@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Il Trono di Cenere</title>
+  <style>
+    :root {
+      --bg: #07090d;
+      --text: #e8edf3;
+      --muted: #aeb8c5;
+      --accent: #5b92ff;
+      --accent-text: #0d1117;
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: Georgia, "Times New Roman", serif;
+      text-align: center;
+    }
+
+    .sfondo {
+      position: fixed; inset: 0; z-index: -2;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center 40%;
+      background: var(--bg);
+    }
+    .velo {
+      position: fixed; inset: 0; z-index: -1;
+      background:
+        radial-gradient(ellipse at 50% 45%, rgba(7,9,13,0) 30%, rgba(7,9,13,0.55) 100%),
+        linear-gradient(to bottom, rgba(7,9,13,0.75) 0%, rgba(7,9,13,0) 28%, rgba(7,9,13,0) 52%, rgba(7,9,13,0.92) 100%);
+    }
+
+    main {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: space-between; align-items: center;
+      padding: clamp(2rem, 7vh, 4rem) 1.5rem clamp(2rem, 8vh, 4.5rem);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 6.5vw, 4.25rem);
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-shadow: 0 2px 24px rgba(91,146,255,0.35), 0 2px 6px rgba(0,0,0,0.8);
+    }
+    h1::after {
+      content: ""; display: block; width: 6rem; height: 1px; margin: 1.1rem auto 0;
+      background: linear-gradient(to right, transparent, var(--muted), transparent);
+    }
+
+    .domanda { max-width: 36rem; }
+    h2 {
+      margin: 0 0 1.75rem;
+      font-size: clamp(1.4rem, 3.5vw, 2rem);
+      font-weight: 400;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.9);
+    }
+    .scelte { display: flex; gap: 1rem; justify-content: center; }
+    button {
+      font: inherit;
+      font-size: 1.2rem;
+      min-width: 8rem;
+      padding: 0.7rem 2.25rem;
+      border-radius: 0.5rem;
+      border: 2px solid var(--accent);
+      cursor: pointer;
+      transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    #si { background: var(--accent); color: var(--accent-text); box-shadow: 0 0 22px rgba(91,146,255,0.35); }
+    #si:hover { background: #7aa7ff; transform: translateY(-1px); }
+    #no { background: rgba(7,9,13,0.55); color: var(--muted); border-color: var(--muted); backdrop-filter: blur(4px); }
+    #no:hover { background: rgba(7,9,13,0.8); color: var(--text); }
+    button:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
+    #risposta { margin: 1.75rem 0 0; font-size: 1.4rem; min-height: 2rem; font-style: italic; text-shadow: 0 2px 10px rgba(0,0,0,0.9); }
+
+    @media (prefers-reduced-motion: no-preference) {
+      h1, .domanda { animation: appari 1.6s ease-out both; }
+      .domanda { animation-delay: 0.8s; }
+      @keyframes appari { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    }
+  </style>
+</head>
+<body>
+  <video class="sfondo" id="sfondo" src="immagini/Video_login.mp4" poster="immagini/Trono_di_Cenere.webp" autoplay loop muted playsinline preload="auto" aria-hidden="true" tabindex="-1"></video>
+  <div class="velo" aria-hidden="true"></div>
+
+  <main>
+    <h1>Il Trono di Cenere</h1>
+    <section class="domanda">
+      <h2>Te la senti di entrare nel dungeon?</h2>
+      <div class="scelte">
+        <button id="si" type="button">Sì</button>
+        <button id="no" type="button">No</button>
+      </div>
+      <p id="risposta" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <script>
+    /* Sfondo video: muto e in ripetizione infinita. Con "riduci animazioni" resta fermo sull'immagine statica. */
+    const sfondo = document.getElementById("sfondo");
+    sfondo.muted = true;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      sfondo.removeAttribute("autoplay");
+      sfondo.pause();
+    } else {
+      sfondo.play().catch(() => {}); /* se il browser blocca l'avvio, resta l'immagine statica */
+    }
+
+    const risposta = document.getElementById("risposta");
+    document.getElementById("si").addEventListener("click", () => {
+      risposta.textContent = "Bene. Allora vai e preparati a soffrire.";
+      setTimeout(() => { window.location.href = "creazione.html"; }, 1500);
+    });
+    document.getElementById("no").addEventListener("click", () => {
+      risposta.textContent = "Beh. Chi potrebbe biasimarti?";
+    });
+  </script>
+</body>
+</html>

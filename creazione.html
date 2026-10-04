@@ -419,14 +419,20 @@
       immagine = null;
       box.style.backgroundImage = ""; box.textContent = "?"; box.classList.remove("piena"); msg.textContent = "";
       if (!key) return;
-      const src = `${IMMAGINI_DIR}${key}.png`, img = new Image();
-      img.onload = () => {
+      const estensioni = ["png", "webp", "jpg", "jpeg", "PNG", "WEBP", "JPG"];
+      const prova = (i) => {
         if (id !== rif) return;
-        immagine = src;
-        box.style.backgroundImage = `url('${src}')`; box.textContent = ""; box.classList.add("piena");
+        if (i >= estensioni.length) { msg.textContent = `Nessuna immagine per ${razza} ${classe}.`; return; }
+        const src = `${IMMAGINI_DIR}${key}.${estensioni[i]}`, img = new Image();
+        img.onload = () => {
+          if (id !== rif) return;
+          immagine = src;
+          box.style.backgroundImage = `url('${src}')`; box.textContent = ""; box.classList.add("piena");
+        };
+        img.onerror = () => prova(i + 1);
+        img.src = src;
       };
-      img.onerror = () => { if (id === rif) msg.textContent = `Nessuna immagine per ${razza} ${classe}.`; };
-      img.src = src;
+      prova(0);
     }
 
     /* ---------- Salvataggio ---------- */

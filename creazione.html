@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Creazione personaggio</title>
+  <style>
+    :root {
+      --bg: #f5f7fa; --text: #1d2733; --muted: #5b6675; --line: #c9d1db;
+      --accent: #2f6fed; --accent-text: #ffffff; --errore: #c0392b;
+      --tip-bg: #e9f0fd; --tip-line: #b4c9f2;
+      --rosso-bg: #fbeaea; --rosso-line: #e6b3b3; --blu-bg: #e9f0fd; --blu-line: #b4c9f2; --verde-bg: #e7f5ec; --verde-line: #b0dbbf;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #161b22; --text: #e8edf3; --muted: #9aa5b4; --line: #2f3844;
+        --accent: #5b92ff; --accent-text: #0d1117; --errore: #ff7b6b;
+        --tip-bg: #1e2a3f; --tip-line: #38527d;
+        --rosso-bg: #3a2226; --rosso-line: #7d444b; --blu-bg: #1e2a3f; --blu-line: #38527d; --verde-bg: #1f3328; --verde-line: #3f6b4f;
+      }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--text); font-family: Georgia, "Times New Roman", serif; padding: 2rem 1.5rem; }
+    main { max-width: 78rem; margin: 0 auto; }
+    h1 { font-size: clamp(2rem, 5vw, 2.5rem); margin: 0 0 1.5rem; font-weight: 600; text-align: center; }
+    h2 { font-size: 1.6rem; margin: 0 0 1rem; font-weight: 600; }
+    h3 { font-size: 1.2rem; margin: 1.75rem 0 0.4rem; font-weight: 600; }
+    label { display: block; margin-bottom: 0.4rem; }
+    .formati, .guida { color: var(--muted); font-size: 0.9rem; margin: 0.4rem 0 0; }
+
+    .pagina { margin-top: 3rem; display: grid; grid-template-columns: 1.3fr 1fr; align-items: start; }
+    #pers { padding-right: 2.5rem; }
+    #equip { padding-left: 2.5rem; border-left: 1px solid transparent; border-image: linear-gradient(to bottom, transparent, var(--line) 8%, var(--line) 92%, transparent) 1; }
+    @media (max-width: 900px) {
+      .pagina { grid-template-columns: 1fr; }
+      #pers { padding-right: 0; }
+      #equip { padding: 2rem 0 0; margin-top: 2rem; border-left: 0; border-image: none; border-top: 1px solid var(--line); }
+    }
+    h4 { font-size: 1.05rem; margin: 1.5rem 0 0.3rem; font-weight: 600; }
+    .riga { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem 3rem; max-width: 46rem; margin: 0 auto 1.75rem; text-align: center; }
+    .riga .razze, .riga .ritratto { justify-content: center; }
+    .riga .ritratto > div:last-child { text-align: left; }
+    @media (max-width: 560px) { .riga { grid-template-columns: 1fr; } }
+    .riga h3 { margin-top: 0; }
+
+    input[type="text"], input[type="number"] { font: inherit; color: inherit; background: transparent; border: 2px solid var(--line); border-radius: 0.5rem; padding: 0.6rem 0.75rem; }
+    #nome { width: 100%; }
+    input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
+
+    .razze { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    .razze label { margin: 0; cursor: pointer; }
+    .opzioni { display: grid; gap: 0.5rem; }
+    .opzioni label { cursor: pointer; margin: 0; }
+    .razze input, .opzioni input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+    .razze span { display: block; text-align: center; padding: 0.5rem 0.75rem; border: 2px solid var(--line); border-radius: 0.5rem; }
+    .opzioni span { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.15rem 1rem; padding: 0.65rem 1rem; border: 2px solid var(--line); border-radius: 0.5rem; }
+    .opzioni small { color: var(--muted); font-size: 0.95rem; white-space: nowrap; }
+    .razze input:checked + span, .opzioni input:checked + span { border-color: var(--accent); color: var(--accent); }
+    .razze input:checked + span { font-weight: 600; }
+    .razze input:disabled + span, .opzioni input:disabled + span { opacity: 0.45; cursor: not-allowed; }
+    .razze input:focus-visible + span, .opzioni input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+
+    .centro { text-align: center; }
+    .nome-box { max-width: 20rem; margin: 0 auto 1.5rem; }
+    .token { width: 11rem; height: 11rem; margin: 0 auto 0.5rem; border-radius: 50%; border: 3px dashed var(--line); background-size: cover; background-position: 50% 8%; display: grid; place-items: center; color: var(--muted); font-size: 2rem; }
+    .token.piena { border-style: solid; border-color: var(--accent); }
+    #token-msg { min-height: 1.25rem; margin: 0 0 1.5rem; }
+    #classi { position: relative; }
+    .tip { display: none; position: absolute; left: 0; right: 0; top: 100%; z-index: 5; margin-top: 0.4rem; padding: 0.75rem 1rem; background: var(--tip-bg); border: 1px solid var(--tip-line); border-radius: 0.5rem; box-shadow: 0 6px 18px rgba(0,0,0,0.12); text-align: left; font-size: 0.9rem; line-height: 1.45; color: var(--text); }
+    #abilita label, #dotazione label { position: relative; }
+    .tip-riga { display: block; max-width: 13rem; font-style: normal; padding-bottom: 0.5rem; margin-bottom: 0.6rem; border-bottom: 1px solid var(--tip-line); }
+    .tip-riga i { display: flex; justify-content: space-between; gap: 1rem; font-style: normal; font-size: 0.9rem; padding: 0.1rem 0; }
+    .tip-riga b:first-child { font-weight: 400; color: var(--muted); }
+    .tip-riga b:last-child { font-weight: 600; }
+    .opzioni small.tip { white-space: normal; color: var(--text); font-size: 0.9rem; }
+    #classi label:hover .tip, #classi label:has(input:focus-visible) .tip,
+    #abilita label:hover .tip, #abilita label:has(input:focus-visible) .tip,
+    #dotazione label:hover .tip, #dotazione label:has(input:focus-visible) .tip { display: block; }
+    .punti { color: var(--muted); margin: 0 0 0.75rem; }
+    .punti strong { color: var(--text); font-size: 1.25rem; }
+    .punti.esauriti strong { color: var(--accent); }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 0.6rem 0.5rem; border-bottom: 1px solid var(--line); }
+    th { color: var(--muted); font-weight: 400; }
+    td:last-child, th:last-child { text-align: right; white-space: nowrap; }
+    th:nth-child(3), th:nth-child(4) { text-align: center; }
+    td.uso { color: var(--muted); font-size: 0.9rem; }
+    td.bonus { color: var(--muted); text-align: center; }
+    td.mod { text-align: center; font-weight: 600; }
+    td input { width: 4rem; text-align: center; padding: 0.4rem; }
+    @media (min-width: 901px) and (max-width: 1250px) { td.uso, th:nth-child(2) { display: none; } }
+    .step { font: inherit; font-size: 1.1rem; line-height: 1; width: 2.25rem; height: 2.25rem; padding: 0; margin: 0 0.15rem; background: transparent; color: var(--text); border: 2px solid var(--line); border-radius: 0.5rem; cursor: pointer; }
+    .step:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    button { font: inherit; cursor: pointer; }
+    .btn { font-size: 1.25rem; margin-top: 2rem; padding: 0.75rem 2.5rem; border-radius: 0.5rem; border: 2px solid var(--accent); background: var(--accent); color: var(--accent-text); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-file, .btn-sec { font-size: 1rem; padding: 0.45rem 1.1rem; border-radius: 0.5rem; border: 2px solid var(--accent); background: transparent; color: var(--accent); }
+    .btn-sec:disabled { opacity: 0.4; cursor: not-allowed; }
+    button:focus-visible, .step:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    #pv { margin: 0.6rem 0 0; }
+
+    .tonde { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 1.5rem; margin: 4rem 0 2.5rem; }
+    .dado { width: 11rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.6rem; text-align: center; }
+    .dado b { font-weight: 600; font-size: 0.95rem; }
+    .dado #pv { margin: 0; color: var(--muted); font-size: 0.85rem; line-height: 1.3; }
+    .tonda { width: 9.5rem; height: 9.5rem; border-radius: 50%; border: 2px solid; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0.5rem; }
+    .tonda b { font-weight: 600; font-size: 0.95rem; }
+    .tonda .num { font-size: 2.25rem; line-height: 1.1; }
+    .tonda small { color: var(--muted); font-size: 0.8rem; line-height: 1.2; }
+    .tonda.rosso { background: var(--rosso-bg); border-color: var(--rosso-line); }
+    .tonda.blu { background: var(--blu-bg); border-color: var(--blu-line); }
+    .tonda.verde { background: var(--verde-bg); border-color: var(--verde-line); }
+    .fine { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--line); text-align: center; }
+    #esito { min-height: 1.5rem; margin: 0.75rem 0 0; }
+    #esito.errore { color: var(--errore); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Creazione del personaggio</h1>
+    <form id="scheda">
+        <div class="centro nome-box">
+          <h3 style="margin-top:0"><label for="nome" style="margin:0">Nome</label></h3>
+          <input id="nome" name="nome" type="text" maxlength="40" required autocomplete="off">
+        </div>
+        <div class="centro">
+          <div class="token" id="token" role="img" aria-label="Immagine del personaggio">?</div>
+          <p class="formati" id="token-msg" aria-live="polite"></p>
+        </div>
+
+        <div class="riga">
+          <div>
+            <h3 id="h-razza">Razza</h3>
+            <p class="guida" style="margin:0 0 0.6rem">Scegli una razza.</p>
+            <div class="razze" id="razze" role="radiogroup" aria-labelledby="h-razza"></div>
+          </div>
+          <div>
+            <h3 id="h-classe">Classe</h3>
+            <p class="guida" style="margin:0 0 0.6rem">Scegli una classe.</p>
+            <div class="razze" id="classi" role="radiogroup" aria-labelledby="h-classe"></div>
+          </div>
+        </div>
+
+        <div class="pagina">
+          <section id="pers" aria-label="Statistiche e abilità">
+          <h3 style="margin-top:0">Statistiche</h3>
+          <p class="punti" id="punti">Punti da distribuire: <strong id="rimasti">10</strong> su <span id="totale">10</span></p>
+          <table>
+            <thead><tr><th>Attributo</th><th>Utilizzo</th><th>Classe</th><th>Mod</th><th>Valore</th></tr></thead>
+            <tbody id="statistiche"></tbody>
+          </table>
+
+          <h3 id="h-abilita">Abilità</h3>
+          <p class="guida" style="margin:0 0 0.75rem">Scegline quattro. Il valore è il modificatore dell'attributo collegato.</p>
+          <div class="opzioni" id="abilita" role="group" aria-labelledby="h-abilita"></div>
+
+          </section>
+
+          <section id="equip" aria-labelledby="t-equip">
+            <h3 id="t-equip" style="margin-top:0">Equipaggiamento</h3>
+          <h4 id="h-arma">Arma</h4>
+          <p class="guida" style="margin:0 0 0.75rem">Scegline una.</p>
+          <div class="opzioni" id="armi" role="radiogroup" aria-labelledby="h-arma"></div>
+
+          <h4 id="h-armatura">Armatura</h4>
+          <p class="guida" style="margin:0 0 0.75rem">Scegline una.</p>
+          <div class="opzioni" id="armature" role="radiogroup" aria-labelledby="h-armatura"></div>
+
+          <h4 id="h-dotazione">Dotazione</h4>
+          <p class="guida" style="margin:0 0 0.75rem">Scegline tre.</p>
+          <div class="opzioni" id="dotazione" role="group" aria-labelledby="h-dotazione"></div>
+
+          </section>
+        </div>
+
+      <div class="tonde">
+        <div class="dado"><b>Dado vita</b><button type="button" class="btn-sec" id="lancia" disabled>Lancia il dado</button><p id="pv" aria-live="polite"></p></div>
+        <div class="tonda rosso"><b>Salute fisica</b><span class="num" id="sf-v">–</span><small id="sf-f"></small></div>
+        <div class="tonda blu"><b>Salute mentale</b><span class="num" id="sm-v">–</span><small id="sm-f"></small></div>
+        <div class="tonda verde"><b>Classe armatura</b><span class="num" id="ca-v">–</span><small id="ca-f"></small></div>
+      </div>
+
+      <div class="fine">
+        <button type="submit" class="btn" id="crea" aria-describedby="avviso" style="margin-top:0">Entra nel dungeon</button>
+        <p id="avviso" class="formati"></p>
+        <p id="esito" aria-live="polite"></p>
+      </div>
+    </form>
+  </main>
+
+  <script>
+    const VALORE_MINIMO = 10, PUNTI_BASE = 10, LATO_MAX_IMMAGINE = 400;
+    const PV_BASE = 10, LIVELLO = 1, CA_BASE = 10, MAX_ABILITA = 4, MAX_DOTAZIONE = 3;
+
+    const ATTRIBUTI = [
+      ["Lotta", "Potenza fisica"],
+      ["Agilità", "Movimento e riflessi"],
+      ["Mente", "Conoscenza arcana e logica"],
+      ["Corpo", "Resistenza, salute fisica e sensi"],
+      ["Carisma", "Interazioni sociali"],
+      ["Spirito", "Fede, resistenza mentale e salute mentale"]
+    ];
+    const NOMI = ATTRIBUTI.map(a => a[0]);
+    const CLASSI = { Soldato: 10, Forestiero: 8, Sapiente: 6, Accolito: 6 };
+    const BONUS_CLASSI = {
+      Soldato: { Lotta: 2, Corpo: 1, Carisma: 1 },
+      Forestiero: { "Agilità": 2, Lotta: 1, Mente: 1 },
+      Sapiente: { Spirito: 2, Mente: 1, Corpo: 1 },
+      Accolito: { Spirito: 2, Mente: 1, Carisma: 1 }
+    };
+    const DESC_CLASSI = {
+      Soldato: "Hai trascorso gran parte della tua vita nell'esercito o in una compagnia militare. Addestrato all'uso di armi e armature, hai imparato a sopravvivere sul campo di battaglia e a lavorare in squadra. Potresti aver servito in un esercito regolare, una milizia locale, la guardia cittadina o una compagnia mercenaria.",
+      Forestiero: "Sei cresciuto nelle terre selvagge, lontano dalle città e dalla civiltà. Hai imparato a cavartela da solo e a orientarti anche nei luoghi più remoti ed a te sconosciuti.",
+      Sapiente: "Hai dedicato la tua vita alla conoscenza, studiando testi antichi e pergamene. Le tue ricerche ti hanno condotto a esplorare i segreti della magia arcana, rendendoti un esperto di storia, incantesimi e sapere occulto.",
+      Accolito: "Hai dedicato la tua vita al servizio di una divinità o di un pantheon, fungendo da tramite tra il sacro e i mortali. Guidi riti, celebrazioni e preghiere per diffondere la fede del tuo patrono. Potresti essere stato un semplice servitore del tempio, un sacerdote, o l'ex membro di un culto che ha scelto una nuova strada spirituale."
+    };
+    const ABILITA = [
+      ["Furtività", "Agilità", "Capacità di muoversi in silenzio, nascondersi nell'ombra e passare inosservati agli occhi dei nemici."],
+      ["Indagare", "Mente", "Capacità di analizzare indizi, dedurre dettagli nascosti, decifrare codici o ricostruire eventi passati."],
+      ["Medicina", "Mente", "Conoscenza del corpo e dei rimedi per stabilizzare feriti, diagnosticare malattie, curare veleni e applicare primi soccorsi."],
+      ["Persuasione", "Carisma", "Arte di convincere gli altri con la diplomazia, la gentilezza, la dialettica e la negoziazione in buona fede."],
+      ["Intimidire", "Carisma", "Capacità di piegare la volontà altrui attraverso minacce, presenza fisica imponente o pressione psicologica."],
+      ["Percezione", "Corpo", "Acume visivo e uditivo per notare pericoli imminenti, trappole, nemici nascosti o piccoli dettagli nell'ambiente."],
+      ["Atletica", "Lotta", "Abilità nell'eseguire prove di forza fisica, come arrampicarsi, nuotare in acque agitate, saltare grandi distanze o sfondare ostacoli."],
+      ["Acrobazia", "Agilità", "Controllo dell'equilibrio e dei riflessi per schivare ostacoli, compiere salti acrobatici, atterrare senza farsi male ed uscire da trattenute."],
+      ["Arcano", "Mente", "Studio teorico e pratico delle leggi della magia, dei costrutti, dei piani d'esistenza e degli incantesimi."],
+      ["Misticismo", "Mente", "Comprensione delle forze divine, degli spiriti, delle energie sacre o profane e dei rituali legati alla fede."]
+    ];
+    const RAZZE = { Umano: {}, Elfo: {}, Nano: {}, Gnomo: {} };
+    const ARMI = [
+      { nome: "Spada corta", danno: "1d6" }, { nome: "Arco", danno: "1d6" },
+      { nome: "Ascia da battaglia", danno: "1d8" }, { nome: "Bastone", danno: "1d6" },
+      { nome: "Maglio", danno: "1d8" }
+    ];
+    /* malus: penalità alle abilità che usano Agilità (il risultato può diventare negativo) */
+    const ARMATURE = [
+      { nome: "Armatura di cuoio borchiato", ca: 2, malus: 0 },
+      { nome: "Armatura di piastre", ca: 3, malus: 1 },
+      { nome: "Cotta di maglia", ca: 4, malus: 2 }
+    ];
+    /* senza "usi" = oggetto riutilizzabile */
+    const DOTAZIONE = [
+      { nome: "Pozione di cura", usi: 1, desc: "Quando un personaggio beve il fluido magico rossastro contenuto in questa fiala, recupera 1d4 + il livello del personaggio." },
+      { nome: "Pozione di mana", usi: 1, desc: "Quando un personaggio beve il fluido magico violaceo contenuto in questa fiala, recupera 1d4 + il livello del personaggio." },
+      { nome: "Razioni da viaggio", usi: 5, desc: "Non sai se troverai da mangiare dove stai andando: queste razioni ti terranno in vita per qualche giorno, anche se fanno schifo. Recupera 1 punto salute + il livello del personaggio. Si può utilizzare una razione a turno." },
+      { nome: "Torcia", usi: 5, desc: "Un massiccio tizzone di legno avvolto da panno imbevuto di pece e resina ancora vischiosa. Un oggetto fondamentale da tenere stretto... a meno che tu non pretenda di orientarti nei sotterranei affidandoti unicamente ai respiri affannosi di ciò che ti attende nell'oscurità." },
+      { nome: "Piede di porco", desc: "L'utilizzo di un piede di porco conferisce vantaggio alle prove di lotta in cui è possibile usare il piede di porco per fare leva." },
+      { nome: "Ampolla di fuoco", usi: 1, desc: "Questo fluido giallognolo ed aranciato si infiamma quando è esposto all'aria. Il personaggio può lanciare questa ampolla causando al bersaglio, se lo colpisce, 1d4 danni da fuoco." },
+      { nome: "Corda e rampino", desc: "Un rampino d'acciaio legato a diversi metri di robusta corda: utile per scalare muri, superare dislivelli e raggiungere luoghi altrimenti inaccessibili." } /* PROVVISORIO: descrizione scritta da me */
+    ];
+
+    let classe = null, tiro = null, razza = null;
+    let bonus = NOMI.map(() => 0);
+    const extra = NOMI.map(() => 0);
+
+    const $ = (id) => document.getElementById(id);
+    const mod = (v) => Math.floor((v - 10) / 2);
+    const fmt = (n) => (n < 0 ? "−" : "+") + Math.abs(n);
+    const puntiTotali = () => PUNTI_BASE;
+    const minimo = (i) => VALORE_MINIMO + bonus[i];
+    const totale = (i) => minimo(i) + extra[i];
+    const spesi = (escludi) => extra.reduce((t, e, i) => i === escludi ? t : t + e, 0);
+    const modDi = (attr) => mod(totale(NOMI.indexOf(attr)));
+    const abilitaScelte = () => [...document.querySelectorAll('input[name="abilita"]:checked')].map(c => ABILITA[c.value]);
+    const scelto = (name) => document.querySelector(`input[name="${name}"]:checked`);
+    const armaScelta = () => scelto("arma") ? ARMI[scelto("arma").value] : null;
+    const armaturaScelta = () => scelto("armatura") ? ARMATURE[scelto("armatura").value] : null;
+    const malusAgilita = () => { const a = armaturaScelta(); return a ? a.malus : 0; };
+    const valoreAbilita = (attr) => modDi(attr) - (attr === "Agilità" ? malusAgilita() : 0);
+    const dotazioneScelta = () => [...document.querySelectorAll('input[name="dotazione"]:checked')].map(c => DOTAZIONE[c.value]);
+
+    /* ---------- Costruzione liste ---------- */
+    const riepilogoClasse = (nome) => [["Dado salute", CLASSI[nome]], ...NOMI.filter(n => BONUS_CLASSI[nome][n]).map(n => [n, "+" + BONUS_CLASSI[nome][n]])]
+      .map(([k, v]) => `<i><b>${k}</b><b>${v}</b></i>`).join("");
+    Object.keys(CLASSI).forEach(nome => {
+      const l = document.createElement("label");
+      l.innerHTML = `<input type="radio" name="classe" value="${nome}" aria-describedby="tip-${nome}"><span>${nome}</span><small class="tip" id="tip-${nome}" role="tooltip"><em class="tip-riga">${riepilogoClasse(nome)}</em>${DESC_CLASSI[nome]}</small>`;
+      l.querySelector("input").addEventListener("change", () => { if (classe !== nome) { classe = nome; tiro = null; } bonus = NOMI.map(n => BONUS_CLASSI[nome][n] || 0); aggiorna(); });
+      $("classi").appendChild(l);
+    });
+    Object.keys(RAZZE).forEach(nome => {
+      const l = document.createElement("label");
+      l.innerHTML = `<input type="radio" name="razza" value="${nome}"><span>${nome}</span>`;
+      l.querySelector("input").addEventListener("change", () => scegliRazza(nome));
+      $("razze").appendChild(l);
+    });
+    const nAb = (attr) => ABILITA.filter(x => x[1] === attr).length;
+    const ordineAttr = [...new Set(ABILITA.map(x => x[1]))].sort((x, y) => (nAb(x) - nAb(y)) || (NOMI.indexOf(x) - NOMI.indexOf(y)));
+    ordineAttr.forEach(attr => {
+      ABILITA.forEach(([nome, a, desc], i) => {
+      if (a !== attr) return;
+      const l = document.createElement("label");
+      l.innerHTML = `<input type="checkbox" name="abilita" value="${i}"><span><b>${nome}</b><small id="ab${i}"></small></span><small class="tip" id="tip-ab-${i}" role="tooltip">${desc}</small>`;
+      l.querySelector("input").setAttribute("aria-describedby", `tip-ab-${i}`);
+      l.querySelector("input").addEventListener("change", aggiorna);
+      $("abilita").appendChild(l);
+      });
+    });
+    function creaOpzioni(id, items, tipo, name, descr, tip) {
+      items.forEach((it, i) => {
+        const l = document.createElement("label");
+        const t = tip ? tip(it) : null;
+        l.innerHTML = `<input type="${tipo}" name="${name}" value="${i}"><span><b>${it.nome}</b><small>${descr(it)}</small></span>` +
+          (t ? `<small class="tip" id="tip-${name}-${i}" role="tooltip">${t}</small>` : "");
+        const inp = l.querySelector("input");
+        if (t) inp.setAttribute("aria-describedby", `tip-${name}-${i}`);
+        inp.addEventListener("change", aggiorna);
+        $(id).appendChild(l);
+      });
+    }
+    creaOpzioni("armi", ARMI, "radio", "arma", a => `${a.danno} + modificatore Lotta`);
+    creaOpzioni("armature", ARMATURE, "radio", "armatura", a => `+${a.ca} Classe Armatura` + (a.malus ? ` · −${a.malus} alle abilità di Agilità` : ""));
+    creaOpzioni("dotazione", DOTAZIONE, "checkbox", "dotazione",
+      d => d.usi > 1 ? `${d.usi} utilizzi` : (d.usi === 1 ? "1 utilizzo" : "Riutilizzabile"), d => d.desc);
+
+    /* ---------- Statistiche ---------- */
+    const corpo = $("statistiche"), campi = [], celleBonus = [], celleMod = [];
+    ATTRIBUTI.forEach(([nome, uso], i) => {
+      const riga = document.createElement("tr");
+      riga.innerHTML =
+        `<td><label for="stat${i}" style="margin:0">${nome}</label></td>` +
+        `<td class="uso">${uso}</td><td class="bonus">–</td><td class="mod">+0</td>` +
+        `<td><button type="button" class="step" data-i="${i}" data-d="-1" aria-label="Diminuisci ${nome}">−</button>` +
+        `<input id="stat${i}" type="number" min="${VALORE_MINIMO}" value="${VALORE_MINIMO}">` +
+        `<button type="button" class="step" data-i="${i}" data-d="1" aria-label="Aumenta ${nome}">+</button></td>`;
+      corpo.appendChild(riga);
+      campi.push(riga.querySelector("input"));
+      celleBonus.push(riga.querySelector(".bonus"));
+      celleMod.push(riga.querySelector(".mod"));
+    });
+
+    function imposta(i, valore) {
+      const v = Math.round(Number(valore));
+      const e = Number.isFinite(v) ? v - minimo(i) : 0;
+      extra[i] = Math.min(puntiTotali() - spesi(i), Math.max(0, e));
+      aggiorna();
+    }
+
+    function scegliRazza(nome) {
+      razza = nome;
+      aggiorna();
+    }
+
+    campi.forEach((c, i) => c.addEventListener("change", () => imposta(i, c.value)));
+    corpo.addEventListener("click", (e) => {
+      const b = e.target.closest(".step");
+      if (b) imposta(Number(b.dataset.i), totale(Number(b.dataset.i)) + Number(b.dataset.d));
+    });
+
+    $("lancia").addEventListener("click", () => {
+      if (!classe || tiro !== null) return;
+      tiro = 1 + Math.floor(Math.random() * CLASSI[classe]);
+      aggiorna();
+    });
+
+    /* ---------- Aggiornamento complessivo ---------- */
+    function aggiorna() {
+      const rimasti = puntiTotali() - spesi(-1);
+      $("rimasti").textContent = rimasti;
+      $("totale").textContent = puntiTotali();
+      $("punti").classList.toggle("esauriti", rimasti === 0);
+      campi.forEach((c, i) => {
+        c.min = minimo(i); c.max = totale(i) + rimasti; c.value = totale(i);
+        celleBonus[i].textContent = bonus[i] ? "+" + bonus[i] : "–";
+        celleMod[i].textContent = fmt(mod(totale(i)));
+        document.querySelector(`.step[data-i="${i}"][data-d="-1"]`).disabled = extra[i] === 0;
+        document.querySelector(`.step[data-i="${i}"][data-d="1"]`).disabled = rimasti === 0;
+      });
+
+      const l = $("lancia");
+      l.textContent = classe ? `Lancia d${CLASSI[classe]}` : "Lancia il dado";
+      l.disabled = !classe || tiro !== null;
+      $("pv").textContent = tiro !== null
+        ? `Risultato: ${tiro} (d${CLASSI[classe]})`
+        : (classe ? "Cambiando classe il tiro si azzera." : "Scegli prima una classe.");
+      ABILITA.forEach(([, a], i) => { $("ab" + i).textContent = `${a} ${fmt(valoreAbilita(a))}`; });
+      const nAb = abilitaScelte().length;
+      document.querySelectorAll('input[name="abilita"]').forEach(c => { c.disabled = !c.checked && nAb >= MAX_ABILITA; });
+
+      const arma = armaScelta(), arm = armaturaScelta(), dot = dotazioneScelta();
+      document.querySelectorAll('input[name="dotazione"]').forEach(c => { c.disabled = !c.checked && dot.length >= MAX_DOTAZIONE; });
+
+      const bc = arm ? arm.ca : 0;
+      const segno = (n) => (n < 0 ? "−" : "+") + " " + Math.abs(n);
+      const modC = modDi("Corpo"), modM = modDi("Spirito");
+      $("sf-v").textContent = tiro === null ? "–" : PV_BASE + tiro + modC;
+      $("sf-f").textContent = tiro === null ? "Lancia il dado vita" : `${PV_BASE} + ${tiro} ${segno(modC)}`;
+      $("sm-v").textContent = tiro === null ? "–" : PV_BASE + tiro + modM;
+      $("sm-f").textContent = tiro === null ? "Lancia il dado vita" : `${PV_BASE} + ${tiro} ${segno(modM)}`;
+      $("ca-v").textContent = arm ? CA_BASE + bc : "–";
+      $("ca-f").textContent = arm ? `${CA_BASE} + ${bc}` : "Scegli l'armatura";
+
+      aggiornaImmagine();
+
+      const manca = [];
+      if (!razza) manca.push("la razza");
+      if (!classe) manca.push("la classe");
+      else if (tiro === null) manca.push("il tiro dei punti vita");
+      if (rimasti > 0) manca.push(`${rimasti} punti attributo da distribuire`);
+      if (nAb < MAX_ABILITA) manca.push(`${MAX_ABILITA - nAb} abilità`);
+      if (!arma) manca.push("un'arma");
+      if (!arm) manca.push("un'armatura");
+      if (dot.length < MAX_DOTAZIONE) manca.push(`${MAX_DOTAZIONE - dot.length} ${MAX_DOTAZIONE - dot.length === 1 ? "oggetto" : "oggetti"} di dotazione`);
+      $("crea").disabled = manca.length > 0;
+      $("avviso").textContent = manca.length ? "Ancora da fare: " + manca.join(", ") + "." : "";
+    }
+
+    /* ---------- Immagine da razza + classe ---------- */
+    /* File attesi in IMMAGINI_DIR con nome Razza_Classe.png, es. immagini/Umano_Soldato.png */
+    const IMMAGINI_DIR = "immagini/";
+    let immagine = null, chiave = null, rif = 0;
+    function aggiornaImmagine() {
+      const key = razza && classe ? `${razza}_${classe}` : null;
+      if (key === chiave) return;
+      chiave = key;
+      const id = ++rif, box = $("token"), msg = $("token-msg");
+      immagine = null;
+      box.style.backgroundImage = ""; box.textContent = "?"; box.classList.remove("piena"); msg.textContent = "";
+      if (!key) return;
+      const estensioni = ["png", "webp", "jpg", "jpeg", "PNG", "WEBP", "JPG"];
+      const prova = (i) => {
+        if (id !== rif) return;
+        if (i >= estensioni.length) { msg.textContent = `Nessuna immagine per ${razza} ${classe}.`; return; }
+        const src = `${IMMAGINI_DIR}${key}.${estensioni[i]}`, img = new Image();
+        img.onload = () => {
+          if (id !== rif) return;
+          immagine = src;
+          box.style.backgroundImage = `url('${src}')`; box.textContent = ""; box.classList.add("piena");
+        };
+        img.onerror = () => prova(i + 1);
+        img.src = src;
+      };
+      prova(0);
+    }
+
+    /* ---------- Salvataggio ---------- */
+    $("scheda").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const arma = armaScelta(), arm = armaturaScelta(), dot = dotazioneScelta();
+      if (!razza || !classe || tiro === null || puntiTotali() - spesi(-1) !== 0 ||
+          abilitaScelte().length !== MAX_ABILITA || !arma || !arm || dot.length !== MAX_DOTAZIONE) return;
+
+      const base = Object.fromEntries(NOMI.map((n, i) => [n, totale(i)]));
+      const stat = { ...base }; /* l'arma non modifica più la Lotta: dà il dado di danno */
+      const pg = {
+        nome: $("nome").value.trim(),
+        razza, classe, livello: LIVELLO, immagine,
+        statisticheBase: base,
+        statistiche: stat,
+        modificatori: Object.fromEntries(Object.entries(stat).map(([k, v]) => [k, mod(v)])),
+        tiroDado: { dado: CLASSI[classe], valore: tiro },
+        puntiVita: PV_BASE + tiro + mod(stat.Corpo),
+        saluteMentale: PV_BASE + tiro + mod(stat.Spirito),
+        classeArmatura: CA_BASE + arm.ca,
+        abilita: abilitaScelte().map(([n, a]) => ({ nome: n, attributo: a, valore: valoreAbilita(a) })),
+        equipaggiamento: { arma: arma.nome, armaDanno: arma.danno, armatura: arm.nome, malusAgilita: arm.malus, dotazione: dot.map(d => ({ nome: d.nome, usi: d.usi, desc: d.desc })) }
+      };
+      const esito = $("esito");
+      try {
+        localStorage.setItem("personaggio", JSON.stringify(pg));
+        try { ["scena", "usate", "diario", "luogo", "partita"].forEach(k => localStorage.removeItem(k)); } catch (err) {}
+        try { /* il personaggio entra in uno dei tre posti salvati (quello scelto dalla pagina iniziale, altrimenti il primo libero) */
+          let n = localStorage.getItem("slot_nuovo");
+          if (!n || localStorage.getItem("slot" + n)) n = ["1", "2", "3"].find(k => !localStorage.getItem("slot" + k)) || null;
+          localStorage.removeItem("slot_nuovo");
+          if (n) { localStorage.setItem("slot" + n, JSON.stringify({ pg, partita: null, aggiornato: Date.now() })); localStorage.setItem("slot_attivo", n); }
+          else localStorage.removeItem("slot_attivo");
+        } catch (err) {}
+        esito.className = "";
+        esito.textContent = `${pg.nome} è pronto a entrare nel dungeon.`;
+        $("crea").disabled = true;
+        setTimeout(() => { window.location.href = "gioco.html"; }, 1200);
+      } catch (err) {
+        esito.className = "errore";
+        esito.textContent = "Salvataggio non riuscito: prova con un'immagine più piccola.";
+      }
+    });
+
+    aggiorna();
+  </script>
+</body>
+</html>

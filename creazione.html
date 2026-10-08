@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Creazione personaggio</title>
+  <script src="lingua.js"></script>
+  <style>
+    :root {
+      --bg: #f5f7fa; --text: #1d2733; --muted: #5b6675; --line: #c9d1db;
+      --accent: #2f6fed; --accent-text: #ffffff; --errore: #c0392b;
+      --tip-bg: #e9f0fd; --tip-line: #b4c9f2;
+      --rosso-bg: #fbeaea; --rosso-line: #e6b3b3; --blu-bg: #e9f0fd; --blu-line: #b4c9f2; --verde-bg: #e7f5ec; --verde-line: #b0dbbf;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #161b22; --text: #e8edf3; --muted: #9aa5b4; --line: #2f3844;
+        --accent: #5b92ff; --accent-text: #0d1117; --errore: #ff7b6b;
+        --tip-bg: #1e2a3f; --tip-line: #38527d;
+        --rosso-bg: #3a2226; --rosso-line: #7d444b; --blu-bg: #1e2a3f; --blu-line: #38527d; --verde-bg: #1f3328; --verde-line: #3f6b4f;
+      }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--text); font-family: Georgia, "Times New Roman", serif; padding: 2rem 1.5rem; }
+    main { max-width: 78rem; margin: 0 auto; }
+    h1 { font-size: clamp(2rem, 5vw, 2.5rem); margin: 0 0 1.5rem; font-weight: 600; text-align: center; }
+    h2 { font-size: 1.6rem; margin: 0 0 1rem; font-weight: 600; }
+    h3 { font-size: 1.2rem; margin: 1.75rem 0 0.4rem; font-weight: 600; }
+    label { display: block; margin-bottom: 0.4rem; }
+    .formati, .guida { color: var(--muted); font-size: 0.9rem; margin: 0.4rem 0 0; }
+
+    .pagina { margin-top: 3rem; display: grid; grid-template-columns: 1.3fr 1fr; align-items: start; }
+    #pers { padding-right: 2.5rem; }
+    #equip { padding-left: 2.5rem; border-left: 1px solid transparent; border-image: linear-gradient(to bottom, transparent, var(--line) 8%, var(--line) 92%, transparent) 1; }
+    @media (max-width: 900px) {
+      .pagina { grid-template-columns: 1fr; }
+      #pers { padding-right: 0; }
+      #equip { padding: 2rem 0 0; margin-top: 2rem; border-left: 0; border-image: none; border-top: 1px solid var(--line); }
+    }
+    h4 { font-size: 1.05rem; margin: 1.5rem 0 0.3rem; font-weight: 600; }
+    .riga { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem 3rem; max-width: 46rem; margin: 0 auto 1.75rem; text-align: center; }
+    .riga .razze, .riga .ritratto { justify-content: center; }
+    .riga .ritratto > div:last-child { text-align: left; }
+    @media (max-width: 560px) { .riga { grid-template-columns: 1fr; } }
+    .riga h3 { margin-top: 0; }
+
+    input[type="text"], input[type="number"] { font: inherit; color: inherit; background: transparent; border: 2px solid var(--line); border-radius: 0.5rem; padding: 0.6rem 0.75rem; }
+    #nome { width: 100%; }
+    input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
+
+    .razze { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    .razze label { margin: 0; cursor: pointer; }
+    .opzioni { display: grid; gap: 0.5rem; }
+    .opzioni label { cursor: pointer; margin: 0; }
+    .razze input, .opzioni input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+    .razze span { display: block; text-align: center; padding: 0.5rem 0.75rem; border: 2px solid var(--line); border-radius: 0.5rem; }
+    .opzioni span { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.15rem 1rem; padding: 0.65rem 1rem; border: 2px solid var(--line); border-radius: 0.5rem; }
+    .opzioni small { color: var(--muted); font-size: 0.95rem; white-space: nowrap; }
+    .razze input:checked + span, .opzioni input:checked + span { border-color: var(--accent); color: var(--accent); }
+    .razze input:checked + span { font-weight: 600; }
+    .razze input:disabled + span, .opzioni input:disabled + span { opacity: 0.45; cursor: not-allowed; }
+    .razze input:focus-visible + span, .opzioni input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+
+    .centro { text-align: center; }
+    .nome-box { max-width: 20rem; margin: 0 auto 1.5rem; }
+    .token { width: 11rem; height: 11rem; margin: 0 auto 0.5rem; border-radius: 50%; border: 3px dashed var(--line); background-size: cover; background-position: 50% 8%; display: grid; place-items: center; color: var(--muted); font-size: 2rem; }
+    .token.piena { border-style: solid; border-color: var(--accent); }
+    #token-msg { margin: 0 0 0.75rem; } #token-msg:empty { margin: 0; }
+    /* Galleria dei ritratti disponibili per razza + classe: il giocatore sceglie il suo */
+    .galleria { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.1rem; margin: 0 auto 2rem; max-width: 52rem; }
+    @media (max-width: 560px) { .galleria span { width: 8.5rem; } }
+    .galleria:empty { display: none; }
+    .galleria label { position: relative; margin: 0; cursor: pointer; }
+    .galleria input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+    .galleria span { display: block; width: 11rem; aspect-ratio: 900 / 1122; border-radius: 0.5rem; background-size: cover; background-position: 50% 0; /* forma originale delle immagini */ border: 3px solid var(--line); opacity: 0.7; transition: opacity 0.15s, border-color 0.15s, transform 0.15s; }
+    .galleria label:hover span { opacity: 1; transform: translateY(-2px); }
+    .galleria input:checked + span { opacity: 1; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent); }
+    .galleria input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 3px; }
+    #classi, #razze { position: relative; }
+    .tip { display: none; position: absolute; left: 0; right: 0; top: 100%; z-index: 5; margin-top: 0.4rem; padding: 0.75rem 1rem; background: var(--tip-bg); border: 1px solid var(--tip-line); border-radius: 0.5rem; box-shadow: 0 6px 18px rgba(0,0,0,0.12); text-align: left; font-size: 0.9rem; line-height: 1.45; color: var(--text); }
+    #abilita label, #dotazione label, #armi label, #armature label, #scudi label { position: relative; }
+    .tip-riga.sola { border: 0; margin: 0; padding: 0; }
+    .tip .tit { display: block; font-weight: 600; margin: 0.15rem 0 0.2rem; }
+    .tip .nota-mani { display: block; margin-top: 0.5rem; font-style: italic; color: var(--muted); }
+    .tip-riga { display: block; max-width: 15rem; font-style: normal; padding-bottom: 0.5rem; margin-bottom: 0.6rem; border-bottom: 1px solid var(--tip-line); }
+    .tip-riga i { display: flex; justify-content: space-between; gap: 1rem; font-style: normal; font-size: 0.9rem; padding: 0.1rem 0; }
+    .tip-riga b:first-child { font-weight: 400; color: var(--muted); }
+    .tip-riga b:last-child { font-weight: 600; }
+    .opzioni small.tip { white-space: normal; color: var(--text); font-size: 0.9rem; }
+    #classi label:hover .tip, #classi label:has(input:focus-visible) .tip,
+    #razze label:hover .tip, #razze label:has(input:focus-visible) .tip,
+    #armi label:hover .tip, #armi label:has(input:focus-visible) .tip,
+    #armature label:hover .tip, #armature label:has(input:focus-visible) .tip,
+    #scudi label:hover .tip, #scudi label:has(input:focus-visible) .tip,
+    #abilita label:hover .tip, #abilita label:has(input:focus-visible) .tip,
+    #dotazione label:hover .tip, #dotazione label:has(input:focus-visible) .tip { display: block; }
+    .punti { color: var(--muted); margin: 0 0 0.75rem; }
+    .punti strong { color: var(--text); font-size: 1.25rem; }
+    .punti.esauriti strong { color: var(--accent); }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 0.6rem 0.5rem; border-bottom: 1px solid var(--line); }
+    th { color: var(--muted); font-weight: 400; }
+    td:last-child, th:last-child { text-align: right; white-space: nowrap; }
+    th:nth-child(3), th:nth-child(4) { text-align: center; }
+    td.uso { color: var(--muted); font-size: 0.9rem; }
+    td.bonus { color: var(--muted); text-align: center; }
+    td.mod { text-align: center; font-weight: 600; }
+    td input { width: 4rem; text-align: center; padding: 0.4rem; }
+    @media (min-width: 901px) and (max-width: 1250px) { td.uso, th:nth-child(2) { display: none; } }
+    .step { font: inherit; font-size: 1.1rem; line-height: 1; width: 2.25rem; height: 2.25rem; padding: 0; margin: 0 0.15rem; background: transparent; color: var(--text); border: 2px solid var(--line); border-radius: 0.5rem; cursor: pointer; }
+    .step:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    button { font: inherit; cursor: pointer; }
+    .btn { font-size: 1.25rem; margin-top: 2rem; padding: 0.75rem 2.5rem; border-radius: 0.5rem; border: 2px solid var(--accent); background: var(--accent); color: var(--accent-text); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-file, .btn-sec { font-size: 1rem; padding: 0.45rem 1.1rem; border-radius: 0.5rem; border: 2px solid var(--accent); background: transparent; color: var(--accent); }
+    .btn-sec:disabled { opacity: 0.4; cursor: not-allowed; }
+    button:focus-visible, .step:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    #pv { margin: 0.6rem 0 0; }
+
+    .tonde { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 1.5rem; margin: 4rem 0 2.5rem; }
+    .dado { width: 11rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.6rem; text-align: center; }
+    .dado b { font-weight: 600; font-size: 0.95rem; }
+    .dado #pv { margin: 0; color: var(--muted); font-size: 0.85rem; line-height: 1.3; }
+    .tonda { width: 9.5rem; height: 9.5rem; border-radius: 50%; border: 2px solid; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0.5rem; }
+    .tonda b { font-weight: 600; font-size: 0.95rem; }
+    .tonda .num { font-size: 2.25rem; line-height: 1.1; }
+    .tonda small { color: var(--muted); font-size: 0.8rem; line-height: 1.2; }
+    .tonda.rosso { background: var(--rosso-bg); border-color: var(--rosso-line); }
+    .tonda.blu { background: var(--blu-bg); border-color: var(--blu-line); }
+    .tonda.verde { background: var(--verde-bg); border-color: var(--verde-line); }
+    .fine { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--line); text-align: center; }
+    #esito { min-height: 1.5rem; margin: 0.75rem 0 0; }
+    #esito.errore { color: var(--errore); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1 data-t="titolo">Creazione del personaggio</h1>
+    <form id="scheda">
+        <div class="centro nome-box">
+          <h3 style="margin-top:0"><label for="nome" style="margin:0" data-t="nome">Nome</label></h3>
+          <input id="nome" name="nome" type="text" maxlength="40" required autocomplete="off">
+        </div>
+        <div class="centro">
+          <p class="formati" id="token-msg" aria-live="polite"></p>
+          <div class="galleria" id="galleria" role="radiogroup"></div>
+        </div>
+
+        <div class="riga">
+          <div>
+            <h3 id="h-razza" data-t="razza">Razza</h3>
+            <p class="guida" style="margin:0 0 0.6rem" data-t="guidaRazza">Scegli una razza.</p>
+            <div class="razze" id="razze" role="radiogroup" aria-labelledby="h-razza"></div>
+          </div>
+          <div>
+            <h3 id="h-classe" data-t="classe">Classe</h3>
+            <p class="guida" style="margin:0 0 0.6rem" data-t="guidaClasse">Scegli una classe.</p>
+            <div class="razze" id="classi" role="radiogroup" aria-labelledby="h-classe"></div>
+          </div>
+        </div>
+
+        <div class="pagina">
+          <section id="pers">
+          <h3 style="margin-top:0" data-t="statistiche">Statistiche</h3>
+          <p class="punti" id="punti"><span data-t="punti">Punti da distribuire:</span> <strong id="rimasti">10</strong> <span data-t="su">su</span> <span id="totale">10</span></p>
+          <table>
+            <thead><tr><th data-t="thAttributo">Attributo</th><th data-t="thUtilizzo">Utilizzo</th><th data-t="thRazza">Razza</th><th data-t="thMod">Mod</th><th data-t="thValore">Valore</th></tr></thead>
+            <tbody id="statistiche"></tbody>
+          </table>
+
+          <h3 id="h-abilita" data-t="abilita">Abilità</h3>
+          <p class="guida" style="margin:0 0 0.75rem" data-t="guidaAbilita"></p>
+          <div class="opzioni" id="abilita" role="group" aria-labelledby="h-abilita"></div>
+
+          </section>
+
+          <section id="equip" aria-labelledby="t-equip">
+            <h3 id="t-equip" style="margin-top:0" data-t="equipaggiamento">Equipaggiamento</h3>
+          <h4 id="h-arma" data-t="arma">Arma</h4>
+          <p class="guida" id="guida-arma" style="margin:0 0 0.75rem"></p>
+          <div class="opzioni" id="armi" role="radiogroup" aria-labelledby="h-arma"></div>
+
+          <h4 id="h-armatura" data-t="armatura">Armatura</h4>
+          <p class="guida" id="guida-armatura" style="margin:0 0 0.75rem"></p>
+          <div class="opzioni" id="armature" role="radiogroup" aria-labelledby="h-armatura"></div>
+
+          <h4 id="h-scudo" data-t="scudo">Scudo</h4>
+          <p class="guida" id="guida-scudo" style="margin:0 0 0.75rem"></p>
+          <div class="opzioni" id="scudi" role="group" aria-labelledby="h-scudo"></div>
+
+          <h4 id="h-dotazione" data-t="dotazione">Dotazione</h4>
+          <p class="guida" style="margin:0 0 0.75rem" data-t="guidaDotazione">Scegline tre.</p>
+          <div class="opzioni" id="dotazione" role="group" aria-labelledby="h-dotazione"></div>
+
+          </section>
+        </div>
+
+      <div class="tonde">
+        <div class="dado"><b data-t="dadoVita">Dado vita</b><button type="button" class="btn-sec" id="lancia" disabled></button><p id="pv" aria-live="polite"></p></div>
+        <div class="tonda rosso"><b data-t="saluteFisica">Salute fisica</b><span class="num" id="sf-v">–</span><small id="sf-f"></small></div>
+        <div class="tonda blu"><b data-t="saluteMentale">Salute mentale</b><span class="num" id="sm-v">–</span><small id="sm-f"></small></div>
+        <div class="tonda verde"><b data-t="classeArmatura">Classe armatura</b><span class="num" id="ca-v">–</span><small id="ca-f"></small></div>
+      </div>
+
+      <div class="fine">
+        <button type="submit" class="btn" id="crea" aria-describedby="avviso" style="margin-top:0" data-t="entra">Entra nel dungeon</button>
+        <p id="avviso" class="formati"></p>
+        <p id="esito" aria-live="polite"></p>
+      </div>
+    </form>
+  </main>
+
+  <script>
+    /* ---------- Lingua ---------- */
+    const LINGUA = Lingua.get();
+    const L = Lingua.t, N = Lingua.nome;
+    const T = {
+      it: {
+        titoloPagina: "Creazione personaggio", titolo: "Creazione del personaggio", nome: "Nome", immagine: "Immagine del personaggio",
+        razza: "Razza", guidaRazza: "Scegli una razza.", classe: "Classe", guidaClasse: "Scegli una classe.",
+        statistiche: "Statistiche", punti: "Punti da distribuire:", su: "su",
+        thAttributo: "Attributo", thUtilizzo: "Utilizzo", thRazza: "Razza", thMod: "Mod", thValore: "Valore",
+        abilita: "Abilità", guidaAbilita: "Scegline quattro. Il valore è il modificatore dell'attributo collegato; le abilità scelte aggiungono anche il livello del personaggio.",
+        equipaggiamento: "Equipaggiamento", arma: "Arma", armatura: "Armatura", scudo: "Scudo", dotazione: "Dotazione", guidaDotazione: "Scegline tre.",
+        dadoVita: "Dado vita", saluteFisica: "Salute fisica", saluteMentale: "Salute mentale", classeArmatura: "Classe armatura", entra: "Entra nel dungeon",
+        sceglineUna: "Scegline una.", nonDisponibili: (c) => ` Alcune non sono disponibili per la classe ${c}.`,
+        guidaScudo: "Facoltativo. Occupa una mano.", scudoNo: "Facoltativo. Non si può usare con un'arma a due mani.",
+        lanciaDado: "Lancia il dado", lanciaD: (d) => `Lancia d${d}`, risultato: (t, d) => `Risultato: ${t} (d${d})`,
+        cambiaClasse: "Cambiando classe il tiro si azzera.", primaClasse: "Scegli prima una classe.",
+        lanciaDadoVita: "Lancia il dado vita", scegliArmatura: "Scegli l'armatura",
+        diminuisci: (n) => `Diminuisci ${n}`, aumenta: (n) => `Aumenta ${n}`,
+        punti4: "+4 punti attributo da assegnare a scelta del giocatore",
+        tipoDanno: "Tipo di danno", mani: "Mani", testoMani: (n) => `${n} ${n === 1 ? "mano" : "mani"}`, dannoTit: (t) => `Danno ${t}`,
+        notaDueMani: "Un'arma a due mani occupa entrambe le mani: per usare altri oggetti, come la torcia, dovrai prima riporla. Non si può usare insieme allo scudo.",
+        notaScudo: "Occupa una mano: non si può usare con un'arma a due mani, e per tenere la torcia dovrai prima riporlo.",
+        modLotta: "modificatore Lotta", malusAgilita: "Malus Agilità", infoScudo: "+1 classe armatura · malus Agilità −1",
+        utilizzi: (n) => (n > 1 ? `${n} utilizzi` : "1 utilizzo"), riutilizzabile: "Riutilizzabile",
+        manca: { razza: "la razza", classe: "la classe", tiro: "il tiro dei punti vita", punti: (n) => `${n} punti attributo da distribuire`, abilita: (n) => `${n} abilità`, arma: "un'arma", armatura: "un'armatura", ritratto: "il ritratto", dot: (n) => `${n} ${n === 1 ? "oggetto" : "oggetti"} di dotazione` },
+        ancora: "Ancora da fare: ", pronto: (n) => `${n} è pronto a entrare nel dungeon.`,
+        errore: "Salvataggio non riuscito: prova con un'immagine più piccola.", nessunaImmagine: (r, c) => `Nessuna immagine per ${r} ${c}.`,
+        scegliRitratto: "Scegli il tuo ritratto.", ritrattoN: (n) => `Ritratto ${n}`
+      },
+      en: {
+        titoloPagina: "Character creation", titolo: "Character creation", nome: "Name", immagine: "Character portrait",
+        razza: "Race", guidaRazza: "Choose a race.", classe: "Class", guidaClasse: "Choose a class.",
+        statistiche: "Attributes", punti: "Points to assign:", su: "of",
+        thAttributo: "Attribute", thUtilizzo: "Used for", thRazza: "Race", thMod: "Mod", thValore: "Value",
+        abilita: "Skills", guidaAbilita: "Choose four. The value is the modifier of the linked attribute; the skills you choose also add the character's level.",
+        equipaggiamento: "Equipment", arma: "Weapon", armatura: "Armor", scudo: "Shield", dotazione: "Gear", guidaDotazione: "Choose three.",
+        dadoVita: "Hit die", saluteFisica: "Physical health", saluteMentale: "Mental health", classeArmatura: "Armor class", entra: "Enter the dungeon",
+        sceglineUna: "Choose one.", nonDisponibili: (c) => ` Some are not available to the ${c} class.`,
+        guidaScudo: "Optional. Takes up one hand.", scudoNo: "Optional. Cannot be used with a two-handed weapon.",
+        lanciaDado: "Roll the die", lanciaD: (d) => `Roll d${d}`, risultato: (t, d) => `Result: ${t} (d${d})`,
+        cambiaClasse: "Changing class resets the roll.", primaClasse: "Choose a class first.",
+        lanciaDadoVita: "Roll the hit die", scegliArmatura: "Choose your armor",
+        diminuisci: (n) => `Decrease ${n}`, aumenta: (n) => `Increase ${n}`,
+        punti4: "+4 attribute points to assign as the player chooses",
+        tipoDanno: "Damage type", mani: "Hands", testoMani: (n) => `${n} ${n === 1 ? "hand" : "hands"}`, dannoTit: (t) => `${t} damage`,
+        notaDueMani: "A two-handed weapon takes up both hands: to use other items, such as the torch, you will first have to put it away. It cannot be used together with the shield.",
+        notaScudo: "Takes up one hand: it cannot be used with a two-handed weapon, and to hold the torch you will first have to put it away.",
+        modLotta: "Might modifier", malusAgilita: "Agility penalty", infoScudo: "+1 armor class · Agility penalty −1",
+        utilizzi: (n) => (n > 1 ? `${n} uses` : "1 use"), riutilizzabile: "Reusable",
+        manca: { razza: "the race", classe: "the class", tiro: "the hit point roll", punti: (n) => `${n} attribute points to assign`, abilita: (n) => `${n} ${n === 1 ? "skill" : "skills"}`, arma: "a weapon", armatura: "an armor", ritratto: "the portrait", dot: (n) => `${n} gear ${n === 1 ? "item" : "items"}` },
+        ancora: "Still to do: ", pronto: (n) => `${n} is ready to enter the dungeon.`,
+        errore: "Saving failed: try a smaller image.", nessunaImmagine: (r, c) => `No image for ${r} ${c}.`,
+        scegliRitratto: "Choose your portrait.", ritrattoN: (n) => `Portrait ${n}`
+      }
+    };
+    const t = T[LINGUA];
+    document.title = t.titoloPagina;
+    document.querySelectorAll("[data-t]").forEach(e => { e.textContent = t[e.dataset.t]; });
+    document.getElementById("galleria").setAttribute("aria-label", t.immagine);
+
+    /* ---------- Regole e dati ---------- */
+    const VALORE_MINIMO = 10, PUNTI_BASE = 10, LATO_MAX_IMMAGINE = 400;
+    const PV_BASE = 10, LIVELLO = 1, CA_BASE = 10, MAX_ABILITA = 4, MAX_DOTAZIONE = 3;
+
+    const ATTRIBUTI = [
+      ["Lotta", { it: "Doti atletiche, potenza fisica", en: "Athletic prowess, physical power" }],
+      ["Agilità", { it: "Agilità fisica, riflessi, equilibrio, prontezza", en: "Physical agility, reflexes, balance, readiness" }],
+      ["Mente", { it: "Acume mentale, doti analitiche, conoscenza arcana", en: "Mental acuity, analytical skill, arcane knowledge" }],
+      ["Corpo", { it: "Salute fisica, resistenza fisica, sensi", en: "Physical health, physical endurance, senses" }],
+      ["Carisma", { it: "Interazioni sociali, autorità", en: "Social interaction, authority" }],
+      ["Spirito", { it: "Salute mentale, resistenza mentale, fede", en: "Mental health, mental endurance, faith" }]
+    ];
+    const NOMI = ATTRIBUTI.map(a => a[0]);
+    const CLASSI = { Soldato: 10, Forestiero: 8, Sapiente: 6, Accolito: 6 };
+    const DESC_CLASSI = {
+      Soldato: {
+        it: "Hai trascorso gran parte della tua vita nell'esercito o in una compagnia militare. Addestrato all'uso di armi e armature, hai imparato a sopravvivere sul campo di battaglia e a lavorare in squadra. Potresti aver servito in un esercito regolare, una milizia locale, la guardia cittadina o una compagnia mercenaria.",
+        en: "You have spent most of your life in an army or a military company. Trained in the use of weapons and armor, you have learned to survive on the battlefield and to work as part of a team. You may have served in a regular army, a local militia, the city watch or a mercenary company."
+      },
+      Forestiero: {
+        it: "Sei cresciuto nelle terre selvagge, lontano dalle città e dalla civiltà. Hai imparato a cavartela da solo e a orientarti anche nei luoghi più remoti ed a te sconosciuti.",
+        en: "You grew up in the wilds, far from cities and civilisation. You have learned to fend for yourself and to find your way even in the most remote and unfamiliar places."
+      },
+      Sapiente: {
+        it: "Hai dedicato la tua vita alla conoscenza, studiando testi antichi e pergamene. Le tue ricerche ti hanno condotto a esplorare i segreti della magia arcana, rendendoti un esperto di storia, incantesimi e sapere occulto.",
+        en: "You have devoted your life to knowledge, studying ancient texts and scrolls. Your research has led you to explore the secrets of arcane magic, making you an expert in history, spells and occult lore."
+      },
+      Accolito: {
+        it: "Hai dedicato la tua vita al servizio di una divinità o di un pantheon, fungendo da tramite tra il sacro e i mortali. Guidi riti, celebrazioni e preghiere per diffondere la fede del tuo patrono. Potresti essere stato un semplice servitore del tempio, un sacerdote, o l'ex membro di un culto che ha scelto una nuova strada spirituale.",
+        en: "You have devoted your life to the service of a deity or a pantheon, acting as a bridge between the sacred and mortals. You lead rites, celebrations and prayers to spread the faith of your patron. You may have been a humble temple servant, a priest, or a former cult member who chose a new spiritual path."
+      }
+    };
+    const ABILITA = [
+      ["Furtività", "Agilità", { it: "Capacità di muoversi in silenzio, nascondersi nell'ombra e passare inosservati agli occhi dei nemici.", en: "The ability to move silently, hide in shadows and slip past enemies unseen." }],
+      ["Indagare", "Mente", { it: "Capacità di analizzare indizi, dedurre dettagli nascosti, decifrare codici o ricostruire eventi passati.", en: "The ability to analyse clues, deduce hidden details, decipher codes or reconstruct past events." }],
+      ["Medicina", "Mente", { it: "Conoscenza del corpo e dei rimedi per stabilizzare feriti, diagnosticare malattie, curare veleni e applicare primi soccorsi.", en: "Knowledge of the body and of remedies to stabilise the wounded, diagnose illnesses, cure poisons and give first aid." }],
+      ["Persuasione", "Carisma", { it: "Arte di convincere gli altri con la diplomazia, la gentilezza, la dialettica e la negoziazione in buona fede.", en: "The art of convincing others through diplomacy, kindness, rhetoric and good-faith negotiation." }],
+      ["Intimidire", "Carisma", { it: "Capacità di piegare la volontà altrui attraverso minacce, presenza fisica imponente o pressione psicologica.", en: "The ability to bend others' will through threats, an imposing physical presence or psychological pressure." }],
+      ["Percezione", "Corpo", { it: "Acume visivo e uditivo per notare pericoli imminenti, trappole, nemici nascosti o piccoli dettagli nell'ambiente.", en: "Sharp eyes and ears to notice imminent dangers, traps, hidden enemies or small details in the surroundings." }],
+      ["Atletica", "Lotta", { it: "Abilità nell'eseguire prove di forza fisica, come arrampicarsi, nuotare in acque agitate, saltare grandi distanze o sfondare ostacoli.", en: "Skill at feats of physical strength, such as climbing, swimming in rough water, leaping great distances or breaking through obstacles." }],
+      ["Acrobazia", "Agilità", { it: "Controllo dell'equilibrio e dei riflessi per schivare ostacoli, compiere salti acrobatici, atterrare senza farsi male ed uscire da trattenute.", en: "Control of balance and reflexes to dodge obstacles, perform acrobatic leaps, land without injury and escape from grapples." }],
+      ["Arcano", "Mente", { it: "Studio teorico e pratico delle leggi della magia, dei costrutti, dei piani d'esistenza e degli incantesimi.", en: "The theoretical and practical study of the laws of magic, constructs, planes of existence and spells." }],
+      ["Misticismo", "Mente", { it: "Comprensione delle forze divine, degli spiriti, delle energie sacre o profane e dei rituali legati alla fede.", en: "Understanding of divine forces, spirits, sacred or profane energies and the rituals bound to faith." }]
+    ];
+    /* PROVVISORIO: bonus attributo per razza (ex bonus di classe, abbinamento da confermare) */
+    const RAZZE = {
+      Umano: {},
+      Elfo: { "Agilità": 2, Corpo: 1, Spirito: 1 },
+      Nano: { Corpo: 2, Lotta: 1, Carisma: 1 },
+      Gnomo: { Spirito: 2, Mente: 1, "Agilità": 1 }
+    };
+    const PUNTI_RAZZA = { Umano: 4 }; /* punti attributo in più da distribuire */
+    const DANNI = {
+      Tagliente: {
+        it: "Causato da armi dotate di un filo affilato, il danno tagliente opera per incisione e scissione dei tessuti. Separa nettamente pelle e muscoli, provocando ferite ampie, sanguinamenti profusi e mutilazioni immediate. È il tipo di danno ideale per recidere le difese leggere e disattivare gli arti avversari.",
+        en: "Caused by weapons with a keen edge, slashing damage works by cutting and cleaving tissue. It parts skin and muscle cleanly, causing wide wounds, heavy bleeding and immediate mutilation. It is the ideal damage type for cutting through light defences and disabling an opponent's limbs."
+      },
+      Contundente: {
+        it: "Causato da impatti brutali sferrati con armi prive di filo. Il danno contundente non ha bisogno di penetrare la pelle per essere letale: la forza cinetica attraversa la carne e si scarica direttamente all'interno, frantumando le ossa, lesionando gli organi interni e provocando traumi da schiacciamento severi.",
+        en: "Caused by brutal blows from edgeless weapons. Bludgeoning damage need not break the skin to be lethal: the kinetic force travels through the flesh and discharges inside, shattering bones, damaging internal organs and causing severe crushing trauma."
+      },
+      Perforante: {
+        it: "Causato da armi appuntite e da stoccata focalizzate su una superficie d'impatto ridottissima. Il danno perforante sfrutta le fessure della corazza per penetrare in profondità, danneggiando direttamente organi vitali e centri nervosi. È la forma di attacco più letale contro bersagli dotati di armature pesanti o spesse difese naturali.",
+        en: "Caused by pointed weapons and thrusts focused on a tiny point of impact. Piercing damage exploits gaps in armor to penetrate deep, directly damaging vital organs and nerve centres. It is the deadliest form of attack against targets protected by heavy armor or thick natural defences."
+      }
+    };
+    /* PROVVISORIO: danno di mazza chiodata e piccone da battaglia scelto da me */
+    const ARMI = [
+      { nome: "Spada corta", danno: "1d6", tipo: "Tagliente", mani: 1 },
+      { nome: "Ascia da battaglia", danno: "1d8", tipo: "Tagliente", mani: 2 },
+      { nome: "Bastone", danno: "1d6", tipo: "Contundente", mani: 2 },
+      { nome: "Martello da battaglia", danno: "1d8", tipo: "Contundente", mani: 1 },
+      { nome: "Mazza chiodata", danno: "1d6", tipo: "Perforante", mani: 1 },
+      { nome: "Piccone da battaglia", danno: "1d8", tipo: "Perforante", mani: 2 }
+    ];
+    /* Le armi con il descrittore "da battaglia" sono riservate al Soldato */
+    const ARMI_COMUNI = ARMI.filter(a => !/da battaglia/i.test(a.nome)).map(a => a.nome);
+    /* Limiti di equipaggiamento per classe: se manca una voce, la classe può scegliere tutto */
+    const LIMITI_CLASSI = {
+      Forestiero: { armi: ARMI_COMUNI },
+      Sapiente: { armi: ARMI_COMUNI, armature: ["Armatura leggera"] },
+      Accolito: { armi: ARMI_COMUNI, armature: ["Armatura leggera", "Armatura media"] }
+    };
+    /* malus: penalità alle abilità che usano Agilità (il risultato può diventare negativo) */
+    const ARMATURE = [
+      { nome: "Armatura leggera", ca: 2, malus: 0, desc: { it: "Cuoio lavorato e flessibile, rinforzato da borchie metalliche che aumentano la protezione senza limitare i movimenti.", en: "Worked, supple leather reinforced with metal studs that add protection without hindering movement." } },
+      { nome: "Armatura media", ca: 3, malus: 1, desc: { it: "Anelli di metallo intrecciati formano una maglia resistente, spesso rivestita di stoffa o cuoio per attutirne il rumore.", en: "Interlocking metal rings form a tough mesh, often lined with cloth or leather to muffle its noise." } },
+      { nome: "Armatura pesante", ca: 4, malus: 2, desc: { it: "Solide piastre metalliche proteggono il corpo sopra un'imbottitura spessa. Completa la protezione un elmo, insieme a guanti e stivali rinforzati.", en: "Solid metal plates protect the body over thick padding. A helmet completes the protection, along with reinforced gauntlets and boots." } }
+    ];
+    /* Scudo facoltativo: +1 Classe Armatura, −1 alle abilità di Agilità, occupa una mano */
+    const SCUDO = { nome: "Scudo", ca: 1, malus: 1 };
+    /* senza "usi" = oggetto riutilizzabile; le descrizioni stanno in lingua.js */
+    const DOTAZIONE = [
+      { nome: "Pozione di cura", usi: 1 },
+      { nome: "Pozione di mana", usi: 1 },
+      { nome: "Razioni da viaggio", usi: 5 },
+      { nome: "Torcia", usi: 5, impugnabile: true },
+      { nome: "Piede di porco" }
+    ];
+
+    let classe = null, tiro = null, razza = null;
+    let bonus = NOMI.map(() => 0);
+    const extra = NOMI.map(() => 0);
+
+    const $ = (id) => document.getElementById(id);
+    const mod = (v) => Math.floor((v - 10) / 2);
+    const fmt = (n) => (n < 0 ? "−" : "+") + Math.abs(n);
+    const puntiTotali = () => PUNTI_BASE + (PUNTI_RAZZA[razza] || 0);
+    const minimo = (i) => VALORE_MINIMO + bonus[i];
+    const totale = (i) => minimo(i) + extra[i];
+    const spesi = (escludi) => extra.reduce((t, e, i) => i === escludi ? t : t + e, 0);
+    const modDi = (attr) => mod(totale(NOMI.indexOf(attr)));
+    const abilitaScelte = () => [...document.querySelectorAll('input[name="abilita"]:checked')].map(c => ABILITA[c.value]);
+    const scelto = (name) => document.querySelector(`input[name="${name}"]:checked`);
+    const armaScelta = () => scelto("arma") ? ARMI[scelto("arma").value] : null;
+    const armaturaScelta = () => scelto("armatura") ? ARMATURE[scelto("armatura").value] : null;
+    const scudoScelto = () => !!scelto("scudo");
+    const malusAgilita = () => { const a = armaturaScelta(); return (a ? a.malus : 0) + (scudoScelto() ? SCUDO.malus : 0); };
+    const valoreAbilita = (attr) => modDi(attr) - (attr === "Agilità" ? malusAgilita() : 0);
+    const dotazioneScelta = () => [...document.querySelectorAll('input[name="dotazione"]:checked')].map(c => DOTAZIONE[c.value]);
+
+    /* ---------- Costruzione liste ---------- */
+    const riepilogoClasse = (nome) => `<i><b>${t.dadoVita}</b><b>d${CLASSI[nome]}</b></i>`;
+    const riepilogoRazza = (nome) => PUNTI_RAZZA[nome] ? t.punti4 : NOMI.filter(n => RAZZE[nome][n]).map(n => `<i><b>${N("attributi", n)}</b><b>+${RAZZE[nome][n]}</b></i>`).join("");
+    Object.keys(CLASSI).forEach(nome => {
+      const l = document.createElement("label");
+      l.innerHTML = `<input type="radio" name="classe" value="${nome}" aria-describedby="tip-${nome}"><span>${N("classi", nome)}</span><small class="tip" id="tip-${nome}" role="tooltip"><em class="tip-riga">${riepilogoClasse(nome)}</em>${L(DESC_CLASSI[nome])}</small>`;
+      l.querySelector("input").addEventListener("change", () => { if (classe !== nome) { classe = nome; tiro = null; } aggiorna(); });
+      $("classi").appendChild(l);
+    });
+    Object.keys(RAZZE).forEach(nome => {
+      const l = document.createElement("label");
+      l.innerHTML = `<input type="radio" name="razza" value="${nome}" aria-describedby="tip-razza-${nome}"><span>${N("razze", nome)}</span><small class="tip" id="tip-razza-${nome}" role="tooltip"><em class="tip-riga sola">${riepilogoRazza(nome)}</em></small>`;
+      l.querySelector("input").addEventListener("change", () => scegliRazza(nome));
+      $("razze").appendChild(l);
+    });
+    const nAb = (attr) => ABILITA.filter(x => x[1] === attr).length;
+    const ordineAttr = [...new Set(ABILITA.map(x => x[1]))].sort((x, y) => (nAb(x) - nAb(y)) || (NOMI.indexOf(x) - NOMI.indexOf(y)));
+    ordineAttr.forEach(attr => {
+      ABILITA.forEach(([nome, a, desc], i) => {
+        if (a !== attr) return;
+        const l = document.createElement("label");
+        l.innerHTML = `<input type="checkbox" name="abilita" value="${i}"><span><b>${N("abilita", nome)}</b><small id="ab${i}"></small></span><small class="tip" id="tip-ab-${i}" role="tooltip">${L(desc)}</small>`;
+        l.querySelector("input").setAttribute("aria-describedby", `tip-ab-${i}`);
+        l.querySelector("input").addEventListener("change", aggiorna);
+        $("abilita").appendChild(l);
+      });
+    });
+    function creaOpzioni(id, items, tipo, name, descr, tip) {
+      items.forEach((it, i) => {
+        const l = document.createElement("label");
+        const tt = tip ? tip(it) : null;
+        l.innerHTML = `<input type="${tipo}" name="${name}" value="${i}"><span><b>${N("oggetti", it.nome)}</b><small>${descr(it)}</small></span>` +
+          (tt ? `<small class="tip" id="tip-${name}-${i}" role="tooltip">${tt}</small>` : "");
+        const inp = l.querySelector("input");
+        if (tt) inp.setAttribute("aria-describedby", `tip-${name}-${i}`);
+        inp.addEventListener("change", aggiorna);
+        $(id).appendChild(l);
+      });
+    }
+    creaOpzioni("armi", ARMI, "radio", "arma", a => `${a.danno} + ${t.modLotta}`,
+      a => `<em class="tip-riga"><i><b>${t.tipoDanno}</b><b>${N("danni", a.tipo)}</b></i><i><b>${t.mani}</b><b>${t.testoMani(a.mani)}</b></i></em>` +
+        `<strong class="tit">${t.dannoTit(N("danni", a.tipo))}</strong>${L(DANNI[a.tipo])}` +
+        (a.mani === 2 ? `<em class="nota-mani">${t.notaDueMani}</em>` : ""));
+    creaOpzioni("armature", ARMATURE, "radio", "armatura", () => "",
+      a => `<em class="tip-riga"><i><b>${t.classeArmatura}</b><b>+${a.ca}</b></i><i><b>${t.malusAgilita}</b><b>${a.malus ? "−" + a.malus : "–"}</b></i></em>${L(a.desc)}`);
+    creaOpzioni("scudi", [SCUDO], "checkbox", "scudo", () => t.infoScudo,
+      s => `<em class="tip-riga"><i><b>${t.classeArmatura}</b><b>+${s.ca}</b></i><i><b>${t.malusAgilita}</b><b>−${s.malus}</b></i></em>${Lingua.desc("Scudo")}<em class="nota-mani">${t.notaScudo}</em>`);
+    creaOpzioni("dotazione", DOTAZIONE, "checkbox", "dotazione",
+      d => d.usi ? t.utilizzi(d.usi) : t.riutilizzabile, d => Lingua.desc(d.nome));
+
+    /* ---------- Statistiche ---------- */
+    const corpo = $("statistiche"), campi = [], celleBonus = [], celleMod = [];
+    ATTRIBUTI.forEach(([nome, uso], i) => {
+      const n = N("attributi", nome);
+      const riga = document.createElement("tr");
+      riga.innerHTML =
+        `<td><label for="stat${i}" style="margin:0">${n}</label></td>` +
+        `<td class="uso">${L(uso)}</td><td class="bonus">–</td><td class="mod">+0</td>` +
+        `<td><button type="button" class="step" data-i="${i}" data-d="-1" aria-label="${t.diminuisci(n)}">−</button>` +
+        `<input id="stat${i}" type="number" min="${VALORE_MINIMO}" value="${VALORE_MINIMO}">` +
+        `<button type="button" class="step" data-i="${i}" data-d="1" aria-label="${t.aumenta(n)}">+</button></td>`;
+      corpo.appendChild(riga);
+      campi.push(riga.querySelector("input"));
+      celleBonus.push(riga.querySelector(".bonus"));
+      celleMod.push(riga.querySelector(".mod"));
+    });
+
+    function imposta(i, valore) {
+      const v = Math.round(Number(valore));
+      const e = Number.isFinite(v) ? v - minimo(i) : 0;
+      extra[i] = Math.min(puntiTotali() - spesi(i), Math.max(0, e));
+      aggiorna();
+    }
+
+    function scegliRazza(nome) {
+      razza = nome;
+      bonus = NOMI.map(n => RAZZE[nome][n] || 0);
+      while (spesi(-1) > puntiTotali()) { /* si lascia una razza con punti extra: i punti in eccesso tornano da assegnare */
+        const k = extra.map((e, i) => [e, i]).filter(x => x[0] > 0).pop();
+        extra[k[1]]--;
+      }
+      aggiorna();
+    }
+
+    campi.forEach((c, i) => c.addEventListener("change", () => imposta(i, c.value)));
+    corpo.addEventListener("click", (e) => {
+      const b = e.target.closest(".step");
+      if (b) imposta(Number(b.dataset.i), totale(Number(b.dataset.i)) + Number(b.dataset.d));
+    });
+
+    $("lancia").addEventListener("click", () => {
+      if (!classe || tiro !== null) return;
+      tiro = 1 + Math.floor(Math.random() * CLASSI[classe]);
+      aggiorna();
+    });
+
+    /* ---------- Aggiornamento complessivo ---------- */
+    function applicaLimiti() {
+      const lim = (classe && LIMITI_CLASSI[classe]) || {};
+      const filtra = (name, lista, ammessi, guida) => {
+        document.querySelectorAll(`input[name="${name}"]`).forEach(inp => {
+          const ok = !ammessi || ammessi.includes(lista[inp.value].nome);
+          inp.disabled = !ok;
+          if (!ok && inp.checked) inp.checked = false;
+        });
+        $(guida).textContent = t.sceglineUna + (ammessi ? t.nonDisponibili(N("classi", classe)) : "");
+      };
+      filtra("arma", ARMI, lim.armi, "guida-arma");
+      filtra("armatura", ARMATURE, lim.armature, "guida-armatura");
+      /* lo scudo occupa una mano: niente scudo con un'arma a due mani */
+      const a = armaScelta(), sc = document.querySelector('input[name="scudo"]');
+      const dueMani = !!(a && a.mani === 2);
+      sc.disabled = dueMani;
+      if (dueMani) sc.checked = false;
+      $("guida-scudo").textContent = dueMani ? t.scudoNo : t.guidaScudo;
+    }
+
+    function aggiorna() {
+      applicaLimiti();
+      const rimasti = puntiTotali() - spesi(-1);
+      $("rimasti").textContent = rimasti;
+      $("totale").textContent = puntiTotali();
+      $("punti").classList.toggle("esauriti", rimasti === 0);
+      campi.forEach((c, i) => {
+        c.min = minimo(i); c.max = totale(i) + rimasti; c.value = totale(i);
+        celleBonus[i].textContent = bonus[i] ? "+" + bonus[i] : "–";
+        celleMod[i].textContent = fmt(mod(totale(i)));
+        document.querySelector(`.step[data-i="${i}"][data-d="-1"]`).disabled = extra[i] === 0;
+        document.querySelector(`.step[data-i="${i}"][data-d="1"]`).disabled = rimasti === 0;
+      });
+
+      const l = $("lancia");
+      l.textContent = classe ? t.lanciaD(CLASSI[classe]) : t.lanciaDado;
+      l.disabled = !classe || tiro !== null;
+      $("pv").textContent = tiro !== null ? t.risultato(tiro, CLASSI[classe]) : (classe ? t.cambiaClasse : t.primaClasse);
+      ABILITA.forEach(([, a], i) => {
+        const c = document.querySelector(`input[name="abilita"][value="${i}"]`);
+        $("ab" + i).textContent = `${N("attributi", a)} ${fmt(valoreAbilita(a) + (c && c.checked ? LIVELLO : 0))}`;
+      });
+      const nAb = abilitaScelte().length;
+      document.querySelectorAll('input[name="abilita"]').forEach(c => { c.disabled = !c.checked && nAb >= MAX_ABILITA; });
+
+      const arma = armaScelta(), arm = armaturaScelta(), dot = dotazioneScelta(), sc = scudoScelto();
+      document.querySelectorAll('input[name="dotazione"]').forEach(c => { c.disabled = !c.checked && dot.length >= MAX_DOTAZIONE; });
+
+      const segno = (n) => (n < 0 ? "−" : "+") + " " + Math.abs(n);
+      const modC = modDi("Corpo"), modM = modDi("Spirito");
+      $("sf-v").textContent = tiro === null ? "–" : PV_BASE + tiro + modC;
+      $("sf-f").textContent = tiro === null ? t.lanciaDadoVita : `${PV_BASE} + ${tiro} ${segno(modC)}`;
+      $("sm-v").textContent = tiro === null ? "–" : PV_BASE + tiro + modM;
+      $("sm-f").textContent = tiro === null ? t.lanciaDadoVita : `${PV_BASE} + ${tiro} ${segno(modM)}`;
+      $("ca-v").textContent = arm ? CA_BASE + arm.ca + (sc ? SCUDO.ca : 0) : "–";
+      $("ca-f").textContent = arm ? `${CA_BASE} + ${arm.ca}${sc ? " + " + SCUDO.ca : ""}` : t.scegliArmatura;
+
+      aggiornaImmagine();
+
+      const m = t.manca, manca = [];
+      if (!razza) manca.push(m.razza);
+      if (!classe) manca.push(m.classe);
+      else if (tiro === null) manca.push(m.tiro);
+      if (rimasti > 0) manca.push(m.punti(rimasti));
+      if (nAb < MAX_ABILITA) manca.push(m.abilita(MAX_ABILITA - nAb));
+      if (!arma) manca.push(m.arma);
+      if (!arm) manca.push(m.armatura);
+      if (dot.length < MAX_DOTAZIONE) manca.push(m.dot(MAX_DOTAZIONE - dot.length));
+      if (ritrattiN > 0 && !immagine) manca.push(m.ritratto);
+      $("crea").disabled = manca.length > 0;
+      $("avviso").textContent = manca.length ? t.ancora + manca.join(", ") + "." : "";
+    }
+
+    /* ---------- Immagine da razza + classe ---------- */
+    /* Catalogo in IMMAGINI_DIR con nome Razza_Classe_N (es. immagini/pg/Umano_Soldato_1.webp, _2, _3…).
+       Si contano le immagini disponibili per la coppia scelta e se ne mostra una a caso.
+       Se non ce ne sono di numerate, si prova il vecchio nome senza numero (Razza_Classe.png). */
+    const IMMAGINI_DIR = "immagini/pg/", MAX_PER_COPPIA = 30;
+    const ESTENSIONI = ["webp", "png", "jpg", "jpeg", "WEBP", "PNG", "JPG"];
+    const catalogo = {}; /* "Razza_Classe" → elenco dei percorsi trovati (cache) */
+    let immagine = null, chiave = null, rif = 0;
+
+    /* prova le estensioni di un nome: restituisce il primo percorso che si apre, altrimenti null */
+    function trova(base) {
+      return new Promise(ok => {
+        const prova = (i) => {
+          if (i >= ESTENSIONI.length) return ok(null);
+          const src = `${IMMAGINI_DIR}${base}.${ESTENSIONI[i]}`, img = new Image();
+          img.onload = () => ok(src);
+          img.onerror = () => prova(i + 1);
+          img.src = src;
+        };
+        prova(0);
+      });
+    }
+    /* elenca le immagini numerate della coppia: 1, 2, 3… fino al primo numero mancante (anche in minuscolo) */
+    async function elenco(key) {
+      if (catalogo[key]) return catalogo[key];
+      const trovate = [];
+      for (const base of [key, key.toLowerCase()]) {
+        for (let n = 1; n <= MAX_PER_COPPIA; n++) {
+          const src = await trova(`${base}_${n}`);
+          if (!src) break;
+          trovate.push(src);
+        }
+        if (trovate.length) break;
+      }
+      if (!trovate.length) { const vecchia = await trova(key); if (vecchia) trovate.push(vecchia); }
+      return (catalogo[key] = trovate);
+    }
+
+    /* Scelta razza + classe: si mostrano tutte le immagini disponibili e il giocatore sceglie la sua */
+    let ritrattiN = 0; /* quante immagini ci sono per la coppia scelta (0 = nessuna, la scelta non è richiesta) */
+    function mostraRitratto() {} /* il ritratto scelto è evidenziato nella galleria stessa */
+    function aggiornaImmagine() {
+      const key = razza && classe ? `${razza}_${classe}` : null;
+      if (key === chiave) return;
+      chiave = key;
+      const id = ++rif, msg = $("token-msg"), gal = $("galleria");
+      immagine = null; ritrattiN = 0;
+      mostraRitratto(null); msg.textContent = ""; gal.replaceChildren();
+      if (!key) return;
+      elenco(key).then(lista => {
+        if (id !== rif) return;
+        ritrattiN = lista.length;
+        if (!lista.length) { msg.textContent = t.nessunaImmagine(N("razze", razza), N("classi", classe)); aggiorna(); return; }
+        lista.forEach((src, i) => {
+          const l = document.createElement("label");
+          l.innerHTML = `<input type="radio" name="ritratto" value="${i}"><span></span>`;
+          l.querySelector("span").style.backgroundImage = `url('${src}')`;
+          const inp = l.querySelector("input");
+          inp.setAttribute("aria-label", t.ritrattoN(i + 1));
+          inp.addEventListener("change", () => { immagine = src; mostraRitratto(src); aggiorna(); });
+          gal.appendChild(l);
+        });
+        aggiorna();
+      });
+    }
+
+    /* ---------- Salvataggio ---------- */
+    $("scheda").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const arma = armaScelta(), arm = armaturaScelta(), dot = dotazioneScelta(), sc = scudoScelto();
+      if (!razza || !classe || tiro === null || puntiTotali() - spesi(-1) !== 0 ||
+          abilitaScelte().length !== MAX_ABILITA || !arma || !arm || dot.length !== MAX_DOTAZIONE || (ritrattiN > 0 && !immagine)) return;
+
+      const base = Object.fromEntries(NOMI.map((n, i) => [n, totale(i)]));
+      const stat = { ...base }; /* l'arma non modifica più la Lotta: dà il dado di danno */
+      const pg = {
+        nome: $("nome").value.trim(),
+        razza, classe, livello: LIVELLO, immagine,
+        statisticheBase: base,
+        statistiche: stat,
+        modificatori: Object.fromEntries(Object.entries(stat).map(([k, v]) => [k, mod(v)])),
+        tiroDado: { dado: CLASSI[classe], valore: tiro },
+        puntiVita: PV_BASE + tiro + mod(stat.Corpo),
+        saluteMentale: PV_BASE + tiro + mod(stat.Spirito),
+        classeArmatura: CA_BASE + arm.ca + (sc ? SCUDO.ca : 0), /* comprende lo scudo, se scelto */
+        abilita: abilitaScelte().map(([n, a]) => ({ nome: n, attributo: a, valore: valoreAbilita(a) + LIVELLO })),
+        equipaggiamento: {
+          arma: arma.nome, armaDanno: arma.danno, armaTipoDanno: arma.tipo, armaMani: arma.mani,
+          armatura: arm.nome, armaturaCA: arm.ca, malusAgilita: arm.malus, /* solo l'armatura: il malus dello scudo è a parte */
+          scudo: sc ? { ...SCUDO } : null,
+          dotazione: dot.map(d => ({ nome: d.nome, usi: d.usi, desc: Lingua.desc(d.nome), impugnabile: !!d.impugnabile }))
+        }
+      };
+      const esito = $("esito");
+      try {
+        localStorage.setItem("personaggio", JSON.stringify(pg));
+        try { ["scena", "usate", "diario", "luogo", "partita"].forEach(k => localStorage.removeItem(k)); } catch (err) {}
+        try { /* il personaggio entra in uno dei tre posti salvati (quello scelto dalla pagina iniziale, altrimenti il primo libero) */
+          let n = localStorage.getItem("slot_nuovo");
+          if (!n || localStorage.getItem("slot" + n)) n = ["1", "2", "3"].find(k => !localStorage.getItem("slot" + k)) || null;
+          localStorage.removeItem("slot_nuovo");
+          if (n) { localStorage.setItem("slot" + n, JSON.stringify({ pg, partita: null, aggiornato: Date.now() })); localStorage.setItem("slot_attivo", n); }
+          else localStorage.removeItem("slot_attivo");
+        } catch (err) {}
+        esito.className = "";
+        esito.textContent = t.pronto(pg.nome);
+        $("crea").disabled = true;
+        setTimeout(() => { window.location.href = "gioco.html"; }, 1200);
+      } catch (err) {
+        esito.className = "errore";
+        esito.textContent = t.errore;
+      }
+    });
+
+    aggiorna();
+  </script>
+</body>
+</html>

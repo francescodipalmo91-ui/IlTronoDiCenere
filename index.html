@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Il Trono di Cenere</title>
+  <script src="lingua.js"></script>
+  <style>
+    :root {
+      --bg: #07090d;
+      --text: #e8edf3;
+      --muted: #aeb8c5;
+      --accent: #5b92ff;
+      --accent-text: #0d1117;
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: Georgia, "Times New Roman", serif;
+      text-align: center;
+    }
+
+    .sfondo {
+      position: fixed; inset: 0; z-index: -2;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center 40%;
+      background: var(--bg);
+    }
+    .velo {
+      position: fixed; inset: 0; z-index: -1;
+      background:
+        radial-gradient(ellipse at 50% 45%, rgba(7,9,13,0) 30%, rgba(7,9,13,0.55) 100%),
+        linear-gradient(to bottom, rgba(7,9,13,0.75) 0%, rgba(7,9,13,0) 28%, rgba(7,9,13,0) 52%, rgba(7,9,13,0.92) 100%);
+    }
+
+    main {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: space-between; align-items: center;
+      padding: clamp(2rem, 7vh, 4rem) 1.5rem calc(clamp(2rem, 8vh, 4.5rem) + 2.25rem);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 6.5vw, 4.25rem);
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-shadow: 0 2px 24px rgba(91,146,255,0.35), 0 2px 6px rgba(0,0,0,0.8);
+    }
+    h1::after {
+      content: ""; display: block; width: 6rem; height: 1px; margin: 1.1rem auto 0;
+      background: linear-gradient(to right, transparent, var(--muted), transparent);
+    }
+
+    .domanda { max-width: 36rem; }
+    h2 {
+      margin: 0 0 1.75rem;
+      font-size: clamp(1.4rem, 3.5vw, 2rem);
+      font-weight: 400;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.9);
+    }
+    .scelte { display: flex; gap: 1rem; justify-content: center; }
+    button {
+      font: inherit;
+      font-size: 1.2rem;
+      min-width: 8rem;
+      padding: 0.7rem 2.25rem;
+      border-radius: 0.5rem;
+      border: 2px solid var(--accent);
+      cursor: pointer;
+      transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+    }
+    #si { background: var(--accent); color: var(--accent-text); box-shadow: 0 0 22px rgba(91,146,255,0.35); }
+    #si:hover { background: #7aa7ff; transform: translateY(-1px); }
+    #no { background: rgba(7,9,13,0.55); color: var(--muted); border-color: var(--muted); backdrop-filter: blur(4px); }
+    #no:hover { background: rgba(7,9,13,0.8); color: var(--text); }
+    button:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
+    #risposta { margin: 1.75rem 0 0; font-size: 1.4rem; min-height: 2rem; font-style: italic; text-shadow: 0 2px 10px rgba(0,0,0,0.9); }
+
+
+    /* ---------- Scelta del personaggio (stile piattaforma di streaming) ---------- */
+    .personaggi { width: min(100%, 36rem); text-align: left; }
+    .personaggi[hidden] { display: none; }
+    .personaggi h2 { text-align: center; margin-bottom: 1.25rem; }
+    .lista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.75rem; }
+    .riga { display: flex; align-items: stretch; gap: 0.5rem; }
+    .scheda {
+      flex: 1; min-width: 0; display: flex; align-items: center; gap: 1.1rem;
+      padding: 0.7rem 1rem; text-align: left; color: var(--text);
+      background: rgba(7,9,13,0.72); border: 2px solid rgba(174,184,197,0.28); border-radius: 0.75rem;
+      backdrop-filter: blur(6px);
+    }
+    .scheda:hover:not(:disabled) { border-color: var(--accent); background: rgba(13,17,23,0.88); transform: translateY(-1px); box-shadow: 0 0 22px rgba(91,146,255,0.25); }
+    .scheda:disabled { opacity: 0.55; cursor: not-allowed; }
+    .token {
+      flex: none; width: 4.75rem; height: 4.75rem; border-radius: 50%; overflow: hidden;
+      border: 2px solid var(--accent); background: #11161d; color: var(--muted);
+      display: grid; place-items: center; font-size: 2rem;
+    }
+    .token img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; display: block; }
+    .dettagli { min-width: 0; }
+    .nome { display: block; font-size: 1.35rem; font-weight: 600; overflow-wrap: anywhere; }
+    .info { display: block; color: var(--muted); font-size: 1.02rem; }
+    .salvato { display: block; color: var(--muted); font-size: 0.85rem; font-style: italic; margin-top: 0.15rem; }
+    .elimina {
+      min-width: 0; padding: 0 1rem; font-size: 0.95rem; color: var(--muted);
+      background: rgba(7,9,13,0.72); border: 2px solid rgba(174,184,197,0.28); border-radius: 0.75rem;
+    }
+    .elimina:hover, .elimina[data-conferma] { color: #ffb4b4; border-color: #d96b6b; }
+    .nuova .token { border-style: dashed; border-color: var(--muted); color: var(--text); font-size: 2.4rem; }
+    .avviso { margin: 0.9rem 0 0; text-align: center; color: var(--muted); font-style: italic; text-shadow: 0 2px 10px rgba(0,0,0,0.9); }
+    @media (max-width: 480px) { .token { width: 3.75rem; height: 3.75rem; font-size: 1.6rem; } .scheda { gap: 0.8rem; } .nome { font-size: 1.15rem; } }
+
+    /* ---------- Scelta della lingua (in fondo, al centro) ---------- */
+    .lingue {
+      position: fixed; left: 50%; bottom: 1.1rem; transform: translateX(-50%); z-index: 2;
+      display: flex; gap: 0.65rem;
+    }
+    .lingue .bandiera {
+      min-width: 0; width: 2.25rem; height: 1.5rem; padding: 0; overflow: hidden;
+      border-radius: 0.25rem; border: 1px solid rgba(174,184,197,0.45); background: none;
+      opacity: 0.5; box-shadow: 0 2px 8px rgba(0,0,0,0.65);
+    }
+    .lingue .bandiera svg { display: block; width: 100%; height: 100%; }
+    .lingue .bandiera:hover { opacity: 0.85; transform: translateY(-1px); }
+    .lingue .bandiera[aria-pressed="true"] {
+      opacity: 1; border-color: rgba(232,237,243,0.9);
+      box-shadow: 0 0 0 1px rgba(232,237,243,0.25), 0 0 14px rgba(91,146,255,0.5);
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .personaggi { animation: appari 0.8s ease-out both; }
+      h1, .domanda { animation: appari 1.6s ease-out both; }
+      .domanda { animation-delay: 0.8s; }
+      .lingue { animation: appariLingue 1.6s ease-out 1.2s both; }
+      @keyframes appari { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+      @keyframes appariLingue { from { opacity: 0; } to { opacity: 1; } }
+    }
+  </style>
+</head>
+<body>
+  <video class="sfondo" id="sfondo" src="immagini/Video_login.mp4" poster="immagini/Trono_di_Cenere.webp" autoplay loop muted playsinline preload="auto" aria-hidden="true" tabindex="-1"></video>
+  <div class="velo" aria-hidden="true"></div>
+
+  <main>
+    <h1 id="titolo">Il Trono di Cenere</h1>
+    <section class="domanda">
+      <h2 id="domanda">Te la senti di entrare nel dungeon?</h2>
+      <div class="scelte">
+        <button id="si" type="button">Sì</button>
+        <button id="no" type="button">No</button>
+      </div>
+      <p id="risposta" aria-live="polite"></p>
+    </section>
+
+    <section class="personaggi" id="personaggi" hidden aria-labelledby="titoloPersonaggi">
+      <h2 id="titoloPersonaggi">Chi entra nel dungeon?</h2>
+      <ul class="lista" id="lista"></ul>
+      <p class="avviso" id="avviso" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <nav class="lingue" aria-label="Lingua / Language">
+    <button type="button" class="bandiera" data-lingua="it" aria-label="Italiano" title="Italiano">
+      <svg viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true">
+        <rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#f4f5f0"/><rect x="2" width="1" height="2" fill="#ce2b37"/>
+      </svg>
+    </button>
+    <button type="button" class="bandiera" data-lingua="en" aria-label="English" title="English">
+      <svg viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <clipPath id="uk-s"><path d="M0,0 v30 h60 v-30 z"/></clipPath>
+        <clipPath id="uk-t"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath>
+        <g clip-path="url(#uk-s)">
+          <path d="M0,0 v30 h60 v-30 z" fill="#012169"/>
+          <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/>
+          <path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#uk-t)" stroke="#C8102E" stroke-width="4"/>
+          <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/>
+          <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/>
+        </g>
+      </svg>
+    </button>
+  </nav>
+
+  <script>
+    /* ---------- Testi della pagina nelle due lingue ---------- */
+    const T = {
+      it: {
+        titolo: "Il Trono di Cenere", domanda: "Te la senti di entrare nel dungeon?", si: "Sì", no: "No",
+        rispSi: "Bene. Allora vai e preparati a soffrire.", rispNo: "Beh. Chi potrebbe biasimarti?",
+        chi: "Chi entra nel dungeon?", erroreMemoria: "Impossibile caricare il personaggio: memoria del browser non disponibile.",
+        eliminato: "Personaggio eliminato.", senzaNome: "Senza nome", livello: "Livello",
+        ultimo: "Ultimo salvataggio: ", nessunSalvataggio: "Nessun salvataggio: si riparte dall'inizio",
+        elimina: "Elimina", conferma: "Confermi?", eliminaPg: "Elimina il personaggio ",
+        nuova: "Nuova partita", pieno: "Hai già tre personaggi", crea: "Crea un nuovo personaggio",
+        avvisoPieno: "Per iniziare una nuova partita elimina uno dei tre personaggi."
+      },
+      en: {
+        titolo: "The Throne of Ashes", domanda: "Do you dare to enter the dungeon?", si: "Yes", no: "No",
+        rispSi: "Good. Then go, and prepare to suffer.", rispNo: "Well. Who could blame you?",
+        chi: "Who enters the dungeon?", erroreMemoria: "Unable to load the character: browser storage is not available.",
+        eliminato: "Character deleted.", senzaNome: "Nameless", livello: "Level",
+        ultimo: "Last saved: ", nessunSalvataggio: "No save yet: you will start from the beginning",
+        elimina: "Delete", conferma: "Confirm?", eliminaPg: "Delete the character ",
+        nuova: "New game", pieno: "You already have three characters", crea: "Create a new character",
+        avvisoPieno: "To start a new game, delete one of your three characters."
+      }
+    };
+    const tx = () => T[Lingua.get()];
+    let rispostaChiave = null; /* risposta mostrata sotto i pulsanti, da ritradurre se cambia la lingua */
+
+    /* Sfondo video: muto e in ripetizione infinita. Con "riduci animazioni" resta fermo sull'immagine statica. */
+    const sfondo = document.getElementById("sfondo");
+    sfondo.muted = true;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      sfondo.removeAttribute("autoplay");
+      sfondo.pause();
+    } else {
+      sfondo.play().catch(() => {}); /* se il browser blocca l'avvio, resta l'immagine statica */
+    }
+
+    /* ---------- Personaggi salvati (massimo tre) ----------
+       Ogni posto è salvato in localStorage come "slot1", "slot2", "slot3": { pg, partita, aggiornato }.
+       "personaggio" e "partita" restano le chiavi usate dal gioco: scegliendo un posto vengono riempite con i suoi dati. */
+    const POSTI = [1, 2, 3];
+    const leggi = (k) => { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } };
+    const togli = (...chiavi) => { try { chiavi.forEach(k => localStorage.removeItem(k)); } catch (e) {} };
+
+    function leggiPosti() {
+      let posti = POSTI.map(n => leggi("slot" + n));
+      if (!posti.some(Boolean) && !localStorage.getItem("slot_migrati")) { /* chi giocava già prima: il suo personaggio diventa il primo posto (una volta sola) */
+        try { localStorage.setItem("slot_migrati", "1"); } catch (e) {}
+        const pg = leggi("personaggio"), partita = leggi("partita");
+        if (pg && pg.nome && pg.classe) {
+          const sl = { pg, partita: partita || null, aggiornato: (partita && partita.ora) || Date.now() };
+          try { localStorage.setItem("slot1", JSON.stringify(sl)); localStorage.setItem("slot_attivo", "1"); posti[0] = sl; } catch (e) {}
+        }
+      }
+      return posti;
+    }
+
+    function continua(n, sl) {
+      try {
+        localStorage.setItem("personaggio", JSON.stringify(sl.pg));
+        if (sl.partita) localStorage.setItem("partita", JSON.stringify(sl.partita)); else localStorage.removeItem("partita");
+        togli("scena", "usate", "diario", "luogo", "slot_nuovo");
+        localStorage.setItem("slot_attivo", String(n));
+      } catch (e) { document.getElementById("avviso").textContent = tx().erroreMemoria; return; }
+      window.location.href = "gioco.html";
+    }
+
+    function nuovaPartita() {
+      const libero = POSTI.find(n => !leggi("slot" + n));
+      if (!libero) return;
+      try { localStorage.setItem("slot_nuovo", String(libero)); } catch (e) {}
+      togli("personaggio", "partita", "scena", "usate", "diario", "luogo", "slot_attivo"); /* i personaggi salvati restano nei loro posti */
+      window.location.href = "creazione.html";
+    }
+
+    function elimina(n) {
+      togli("slot" + n);
+      if (localStorage.getItem("slot_attivo") === String(n)) togli("slot_attivo", "personaggio", "partita");
+      disegnaLista(leggiPosti(), tx().eliminato);
+    }
+
+    const el = (tag, classe, testo) => { const e = document.createElement(tag); if (classe) e.className = classe; if (testo != null) e.textContent = testo; return e; };
+
+    function token(pg) {
+      const t = el("span", "token");
+      t.setAttribute("aria-hidden", "true");
+      if (pg && pg.immagine) {
+        const img = el("img"); img.src = String(pg.immagine).replace(/^immagini\/(?!pg\/)/, "immagini/pg/"); img.alt = ""; /* vecchi salvataggi: ritratti spostati in immagini/pg/ */
+        img.addEventListener("error", () => { img.remove(); t.textContent = (pg.nome || "?").charAt(0).toUpperCase(); });
+        t.append(img);
+      } else t.textContent = (pg && pg.nome ? pg.nome.charAt(0).toUpperCase() : "?");
+      return t;
+    }
+
+    function disegnaLista(posti, messaggio) {
+      const t = tx();
+      const lista = document.getElementById("lista");
+      lista.replaceChildren();
+      posti.forEach((sl, i) => {
+        if (!sl || !sl.pg) return;
+        const pg = sl.pg, n = i + 1;
+        const li = el("li", "riga");
+        const b = el("button", "scheda"); b.type = "button";
+        const d = el("span", "dettagli");
+        d.append(
+          el("span", "nome", pg.nome || t.senzaNome),
+          el("span", "info", [pg.razza && Lingua.nome("razze", pg.razza), pg.classe && Lingua.nome("classi", pg.classe)].filter(Boolean).join(" — ")),
+          el("span", "info", t.livello + " " + (pg.livello || 1))
+        );
+        const quando = (sl.partita && sl.partita.ora) ? new Date(Number(sl.partita.ora)) : null;
+        d.append(el("span", "salvato", quando && !isNaN(quando)
+          ? t.ultimo + quando.toLocaleString(Lingua.locale(), { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })
+          : t.nessunSalvataggio));
+        b.append(token(pg), d);
+        b.addEventListener("click", () => continua(n, sl));
+        const x = el("button", "elimina", t.elimina); x.type = "button";
+        x.setAttribute("aria-label", t.eliminaPg + (pg.nome || n));
+        x.addEventListener("click", () => {
+          if (!x.dataset.conferma) { /* primo clic: chiede conferma; senza un secondo clic entro 3 secondi non succede nulla */
+            x.dataset.conferma = "1"; x.textContent = tx().conferma;
+            setTimeout(() => { if (x.isConnected) { delete x.dataset.conferma; x.textContent = tx().elimina; } }, 3000);
+            return;
+          }
+          elimina(n);
+        });
+        li.append(b, x); lista.append(li);
+      });
+
+      const pieno = posti.filter(s => s && s.pg).length >= POSTI.length;
+      const li = el("li", "riga nuova");
+      const b = el("button", "scheda"); b.type = "button"; b.disabled = pieno;
+      const d = el("span", "dettagli");
+      d.append(el("span", "nome", t.nuova), el("span", "info", pieno ? t.pieno : t.crea));
+      const plus = el("span", "token", "+"); plus.setAttribute("aria-hidden", "true");
+      b.append(plus, d);
+      b.addEventListener("click", nuovaPartita);
+      li.append(b); lista.append(li);
+      document.getElementById("avviso").textContent = messaggio || (pieno ? t.avvisoPieno : "");
+    }
+
+    function mostraPersonaggi(posti) {
+      document.querySelector(".domanda").hidden = true;
+      document.getElementById("personaggi").hidden = false;
+      disegnaLista(posti);
+      const primo = document.querySelector("#lista .scheda:not(:disabled)");
+      if (primo) primo.focus({ preventScroll: true });
+    }
+
+    /* ---------- Lingua ---------- */
+    function applicaLingua() {
+      const t = tx();
+      document.title = t.titolo;
+      document.getElementById("titolo").textContent = t.titolo;
+      document.getElementById("domanda").textContent = t.domanda;
+      document.getElementById("si").textContent = t.si;
+      document.getElementById("no").textContent = t.no;
+      document.getElementById("risposta").textContent = rispostaChiave ? t[rispostaChiave] : "";
+      document.getElementById("titoloPersonaggi").textContent = t.chi;
+      document.querySelectorAll(".bandiera").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lingua === Lingua.get())));
+      if (!document.getElementById("personaggi").hidden) disegnaLista(leggiPosti());
+    }
+    document.querySelectorAll(".bandiera").forEach(b => b.addEventListener("click", () => { Lingua.set(b.dataset.lingua); applicaLingua(); }));
+
+    const risposta = document.getElementById("risposta");
+    document.getElementById("si").addEventListener("click", () => {
+      document.getElementById("si").disabled = true; document.getElementById("no").disabled = true;
+      rispostaChiave = "rispSi"; risposta.textContent = tx().rispSi;
+      setTimeout(() => {
+        const posti = leggiPosti();
+        if (posti.some(Boolean)) mostraPersonaggi(posti); /* ci sono personaggi salvati: si sceglie quale usare */
+        else nuovaPartita();
+      }, 1500);
+    });
+    document.getElementById("no").addEventListener("click", () => {
+      rispostaChiave = "rispNo"; risposta.textContent = tx().rispNo;
+    });
+
+    applicaLingua();
+  </script>
+</body>
+</html>

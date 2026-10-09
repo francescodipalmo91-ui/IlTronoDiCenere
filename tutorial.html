@@ -109,6 +109,11 @@
     .voce.sistema kbd { font-family: inherit; font-style: italic; color: var(--text); }
     .voce p.esito-prova { font-weight: 600; color: var(--accent); }
     .voce p.banner { font-weight: 700; font-size: 1.25rem; text-align: center; margin-top: 1.5rem; }
+    /* banner di fine scontro: verde se vinto, rosso se perso; sta fuori dalle tendine */
+    .voce.esito-scontro { padding: 0.9rem 1.25rem; border: 2px solid; border-radius: 0.5rem; text-align: center; }
+    .voce.esito-scontro p { margin: 0; font-size: 1.3rem; font-weight: 800; letter-spacing: 0.02em; }
+    .voce.esito-scontro.ok { background: var(--ok-bg); border-color: var(--ok-line); color: var(--ok); }
+    .voce.esito-scontro.ko { background: var(--ko-bg); border-color: var(--ko-line); color: var(--ko); }
     .voce.riquadro { padding: 1.25rem 1.5rem; border: 2px solid; border-radius: 0.5rem; }
     /* riquadri: azzurro per le azioni del personaggio, arancione per quelle del nemico */
     .voce.mia { background: var(--pg-bg); border-color: var(--pg-line); }
@@ -569,6 +574,8 @@
         cEsplora: [
           "<b>Lo scontro è finito.</b> Ora impara a interagire con l'ambiente: ogni cosa nella sala può nascondere qualcosa.",
           "Una prova di abilità è un d20 più il valore dell'abilità; se raggiungi la difficoltà (CD) riesci. Le abilità che conosci aggiungono anche il tuo livello: per questo valgono +3.",
+          "<b>Attenzione:</b> ogni prova di abilità fallita ti costa <b>1 punto di salute mentale</b>. Prima di tentare, guarda il modificatore di quell'abilità nella tua scheda e chiediti se è abbastanza alto da valerne la pena.",
+          "Potrai sempre riposarti nelle sale in cui vedi un camino acceso e caldo, o dove qualcosa <i>ti ricorda casa</i>: recuperi <b>1d6 punti di salute mentale</b>, ma consumi il camino. Le sue fiamme passano da un caldo arancio al freddo azzurro di tutti gli altri fuochi del dungeon.",
           "Prova a scrivere:",
           "<kbd>esamina il corpo del mastino</kbd> — prova di Medicina",
           "<kbd>osserva la sala</kbd> — prova di Percezione",
@@ -584,6 +591,7 @@
           "Suggerimento: quando la salute scende sotto la metà, la pozione può valere più di un attacco. E con lo scudo imbracciato la belva fatica di più a colpirti.",
           "Scrivi <kbd>riprova</kbd> per affrontare di nuovo il Mastino, oppure <kbd>torna all'ingresso</kbd>."
         ],
+        bannerVinto: "Hai vinto lo scontro!", bannerPerso: "Non preoccuparti: non sei morto, solo un po' ammaccato nell'orgoglio.",
         presaTuo: (a, b) => `<span class="lab">Tu</span> = <b>${b}</b>`, presaSuo: (a, b) => `<span class="lab">Mastino</span> = <b>${b}</b>`,
         dannoPresa: (d, da, a) => `<span class="lab">Danni</span> = <b>${d}</b> · punti salute ${da} → <b>${a}</b>`,
         presaVinta: "Presa riuscita.", presaPersa: "Ti liberi.",
@@ -663,6 +671,8 @@
         cEsplora: [
           "<b>The fight is over.</b> Now learn to interact with your surroundings: anything in the hall may hide something.",
           "A skill check is a d20 plus the skill's value; if you reach the difficulty (DC) you succeed. Skills you know also add your level: that is why they are worth +3.",
+          "<b>Careful:</b> every failed skill check costs you <b>1 mental health point</b>. Before trying, look at that skill's modifier on your sheet and ask yourself whether it is high enough to be worth it.",
+          "You can always rest in rooms where you see a warm, lit fireplace, or where something <i>reminds you of home</i>: you recover <b>1d6 mental health points</b>, but the fireplace is spent. Its flames turn from a warm orange to the cold blue of every other fire in the dungeon.",
           "Try writing:",
           "<kbd>examine the hound's body</kbd> — Medicine check",
           "<kbd>look around the hall</kbd> — Perception check",
@@ -678,6 +688,7 @@
           "Tip: when your health drops below half, the potion can be worth more than an attack. And with the shield up, the beast has a harder time hitting you.",
           "Write <kbd>retry</kbd> to face the Hellhound again, or <kbd>back to the entrance</kbd>."
         ],
+        bannerVinto: "You won the fight!", bannerPerso: "Don't worry: you're not dead, just a little bruised in your pride.",
         presaTuo: (a, b) => `<span class="lab">You</span> = <b>${b}</b>`, presaSuo: (a, b) => `<span class="lab">Hellhound</span> = <b>${b}</b>`,
         dannoPresa: (d, da, a) => `<span class="lab">Damage</span> = <b>${d}</b> · health points ${da} → <b>${a}</b>`,
         presaVinta: "Grab succeeds.", presaPersa: "You break free.",
@@ -1103,11 +1114,14 @@
       fase = "esplora";
       Musica.ferma(2500);
       log(t.vittoriaLog);
+      fuori = true; /* banner, avviso e manuale fuori dalla tendina dell'ultimo attacco */
+      voce(`<p>${t.bannerVinto}</p>`, "esito-scontro ok");
       log(t.rivelata, "sis");
+      manuale(t.cEsplora);
+      fuori = false;
       disegna();
       document.querySelectorAll("#schedaNem details.sez").forEach(d => d.open = true);
       turno(t.esplora, true);
-      manuale(t.cEsplora);
       stato(false);
     }
     const daFare = () => [...Object.keys(prove).filter(k => prove[k] === null), ...(collarePreso ? [] : ["collare"])];
@@ -1162,8 +1176,11 @@
       fase = "sconfitta";
       Musica.ferma(2500);
       log(t.sconfittaLog);
-      turno(t.caduto, true);
+      fuori = true;
+      voce(`<p>${t.bannerPerso}</p>`, "esito-scontro ko");
       manuale(t.cSconfitta);
+      fuori = false;
+      turno(t.caduto, true);
       stato(false);
     }
 

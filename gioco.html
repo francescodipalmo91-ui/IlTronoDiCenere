@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Il dungeon</title>
   <script src="lingua.js"></script>
+  <script src="volume.js"></script>
   <style>
     :root {
       --bg: #f5f7fa;
@@ -109,6 +110,14 @@
       background: transparent; color: var(--text); border: 2px solid var(--line);
     }
     #audio:hover { border-color: var(--accent); }
+    #home {
+      font: inherit; font-size: 1.05rem; line-height: 1; padding: 0.5rem 0.7rem; border-radius: 0.5rem;
+      background: transparent; color: var(--text); border: 2px solid var(--line); text-decoration: none;
+      display: inline-flex; align-items: center;
+    }
+    #audio { display: inline-flex; align-items: center; }
+    #home:hover { border-color: var(--accent); }
+    #home:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
     #diario {
       flex: 1; overflow-y: auto; min-height: 0;
       padding: 2rem max(1.5rem, calc((100% - 62rem) / 2)) 1rem;
@@ -203,6 +212,7 @@
         <div class="barra-dx">
           <button type="button" id="salva" data-t="salva">Salva partita</button>
           <button type="button" id="audio" aria-pressed="true">🔊</button>
+          <a id="home" href="index.html" data-t-aria="home"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 21V11.5a6.5 6.5 0 0 1 13 0V21" fill="currentColor" fill-opacity="0.15"/><path d="M3.5 21h17"/><path d="M12 5v16"/><circle cx="10.2" cy="14" r="0.7" fill="currentColor"/><circle cx="13.8" cy="14" r="0.7" fill="currentColor"/></svg></a>
         </div>
       </div>
       <section id="diario" aria-live="polite" data-t-aria="diario"></section>
@@ -451,7 +461,7 @@
         ui: {
           titoloPagina: "Il dungeon", schedaPg: "Scheda del personaggio", completa: "Scheda completa",
           caratteristiche: "Caratteristiche", abilita: "Abilità", equipaggiamento: "Equipaggiamento", zaino: "Zaino",
-          audioOn: "Suoni attivi: clicca per disattivarli", audioOff: "Suoni disattivati: clicca per attivarli", salva: "Salva partita", diario: "Diario dell'avventura", ariaTesto: "Cosa fa il tuo personaggio?", invia: "Invia",
+          home: "Torna alla pagina iniziale", audioOn: "Suoni attivi: clicca per disattivarli", audioOff: "Suoni disattivati: clicca per attivarli", salva: "Salva partita", diario: "Diario dell'avventura", ariaTesto: "Cosa fa il tuo personaggio?", invia: "Invia",
           placeholder: "Cosa fai? Per esempio: esamino l'arazzo sulla sinistra", scegliAzione: "Scegli un'azione qui sopra",
           scrive: "Il narratore sta scrivendo…", notaInizio: "Scrivi qui sotto cosa fa il tuo personaggio.",
           nonSalvate: "Modifiche non salvate", salvataAlle: (h) => `Partita salvata alle ${h}`, nessunSalvataggio: "Nessun salvataggio",
@@ -718,7 +728,7 @@
         ui: {
           titoloPagina: "The dungeon", schedaPg: "Character sheet", completa: "Full sheet",
           caratteristiche: "Attributes", abilita: "Skills", equipaggiamento: "Equipment", zaino: "Pack",
-          audioOn: "Sound on: click to turn it off", audioOff: "Sound off: click to turn it on", salva: "Save game", diario: "Adventure journal", ariaTesto: "What does your character do?", invia: "Send",
+          home: "Back to the home page", audioOn: "Sound on: click to turn it off", audioOff: "Sound off: click to turn it on", salva: "Save game", diario: "Adventure journal", ariaTesto: "What does your character do?", invia: "Send",
           placeholder: "What do you do? For example: I examine the tapestry on the left", scegliAzione: "Choose an action above",
           scrive: "The narrator is writing…", notaInizio: "Write below what your character does.",
           nonSalvate: "Unsaved changes", salvataAlle: (h) => `Game saved at ${h}`, nessunSalvataggio: "No save yet",
@@ -771,6 +781,7 @@
     document.title = U.titoloPagina;
     document.querySelectorAll("[data-t]").forEach(e => { e.textContent = U[e.dataset.t]; });
     document.querySelectorAll("[data-t-aria]").forEach(e => e.setAttribute("aria-label", U[e.dataset.tAria]));
+    document.getElementById("home").title = U.home;
 
     /* ---------- Salvataggio manuale ----------
        Il gioco NON salva da solo: i progressi restano in memoria finché non si preme «Salva partita».
@@ -1693,14 +1704,12 @@
     const Suono = (() => {
       let ctx = null, master = null, sorgenti = [], timer = null, attivo = false;
       let modo = null, el = null, elSrc = null, fade = null; const fileKo = new Set(); /* lettore del file audio */
-      let muto = false;
-      try { muto = localStorage.getItem("audio") === "off"; } catch (e) {}
       let fuoco = null; /* il fuoco generato (FuocoSintetico) */
       function avviaSintetico() {
         try { ctx = ctx || new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return; }
         if (ctx.state === "suspended") ctx.resume().catch(() => {});
         master = ctx.createGain(); master.gain.value = 0; master.connect(ctx.destination);
-        master.gain.linearRampToValueAtTime(VOLUME_FUOCO, ctx.currentTime + 2.5); /* entra piano */
+        master.gain.linearRampToValueAtTime(VOLUME_FUOCO * Volume.livello, ctx.currentTime + 2.5); /* entra piano */
         fuoco = FuocoSintetico(ctx, master);
         fuoco.programma(ctx.currentTime + 0.6);
         timer = setInterval(() => fuoco.programma(ctx.currentTime + 0.6), 200); /* si programma sempre un po' in anticipo */
@@ -1738,7 +1747,7 @@
         attivo = true; modo = "file";
         clearInterval(fade); /* annulla un'eventuale dissolvenza in uscita ancora in corso */
         el.volume = 0;
-        el.play().then(() => { if (attivo && modo === "file") sfuma(VOLUME_AMBIENTE, 2500); else el.pause(); })
+        el.play().then(() => { if (attivo && modo === "file") sfuma(VOLUME_AMBIENTE * Volume.livello, 2500); else el.pause(); })
           .catch(err => {
             if (err && err.name === "NotAllowedError") { attivo = false; return; } /* serve prima un clic: si riprova al primo gesto */
             fileKo.add(src);
@@ -1746,7 +1755,7 @@
           });
       }
       function avvia(src) {
-        if (attivo || muto) return;
+        if (attivo || Volume.muto || Volume.livello === 0) return;
         if (src && src.includes("/") && !fileKo.has(src)) avviaFile(src); else avviaSintetico();
       }
       function ferma() {
@@ -1755,18 +1764,20 @@
         else fermaSintetico();
       }
       return {
-        aggiorna() { (SUONI_STANZE[luogo] && !muto && !document.hidden) ? avvia(SUONI_STANZE[luogo]) : ferma(); },
-        get muto() { return muto; },
-        set muto(v) { muto = v; try { localStorage.setItem("audio", v ? "off" : "on"); } catch (e) {} }
+        aggiorna() { (SUONI_STANZE[luogo] && !Volume.muto && Volume.livello > 0 && !document.hidden) ? avvia(SUONI_STANZE[luogo]) : ferma(); },
+        /* il giocatore ha spostato il cursore del volume: si adegua il suono in corso */
+        volume() {
+          const l = Volume.livello;
+          if (attivo && modo === "sintetico" && master) master.gain.setTargetAtTime(VOLUME_FUOCO * l, ctx.currentTime, 0.08);
+          if (attivo && modo === "file" && el) { clearInterval(fade); el.volume = Math.min(1, VOLUME_AMBIENTE * l); }
+        }
       };
     })();
 
+    /* pulsante del volume: cursore e silenziamento (volume.js) */
     function pulsanteAudio() {
-      const b = document.getElementById("audio");
-      b.textContent = Suono.muto ? "🔇" : "🔊";
-      b.setAttribute("aria-pressed", String(!Suono.muto));
-      b.title = Suono.muto ? U.audioOff : U.audioOn;
-      b.setAttribute("aria-label", b.title);
+      Volume.monta(document.getElementById("audio"));
+      Volume.onCambio(() => { Suono.volume(); Suono.aggiorna(); });
     }
 
     function vai(id) {
@@ -1877,7 +1888,6 @@
       mostraStanza(luogo);
       document.getElementById("salva").addEventListener("click", salvaPartita);
       pulsanteAudio();
-      document.getElementById("audio").addEventListener("click", () => { Suono.muto = !Suono.muto; pulsanteAudio(); Suono.aggiorna(); });
       /* il browser permette l'audio solo dopo il primo clic o tasto: se si riprende la partita nella sala, parte lì */
       const sblocca = () => { Suono.aggiorna(); document.removeEventListener("pointerdown", sblocca); document.removeEventListener("keydown", sblocca); };
       document.addEventListener("pointerdown", sblocca); document.addEventListener("keydown", sblocca);

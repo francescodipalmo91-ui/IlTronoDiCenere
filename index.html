@@ -78,6 +78,18 @@
     #no { background: rgba(7,9,13,0.55); color: var(--muted); border-color: var(--muted); backdrop-filter: blur(4px); }
     #no:hover { background: rgba(7,9,13,0.8); color: var(--text); }
     button:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
+    /* ---------- Accesso alla sala d'allenamento (tutorial) ---------- */
+    .allenamento {
+      display: inline-flex; align-items: center; gap: 0.6rem; margin-top: 1.4rem;
+      color: var(--muted); text-decoration: none; font-size: 1.02rem; font-style: italic;
+      padding: 0.45rem 1.1rem; border: 1px solid rgba(174,184,197,0.3); border-radius: 0.5rem;
+      background: rgba(7,9,13,0.55); backdrop-filter: blur(4px); text-shadow: 0 2px 8px rgba(0,0,0,0.9);
+      transition: color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+    }
+    .allenamento:hover { color: var(--text); border-color: var(--accent); transform: translateY(-1px); }
+    .allenamento:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
+    .allenamento .fatto { font-style: normal; font-size: 0.85rem; color: #6fd39a; }
+    .personaggi .allenamento { display: flex; justify-content: center; margin: 1rem auto 0; width: fit-content; }
     #risposta { margin: 1.75rem 0 0; font-size: 1.4rem; min-height: 2rem; font-style: italic; text-shadow: 0 2px 10px rgba(0,0,0,0.9); }
 
 
@@ -154,12 +166,14 @@
         <button id="no" type="button">No</button>
       </div>
       <p id="risposta" aria-live="polite"></p>
+      <a class="allenamento" id="allenamento" href="tutorial.html"></a>
     </section>
 
     <section class="personaggi" id="personaggi" hidden aria-labelledby="titoloPersonaggi">
       <h2 id="titoloPersonaggi">Chi entra nel dungeon?</h2>
       <ul class="lista" id="lista"></ul>
       <p class="avviso" id="avviso" aria-live="polite"></p>
+      <a class="allenamento" id="allenamento2" href="tutorial.html"></a>
     </section>
   </main>
 
@@ -195,7 +209,8 @@
         ultimo: "Ultimo salvataggio: ", nessunSalvataggio: "Nessun salvataggio: si riparte dall'inizio",
         elimina: "Elimina", conferma: "Confermi?", eliminaPg: "Elimina il personaggio ",
         nuova: "Nuova partita", pieno: "Hai già tre personaggi", crea: "Crea un nuovo personaggio",
-        avvisoPieno: "Per iniziare una nuova partita elimina uno dei tre personaggi."
+        avvisoPieno: "Per iniziare una nuova partita elimina uno dei tre personaggi.",
+        allenamento: "⚔ Sala d'allenamento: impara a combattere", allenamentoFatto: "✓ completato"
       },
       en: {
         titolo: "The Throne of Ashes", domanda: "Do you dare to enter the dungeon?", si: "Yes", no: "No",
@@ -205,7 +220,8 @@
         ultimo: "Last saved: ", nessunSalvataggio: "No save yet: you will start from the beginning",
         elimina: "Delete", conferma: "Confirm?", eliminaPg: "Delete the character ",
         nuova: "New game", pieno: "You already have three characters", crea: "Create a new character",
-        avvisoPieno: "To start a new game, delete one of your three characters."
+        avvisoPieno: "To start a new game, delete one of your three characters.",
+        allenamento: "⚔ Training hall: learn to fight", allenamentoFatto: "✓ completed"
       }
     };
     const tx = () => T[Lingua.get()];
@@ -342,6 +358,12 @@
       document.getElementById("no").textContent = t.no;
       document.getElementById("risposta").textContent = rispostaChiave ? t[rispostaChiave] : "";
       document.getElementById("titoloPersonaggi").textContent = t.chi;
+      let fatto = false; try { fatto = localStorage.getItem("tutorial_completato") === "1"; } catch (e) {}
+      ["allenamento", "allenamento2"].forEach(id => {
+        const a = document.getElementById(id);
+        a.textContent = t.allenamento;
+        if (fatto) a.append(el("span", "fatto", t.allenamentoFatto));
+      });
       document.querySelectorAll(".bandiera").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lingua === Lingua.get())));
       if (!document.getElementById("personaggi").hidden) disegnaLista(leggiPosti());
     }

@@ -592,7 +592,7 @@
           "<kbd>prendi il collare</kbd> — lo metti nello zaino"
         ],
         cFine: [
-          "<b>Addestramento completato.</b> Hai imparato a leggere la tua scheda, a combattere un turno dopo l'altro, a usare una risorsa, a esplorare con le prove di abilità e a raccogliere ciò che trovi.",
+          "Hai imparato a leggere la tua scheda, a combattere un turno dopo l'altro, a usare una risorsa, a esplorare con le prove di abilità e a raccogliere ciò che trovi.",
           "Scrivi <kbd>torna all'ingresso</kbd> per tornare alla pagina iniziale, oppure <kbd>ripeti</kbd> per rifare l'addestramento."
         ],
         cSconfitta: [
@@ -689,7 +689,7 @@
           "<kbd>take the collar</kbd> — it goes into your backpack"
         ],
         cFine: [
-          "<b>Training complete.</b> You have learned to read your sheet, to fight one turn after another, to use a resource, to explore with skill checks and to pick up what you find.",
+          "You have learned to read your sheet, to fight one turn after another, to use a resource, to explore with skill checks and to pick up what you find.",
           "Write <kbd>back to the entrance</kbd> to return to the home page, or <kbd>repeat</kbd> to do the training again."
         ],
         cSconfitta: [
@@ -1177,8 +1177,9 @@
       fase = "fine";
       log(t.fineLog);
       turno(t.fine, true);
-      voce(`<p class="banner">${t.fine}</p>`);
-      manuale(t.cFine);
+      fuori = true; /* riquadro dedicato, fuori dalla tendina dell'ultima azione */
+      manuale(t.cFine, t.fine);
+      fuori = false;
       try { localStorage.setItem("tutorial_completato", "1"); } catch (e) {}
       stato(false);
     }

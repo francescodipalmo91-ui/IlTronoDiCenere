@@ -92,6 +92,15 @@
     details.voce.giocatore[open] > summary::before { content: "▾"; }
     details.voce.giocatore > .corpo { margin-top: 1.25rem; }
     details.voce.giocatore > .corpo > .voce:last-child { margin-bottom: 0; }
+    /* tendina di un'azione con prova di abilità: verde se superata, rossa se fallita */
+    details.voce.giocatore.t-ok, details.voce.giocatore.t-ko { padding: 0.75rem 1rem; border: 1px solid; border-radius: 0.5rem; }
+    details.voce.giocatore.t-ok { background: var(--ok-bg); border-color: var(--ok-line); }
+    details.voce.giocatore.t-ko { background: var(--ko-bg); border-color: var(--ko-line); }
+    details.voce.giocatore.t-ok > summary { border-left-color: var(--ok); color: var(--ok); }
+    details.voce.giocatore.t-ko > summary { border-left-color: var(--ko); color: var(--ko); }
+    details.voce.giocatore.t-ok > summary::before { color: var(--ok); }
+    details.voce.giocatore.t-ko > summary::before { color: var(--ko); }
+    .voce .attenzione { color: var(--ko); }
     .voce.prova { padding: 1rem 1.25rem; border: 1px solid var(--accent); border-radius: 0.5rem; background: rgba(91,146,255,0.07); }
     .voce.prova p { margin: 0 0 0.5rem; }
     .voce.prova p.prova-titolo { font-weight: 700; font-size: 1.15rem; color: var(--accent); letter-spacing: 0.03em; }
@@ -335,7 +344,7 @@
         nemManca: ["Le fauci scattano a un palmo dal tuo volto: lo scudo devia il colpo.", "Gli artigli stridono sull'armatura senza affondare.", "Ti scansi all'ultimo istante: la belva sbatte contro la pietra."],
         nemAgisce: (a) => `Il Mastino attacca: ${a}.`,
 
-        presaLog: "Il Mastino scatta in avanti e ti serra tra le fauci, trascinandoti verso il centro del cerchio!",
+        presaLog: "Il Mastino non molla: approfitta del colpo, ti serra tra le fauci e ti trascina verso il centro del cerchio!",
         cPresa: [
           "<b>Azione speciale: la Presa.</b> Una volta per scontro, quando meno te lo aspetti, la belva può afferrarti.",
           "<span class='regola'>Prova contrapposta di Lotta: tu tiri d20 + 2, il Mastino d20 + 0. Se il suo totale è più alto, ti infligge 1d4 danni aggiuntivi. Se vinci tu, ti liberi senza altri vantaggi. In caso di parità prevale chi si difende: tu.</span>"
@@ -470,7 +479,7 @@
         nemManca: ["The jaws snap a hand's breadth from your face: the shield turns the blow.", "The claws screech on your armor without sinking in.", "You dodge at the last moment: the beast slams into the stone."],
         nemAgisce: (a) => `The Hellhound attacks: ${a}.`,
 
-        presaLog: "The Hellhound lunges forward and clamps you in its jaws, dragging you towards the centre of the circle!",
+        presaLog: "The Hellhound does not let go: it follows up its blow, clamps you in its jaws and drags you towards the centre of the circle!",
         cPresa: [
           "<b>Special action: the Grab.</b> Once per fight, when you least expect it, the beast can seize you.",
           "<span class='regola'>Opposed Might check: you roll d20 + 2, the Hellhound d20 + 0. If its total is higher, it deals 1d4 extra damage. If you win, you break free with no further advantage. On a tie the defender wins: you.</span>"
@@ -543,7 +552,7 @@
         armiNaturali: "Armi naturali", speciale: "Speciale", collareVoce: "Collo",
         descPozione: "Una fiala di vetro spesso, chiusa da un tappo di cera. Il liquido rosso scuro riluce debolmente. Cura 2d4 punti salute.",
         descTorcia: "Un bastone di legno avvolto in stracci imbevuti di pece. Fa luce e, all'occorrenza, colpisce: 1d4 + mod. Lotta, contundente.",
-        descPresa: "Una volta per scontro, a sorpresa, la belva afferra il bersaglio tra le fauci: prova contrapposta di Lotta. Se vince la belva, 1d4 danni aggiuntivi.",
+        descPresa: "Una volta per scontro, dopo un attacco andato a segno, la belva afferra il bersaglio tra le fauci: prova contrapposta di Lotta. Se vince la belva, 1d4 danni aggiuntivi.",
         esci: "Esci dall'addestramento", completa: "Scheda completa", zaino: "Zaino", invia: "Invia",
         arma: "Arma", armaturaL: "Armatura", manoSec: "Mano secondaria", vuota: "libera", zainoVuoto: "Vuoto.",
         manuale: "Manuale di combattimento", ignoto: "???", nemSottoVelato: "Belva · livello sconosciuto",
@@ -568,13 +577,13 @@
         ],
         cFerito: ["<b>Sei ferito.</b> Se la salute scende troppo, prova a scrivere <kbd>bevi la pozione</kbd>: cura 2d4, ma occupa tutto il turno."],
         cPresa: [
-          "Una volta per scontro, quando meno te lo aspetti, la belva può afferrarti.",
+          "Quando un suo attacco va a segno, una volta per scontro la belva può afferrarti.",
           "Prova contrapposta di Lotta: tu tiri d20 + 2, il Mastino d20 + 0. Se il suo totale è più alto, ti infligge 1d4 danni aggiuntivi. Se vinci tu, ti liberi senza altri vantaggi. In caso di parità prevale chi si difende: tu. Lancia il dado qui sotto."
         ],
         cEsplora: [
           "<b>Lo scontro è finito.</b> Ora impara a interagire con l'ambiente: ogni cosa nella sala può nascondere qualcosa.",
           "Una prova di abilità è un d20 più il valore dell'abilità; se raggiungi la difficoltà (CD) riesci. Le abilità che conosci aggiungono anche il tuo livello: per questo valgono +3.",
-          "<b>Attenzione:</b> ogni prova di abilità fallita ti costa <b>1 punto di salute mentale</b>. Prima di tentare, guarda il modificatore di quell'abilità nella tua scheda e chiediti se è abbastanza alto da valerne la pena.",
+          "<u><b class='attenzione'>Attenzione:</b> ogni prova di abilità fallita ti costa <b>1 punto di salute mentale</b>. Prima di tentare, guarda il modificatore di quell'abilità nella tua scheda e chiediti se è abbastanza alto da valerne la pena.</u>",
           "Potrai sempre riposarti nelle sale in cui vedi un camino acceso e caldo, o dove qualcosa <i>ti ricorda casa</i>: recuperi <b>1d6 punti di salute mentale</b>, ma consumi il camino. Le sue fiamme passano da un caldo arancio al freddo azzurro di tutti gli altri fuochi del dungeon.",
           "Prova a scrivere:",
           "<kbd>esamina il corpo del mastino</kbd> — prova di Medicina",
@@ -640,7 +649,7 @@
         armiNaturali: "Natural weapons", speciale: "Special", collareVoce: "Neck",
         descPozione: "A vial of thick glass sealed with a wax stopper. The dark red liquid glows faintly. Heals 2d4 health points.",
         descTorcia: "A wooden stick wrapped in pitch-soaked rags. It gives light and, if need be, strikes: 1d4 + Might mod., bludgeoning.",
-        descPresa: "Once per fight, by surprise, the beast seizes its target in its jaws: opposed Might check. If the beast wins, 1d4 extra damage.",
+        descPresa: "Once per fight, after an attack that lands, the beast seizes its target in its jaws: opposed Might check. If the beast wins, 1d4 extra damage.",
         esci: "Leave the training", completa: "Full sheet", zaino: "Backpack", invia: "Send",
         arma: "Weapon", armaturaL: "Armor", manoSec: "Off hand", vuota: "free", zainoVuoto: "Empty.",
         manuale: "Combat manual", ignoto: "???", nemSottoVelato: "Beast · unknown level",
@@ -665,13 +674,13 @@
         ],
         cFerito: ["<b>You are wounded.</b> If your health drops too far, try writing <kbd>drink the potion</kbd>: it heals 2d4, but takes your whole turn."],
         cPresa: [
-          "Once per fight, when you least expect it, the beast can seize you.",
+          "When one of its attacks lands, once per fight the beast can seize you.",
           "Opposed Might check: you roll d20 + 2, the Hellhound d20 + 0. If its total is higher, it deals 1d4 extra damage. If you win, you break free with no further advantage. On a tie the defender wins: you. Roll the die below."
         ],
         cEsplora: [
           "<b>The fight is over.</b> Now learn to interact with your surroundings: anything in the hall may hide something.",
           "A skill check is a d20 plus the skill's value; if you reach the difficulty (DC) you succeed. Skills you know also add your level: that is why they are worth +3.",
-          "<b>Careful:</b> every failed skill check costs you <b>1 mental health point</b>. Before trying, look at that skill's modifier on your sheet and ask yourself whether it is high enough to be worth it.",
+          "<u><b class='attenzione'>Careful:</b> every failed skill check costs you <b>1 mental health point</b>. Before trying, look at that skill's modifier on your sheet and ask yourself whether it is high enough to be worth it.</u>",
           "You can always rest in rooms where you see a warm, lit fireplace, or where something <i>reminds you of home</i>: you recover <b>1d6 mental health points</b>, but the fireplace is spent. Its flames turn from a warm orange to the cold blue of every other fire in the dungeon.",
           "Try writing:",
           "<kbd>examine the hound's body</kbd> — Medicine check",
@@ -750,7 +759,7 @@
     const ABILITA_TUTTE = [["Furtività", "Agilità"], ["Indagare", "Mente"], ["Medicina", "Mente"], ["Persuasione", "Carisma"], ["Intimidire", "Carisma"],
       ["Percezione", "Corpo"], ["Atletica", "Lotta"], ["Acrobazia", "Agilità"], ["Arcano", "Mente"], ["Misticismo", "Mente"]];
     const NEM_BASE = { stat: Object.fromEntries(ATTR.map(a => [a, 10])), dadoVita: 6, ca: 10 };
-    const PROB_PRESA = 0.35;   /* probabilità per turno del Mastino, finché la presa non è stata usata */
+    const PROB_PRESA = 0.6;    /* probabilità dopo un attacco del Mastino andato a segno, finché la presa non è stata usata */
     const SCARTO_AGILE = 4;    /* senza scudo: se il Mastino resta sotto la CA di almeno 4 punti, la schivata è "agile" */
     const PAUSA = 900;
 
@@ -781,6 +790,7 @@
     const Musica = (() => {
       const a = new Audio("audio/sala_addestramento.mp3");
       a.loop = true; a.preload = "none";
+      a.addEventListener("error", () => console.warn("Musica dello scontro non trovata:", a.src));
       const VOL = 0.7; /* volume massimo del brano; il cursore lo scala */
       let attiva = false, timer = null;
       const spento = () => Volume.muto || Volume.livello === 0;
@@ -956,7 +966,7 @@
         b.type = "button"; b.textContent = s.testo;
         b.addEventListener("click", () => {
           $("azioni").querySelectorAll("button").forEach(x => x.disabled = true);
-          fuori = true; try { s.fn(); } finally { fuori = false; }
+          s.fn();
         });
         return b;
       }));
@@ -1060,8 +1070,7 @@
       if (fase !== "scontro") return;
       if (primo === "nem") round++;
       turno(`${t.round(round)} — ${t.suo}`);
-      if (!nem.presaUsata && Math.random() < PROB_PRESA) presa();
-      else attaccoNemico();
+      attaccoNemico();
     }
     /* Azione speciale: una volta per partita, a caso. Prova contrapposta di Lotta; se vince il Mastino, +1d4 danni. */
     function presa() {
@@ -1083,9 +1092,7 @@
         disegna();
         stato(true, t.attesaNem);
         if (pg.pv <= 0) return setTimeout(sconfitta, PAUSA / 2);
-        log(t.dopoPresa);
-        turno(`${t.round(round)} — ${t.suo}`);
-        setTimeout(attaccoNemico, PAUSA);
+        setTimeout(turnoPg, PAUSA * 0.7);
       } }]);
     }
     function attaccoNemico() {
@@ -1106,6 +1113,8 @@
       voce(`<p>${testo}${tiri}</p>`, "riquadro nemico");
       disegna();
       if (pg.pv <= 0) return setTimeout(sconfitta, PAUSA / 2);
+      /* Presa: solo se l'attacco è andato a segno, una volta per scontro */
+      if (ok && !nem.presaUsata && Math.random() < PROB_PRESA) return setTimeout(presa, PAUSA * 0.7);
       setTimeout(turnoPg, PAUSA * 0.7);
     }
 
@@ -1134,7 +1143,7 @@
     /* Riquadro della prova come in gioco.html: titolo, azione, difficoltà, dado, modificatore; poi Lancia / Lascia perdere */
     function proponiProva(id) {
       if (prove[id] !== null) { log(t.provaFatta, "sis"); return; }
-      const p = t.prove[id], m = valAbilita(p.abilita);
+      const p = t.prove[id], m = valAbilita(p.abilita), tendina = tendinaAperta;
       riquadroProva(t.provaTit(t.ab[p.abilita], p.cd), p.intro, [`CD ${p.cd}`, "d20", `${t.ab[p.abilita]} ${fmt(m)}`]);
       scelte([
         { testo: t.lancia(p.cd), fn: () => {
@@ -1147,6 +1156,7 @@
             mentale = `<p>${scegli(t.fitte)}</p><p><span class="tiro">${t.dannoMentale(prima, pg.sm)}</span></p>`;
             scuoti("schedaPg"); disegna();
           }
+          if (tendina) tendina.classList.add(ok ? "t-ok" : "t-ko");
           voce(`<p class="esito-prova"><span class="esito">${ok ? t.successo : t.fallimento}.</span><span class="tiro">${t.tiroProva(tot, p.cd)}</span></p><p>${ok ? p.ok : p.ko}</p>${mentale}`, "riquadro " + (ok ? "ok" : "ko"));
           dopoEsplorazione();
         } },

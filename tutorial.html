@@ -93,6 +93,8 @@
     details.voce.giocatore > .corpo { margin-top: 1.25rem; }
     details.voce.giocatore > .corpo > .voce:last-child { margin-bottom: 0; }
     /* tendina di un'azione con prova di abilità: verde se superata, rossa se fallita */
+    /* tendina senza prova di abilità: azzurra, come in gioco.html */
+    details.voce.giocatore { padding: 0.75rem 1rem; border: 1px solid var(--tip-line); border-radius: 0.5rem; background: var(--tip-bg); }
     details.voce.giocatore.t-ok, details.voce.giocatore.t-ko { padding: 0.75rem 1rem; border: 1px solid; border-radius: 0.5rem; }
     details.voce.giocatore.t-ok { background: var(--ok-bg); border-color: var(--ok-line); }
     details.voce.giocatore.t-ko { background: var(--ko-bg); border-color: var(--ko-line); }
@@ -297,7 +299,7 @@
         },
         nemNome: "Mastino Infernale", nemSotto: "Belva infernale · Livello 1",
         nemVelata: "Scheda sconosciuta. Ne scoprirai i segreti solo quando la belva sarà a terra.",
-        cond: ["Ringhia furioso: sembra ancora del tutto integro.", "È ferito: dal pelo strappato cadono braci.", "Barcolla, il respiro rotto: le fiamme sulla groppa si affievoliscono.", "Giace immobile nel cerchio di gesso."],
+        cond: ["Ringhia furioso: sembra ancora del tutto integro.", "È ferito: dal pelo strappato cadono braci.", "Barcolla, il respiro rotto: le fiamme sulla groppa si affievoliscono.", ""],
         morso: "Morso", zampata: "Zampata", presaNome: "Presa (speciale)",
         attMorso: "1d4 + Lotta · perforante", attZampata: "1d4 + Lotta · tagliente", attPresa: "una volta per scontro, a sorpresa · prova contrapposta di Lotta · +1d4 danni",
 
@@ -432,7 +434,7 @@
         },
         nemNome: "Hellhound", nemSotto: "Infernal beast · Level 1",
         nemVelata: "Unknown sheet. You will learn its secrets only once the beast is down.",
-        cond: ["Snarling with fury: it looks completely unharmed.", "It is wounded: embers fall from its torn hide.", "It staggers, breath ragged: the flames on its back are dying down.", "It lies still in the chalk circle."],
+        cond: ["Snarling with fury: it looks completely unharmed.", "It is wounded: embers fall from its torn hide.", "It staggers, breath ragged: the flames on its back are dying down.", ""],
         morso: "Bite", zampata: "Claw", presaNome: "Grab (special)",
         attMorso: "1d4 + Might · piercing", attZampata: "1d4 + Might · slashing", attPresa: "once per fight, by surprise · opposed Might check · +1d4 damage",
 
@@ -897,10 +899,9 @@
       let cond = "";
       if (nem.pvMax) { const r = nem.pv / nem.pvMax; cond = t.cond[r <= 0 ? 3 : r > 0.66 ? 0 : r > 0.33 ? 1 : 2]; }
       $("condNem").textContent = cond;
-      const smMax = 10 + (nem.tiroVita || 0) + mod(NEM_BASE.stat.Spirito);
       $("vitaliNem").innerHTML = morto
-        ? riga(t.puntiSalute, `0 / ${nem.pvMax}`) + riga(t.puntiMentali, `${smMax} / ${smMax}`) + riga(t.classeArmaturaG, NEM_BASE.ca)
-        : riga(t.puntiSalute, ig) + riga(t.puntiMentali, ig) + riga(t.classeArmaturaG, ig);
+        ? riga(t.puntiSalute, `0 / ${nem.pvMax}`) + riga(t.classeArmaturaG, NEM_BASE.ca)
+        : riga(t.puntiSalute, ig) + riga(t.classeArmaturaG, ig);
       const velo = `<p class="vuoto">${t.nemVelataStat}</p>`;
       if (!morto) { $("statNem").innerHTML = velo; $("abilNem").innerHTML = velo; $("equipNem").innerHTML = velo; return; }
       $("statNem").innerHTML = `<dl>${ATTR.map(a => riga(t.attr[a], `${NEM_BASE.stat[a]} (${fmt(mod(NEM_BASE.stat[a]))})`)).join("")}</dl>`;
@@ -1285,7 +1286,7 @@
         if (c(tx, "medicina")) return proponiProva("medicina");
         if (c(tx, "percezione") || (c(tx, "percVerbo") && !c(tx, "mastino"))) return proponiProva("percezione");
         if (c(tx, "mastino") && (c(tx, "guarda") || c(tx, "indaga"))) return proponiProva("medicina");
-        if (c(tx, "attacca")) { log(t.cond[3], "sis"); return suggerisci(daFare().map(k => t.cosaResta[k]).join(", ")); }
+        if (c(tx, "attacca")) return suggerisci(daFare().map(k => t.cosaResta[k]).join(", "));
         log(t.nonCapisco, "sis");
         return suggerisci(daFare().map(k => t.cosaResta[k]).join(", "));
       }

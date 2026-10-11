@@ -10,14 +10,14 @@
       --bg: #f5f7fa; --text: #1d2733; --muted: #5b6675; --line: #c9d1db;
       --accent: #2f6fed; --accent-text: #ffffff; --errore: #c0392b;
       --tip-bg: #e9f0fd; --tip-line: #b4c9f2;
-      --rosso-bg: #fbeaea; --rosso-line: #e6b3b3; --blu-bg: #e9f0fd; --blu-line: #b4c9f2; --verde-bg: #e7f5ec; --verde-line: #b0dbbf;
+      --rosso-bg: #fbeaea; --rosso-line: #e6b3b3; --blu-bg: #e9f0fd; --blu-line: #b4c9f2; --verde-bg: #e7f5ec; --verde-line: #b0dbbf; --giallo-bg: #fdf6dc; --giallo-line: #e5cf7a;
     }
     @media (prefers-color-scheme: dark) {
       :root {
         --bg: #161b22; --text: #e8edf3; --muted: #9aa5b4; --line: #2f3844;
         --accent: #5b92ff; --accent-text: #0d1117; --errore: #ff7b6b;
         --tip-bg: #1e2a3f; --tip-line: #38527d;
-        --rosso-bg: #3a2226; --rosso-line: #7d444b; --blu-bg: #1e2a3f; --blu-line: #38527d; --verde-bg: #1f3328; --verde-line: #3f6b4f;
+        --rosso-bg: #3a2226; --rosso-line: #7d444b; --blu-bg: #1e2a3f; --blu-line: #38527d; --verde-bg: #1f3328; --verde-line: #3f6b4f; --giallo-bg: #352f1a; --giallo-line: #8a7535;
       }
     }
     * { box-sizing: border-box; }
@@ -31,11 +31,26 @@
 
     .pagina { margin-top: 3rem; display: grid; grid-template-columns: 1.3fr 1fr; align-items: start; }
     #pers { padding-right: 2.5rem; }
+    /* Sapiente e Accolito: terza colonna con gli incantesimi, a destra dell'equipaggiamento */
+    body:has(.pagina.magia) main { max-width: 92rem; }
+    .pagina.magia { grid-template-columns: 1.3fr 1fr 1fr; }
+    #incantesimi[hidden] { display: none; }
+    #incantesimi { padding-left: 2.5rem; border-left: 1px solid transparent; border-image: linear-gradient(to bottom, transparent, var(--line) 8%, var(--line) 92%, transparent) 1; }
+    .pagina.magia #equip { padding-right: 2.5rem; }
+    .nota-riposo { margin: 0.9rem 0 0; padding: 0.6rem 0.8rem; border: 1px dashed var(--line); border-radius: 0.5rem; color: var(--muted); font-size: 0.9rem; font-style: italic; }
+    @media (min-width: 901px) and (max-width: 1250px) {
+      .pagina.magia { grid-template-columns: 1.3fr 1fr; }
+      .pagina.magia #equip { padding-right: 0; }
+      #incantesimi { grid-column: 1 / -1; padding: 2rem 0 0; margin-top: 2rem; border-left: 0; border-image: none; border-top: 1px solid var(--line); }
+    }
     #equip { padding-left: 2.5rem; border-left: 1px solid transparent; border-image: linear-gradient(to bottom, transparent, var(--line) 8%, var(--line) 92%, transparent) 1; }
     @media (max-width: 900px) {
       .pagina { grid-template-columns: 1fr; }
       #pers { padding-right: 0; }
       #equip { padding: 2rem 0 0; margin-top: 2rem; border-left: 0; border-image: none; border-top: 1px solid var(--line); }
+      .pagina.magia { grid-template-columns: 1fr; }
+      .pagina.magia #equip { padding-right: 0; }
+      #incantesimi { padding: 2rem 0 0; margin-top: 2rem; border-left: 0; border-image: none; border-top: 1px solid var(--line); }
     }
     h4 { font-size: 1.05rem; margin: 1.5rem 0 0.3rem; font-weight: 600; }
     .riga { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem 3rem; max-width: 46rem; margin: 0 auto 1.75rem; text-align: center; }
@@ -78,23 +93,25 @@
     .galleria input:checked + span { opacity: 1; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent); }
     .galleria input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 3px; }
     #classi, #razze { position: relative; }
-    .tip { display: none; position: absolute; left: 0; right: 0; top: 100%; z-index: 5; margin-top: 0.4rem; padding: 0.75rem 1rem; background: var(--tip-bg); border: 1px solid var(--tip-line); border-radius: 0.5rem; box-shadow: 0 6px 18px rgba(0,0,0,0.12); text-align: left; font-size: 0.9rem; line-height: 1.45; color: var(--text); }
-    #abilita label, #dotazione label, #armi label, #armature label, #scudi label { position: relative; }
+    .tip { display: none; position: absolute; left: 0; right: 0; top: 100%; z-index: 5; margin-top: 0.25rem; padding: 0.45rem 0.65rem; background: var(--tip-bg); border: 1px solid var(--tip-line); border-radius: 0.4rem; box-shadow: 0 4px 12px rgba(0,0,0,0.12); text-align: left; font-size: 0.8rem; line-height: 1.35; color: var(--text); }
+    #abilita label, #dotazione label, #armi label, #armature label, #scudi label, #lista-incantesimi label { position: relative; }
     .tip-riga.sola { border: 0; margin: 0; padding: 0; }
-    .tip .tit { display: block; font-weight: 600; margin: 0.15rem 0 0.2rem; }
-    .tip .nota-mani { display: block; margin-top: 0.5rem; font-style: italic; color: var(--muted); }
-    .tip-riga { display: block; max-width: 15rem; font-style: normal; padding-bottom: 0.5rem; margin-bottom: 0.6rem; border-bottom: 1px solid var(--tip-line); }
-    .tip-riga i { display: flex; justify-content: space-between; gap: 1rem; font-style: normal; font-size: 0.9rem; padding: 0.1rem 0; }
+    .tip .tit { display: block; font-weight: 600; margin: 0.1rem 0; }
+    .tip .nota-mani { display: block; margin-top: 0.3rem; font-style: italic; color: var(--muted); }
+    .tip-riga { display: block; max-width: 13rem; font-style: normal; padding-bottom: 0.3rem; margin-bottom: 0.35rem; border-bottom: 1px solid var(--tip-line); }
+    .tip-riga i { display: flex; justify-content: space-between; gap: 1rem; font-style: normal; font-size: 0.8rem; padding: 0; }
     .tip-riga b:first-child { font-weight: 400; color: var(--muted); }
     .tip-riga b:last-child { font-weight: 600; }
-    .opzioni small.tip { white-space: normal; color: var(--text); font-size: 0.9rem; }
+    .opzioni small.tip { white-space: normal; color: var(--text); font-size: 0.8rem; }
     #classi label:hover .tip, #classi label:has(input:focus-visible) .tip,
     #razze label:hover .tip, #razze label:has(input:focus-visible) .tip,
     #armi label:hover .tip, #armi label:has(input:focus-visible) .tip,
     #armature label:hover .tip, #armature label:has(input:focus-visible) .tip,
     #scudi label:hover .tip, #scudi label:has(input:focus-visible) .tip,
     #abilita label:hover .tip, #abilita label:has(input:focus-visible) .tip,
-    #dotazione label:hover .tip, #dotazione label:has(input:focus-visible) .tip { display: block; }
+    #dotazione label:hover .tip, #dotazione label:has(input:focus-visible) .tip,
+    #lista-incantesimi label:hover .tip, #lista-incantesimi label:has(input:focus-visible) .tip { display: block; }
+    .tip .effetto { display: block; margin-top: 0.3rem; font-weight: 600; }
     .punti { color: var(--muted); margin: 0 0 0.75rem; }
     .punti strong { color: var(--text); font-size: 1.25rem; }
     .punti.esauriti strong { color: var(--accent); }
@@ -130,6 +147,8 @@
     .tonda.rosso { background: var(--rosso-bg); border-color: var(--rosso-line); }
     .tonda.blu { background: var(--blu-bg); border-color: var(--blu-line); }
     .tonda.verde { background: var(--verde-bg); border-color: var(--verde-line); }
+    .tonda.giallo { background: var(--giallo-bg); border-color: var(--giallo-line); }
+    .tonda[hidden] { display: none; }
     .fine { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--line); text-align: center; }
     #esito { min-height: 1.5rem; margin: 0.75rem 0 0; }
     #esito.errore { color: var(--errore); }
@@ -195,6 +214,13 @@
           <div class="opzioni" id="dotazione" role="group" aria-labelledby="h-dotazione"></div>
 
           </section>
+
+          <section id="incantesimi" aria-labelledby="t-incantesimi" hidden>
+            <h3 id="t-incantesimi" style="margin-top:0" data-t="incantesimi">Incantesimi</h3>
+            <p class="guida" style="margin:0 0 0.75rem" data-t="guidaIncantesimi">Scegline quattro.</p>
+            <div class="opzioni" id="lista-incantesimi" role="group" aria-labelledby="t-incantesimi"></div>
+            <p class="nota-riposo" data-t="notaRiposo"></p>
+          </section>
         </div>
 
       <div class="tonde">
@@ -202,6 +228,7 @@
         <div class="tonda rosso"><b data-t="saluteFisica">Salute fisica</b><span class="num" id="sf-v">–</span><small id="sf-f"></small></div>
         <div class="tonda blu"><b data-t="saluteMentale">Salute mentale</b><span class="num" id="sm-v">–</span><small id="sm-f"></small></div>
         <div class="tonda verde"><b data-t="classeArmatura">Classe armatura</b><span class="num" id="ca-v">–</span><small id="ca-f"></small></div>
+        <div class="tonda giallo" id="mana-box" hidden><b data-t="mana">Mana</b><span class="num" id="mana-v">–</span><small id="mana-f"></small></div>
       </div>
 
       <div class="fine">
@@ -240,7 +267,10 @@
         manca: { razza: "la razza", classe: "la classe", tiro: "il tiro dei punti vita", punti: (n) => `${n} punti attributo da distribuire`, abilita: (n) => `${n} abilità`, arma: "un'arma", armatura: "un'armatura", ritratto: "il ritratto", dot: (n) => `${n} ${n === 1 ? "oggetto" : "oggetti"} di dotazione` },
         ancora: "Ancora da fare: ", pronto: (n) => `${n} è pronto a entrare nel dungeon.`,
         errore: "Salvataggio non riuscito: prova con un'immagine più piccola.", nessunaImmagine: (r, c) => `Nessuna immagine per ${r} ${c}.`,
-        scegliRitratto: "Scegli il tuo ritratto.", ritrattoN: (n) => `Ritratto ${n}`
+        scegliRitratto: "Scegli il tuo ritratto.", ritrattoN: (n) => `Ritratto ${n}`,
+        incantesimi: "Incantesimi", guidaIncantesimi: "Scegline quattro.", mana: "Mana", modAttr: (a) => `mod. ${a}`,
+        notaRiposo: "Gli incantesimi scelti si potranno cambiare quando ti riposi.",
+        costo: "Costo", costoMana: (n) => `${n} Mana`, mancaInc: (n) => `${n} ${n === 1 ? "incantesimo" : "incantesimi"}`
       },
       en: {
         titoloPagina: "Character creation", titolo: "Character creation", nome: "Name", immagine: "Character portrait",
@@ -265,7 +295,10 @@
         manca: { razza: "the race", classe: "the class", tiro: "the hit point roll", punti: (n) => `${n} attribute points to assign`, abilita: (n) => `${n} ${n === 1 ? "skill" : "skills"}`, arma: "a weapon", armatura: "an armor", ritratto: "the portrait", dot: (n) => `${n} gear ${n === 1 ? "item" : "items"}` },
         ancora: "Still to do: ", pronto: (n) => `${n} is ready to enter the dungeon.`,
         errore: "Saving failed: try a smaller image.", nessunaImmagine: (r, c) => `No image for ${r} ${c}.`,
-        scegliRitratto: "Choose your portrait.", ritrattoN: (n) => `Portrait ${n}`
+        scegliRitratto: "Choose your portrait.", ritrattoN: (n) => `Portrait ${n}`,
+        incantesimi: "Spells", guidaIncantesimi: "Choose four.", mana: "Mana", modAttr: (a) => `${a} mod.`,
+        notaRiposo: "You will be able to change your chosen spells when you rest.",
+        costo: "Cost", costoMana: (n) => `${n} Mana`, mancaInc: (n) => `${n} ${n === 1 ? "spell" : "spells"}`
       }
     };
     const t = T[LINGUA];
@@ -372,6 +405,94 @@
       { nome: "Torcia", usi: 5, impugnabile: true },
       { nome: "Piede di porco" }
     ];
+
+    /* ---------- Incantesimi (Sapiente e Accolito) ----------
+       Mana = 10 + modificatore di Mente. Se ne scelgono 4; si potranno cambiare riposando (meccanica non ancora implementata). */
+    const MANA_BASE = 10, MAX_INCANTESIMI = 4;
+    const INCANTESIMI = {
+      Sapiente: [
+        { id: "luce", costo: 1, nome: { it: "Luce", en: "Light" },
+          desc: { it: "Sussurri un'antica sillaba dimenticata. Dal palmo scorre un bagliore freddo che si condensa in una sfera fluttuante; orbita attorno a te come un piccolo occhio spettrale, squarciando la tenebra al tuo comando.",
+                  en: "You whisper an ancient, forgotten syllable. A cold glow flows from your palm and condenses into a floating sphere; it orbits you like a small spectral eye, tearing through the darkness at your command." } },
+        { id: "dardo_ghiaccio", costo: 1, nome: { it: "Dardo di Ghiaccio", en: "Ice Bolt" },
+          desc: { it: "Punti l'indice tremante verso il bersaglio. L'aria si congela all'istante formando una spina di ghiaccio nero che sfreccia nel buio, implacabile, per trafiggere le carni nemiche.",
+                  en: "You point a trembling finger at the target. The air freezes instantly into a spike of black ice that streaks through the dark, relentless, to pierce enemy flesh." },
+          effetto: { it: "1d8 Danni", en: "1d8 Damage" } },
+        { id: "scudo", costo: 1, nome: { it: "Scudo", en: "Shield" },
+          desc: { it: "Invochi una barriera d'energia abissale. Un velo traslucido dalle sfumature bluastre si erge a protezione, deflettendo i colpi imminenti.",
+                  en: "You invoke a barrier of abyssal energy. A translucent veil with bluish hues rises to protect you, deflecting incoming blows." },
+          effetto: { it: "+2 Classe Armatura per 2 turni", en: "+2 Armor Class for 2 turns" } },
+        { id: "stop", costo: 2, nome: { it: "Stop", en: "Stop" },
+          desc: { it: "Spalanchi le mani verso il vuoto. Il battito del mondo si arresta: il sangue cessa di scorrere e le bestie si pietrificano a metà del passo. Hai strappato un istante al destino.",
+                  en: "You fling your hands open towards the void. The heartbeat of the world stops: blood ceases to flow and beasts turn to stone mid-stride. You have snatched a moment from fate." },
+          effetto: { it: "Nemico bloccato per 2 turni", en: "Enemy frozen for 2 turns" } },
+        { id: "invulnerabilita", costo: 2, nome: { it: "Invulnerabilità", en: "Invulnerability" },
+          desc: { it: "Ti avvolgi in un'aura di assoluto rifiuto della morte. Ogni lama scivola via, ogni stretta fallisce; per un breve attimo sei una fortezza inespugnabile.",
+                  en: "You wrap yourself in an aura of utter refusal of death. Every blade slides away, every grip fails; for a brief moment you are an impregnable fortress." },
+          effetto: { it: "Immunità ai danni e successi automatici in Lotta/Corpo per 2 turni", en: "Immunity to damage and automatic success on Might/Body for 2 turns" } },
+        { id: "scopri_carte", costo: 2, nome: { it: "Scopri Carte", en: "Reveal Cards" },
+          desc: { it: "Punti lo sguardo sulla creatura di fronte a te. La sua mente si spalanca come un tomo proibito: la sua essenza, le sue ferite e i suoi punti deboli ti vengono rivelati.",
+                  en: "You fix your gaze on the creature before you. Its mind opens like a forbidden tome: its essence, its wounds and its weak points are revealed to you." },
+          effetto: { it: "Apre la scheda del nemico", en: "Reveals the enemy's sheet" } },
+        { id: "arma_migliorata", costo: 3, nome: { it: "Arma Migliorata", en: "Empowered Weapon" },
+          desc: { it: "Tracci una runa di rafforzamento sull'acciaio. La lama o il martello risplendono di un'energia arcanica, rendendo ogni fendente spietato e devastante.",
+                  en: "You trace a rune of strengthening on the steel. Blade or hammer blazes with arcane energy, making every blow merciless and devastating." },
+          effetto: { it: "Aumenta il dado danno per 3 turni: 1d6→1d8, 1d8→1d10, 1d10→1d12", en: "Increases the damage die for 3 turns: 1d6→1d8, 1d8→1d10, 1d10→1d12" } }
+      ],
+      Accolito: [
+        { id: "luce", costo: 1, nome: { it: "Luce", en: "Light" },
+          desc: { it: "Una sommessa preghiera stringe il buio. Un orbe di pura luminescenza sacra nasce dalla tua mano e danza nell'aria, pronto ad accendersi o sopirsi ad ogni tuo cenno.",
+                  en: "A soft prayer closes around the dark. An orb of pure sacred luminescence is born from your hand and dances in the air, ready to brighten or dim at your every gesture." } },
+        { id: "dardo_luce", costo: 1, nome: { it: "Dardo di Luce", en: "Bolt of Light" },
+          desc: { it: "Punti il dito contro l'empietà. Un raggio di luce sacra, cieco e accecante, sfreccia dal tuo corpo lasciando una scia di cenere nell'aria.",
+                  en: "You point your finger at the ungodly. A ray of sacred light, blind and blinding, streaks from your body, leaving a trail of ash in the air." },
+          effetto: { it: "1d8 Danni", en: "1d8 Damage" } },
+        { id: "scudo", costo: 1, nome: { it: "Scudo", en: "Shield" },
+          desc: { it: "Invochi la benedizione dei Cieli. Uno scudo trasparente, candido e benedetto, si frappone tra te e il male imminente.",
+                  en: "You invoke the blessing of the Heavens. A transparent shield, pure white and blessed, comes between you and the looming evil." },
+          effetto: { it: "+2 Classe Armatura per 2 turni", en: "+2 Armor Class for 2 turns" } },
+        { id: "folgorazione", costo: 2, nome: { it: "Folgorazione", en: "Smite" },
+          desc: { it: "Scateni l'ira divina. Un fulmine d'argento trafigge la carne dell'avversario, paralizzandolo in un getto di fumo e spasmi involontari.",
+                  en: "You unleash divine wrath. A silver lightning bolt pierces the enemy's flesh, paralysing it in a burst of smoke and involuntary spasms." },
+          effetto: { it: "Paralisi per 2 turni", en: "Paralysis for 2 turns" } },
+        { id: "pelle_pietra", costo: 2, nome: { it: "Pelle di Pietra", en: "Stoneskin" },
+          desc: { it: "La grazia divina indurisce i tuoi tessuti. La pelle assume la grana e la durezza della roccia antica, vanificando tagli e stoccate.",
+                  en: "Divine grace hardens your flesh. Your skin takes on the grain and hardness of ancient rock, thwarting cuts and thrusts." },
+          effetto: { it: "Resistenza ai danni Perforanti e Taglienti per 2 turni", en: "Resistance to Piercing and Slashing damage for 2 turns" } },
+        { id: "accecare", costo: 2, nome: { it: "Accecare", en: "Blind" },
+          desc: { it: "Avanzi le mani recitando una condanna. Un lampo di gloria divina esplode negli occhi della creatura, avvolgendola in un'oscurità totale.",
+                  en: "You stretch out your hands, reciting a condemnation. A flash of divine glory bursts in the creature's eyes, wrapping it in total darkness." },
+          effetto: { it: "50% di possibilità che il nemico manchi per 2 turni", en: "50% chance the enemy misses for 2 turns" } },
+        { id: "aumento_potenza", costo: 3, nome: { it: "Aumento di Potenza", en: "Surge of Power" },
+          desc: { it: "Il fervore della fede inonda le tue vene. Un'ondata di vigore divino pervade il tuo corpo, elevando la tua forza e il tuo spirito oltre i limiti umani.",
+                  en: "The fervour of faith floods your veins. A wave of divine vigour courses through your body, raising your strength and spirit beyond human limits." },
+          effetto: { it: "+2 a tutte le Caratteristiche per 3 turni", en: "+2 to all Attributes for 3 turns" } }
+      ]
+    };
+    /* attributo da cui dipende il mana: Mente per il Sapiente, Spirito per l'Accolito */
+    const ATTR_MANA = { Sapiente: "Mente", Accolito: "Spirito" };
+    const usaMagia = () => !!(classe && INCANTESIMI[classe]);
+    const incantesimiScelti = () => usaMagia() ? [...document.querySelectorAll('input[name="incantesimo"]:checked')].map(c => INCANTESIMI[classe][c.value]) : [];
+
+    let classeIncantesimi = null; /* classe per cui è stata costruita la lista: cambiando classe si riparte da zero */
+    function disegnaIncantesimi() {
+      const sez = $("incantesimi"), magia = usaMagia();
+      sez.hidden = !magia;
+      document.querySelector(".pagina").classList.toggle("magia", magia);
+      if (classeIncantesimi === classe) return;
+      classeIncantesimi = classe;
+      const box = $("lista-incantesimi");
+      box.replaceChildren();
+      if (!magia) return;
+      INCANTESIMI[classe].forEach((inc, i) => {
+        const l = document.createElement("label");
+        l.innerHTML = `<input type="checkbox" name="incantesimo" value="${i}" aria-describedby="tip-inc-${i}"><span><b>${L(inc.nome)}</b></span>` +
+          `<small class="tip" id="tip-inc-${i}" role="tooltip"><em class="tip-riga sola"><i><b>${t.costo}</b><b>${t.costoMana(inc.costo)}</b></i></em>${L(inc.desc)}` +
+          (inc.effetto ? `<em class="effetto">[${L(inc.effetto)}]</em>` : "") + `</small>`;
+        l.querySelector("input").addEventListener("change", aggiorna);
+        box.appendChild(l);
+      });
+    }
 
     let classe = null, tiro = null, razza = null;
     let bonus = NOMI.map(() => 0);
@@ -548,6 +669,15 @@
       $("ca-v").textContent = arm ? CA_BASE + arm.ca + (sc ? SCUDO.ca : 0) : "–";
       $("ca-f").textContent = arm ? `${CA_BASE} + ${arm.ca}${sc ? " + " + SCUDO.ca : ""}` : t.scegliArmatura;
 
+      /* mana: solo Sapiente e Accolito */
+      disegnaIncantesimi();
+      const magia = usaMagia(), attrMana = ATTR_MANA[classe] || "Mente", modMe = modDi(attrMana);
+      $("mana-box").hidden = !magia;
+      $("mana-v").textContent = MANA_BASE + modMe;
+      $("mana-f").textContent = `${MANA_BASE} ${segno(modMe)} (${t.modAttr(N("attributi", attrMana))})`;
+      const nInc = incantesimiScelti().length;
+      document.querySelectorAll('input[name="incantesimo"]').forEach(c => { c.disabled = !c.checked && nInc >= MAX_INCANTESIMI; });
+
       aggiornaImmagine();
 
       const m = t.manca, manca = [];
@@ -559,6 +689,7 @@
       if (!arma) manca.push(m.arma);
       if (!arm) manca.push(m.armatura);
       if (dot.length < MAX_DOTAZIONE) manca.push(m.dot(MAX_DOTAZIONE - dot.length));
+      if (magia && nInc < MAX_INCANTESIMI) manca.push(t.mancaInc(MAX_INCANTESIMI - nInc));
       if (ritrattiN > 0 && !immagine) manca.push(m.ritratto);
       $("crea").disabled = manca.length > 0;
       $("avviso").textContent = manca.length ? t.ancora + manca.join(", ") + "." : "";
@@ -635,7 +766,8 @@
       e.preventDefault();
       const arma = armaScelta(), arm = armaturaScelta(), dot = dotazioneScelta(), sc = scudoScelto();
       if (!razza || !classe || tiro === null || puntiTotali() - spesi(-1) !== 0 ||
-          abilitaScelte().length !== MAX_ABILITA || !arma || !arm || dot.length !== MAX_DOTAZIONE || (ritrattiN > 0 && !immagine)) return;
+          abilitaScelte().length !== MAX_ABILITA || !arma || !arm || dot.length !== MAX_DOTAZIONE || (ritrattiN > 0 && !immagine) ||
+          (usaMagia() && incantesimiScelti().length !== MAX_INCANTESIMI)) return;
 
       const base = Object.fromEntries(NOMI.map((n, i) => [n, totale(i)]));
       const stat = { ...base }; /* l'arma non modifica più la Lotta: dà il dado di danno */
@@ -649,6 +781,8 @@
         puntiVita: PV_BASE + tiro + mod(stat.Corpo),
         saluteMentale: PV_BASE + tiro + mod(stat.Spirito),
         classeArmatura: CA_BASE + arm.ca + (sc ? SCUDO.ca : 0), /* comprende lo scudo, se scelto */
+        mana: usaMagia() ? MANA_BASE + mod(stat[ATTR_MANA[classe]]) : null, /* solo Sapiente (Mente) e Accolito (Spirito) */
+        incantesimi: incantesimiScelti().map(inc => ({ id: inc.id, nome: inc.nome, costo: inc.costo, desc: inc.desc, effetto: inc.effetto || null })),
         abilita: abilitaScelte().map(([n, a]) => ({ nome: n, attributo: a, valore: valoreAbilita(a) + LIVELLO })),
         equipaggiamento: {
           arma: arma.nome, armaDanno: arma.danno, armaTipoDanno: arma.tipo, armaMani: arma.mani,

@@ -19,6 +19,7 @@
       --ko-line: #dcaaaa;
       --tip-bg: #e9f0fd;
       --tip-line: #b4c9f2;
+      --ok: #23824a; --ko: #c0392b;
     }
     @media (prefers-color-scheme: dark) {
       :root {
@@ -33,6 +34,7 @@
         --ko-line: #7b4549;
         --tip-bg: #1e2a3f;
         --tip-line: #38527d;
+        --ok: #6fd39a; --ko: #ff7b6b;
       }
     }
     * { box-sizing: border-box; }
@@ -90,6 +92,8 @@
     }
     #zaino .mini:hover, #equipAzioni .mini:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
     .scheda small.malus { color: var(--muted); font-size: 0.85rem; }
+    .colpito { animation: scuoti 0.35s ease-in-out; }
+    @keyframes scuoti { 0%,100% { transform: none; } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
 
     /* ---------- Gioco ---------- */
     .gioco { display: flex; flex-direction: column; min-height: 0; }
@@ -126,7 +130,28 @@
     .voce p { font-size: 1.12rem; line-height: 1.75; margin: 0 0 1.1rem; }
     .voce p:last-child { margin-bottom: 0; }
     .voce h2.luogo { margin: 0 0 0.9rem; font-size: 1.6rem; font-weight: 600; letter-spacing: 0.04em; }
-    .voce img.scena { display: block; width: 100%; height: auto; border-radius: 0.5rem; margin: 0 0 1.5rem; }
+    .voce .cornice { overflow: hidden; border-radius: 0.5rem; margin: 0 0 1.5rem; background: #000; }
+    .voce img.scena { display: block; width: 100%; height: auto; }
+    /* entrando nella grotta: zoom dentro l'ingresso fino al nero; uscendo: zoom indietro fino alla foresta */
+    .voce img.scena.nera, .voce img.scena.esce { transform-origin: 51% 55%; }
+    .voce img.scena.nera { transform: scale(2.6); filter: brightness(0); animation: dentro 2.6s cubic-bezier(0.55, 0, 0.75, 0.45) both; }
+    .voce img.scena.esce { animation: fuori 2.6s cubic-bezier(0.2, 0.6, 0.3, 1) both; }
+    .voce img.scena.subito { animation: none; }
+    @keyframes dentro { from { transform: scale(1); filter: brightness(1); } 55% { filter: brightness(0.45); } to { transform: scale(2.6); filter: brightness(0); } }
+    @keyframes fuori { from { transform: scale(2.6); filter: brightness(0); } 45% { filter: brightness(0.4); } to { transform: scale(1); filter: brightness(1); } }
+    @media (prefers-reduced-motion: reduce) {
+      @keyframes dentro { from { filter: brightness(1); } to { transform: scale(2.6); filter: brightness(0); } }
+      @keyframes fuori { from { filter: brightness(0); } to { filter: brightness(1); } }
+    }
+    #incantesimi .oggetto { margin: 0.45rem 0; font-size: 0.97rem; }
+    #incantesimi .testa { display: flex; align-items: baseline; justify-content: space-between; gap: 0.6rem; }
+    #incantesimi .nome-btn { font: inherit; color: var(--text); background: none; border: 0; padding: 0; cursor: pointer; text-align: left; text-decoration: underline dotted var(--muted); text-underline-offset: 0.25rem; }
+    #incantesimi .costo { color: var(--muted); font-size: 0.88rem; flex: none; }
+    #incantesimi .testa { align-items: center; }
+    #incantesimi .azioni-inc { display: flex; align-items: center; gap: 0.5rem; flex: none; }
+    #incantesimi .mini { font: inherit; font-size: 0.85rem; padding: 0.25rem 0.65rem; border-radius: 0.4rem; cursor: pointer; background: transparent; color: var(--text); border: 1px solid var(--accent); }
+    #incantesimi .mini:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+    #incantesimi .testo { margin: 0.4rem 0 0; padding: 0.6rem 0.8rem; background: var(--tip-bg); border: 1px solid var(--tip-line); border-radius: 0.5rem; font-size: 0.9rem; line-height: 1.5; }
     details.voce.giocatore > summary {
       display: flex; align-items: baseline; gap: 0.6rem; cursor: pointer; list-style: none;
       color: var(--muted); font-style: italic; font-size: 1.12rem; line-height: 1.75;
@@ -137,6 +162,14 @@
     details.voce.giocatore[open] > summary::before { content: "▾"; }
     details.voce.giocatore > .corpo { margin-top: 1.25rem; }
     details.voce.giocatore > .corpo > .voce:last-child { margin-bottom: 0; }
+    /* tendine come nel tutorial: blu di base, verde se contiene una prova superata, rossa se fallita */
+    details.voce.giocatore { padding: 0.75rem 1rem; border: 1px solid var(--tip-line); border-radius: 0.5rem; background: var(--tip-bg); }
+    details.voce.giocatore.t-ok { background: var(--ok-bg); border-color: var(--ok-line); }
+    details.voce.giocatore.t-ko { background: var(--ko-bg); border-color: var(--ko-line); }
+    details.voce.giocatore.t-ok > summary { border-left-color: var(--ok); color: var(--ok); }
+    details.voce.giocatore.t-ko > summary { border-left-color: var(--ko); color: var(--ko); }
+    details.voce.giocatore.t-ok > summary::before { color: var(--ok); }
+    details.voce.giocatore.t-ko > summary::before { color: var(--ko); }
     .voce.prova { padding: 1rem 1.25rem; border: 1px solid var(--accent); border-radius: 0.5rem; background: rgba(91,146,255,0.07); }
     .voce.prova p { margin: 0 0 0.5rem; }
     .voce.prova p.prova-titolo { font-weight: 700; font-size: 1.15rem; color: var(--accent); letter-spacing: 0.03em; }
@@ -201,6 +234,7 @@
         <details class="sez"><summary data-t="abilita">Abilità</summary><dl id="abil"></dl></details>
         <details class="sez"><summary data-t="equipaggiamento">Equipaggiamento</summary><dl id="equip"></dl><div id="equipAzioni"></div></details>
         <details class="sez" id="zainoBox"><summary data-t="zaino">Zaino</summary><div id="zaino"></div></details>
+        <details class="sez" id="incantesimiBox" hidden><summary data-t="incantesimi">Incantesimi</summary><div id="incantesimi"></div></details>
       </details>
     </aside>
 
@@ -267,18 +301,29 @@
             gia: { ok: "Hai già ascoltato con attenzione: non senti altro che il crepitio del camino.", ko: "Hai già ascoltato con attenzione: non senti altro che il crepitio del camino." }, lascia: LASCIA_SALA
           },
           divani: {
-            azione: "Perlustri con cura i divani e il tavolino al centro della sala.", fisso: DIVANI,
-            successo: DIVANI, fallimento: DIVANI,
-            gia: { ok: "Hai già frugato ovunque tra divani e tavolino: non c'è altro da trovare.", ko: "Hai già frugato ovunque tra divani e tavolino: non c'è altro da trovare." }, lascia: LASCIA_SALA
+            azione: "Ti muovi con cautela tra i divani mentre perdi la cognizione del tempo. Tasti la stoffa spessa e sorprendentemente calda, cercando una cucitura allentata, uno strappo o una vecchia macchia di sangue.", fisso: [],
+            successo: ["La suola s'inchioda con un sordo scricchiolio tra il divano e le finestre. Sotto il tuo peso: figurine di legno intagliato, piccoli omini rigidi e scheggiati, null'altro che giocattoli."],
+            fallimento: ["Niente. Il tessuto è intatto e perfetto, un dettaglio che in questo posto ti mette solo addosso una gran paranoia."],
+            gia: { ok: "Hai già frugato ovunque tra divani e tavolino: oltre ai giocattoli di legno non c'è altro da trovare.", ko: "Hai già frugato ovunque tra divani e tavolino: non c'è altro da trovare." }, lascia: LASCIA_SALA
           },
           quadri: {
             azione: "Studi i quadri alle pareti e guardi fuori dalla finestra, cercando qualcosa che non torni.", fisso: QUADRI,
             successo: QUADRI, fallimento: QUADRI,
             gia: { ok: "Hai già riflettuto su quadri e finestra: non ti viene in mente altro.", ko: "Hai già riflettuto su quadri e finestra: non ti viene in mente altro." }, lascia: LASCIA_SALA
           },
-          camino: { fisso: ["Ti avvicini al braciere, dove il fuoco scoppietta vivace. Alzando la testa, ti scontri con gli occhi severi della donna nel dipinto: ti fissano con una rigidità quasi reale. Un brivido ti scorre lungo la schiena, ma ti scuoti, addossando il colpo al gioco delle ombre. Poi, sulla targhetta in bronzo leggi il nome: Regina Adele."] },
+          camino: {
+            azione: "Esamini da vicino il camino e le sculture della sua cornice.", fisso: [],
+            successo: ["Ti avvicini al braciere, attirato dal vivido scoppiettìo del fuoco. Esaminando le sculture incise nella pietra della cornice, noti al centro dei bassorilievi una forma circolare sigillata: sembra uno stemma di famiglia privo di blasone."],
+            fallimento: ["Ti avvicini al fuoco scoppiettante, passando le dita sulla cornice di pietra nel tentativo di decifrarne i dettagli. Le sculture in rilievo sono un groviglio di forme confuse ed erose dal tempo; tra i bassorilievi scorgi un tondo di pietra, ma non riesci a capire se sia un antico stemma o solo un ornamento incompiuto.", "Ti si annebbia la vista e un dolore sordo ti martella alla base del cranio: la frustrazione di non capire ti morde la mente."], fittaNelTesto: true,
+            gia: { ok: "Hai già esaminato il camino: al centro dei bassorilievi c'è quella forma circolare sigillata, uno stemma senza blasone.", ko: "Hai già esaminato il camino, senza notare nulla di particolare." }, lascia: LASCIA_SALA
+          },
+          fiori: { fisso: ["Ti avvicini al tavolino posizionato tra le due poltrone. Il vaso ospita una composizione di fiori dai colori cupi e fin troppo vividi: al tatto i petali risultano freddi e leggermente rigidi."] },
           tavolino: { fisso: ["Passi la mano sul tavolino e ti guardi le dita controluce: neanche un granello di polvere. Sembra quasi che qualcuno pulisca la casa regolarmente. Fai scorrere le dita sotto la superficie, cercando a tentoni un cassetto nascosto, una leva o un meccanismo segreto. Ma tocchi soltanto legno liscio e freddo. Nessuna traccia."] },
-          finestre: { fisso: ["Ti avvicini e pianti le mani sul davanzale. Fuori, diversi globi lunari squarciano il cielo: non sei decisamente a casa. Il giardino sotto di te è pietrificato, immobile e privo di vento, eppure, poco più in là, una fontana continua a zampillare acqua viva. Un contrasto assurdo che ti fa salire i brividi."] },
+          finestre: {
+            azione: "Ti avvicini e pianti le mani sul davanzale. Fuori, diversi globi lunari squarciano il cielo: non sei decisamente a casa. Il giardino sotto di te è pietrificato, immobile e privo di vento, eppure, poco più in là, una fontana continua a zampillare acqua viva. Un contrasto assurdo che ti fa salire i brividi.", fisso: [],
+            successo: [], fallimento: [], /* frasi standard: esito del tiro e, se fallita, la fitta alla mente */
+            gia: { ok: "Hai già guardato fuori dalle finestre: non vuoi rivedere quel cielo.", ko: "Hai già guardato fuori dalle finestre: non vuoi rivedere quel cielo." }, lascia: LASCIA_SALA
+          },
           arazzo_sx: {
             fisso: ["L'arazzo che ricopre la parete sinistra è imponente, tanto da sfiorare il pavimento con le sue pesanti pieghe. Fili scuri e dorati si intrecciano in un raffinato ricamo che raffigura un maestoso cervo dai palchi imponenti, ritratto con l'eleganza di una creatura regale.", "Osservandolo più attentamente, qualcosa attira la tua attenzione: la parte inferiore dell'arazzo appare leggermente più rigonfia rispetto al resto del tessuto, come se dietro quella piega si celasse qualcosa."],
             azione: "Esamini da vicino l'arazzo di sinistra, cercando cosa nasconda la piega rigonfia.",
@@ -300,6 +345,17 @@
           /* PROVVISORIO: guardare la sala da pranzo dalla soglia (diverso da entrarci) */
           pranzo_guarda: { fisso: ["Dalla soglia della porta a doppio battente lanci uno sguardo nella sala accanto. Intravedi il bordo di un lungo tavolo di legno scuro e il bagliore freddo dell'argenteria sotto la luce azzurra delle fiaccole.", "Il resto della stanza si perde nella penombra: per vederla davvero dovresti entrare."] },
           /* prove dichiarate dal giocatore nella sala da conversazione («faccio una prova di percezione») */
+          pranzo_percezione: {
+            fisso: [],
+            azione: "Avanzi con cautela tra il tavolo e le finestre, percependo un'anomalia nell'aria. Il camino accoglie un fuoco che danza vivido, eppure non ne proviene alcun crepitio: brucia in un silenzio innaturale. Fuori, oltre i vetri, la vista del giardino si ripete in modo inquietante, identica a quella della stanza appena lasciata. Avvicinandoti al focolare, noti lo stemma di famiglia che domina solenne la cornice di pietra e, poco oltre l'angolo a sinistra, una porta chiusa.",
+            /* PROVVISORIO: testi di esito scritti da me */
+            successo: ["Ti fermi e trattieni il fiato. Da dietro la porta chiusa giunge un rumore ben distinguibile: il tintinnio di stoviglie, piatti posati uno sull'altro, il cozzare leggero di posate raccolte in fretta. Qualcuno, dall'altra parte, sta apparecchiando. O sparecchiando."],
+            fallimento: ["Tendi l'orecchio, ma la sala ti restituisce soltanto silenzio. Un silenzio denso, assoluto, che sembra assorbire perfino il suono del tuo respiro e dei tuoi passi sul pavimento. Il fuoco danza muto nel camino, le sedie restano immobili attorno al tavolo e, più a lungo ascolti, più quel nulla ti preme sulle orecchie come acqua profonda."],
+            gia: { ok: "Hai già teso l'orecchio: dalla porta chiusa giunge ancora, a tratti, il tintinnio delle stoviglie.", ko: "Hai già teso l'orecchio: la sala resta immersa nel suo silenzio innaturale." },
+            lascia: "Lasci perdere e ti rimetti in mezzo alla sala."
+          },
+          credenza: { fisso: ["Avanzi tra il tavolo e la credenza, sfiorando la superficie liscia e levigata del legno. Apri i battenti del mobile in cerca di un indizio, ma l'interno custodisce soltanto corredi di casa: tovaglie pregiate, piatti di porcellana e posate disposte con ordine, tutto l'occorrente per apparecchiare una tavola formale."] },
+          pranzo_niente: { fisso: ["Osservi con attenzione, ma non noti nulla che la sala non ti abbia già mostrato."] }, /* PROVVISORIO */
           conv_percezione: {
             fisso: [],
             azione: "Ti fermi in mezzo alla sala e tendi ogni senso, cercando di cogliere anche il più piccolo segno di vita.",
@@ -311,27 +367,81 @@
           conv_indagare: {
             fisso: [],
             azione: "Ti aggiri per la sala con attenzione, deciso a non lasciarti sfuggire alcun dettaglio.",
-            successo: ["Mentre t'inoltri nella sala, la suola s'inchioda con un sordo scricchiolio tra il divano e le finestre. Sotto il tuo peso: figurine di legno intagliato, piccoli omini rigidi e scheggiati, null'altro che giocattoli."],
+            successo: ["La suola s'inchioda con un sordo scricchiolio tra il divano e le finestre. Sotto il tuo peso: figurine di legno intagliato, piccoli omini rigidi e scheggiati, null'altro che giocattoli."],
             fallimento: ["Ti aggiri per la sala in cerca di qualcosa di utile, di indizi, ma vieni rapito dal tepore del bracere che arde allegro, avvicini le mani come a volerti scaldare. Il ricordo di casa ti assale e riprendi la ricerca, di cosa in fondo non lo sai nemmeno tu."],
             gia: { ok: "Hai già frugato la sala da cima a fondo: oltre alle figurine di legno non c'è altro.", ko: "Hai già frugato la sala senza trovare nulla." },
             lascia: "Lasci perdere la ricerca."
-          }
+          },
+          /* PROVVISORIO: dettagli dell'accampamento fuori dal dungeon */
+          foresta_falo: { fisso: ["Ti accovacci accanto al falò e tendi le mani verso le fiamme. Il legno crepita e sputa scintille che salgono verso la volta della grotta, per poi spegnersi nel buio. È l'ultimo calore che sentirai per molto tempo.", "Accanto al fuoco è accatastata altra legna: rami secchi, qualcuno abbastanza dritto e robusto da farne una torcia."] },
+          foresta_lanterna: { fisso: ["La lanterna è posata sulla coperta, accanto allo zaino. La fiammella tremola dietro il vetro annerito: l'olio è quasi finito e basta appena a rischiarare l'accampamento.", "Non durerebbe dieci passi, là dentro."] },
+          foresta_grotta: { fisso: ["L'ingresso della grotta si apre nella roccia come una bocca spalancata, incorniciato da radici contorte e muschio. La luce del falò ne lambisce solo i primi passi; oltre, il buio è totale.", "Dall'interno sale un'aria fredda e immobile, che non sa né di terra né di umido. Sa di chiuso, come una stanza rimasta sbarrata troppo a lungo."] },
+          foresta_bosco: { fisso: ["Gli alberi secolari si stringono attorno alla radura, i rami intrecciati come dita nodose. Tra i tronchi il cielo brucia di arancione e porpora, e le ombre si allungano a vista d'occhio.", "Nessun uccello canta. Anche la foresta sembra trattenere il fiato."] },
+          portone: { fisso: ["Alle tue spalle, dove prima si apriva l'ingresso della grotta, si erge un imponente portone d'ingresso in legno scuro. I battenti sono finemente intagliati: tralci, stemmi e figure che si intrecciano fino all'architrave, così fitti che lo sguardo vi si perde.", "Della grotta e della foresta non resta alcuna traccia."] }, /* PROVVISORIO */
+          foresta_campo: { fisso: ["Il tuo accampamento è tutto lì: la coperta a righe stesa sull'erba, lo zaino da esploratore con il giaciglio arrotolato, il pugnale posato su un ciocco e la spada appoggiata alla roccia, vicino al fuoco.", "Ogni cosa è al suo posto, come se avessi voluto rimandare ancora un po' il momento di entrare."] }
         },
         giocattoli: {
           nome: "Giocattoli di legno",
-          desc: "Mentre t'inoltri nella sala, la suola s'inchioda con un sordo scricchiolio tra il divano e le finestre. Sotto il tuo peso: figurine di legno intagliato, piccoli omini rigidi e scheggiati, null'altro che giocattoli.",
+          desc: "Piccoli animali di legno intagliati a mano.",
           domanda: "Vuoi prendere i giocattoli di legno?", si_btn: "Sì, li prendo", no_btn: "No, li lascio lì",
           presi: ["Raccogli le figurine una a una e le riponi nello zaino."],
           lasciati: ["Lasci le figurine dove sono, sul pavimento tra il divano e le finestre."],
           giaPresi: "I giocattoli di legno sono già nel tuo zaino.",
           nonVisti: "Non vedi nessun giocattolo, qui intorno."
         },
+        /* Foresta (esterno del dungeon) e buio della grotta */
+        esterno: {
+          /* PROVVISORIO: la torcia improvvisata dell'accampamento, un solo utilizzo */
+          torciaPresa: ["Tra la legna accatastata accanto al falò scegli un ramo dritto e robusto. Strappi una striscia dalla coperta, la avvolgi stretta attorno a un'estremità e la imbevi con l'olio della lanterna.", "Ne esce una torcia rozza: farà luce, ma non a lungo."],
+          torciaGia: "Hai già preparato la torcia dell'accampamento: la legna rimasta è troppo umida o troppo sottile per fartene un'altra.",
+          torciaFuori: "Qui fuori la luce del tramonto e del falò ti bastano: la torcia ti servirà una volta dentro la grotta.",
+          entraConLuce: "Non c'è nulla da illuminare, qui: la grotta è alle tue spalle. Per accendere la luce devi prima entrarci.",
+          notaForesta: "Scrivi qui sotto cosa fa il tuo personaggio: per esempio «entro nel dungeon».",
+          placeholder: "Cosa fai? Per esempio: guardo il falò, oppure entro nel dungeon",
+          /* nel buio */
+          buio: [
+            "Il buio è assoluto. Allunghi una mano davanti a te e non riesci a vederla.",
+            "Fai un passo e la punta del piede urta la roccia. Senza una luce, andare avanti sarebbe una follia.",
+            "L'oscurità è così densa che sembra quasi di poterla toccare. Da qualche parte, più avanti, l'aria si muove appena."
+          ],
+          notaLuce: "Ti serve una fonte di luce: accendi una torcia o lancia l'incantesimo Luce.",
+          notaEsci: "Non hai né una torcia né l'incantesimo Luce. Puoi uscire dal dungeon («esco dal dungeon») e cercare all'accampamento qualcosa per farti luce.",
+          nessunaTorcia: "Frughi a tentoni nello zaino, ma non trovi nessuna torcia.",
+          nessunIncantesimo: "Provi a raccogliere le energie, ma non conosci l'incantesimo Luce.",
+          giaFuori: "Sei già fuori, all'accampamento.",
+          /* PROVVISORIO: passaggio dal buio all'atrio, prima della descrizione dell'atrio */
+          luceTorcia: ["La torcia prende fuoco con un crepitio improvviso. La fiamma strappa un lembo d'ombra al buio e ciò che rivela ti mozza il fiato."],
+          luceIncantesimo: ["Pronunci la formula e una sfera di luce pallida si accende sul palmo della tua mano, respingendo l'oscurità. Ciò che rivela ti lascia senza fiato."],
+          incantesimoUsato: (c, r) => `Lanci l'incantesimo Luce: −${c} mana (rimasti ${r}).`,
+          pocoMana: (c, r) => `Raccogli le energie, ma non ne hai abbastanza: Luce richiede ${c} mana e te ne restano ${r}.`,
+          /* l'atrio dopo la luce */
+          portone: "Istintivamente ti volti. L'ingresso della grotta da cui sei entrato è scomparso: al suo posto si erge un imponente portone di legno scuro, finemente intagliato e sigillato.",
+          torciaSpenta: "In quell'istante, la fiamma della torcia si spegne soffocata da una morsa invisibile. Il tizzone è subito freddo, la pece ormai pietrificata. Inutile. Lo lasci cadere sul marmo con un tonfo sordo.",
+          sistTorciaSpenta: "La torcia si è spenta ed è diventata inutile: la tua mano secondaria è libera.",
+          portoneChiuso: ["Afferri le maniglie e spingi i pesanti battenti, poi provi a tirarli verso di te. Il portone non si muove di un millimetro.", "È chiuso. Al centro, tra gli intagli, noti una toppa massiccia: sembra che ti serva una chiave."],
+          torciaAggiunta: (n) => `Zaino aggiornato: Torcia +1 utilizzo (ora ${n}).`,
+          incInutile: (n) => `Ti prepari a lanciare ${n}, ma qui non servirebbe a nulla: lasci svanire l'energia senza consumarla.`, /* PROVVISORIO */
+          incSconosciuto: "Non conosci nessun incantesimo con quel nome."
+        },
         ambigui: {
           "arazzo?": "Gli arazzi sono due: quello sulla parete sinistra e quello sulla destra. Quale vuoi esaminare?",
-          "porta?": "Le porte sono due: una a sinistra e una a destra. Quale vuoi esaminare?",
+          "porta?": "Ai lati della sala ci sono due porte, una a sinistra e una a destra; alle tue spalle c'è il portone d'ingresso. Quale vuoi esaminare?",
           "armatura?": "Le armature sono tre: una a sinistra e una a destra ai piedi delle scale, e quella sul pianerottolo. Quale vuoi esaminare?"
         },
         stanze: {
+          foresta: {
+            intro: [
+              "Il sole sta tramontando dietro gli alberi secolari, dipingendo il cielo di arancione e porpora. Il tuo accampamento all'ingresso — con il falò crepitante, lo zaino da esploratore, le armi e la lanterna — è l'ultimo baluardo di calore prima dell'abisso.",
+              "Ti prepari a varcare la soglia della grotta che nei villaggi descrivono come la dimora del male, un luogo da cui nessuno è mai uscito vivo."
+            ],
+            fallbackLibera: ["Ci provi, ma qui fuori non c'è nulla di utile in questo senso. Il falò, la lanterna, l'accampamento e l'ingresso della grotta sono ciò che hai intorno."],
+            ritorno: ["Torni fuori, all'accampamento. Il falò crepita ancora, e il suo calore ti sembra un dono dopo il gelo della grotta."] /* PROVVISORIO */
+          },
+          buio: {
+            intro: ["Varchi la soglia e muovi qualche passo dentro la grotta. Alle tue spalle il bagliore del falò si affievolisce, poi scompare del tutto.", "Il buio è totale: non vedi nemmeno le tue mani."], /* PROVVISORIO */
+            fallbackLibera: ["Nel buio totale non puoi fare nulla di utile."],
+            ritorno: ["Varchi di nuovo la soglia. La luce del falò si spegne alle tue spalle e l'oscurità ti inghiotte."] /* PROVVISORIO */
+          },
           atrio: {
             fallbackLibera: ["Ci provi, ma l'atrio non ti offre nulla di utile in questo senso. Gli arazzi, le due porte, il soffitto affrescato e la scalinata sono ciò che puoi esplorare."],
             ritorno: ["Torni nell'atrio. Il marmo lucido riflette il tremolio delle fiaccole eterne, mentre la scalinata sale silenziosa verso il pianerottolo."] /* PROVVISORIO */
@@ -347,7 +457,7 @@
           },
           sala_conversazione: {
             intro: [
-              "Chiudi la porta alle tue spalle con un lieve tonfo e ti ritrovi nella sala da conversazione. L'ambiente che ti accoglie trasuda un'eleganza sfarzosa e decadente: l'aria è intrisa del profumo di legna e cera, mentre i riflessi spettrali delle fiaccole azzurre alle pareti danzano sulle pareti. Sotto le tue calzature, spessi tappeti dai motivi elaborati attutiscono ogni singolo passo, avvolgendo la stanza in un silenzio quasi ovattato.",
+              "Ti lasci la porta alle spalle, chiudendola con un tonfo ovattato. D'un tratto vieni accolto dal calore di un salotto elegante, chiaramente concepito per riposare, accogliere gli ospiti e conciliare la conversazione. L'ambiente che ti accoglie trasuda un'eleganza sfarzosa e decadente: l'aria è intrisa del profumo di legna e cera, mentre i riflessi spettrali delle fiaccole azzurre alle pareti danzano sulle pareti. Sotto le tue calzature, spessi tappeti dai motivi elaborati attutiscono ogni singolo passo, avvolgendo la stanza in un silenzio quasi ovattato.",
               "Al centro dell'ampio salone si snoda un raffinato punto di ritrovo: morbidi divani e comode poltrone foderate di velluto sono disposti attorno a un tavolino di pregiata fattura. Attorno ad essi, rigogliose piante ornamentali crescono rigogliose all'interno di vasi finemente decorati, aggiungendo un tocco di vita a un ambiente altrimenti immobile.",
               "Di fronte a te domina la scena un maestoso camino in pietra finemente scolpita, all'interno del quale arde un fuoco vivo dalle sfumature arancioni e cremisi. Svettante proprio sopra la cornice del camino si erge il vero fulcro della stanza: l'imponente ritratto a figura intera di una nobildonna. I suoi occhi dipinti sembrano fissarti con severa rigidità, dominando l'intero salone con una presenza quasi tangibile. Sicuramente si tratta della padrona di casa.",
               "Alla tua destra, un'ampia vetrata lascia scorgere le sagome ordinate di un giardino curato nei minimi dettagli. Tra le torce a parete pendono quadri incorniciati con grande raffinatezza, raffiguranti nature morte e paesaggi malinconici che non riesci a riconoscere.",
@@ -359,7 +469,7 @@
           },
           sala_pranzo: {
             intro: [
-              "Ti avvicini alla sala da pranzo e, oltrepassata la soglia, vieni accolto da un ambiente vasto e austero, permeato dalla stessa quiete solenne che caratterizza il resto della dimora. La luce delle eterne fiaccole azzurre si riflette sulle superfici levigate del mobilio, avvolgendo ogni cosa in un alone freddo e quasi irreale.",
+              "Ti avvicini alla sala da pranzo e, oltrepassata la soglia, vieni accolto da un ambiente vasto e austero, permeato dalla stessa quiete solenne che caratterizza il resto della dimora. La luce del lampadario e del camino si riflette sulle superfici levigate del mobilio, avvolgendo ogni cosa in un alone freddo e quasi irreale.",
               "Al centro della sala si estende un lungo tavolo in legno scuro, tanto massiccio da sembrare scolpito da un unico blocco. La sua superficie lucidata cattura i riflessi tremolanti delle fiamme azzurre, mentre una dozzina di sedie finemente lavorate lo circondano in perfetto ordine: cinque per ciascun lato e due ai capotavola, leggermente più elaborate delle altre, come se fossero destinate a ospiti di particolare importanza.",
               "Il silenzio regna sovrano. L'aria porta con sé il profumo del legno antico, della cera e del tempo, come se questa stanza fosse rimasta immutata per generazioni.",
               "Lungo le pareti laterali, in una simmetria quasi rituale, si trovano due basse credenze realizzate nello stesso stile severo ed elegante del tavolo. Sopra di esse riposano centrini di pizzo ormai ingialliti dagli anni e fioriere accuratamente mantenute, le cui foglie proiettano ombre intricate sui muri circostanti. Al di sopra, alcuni dipinti osservano silenziosamente la sala dalle loro cornici ornate. I colori delle tele appaiono smorzati dalla luce azzurra delle fiaccole, che dona ai paesaggi e alle figure raffigurate un aspetto quasi spettrale.",
@@ -373,6 +483,8 @@
           }
         },
         viste: {
+          foresta: { titolo: "Foresta – esterno del dungeon", alt: "Al tramonto, nella foresta, l'ingresso di una grotta tra radici e alberi secolari; davanti, un piccolo accampamento con falò, zaino, lanterna, coperta, un pugnale e una spada appoggiata alla roccia." },
+          buio: { titolo: "Oscurità", alt: "Buio totale." },
           atrio: { titolo: "Atrio", alt: "L'atrio del dungeon: un'ampia scalinata di marmo con un tappeto rosso sale verso un'armatura con una spada, davanti a una grande vetrata che raffigura lo stesso cavaliere." },
           sala_caccia: { titolo: "Sala della caccia", alt: "La sala della caccia." },
           sala_conversazione: { titolo: "Sala da conversazione", alt: "La sala da conversazione: divani di velluto rosso attorno a un tavolino davanti al camino acceso, sopra il quale domina il ritratto di una nobildonna; a destra alte vetrate sul giardino, a sinistra una porta aperta sulla sala da pranzo." },
@@ -423,13 +535,10 @@
           ancoraLi: "La spada, però, è ancora tra i guanti dell'armatura."
         },
         intro: [
-          "Entri nel dungeon lasciandoti alle spalle la foresta oscura. Quella che all'apparenza era una semplice grotta, dopo l'ennesimo battito di ciglia si trasforma in un ingresso sontuoso, degno della dimora di un nobile. L'ambiente è avvolto da una penombra solenne, interrotta soltanto dalla fredda luce azzurra delle fiaccole eterne fissate alle pareti e da quella argentea che filtra dall'enorme vetrata che domina il fondo della sala.",
-          "Il pavimento di marmo lucido riflette debolmente le luci e le ombre dell'ambiente, mentre un lungo tappeto cremisi, ricamato con motivi dorati, attraversa l'atrio come una guida silenziosa verso la maestosa scalinata centrale.",
-          "Ai lati si innalzano alte colonne e pareti decorate da enormi arazzi raffiguranti stemmi, animali araldici e scene di antica memoria. Le loro figure si perdono parzialmente nell'oscurità, lasciando che l'immaginazione completi ciò che la vista non riesce a cogliere.",
-          "La scalinata di marmo sale in ampie gradinate verso un pianerottolo rialzato. Là, illuminata dai raggi che attraversano la grande vetrata, si erge la statua di un cavaliere in armatura completa. La figura è immobile e severa, le mani appoggiate all'elsa della spada puntata verso il basso, come un eterno guardiano posto a sorvegliare l'intera dimora.",
-          "Alle spalle della statua si innalza un'immensa vetrata colorata che occupa quasi tutta la parete. Nel vetro è raffigurato un sovrano incoronato, avvolto da simboli araldici e antichi emblemi. La luce che attraversa le sue figure crea sottili fasci luminosi che scendono nella sala, conferendo all'ambiente un'aura quasi sacra.",
-          "Ai piedi della scalinata, ai lati dei primi gradini, si distinguono armature da parata montate su supporti decorati. La loro presenza, insieme alle numerose fiaccole azzurre, dona all'atrio l'aspetto di una dimora nobiliare antica, dove ogni dettaglio sembra celebrare un passato glorioso e ormai lontano.",
-          "Dalle ombre ai lati dell'atrio si intravedono inoltre grandi porte che conducono ad altre ali della residenza, ma da questa posizione è impossibile capire cosa si nasconda oltre quei varchi oscuri."
+          "Davanti a te si spalanca un atrio monumentale, degno del più sfarzoso palazzo nobiliare. L'ambiente è avvolto da una penombra solenne, rotta soltanto dallo spettrale bagliore azzurro di fiaccole eterne e dai riflessi argentei che filtrano dall'imponente vetrata in fondo alla sala. Il pavimento in marmo lucido specchia le luci e le ombre, mentre un tappeto cremisi ricamato in oro attraversa l'atrio come una scia di sangue verso la scalinata centrale.",
+          "Ai lati s'innalzano severe colonne e grandi arazzi che ritraggono stemmi e gesta di un tempo dimenticato; le loro sagome sfumano nelle tenebre, lasciando all'immaginazione il compito di completare ciò che la vista non afferra. Ai piedi dei primi gradini, due armature da parata vegliano come guardie silenziose.",
+          "La scalinata sale in ampie gradinate verso un pianerottolo. Là, investita dalla luce della vetrata, si erge la statua di un cavaliere in armatura completa: immobile e severo, le mani serrate sull'elsa di una spada puntata a terra, vigila come un eterno guardiano. Alle sue spalle, la vetrata istoriata raffigura un antico sovrano incoronato, forse il padrone di casa; la luce della luna ne attraversa i vetri colorati, proiettando lame luminose che tagliano l'aria della sala.",
+          "Ai lati dell'atrio, grandi porte suggeriscono il passaggio verso altre ali del palazzo."
         ],
         prove: {
           /* prove che danno un riscontro, stanza per stanza */
@@ -460,13 +569,13 @@
         },
         ui: {
           titoloPagina: "Il dungeon", schedaPg: "Scheda del personaggio", completa: "Scheda completa",
-          caratteristiche: "Caratteristiche", abilita: "Abilità", equipaggiamento: "Equipaggiamento", zaino: "Zaino",
+          caratteristiche: "Caratteristiche", abilita: "Abilità", equipaggiamento: "Equipaggiamento", zaino: "Zaino", incantesimi: "Incantesimi", mana: "Mana", lanciaInc: "Lancia",
           home: "Torna alla pagina iniziale", audioOn: "Suoni attivi: clicca per disattivarli", audioOff: "Suoni disattivati: clicca per attivarli", salva: "Salva partita", diario: "Diario dell'avventura", ariaTesto: "Cosa fa il tuo personaggio?", invia: "Invia",
           placeholder: "Cosa fai? Per esempio: esamino l'arazzo sulla sinistra", scegliAzione: "Scegli un'azione qui sopra",
           scrive: "Il narratore sta scrivendo…", notaInizio: "Scrivi qui sotto cosa fa il tuo personaggio.",
           nonSalvate: "Modifiche non salvate", salvataAlle: (h) => `Partita salvata alle ${h}`, nessunSalvataggio: "Nessun salvataggio",
           salvataggioErr: "Salvataggio non riuscito: memoria del browser non disponibile",
-          livello: "livello", puntiSalute: "Punti salute", puntiMentali: "Punti mentali", classeArmatura: "Classe Armatura",
+          livello: "livello", puntiSalute: "Salute fisica", puntiMentali: "Salute mentale", classeArmatura: "Classe Armatura",
           abilScelta: "Abilità scelta: aggiunge il livello del personaggio",
           malusEquip: (n) => ` (equipaggiamento −${n})`, malusTitle: "Il malus di armatura e scudo è già incluso nel valore",
           arma: "Arma", armatura: "Armatura", scudo: "Scudo", manoLibera: "Mano libera", libera: "Libera", manoPrimaria: "Mano primaria", manoSecondaria: "Mano secondaria",
@@ -482,6 +591,14 @@
           dannoStanza: (d) => `Nessuna delle tue ricerche in questa sala ha dato frutto, e quel susseguirsi di risposte mancate ti pesa sulla mente. Subisci danni mentali pari a 1d${d}.`, /* PROVVISORIO */
           dannoStanzaEsito: "Una vaga nausea ti stringe lo stomaco, e per un istante la tua mente fatica a restare lucida.", /* PROVVISORIO */
           dannoSubito: (d) => `Danni mentali subiti: ${d}.`,
+          dannoMentale: (da, a) => `Danni mentali = 1 · salute mentale ${da} → ${a}`,
+          fitte: [
+            "Una fitta improvvisa ti trafigge le tempie, come un ago rovente infilato dietro gli occhi. Per un istante la sala ondeggia.",
+            "Ti si annebbia la vista e un dolore sordo ti martella alla base del cranio: la frustrazione di non capire ti morde la mente.",
+            "Un ronzio acuto ti riempie le orecchie e la testa ti pulsa come dopo un colpo. Stringi i denti finché il dolore si attenua.",
+            "Senti una pressione dietro la fronte, come una mano che stringe. I pensieri si fanno confusi e ci metti un momento a ritrovarli.",
+            "Una scarica di dolore ti attraversa la testa da una tempia all'altra. Chiudi gli occhi e respiri a fondo, ma qualcosa dentro di te si è incrinato."
+          ],
           zainoAgg: (n) => `Zaino aggiornato: ${n}.`, zainoSpada: (n) => `Zaino aggiornato: ${n}. Puoi equipaggiarla dallo zaino.`,
           dueManiConMano: (a, b) => `${a} si impugna con due mani, ma hai ${b} in mano. Riponi prima ${b}.`,
           dueManiConScudo: (a, b) => `${a} si impugna con due mani, ma hai ${b} al braccio. Riponi prima ${b}.`,
@@ -539,18 +656,29 @@
             gia: { ok: "You have already listened carefully: you hear nothing but the crackling of the fire.", ko: "You have already listened carefully: you hear nothing but the crackling of the fire." }, lascia: LASCIA_SALA
           },
           divani: {
-            azione: "You carefully search the sofas and the low table in the middle of the room.", fisso: DIVANI,
-            successo: DIVANI, fallimento: DIVANI,
-            gia: { ok: "You have already searched every inch of the sofas and the table: there is nothing more to find.", ko: "You have already searched every inch of the sofas and the table: there is nothing more to find." }, lascia: LASCIA_SALA
+            azione: "You move cautiously among the sofas as you lose all sense of time. You feel the thick, surprisingly warm fabric, searching for a loose seam, a tear or an old bloodstain.", fisso: [],
+            successo: ["Your sole jams with a dull creak between the sofa and the windows. Under your weight: carved wooden figurines, little stiff, chipped men, nothing more than toys."],
+            fallimento: ["Nothing. The upholstery is intact and flawless, a detail that in this place only fills you with deep paranoia."],
+            gia: { ok: "You have already searched every inch of the sofas and the table: beyond the wooden toys there is nothing more to find.", ko: "You have already searched every inch of the sofas and the table: there is nothing more to find." }, lascia: LASCIA_SALA
           },
           quadri: {
             azione: "You study the paintings on the walls and look out of the window, searching for something that doesn't add up.", fisso: QUADRI,
             successo: QUADRI, fallimento: QUADRI,
             gia: { ok: "You have already pondered the paintings and the window: nothing else comes to mind.", ko: "You have already pondered the paintings and the window: nothing else comes to mind." }, lascia: LASCIA_SALA
           },
-          camino: { fisso: ["You approach the hearth, where the fire crackles merrily. Raising your head, you meet the stern eyes of the woman in the painting: they stare at you with an almost living rigidity. A shiver runs down your spine, but you shake it off, blaming it on the play of shadows. Then, on the bronze plaque, you read the name: Queen Adele."] },
+          camino: {
+            azione: "You take a close look at the fireplace and the carvings on its mantel.", fisso: [],
+            successo: ["You approach the hearth, drawn by the lively crackle of the fire. Examining the carvings cut into the stone of the mantel, you notice a sealed circular shape at the centre of the reliefs: it looks like a family crest with no coat of arms."],
+            fallimento: ["You approach the crackling fire, running your fingers over the stone mantel as you try to make out its details. The carvings are a tangle of shapes, blurred and worn by time; among the reliefs you glimpse a stone roundel, but you cannot tell whether it is an ancient crest or merely an unfinished ornament.", "Your sight blurs and a dull pain hammers at the base of your skull: the frustration of not understanding gnaws at your mind."], fittaNelTesto: true,
+            gia: { ok: "You have already examined the fireplace: at the centre of the reliefs there is that sealed circular shape, a crest without a coat of arms.", ko: "You have already examined the fireplace without noticing anything in particular." }, lascia: LASCIA_SALA
+          },
+          fiori: { fisso: ["You step over to the low table set between the two armchairs. The vase holds an arrangement of flowers in dark, all too vivid colours: to the touch the petals feel cold and slightly stiff."] },
           tavolino: { fisso: ["You run your hand over the low table and look at your fingers against the light: not a single speck of dust. It almost seems as if someone cleans the house regularly. You slide your fingers under the surface, groping for a hidden drawer, a lever or a secret mechanism. But you touch only smooth, cold wood. No trace."] },
-          finestre: { fisso: ["You step closer and plant your hands on the windowsill. Outside, several moons tear through the sky: you are definitely not at home. The garden below is petrified, motionless and without a breath of wind, and yet, a little further on, a fountain keeps spouting living water. An absurd contrast that sends shivers through you."] },
+          finestre: {
+            azione: "You step closer and plant your hands on the windowsill. Outside, several moons tear through the sky: you are definitely not at home. The garden below is petrified, motionless and without a breath of wind, and yet, a little further on, a fountain keeps spouting living water. An absurd contrast that sends shivers through you.", fisso: [],
+            successo: [], fallimento: [],
+            gia: { ok: "You have already looked out of the windows: you do not want to see that sky again.", ko: "You have already looked out of the windows: you do not want to see that sky again." }, lascia: LASCIA_SALA
+          },
           arazzo_sx: {
             fisso: ["The tapestry covering the left-hand wall is imposing, so large that its heavy folds brush the floor. Dark and golden threads intertwine in a refined embroidery depicting a majestic stag with towering antlers, portrayed with the elegance of a regal creature.", "Looking more closely, something catches your eye: the lower part of the tapestry seems slightly more swollen than the rest of the fabric, as if something were hidden behind that fold."],
             azione: "You examine the left-hand tapestry up close, trying to find what the bulging fold conceals.",
@@ -569,6 +697,16 @@
           stanza: { fallback: ["You look around unhurriedly: the polished marble, the tapestries on the walls, the two doors at the sides and the staircase climbing towards the armor. Everything is kept as if no one had ever stopped living here."] },
           scale_guarda: { fisso: ["You stop at the foot of the staircase and follow its broad ascent with your eyes. The marble steps gleam as if no one had ever set foot on them, and the long crimson carpet covers them all the way up to the landing.", "On either side of the first step, the two decorative suits of armor keep their motionless watch. Higher up, the light from the window flows down the stairs like a coloured veil, and the armor on the landing seems to be waiting for someone to make up their mind and climb."] },
           pranzo_guarda: { fisso: ["From the threshold of the double door you cast a glance into the next room. You glimpse the edge of a long table of dark wood and the cold gleam of silverware under the blue light of the torches.", "The rest of the room is lost in half-light: to truly see it, you would have to go in."] },
+          pranzo_percezione: {
+            fisso: [],
+            azione: "You move cautiously between the table and the windows, sensing something wrong in the air. The fireplace holds a fire that dances vividly, and yet no crackle comes from it: it burns in an unnatural silence. Outside, beyond the panes, the view of the garden repeats itself unsettlingly, identical to that of the room you just left. Drawing closer to the hearth, you notice the family crest presiding solemnly over the stone mantel and, just past the left-hand corner, a closed door.",
+            successo: ["You stop and hold your breath. From behind the closed door comes a clearly distinguishable sound: the clink of crockery, plates set one upon another, the light clatter of cutlery gathered in haste. Someone on the other side is laying a table. Or clearing one."],
+            fallimento: ["You strain your ears, but the hall gives you back nothing but silence. A dense, absolute silence that seems to swallow even the sound of your breathing and of your steps on the floor. The fire dances mutely in the hearth, the chairs stand motionless around the table and, the longer you listen, the more that nothingness presses on your ears like deep water."],
+            gia: { ok: "You have already listened closely: from the closed door the clink of crockery still comes, now and then.", ko: "You have already listened closely: the hall remains sunk in its unnatural silence." },
+            lascia: "You let it go and step back into the middle of the hall."
+          },
+          credenza: { fisso: ["You make your way between the table and the sideboard, brushing the smooth, polished surface of the wood. You open the cabinet doors in search of a clue, but inside there is only household linen: fine tablecloths, porcelain plates and neatly arranged cutlery, everything needed to lay a formal table."] },
+          pranzo_niente: { fisso: ["You look closely, but you notice nothing the hall has not already shown you."] },
           conv_percezione: {
             fisso: [],
             azione: "You stop in the middle of the room and strain every sense, trying to catch even the faintest sign of life.",
@@ -580,27 +718,75 @@
           conv_indagare: {
             fisso: [],
             azione: "You move around the room carefully, determined not to let a single detail escape you.",
-            successo: ["As you make your way into the room, your sole jams with a dull creak between the sofa and the windows. Under your weight: carved wooden figurines, little stiff, chipped men, nothing more than toys."],
+            successo: ["Your sole jams with a dull creak between the sofa and the windows. Under your weight: carved wooden figurines, little stiff, chipped men, nothing more than toys."],
             fallimento: ["You wander the room looking for something useful, for clues, but you are caught by the warmth of the brazier burning merrily and you hold out your hands as if to warm them. The memory of home overwhelms you and you resume your search, though for what, deep down, you don't even know."],
             gia: { ok: "You have already searched the room from top to bottom: beyond the wooden figurines there is nothing else.", ko: "You have already searched the room and found nothing." },
             lascia: "You give up the search."
-          }
+          },
+          foresta_falo: { fisso: ["You crouch by the campfire and hold your hands out to the flames. The wood crackles and spits sparks that rise towards the mouth of the cave, then die in the dark. It is the last warmth you will feel for a long time.", "More wood is stacked beside the fire: dry branches, a few of them straight and sturdy enough to make a torch."] },
+          foresta_lanterna: { fisso: ["The lantern rests on the blanket, beside the pack. The little flame trembles behind the blackened glass: the oil is almost gone and barely lights the camp.", "It would not last ten steps in there."] },
+          foresta_grotta: { fisso: ["The mouth of the cave gapes in the rock, framed by twisted roots and moss. The firelight reaches only its first few steps; beyond, the darkness is total.", "A cold, still air rises from within, smelling neither of earth nor of damp. It smells stale, like a room left barred for far too long."] },
+          foresta_bosco: { fisso: ["Ancient trees crowd around the clearing, their branches knotted like gnarled fingers. Between the trunks the sky burns orange and purple, and the shadows lengthen before your eyes.", "No bird sings. Even the forest seems to hold its breath."] },
+          portone: { fisso: ["Behind you, where the mouth of the cave once opened, stands an imposing entrance door of dark wood. Its leaves are finely carved: vines, crests and figures intertwining up to the lintel, so dense the eye gets lost in them.", "Of the cave and the forest, no trace remains."] },
+          foresta_campo: { fisso: ["Your whole camp is right there: the striped blanket spread on the grass, the explorer's pack with its rolled bedroll, the dagger resting on a log and the sword leaning against the rock, near the fire.", "Everything is in its place, as if you had wanted to put off the moment of going in a little longer."] }
         },
         giocattoli: {
           nome: "Wooden toys",
-          desc: "As you make your way into the room, your sole jams with a dull creak between the sofa and the windows. Under your weight: carved wooden figurines, little stiff, chipped men, nothing more than toys.",
+          desc: "Small wooden animals, carved by hand.",
           domanda: "Do you want to take the wooden toys?", si_btn: "Yes, I take them", no_btn: "No, I leave them",
           presi: ["You pick up the figurines one by one and put them in your pack."],
           lasciati: ["You leave the figurines where they are, on the floor between the sofa and the windows."],
           giaPresi: "The wooden toys are already in your pack.",
           nonVisti: "You see no toys around here."
         },
+        esterno: {
+          torciaPresa: ["From the wood stacked beside the campfire you pick a straight, sturdy branch. You tear a strip from the blanket, wrap it tightly around one end and soak it with oil from the lantern.", "The result is a crude torch: it will give light, but not for long."],
+          torciaGia: "You have already made the camp torch: the wood left is too damp or too thin to make another.",
+          torciaFuori: "Out here the sunset and the campfire give you light enough: you will need the torch once inside the cave.",
+          entraConLuce: "There is nothing to light up here: the cave is behind you. To light your way you must go in first.",
+          notaForesta: "Write below what your character does: for example “I enter the dungeon”.",
+          placeholder: "What do you do? For example: I look at the campfire, or I enter the dungeon",
+          buio: [
+            "The darkness is absolute. You hold a hand out in front of you and cannot see it.",
+            "You take a step and the tip of your boot strikes rock. Without a light, going on would be madness.",
+            "The dark is so thick you could almost touch it. Somewhere ahead, the air stirs faintly."
+          ],
+          notaLuce: "You need a light source: light a torch or cast the Light spell.",
+          notaEsci: "You have neither a torch nor the Light spell. You can leave the dungeon (“I leave the dungeon”) and look for something at the camp to light your way.",
+          nessunaTorcia: "You grope through your pack, but you find no torch.",
+          nessunIncantesimo: "You try to gather your power, but you do not know the Light spell.",
+          giaFuori: "You are already outside, at the camp.",
+          luceTorcia: ["The torch catches with a sudden crackle. The flame tears a shred of shadow from the dark, and what it reveals takes your breath away."],
+          luceIncantesimo: ["You speak the formula and a sphere of pale light kindles on your palm, driving back the darkness. What it reveals takes your breath away."],
+          incantesimoUsato: (c, r) => `You cast the Light spell: −${c} mana (${r} left).`,
+          pocoMana: (c, r) => `You gather your power, but it is not enough: Light needs ${c} mana and you have ${r} left.`,
+          portone: "Instinctively you turn around. The mouth of the cave you came through has vanished: in its place stands an imposing door of dark wood, finely carved and sealed.",
+          torciaSpenta: "At that very moment, the torch flame dies, smothered by an invisible grip. The brand is instantly cold, the pitch already turned to stone. Useless. You let it fall onto the marble with a dull thud.",
+          sistTorciaSpenta: "The torch has gone out and is now useless: your off hand is free.",
+          portoneChiuso: ["You grasp the handles and push the heavy leaves, then try pulling them towards you. The door does not budge an inch.", "It is locked. In the middle, among the carvings, you notice a massive keyhole: it looks like you need a key."],
+          torciaAggiunta: (n) => `Pack updated: Torch +1 use (now ${n}).`,
+          incInutile: (n) => `You prepare to cast ${n}, but it would be of no use here: you let the energy fade without spending it.`,
+          incSconosciuto: "You know no spell by that name."
+        },
         ambigui: {
           "arazzo?": "There are two tapestries: one on the left wall and one on the right. Which one do you want to examine?",
-          "porta?": "There are two doors: one on the left and one on the right. Which one do you want to examine?",
+          "porta?": "There are two doors at the sides of the hall, one on the left and one on the right; behind you stands the great entrance door. Which one do you want to examine?",
           "armatura?": "There are three suits of armor: one on the left and one on the right at the foot of the stairs, and the one on the landing. Which one do you want to examine?"
         },
         stanze: {
+          foresta: {
+            intro: [
+              "The sun is setting behind the ancient trees, painting the sky orange and purple. Your camp at the entrance — with its crackling fire, the explorer's pack, your weapons and the lantern — is the last bulwark of warmth before the abyss.",
+              "You make ready to cross the threshold of the cave the villages call the dwelling of evil, a place from which no one has ever come out alive."
+            ],
+            fallbackLibera: ["You try, but there is nothing useful out here in that regard. The campfire, the lantern, the camp and the mouth of the cave are what surround you."],
+            ritorno: ["You step back outside, to the camp. The fire is still crackling, and its warmth feels like a gift after the chill of the cave."]
+          },
+          buio: {
+            intro: ["You cross the threshold and take a few steps into the cave. Behind you the glow of the campfire fades, then vanishes altogether.", "The darkness is total: you cannot even see your own hands."],
+            fallbackLibera: ["In total darkness there is nothing useful you can do."],
+            ritorno: ["You cross the threshold again. The firelight dies behind you and the darkness swallows you."]
+          },
           atrio: {
             fallbackLibera: ["You try, but the entrance hall offers nothing useful in that regard. The tapestries, the two doors, the frescoed ceiling and the staircase are what you can explore."],
             ritorno: ["You return to the entrance hall. The polished marble reflects the flicker of the eternal torches, while the staircase climbs silently towards the landing."]
@@ -616,7 +802,7 @@
           },
           sala_conversazione: {
             intro: [
-              "You close the door behind you with a soft thud and find yourself in the drawing room. The space that welcomes you exudes a lavish, decadent elegance: the air is steeped in the scent of wood and wax, while the ghostly glints of the blue torches dance across the walls. Beneath your boots, thick carpets with elaborate patterns muffle every single step, wrapping the room in an almost muffled silence.",
+              "You leave the door behind you, closing it with a muffled thud. All at once you are welcomed by the warmth of an elegant parlour, clearly designed for resting, receiving guests and easing conversation. The space that welcomes you exudes a lavish, decadent elegance: the air is steeped in the scent of wood and wax, while the ghostly glints of the blue torches dance across the walls. Beneath your boots, thick carpets with elaborate patterns muffle every single step, wrapping the room in an almost muffled silence.",
               "In the middle of the broad hall lies a refined gathering place: soft sofas and comfortable velvet-upholstered armchairs are arranged around a low table of fine craftsmanship. Around them, lush ornamental plants thrive in finely decorated urns, adding a touch of life to an otherwise motionless room.",
               "Before you, a majestic fireplace of finely carved stone dominates the scene, a lively fire of orange and crimson hues burning within. Towering right above the mantelpiece stands the true heart of the room: the imposing full-length portrait of a noblewoman. Her painted eyes seem to stare at you with stern rigidity, dominating the whole hall with an almost tangible presence. Surely she is the lady of the house.",
               "To your right, a wide window reveals the orderly outlines of a garden tended down to the smallest detail. Between the wall torches hang finely framed paintings of still lifes and melancholic landscapes you cannot recognise.",
@@ -628,7 +814,7 @@
           },
           sala_pranzo: {
             intro: [
-              "You approach the dining hall and, crossing the threshold, are greeted by a vast, austere space, steeped in the same solemn stillness as the rest of the house. The light of the eternal blue torches gleams on the polished surfaces of the furniture, wrapping everything in a cold, almost unreal glow.",
+              "You approach the dining hall and, crossing the threshold, are greeted by a vast, austere space, steeped in the same solemn stillness as the rest of the house. The light of the chandelier and the fireplace gleams on the polished surfaces of the furniture, wrapping everything in a cold, almost unreal glow.",
               "In the middle of the hall stretches a long table of dark wood, so massive it seems carved from a single block. Its polished surface catches the trembling reflections of the blue flames, while a dozen finely worked chairs surround it in perfect order: five on each side and two at the heads, slightly more elaborate than the others, as if meant for guests of particular importance.",
               "Silence reigns. The air carries the scent of ancient wood, wax and time, as if this room had remained unchanged for generations.",
               "Along the side walls, in an almost ritual symmetry, stand two low sideboards made in the same stern, elegant style as the table. On them rest lace doilies yellowed by the years and carefully tended planters, whose leaves cast intricate shadows on the surrounding walls. Above them, a few paintings watch the room silently from their ornate frames. Their colours seem muted by the blue torchlight, which lends the landscapes and figures an almost spectral look.",
@@ -642,6 +828,8 @@
           }
         },
         viste: {
+          foresta: { titolo: "Forest – outside the dungeon", alt: "At sunset, in the forest, the mouth of a cave among roots and ancient trees; in front of it a small camp with a campfire, a pack, a lantern, a blanket, a dagger and a sword leaning against the rock." },
+          buio: { titolo: "Darkness", alt: "Total darkness." },
           atrio: { titolo: "Entrance hall", alt: "The dungeon's entrance hall: a wide marble staircase with a red carpet climbs towards a suit of armor holding a sword, in front of a great stained-glass window depicting the same knight." },
           sala_caccia: { titolo: "Hunting room", alt: "The hunting room." },
           sala_conversazione: { titolo: "Drawing room", alt: "The drawing room: red velvet sofas around a low table before the lit fireplace, above which hangs the portrait of a noblewoman; tall windows onto the garden on the right, an open door to the dining hall on the left." },
@@ -692,13 +880,10 @@
           ancoraLi: "The sword, however, is still between the armor's gauntlets."
         },
         intro: [
-          "You enter the dungeon, leaving the dark forest behind you. What looked like a simple cave becomes, after one more blink, a sumptuous entrance worthy of a nobleman's residence. The space is wrapped in a solemn half-light, broken only by the cold blue glow of the eternal torches fixed to the walls and by the silver light filtering through the enormous stained-glass window that dominates the far end of the hall.",
-          "The polished marble floor faintly reflects the lights and shadows around you, while a long crimson carpet, embroidered with golden patterns, crosses the hall like a silent guide towards the majestic central staircase.",
-          "To either side rise tall columns and walls hung with huge tapestries depicting coats of arms, heraldic beasts and scenes of ancient memory. Their figures fade partly into the darkness, leaving the imagination to complete what the eye cannot grasp.",
-          "The marble staircase climbs in broad flights towards a raised landing. There, lit by the rays passing through the great window, stands the statue of a knight in full armor. The figure is motionless and stern, its hands resting on the hilt of a sword pointed downwards, like an eternal guardian set to watch over the whole residence.",
-          "Behind the statue rises an immense stained-glass window that fills almost the entire wall. In the glass is depicted a crowned sovereign, surrounded by heraldic symbols and ancient emblems. The light passing through its figures casts thin beams that fall into the hall, giving the space an almost sacred aura.",
-          "At the foot of the staircase, on either side of the first steps, stand suits of parade armor mounted on decorated stands. Their presence, together with the many blue torches, gives the hall the look of an ancient noble residence, where every detail seems to celebrate a glorious and long-vanished past.",
-          "From the shadows at the sides of the hall you can also make out great doors leading to other wings of the residence, but from here it is impossible to tell what lies beyond those dark thresholds."
+          "Before you opens a monumental entrance hall, worthy of the most lavish noble palace. The space is wrapped in a solemn half-light, broken only by the ghostly blue glow of eternal torches and by the silver gleams filtering through the imposing stained-glass window at the far end of the hall. The polished marble floor mirrors light and shadow, while a crimson carpet embroidered in gold crosses the hall like a trail of blood towards the central staircase.",
+          "On either side rise stern columns and great tapestries depicting crests and deeds of a forgotten age; their shapes fade into the darkness, leaving the imagination to complete what the eye cannot grasp. At the foot of the first steps, two suits of parade armor keep watch like silent guards.",
+          "The staircase climbs in broad flights towards a landing. There, bathed in the light of the window, stands the statue of a knight in full armor: motionless and stern, hands clenched on the hilt of a sword pointed at the ground, it watches like an eternal guardian. Behind it, the stained-glass window depicts an ancient crowned sovereign, perhaps the master of the house; moonlight passes through its coloured panes, casting blades of light that cut through the air of the hall.",
+          "At the sides of the hall, great doors hint at passages to other wings of the palace."
         ],
         prove: {
           stanze: {
@@ -727,13 +912,13 @@
         },
         ui: {
           titoloPagina: "The dungeon", schedaPg: "Character sheet", completa: "Full sheet",
-          caratteristiche: "Attributes", abilita: "Skills", equipaggiamento: "Equipment", zaino: "Pack",
+          caratteristiche: "Attributes", abilita: "Skills", equipaggiamento: "Equipment", zaino: "Pack", incantesimi: "Spells", mana: "Mana", lanciaInc: "Cast",
           home: "Back to the home page", audioOn: "Sound on: click to turn it off", audioOff: "Sound off: click to turn it on", salva: "Save game", diario: "Adventure journal", ariaTesto: "What does your character do?", invia: "Send",
           placeholder: "What do you do? For example: I examine the tapestry on the left", scegliAzione: "Choose an action above",
           scrive: "The narrator is writing…", notaInizio: "Write below what your character does.",
           nonSalvate: "Unsaved changes", salvataAlle: (h) => `Game saved at ${h}`, nessunSalvataggio: "No save yet",
           salvataggioErr: "Saving failed: browser storage is not available",
-          livello: "level", puntiSalute: "Health points", puntiMentali: "Mental points", classeArmatura: "Armor Class",
+          livello: "level", puntiSalute: "Physical health", puntiMentali: "Mental health", classeArmatura: "Armor Class",
           abilScelta: "Chosen skill: adds the character's level",
           malusEquip: (n) => ` (gear −${n})`, malusTitle: "The armor and shield penalty is already included in the value",
           arma: "Weapon", armatura: "Armor", scudo: "Shield", manoLibera: "Free hand", libera: "Free", manoPrimaria: "Main hand", manoSecondaria: "Off hand",
@@ -749,6 +934,14 @@
           dannoStanza: (d) => `None of your searches in this room has borne fruit, and that string of missing answers weighs on your mind. You take 1d${d} mental damage.`,
           dannoStanzaEsito: "A vague nausea grips your stomach, and for a moment your mind struggles to stay clear.",
           dannoSubito: (d) => `Mental damage taken: ${d}.`,
+          dannoMentale: (da, a) => `Mental damage = 1 · mental health ${da} → ${a}`,
+          fitte: [
+            "A sudden stab pierces your temples, like a red-hot needle behind your eyes. For an instant the hall sways.",
+            "Your sight blurs and a dull pain hammers at the base of your skull: the frustration of not understanding gnaws at your mind.",
+            "A shrill buzzing fills your ears and your head throbs as if after a blow. You grit your teeth until the pain fades.",
+            "You feel a pressure behind your forehead, like a hand squeezing. Your thoughts blur and it takes a moment to gather them.",
+            "A jolt of pain crosses your head from one temple to the other. You close your eyes and breathe deeply, but something inside you has cracked."
+          ],
           zainoAgg: (n) => `Pack updated: ${n}.`, zainoSpada: (n) => `Pack updated: ${n}. You can equip it from your pack.`,
           dueManiConMano: (a, b) => `${a} is wielded with two hands, but you are holding ${b}. Put away ${b} first.`,
           dueManiConScudo: (a, b) => `${a} is wielded with two hands, but you have ${b} on your arm. Put away ${b} first.`,
@@ -822,7 +1015,7 @@
     ].join(" ");
 
     /* ---------- Il mondo: regole delle scene (i testi sono in TESTI) ---------- */
-    const FATTI_ATRIO = "Atrio sontuoso di un dungeon: pavimento di marmo bianco lucidissimo con bei tappeti; alle pareti imponenti arazzi illuminati da fiaccole eterne, a sinistra uno con un cervo dai palchi imponenti, a destra uno con un leone; due porte di legno pregiato intarsiato, una a sinistra e una a destra, con due fiaccole ai lati; di fronte una scalinata sale al piano superiore, ai cui piedi stanno due armature decorative di ferro (una a sinistra e una a destra); sul pianerottolo riposa un'armatura scintillante con una lunga spada, davanti a una vetrata che raffigura il padrone di casa con la stessa armatura.";
+    const FATTI_ATRIO = "Atrio sontuoso di un dungeon: pavimento di marmo bianco lucidissimo con bei tappeti; alle pareti imponenti arazzi illuminati da fiaccole eterne, a sinistra uno con un cervo dai palchi imponenti, a destra uno con un leone; due porte di legno pregiato intarsiato, una a sinistra e una a destra, con due fiaccole ai lati; di fronte una scalinata sale al piano superiore, ai cui piedi stanno due armature decorative di ferro (una a sinistra e una a destra); sul pianerottolo riposa un'armatura scintillante con una lunga spada, davanti a una vetrata che raffigura il padrone di casa con la stessa armatura; alle spalle di chi entra un imponente portone d'ingresso finemente intagliato, chiuso a chiave (dove prima c'era l'ingresso della grotta).";
 
     const PROVA_INDAGARE = { abilita: "Indagare", dado: 10, cd: 8 };
     const PROVA_INDAGARE_10 = { abilita: "Indagare", dado: 10, cd: 10 };
@@ -837,8 +1030,10 @@
       porta_sx: { prova: PROVA_INDAGARE },
       porta_dx: { prova: PROVA_INDAGARE },
       /* sala da conversazione: «esamino …» non fa più scattare prove (descrizioni definitive in arrivo) */
-      ascolto: {}, divani: {}, quadri: {}, tavolino: {}, finestre: {},
-      camino: {},
+      ascolto: {}, quadri: {}, tavolino: {}, fiori: {},
+      divani: { prova: { abilita: "Indagare", dado: 20, cd: 10 }, dopo: "giocattoli" },
+      camino: { prova: { abilita: "Indagare", dado: 20, cd: 10 } },
+      finestre: { prova: { attributo: "Spirito", dado: 20, cd: 10 } }, /* fallita: −1 salute mentale, come ogni prova fallita */
       arazzo_sx: { prova: PROVA_INDAGARE, zaino: { nome: "Foglietto di Adele" } },
       arazzo_dx: {}, armatura_sx: {}, armatura_dx: {},
       armatura: { fatti: "Sul pianerottolo in cima alla scalinata un'armatura scintillante regge con i guanti una lunga spada impeccabile, come in attesa del proprietario. Alle sue spalle una vetrata artistica raffigura un uomo in posa fiera con la stessa armatura e la stessa spada: il padrone di casa. Da qui l'armatura si vede solo da lontano." },
@@ -849,14 +1044,22 @@
       scale_guarda: {}, pranzo_guarda: {},
       /* prove dichiarate nella sala da conversazione: d20 + modificatore dell'abilità */
       conv_percezione: { prova: { abilita: "Percezione", dado: 20, cd: 15 } },
-      conv_indagare: { prova: { abilita: "Indagare", dado: 20, cd: 10 }, dopo: "giocattoli" }
+      /* sala da pranzo: Percezione CD 8; la credenza (Indagare) è solo una descrizione, senza tiro */
+      pranzo_percezione: { prova: { abilita: "Percezione", dado: 20, cd: 8 } },
+      credenza: {}, pranzo_niente: {},
+      conv_indagare: { prova: { abilita: "Indagare", dado: 20, cd: 10 }, dopo: "giocattoli" },
+      /* accampamento fuori dal dungeon: solo descrizioni */
+      foresta_falo: {}, foresta_lanterna: {}, foresta_grotta: {}, foresta_bosco: {}, foresta_campo: {},
+      portone: {}
     };
     /* «faccio una prova di …»: abilità che in questa stanza hanno un tiro vero; le altre danno le frasi predefinite */
-    const PROVE_DICHIARATE = { sala_conversazione: { Percezione: "conv_percezione", Indagare: "conv_indagare" } };
+    const PROVE_DICHIARATE = { sala_conversazione: { Percezione: "conv_percezione", Indagare: "VUOTA" }, sala_pranzo: { Percezione: "pranzo_percezione", Indagare: "credenza" } }; /* VUOTA: da definire */
     const LUOGHI = {};
     for (const id in MECCANICA) LUOGHI[id] = { ...MECCANICA[id], ...TX.luoghi[id] };
 
     const STANZE_FATTI = {
+      foresta: "Radura nella foresta al tramonto, cielo arancione e porpora tra alberi secolari dai rami contorti; l'ingresso di una grotta nella roccia, incorniciato da radici e muschio, buio all'interno; davanti l'accampamento del personaggio: falò crepitante con legna accatastata accanto, zaino da esploratore con giaciglio arrotolato, coperta a righe sull'erba, lanterna quasi a secco, un pugnale su un ciocco e una spada appoggiata alla roccia. Nei villaggi la grotta è detta dimora del male: nessuno ne è mai uscito vivo.",
+      buio: "Appena dentro la grotta: buio totale, non si vede nulla, nemmeno le proprie mani; aria fredda e immobile; alle spalle l'uscita verso l'accampamento.",
       atrio: FATTI_ATRIO,
       sala_caccia: "Sala della caccia: soffitto basso, pannelli di legno scuro, teste imbalsamate di cervi, cinghiali e lupi con occhi di vetro, enorme camino di pietra spento sulla parete di fondo, pelli d'orso sul pavimento, lungo tavolo di quercia al centro con sedie dall'alto schienale, lance, archi e balestre appesi in ordine e ben lucidi, odore di legno, cuoio e vecchia cenere. Si torna nell'atrio dalla porta da cui si è entrati.",
       sala_conversazione: "Sala da conversazione: ampia e sfarzosa, al centro divani e poltrone attorno a un basso tavolino di pregiata fattura; di fronte all'ingresso un grande camino di pietra scolpita con fuoco vivo arancione e cremisi, calore e profumo di legna e cera; sopra il camino l'imponente ritratto a figura intera di una nobildonna dallo sguardo severo, la padrona di casa; a destra una grande vetrata su un giardino curato nei minimi dettagli; pareti con fiaccole eterne azzurre e quadri (nature morte e paesaggi lontani); spessi tappeti elaborati simili a quelli dell'atrio; molte piante ornamentali; sulla parete destra una grande porta a doppio battente spalancata da cui si intravedono una vasta sala da pranzo, lunghi tavoli e argenteria. Si torna nell'atrio dalla porta da cui si è entrati.",
@@ -868,11 +1071,13 @@
       STANZE[id] = { ...s, fatti: STANZE_FATTI[id], fallback: s.intro || s.fallbackLibera };
     }
 
-    const IMMAGINI = { atrio: "immagini/house/atrio.webp", sala_caccia: "immagini/house/sala_caccia.webp", sala_conversazione: "immagini/house/sala_conversazione.webp", sala_pranzo: "immagini/house/sala_pranzo.webp" };
-    const DIM_IMMAGINI = { atrio: [1920, 1079], sala_conversazione: [1358, 679] }; /* le altre sono 1536 × 1024 */
+    /* il buio usa l'immagine dell'esterno, spenta fino al nero (classe "nera") */
+    const IMMAGINI = { foresta: "immagini/house/esterno_dungeon.webp", buio: "immagini/house/esterno_dungeon.webp", atrio: "immagini/house/atrio.webp", sala_caccia: "immagini/house/sala_caccia.webp", sala_conversazione: "immagini/house/sala_conversazione.webp", sala_pranzo: "immagini/house/sala_pranzo.webp" };
+    const DIM_IMMAGINI = { foresta: [1920, 1079], buio: [1920, 1079], atrio: [1920, 1079], sala_conversazione: [1358, 679] }; /* le altre sono 1536 × 1024 */
     const vista = (id) => ({ titolo: TX.viste[id].titolo, img: { src: IMMAGINI[id], alt: TX.viste[id].alt } });
 
-    let luogo = "atrio";
+    /* Una nuova partita parte dalla foresta, fuori dal dungeon; i salvataggi già esistenti riprendono dal loro luogo */
+    let luogo = (salvata && Array.isArray(salvata.diario) && salvata.diario.length) ? "atrio" : "foresta";
     if (salvata && salvata.luogo && STANZE[salvata.luogo]) luogo = salvata.luogo;
 
     const SCALE = { ...TX.scale, soglia: 14, dannoDado: 4 };
@@ -888,7 +1093,7 @@
       muovi: "entr\\w*|pass\\w*|attravers\\w*|varc\\w*|oltrepass\\w*|vado|vai|andiamo|andare|raggiung\\w*|avvicin\\w*|dirig\\w*|cammin\\w*|percorr\\w*|prosegu\\w*|avanz\\w*|sposto|reco|enter\\w*|go|goes|going|walk\\w*|head\\w*|move\\w*|step\\w*|approach\\w*|cross\\w*|proceed\\w*",
       sali: "salgo|salire|sali|saliamo|salendo|climb\\w*|ascend\\w*|upstairs",
       tocca: "tocc\\w*|sfior\\w*|accarezz\\w*|tast\\w*|palp\\w*|touch\\w*|stroke\\w*|feel\\w*|caress\\w*",
-      prendi: "prend\\w*|raccogl\\w*|afferr\\w*|sfil\\w*|estra\\w*|agguant\\w*|stacc\\w*|rub\\w*|take|takes|taking|took|grab\\w*|pick\\w*|seiz\\w*|steal\\w*|draw\\w*|pull\\w*",
+      prendi: "prend\\w*|raccogl\\w*|raccolg\\w*|raccolt\\w*|afferr\\w*|sfil\\w*|estra\\w*|agguant\\w*|stacc\\w*|rub\\w*|take|takes|taking|took|grab\\w*|pick\\w*|seiz\\w*|steal\\w*|draw\\w*|pull\\w*",
       usa: "uso|usa|usare|usiamo|utilizz\\w*|equipagg\\w*|impugn\\w*|brandisc\\w*|sguain\\w*|imbracc\\w*|indoss\\w*|accend\\w*|bev\\w*|mangi\\w*|consum\\w*|applic\\w*|leggo|leggi|leggere|rileggo|use|uses|using|equip|equips|equipping|wield\\w*|brandish\\w*|light|lights|lighting|drink\\w*|eat|eats|eating|apply|read|reads|reading|reread|hold|holds|holding|wear\\w*|strap\\w*",
       riponi: "ripon\\w*|ripong\\w*|rinfoder\\w*|rimett\\w*|disequip\\w*|tolgo|togli\\w*|unequip\\w*|sheath\\w*|stow\\w*|put away|put down|put back|remove\\w*|take off",
       ascolta: "ascolt\\w*|origli\\w*|orecchi\\w*|listen\\w*|hear\\w*|eavesdrop\\w*"
@@ -908,6 +1113,12 @@
       const scale = /\bscal[ae]\b|scalinat|gradin|\bstair\w*|\bsteps?\b/.test(t);
       const sopra = /\bdi sopra\b|\bsu\b|piano superiore|pianerottol|\bupstairs\b|\blanding\b|\bcima\b|\btop\b|\bup\b/.test(t);
 
+      /* il portone d'ingresso alle spalle (dove c'era la grotta): chiuso a chiave */
+      const apri = /\bapr\w*|\bspalanc\w*|\bsping\w*|\btir[oa]\b|\bforz\w*|\bsfond\w*|\bopen\w*|\bpush\w*|\bpull\w*|\bforce\w*|\bunlock\w*/.test(t);
+      const portone = /portone|porta d\s?ingresso|porta principale|\bingresso\b|alle (mie )?spalle|dietro di me|front door|entrance door|main door|great door|behind me/.test(t);
+      const uscire = /\besc[oi]\b|\buscire\b|\buscita\b|foresta|grotta|accampament|\bleave\b|\bexit\b|way out|\bforest\b|\bcave\b|\bcamp\b|\bget out\b|\bgo out\b/.test(t);
+      if ((portone && (apri || muovi || uscire)) || (uscire && !/caccia|conversazion|pranzo|hunt|drawing|dining/.test(t))) return "portone_chiuso";
+      if (portone) return "portone";
       if (/caccia|hunt/.test(t)) return muovi && !guarda ? "entra_sx" : (guarda || ascolta ? "porta_sx" : null);
       if (/conversazion|drawing|sitting|parlou?r/.test(t)) return muovi && !guarda ? "entra_dx" : (guarda || ascolta ? "porta_dx" : null);
       if (/pranzo|dining/.test(t)) return "pranzo_lontano";
@@ -940,15 +1151,56 @@
         if (!muovi && (ha(t, "ascolta") || /rumor|suon|silenzi|\bsent[oi]\b|noise|sound|silence/.test(t))) return "ascolto";
         if ((pranzo || /\bport\w*|\bdoors?\b|destr|\bright\b/.test(t)) && muovi && !guarda && !torna && !atrio) return "entra_pranzo";
         if (pranzo && !torna) return "pranzo_guarda";
+        if (/\bfior\w*|fiorier\w*|\bpiant\w*|\bvas[oi]\b|petal\w*|\bflowers?\b|\bplants?\b|\bvases?\b|planter/.test(t)) return "fiori";
         if (/tavol|\btables?\b/.test(t)) return "tavolino";
         if (/divan|poltron|sofa|couch|settee|armchair/.test(t)) return "divani";
         if (/finestr|davanzal|giardin|fontan|lun[ae]\b|window|sill|garden|fountain|moons?\b/.test(t)) return "finestre";
         if (/camin|fuoco|brace|braci|legna|scald|fireplace|\bfire\b|hearth|ember|warm/.test(t)) return "camino";
       }
-      if (luogo === "sala_pranzo" && atrio) return "atrio_lontano";
+      if (luogo === "sala_pranzo") {
+        if (atrio) return "atrio_lontano";
+        if (/credenz|mobil[ei]|\bcassett\w*|\bante\b|battent|sideboard|cabinet|cupboard|drawer/.test(t)) return "credenza";
+        if (!muovi && (ha(t, "ascolta") || /rumor|suon|silenzi|noise|sound|silence/.test(t))) return "pranzo_percezione";
+        if (guarda && !torna && parole(t) > 2 && !/\b(stanza|sala|ambiente|intorno|room|hall|around)\b/.test(t)) return "pranzo_niente"; /* gli altri «esamino…» non aggiungono dettagli */
+      }
       if (torna || atrio) return "torna";
       if (/\b(stanza|sala|ambiente|intorno|paraggi|cerco|controllo|ispeziono|esploro|room|around|surroundings|explore|search\w*)\b|mi guardo/.test(t)) return "stanza_corrente";
       if (guarda && parole(t) <= 2) return "stanza_corrente";
+      return null;
+    }
+
+    /* Foresta, fuori dal dungeon */
+    const RE_TORCIA = /\btorc\w*|\btorch\w*|\bfiaccol\w*/;
+    const RE_ACCENDI = /\baccend\w*|\bappicc\w*|\bincendi\w*|\blight\w*|\bkindl\w*|\bignit\w*|\buso\b|\busa\b|\busare\b|utilizz\w*|\buse\b|\buses\b|\busing\b/;
+    const RE_GROTTA = /dungeon|grott|cavern|\bcaves?\b|soglia|ingress|entrata|abisso|\bdentro\b|oscurita|\binside\b|threshold|entrance|\bmouth\b|\bgo in\b|\bwalk in\b|\bstep in\b/;
+    function interpretaForesta(t) {
+      const guarda = ha(t, "guarda"), muovi = ha(t, "muovi"), prendi = ha(t, "prendi");
+      /* farsi una torcia: «crea torcia», «mi costruisco una torcia», «preparo una fiaccola», «raccolgo un ramo», «make a torch»… */
+      const crea = /\bcre[aio]\w*|costru\w*|prepar\w*|fabbric\w*|realizz\w*|improvvis\w*|ricav\w*|assembl\w*|confezion\w*|\bfaccio\b|\bfare\b|\bfai\b|\bmi serve\b|\bcerco\b|\btrovo\b|\bvoglio\b|\bmake\b|\bmaking\b|\bcraft\w*|\bbuild\w*|\bfashion\w*|\bprepar\w*|\bimprovis\w*|\bget\b|\bneed\b|\bfind\b|\bwant\b/.test(t);
+      if (RE_TORCIA.test(t) && RE_ACCENDI.test(t) && !crea && !prendi) return "torcia_fuori";
+      if (RE_TORCIA.test(t) && (prendi || crea)) return "prendi_torcia";
+      if ((prendi || crea) && /\brami?\b|\bramo\b|\blegn[oa]\b|bastone di legno|ciocc|tizzon|\bbranch\w*|\bstick\w*|firewood|\blog\b/.test(t)) return "prendi_torcia";
+      if (RE_TORCIA.test(t)) return "torcia_fuori";
+      if (/incantesim|\bspell\b|\bcast\w*|\bmagi\w*/.test(t) && /\bluce\b|\blight\b/.test(t)) return "luce_fuori";
+      /* entrare: "entro nel dungeon", "avanzo nella grotta", "varco la soglia", anche solo "entro" o "avanzo" */
+      if (muovi && !guarda && (RE_GROTTA.test(t) || parole(t) <= 2)) return "entra_dungeon";
+      if (/fal[oò]|\bfuoco\b|fiamm|brac[ei]|legna|\brami?\b|\bfires?\b|campfire|flames?|embers?|firewood|branch\w*/.test(t)) return "foresta_falo";
+      if (/lantern/.test(t)) return "foresta_lanterna";
+      if (RE_GROTTA.test(t) || /roccia|radic|\brock\b|\broots?\b/.test(t)) return "foresta_grotta";
+      if (/alber|bosco|forest|cielo|tramont|\bsole\b|\btrees?\b|\bwoods?\b|\bsky\b|sunset|\bsun\b/.test(t)) return "foresta_bosco";
+      if (/accampament|\bcampo\b|copert|giacigli|\bspada\b|pugnal|\barmi\b|\bcamp\b|blanket|bedroll|\bswords?\b|dagger|weapons|\bpack\b|backpack|\bzaino\b/.test(t)) return "foresta_campo";
+      if (/\b(intorno|paraggi|radura|mi guardo|around|surroundings|clearing)\b/.test(t) || (guarda && parole(t) <= 2)) return "stanza_corrente";
+      return null;
+    }
+
+    /* Nel buio della grotta: si avanza solo con una luce */
+    function interpretaBuio(t) {
+      const esci = /\b(esc\w*|torn\w*|ritorn\w*|indietro|fuori|back|return\w*|leave|exit\w*|out|outside)\b|accampament|\bcamp\b/.test(t);
+      if (RE_TORCIA.test(t) && RE_ACCENDI.test(t)) return "accendi_torcia";
+      if (/incantesim|\bspell\b|\bcast\w*|\bmagi\w*|\blanci\w*|\bevoc\w*/.test(t) && /\bluce\b|\blight\b/.test(t)) return "lancia_luce";
+      if (/^\s*(luce|light)\s*$/.test(t)) return "lancia_luce";
+      if (esci) return "esci"; /* anche «esco a prendere una torcia» */
+      if (RE_TORCIA.test(t)) return "accendi_torcia";
       return null;
     }
 
@@ -982,10 +1234,18 @@
       return base - (attr === "Agilità" ? malusArmatura() : 0) + (addestrata(n) ? (Number(pg.livello) || 1) : 0);
     };
     const maxMentali = () => (pg.saluteMentale != null ? Number(pg.saluteMentale) : 10 + mod(spirito()));
+    /* mana (Sapiente e Accolito): il massimo viene dalla creazione, quello speso fa parte della partita */
+    const manaMax = () => (pg.mana != null ? Number(pg.mana) : null);
+    /* incantesimi salvati in creazione: { id, nome: { it, en }, costo, desc: { it, en }, effetto } */
+    const listaIncantesimi = () => [].concat(pg.incantesimi || []).filter(Boolean).map(x => typeof x === "string" ? { id: x, nome: x } : x);
+    const nomeInc = (inc) => Lingua.t(inc.nome) || inc.id || "";
+    const nomiInc = (inc) => (inc.nome && typeof inc.nome === "object" ? Object.values(inc.nome) : [inc.nome, inc.id]).filter(Boolean).map(String);
+    const manaAttuale = () => Math.max(0, manaMax() - (pg.manaUsato || 0));
 
     let usate = (salvata && salvata.usate && typeof salvata.usate === "object" && !Array.isArray(salvata.usate)) ? salvata.usate : {};
     if (pg) pg.dannoFisico = salvata ? (Number(salvata.dannoFisico) || 0) : 0;
-    if (pg) pg.dannoMentale = salvata ? (Number(salvata.dannoMentale) || 0) : 0; /* i danni mentali fanno parte della partita, non del personaggio */
+    if (pg) pg.dannoMentale = salvata ? (Number(salvata.dannoMentale) || 0) : 0;
+    if (pg) pg.manaUsato = salvata ? (Number(salvata.manaUsato) || 0) : 0; /* i danni mentali fanno parte della partita, non del personaggio */
     const salvaUsate = () => modificato();
     const salvaPg = () => modificato();
 
@@ -1043,6 +1303,7 @@
       disegnaAbilita();
       disegnaEquip();
       aggiornaZaino();
+      disegnaIncantesimi();
     }
 
     function disegnaVitali() {
@@ -1051,6 +1312,31 @@
       riga(vit, U.puntiSalute, testoSalute(), "salute");
       riga(vit, U.puntiMentali, testoMentali(), "mentali");
       riga(vit, U.classeArmatura, String(caAttuale()));
+      if (manaMax() != null) riga(vit, U.mana, `${manaAttuale()} / ${manaMax()}`, "mana");
+    }
+
+    /* Tendina degli incantesimi: nome (si apre la descrizione) e costo in mana */
+    function disegnaIncantesimi() {
+      const lista = listaIncantesimi();
+      document.getElementById("incantesimiBox").hidden = !lista.length;
+      const box = document.getElementById("incantesimi");
+      box.replaceChildren();
+      lista.forEach((inc, i) => {
+        const costo = inc.costo;
+        const og = document.createElement("div"); og.className = "oggetto";
+        const testa = document.createElement("div"); testa.className = "testa";
+        const k = "inc-" + (inc.id || i), aperto = aperti.has(k);
+        const testo = document.createElement("p"); testo.className = "testo"; testo.id = k.replace(/\W+/g, "_");
+        testo.textContent = [Lingua.t(inc.desc), inc.effetto ? `[${Lingua.t(inc.effetto)}]` : ""].filter(Boolean).join(" "); testo.hidden = !aperto;
+        const b = document.createElement("button"); b.type = "button"; b.className = "nome-btn"; b.textContent = nomeInc(inc);
+        b.setAttribute("aria-expanded", String(aperto)); b.setAttribute("aria-controls", testo.id);
+        b.addEventListener("click", () => { const apri = testo.hidden; testo.hidden = !apri; if (apri) aperti.add(k); else aperti.delete(k); b.setAttribute("aria-expanded", String(apri)); });
+        const c = document.createElement("span"); c.className = "costo"; c.textContent = costo != null ? `${costo} ${U.mana.toLowerCase()}` : "";
+        const lancia = document.createElement("button"); lancia.type = "button"; lancia.className = "mini"; lancia.textContent = U.lanciaInc;
+        lancia.addEventListener("click", clic(() => lanciaIncantesimo(inc)));
+        const dx = document.createElement("span"); dx.className = "azioni-inc"; dx.append(c, lancia);
+        testa.append(b, dx); og.append(testa, testo); box.append(og);
+      });
     }
 
     function disegnaAbilita() {
@@ -1079,6 +1365,7 @@
       const max = maxMentali();
       return `${Math.max(0, max - (pg.dannoMentale || 0))} / ${max}`;
     }
+    function scuotiScheda() { const e = document.querySelector(".scheda"); e.classList.remove("colpito"); void e.offsetWidth; e.classList.add("colpito"); }
     function aggiornaMentali() {
       const dd = document.querySelector('#vitali dd[data-k="mentali"]');
       if (dd) dd.textContent = testoMentali();
@@ -1110,6 +1397,8 @@
     }
 
     let ridisegno = false; /* durante il ridisegno della stanza niente scorrimento automatico */
+    /* suggerimenti tolti dal diario (restano solo nella barra di scrittura): nascosti anche nei salvataggi vecchi */
+    const NOTE_TOLTE = [TESTI.it.ui.notaInizio, TESTI.en.ui.notaInizio, TESTI.it.esterno.notaForesta, TESTI.en.esterno.notaForesta, TESTI.it.esterno.notaLuce, TESTI.en.esterno.notaLuce];
     let gruppo = null, tendinaAperta = null; /* ogni azione del giocatore è una tendina che contiene ciò che è successo */
     function disegna(v) {
       if (v.tipo === "giocatore") {
@@ -1133,9 +1422,10 @@
       if (v.img) {
         const img = document.createElement("img");
         const dim = DIM_IMMAGINI[v.stanza] || [1536, 1024];
-        img.className = "scena"; img.src = v.img.src; img.alt = v.img.alt; img.width = dim[0]; img.height = dim[1];
-        img.addEventListener("error", () => img.remove()); /* immagine non ancora caricata: niente icona rotta */
-        el.append(img);
+        img.className = "scena" + (v.stanza === "buio" ? " nera" : v.anim === "esce" ? " esce" : "") + (ridisegno ? " subito" : ""); img.src = v.img.src; img.alt = v.img.alt; img.width = dim[0]; img.height = dim[1];
+        const cornice = document.createElement("div"); cornice.className = "cornice"; cornice.append(img);
+        img.addEventListener("error", () => cornice.remove()); /* immagine non ancora caricata: niente icona rotta */
+        el.append(cornice);
       }
       const p = (t, c) => { const e = document.createElement("p"); e.textContent = t; if (c) e.className = c; el.append(e); };
       if (v.tipo === "prova") {
@@ -1148,8 +1438,10 @@
       if (v.esito) p(v.esito, "esito-prova");
       (v.righe || []).forEach(t => p(t, (t.startsWith("«") || t.startsWith("“")) ? "lettera" : ""));
       if (v.banner) p(v.banner, "banner");
-      if (v.nota) p(v.nota, "nota");
+      if (v.nota && !NOTE_TOLTE.includes(v.nota)) p(v.nota, "nota");
       (v.fuori ? elDiario : (gruppo || elDiario)).append(el); /* i messaggi dei pulsanti stanno fuori dalla tendina dell'azione */
+      /* esito di una prova di abilità: la tendina dell'azione diventa verde o rossa (anche nei salvataggi vecchi) */
+      if (!v.fuori && gruppo && tendinaAperta && v.box && (v.prova || /difficolt|difficulty/i.test(v.esito || ""))) tendinaAperta.classList.add(v.box === "ok" ? "t-ok" : "t-ko");
       if (!ridisegno) el.scrollIntoView({ block: v.tipo === "narra" ? "start" : "nearest" });
     }
 
@@ -1167,7 +1459,7 @@
     function salvaPartita() {
       const conta = {}, tenute = [];
       for (let i = diario.length - 1; i >= 0; i--) { const k = diario[i].stanza || "atrio"; conta[k] = (conta[k] || 0) + 1; if (conta[k] <= 80) tenute.unshift(diario[i]); }
-      const dati = { usate, diario: tenute, luogo, dannoMentale: pg.dannoMentale || 0, dannoFisico: pg.dannoFisico || 0, zaino, arma, mano, scudo, ora: Date.now() };
+      const dati = { usate, diario: tenute, luogo, dannoMentale: pg.dannoMentale || 0, dannoFisico: pg.dannoFisico || 0, manaUsato: pg.manaUsato || 0, zaino, arma, mano, scudo, ora: Date.now() };
       try { localStorage.setItem(CHIAVE_SALVATAGGIO, JSON.stringify(dati)); }
       catch (e) { document.getElementById("statoSalvataggio").textContent = U.salvataggioErr; return; }
       try { /* copia nel posto del personaggio attivo, così dalla pagina iniziale si riprende da qui */
@@ -1221,7 +1513,7 @@
 
     function stato(blocca, suggerimento) {
       elTesto.disabled = blocca; elInvia.disabled = blocca;
-      elTesto.placeholder = suggerimento || U.placeholder;
+      elTesto.placeholder = suggerimento || ((luogo === "foresta" || luogo === "buio") ? TX.esterno.placeholder : U.placeholder);
       if (!blocca) elTesto.focus({ preventScroll: true });
     }
 
@@ -1275,7 +1567,15 @@
           usate[id] = ok ? "ok" : "ko"; salvaUsate();
           chiudiScelte();
           const testoEsito = ok ? ((dopoFallimento && l.successoDopoFallimento) || l.successo) : l.fallimento;
-          aggiungi({ tipo: "narra", box: ok ? "ok" : "ko", esito: U.esito(tiro, m, tot, p.cd, ok), righe: testoEsito });
+          const fitta = [];
+          if (!ok) { /* prova fallita: una fitta alla mente, −1 salute mentale (come nel tutorial) */
+            const prima = Math.max(0, maxMentali() - (pg.dannoMentale || 0));
+            if (prima > 0) pg.dannoMentale = (pg.dannoMentale || 0) + 1;
+            salvaPg(); aggiornaMentali(); scuotiScheda();
+            if (!l.fittaNelTesto) fitta.push(U.fitte[Math.floor(Math.random() * U.fitte.length)]);
+            fitta.push(U.dannoMentale(prima, Math.max(0, maxMentali() - pg.dannoMentale)));
+          }
+          aggiungi({ tipo: "narra", prova: true, box: ok ? "ok" : "ko", esito: U.esito(tiro, m, tot, p.cd, ok), righe: [...testoEsito, ...fitta] });
           if (ok && l.apre) sist(l.apre);
           if (ok && l.zaino) {
             aggiungiZaino({ id: id, nome: l.zaino.nome, tipo: "nota", testo: TX.foglietto });
@@ -1549,7 +1849,7 @@
     /* «prendo i giocattoli»: possibile solo dopo averli trovati, anche se prima si era detto di no */
     function giocattoli() {
       if (usate.giocattoli === "presi") return aggiungi({ tipo: "narra", righe: [GIOCATTOLI.giaPresi] });
-      if (usate.conv_indagare === "ok") return offriGiocattoli();
+      if (usate.divani === "ok" || usate.conv_indagare === "ok") return offriGiocattoli();
       aggiungi({ tipo: "narra", righe: [GIOCATTOLI.nonVisti] });
     }
 
@@ -1597,6 +1897,104 @@
     }
 
     /* =====================================================================
+       FORESTA E BUIO DELLA GROTTA
+       Entrando nel dungeon l'immagine si spegne fino al nero. Si arriva all'atrio solo accendendo
+       una torcia o lanciando l'incantesimo Luce. Senza nessuno dei due si può uscire all'accampamento
+       e prepararsi una torcia improvvisata (un solo utilizzo, una sola volta per partita).
+       ===================================================================== */
+    const EST = TX.esterno;
+    const torciaUtile = () => [...(mano ? [mano] : []), ...zaino].find(it => it.nome === "Torcia" && Number(it.usi) > 0) || null;
+    /* incantesimi scelti in creazione (Sapiente e Accolito): si cerca «Luce» / «Light», per nome o come stringa */
+    const incantesimoLuce = () => listaIncantesimi().find(s => s.id === "luce" || nomiInc(s).some(n => /^(luce|light)$/.test(norm(n).trim()))) || null;
+    const notaBuio = () => (torciaUtile() || incantesimoLuce()) ? undefined : EST.notaEsci;
+    const buio = () => aggiungi({ tipo: "narra", righe: [EST.buio[Math.floor(Math.random() * EST.buio.length)]], nota: notaBuio() });
+
+    function entraBuio() {
+      chiudiScelte();
+      luogo = "buio";
+      const tornato = diario.some(e => e.stanza === "buio");
+      mostraStanza("buio");
+      Suono.aggiorna();
+      aggiungi({ tipo: "narra", ...vista("buio"), righe: tornato ? STANZE.buio.ritorno : STANZE.buio.intro, nota: notaBuio() });
+    }
+
+    function prendiTorcia() {
+      if (usate.torcia_campo) return aggiungi({ tipo: "narra", righe: [EST.torciaGia] });
+      usate.torcia_campo = "presa"; salvaUsate();
+      aggiungi({ tipo: "narra", righe: EST.torciaPresa });
+      const gia = [...(mano ? [mano] : []), ...zaino].find(it => it.nome === "Torcia"); /* torce già possedute: si aggiunge un utilizzo */
+      if (gia) { gia.usi = (Number(gia.usi) || 0) + 1; aggiornaEquip(); modificato(); return sist(EST.torciaAggiunta(gia.usi)); }
+      aggiungiZaino({ id: "torcia_campo", nome: "Torcia", tipo: "dotazione", usi: 1, impugnabile: true });
+      sist(U.zainoAgg(nomeOg({ nome: "Torcia" })));
+    }
+
+    /* La luce rivela l'atrio: la descrizione dell'atrio è preceduta da una frase di passaggio */
+    /* torciaSpenta: la torcia accesa si spegne appena entrati nell'atrio */
+    function luceNelBuio(passaggio, msg, torciaSpenta) {
+      chiudiScelte();
+      usate.luce = "ok"; salvaUsate();
+      luogo = "atrio";
+      mostraStanza("atrio");
+      Suono.aggiorna();
+      const righe = [...passaggio, ...TX.intro, EST.portone];
+      if (torciaSpenta) righe.push(EST.torciaSpenta);
+      aggiungi({ tipo: "narra", ...vista("atrio"), righe });
+      if (msg) sist(msg);
+    }
+
+    function accendiTorcia() {
+      const it = torciaUtile();
+      if (!it) return aggiungi({ tipo: "narra", righe: [EST.nessunaTorcia], nota: notaBuio() });
+      /* per accenderla serve la mano secondaria: arma a due mani, scudo o altro oggetto tornano nello zaino
+         e non vengono rimessi a posto. Poi la torcia si spegne e diventa inutile: sparisce e la mano resta libera. */
+      if (mano === it) mano = null; else zaino = zaino.filter(x => x !== it);
+      const extra = liberaSecondaria();
+      aggiornaEquip();
+      luceNelBuio(EST.luceTorcia, EST.sistTorciaSpenta + extra, true);
+    }
+
+    function lanciaLuce() {
+      const inc = incantesimoLuce();
+      if (!inc) return aggiungi({ tipo: "narra", righe: [EST.nessunIncantesimo], nota: notaBuio() });
+      const costo = Number(inc.costo) || 1;
+      if (manaMax() != null) {
+        if (manaAttuale() < costo) return aggiungi({ tipo: "narra", righe: [EST.pocoMana(costo, manaAttuale())], nota: notaBuio() });
+        pg.manaUsato = (pg.manaUsato || 0) + costo; disegnaVitali(); modificato();
+      }
+      luceNelBuio(EST.luceIncantesimo, EST.incantesimoUsato(costo, manaMax() != null ? manaAttuale() : "—"));
+    }
+
+    /* Pulsante «Lancia» nella scheda: per ora ha effetto solo Luce nel buio della grotta */
+    function lanciaIncantesimo(inc) {
+      if (occupato || !elAzioni.hidden) return; /* niente lanci durante una scelta in sospeso */
+      const luce = inc === incantesimoLuce();
+      if (luce && luogo === "buio") return lanciaLuce();
+      if (luce && luogo === "foresta") return aggiungi({ tipo: "narra", righe: [EST.entraConLuce] });
+      aggiungi({ tipo: "narra", righe: [EST.incInutile(nomeInc(inc))] });
+    }
+
+    async function gestisciForesta(t, testo) {
+      const id = interpretaForesta(t);
+      if (id === "entra_dungeon") return entraBuio();
+      if (id === "prendi_torcia") return prendiTorcia();
+      if (id === "torcia_fuori") return aggiungi({ tipo: "narra", righe: [EST.torciaFuori] });
+      if (id === "luce_fuori") return aggiungi({ tipo: "narra", righe: [EST.entraConLuce] });
+      if (id && LUOGHI[id]) return esamina(id);
+      if (id === "stanza_corrente") return aggiungi({ tipo: "narra", righe: (await narra(COMPITI.osserva, STANZE.foresta.fatti, testo)) || STANZE.foresta.intro });
+      return false; /* non riguarda la foresta: prove di abilità, oggetti, ecc. */
+    }
+
+    function gestisciBuio(t) {
+      const id = interpretaBuio(t);
+      if (id === "accendi_torcia") return accendiTorcia();
+      if (id === "lancia_luce") return lanciaLuce();
+      if (id === "esci") return vai("foresta");
+      /* riporre o equipaggiare oggetti resta possibile anche al buio */
+      if (ha(t, "riponi") || ha(t, "usa") || ha(t, "prendi")) return false;
+      return buio();
+    }
+
+    /* =====================================================================
        SUONI DI AMBIENTE
        Ogni stanza in SUONI_STANZE ha il suo file audio, riprodotto in ciclo (es. audio/camino.mp3).
        Se il file manca o non si apre, si usa il crepitio generato dal browser (Web Audio API).
@@ -1604,7 +2002,7 @@
        I browser avviano l'audio solo dopo un'interazione del giocatore (clic o tasto).
        ===================================================================== */
     /* valore: "crepitio" = scoppiettii generati dal browser; un percorso (es. "audio/camino.mp3") = file audio in ciclo */
-    const SUONI_STANZE = { sala_conversazione: "crepitio" };
+    const SUONI_STANZE = { foresta: "audio/Foresta.mp3", sala_conversazione: "audio/sala_conversazione.mp3" }; /* se il file manca si usa il crepitio generato */
     const VOLUME_AMBIENTE = 0.7; /* volume del file audio, da 0 a 1 */
     /* =====================================================================
        FUOCO DEL CAMINO generato dal browser (Web Audio API), a strati:
@@ -1631,8 +2029,8 @@
         return { f, g };
       }
       const rombo = strato(marrone, "lowpass", 180, 0.7, 0.22);
-      const fiato = strato(bianco, "bandpass", 650, 0.5, 0.008);
-      const sibilo = strato(bianco, "highpass", 6000, 0.7, 0.0025);
+      const fiato = strato(bianco, "bandpass", 650, 0.5, 0.0055); /* fruscio: abbassato */
+      const sibilo = strato(bianco, "highpass", 6000, 0.7, 0.0016);
 
       /* un evento di rumore breve: sorgente → filtro → inviluppo → panorama */
       function lampo(t, dur, amp, tipo, freq, q, pan) {
@@ -1682,9 +2080,9 @@
           viv = Math.max(0.55, Math.min(1.5, viv + (R() - 0.5) * 0.12 + (1 - viv) * 0.03));
           rombo.g.gain.setTargetAtTime(0.16 * viv * (0.75 + R() * 0.5), t, 0.09);
           rombo.f.frequency.setTargetAtTime(130 + 110 * viv * R(), t, 0.12);
-          fiato.g.gain.setTargetAtTime(0.008 * viv * (0.4 + R() * 1.2), t, 0.06);
+          fiato.g.gain.setTargetAtTime(0.0055 * viv * (0.4 + R() * 1.2), t, 0.06);
           fiato.f.frequency.setTargetAtTime(450 + R() * 500, t, 0.1);
-          sibilo.g.gain.setTargetAtTime(0.0025 * (0.6 + R() * 0.8), t, 0.2);
+          sibilo.g.gain.setTargetAtTime(0.0016 * (0.6 + R() * 0.8), t, 0.2);
           prossimoRespiro += 0.08 + R() * 0.06;
         }
         while (prossimoTic < fino) { /* processo di Poisson: la frequenza dipende dalla vivacità */
@@ -1747,7 +2145,7 @@
         attivo = true; modo = "file";
         clearInterval(fade); /* annulla un'eventuale dissolvenza in uscita ancora in corso */
         el.volume = 0;
-        el.play().then(() => { if (attivo && modo === "file") sfuma(VOLUME_AMBIENTE * Volume.livello, 2500); else el.pause(); })
+        el.play().then(() => { if (attivo && modo === "file") sfuma(VOLUME_AMBIENTE * Volume.livello, 800); else el.pause(); })
           .catch(err => {
             if (err && err.name === "NotAllowedError") { attivo = false; return; } /* serve prima un clic: si riprova al primo gesto */
             fileKo.add(src);
@@ -1787,7 +2185,8 @@
       const tornato = diario.some(e => e.stanza === id);
       mostraStanza(id); /* sparisce il diario della stanza precedente, riappare quello di questa */
       Suono.aggiorna(); /* il suono di ambiente segue la stanza */
-      if (tornato) aggiungi({ tipo: "narra", righe: s.ritorno });
+      if (tornato && id === "foresta") aggiungi({ tipo: "narra", ...vista(id), anim: "esce", righe: s.ritorno }); /* zoom indietro dal buio alla foresta */
+      else if (tornato) aggiungi({ tipo: "narra", righe: s.ritorno });
       else aggiungi({ tipo: "narra", ...vista(id), righe: s.intro, nota: s.nota });
     }
 
@@ -1802,6 +2201,8 @@
     ];
     function provaAbilita(nome) {
       const conTiro = PROVE_DICHIARATE[luogo] && PROVE_DICHIARATE[luogo][nome];
+      if (conTiro === "VUOTA") return aggiungi({ tipo: "narra", righe: ["PROVA VUOTA"] });
+      if (conTiro && !LUOGHI[conTiro].prova) return aggiungi({ tipo: "narra", esito: U.prova(N("abilita", nome)), righe: LUOGHI[conTiro].fisso });
       if (conTiro) return esamina(conTiro);
       const spec = TX.prove.stanze[luogo] && TX.prove.stanze[luogo][nome];
       const gen = TX.prove.generiche[nome];
@@ -1813,12 +2214,24 @@
     async function gestisci(testo) {
       const t = norm(testo);
       const stanza = STANZE[luogo];
+      const fuori = luogo === "foresta" || luogo === "buio"; /* fuori dalla dimora: niente atrio né altre stanze */
+
+      /* foresta e buio hanno le loro regole; ciò che non riguarda il luogo (oggetti, prove) prosegue qui sotto */
+      if (luogo === "buio" && gestisciBuio(t) !== false) return;
+      if (luogo === "foresta" && (await gestisciForesta(t, testo)) !== false) return;
+
+      /* incantesimo lanciato fuori dal buio: per ora nessun effetto e nessun costo */
+      if (/incantesim|\bspell\b|\bcast\w*|\blanci[oa]\b|\bevoc\w*/.test(t)) {
+        const citatoInc = listaIncantesimi().find(inc => nomiInc(inc).some(v => t.includes(norm(v))));
+        if (citatoInc) return aggiungi({ tipo: "narra", righe: [EST.incInutile(nomeInc(citatoInc))] });
+        if (/incantesim|\bspell\b/.test(t)) return aggiungi({ tipo: "narra", righe: [EST.incSconosciuto] });
+      }
 
       /* 0. prova di abilità dichiarata */
       const ab = PROVE_ABILITA.find(([, re]) => re.test(t));
       if (ab) {
         /* se la frase indica un elemento con una prova di quella stessa abilità (es. "prova di indagare sull'arazzo a sinistra"), parte quella prova */
-        const bersaglio = luogo === "atrio" ? interpreta(t) : interpretaAltrove(t);
+        const bersaglio = fuori ? null : luogo === "atrio" ? interpreta(t) : interpretaAltrove(t);
         const lb = bersaglio && LUOGHI[bersaglio];
         if (lb && lb.prova && lb.prova.abilita === ab[0]) return esamina(bersaglio);
         return provaAbilita(ab[0]);
@@ -1841,7 +2254,10 @@
       }
 
       /* 3. il luogo */
+      if (luogo === "buio") return buio();
+      if (luogo === "foresta") return aggiungi({ tipo: "narra", righe: (await narra(COMPITI.libera, stanza.fatti, testo)) || stanza.fallbackLibera });
       const id = luogo === "atrio" ? interpreta(t) : interpretaAltrove(t);
+      if (id === "portone_chiuso") return aggiungi({ tipo: "narra", righe: EST.portoneChiuso });
       if (id === "spada") return spada();
       if (id === "giocattoli") return giocattoli();
       if (id === "scale") return scale();
@@ -1882,15 +2298,20 @@
 
       [arma, ...zaino].forEach(o => { if (o && o.nome === SPADA.oggetto.nome) { o.bonus = 0; if (!o.danno) o.danno = SPADA.oggetto.danno; if (!o.mani) { o.mani = SPADA.oggetto.mani; o.tipoDanno = SPADA.oggetto.tipoDanno; } if (!o.alias || !o.alias.includes("sword")) o.alias = SPADA.oggetto.alias; } }); /* salvataggi vecchi */
       disegnaScheda();
-      if (!diario.length) {
-        diario.push({ tipo: "narra", stanza: "atrio", ...vista("atrio"), righe: TX.intro, nota: U.notaInizio });
+      if (!diario.length) { /* nuova partita: si comincia all'accampamento, fuori dal dungeon */
+        luogo = "foresta";
+        diario.push({ tipo: "narra", stanza: "foresta", ...vista("foresta"), righe: STANZE.foresta.intro });
       }
       mostraStanza(luogo);
       document.getElementById("salva").addEventListener("click", salvaPartita);
       pulsanteAudio();
       /* il browser permette l'audio solo dopo il primo clic o tasto: se si riprende la partita nella sala, parte lì */
-      const sblocca = () => { Suono.aggiorna(); document.removeEventListener("pointerdown", sblocca); document.removeEventListener("keydown", sblocca); };
-      document.addEventListener("pointerdown", sblocca); document.addEventListener("keydown", sblocca);
+      /* si prova a partire subito (di solito il browser lo permette, perché si arriva qui con un clic dalla pagina precedente);
+         intanto il file inizia a scaricarsi. Se il browser blocca l'audio, parte al primo clic, tocco o tasto. */
+      Suono.aggiorna();
+      const GESTI = ["pointerdown", "keydown", "touchstart", "click"];
+      const sblocca = () => { Suono.aggiorna(); GESTI.forEach(g => document.removeEventListener(g, sblocca, true)); };
+      GESTI.forEach(g => document.addEventListener(g, sblocca, true));
       document.addEventListener("visibilitychange", () => Suono.aggiorna()); /* in pausa quando la scheda non è visibile */
       aggiornaBarra();
       stato(false);

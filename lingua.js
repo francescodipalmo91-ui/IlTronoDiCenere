@@ -32,12 +32,12 @@
   /* Descrizioni di dotazione e scudo */
   const DESC = {
     "Pozione di cura": {
-      it: "Quando un personaggio beve il fluido magico rossastro contenuto in questa fiala, recupera 1d4 + il livello del personaggio.",
-      en: "When a character drinks the reddish magical fluid in this vial, they recover 1d4 + the character's level."
+      it: "Quando un personaggio beve il fluido magico rossastro contenuto in questa fiala, recupera 1d6 + il livello del personaggio in salute fisica.",
+      en: "When a character drinks the reddish magical fluid in this vial, they recover 1d6 + the character's level in physical health."
     },
     "Pozione di mana": {
-      it: "Quando un personaggio beve il fluido magico violaceo contenuto in questa fiala, recupera 1d4 + il livello del personaggio.",
-      en: "When a character drinks the violet magical fluid in this vial, they recover 1d4 + the character's level."
+      it: "Quando un personaggio beve il fluido magico violaceo contenuto in questa fiala, recupera 1d6 + il livello del personaggio in mana.",
+      en: "When a character drinks the violet magical fluid in this vial, they recover 1d6 + the character's level in mana."
     },
     "Razioni da viaggio": {
       it: "Non sai se troverai da mangiare dove stai andando: queste razioni ti terranno in vita per qualche giorno, anche se fanno schifo. Recupera 1 punto salute + il livello del personaggio. Si può utilizzare una razione a turno.",

@@ -10,6 +10,7 @@
     try { if (localStorage.getItem("audio_volume") === null) localStorage.setItem("audio_volume", "0.1"); } catch (e) {}
   </script>
   <script src="volume.js"></script>
+  <script src="cloud.js"></script>
   <style>
     :root {
       --bg: #07090d;
@@ -179,6 +180,35 @@
       border-width: 1px; transition: none;
     }
 
+    /* ---------- Account cloud: in basso a sinistra, speculare al volume ---------- */
+    .account { position: fixed; left: 1.1rem; bottom: 1rem; z-index: 3; }
+    .account[hidden] { display: none; }
+    .account button {
+      min-width: 0; padding: 0.45rem 0.8rem; font-size: 0.92rem; line-height: 1.2;
+      color: var(--text); background: rgba(7,9,13,0.6); border: 1px solid rgba(174,184,197,0.45);
+      backdrop-filter: blur(4px); box-shadow: 0 2px 8px rgba(0,0,0,0.65);
+      max-width: 42vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .account button:hover { border-color: var(--accent); }
+    .account button[data-conferma] { color: #ffb4b4; border-color: #d96b6b; }
+    @media (max-width: 480px) { .lingue { left: auto; right: 4.6rem; transform: none; } }
+
+    /* ---------- Conflitti di salvataggio tra dispositivi ---------- */
+    .conflitti:empty { display: none; }
+    .conflitti { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem; }
+    .conflitto { padding: 0.9rem 1rem; border: 2px solid #d9a441; border-radius: 0.75rem; background: rgba(7,9,13,0.82); backdrop-filter: blur(6px); }
+    .conflitto .c-tit { margin: 0; font-weight: 600; color: #f0c674; }
+    .conflitto .c-info { margin: 0.3rem 0 0.75rem; color: var(--muted); font-size: 0.95rem; }
+    .conflitto .c-scelte { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+    @media (max-width: 480px) { .conflitto .c-scelte { grid-template-columns: 1fr; } }
+    .conflitto .c-scelta {
+      min-width: 0; padding: 0.6rem 0.8rem; font-size: 0.95rem; text-align: left; color: var(--text);
+      background: rgba(13,17,23,0.9); border: 1px solid rgba(174,184,197,0.35); display: flex; flex-direction: column; gap: 0.15rem;
+    }
+    .conflitto .c-scelta:hover:not(:disabled) { border-color: var(--accent); }
+    .conflitto .c-scelta b { font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+    .conflitto .c-scelta span { color: var(--muted); font-size: 0.9rem; }
+
     @media (prefers-reduced-motion: no-preference) {
       .personaggi { animation: appari 0.8s ease-out both; }
       h1, .domanda { animation: appari 1.6s ease-out both; }
@@ -207,12 +237,14 @@
 
     <section class="personaggi" id="personaggi" hidden aria-labelledby="titoloPersonaggi">
       <h2 id="titoloPersonaggi">Chi entra nel dungeon?</h2>
+      <div class="conflitti" id="conflitti" aria-live="polite"></div>
       <ul class="lista" id="lista"></ul>
       <p class="avviso" id="avviso" aria-live="polite"></p>
       <a class="allenamento" id="allenamento2" href="tutorial.html"></a>
     </section>
   </main>
 
+  <div class="account" id="account" hidden><button type="button" id="accedi"></button></div>
   <button type="button" id="audio" aria-pressed="true" title="Musica">🔊</button>
   <audio id="musica" src="audio/intro.mp3" loop preload="auto"></audio>
 
@@ -249,7 +281,13 @@
         elimina: "Elimina", conferma: "Confermi?", eliminaPg: "Elimina il personaggio ",
         nuova: "Nuova partita", pieno: "Hai già tre personaggi", crea: "Crea un nuovo personaggio",
         avvisoPieno: "Per iniziare una nuova partita elimina uno dei tre personaggi.",
-        allenamento: "⚔ Sala d'allenamento: impara a combattere", allenamentoFatto: "✓ completato"
+        allenamento: "⚔ Sala d'allenamento: impara a combattere", allenamentoFatto: "✓ completato",
+        accedi: "☁ Accedi con Google", esci: "Esci dall'account?", accessoKo: "Accesso non riuscito. Riprova.",
+        syncKo: "Cloud non raggiungibile: uso i salvataggi di questo dispositivo.",
+        conflitto: (n) => `Posto ${n}: due versioni diverse`,
+        conflittoInfo: "Hai giocato su due dispositivi senza sincronizzare. Scegli quale versione tenere: l'altra verrà sostituita.",
+        questo: "Questo dispositivo", cloud: (d) => d ? `Cloud · salvato dal ${d}` : "Cloud",
+        disp: { telefono: "telefono", computer: "computer" }, vuoto: "Nessun personaggio (eliminato)", risolviKo: "Non riesco a raggiungere il cloud. Riprova."
       },
       en: {
         titolo: "The Throne of Ashes", domanda: "Do you dare to enter the dungeon?", si: "Yes", no: "No",
@@ -260,7 +298,13 @@
         elimina: "Delete", conferma: "Confirm?", eliminaPg: "Delete the character ",
         nuova: "New game", pieno: "You already have three characters", crea: "Create a new character",
         avvisoPieno: "To start a new game, delete one of your three characters.",
-        allenamento: "⚔ Training hall: learn to fight", allenamentoFatto: "✓ completed"
+        allenamento: "⚔ Training hall: learn to fight", allenamentoFatto: "✓ completed",
+        accedi: "☁ Sign in with Google", esci: "Sign out?", accessoKo: "Sign-in failed. Try again.",
+        syncKo: "Cloud unreachable: using the saves on this device.",
+        conflitto: (n) => `Slot ${n}: two different versions`,
+        conflittoInfo: "You played on two devices without syncing. Choose which version to keep: the other one will be replaced.",
+        questo: "This device", cloud: (d) => d ? `Cloud · saved from the ${d}` : "Cloud",
+        disp: { telefono: "phone", computer: "computer" }, vuoto: "No character (deleted)", risolviKo: "Cannot reach the cloud. Try again."
       }
     };
     const tx = () => T[Lingua.get()];
@@ -352,6 +396,7 @@
 
     function elimina(n) {
       togli("slot" + n);
+      if (window.Cloud) Cloud.eliminaSlot(n);
       if (localStorage.getItem("slot_attivo") === String(n)) togli("slot_attivo", "personaggio", "partita");
       disegnaLista(leggiPosti(), tx().eliminato);
     }
@@ -371,6 +416,7 @@
 
     function disegnaLista(posti, messaggio) {
       const t = tx();
+      disegnaConflitti();
       const lista = document.getElementById("lista");
       lista.replaceChildren();
       posti.forEach((sl, i) => {
@@ -415,10 +461,10 @@
       document.getElementById("avviso").textContent = messaggio || (pieno ? t.avvisoPieno : "");
     }
 
-    function mostraPersonaggi(posti) {
+    function mostraPersonaggi(posti, messaggio) {
       document.querySelector(".domanda").hidden = true;
       document.getElementById("personaggi").hidden = false;
-      disegnaLista(posti);
+      disegnaLista(posti, messaggio);
       const primo = document.querySelector("#lista .scheda:not(:disabled)");
       if (primo) primo.focus({ preventScroll: true });
     }
@@ -440,6 +486,7 @@
         if (fatto) a.append(el("span", "fatto", t.allenamentoFatto));
       });
       document.querySelectorAll(".bandiera").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lingua === Lingua.get())));
+      if (typeof disegnaAccount === "function" && window.Cloud && Cloud.attivo) disegnaAccount();
       if (!document.getElementById("personaggi").hidden) disegnaLista(leggiPosti());
     }
     document.querySelectorAll(".bandiera").forEach(b => b.addEventListener("click", () => { Lingua.set(b.dataset.lingua); applicaLingua(); }));
@@ -448,17 +495,95 @@
     document.getElementById("si").addEventListener("click", () => {
       document.getElementById("si").disabled = true; document.getElementById("no").disabled = true;
       rispostaChiave = "rispSi"; risposta.textContent = tx().rispSi;
-      setTimeout(() => {
+      const attesa = new Promise(r => setTimeout(r, 1500));
+      Promise.all([attesa, sincronizzaOra()]).then(([, esito]) => {
         const posti = leggiPosti();
-        if (posti.some(Boolean)) mostraPersonaggi(posti); /* ci sono personaggi salvati: si sceglie quale usare */
+        if (posti.some(Boolean) || conflitti.length) mostraPersonaggi(posti, esito === false ? tx().syncKo : ""); /* ci sono personaggi salvati: si sceglie quale usare */
         else nuovaPartita();
-      }, 1500);
+      });
     });
     document.getElementById("no").addEventListener("click", () => {
       rispostaChiave = "rispNo"; risposta.textContent = tx().rispNo;
     });
 
+    /* ---------- Salvataggi nel cloud (cloud.js) ----------
+       Senza configurazione Firebase il pulsante non compare e tutto resta locale come prima. */
+    let conflitti = [], sync = null;
+    const elAccedi = document.getElementById("accedi");
+    /* restituisce true (sincronizzato), false (cloud irraggiungibile) o null (cloud non attivo o accesso non fatto) */
+    function sincronizzaOra() {
+      if (!window.Cloud || !Cloud.attivo) return Promise.resolve(null);
+      if (sync) return sync;
+      sync = Promise.race([
+        Cloud.avvia().then(() => Cloud.utente() ? Cloud.sincronizza().then(r => { conflitti = r.conflitti || []; return !!r.ok; }) : null),
+        new Promise(r => setTimeout(() => r(false), 8000))
+      ]).catch(() => false).finally(() => { setTimeout(() => { sync = null; }, 0); });
+      return sync;
+    }
+    function ridisegna(messaggio) { if (!document.getElementById("personaggi").hidden) disegnaLista(leggiPosti(), messaggio); }
+    function disegnaAccount() {
+      const box = document.getElementById("account");
+      if (!window.Cloud || !Cloud.attivo) { box.hidden = true; return; }
+      box.hidden = !Cloud.pronto;
+      const u = Cloud.utente();
+      delete elAccedi.dataset.conferma;
+      elAccedi.textContent = u ? "☁ " + (u.nome || u.email) : tx().accedi;
+      elAccedi.title = u ? u.email : "";
+    }
+    elAccedi.addEventListener("click", async () => {
+      const t = tx();
+      if (Cloud.utente()) { /* già dentro: secondo clic entro 3 secondi per uscire */
+        if (!elAccedi.dataset.conferma) {
+          elAccedi.dataset.conferma = "1"; elAccedi.textContent = t.esci;
+          setTimeout(() => { if (elAccedi.dataset.conferma) disegnaAccount(); }, 3000);
+          return;
+        }
+        await Cloud.esci(); conflitti = []; disegnaAccount(); ridisegna(); return;
+      }
+      try { await Cloud.accedi(); }
+      catch (e) { if (e && e.code !== "auth/popup-closed-by-user" && e.code !== "auth/cancelled-popup-request") ridisegna(t.accessoKo); return; }
+      disegnaAccount();
+      const esito = await sincronizzaOra();
+      ridisegna(esito === false ? t.syncKo : "");
+      applicaLingua(); /* il tutorial può risultare completato su un altro dispositivo */
+    });
+    function riepilogo(sl) {
+      const t = tx();
+      if (!sl || !sl.pg) return [t.vuoto];
+      const pg = sl.pg, p = sl.partita || {};
+      const luogo = p.luogo ? String(p.luogo).replace(/_/g, " ").replace(/^./, c => c.toUpperCase()) : null;
+      const quando = p.ora ? new Date(Number(p.ora)).toLocaleString(Lingua.locale(), { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : t.nessunSalvataggio;
+      return [[pg.nome || t.senzaNome, t.livello + " " + (pg.livello || 1), luogo].filter(Boolean).join(" · "), quando];
+    }
+    function disegnaConflitti() {
+      const box = document.getElementById("conflitti"), t = tx();
+      box.replaceChildren();
+      conflitti.forEach(c => {
+        const card = el("div", "conflitto");
+        card.append(el("p", "c-tit", t.conflitto(c.n)), el("p", "c-info", t.conflittoInfo));
+        const scelte = el("div", "c-scelte");
+        [["locale", t.questo, c.locale], ["remoto", t.cloud(t.disp[c.remotoDisp]), c.remoto]].forEach(([k, titolo, sl]) => {
+          const b = el("button", "c-scelta"); b.type = "button";
+          b.append(el("b", null, titolo), ...riepilogo(sl).map(r => el("span", null, r)));
+          b.addEventListener("click", async () => {
+            scelte.querySelectorAll("button").forEach(x => x.disabled = true);
+            let ok = false; try { ok = await Cloud.risolvi(c.n, k); } catch (e) {}
+            if (ok) conflitti = conflitti.filter(x => x !== c);
+            else scelte.querySelectorAll("button").forEach(x => x.disabled = false);
+            ridisegna(ok ? "" : tx().risolviKo);
+          });
+          scelte.append(b);
+        });
+        card.append(scelte); box.append(card);
+      });
+    }
+    if (window.Cloud && Cloud.attivo) {
+      Cloud.onStato(disegnaAccount);
+      Cloud.avvia(); /* carica Firebase subito: quando il giocatore preme «Sì» è già pronto */
+    }
+
     applicaLingua();
+    disegnaAccount();
   </script>
 </body>
 </html>

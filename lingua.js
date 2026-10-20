@@ -10,7 +10,7 @@
 
   const EN = {
     razze: { Umano: "Human", Elfo: "Elf", Nano: "Dwarf", Gnomo: "Gnome" },
-    classi: { Soldato: "Soldier", Forestiero: "Outlander", Sapiente: "Sage", Accolito: "Acolyte" },
+    classi: { Soldato: "Warrior", Forestiero: "Shaman", Sapiente: "Arcanist", Accolito: "Monk" },
     attributi: { Lotta: "Might", "Agilità": "Agility", Mente: "Mind", Corpo: "Body", Carisma: "Charisma", Spirito: "Spirit" },
     abilita: {
       "Furtività": "Stealth", Indagare: "Investigation", Medicina: "Medicine", Persuasione: "Persuasion", Intimidire: "Intimidation",
@@ -27,6 +27,13 @@
       Torcia: "Torch", "Piede di porco": "Crowbar", "Ampolla di fuoco": "Fire flask", "Corda e rampino": "Rope and grappling hook",
       "Foglietto di Adele": "Adele's note"
     }
+  };
+
+  /* Nomi italiani da mostrare quando sono diversi dalla chiave interna.
+     Le classi sono state rinominate, ma la chiave resta quella vecchia: è salvata nei personaggi già creati
+     e nei nomi dei file dei ritratti (immagini/pg/Razza_Classe_N.webp). */
+  const IT = {
+    classi: { Soldato: "Guerriero", Forestiero: "Sciamano", Sapiente: "Arcanista", Accolito: "Monaco" }
   };
 
   /* Descrizioni di dotazione e scudo */
@@ -73,9 +80,9 @@
       document.documentElement.lang = corrente;
     },
     /* nome da mostrare: in inglese se esiste la traduzione, altrimenti la chiave italiana */
-    nome: (cat, k) => (corrente === "en" && EN[cat] && EN[cat][k]) || k,
+    nome: (cat, k) => (corrente === "en" && EN[cat] && EN[cat][k]) || (IT[cat] && IT[cat][k]) || k,
     /* tutti i nomi di una chiave nelle due lingue (per riconoscere ciò che scrive il giocatore) */
-    nomi: (k) => [k, ...Object.values(EN).map(c => c[k]).filter(Boolean)],
+    nomi: (k) => [k, ...[...Object.values(IT), ...Object.values(EN)].map(c => c[k]).filter(Boolean)],
     desc: (k) => (DESC[k] ? (DESC[k][corrente] || DESC[k].it) : null),
     locale: () => (corrente === "en" ? "en-GB" : "it-IT"),
     /* testo bilingue { it, en } → testo nella lingua corrente */

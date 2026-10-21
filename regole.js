@@ -36,6 +36,7 @@ window.Regole = Object.freeze({
   ARMATURE_CLASSI: { Forestiero: ["Armatura leggera", "Armatura media"], Sapiente: ["Armatura leggera"], Accolito: ["Armatura leggera", "Armatura media"] },
   RISORSA_BASE: 10,            /* mana, fede, ira, natura = 10 + modificatore */
   MAX_INCANTESIMI: 4,
+  MAX_TECNICHE: 4,             /* tecniche speciali preparate dalle classi marziali */
   SALUTE_BASE: 10,             /* salute fisica e mentale = 10 + dado vita + modificatore */
   CA_BASE: 10,
   TETTO_AGILITA: { "Armatura leggera": 3, "Armatura media": 2, "Armatura pesante": 0 },

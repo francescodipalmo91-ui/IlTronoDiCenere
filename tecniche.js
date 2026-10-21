@@ -1,8 +1,9 @@
 /* =====================================================================
    TECNICHE DEL GUERRIERO — livelli 1 e 2 (i livelli 3-5 arriveranno con i contenuti)
    - tipo: tipo di danno dell'arma che serve ("Tagliente", "Contundente", "Perforante") oppure "Scudo" (scudo imbracciato)
-   - Livello 1: tutte le tecniche del tipo dell'arma in mano sono disponibili (e quelle dello scudo, se imbracciato).
-   - Dal livello 2: un posto per livello, riempito con una tecnica di quel livello; si cambia riposando.
+   - Si preparano 4 «tecniche speciali» (come i 4 incantesimi), scelte in creazione e cambiate riposando,
+     tra quelle sbloccate (livello ≤ livello del personaggio) del tipo dell'arma in mano e, con lo scudo imbracciato, dello scudo.
+   - Le tecniche di utilità (Mente incrollabile, Furore inarrestabile) sono della classe e non occupano posti.
    - costo in punti ira. Gli effetti sono tradotti nel sistema a dadi del gioco (un nemico alla volta, un'azione per turno).
    - nomi e descrizioni dalle tabelle di Francesco; effetti PROVVISORI, da rifinire giocando.
    ===================================================================== */
@@ -100,10 +101,10 @@ window.TECNICHE = [
     nome: { it: "Schiaffo di Piastra", en: "Plate Slap" },
     desc: { it: "Colpo con il bordo pesante dello scudo al viso.", en: "A blow to the face with the heavy rim of the shield." },
     effetto: { it: "Danno 1d4 + Vigore; se il nemico fallisce il tiro salvezza, è Stordito e salta il suo prossimo turno.", en: "Damage 1d4 + Vigour; if the enemy fails its saving throw it is Stunned and skips its next turn." } },
-  { id: "frontale", liv: 1, tipo: "Scudo", costo: 2, gratuita: true,
+  { id: "frontale", liv: 1, tipo: "Scudo", costo: 2,
     nome: { it: "Scudo Frontale", en: "Front Guard" },
     desc: { it: "Rapida alzata dello scudo per deviare i colpi minori.", en: "A quick raise of the shield to turn aside lesser blows." },
-    effetto: { it: "+3 alla Classe armatura fino al tuo prossimo turno. Non consuma l'azione (una volta per turno).", en: "+3 Armor class until your next turn. Does not use your action (once per turn)." } },
+    effetto: { it: "+3 alla Classe armatura fino al tuo prossimo turno.", en: "+3 Armor class until your next turn." } },
   { id: "balzo", liv: 2, tipo: "Scudo", costo: 4,
     nome: { it: "Balzo con Scudo", en: "Shield Leap" },
     desc: { it: "Piccolo salto per atterrare con lo scudo spianato.", en: "A short leap to land shield-first." },

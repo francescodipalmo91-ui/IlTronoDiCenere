@@ -6,6 +6,7 @@
   <title>Creazione personaggio</title>
   <script src="regole.js"></script>
   <script src="incantesimi.js"></script>
+  <script src="tecniche.js"></script>
   <script src="lingua.js"></script>
   <style>
     :root {
@@ -36,14 +37,17 @@
     /* Sapiente e Accolito: terza colonna con gli incantesimi, a destra dell'equipaggiamento */
     body:has(.pagina.magia) main { max-width: 92rem; }
     .pagina.magia { grid-template-columns: 1.3fr 1fr 1fr; }
-    #incantesimi[hidden] { display: none; }
+    #incantesimi[hidden], #tecniche[hidden] { display: none; }
+    #tecniche { padding-left: 2.5rem; border-left: 1px solid transparent; border-image: linear-gradient(to bottom, transparent, var(--line) 8%, var(--line) 92%, transparent) 1; }
+    #lista-tecniche label { position: relative; }
+    #lista-tecniche label:hover .tip, #lista-tecniche label:has(input:focus-visible) .tip { display: block; }
     #incantesimi { padding-left: 2.5rem; border-left: 1px solid transparent; border-image: linear-gradient(to bottom, transparent, var(--line) 8%, var(--line) 92%, transparent) 1; }
     .pagina.magia #equip { padding-right: 2.5rem; }
     .nota-riposo { margin: 0.9rem 0 0; padding: 0.6rem 0.8rem; border: 1px dashed var(--line); border-radius: 0.5rem; color: var(--muted); font-size: 0.9rem; font-style: italic; }
     @media (min-width: 901px) and (max-width: 1250px) {
       .pagina.magia { grid-template-columns: 1.3fr 1fr; }
       .pagina.magia #equip { padding-right: 0; }
-      #incantesimi { grid-column: 1 / -1; padding: 2rem 0 0; margin-top: 2rem; border-left: 0; border-image: none; border-top: 1px solid var(--line); }
+      #incantesimi, #tecniche { grid-column: 1 / -1; padding: 2rem 0 0; margin-top: 2rem; border-left: 0; border-image: none; border-top: 1px solid var(--line); }
     }
     #equip { padding-left: 2.5rem; border-left: 1px solid transparent; border-image: linear-gradient(to bottom, transparent, var(--line) 8%, var(--line) 92%, transparent) 1; }
     @media (max-width: 900px) {
@@ -52,7 +56,7 @@
       #equip { padding: 2rem 0 0; margin-top: 2rem; border-left: 0; border-image: none; border-top: 1px solid var(--line); }
       .pagina.magia { grid-template-columns: 1fr; }
       .pagina.magia #equip { padding-right: 0; }
-      #incantesimi { padding: 2rem 0 0; margin-top: 2rem; border-left: 0; border-image: none; border-top: 1px solid var(--line); }
+      #incantesimi, #tecniche { padding: 2rem 0 0; margin-top: 2rem; border-left: 0; border-image: none; border-top: 1px solid var(--line); }
     }
     h4 { font-size: 1.05rem; margin: 1.5rem 0 0.3rem; font-weight: 600; }
     .riga { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem 3rem; max-width: 46rem; margin: 0 auto 1.75rem; text-align: center; }
@@ -238,6 +242,13 @@
             <div class="opzioni" id="lista-incantesimi" role="group" aria-labelledby="t-incantesimi"></div>
             <p class="nota-riposo" data-t="notaRiposo"></p>
           </section>
+
+          <section id="tecniche" aria-labelledby="t-tecniche" hidden>
+            <h3 id="t-tecniche" style="margin-top:0" data-t="tecnicheTit">Tecniche speciali lv 1</h3>
+            <p class="guida" style="margin:0 0 0.75rem" id="guida-tecniche"></p>
+            <div class="opzioni" id="lista-tecniche" role="group" aria-labelledby="t-tecniche"></div>
+            <p class="nota-riposo" data-t="notaRiposoTec"></p>
+          </section>
         </div>
 
       <div class="tonde">
@@ -287,6 +298,9 @@
         scegliRitratto: "Scegli il tuo ritratto.", ritrattoN: (n) => `Ritratto ${n}`,
         incantesimi: "Incantesimi lv 1", guidaIncantesimi: "Scegline quattro.", mana: "Mana", fede: "Punti fede", ira: "Punti ira", natura: "Punti natura", modAttr: (a) => `mod. ${a}`,
         notaRiposo: "Gli incantesimi scelti si potranno cambiare quando ti riposi.",
+        tecnicheTit: "Tecniche speciali lv 1", notaRiposoTec: "Le tecniche scelte si potranno cambiare quando ti riposi; salendo di livello se ne sbloccano di nuove.",
+        guidaTec: (n, tot) => tot ? `Scegline ${n}, tra quelle del tipo della tua arma${tot > 3 ? " e dello scudo" : ""}.` : "Scegli prima l'arma.", costoIra: (n) => `${n} ira`,
+        mancaTec: (n) => `${n} ${n === 1 ? "tecnica" : "tecniche"}`,
         costo: "Costo", costoMana: (n) => `${n} ${classe === "Accolito" ? "Fede" : "Mana"}`, mancaInc: (n) => `${n} ${n === 1 ? "incantesimo" : "incantesimi"}`
       },
       en: {
@@ -315,6 +329,9 @@
         scegliRitratto: "Choose your portrait.", ritrattoN: (n) => `Portrait ${n}`,
         incantesimi: "Spells lv 1", guidaIncantesimi: "Choose four.", mana: "Mana", fede: "Faith points", ira: "Rage points", natura: "Nature points", modAttr: (a) => `${a} mod.`,
         notaRiposo: "You will be able to change your chosen spells when you rest.",
+        tecnicheTit: "Special techniques lv 1", notaRiposoTec: "You will be able to change your chosen techniques when you rest; new ones unlock as you level up.",
+        guidaTec: (n, tot) => tot ? `Choose ${n}, among those for your weapon type${tot > 3 ? " and the shield" : ""}.` : "Choose your weapon first.", costoIra: (n) => `${n} rage`,
+        mancaTec: (n) => `${n} ${n === 1 ? "technique" : "techniques"}`,
         costo: "Cost", costoMana: (n) => `${n} ${classe === "Accolito" ? "Faith" : "Mana"}`, mancaInc: (n) => `${n} ${n === 1 ? "spell" : "spells"}`
       }
     };
@@ -450,6 +467,35 @@
           `<small class="tip" id="tip-inc-${i}" role="tooltip"><em class="tip-riga"><i><b>${t.costo}</b><b>${t.costoMana(inc.costo)}</b></i></em>${L(inc.desc)}` +
           (inc.effetto ? `<em class="effetto">[${L(inc.effetto)}]</em>` : "") + `</small>`;
         l.querySelector("input").addEventListener("change", aggiorna);
+        box.appendChild(l);
+      });
+    }
+
+    /* ---------- Tecniche speciali (Guerriero): 4 tra quelle di livello 1 del tipo dell'arma e, con lo scudo, dello scudo ---------- */
+    const TECNICHE = window.TECNICHE || [], MAX_TECNICHE = R_.MAX_TECNICHE ?? 4;
+    const usaTecniche = () => classe === "Soldato" && TECNICHE.length > 0;
+    let chiaveTecniche = null;
+    const opzioniTec = () => { const a = armaScelta(); return a ? TECNICHE.filter(x => x.liv === 1 && (x.tipo === a.tipo || (x.tipo === "Scudo" && scudoScelto()))) : []; };
+    const tecnicheScelte = () => usaTecniche() ? [...document.querySelectorAll('input[name="tecnica"]:checked')].map(c => c.value) : [];
+    const tecNecessarie = () => Math.min(MAX_TECNICHE, opzioniTec().length);
+    function disegnaTecniche() {
+      const sez = $("tecniche"), si = usaTecniche();
+      sez.hidden = !si;
+      if (si) document.querySelector(".pagina").classList.add("magia");
+      const opz = si ? opzioniTec() : [];
+      const chiave = si ? opz.map(x => x.id).join(",") : "";
+      if (chiave === chiaveTecniche) return;
+      const prima = new Set(tecnicheScelte());
+      chiaveTecniche = chiave;
+      const box = $("lista-tecniche");
+      box.replaceChildren();
+      $("guida-tecniche").textContent = t.guidaTec(Math.min(MAX_TECNICHE, opz.length), opz.length);
+      opz.forEach((x, i) => {
+        const l = document.createElement("label");
+        l.innerHTML = `<input type="checkbox" name="tecnica" value="${x.id}" aria-describedby="tip-tec-${i}"><span><b>${L(x.nome)}</b></span>` +
+          `<small class="tip" id="tip-tec-${i}" role="tooltip"><em class="tip-riga"><i><b>${t.costo}</b><b>${t.costoIra(x.costo)}</b></i></em>${L(x.desc)}<em class="effetto">[${L(x.effetto)}]</em></small>`;
+        const c = l.querySelector("input"); c.checked = prima.has(x.id);
+        c.addEventListener("change", aggiorna);
         box.appendChild(l);
       });
     }
@@ -662,6 +708,9 @@
       $("mana-f").textContent = `${MANA_BASE} ${segno(modMe)} (${t.modAttr(N("attributi", attrMana))})`;
       const nInc = incantesimiScelti().length;
       document.querySelectorAll('input[name="incantesimo"]').forEach(c => { c.disabled = !c.checked && nInc >= MAX_INCANTESIMI; });
+      disegnaTecniche();
+      const nTec = tecnicheScelte().length;
+      document.querySelectorAll('input[name="tecnica"]').forEach(c => { c.disabled = !c.checked && nTec >= MAX_TECNICHE; });
 
       aggiornaImmagine();
 
@@ -675,6 +724,7 @@
       if (!arm) manca.push(m.armatura);
       if (dot.length < MAX_DOTAZIONE) manca.push(m.dot(MAX_DOTAZIONE - dot.length));
       if (magia && nInc < MAX_INCANTESIMI) manca.push(t.mancaInc(MAX_INCANTESIMI - nInc));
+      if (usaTecniche() && arma && nTec < tecNecessarie()) manca.push(t.mancaTec(tecNecessarie() - nTec));
       if (ritrattiN > 0 && !immagine) manca.push(m.ritratto);
       $("crea").disabled = manca.length > 0;
       $("avviso").textContent = manca.length ? t.ancora + manca.join(", ") + "." : "";
@@ -752,7 +802,7 @@
       const arma = armaScelta(), arm = armaturaScelta(), dot = dotazioneScelta(), sc = scudoScelto();
       if (!razza || !classe || tiro === null || puntiTotali() - spesi(-1) !== 0 ||
           abilitaScelte().length !== MAX_ABILITA || !arma || !arm || dot.length !== MAX_DOTAZIONE || (ritrattiN > 0 && !immagine) ||
-          (usaMagia() && incantesimiScelti().length !== MAX_INCANTESIMI)) return;
+          (usaMagia() && incantesimiScelti().length !== MAX_INCANTESIMI) || (usaTecniche() && tecnicheScelte().length < tecNecessarie())) return;
 
       const base = Object.fromEntries(NOMI.map((n, i) => [n, totale(i)]));
       const stat = { ...base }; /* l'arma non modifica il Vigore: dà il dado di danno */
@@ -769,6 +819,7 @@
         mana: usaMagia() ? MANA_BASE + mod(stat[ATTR_MANA[classe]]) : null, /* solo Sapiente (Mente) e Accolito (Spirito) */
         risorsa: RISORSA_CLASSE[classe] ? { id: RISORSA_CLASSE[classe].id, max: MANA_BASE + mod(stat[RISORSA_CLASSE[classe].attr]) } : null, /* punti ira (Guerriero) o punti natura (Sciamano) */
         incantesimi: incantesimiScelti().map(inc => ({ id: inc.id, nome: inc.nome, costo: inc.costo, desc: inc.desc, effetto: inc.effetto || null })),
+        tecniche: tecnicheScelte(), /* tecniche speciali del Guerriero */
         abilita: abilitaScelte().map(([n, a]) => ({ nome: n, attributo: a, valore: valoreAbilita(a) + LIVELLO })),
         equipaggiamento: {
           arma: arma.nome, armaDanno: arma.danno, armaTipoDanno: arma.tipo, armaMani: arma.mani,

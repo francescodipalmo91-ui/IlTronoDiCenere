@@ -1998,7 +1998,7 @@
         sblocco: {
           riposo: ["Nuova capacità sbloccata: Riposo",
             "Puoi riposare accanto a un fuoco caldo, dalle fiamme arancioni: per ora qui in cucina e nella sala da conversazione. Scrivi «riposo» oppure usa il pulsante «Riposa» nella scheda, alla voce «Capacità».",
-            "Ogni riposo dura un giorno: consumi fino a 1d4 razioni di Adele e recuperi 1d4 + livello su tutte le risorse (salute fisica, salute mentale e mana, ira o natura). Guendalina cucina 2 razioni al giorno (scorta massima 10). Il focolare della cucina non si spegne mai: qui puoi riposare quante volte vuoi, anche senza razioni (recuperi solo 1 punto). Gli altri fuochi invece si consumano: dopo il riposo le fiamme diventano azzurre e fredde."],
+            "Ogni riposo dura un giorno: consumi fino a 1d4 razioni di Adele e recuperi 1d4 + livello su tutte le risorse (salute fisica, salute mentale e mana, fede, ira o natura). Guendalina cucina 2 razioni al giorno (scorta massima 10). Il focolare della cucina non si spegne mai: qui puoi riposare quante volte vuoi, anche senza razioni (recuperi solo 1 punto). Gli altri fuochi invece si consumano: dopo il riposo le fiamme diventano azzurre e fredde."],
           missione: ["Missione accettata: «Ciò che giace nell'Alto»",
             "Scendi in cantina, recupera la vecchia scaletta di legno e riportala a Guendalina, qui in cucina.",
             "La cantina si raggiunge dalla stanza di servizio, oltre la porta a sinistra della cucina: scrivi ad esempio «vado nella stanza di servizio» e poi «scendo in cantina». Laggiù è buio e girano i guardiani del Signore: muoviti in silenzio e non correre.",
@@ -2202,7 +2202,7 @@
           effettoTesto: { pozCura: "Ripristina 1d6 + livello di salute fisica.", pozMana: "Ripristina 1d6 + livello di mana." },
           cura: (d, da, a) => `Applichi l'unguento sulle ferite: il dolore si placa. Salute fisica +${d} · ${da} → ${a}`,
           bevi: { pozCura: (t, d, da, liv, a) => `Bevi ${t}: un calore buono ti scorre nelle vene. Salute fisica +${d} (${liv ? "1d6 + " + liv : "1d6"}) · ${da} → ${a}`,
-                  pozMana: (t, d, da, liv, a) => `Bevi ${t}: un formicolio ti risale le dita e la mente si fa limpida. Mana +${d} (${liv ? "1d6 + " + liv : "1d6"}) · ${da} → ${a}`,
+                  pozMana: (t, d, da, liv, a) => `Bevi ${t}: un formicolio ti risale le dita e la mente si fa limpida. ${U.mana} +${d} (${liv ? "1d6 + " + liv : "1d6"}) · ${da} → ${a}`,
                   serenita: (t, d, da, a) => `Bevi ${t}: brucia la gola, poi un calore improvviso ti scioglie i pensieri. Salute mentale +${d} (1d4) · ${da} → ${a}`,
                   razione: (t, d, da, liv, a) => `Mangi una razione: è secca, salata e sa di cuoio, ma ti rimette in piedi. Salute fisica +${d} (1 + livello ${liv}) · ${da} → ${a}` },
           inutile: { pozCura: "Sei già in piena salute: meglio conservarla.", pozMana: "Il tuo mana è già al massimo: meglio conservarla.", serenita: "La tua mente è già serena: meglio conservarlo.", razione: "Non hai bisogno di mangiare adesso: sei in piena salute.", noMana: "Non conosci incantesimi: questa pozione non ti servirebbe a nulla." },
@@ -2213,7 +2213,7 @@
         sblocco: {
           riposo: ["New ability unlocked: Rest",
             "You can rest by a warm fire, one with orange flames: for now here in the kitchen and in the drawing room. Write “rest” or use the “Rest” button on your sheet, under “Abilities”.",
-            "Each rest lasts a day: you eat up to 1d4 of Adele's rations and recover 1d4 + level on all your resources (physical health, mental health and mana, rage or nature). Guendalina cooks 2 rations a day (up to 10 in store). The kitchen hearth never goes out: here you can rest as many times as you like, even without rations (you only recover 1 point). Other fires are spent instead: after you rest, their flames turn blue and cold."],
+            "Each rest lasts a day: you eat up to 1d4 of Adele's rations and recover 1d4 + level on all your resources (physical health, mental health and mana, faith, rage or nature). Guendalina cooks 2 rations a day (up to 10 in store). The kitchen hearth never goes out: here you can rest as many times as you like, even without rations (you only recover 1 point). Other fires are spent instead: after you rest, their flames turn blue and cold."],
           missione: ["Quest accepted: “What Lies Up High”",
             "Go down to the cellar, retrieve the old wooden step-ladder and bring it back to Guendalina, here in the kitchen.",
             "The cellar is reached from the service room, beyond the door on the left of the kitchen: write for example “I go to the service room” and then “I go down to the cellar”. It is dark down there and the Master's guardians roam: move silently and do not run.",
@@ -2413,7 +2413,7 @@
           effettoTesto: { pozCura: "Restores 1d6 + level physical health.", pozMana: "Restores 1d6 + level mana." },
           cura: (d, da, a) => `You apply the ointment to your wounds: the pain subsides. Physical health +${d} · ${da} → ${a}`,
           bevi: { pozCura: (t, d, da, liv, a) => `You drink ${t}: a kindly warmth runs through your veins. Physical health +${d} (${liv ? "1d6 + " + liv : "1d6"}) · ${da} → ${a}`,
-                  pozMana: (t, d, da, liv, a) => `You drink ${t}: a tingling climbs your fingers and your mind clears. Mana +${d} (${liv ? "1d6 + " + liv : "1d6"}) · ${da} → ${a}`,
+                  pozMana: (t, d, da, liv, a) => `You drink ${t}: a tingling climbs your fingers and your mind clears. ${U.mana} +${d} (${liv ? "1d6 + " + liv : "1d6"}) · ${da} → ${a}`,
                   serenita: (t, d, da, a) => `You drink ${t}: it burns your throat, then a sudden warmth loosens your thoughts. Mental health +${d} (1d4) · ${da} → ${a}`,
                   razione: (t, d, da, liv, a) => `You eat a ration: dry, salty and tasting of leather, but it puts you back on your feet. Physical health +${d} (1 + level ${liv}) · ${da} → ${a}` },
           inutile: { pozCura: "You are already at full health: better keep it.", pozMana: "Your mana is already full: better keep it.", serenita: "Your mind is already at peace: better keep it.", razione: "You do not need to eat right now: you are in full health.", noMana: "You know no spells: this potion would be of no use to you." },
@@ -3987,6 +3987,13 @@
           massimo: "Hai raggiunto il livello massimo."
         },
         pe: (n, tot) => `+${n} punti esperienza (totale ${tot}).`,
+        fiducia: { /* PROVVISORIO: testi da riscrivere */
+          intro: ["Guendalina torna al suo tagliere. Le sue parole ti risuonano ancora in testa: ti ha detto davvero tutto?"],
+          azione: "Ripensi al suo tono, ai silenzi, a dove è caduto il suo sguardo mentre parlava.",
+          successo: ["Non c'era menzogna nella sua voce, né esitazione dove non doveva essercene. Guendalina ti ha detto tutto ciò che sa, e di lei ti puoi fidare."],
+          fallimento: ["Non riesci a decifrarla. Forse è sincera, forse no; o forse c'è qualcosa che nemmeno lei sa. Scenderai in cantina con un dubbio in più."],
+          foglietto: ["Ti torna in mente il foglietto trovato dietro l'arazzo: «di Guendalina ci si può fidare». La mano di Adele non mentiva. Ciò che la governante ti ha detto è la verità."]
+        },
         incrollabile: {
           offerta: (ris, attr, m, cd) => `Mente incrollabile: puoi spendere 1 ${ris.toLowerCase().replace(/^punti/, "punto")} per resistere alla fitta (tiro salvezza d20 ${fmtN(m)} — ${attr} + livello — contro CD ${cd}).`,
           usa: (ris) => `Resisti (−1 ${ris.toLowerCase().replace(/^punti/, "punto")})`, no: "Subisci la fitta",
@@ -4045,6 +4052,13 @@
           massimo: "You have reached the maximum level."
         },
         pe: (n, tot) => `+${n} experience points (total ${tot}).`,
+        fiducia: {
+          intro: ["Guendalina goes back to her chopping board. Her words still echo in your head: did she really tell you everything?"],
+          azione: "You think back on her tone, her silences, where her eyes fell while she spoke.",
+          successo: ["There was no lie in her voice, no hesitation where there should be none. Guendalina told you all she knows, and you can trust her."],
+          fallimento: ["You cannot read her. Perhaps she is sincere, perhaps not; or perhaps there is something even she does not know. You will go down to the cellar with one more doubt."],
+          foglietto: ["You recall the note found behind the tapestry: «Guendalina can be trusted». Adele's hand did not lie. What the housekeeper told you is the truth."]
+        },
         incrollabile: {
           offerta: (ris, attr, m, cd) => `Unshakeable Mind: you may spend 1 ${ris.toLowerCase().replace(/ points$/, " point")} to resist the pang (saving throw d20 ${fmtN(m)} — ${attr} + level — against DC ${cd}).`,
           usa: (ris) => `Resist (−1 ${ris.toLowerCase().replace(/ points$/, " point")})`, no: "Take the pang",
@@ -4559,6 +4573,7 @@
       } catch (e) {}
     }
     if (pg) pg.statistiche = conAttrVecchi(pg.statistiche || {});
+    if (pg && pg.classe === "Accolito") U.mana = LINGUA === "en" ? "Faith points" : "Punti fede"; /* il Monaco lancia incantesimi con i punti fede */
     /* Agilità: il suo modificatore va sulla Classe armatura, fino al tetto dell'armatura indossata */
     const TETTO_AGILITA = { "Armatura leggera": 3, "Armatura media": 2, "Armatura pesante": 0 };
     function bonusAgilitaCA() {
@@ -5237,8 +5252,26 @@
       if (razioni() < RAZIONI_AL_GIORNO) impostaRazioni(RAZIONI_AL_GIORNO); /* le razioni della prima giornata */
       sist(RG.riposo.prime(RAZIONI_AL_GIORNO));
     }
+    /* Intuizione: alla fine del primo dialogo il giocatore valuta se Guendalina gli ha detto la verità.
+       - con il foglietto di Adele (arazzo dell'atrio) sa già che di lei ci si può fidare: nessuna prova;
+       - altrimenti prova di Intuizione CD 12: superata, il mastino della cantina resta com'è;
+         fallita, il mastino è più forte del 5% (+1 per colpire, +5% di salute). Guendalina non mente:
+         semplicemente non sapeva tutto. */
+    const CD_FIDUCIA = 12;
+    function fiduciaGuendalina(poi) {
+      if (usate.guendalina_fiducia) return poi();
+      const F = RG.fiducia;
+      if (usate.arazzo_sx === "ok") {
+        usate.guendalina_fiducia = "foglietto"; salvaUsate();
+        fuoriDallaTendina(() => aggiungi({ tipo: "narra", box: "ok", righe: F.foglietto }));
+        return poi();
+      }
+      const l = { prova: { abilita: "Intuizione", dado: 20, cd: CD_FIDUCIA }, azione: F.azione, successo: F.successo, fallimento: F.fallimento, senzaLascia: true,
+        poi: (ok) => { usate.guendalina_fiducia = ok ? "intuito" : "dubbio"; if (!ok) usate.mastino_potenziato = true; salvaUsate(); poi(); } };
+      setTimeout(() => fuoriDallaTendina(() => { aggiungi({ tipo: "narra", righe: F.intro }); proponiProva("fiducia_guendalina", l); }), 600);
+    }
     const FINE_DIALOGO = {
-      guendalina() { offriMissioni(1500); }, /* il riposo si sblocca altrove: domanda sui rifugi (gentile) o fine della missione della scaletta (brusco) */
+      guendalina() { fiduciaGuendalina(() => offriMissioni(1500)); }, /* il riposo si sblocca altrove: domanda sui rifugi (gentile) o fine della missione della scaletta (brusco) */
       rifugio() { if (usate.dialogo_guendalina_tono !== "brusco" && !usate.guendalina_diffidente) sbloccaRiposo(); },
       guendalina_diffidente() { usate.guendalina_diffidente = true; salvaUsate(); }, /* gentile ma prova fallita: il segreto del fuoco arriva più tardi */
       quest1_proposta() {
@@ -6292,7 +6325,7 @@
           if (l.poi) l.poi(ok);
           if (fittaSubita) offriIncrollabile();
         } },
-        { testo: U.lasciaPerdere, fn: () => { chiudiScelte(); aggiungi({ tipo: "narra", righe: [l.lascia] }); } }
+        ...(l.senzaLascia ? [] : [{ testo: U.lasciaPerdere, fn: () => { chiudiScelte(); aggiungi({ tipo: "narra", righe: [l.lascia] }); } }])
       ]);
     }
 
@@ -7648,8 +7681,9 @@
       CB = testiScontro(opz.testi || id);
       const D = NEMICI[id];
       const stat = conAttrVecchi(Object.fromEntries(ATTR_NEM.map(a => [a, 10 + (["Vigore", "Agilità"].includes(a) ? tira(6) : 0)]))); /* ogni nemico del seminterrato è diverso */
-      const pv = 10 + tira(D.dadoVita) + mod(stat.Corpo);
-      scontro = { id, img: ultimaImmagineNemico || D.ritratto, stat, pv, pvMax: pv, presaUsata: false, soffioPronto: true, round: 0, primo: null, tuoTurno: false, cambio: false, turno: null, svelata: false, eff: {}, effMax: {}, ctx: opz.ctx || null, caMod: Number(opz.caMod) || 0, resa: false, sid: "s" + Date.now().toString(36) };
+      const potenziato = id === "mastino" && !opz.ctx && usate.mastino_potenziato; /* Intuizione fallita con Guendalina: +5% */
+      const pv = Math.ceil((10 + tira(D.dadoVita) + mod(stat.Corpo)) * (potenziato ? 1.05 : 1));
+      scontro = { id, img: ultimaImmagineNemico || D.ritratto, stat, pv, pvMax: pv, presaUsata: false, soffioPronto: true, round: 0, primo: null, tuoTurno: false, cambio: false, turno: null, svelata: false, eff: {}, effMax: {}, ctx: opz.ctx || null, bonusAtt: potenziato ? 1 : 0, caMod: Number(opz.caMod) || 0, resa: false, sid: "s" + Date.now().toString(36) };
       if (opz.soffioScarico) scontro.soffioPronto = false;
       ultimoNemico = null;
       MusicaScontro.avvia();
@@ -7805,7 +7839,7 @@
         segnaTurno(`${nome}: ${esitoBreve(CB.mancato)}`);
         return fineTurnoNem();
       }
-      const m = modNem("Lotta") + (Number(NEMICI[(scontro || ultimoNemico).id].attacco) || 0), d = tira(20), tot = d + m, ca = caScontro(), crit = d === 20, ok = crit || tot > ca;
+      const m = modNem("Lotta") + (Number(NEMICI[(scontro || ultimoNemico).id].attacco) || 0) + (Number((scontro || ultimoNemico).bonusAtt) || 0), d = tira(20), tot = d + m, ca = caScontro(), crit = d === 20, ok = crit || tot > ca;
       const righe = [];
       if (ok) {
         const nd = crit ? 2 : 1, tiri = tiraDadi(nd, D.dannoDado), danno = Math.max(1, somma(tiri) + m);
@@ -8014,10 +8048,10 @@
       const $ = (id) => document.getElementById(id);
       const en = () => window.Lingua && Lingua.get() === "en";
       const L = () => en()
-        ? { salute: "Health", mentali: "Mind", mana: "Mana", ira: "Rage", natura: "Nature", apriPg: "Open character sheet", apriNem: "Open enemy sheet", chiudi: "Close",
+        ? { salute: "Health", mentali: "Mind", mana: "Mana", fede: "Faith", ira: "Rage", natura: "Nature", apriPg: "Open character sheet", apriNem: "Open enemy sheet", chiudi: "Close",
             invio: "☁ syncing…", ok: "☁ synced", locale: "", errore: "☁ cloud unreachable: saved on this device only",
             conflitto: "☁ another device saved later: choose from the home page", troppo: "☁ save too large for the cloud" }
-        : { salute: "Salute", mentali: "Mente", mana: "Mana", ira: "Ira", natura: "Natura", apriPg: "Apri la scheda del personaggio", apriNem: "Apri la scheda del nemico", chiudi: "Chiudi",
+        : { salute: "Salute", mentali: "Mente", mana: "Mana", fede: "Fede", ira: "Ira", natura: "Natura", apriPg: "Apri la scheda del personaggio", apriNem: "Apri la scheda del nemico", chiudi: "Chiudi",
             invio: "☁ sincronizzo…", ok: "☁ sincronizzata", locale: "", errore: "☁ cloud non raggiungibile: salvata solo qui",
             conflitto: "☁ un altro dispositivo ha salvato dopo: scegli dalla pagina iniziale", troppo: "☁ salvataggio troppo grande per il cloud" };
 
@@ -8081,7 +8115,7 @@
           const v = parti(k), riga = btnPg.querySelectorAll(`.r-${k}-l, .r-${k}, .r-${k}-n`);
           riga.forEach(e => e.hidden = !v);
           if (!v) return;
-          btnPg.querySelector(`.r-${k}-l`).textContent = k === "risorsa" ? t[{ Soldato: "ira", Forestiero: "natura" }[pgClasse()]] || "" : t[k];
+          btnPg.querySelector(`.r-${k}-l`).textContent = k === "risorsa" ? t[{ Soldato: "ira", Forestiero: "natura" }[pgClasse()]] || "" : k === "mana" && pgClasse() === "Accolito" ? t.fede : t[k];
           btnPg.querySelector(`.r-${k}-n`).textContent = `${Math.max(0, v[0])}/${v[1]}`;
           btnPg.querySelector(`.r-${k} i`).style.width = (v[1] ? Math.max(0, Math.min(100, v[0] / v[1] * 100)) : 0) + "%";
         });

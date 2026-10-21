@@ -283,9 +283,9 @@
         ancora: "Ancora da fare: ", pronto: (n) => `${n} è pronto a entrare nel dungeon.`,
         errore: "Salvataggio non riuscito: prova con un'immagine più piccola.", nessunaImmagine: (r, c) => `Nessuna immagine per ${r} ${c}.`,
         scegliRitratto: "Scegli il tuo ritratto.", ritrattoN: (n) => `Ritratto ${n}`,
-        incantesimi: "Incantesimi lv 1", guidaIncantesimi: "Scegline quattro.", mana: "Mana", ira: "Punti ira", natura: "Punti natura", modAttr: (a) => `mod. ${a}`,
+        incantesimi: "Incantesimi lv 1", guidaIncantesimi: "Scegline quattro.", mana: "Mana", fede: "Punti fede", ira: "Punti ira", natura: "Punti natura", modAttr: (a) => `mod. ${a}`,
         notaRiposo: "Gli incantesimi scelti si potranno cambiare quando ti riposi.",
-        costo: "Costo", costoMana: (n) => `${n} Mana`, mancaInc: (n) => `${n} ${n === 1 ? "incantesimo" : "incantesimi"}`
+        costo: "Costo", costoMana: (n) => `${n} ${classe === "Accolito" ? "Fede" : "Mana"}`, mancaInc: (n) => `${n} ${n === 1 ? "incantesimo" : "incantesimi"}`
       },
       en: {
         titoloPagina: "Character creation", titolo: "Character creation", nome: "Name", immagine: "Character portrait",
@@ -311,9 +311,9 @@
         ancora: "Still to do: ", pronto: (n) => `${n} is ready to enter the dungeon.`,
         errore: "Saving failed: try a smaller image.", nessunaImmagine: (r, c) => `No image for ${r} ${c}.`,
         scegliRitratto: "Choose your portrait.", ritrattoN: (n) => `Portrait ${n}`,
-        incantesimi: "Spells lv 1", guidaIncantesimi: "Choose four.", mana: "Mana", ira: "Rage points", natura: "Nature points", modAttr: (a) => `${a} mod.`,
+        incantesimi: "Spells lv 1", guidaIncantesimi: "Choose four.", mana: "Mana", fede: "Faith points", ira: "Rage points", natura: "Nature points", modAttr: (a) => `${a} mod.`,
         notaRiposo: "You will be able to change your chosen spells when you rest.",
-        costo: "Cost", costoMana: (n) => `${n} Mana`, mancaInc: (n) => `${n} ${n === 1 ? "spell" : "spells"}`
+        costo: "Cost", costoMana: (n) => `${n} ${classe === "Accolito" ? "Faith" : "Mana"}`, mancaInc: (n) => `${n} ${n === 1 ? "spell" : "spells"}`
       }
     };
     const t = T[LINGUA];
@@ -713,7 +713,7 @@
       disegnaIncantesimi();
       const magia = usaMagia(), ris = RISORSA_CLASSE[classe], attrMana = ris ? ris.attr : (ATTR_MANA[classe] || "Mente"), modMe = modDi(attrMana);
       $("mana-box").hidden = !magia && !ris;
-      $("mana-t").textContent = ris ? t[ris.id] : t.mana;
+      $("mana-t").textContent = ris ? t[ris.id] : classe === "Accolito" ? t.fede : t.mana;
       $("mana-v").textContent = MANA_BASE + modMe;
       $("mana-f").textContent = `${MANA_BASE} ${segno(modMe)} (${t.modAttr(N("attributi", attrMana))})`;
       const nInc = incantesimiScelti().length;

@@ -108,6 +108,13 @@
     }
     @media (prefers-reduced-motion: reduce) { body.salute-critica #ritratto, body.salute-critica #testo, body.salute-critica #form button { animation: none; box-shadow: 0 0 20px 6px rgba(255, 45, 45, 0.75); } }
     #sub { color: var(--muted); font-size: 0.95rem; margin-top: 0.15rem; }
+    /* fermaglio del grado di caccia, appuntato sul petto del personaggio */
+    .fermaglio { display: inline-block; margin-top: 0.45rem; padding: 0.15rem 0.7rem; border-radius: 1rem; font-size: 0.85rem; font-weight: 600; border: 1px solid; }
+    .fermaglio[hidden] { display: none; }
+    .fermaglio.bronzo { color: #c98a4b; border-color: #c98a4b; background: color-mix(in srgb, #c98a4b 14%, transparent); }
+    .fermaglio.argento { color: #c0c7d0; border-color: #c0c7d0; background: color-mix(in srgb, #c0c7d0 14%, transparent); }
+    .fermaglio.oro { color: #e3b341; border-color: #e3b341; background: color-mix(in srgb, #e3b341 14%, transparent); }
+    .fermaglio.platino { color: #a8d8e8; border-color: #a8d8e8; background: color-mix(in srgb, #a8d8e8 14%, transparent); }
     /* salute mentale: sotto metà il ritratto si incrina, sotto un quarto si spezza e le descrizioni si distorcono */
     #ritratto, #miniRitratto { position: relative; overflow: hidden; }
     body.mente-incrinata #ritratto::after, body.mente-incrinata #miniRitratto::after,
@@ -2587,9 +2594,9 @@
         },
         /* ---------- missioni e oggetti ---------- */
         missioni: {
-          q4: { nome: "La Preda della Cripta", da: "Da: Aldo, il maggiordomo", riassunto: "Esci da Casa Vespera, scendi nella cripta sotto la cappella, trova la preda del Signore e porta ad Aldo il sigillo di bronzo che porta al petto.",
+          q4: { nome: "La Preda della Cripta", da: "Da: Aldo, il maggiordomo", riassunto: "Esci da Casa Vespera, scendi nella cripta sotto la cappella, trova la preda del Signore e porta ad Aldo il fermaglio di bronzo che porta al petto.",
             consiglio: "Il portone dell'atrio si apre con la chiave di Aldo: scrivi ad esempio «esco in giardino», poi «vado alla cappella» e «scendo nella cripta». Aldo ti attende nella sala della caccia, dietro la porta di sinistra dell'atrio.",
-            obiettivi: ["Esci da Casa Vespera dal portone dell'atrio", "Raggiungi la cappella e scendi nella cripta", "Trova la preda e procurati il suo sigillo", "Porta il sigillo ad Aldo, nella sala della caccia"] }
+            obiettivi: ["Esci da Casa Vespera dal portone dell'atrio", "Raggiungi la cappella e scendi nella cripta", "Trova la preda e procurati il suo fermaglio", "Porta il fermaglio ad Aldo, nella sala della caccia"] }
         },
         oggetti: {
           chiave_portone: { nome: "Chiave del portone", testo: "Una grossa chiave di ferro annerito, consegnata da Aldo. Apre il portone d'ingresso di Casa Vespera." },
@@ -2603,14 +2610,14 @@
         /* ---------- messaggi ---------- */
         sblocco: {
           missione: ["Missione accettata: «La Preda della Cripta»",
-            "Aldo non ti ha chiesto se volevi: ti ha dato un ordine. Esci da Casa Vespera dal portone dell'atrio, raggiungi la cappella in fondo al giardino e scendi nella cripta. Lì si nasconde la preda del Signore: portagli il sigillo di bronzo che porta al petto.",
+            "Aldo non ti ha chiesto se volevi: ti ha dato un ordine. Esci da Casa Vespera dal portone dell'atrio, raggiungi la cappella in fondo al giardino e scendi nella cripta. Lì si nasconde la preda del Signore: portagli il fermaglio di bronzo che porta al petto.",
             "Oggetto ottenuto: Chiave del portone (nello zaino). Aldo ti attende nella sala della caccia, dietro la porta di sinistra dell'atrio. Trovi gli obiettivi nella scheda, alla voce «Missioni»."],
           completata: ["Missione completata: «La Preda della Cripta»"],
           premio: (n) => `Ricompensa: le rastrelliere della sala della caccia ti sono aperte. Puoi prendere ${n === 1 ? "un oggetto" : n + " oggetti"} a tua scelta.`,
           nessunPremio: "Nessuna ricompensa: le rastrelliere restano chiuse, per ora. Il portone, però, resta aperto.",
           diario: "Oggetto ottenuto: Diario del figlio maggiore (nello zaino). Missione «Il Vincolo del Silenzio»: hai trovato il diario del figlio maggiore.",
           taccuino: "Oggetto ottenuto: Taccuino del cacciatore (nello zaino).",
-          sigillo: "Oggetto ottenuto: Sigillo del cacciatore (nello zaino)."
+          sigillo: "Oggetto ottenuto: Fermaglio del cacciatore (nello zaino)."
         },
         aldo: {
           arrivo: ["Una corrente gelida attraversa la sala. Al centro del parquet, proprio sotto il lampadario, la tua ombra e quella delle colonne scivolano verso un unico punto, come acqua che cerca uno scolo.", "Lì l'oscurità si addensa, prende spessore, si alza da terra come inchiostro che risale lungo un filo. Prima un paio di scarpe lucide, poi le falde di un frac, infine un volto. Quando l'ombra smette di muoversi, non sei più solo."],
@@ -2669,7 +2676,7 @@
           giaFuori: "Sei già fuori, nel giardino."
         },
         trofei: {
-          ettoreMorto: "Sulla dodicesima mensola, lucidata di fresco, riposa una spilla di bronzo a forma di testa di mastino: il sigillo di Ettore. La targa recita «Caccia XII — Ettore di Valdombra».",
+          ettoreMorto: "Sulla dodicesima mensola, lucidata di fresco, riposa il fermaglio di bronzo a forma di testa di mastino che portava Ettore. La targa recita «Caccia XII — Ettore di Valdombra».",
           ettoreVivo: "La dodicesima mensola è vuota. La targa è già incisa: «Caccia XII — Ettore di Valdombra». Aspetta.",
           ettoreIgnoto: "La dodicesima mensola è vuota. La targa d'ottone riporta soltanto «Caccia XII», seguito da un nome che ancora non ti dice nulla."
         },
@@ -2740,7 +2747,7 @@
                   "«Notevole.»",
                   "Aldo attraversa la sala, scavalca il mucchietto di cenere senza degnarlo di uno sguardo e si ferma davanti a te. Ti studia come si studia un cavallo alla fiera.",
                   "«Forse il Signore ha trovato finalmente qualcuno che valga il pane che mangia. Ho un compito per voi. Una caccia.»",
-                  "«Fuori da questa casa, oltre la fontana, c'è la cappella di famiglia. Sotto la cappella, la cripta. E nella cripta si nasconde una preda che il Signore desidera vedere morta da molto tempo. Uccidetela e portatemi una prova: il sigillo di bronzo che porta al petto.»",
+                  "«Fuori da questa casa, oltre la fontana, c'è la cappella di famiglia. Sotto la cappella, la cripta. E nella cripta si nasconde una preda che il Signore desidera vedere morta da molto tempo. Uccidetela e portatemi una prova: il fermaglio di bronzo che porta al petto.»",
                   "Ti porge una grossa chiave di ferro annerito.",
                   "«Il portone dell'atrio. Non perdetela. E un consiglio, visto che ve lo siete guadagnato: la preda combatte bene, ma la sua gamba sinistra non regge più come un tempo. Colpitela quando arretra. Vi attenderò nella sala della caccia.»",
                   "Si volta, e prima che tu possa rispondere le candele del lampadario tremolano. Quando tornano ferme, Aldo non c'è più."
@@ -2753,7 +2760,7 @@
                   "La parola cade come una lama. Aldo schiocca le dita e il mastino si dissolve a mezz'aria in un turbine di cenere, a un palmo dalla tua gola. Il silenzio torna a riempire la sala, rotto solo dal tuo respiro spezzato.",
                   "Aldo ti guarda dall'alto, le mani intrecciate dietro la schiena.",
                   "«Siete ancora vivo. Per ora, mi basta questo. Non è molto, ma il Signore si è dovuto accontentare di peggio.»",
-                  "«Ho un compito per voi. Una caccia. Fuori da questa casa, oltre la fontana, c'è la cappella di famiglia; sotto la cappella, la cripta. Lì si nasconde una preda che il Signore vuole morta. Uccidetela e portatemi il sigillo di bronzo che porta al petto.»",
+                  "«Ho un compito per voi. Una caccia. Fuori da questa casa, oltre la fontana, c'è la cappella di famiglia; sotto la cappella, la cripta. Lì si nasconde una preda che il Signore vuole morta. Uccidetela e portatemi il fermaglio di bronzo che porta al petto.»",
                   "Lascia cadere ai tuoi piedi una grossa chiave di ferro annerito. Non si china a porgertela.",
                   "«Il portone dell'atrio. Vi attenderò nella sala della caccia. Cercate di non farmi aspettare invano.»",
                   "Le candele tremolano. Quando tornano ferme, Aldo è sparito."
@@ -2786,23 +2793,23 @@
                 testo: {
                   signora: [
                     "Ettore abbassa appena la spada, senza lasciarla.",
-                    "«Sono entrato da quella grotta tanti anni fa che ho smesso di contarli. Ho conosciuto il vecchio, come te. Mi ha messo alla prova, come te. Mi ha dato le sue cacce, e io le ho fatte... tutte. Undici prede, undici sigilli.»",
+                    "«Sono entrato da quella grotta tanti anni fa che ho smesso di contarli. Ho conosciuto il vecchio, come te. Mi ha messo alla prova, come te. Mi ha dato le sue cacce, e io le ho fatte... tutte. Undici prede, undici fermagli.»",
                     "Si tocca la spilla sul petto con due dita, come se scottasse.",
                     "«Poi Guendalina mi ha parlato della Signora. Di Adele, chiusa da qualche parte in questa casa. Dei suoi figli, che la cercano ancora. Ho smesso di cacciare per il Signore e ho cominciato a cercare lei. Ho trovato il diario del figlio maggiore, nell'Ala Est... e il vecchio ha capito.»",
                     "Estrae da sotto il giaciglio un quaderno dalla copertina di pelle, consumato dalle mani di un ragazzo.",
-                    "«Qui dentro c'è la strada verso di lei, o almeno un pezzo. Il Signore lo sa. Per questo vuole il mio sigillo sulla sua mensola. Se mi uccidi, porti al vecchio la sua prova... e la Signora resta dov'è, per sempre.»"
+                    "«Qui dentro c'è la strada verso di lei, o almeno un pezzo. Il Signore lo sa. Per questo vuole il mio fermaglio sulla sua mensola. Se mi uccidi, porti al vecchio la sua prova... e la Signora resta dov'è, per sempre.»"
                   ],
                   signore: [
                     "Ettore ride, una risata secca che diventa tosse.",
                     "«Il vecchio non ti ha detto niente, vero? Non lo dice mai. Sono entrato da quella grotta come te. Mi ha messo alla prova come te. E io ho servito il Signore meglio di chiunque: undici cacce, undici prede. Mai una domanda. Mai un'esitazione.»",
                     "Si batte il pugno sul petto, sulla spilla di bronzo.",
-                    "«Sai chi erano le mie prede? Uomini con il sigillo. Cacciatori. Quelli venuti prima di me. Il Signore ha bisogno di un solo cacciatore alla volta... e quando ne arriva uno nuovo, il vecchio diventa la preda. È così che funziona. È così che è sempre funzionato.»",
+                    "«Sai chi erano le mie prede? Uomini con il fermaglio. Cacciatori. Quelli venuti prima di me. Il Signore ha bisogno di un solo cacciatore alla volta... e quando ne arriva uno nuovo, il vecchio diventa la preda. È così che funziona. È così che è sempre funzionato.»",
                     "Ti guarda negli occhi, e in quello sguardo non c'è odio. Solo una stanchezza infinita.",
-                    "«Io sono fedele al Signore quanto te. Più di te. E tu sei qui per uccidermi in suo nome. Quando avrai finito, porta pure il mio sigillo al vecchio. Un giorno qualcuno scenderà quelle scale per prendere il tuo.»"
+                    "«Io sono fedele al Signore quanto te. Più di te. E tu sei qui per uccidermi in suo nome. Quando avrai finito, porta pure il mio fermaglio al vecchio. Un giorno qualcuno scenderà quelle scale per prendere il tuo.»"
                   ],
                   neutro: [
                     "Ettore inclina la testa, come se faticasse a capire la domanda. Poi si mette a ridere, piano, e non riesce più a smettere.",
-                    "«Cosa vuole? Cosa vuole...» Si gratta la barba con le dita annerite. «Vuole il sigillo. Il sigillo, il sigillo. Sulla mensola. Con gli altri. Io ero il cacciatore, sai? Il cacciatore buono. Poi è arrivato un altro... no. Sei arrivato tu.»",
+                    "«Cosa vuole? Cosa vuole...» Si gratta la barba con le dita annerite. «Vuole il fermaglio. Il fermaglio, il fermaglio. Sulla mensola. Con gli altri. Io ero il cacciatore, sai? Il cacciatore buono. Poi è arrivato un altro... no. Sei arrivato tu.»",
                     "Le sue parole si sfilacciano come stoffa vecchia. Parla di mastini, di una scacchiera, di una mensola vuota con il suo nome sopra. Parla di fame, del fuoco che va tenuto acceso, delle voci che sente la notte dietro i sarcofagi.",
                     "Poi, d'improvviso, torna lucido. Ti fissa con occhi chiarissimi.",
                     "«Non lo so cosa vuole davvero. So solo che, se mi uccidi, la prossima mensola è la tua.»"
@@ -2812,8 +2819,8 @@
               },
               scelta: {
                 risposte: [
-                  { testo: "Mi dispiace, Ettore. Aldo vuole il tuo sigillo, e io devo portarglielo.", vai: "attacco_dopo" },
-                  { testo: "Non ti ucciderò. Dammi il sigillo e nasconditi meglio.", vai: "risparmia" }
+                  { testo: "Mi dispiace, Ettore. Aldo vuole il tuo fermaglio, e io devo portarglielo.", vai: "attacco_dopo" },
+                  { testo: "Non ti ucciderò. Dammi il fermaglio e nasconditi meglio.", vai: "risparmia" }
                 ]
               },
               attacco_dopo: {
@@ -2852,8 +2859,8 @@
               tregua: {
                 risposte: [
                   { testo: "Chi sei? Che cosa vuole Aldo da te?", vai: "storia", una: true },
-                  { testo: "Mi dispiace, Ettore. Aldo vuole il tuo sigillo, e io devo portarglielo.", vai: "attacco_dopo" },
-                  { testo: "Non ti ucciderò. Dammi il sigillo e nasconditi meglio.", vai: "risparmia" }
+                  { testo: "Mi dispiace, Ettore. Aldo vuole il tuo fermaglio, e io devo portarglielo.", vai: "attacco_dopo" },
+                  { testo: "Non ti ucciderò. Dammi il fermaglio e nasconditi meglio.", vai: "risparmia" }
                 ]
               }
             }
@@ -2867,9 +2874,9 @@
                   "«Ebbene?»"
                 ],
                 risposte: [
-                  { testo: "È morto. Ecco il suo sigillo.", vai: "verita", se: "q4_esito=uccisa" },
-                  { abilita: "Persuasione", testo: "È morto. Ecco il suo sigillo.", vai: "menzogna", se: "q4_esito=risparmiata" },
-                  { testo: "Non l'ho ucciso. Ma ho il suo sigillo.", vai: "confessione", se: "q4_esito=risparmiata" }
+                  { testo: "È morto. Ecco il suo fermaglio.", vai: "verita", se: "q4_esito=uccisa" },
+                  { abilita: "Persuasione", testo: "È morto. Ecco il suo fermaglio.", vai: "menzogna", se: "q4_esito=risparmiata" },
+                  { testo: "Non l'ho ucciso. Ma ho il suo fermaglio.", vai: "confessione", se: "q4_esito=risparmiata" }
                 ]
               },
               verita: {
@@ -2897,7 +2904,7 @@
                 testo: [
                   "Aldo sorride. È la prima volta che lo vedi sorridere, e vorresti non averlo visto.",
                   "La sua mano guantata scatta e si chiude sulla tua gola, sollevandoti sulle punte dei piedi senza il minimo sforzo.",
-                  "«Il sigillo è tiepido. I morti non scaldano il bronzo.» Ti lascia andare, e crolli in ginocchio, tossendo.",
+                  "«Il fermaglio è tiepido. I morti non scaldano il bronzo.» Ti lascia andare, e crolli in ginocchio, tossendo.",
                   "«Lo terrò io, e la caccia la finirò io. Le rastrelliere restano chiuse, per voi. E la prossima volta che mi mentite, viandante, finirete su una mensola.»"
                 ],
                 alla_fine: "aldo_punizione"
@@ -2984,7 +2991,7 @@
             tsTiro: (d, m, tot, cd) => `Tiro di Ettore: d20 ${d} ${m < 0 ? "−" : "+"} ${Math.abs(m)} = ${tot} contro difficoltà ${cd}`,
             tsEffetto: { stop: "Ettore resta pietrificato, incapace di muoversi, per 2 turni.", folgorazione: "Ettore resta paralizzato dalla scarica per 2 turni.", accecare: "Ettore è accecato: per 2 turni avrà il 50% di possibilità di mancarti." },
             resistito: "Ettore scuote il capo e si libera dalla presa dell'incantesimo: non ha alcun effetto.",
-            vittoria: ["Ettore crolla in ginocchio. Ti guarda, e per un attimo sembra quasi sollevato. Poi il suo corpo comincia a sgretolarsi come tutto ciò che muore in questa casa: prima le mani, poi il viso, infine la spilla di bronzo, che cade tintinnando su un mucchietto di cenere grigia.", "Raccogli il sigillo. È ancora tiepido."],
+            vittoria: ["Ettore crolla in ginocchio. Ti guarda, e per un attimo sembra quasi sollevato. Poi il suo corpo comincia a sgretolarsi come tutto ciò che muore in questa casa: prima le mani, poi il viso, infine la spilla di bronzo, che cade tintinnando su un mucchietto di cenere grigia.", "Raccogli il fermaglio. È ancora tiepido."],
             sconfitta: ["Le gambe ti cedono e crolli sulla pietra della cripta. Vedi la spada di Ettore sollevarsi sopra di te... e fermarsi.", "«No», sussurra. «Io non sono come lui. Non ancora.»"],
             risveglio: ["Riapri gli occhi sul pavimento freddo della cappella, sotto la vetrata incrinata. Qualcuno ti ha trascinato su per le scale e ti ha lasciato lì, con le mani incrociate sul petto, come un morto in veglia."],
             sistRisveglio: "Ettore ti aspetta ancora nella cripta, di nuovo in piene forze."
@@ -3098,13 +3105,13 @@
           ballo_sedie: { fisso: ["Along the wall the chairs are lined up with inhuman precision: not a finger's breadth of difference between one and the next. On each, a blue velvet cushion without a crease."] }
         },
         missioni: {
-          q4: { nome: "The Prey in the Crypt", da: "From: Aldo, the butler", riassunto: "Leave Casa Vespera, go down into the crypt beneath the chapel, find the Master's prey and bring Aldo the bronze seal it wears on its chest.",
+          q4: { nome: "The Prey in the Crypt", da: "From: Aldo, the butler", riassunto: "Leave Casa Vespera, go down into the crypt beneath the chapel, find the Master's prey and bring Aldo the bronze clasp it wears on its chest.",
             consiglio: "The great door of the hall opens with Aldo's key: write for example “I go out into the garden”, then “I go to the chapel” and “I go down into the crypt”. Aldo awaits you in the hunting hall, behind the left-hand door of the entrance hall.",
-            obiettivi: ["Leave Casa Vespera through the great door of the hall", "Reach the chapel and go down into the crypt", "Find the prey and get its seal", "Bring the seal to Aldo, in the hunting hall"] }
+            obiettivi: ["Leave Casa Vespera through the great door of the hall", "Reach the chapel and go down into the crypt", "Find the prey and get its clasp", "Bring the clasp to Aldo, in the hunting hall"] }
         },
         oggetti: {
           chiave_portone: { nome: "Key to the great door", testo: "A large key of blackened iron, handed over by Aldo. It opens the entrance door of Casa Vespera." },
-          sigillo: { nome: "Hunter's seal", testo: "A brooch of blackened bronze shaped like a mastiff's head, once worn by Ettore. Aldo wants it as proof of the hunt." },
+          sigillo: { nome: "Hunter's clasp", testo: "A brooch of blackened bronze shaped like a mastiff's head, once worn by Ettore. Aldo wants it as proof of the hunt." },
           diario_figlio: { nome: "The elder son's diary", testo: "A notebook with a leather cover, worn by a boy's hands. Its pages are crowded with a child's handwriting: drawings of the house, names of rooms, an unfinished map of the East Wing and, repeated on every page, a single word: “Mother”." },
           taccuino: { nome: "Hunter's notebook", testo: "A greasy notebook tied with a leather lace. It holds a list of names, each with a Roman numeral beside it, from I to XII. Next to every name, in ever-changing hands, the same note: “prey of the next hunter”. The last name is Ettore's." },
           lama_cervo: { nome: "Blade of the White Stag", testo: "A shortsword with a blade pale as bone, engraved with a stag with intertwined antlers. It is cold as snow to the touch. 1d8 slashing, one hand." },
@@ -3113,14 +3120,14 @@
         },
         sblocco: {
           missione: ["Quest accepted: “The Prey in the Crypt”",
-            "Aldo did not ask whether you wanted to: he gave you an order. Leave Casa Vespera through the great door of the hall, reach the chapel at the end of the garden and go down into the crypt. The Master's prey hides there: bring him the bronze seal it wears on its chest.",
+            "Aldo did not ask whether you wanted to: he gave you an order. Leave Casa Vespera through the great door of the hall, reach the chapel at the end of the garden and go down into the crypt. The Master's prey hides there: bring him the bronze clasp it wears on its chest.",
             "Item obtained: Key to the great door (in your pack). Aldo awaits you in the hunting hall, behind the left-hand door of the entrance hall. You will find the objectives on your sheet, under “Quests”."],
           completata: ["Quest completed: “The Prey in the Crypt”"],
           premio: (n) => `Reward: the racks of the hunting hall are open to you. You may take ${n === 1 ? "one item" : n + " items"} of your choice.`,
           nessunPremio: "No reward: the racks stay closed, for now. The great door, however, stays open.",
           diario: "Item obtained: The elder son's diary (in your pack). Quest “The Bond of Silence”: you have found the elder son's diary.",
           taccuino: "Item obtained: Hunter's notebook (in your pack).",
-          sigillo: "Item obtained: Hunter's seal (in your pack)."
+          sigillo: "Item obtained: Hunter's clasp (in your pack)."
         },
         aldo: {
           arrivo: ["An icy draught crosses the hall. In the middle of the parquet, right beneath the chandelier, your shadow and the shadows of the columns slide towards a single point, like water seeking a drain.", "There the darkness thickens, gains depth, rises from the floor like ink climbing a thread. First a pair of polished shoes, then the tails of a coat, at last a face. When the shadow stops moving, you are no longer alone."],
@@ -3179,7 +3186,7 @@
           giaFuori: "You are already outside, in the garden."
         },
         trofei: {
-          ettoreMorto: "On the twelfth shelf, freshly polished, rests a bronze brooch shaped like a mastiff's head: Ettore's seal. The plaque reads “Hunt XII — Ettore of Valdombra”.",
+          ettoreMorto: "On the twelfth shelf, freshly polished, rests a bronze brooch shaped like a mastiff's head: Ettore's clasp. The plaque reads “Hunt XII — Ettore of Valdombra”.",
           ettoreVivo: "The twelfth shelf is empty. The plaque is already engraved: “Hunt XII — Ettore of Valdombra”. It is waiting.",
           ettoreIgnoto: "The twelfth shelf is empty. The brass plaque reads only “Hunt XII”, followed by a name that still means nothing to you."
         },
@@ -3249,7 +3256,7 @@
                   "«Remarkable.»",
                   "Aldo crosses the hall, steps over the little heap of ash without deigning to look at it and stops in front of you. He studies you as one studies a horse at a fair.",
                   "«Perhaps the Master has at last found someone worth the bread they eat. I have a task for you. A hunt.»",
-                  "«Outside this house, beyond the fountain, stands the family chapel. Beneath the chapel, the crypt. And in the crypt hides a prey the Master has long wished to see dead. Kill it and bring me proof: the bronze seal it wears on its chest.»",
+                  "«Outside this house, beyond the fountain, stands the family chapel. Beneath the chapel, the crypt. And in the crypt hides a prey the Master has long wished to see dead. Kill it and bring me proof: the bronze clasp it wears on its chest.»",
                   "He hands you a large key of blackened iron.",
                   "«The great door of the hall. Do not lose it. And a piece of advice, since you have earned it: the prey fights well, but its left leg no longer holds as it once did. Strike when it steps back. I shall await you in the hunting hall.»",
                   "He turns, and before you can answer the candles of the chandelier flicker. When they steady again, Aldo is gone."
@@ -3262,7 +3269,7 @@
                   "The word falls like a blade. Aldo snaps his fingers and the mastiff dissolves in mid-air into a swirl of ash, a hand's breadth from your throat. Silence fills the hall again, broken only by your ragged breathing.",
                   "Aldo looks down at you, hands clasped behind his back.",
                   "«You are still alive. For now, that is enough for me. It is not much, but the Master has had to make do with worse.»",
-                  "«I have a task for you. A hunt. Outside this house, beyond the fountain, stands the family chapel; beneath the chapel, the crypt. There hides a prey the Master wants dead. Kill it and bring me the bronze seal it wears on its chest.»",
+                  "«I have a task for you. A hunt. Outside this house, beyond the fountain, stands the family chapel; beneath the chapel, the crypt. There hides a prey the Master wants dead. Kill it and bring me the bronze clasp it wears on its chest.»",
                   "He lets a large key of blackened iron fall at your feet. He does not stoop to hand it to you.",
                   "«The great door of the hall. I shall await you in the hunting hall. Try not to make me wait in vain.»",
                   "The candles flicker. When they steady again, Aldo has vanished."
@@ -3295,23 +3302,23 @@
                 testo: {
                   signora: [
                     "Ettore lowers his sword slightly, without letting it go.",
-                    "«I came in through that cave so many years ago that I have stopped counting them. I met the old man, like you. He put me to the test, like you. He gave me his hunts, and I carried them out... all of them. Eleven prey, eleven seals.»",
+                    "«I came in through that cave so many years ago that I have stopped counting them. I met the old man, like you. He put me to the test, like you. He gave me his hunts, and I carried them out... all of them. Eleven prey, eleven clasps.»",
                     "He touches the brooch on his chest with two fingers, as if it burned.",
                     "«Then Guendalina told me about the Lady. About Adele, locked away somewhere in this house. About her children, who still look for her. I stopped hunting for the Master and began searching for her. I found the elder son's diary, in the East Wing... and the old man understood.»",
                     "From under the bed he draws a notebook with a leather cover, worn by a boy's hands.",
-                    "«In here is the road to her, or at least a piece of it. The Master knows. That is why he wants my seal on his shelf. If you kill me, you bring the old man his proof... and the Lady stays where she is, for ever.»"
+                    "«In here is the road to her, or at least a piece of it. The Master knows. That is why he wants my clasp on his shelf. If you kill me, you bring the old man his proof... and the Lady stays where she is, for ever.»"
                   ],
                   signore: [
                     "Ettore laughs, a dry laugh that turns into a cough.",
                     "«The old man told you nothing, did he? He never does. I came in through that cave like you. He put me to the test like you. And I served the Master better than anyone: eleven hunts, eleven prey. Never a question. Never a hesitation.»",
                     "He strikes his fist against his chest, against the bronze brooch.",
-                    "«Do you know who my prey were? Men with the seal. Hunters. The ones who came before me. The Master needs only one hunter at a time... and when a new one arrives, the old one becomes the prey. That is how it works. That is how it has always worked.»",
+                    "«Do you know who my prey were? Men with the clasp. Hunters. The ones who came before me. The Master needs only one hunter at a time... and when a new one arrives, the old one becomes the prey. That is how it works. That is how it has always worked.»",
                     "He looks you in the eyes, and in that gaze there is no hatred. Only an endless weariness.",
-                    "«I am as loyal to the Master as you are. More than you. And you are here to kill me in his name. When you are done, take my seal to the old man. One day someone will come down those stairs to take yours.»"
+                    "«I am as loyal to the Master as you are. More than you. And you are here to kill me in his name. When you are done, take my clasp to the old man. One day someone will come down those stairs to take yours.»"
                   ],
                   neutro: [
                     "Ettore tilts his head, as if struggling to understand the question. Then he begins to laugh, softly, and cannot stop.",
-                    "«What does he want? What does he want...» He scratches his beard with blackened fingers. «He wants the seal. The seal, the seal. On the shelf. With the others. I was the hunter, you know? The good hunter. Then another came... no. You came.»",
+                    "«What does he want? What does he want...» He scratches his beard with blackened fingers. «He wants the clasp. The clasp, the clasp. On the shelf. With the others. I was the hunter, you know? The good hunter. Then another came... no. You came.»",
                     "His words fray like old cloth. He talks of mastiffs, of a chessboard, of an empty shelf with his name above it. He talks of hunger, of the fire that must be kept alight, of the voices he hears at night behind the sarcophagi.",
                     "Then, suddenly, he is lucid again. He stares at you with very clear eyes.",
                     "«I do not know what he truly wants. I only know that if you kill me, the next shelf is yours.»"
@@ -3321,8 +3328,8 @@
               },
               scelta: {
                 risposte: [
-                  { testo: "I am sorry, Ettore. Aldo wants your seal, and I must bring it to him.", vai: "attacco_dopo" },
-                  { testo: "I will not kill you. Give me the seal and hide better.", vai: "risparmia" }
+                  { testo: "I am sorry, Ettore. Aldo wants your clasp, and I must bring it to him.", vai: "attacco_dopo" },
+                  { testo: "I will not kill you. Give me the clasp and hide better.", vai: "risparmia" }
                 ]
               },
               attacco_dopo: {
@@ -3360,8 +3367,8 @@
               tregua: {
                 risposte: [
                   { testo: "Who are you? What does Aldo want from you?", vai: "storia", una: true },
-                  { testo: "I am sorry, Ettore. Aldo wants your seal, and I must bring it to him.", vai: "attacco_dopo" },
-                  { testo: "I will not kill you. Give me the seal and hide better.", vai: "risparmia" }
+                  { testo: "I am sorry, Ettore. Aldo wants your clasp, and I must bring it to him.", vai: "attacco_dopo" },
+                  { testo: "I will not kill you. Give me the clasp and hide better.", vai: "risparmia" }
                 ]
               }
             }
@@ -3375,9 +3382,9 @@
                   "«Well?»"
                 ],
                 risposte: [
-                  { testo: "He is dead. Here is his seal.", vai: "verita", se: "q4_esito=uccisa" },
-                  { abilita: "Persuasione", testo: "He is dead. Here is his seal.", vai: "menzogna", se: "q4_esito=risparmiata" },
-                  { testo: "I did not kill him. But I have his seal.", vai: "confessione", se: "q4_esito=risparmiata" }
+                  { testo: "He is dead. Here is his clasp.", vai: "verita", se: "q4_esito=uccisa" },
+                  { abilita: "Persuasione", testo: "He is dead. Here is his clasp.", vai: "menzogna", se: "q4_esito=risparmiata" },
+                  { testo: "I did not kill him. But I have his clasp.", vai: "confessione", se: "q4_esito=risparmiata" }
                 ]
               },
               verita: {
@@ -3405,7 +3412,7 @@
                 testo: [
                   "Aldo smiles. It is the first time you have seen him smile, and you wish you had not.",
                   "His gloved hand darts out and closes around your throat, lifting you onto the tips of your toes without the slightest effort.",
-                  "«The seal is warm. The dead do not warm bronze.» He lets you go, and you fall to your knees, coughing.",
+                  "«The clasp is warm. The dead do not warm bronze.» He lets you go, and you fall to your knees, coughing.",
                   "«I shall keep it, and I shall finish the hunt myself. The racks stay closed, for you. And the next time you lie to me, wanderer, you will end up on a shelf.»"
                 ],
                 alla_fine: "aldo_punizione"
@@ -3491,7 +3498,7 @@
             tsTiro: (d, m, tot, cd) => `Ettore's roll: d20 ${d} ${m < 0 ? "−" : "+"} ${Math.abs(m)} = ${tot} vs difficulty ${cd}`,
             tsEffetto: { stop: "Ettore stays frozen, unable to move, for 2 turns.", folgorazione: "Ettore stays paralysed by the shock for 2 turns.", accecare: "Ettore is blinded: for 2 turns he has a 50% chance to miss you." },
             resistito: "Ettore shakes his head and shrugs off the spell's grip: it has no effect.",
-            vittoria: ["Ettore falls to his knees. He looks at you, and for a moment he seems almost relieved. Then his body begins to crumble like everything that dies in this house: first the hands, then the face, finally the bronze brooch, which falls ringing onto a little heap of grey ash.", "You pick up the seal. It is still warm."],
+            vittoria: ["Ettore falls to his knees. He looks at you, and for a moment he seems almost relieved. Then his body begins to crumble like everything that dies in this house: first the hands, then the face, finally the bronze brooch, which falls ringing onto a little heap of grey ash.", "You pick up the clasp. It is still warm."],
             sconfitta: ["Your legs give way and you collapse on the stone of the crypt. You see Ettore's sword rise above you... and stop.", "«No,» he whispers. «I am not like him. Not yet.»"],
             risveglio: ["You open your eyes on the cold floor of the chapel, beneath the cracked window. Someone dragged you up the stairs and left you there, hands crossed on your chest, like a corpse at a wake."],
             sistRisveglio: "Ettore is still waiting for you in the crypt, back at full strength."
@@ -3876,7 +3883,7 @@
             "Schiocca le dita. L'aria davanti a voi si addensa in due nubi di cenere grigia che turbinano sul parquet; quando si diradano, due mastini enormi vi fissano con occhi rossi come braci. Aldo sfiora il capo di uno dei due con la punta del guanto, e la belva si accuccia ai suoi piedi, immobile.",
             "«Uno basterà. Non sprecherò due cani per dimostrare ciò che i vostri occhi hanno già detto. Se vi vedrò cadere troppo in basso, fermerò io la danza.»"
           ],
-          menzogna: "È morto. Ecco il suo sigillo."
+          menzogna: "È morto. Ecco il suo fermaglio."
         },
         ettore: {
           medicina: "La tua gamba sinistra: lascia che le dia un'occhiata.",
@@ -3948,7 +3955,7 @@
             "He snaps his fingers. The air before you thickens into two clouds of grey ash swirling over the parquet; when they clear, two huge mastiffs stare at you with eyes red as embers. Aldo brushes the head of one with the tip of his glove, and the beast lies down at his feet, motionless.",
             "«One will suffice. I shall not waste two hounds to prove what your eyes have already said. Should I see you fall too low, I shall stop the dance myself.»"
           ],
-          menzogna: "He is dead. Here is his seal."
+          menzogna: "He is dead. Here is his clasp."
         },
         ettore: {
           medicina: "Your left leg: let me take a look at it.",
@@ -3975,6 +3982,69 @@
         }
       }
     };
+
+    /* Aldo, dopo il bronzo: domande sulla casa (risposte secche). PROVVISORIO, da riscrivere. */
+    const dlgAldoCasa = (it) => {
+      const T = it ? {
+        intro: ["Aldo non si volta. «Parlate. Ho poco tempo e meno pazienza.»"],
+        q: { casa: "Che cos'è davvero questa casa?", vespera: "Chi erano i Vespera?", signore: "Parlatemi del Signore.", mastini: "I mastini: da dove vengono?", guendalina: "Cosa pensate di Guendalina?", signora: "Sapete dove si trova la Signora Adele?", diari: "Sapete qualcosa di un diario della Signora?", passaggi: "Ci sono passaggi nascosti in questa casa?", cacce: "Quali altre cacce ci sono?", fine: "Non ho altro da chiedere." },
+        casa: ["«Una casa. La sua casa. Brucia da prima che voi nasceste e brucerà dopo che sarete cenere.»"],
+        casa_r: ["«Una casa che non lascia andare niente: né i servi, né gli ospiti, né i ricordi. Abituatevi.»"],
+        vespera: ["«Una famiglia antica. Ora ne resta uno. Il solo che conti.»"],
+        signore: ["Per un istante la voce di Aldo si incrina, come quella di un vecchio che parla di un figlio.", "«Il Signore è tutto ciò che resta di questa casa. Servirlo è l'unica cosa che abbia ancora un senso.»"],
+        mastini: ["«I suoi cani. I miei cani.» Una pausa. «Nascono dal fuoco e al fuoco tornano. Ce n'è uno per ogni corridoio di questa casa, e non dormono mai tutti insieme.»", "«Ce n'è uno, poi, che non è mio. Lo avete visto. Pregate di non doverlo rivedere.»"],
+        guendalina: ["Le labbra di Aldo si stringono in una linea sottile.", "«Una serva che ha scelto la padrona sbagliata. Cucina bene. Del resto non mi importa.»"],
+        signora: ["«No.» Silenzio. «E non mi interessa saperlo.»"],
+        diari: ["«Un diario? La Signora scriveva molto. Carta bruciata, come tutto il resto. Non esiste più nessun diario.»"],
+        diari_ok: ["Mentre parla, la sua mano guantata sfiora la tasca interna del frac. È un gesto minimo, di un istante. Ma lo hai visto.", "Aldo sta mentendo. Sul diario sa molto più di quanto dica."],
+        diari_ko: ["Il volto di Aldo è una maschera di cera. Non riesci a capire se stia dicendo la verità."],
+        osserva: "Osservo il suo volto mentre risponde.", lascia: "Lasciamo stare.",
+        passaggi: ["Aldo ti guarda il fermaglio sul petto, poi distoglie lo sguardo.", "«Ci sono porte che questa casa apre solo a chi ha portato l'oro. Voi non l'avete portato.»"],
+        passaggi_oro: ["«Ora sì.» (Da scrivere: i passaggi segreti.)"],
+        cacce: ["Aldo indica con un cenno la parete delle teste imbalsamate.", "«Il Signore ha sempre fame. Ogni preda, un grado. Ogni grado, una porta in più.»"],
+        fine: ["Aldo torna a fissare il camino spento. La conversazione, per lui, è già finita da un pezzo."]
+      } : {
+        intro: ["Aldo does not turn. “Speak. I have little time and less patience.”"],
+        q: { casa: "What is this house, really?", vespera: "Who were the Vespera?", signore: "Tell me about the Master.", mastini: "The mastiffs: where do they come from?", guendalina: "What do you think of Guendalina?", signora: "Do you know where Lady Adele is?", diari: "Do you know anything about the Lady's diary?", passaggi: "Are there hidden passages in this house?", cacce: "What other hunts are there?", fine: "I have nothing else to ask." },
+        casa: ["“A house. His house. It has burned since before you were born and it will burn after you are ash.”"],
+        casa_r: ["“A house that lets nothing go: not the servants, not the guests, not the memories. Get used to it.”"],
+        vespera: ["“An ancient family. Now one remains. The only one who matters.”"],
+        signore: ["For an instant Aldo's voice cracks, like an old man speaking of a son.", "“The Master is all that remains of this house. Serving him is the only thing that still makes sense.”"],
+        mastini: ["“His hounds. My hounds.” A pause. “They are born of the fire and to the fire they return. There is one for every corridor of this house, and they never all sleep at once.”", "“There is one, though, that is not mine. You have seen it. Pray you need not see it again.”"],
+        guendalina: ["Aldo's lips press into a thin line.", "“A servant who chose the wrong mistress. She cooks well. Beyond that I do not care.”"],
+        signora: ["“No.” Silence. “Nor do I care to know.”"],
+        diari: ["“A diary? The Lady wrote a great deal. Burnt paper, like everything else. No diary exists any more.”"],
+        diari_ok: ["As he speaks, his gloved hand brushes the inner pocket of his tailcoat. It is a tiny gesture, an instant. But you saw it.", "Aldo is lying. He knows far more about the diary than he says."],
+        diari_ko: ["Aldo's face is a wax mask. You cannot tell whether he is telling the truth."],
+        osserva: "I watch his face as he answers.", lascia: "Never mind.",
+        passaggi: ["Aldo glances at the clasp on your chest, then looks away.", "“There are doors this house opens only to those who have brought gold. You have not brought it.”"],
+        passaggi_oro: ["“Now, yes.” (To be written: the secret passages.)"],
+        cacce: ["Aldo nods towards the wall of stuffed heads.", "“The Master is always hungry. Every prey, a rank. Every rank, one more door.”"],
+        fine: ["Aldo goes back to staring at the cold fireplace. For him, the conversation ended long ago."]
+      };
+      const Q = T.q;
+      const domande = [
+        { testo: Q.casa, vai: "casa", se: "aldo_rispetto=no" }, { testo: Q.casa, vai: "casa_r", se: "aldo_rispetto=si" },
+        { testo: Q.vespera, vai: "vespera" }, { testo: Q.signore, vai: "signore" }, { testo: Q.mastini, vai: "mastini" },
+        { testo: Q.guendalina, vai: "guendalina" }, { testo: Q.signora, vai: "signora" }, { testo: Q.diari, vai: "diari" },
+        { testo: Q.passaggi, vai: "passaggi", se: "fermaglio_oro=no" }, { testo: Q.passaggi, vai: "passaggi_oro", se: "fermaglio_oro=si" },
+        { testo: Q.cacce, vai: "cacce" }, { testo: Q.fine, vai: "fine" }
+      ];
+      const nodo = (testo, extra) => ({ testo, poi: "domande", ...(extra || {}) });
+      return { nome: "Aldo", stanza: "sala_caccia", nodi: {
+        inizio: { testo: T.intro, poi: "domande" },
+        domande: { testo: [], risposte: domande },
+        casa: nodo(T.casa), casa_r: nodo(T.casa_r), vespera: nodo(T.vespera), signore: nodo(T.signore), mastini: nodo(T.mastini),
+        guendalina: nodo(T.guendalina), signora: nodo(T.signora),
+        diari: { testo: T.diari, risposte: [{ tag: "osserva", testo: T.osserva, vai: "diari_ko", una: true, prova: { abilita: "Intuizione", cd: 13, ok: "diari_ok", ko: "diari_ko" } }, { testo: T.lascia, vai: "domande" }] },
+        diari_ok: nodo(T.diari_ok, { imposta: { aldo_mente: true } }), diari_ko: nodo(T.diari_ko),
+        passaggi: nodo(T.passaggi), passaggi_oro: nodo(T.passaggi_oro),
+        cacce: nodo(T.cacce, { alla_fine: "aldo_bacheca" }),
+        fine: { testo: T.fine }
+      } };
+    };
+    DIALOGHI.it.aldo_casa = dlgAldoCasa(true);
+    DIALOGHI.en.aldo_casa = dlgAldoCasa(false);
     for (const l of ["it", "en"]) {
       const P = DLG_PROVE[l], D = DIALOGHI[l];
       /* Guendalina: gentile (Persuasione 12) o dura (Intimidire 12) */
@@ -4208,6 +4278,69 @@
       }
     };
     const RT = RT_TUTTI[LINGUA] || RT_TUTTI.it;
+
+    /* testi di Aldo dopo la caccia del bronzo, udienze e bacheca — PROVVISORI, da riscrivere */
+    const AL_TUTTI = {
+      it: {
+        fermaglioBronzo: [
+          "Aldo estrae dal taschino del frac un piccolo fermaglio di bronzo a forma di testa di mastino, identico a quello di Ettore ma lucido, nuovo.",
+          "Te lo appunta sul petto senza chiedere il permesso. Le sue dita guantate sono fredde come il marmo dell'atrio.",
+          "«Bronzo. Il primo grado. Portatelo in vista: in questa casa tutti sapranno a chi appartenete.»"
+        ],
+        fermaglioOttenuto: "Fermaglio di bronzo: ora lo porti appuntato sul petto. Ogni caccia speciale ti farà salire di grado.",
+        fermaglioNome: (g) => ({ bronzo: "Fermaglio di bronzo", argento: "Fermaglio d'argento", oro: "Fermaglio d'oro", platino: "Fermaglio di platino" })[g],
+        segui: "Segui Aldo", signore: "Il Signore", salaTrono: "La sala del trono",
+        presente: "Aldo è in piedi accanto al camino spento, le mani intrecciate dietro la schiena. Ti segue con lo sguardo, senza dire una parola.",
+        domandeSbloccate: "Ora puoi parlare con Aldo nella sala della caccia: fagli domande sulla casa.",
+        udienza: {
+          bronzo: {
+            invito: ["Aldo si volta verso di te, e per la prima volta ti guarda come si guarda qualcosa che potrebbe valere la pena tenere.", "«Il Signore vuole vedervi. Seguitemi. Non parlate se non vi viene chiesto, e non guardate il cane negli occhi.»"],
+            cammino: ["Aldo ti conduce oltre una porta che non avevi mai notato, dietro l'arazzo più scuro della sala. Scale strette, pareti nere di fuliggine, un calore che sale dal basso come il respiro di una bestia addormentata.", "In fondo, un portale di ferro battuto si apre da solo al vostro arrivo."],
+            sala: ["La sala è immensa e quasi buia. In fondo, su una pedana di gradini anneriti, un trono di pietra arde senza consumarsi: le fiamme sono azzurre, e non danno luce.", "Ai piedi dei gradini è sdraiata una belva enorme, un mastino con due teste. Una dorme. L'altra no: ti segue con un occhio color brace, e il suo respiro fa tremare la cenere sul pavimento.", "Sul trono c'è una figura. Non riesci a distinguerne il volto: solo una sagoma alta, immobile, avvolta nell'ombra."],
+            voce: ["«Bronzo.» La voce non viene dal trono: viene da ogni parete, da sotto il pavimento, da dentro la tua testa.", "«Un altro. Sempre un altro.» Una pausa lunga, pesante. «Vediamo quanto durerai.»"],
+            ritorno: ["Quando ti ritrovi nella sala della caccia non ricordi la strada del ritorno. Aldo è già al suo posto, accanto al camino, come se non si fosse mai mosso.", "La porta dietro l'arazzo non c'è più."]
+          },
+          argento: { invito: ["«Il Signore vi attende di nuovo. Seguitemi.»"], cammino: ["Le stesse scale, lo stesso calore."], sala: ["Il mastino a due teste è sveglio, questa volta. Entrambe le teste."], voce: ["«Argento.»"], ritorno: ["Ti ritrovi nella sala della caccia."] },
+          oro: { invito: ["«Il Signore vi attende. È l'ultima volta che vi porto da lui come ospite.»"], cammino: ["Le scale sembrano più corte."], sala: ["La figura sul trono si sporge in avanti, per la prima volta."], voce: ["«Oro.»"], ritorno: ["Ti ritrovi nella sala della caccia."] }
+        },
+        bacheca: {
+          intro: "Le cacce del Signore:",
+          nomi: { bronzo: "Caccia di bronzo — La Preda della Cripta", argento: "Caccia d'argento — ???", oro: "Caccia d'oro — ???", platino: "Caccia di platino — ???" },
+          completata: "completata", prossima: "disponibile presto", livello: (l) => `richiede il livello ${l}`,
+          comuni: "Le cacce comuni (avventurieri entrati da altri portali, altre bestie) arriveranno più avanti."
+        }
+      },
+      en: {
+        fermaglioBronzo: [
+          "Aldo takes from his tailcoat pocket a small bronze clasp shaped like a mastiff's head, identical to Ettore's but shiny, new.",
+          "He pins it on your chest without asking. His gloved fingers are as cold as the marble of the hall.",
+          "“Bronze. The first rank. Wear it where it can be seen: in this house everyone will know whom you belong to.”"
+        ],
+        fermaglioOttenuto: "Bronze clasp: you now wear it pinned to your chest. Every special hunt will raise your rank.",
+        fermaglioNome: (g) => ({ bronzo: "Bronze clasp", argento: "Silver clasp", oro: "Gold clasp", platino: "Platinum clasp" })[g],
+        segui: "Follow Aldo", signore: "The Master", salaTrono: "The throne room",
+        presente: "Aldo stands by the cold fireplace, hands clasped behind his back. He follows you with his eyes, without a word.",
+        domandeSbloccate: "You can now talk to Aldo in the hunting room: ask him about the house.",
+        udienza: {
+          bronzo: {
+            invito: ["Aldo turns to you, and for the first time he looks at you the way one looks at something that might be worth keeping.", "“The Master wishes to see you. Follow me. Do not speak unless spoken to, and do not look the hound in the eyes.”"],
+            cammino: ["Aldo leads you through a door you had never noticed, behind the darkest tapestry in the room. Narrow stairs, walls black with soot, a heat rising from below like the breath of a sleeping beast.", "At the bottom, a wrought-iron gate opens by itself as you arrive."],
+            sala: ["The hall is immense and almost dark. At the far end, on a dais of blackened steps, a stone throne burns without being consumed: its flames are blue, and give no light.", "At the foot of the steps lies a huge beast, a mastiff with two heads. One sleeps. The other does not: it follows you with an ember-coloured eye, and its breath stirs the ash on the floor.", "There is a figure on the throne. You cannot make out its face: only a tall shape, motionless, wrapped in shadow."],
+            voce: ["“Bronze.” The voice does not come from the throne: it comes from every wall, from beneath the floor, from inside your head.", "“Another one. Always another one.” A long, heavy pause. “Let us see how long you last.”"],
+            ritorno: ["When you find yourself back in the hunting room you do not remember the way back. Aldo is already in his place by the fireplace, as if he had never moved.", "The door behind the tapestry is gone."]
+          },
+          argento: { invito: ["“The Master awaits you again. Follow me.”"], cammino: ["The same stairs, the same heat."], sala: ["The two-headed mastiff is awake this time. Both heads."], voce: ["“Silver.”"], ritorno: ["You find yourself back in the hunting room."] },
+          oro: { invito: ["“The Master awaits you. This is the last time I bring you to him as a guest.”"], cammino: ["The stairs seem shorter."], sala: ["The figure on the throne leans forward, for the first time."], voce: ["“Gold.”"], ritorno: ["You find yourself back in the hunting room."] }
+        },
+        bacheca: {
+          intro: "The Master's hunts:",
+          nomi: { bronzo: "Bronze hunt — The Prey in the Crypt", argento: "Silver hunt — ???", oro: "Gold hunt — ???", platino: "Platinum hunt — ???" },
+          completata: "completed", prossima: "available soon", livello: (l) => `requires level ${l}`,
+          comuni: "Common hunts (adventurers who came through other portals, other beasts) will come later."
+        }
+      }
+    };
+    const AL = AL_TUTTI[LINGUA] || AL_TUTTI.it;
     const A = CACCIA[LINGUA] || CACCIA.it; /* testi di Aldo, della caccia e delle stanze nuove */
     const A2 = CACCIA2[LINGUA] || CACCIA2.it; /* diari di Adele, fontana e prove di giardino, cappella e cripta */
     document.title = U.titoloPagina;
@@ -4922,6 +5055,7 @@
       aggiornaZaino();
       disegnaIncantesimi();
       disegnaMissioni();
+      if (typeof disegnaFermaglio === "function") disegnaFermaglio();
     }
 
     /* Caratteristiche: con Aumento di potenza attivo si vede anche il valore temporaneo, es. «10 (+0) → 12 (+1)» */
@@ -5796,7 +5930,7 @@
          Vinto o perso, assegna la caccia: chiave del portone, cappella, cripta, Ettore.
        - Ettore cambia storia in base alla lealtà del giocatore (Signora, Signore o nessuna delle due):
          si può ucciderlo o risparmiarlo; risparmiato, ad Aldo bisogna mentire (Persuasione CD 14).
-       - Riportato il sigillo nella sala della caccia, Aldo concede le scelte dalle rastrelliere.
+       - Riportato il fermaglio nella sala della caccia, Aldo concede le scelte dalle rastrelliere.
        ===================================================================== */
     const IMG_ALDO = "immagini/house/aldo_sala.webp", IMG_ALDO_MASTINI = "immagini/house/aldo_mastini.webp", DIM_ALDO = [2304, 1728]; /* stessa inquadratura della sala da ballo vuota */
     const IMG_MASTINI_ALDO = ["immagini/nemici/Mastino_sala.webp", "immagini/nemici/Mastino_catene.webp"];
@@ -5929,6 +6063,14 @@
         return nodoDialogo("aldo", st && st !== "fine" ? st : "ritorno", true);
       }
       if (luogo === "sala_caccia" && usate.q4 === "prova") { tendinaDialogo(); return consegnaAldo(); }
+      if (luogo === "sala_caccia" && usate.q4 === "completata") { /* dopo il bronzo Aldo si lascia interrogare (prima l'udienza) */
+        if (!udienzaFatta("bronzo")) return proponiUdienza();
+        usate.aldo_rispetto = usate.aldo_esito === "vinto" ? "si" : "no"; /* ha battuto i suoi mastini: risponde un po' meno sprezzante */
+        usate.fermaglio_oro = gradoFermaglio() >= 2 ? "si" : "no";
+        tendinaDialogo();
+        const st = usate.dialogo_aldo_casa;
+        return nodoDialogo("aldo_casa", st && st !== "fine" ? st : "inizio");
+      }
       aggiungi({ tipo: "narra", righe: A.aldo.assente });
     }
     /* lo scontro di prova: due mastini, uno alla volta */
@@ -6039,7 +6181,60 @@
       controllaLivello();
     }
 
-    /* ---------- La consegna del sigillo, nella sala della caccia ---------- */
+
+    /* =====================================================================
+       DOPO LA CACCIA DEL BRONZO
+       - Aldo appunta il fermaglio di bronzo al personaggio (usate.fermaglio: bronzo → argento → oro → platino).
+       - Udienze dal Signore dopo bronzo, argento e oro: Aldo conduce il personaggio nella sala del trono,
+         sorvegliata dal mastino a due teste; il Signore è una figura in ombra e una voce. Poi la sala si richiude.
+       - Aldo si lascia interrogare sulla casa (risposte secche; con chi lo ha battuto è appena meno sprezzante).
+         Sui diari mente: Intuizione per accorgersene. I passaggi segreti solo dopo il fermaglio d'oro.
+       - Bacheca delle cacce: le cacce speciali (fermagli) con il livello richiesto. TESTI PROVVISORI.
+       ===================================================================== */
+    const GRADI = ["bronzo", "argento", "oro", "platino"];
+    const LIVELLO_CACCIA = { bronzo: 1, argento: 2, oro: 3, platino: 4 }; /* PROVVISORIO */
+    const gradoFermaglio = () => GRADI.indexOf(usate.fermaglio); /* -1 = nessuno */
+    const udienzaFatta = (g) => Array.isArray(usate.udienze) && usate.udienze.includes(g);
+    function proponiUdienza() {
+      const g = usate.fermaglio;
+      if (!g || udienzaFatta(g) || g === "platino" || luogo !== "sala_caccia") return;
+      aggiungi({ tipo: "dialogo", fuori: true, tuttoBox: true, chi: "Aldo", macchina: true, righe: AL.udienza[g].invito });
+      scrittura.then(() => scelte([{ testo: AL.segui, fn: () => { chiudiScelte(); udienza(g); } }]));
+    }
+    function udienza(g) {
+      const U_ = AL.udienza[g];
+      usate.udienze = [...(usate.udienze || []), g]; salvaUsate();
+      fuoriDallaTendina(() => {
+        aggiungi({ tipo: "narra", titolo: AL.salaTrono, righe: U_.cammino });
+        aggiungi({ tipo: "narra", righe: U_.sala });
+        aggiungi({ tipo: "dialogo", fuori: true, tuttoBox: true, chi: AL.signore, macchina: true, righe: U_.voce });
+      });
+      scrittura.then(() => fuoriDallaTendina(() => {
+        aggiungi({ tipo: "narra", righe: U_.ritorno });
+        sist(AL.domandeSbloccate);
+      }));
+    }
+    function bachecaCacce() {
+      const B = AL.bacheca, righe = [B.intro];
+      GRADI.forEach((g, i) => {
+        const fatto = gradoFermaglio() >= i, liv = LIVELLO_CACCIA[g];
+        righe.push(`${B.nomi[g]} — ${fatto ? B.completata : livelloPg() >= liv ? B.prossima : B.livello(liv)}`);
+      });
+      righe.push(B.comuni);
+      aggiungi({ tipo: "sistema", box: "mis", fuori: true, righe });
+    }
+    Object.assign(FINE_DIALOGO, {
+      aldo_bacheca() { bachecaCacce(); }
+    });
+    function disegnaFermaglio() {
+      const nome = document.getElementById("nome"); if (!nome) return;
+      let el = document.getElementById("fermaglio");
+      if (!el) { el = document.createElement("div"); el.id = "fermaglio"; nome.parentElement.append(el); }
+      const g = usate.fermaglio;
+      el.hidden = !g; if (!g) return;
+      el.className = "fermaglio " + g; el.textContent = AL.fermaglioNome(g);
+    }
+    /* ---------- La consegna del fermaglio, nella sala della caccia ---------- */
     function consegnaAldo() {
       if (usate.q4 !== "prova") return;
       const st = usate.dialogo_aldo_caccia;
@@ -6070,8 +6265,12 @@
       salvaUsate();
       sblocco([...A.sblocco.completata, n ? A.sblocco.premio(n) : A.sblocco.nessunPremio], "mis"); disegnaMissioni();
       if (n) aggiungi({ tipo: "dialogo", fuori: true, tuttoBox: true, chi: "Aldo", macchina: true, righe: [A.aldo.prendete] });
-      aggiungi({ tipo: "dialogo", fuori: true, tuttoBox: true, chi: "Aldo", macchina: true, righe: A.aldo.congedoCaccia });
+      /* il primo grado: Aldo appunta al personaggio il fermaglio di bronzo, che resta ben visibile nella scheda */
+      usate.fermaglio = "bronzo"; salvaUsate();
+      aggiungi({ tipo: "dialogo", fuori: true, tuttoBox: true, chi: "Aldo", macchina: true, righe: AL.fermaglioBronzo });
+      scrittura.then(() => { aggiungi({ tipo: "sistema", box: "cap", fuori: true, righe: [AL.fermaglioOttenuto] }); disegnaScheda(); });
       scrittura.then(() => { if (luogo === "sala_caccia") aggiungi({ tipo: "armeria", fuori: true }); });
+      scrittura.then(() => setTimeout(() => fuoriDallaTendina(proponiUdienza), 400));
     }
     const testoMensolaEttore = () => usate.trofeo_ettore === "esposto" ? A.trofei.ettoreMorto : usate.q4 === "completata" ? A.trofei.ettoreVivo : A.trofei.ettoreIgnoto;
 
@@ -6096,7 +6295,7 @@
       aldo_punizione() { const d = tira(6), [da, a] = dannoCorpoNonLetale(d); aggiungi({ tipo: "sistema", box: "ko", righe: [A.aldo.punizione(d, da, a)] }); premioCaccia(false); },
       aldo_delusione() { const d = tira(6), [da, a] = dannoMenteSubito(d); aggiungi({ tipo: "sistema", box: "ko", righe: [A.aldo.delusione(d, da, a)] }); premioCaccia(false); },
       ettore_scontro() { setTimeout(avviaScontroEttore, 400); },
-      ettore_curato() { usate.ettore_curato = true; salvaUsate(); nodoDialogo("ettore", "risparmia"); }, /* curato, ti consegna il sigillo da sé */
+      ettore_curato() { usate.ettore_curato = true; salvaUsate(); nodoDialogo("ettore", "risparmia"); }, /* curato, ti consegna il fermaglio da sé */
       ettore_trono() { usate.ettore_trono = true; salvaUsate(); },
       aldo_scontro_uno() { usate.aldo_mastini_tot = 1; FINE_DIALOGO.aldo_scontro(); },     /* un solo mastino */
       aldo_scontro_carico() { usate.aldo_soffio_carico = true; FINE_DIALOGO.aldo_scontro(); }, /* due mastini, con il soffio già carico */
@@ -7335,6 +7534,7 @@
         vistaFissa = false; (testa ? testa.closest(".voce") : elDiario.firstElementChild || elDiario).scrollIntoView({ block: "start" }); vistaFissa = true;
       }
       if (id === "cripta") entraCripta();
+      if (id === "sala_caccia" && usate.q4 === "completata" && udienzaFatta("bronzo")) aggiungi({ tipo: "narra", righe: [AL.presente] }); /* Aldo resta nella sala della caccia */
       if (id === "sala_caccia" && usate.q4 === "prova" && (!usate.dialogo_aldo_caccia || usate.dialogo_aldo_caccia === "fine")) setTimeout(() => { if (luogo === "sala_caccia" && usate.q4 === "prova") fuoriDallaTendina(consegnaAldo); }, 900);
       if (id === "atrio" && usate.q4 === "prova" && !usate.avviso_porta_sx) { usate.avviso_porta_sx = true; salvaUsate(); sist(A.ui.avvisoPortaSx); }
       if (id === "cucina" && usate.q1 === "scaletta" && usate.portaCucina === "aperta") avviaDialogo("quest1_fine"); /* torni con la scaletta */
@@ -7594,7 +7794,7 @@
         ritratto: "immagini/house/mastino_cantina.webp" /* immagine di riserva: di norma si usa quella caricata alla comparsa */
       },
       /* Ettore, l'esploratore della cripta (PROVVISORIO): spada 1d6, niente attacchi speciali; si arrende a un terzo della salute */
-      esploratore: { ca: 13, dadoVita: 8, dannoDado: 6, xp: 500, attacco: 1, /* custode del sigillo: 500 PE, gli stessi se risparmiato */ probPresa: 0, probSoffio: 0, soffio: null, ritratto: "immagini/nemici/Ettore.webp" } /* immagine da aggiungere */
+      esploratore: { ca: 13, dadoVita: 8, dannoDado: 6, xp: 500, attacco: 1, /* custode del fermaglio: 500 PE, gli stessi se risparmiato */ probPresa: 0, probSoffio: 0, soffio: null, ritratto: "immagini/nemici/Ettore.webp" } /* immagine da aggiungere */
     };
     const caNem = () => { const n = scontro || ultimoNemico; return NEMICI[n.id].ca + (Number(n.caMod) || 0) - (n.eff && n.eff.sbilanciato > 0 ? 2 : 0); }; /* il consiglio di Aldo abbassa la CA di Ettore */
     /* classe difficoltà degli incantesimi: 8 + modificatore (Mente per il Sapiente, Spirito per l'Accolito) + livello */
@@ -8299,7 +8499,7 @@
         aggiungi({ tipo: "sistema", box: "cap", fuori: true, righe: [Q.oggetti.bottino(pelo, larve, ghi)] });
       }
       disegnaVitali();
-      if (ctx === "ettore") { /* il sigillo, prova della caccia */
+      if (ctx === "ettore") { /* il fermaglio, prova della caccia */
         aggiungiZaino({ id: "sigillo", nome: "Sigillo del cacciatore", tipo: "missione" });
         aggiungi({ tipo: "sistema", box: "mis", fuori: true, righe: usate.ettore_lato === "signora" ? [A.ettore.bruciato, A.sblocco.sigillo] : [A.sblocco.sigillo] });
         disegnaMissioni();

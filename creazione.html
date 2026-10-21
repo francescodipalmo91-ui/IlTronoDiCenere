@@ -277,7 +277,7 @@
         razza: "Razza", guidaRazza: "Scegli una razza.", classe: "Classe", guidaClasse: "Scegli una classe.",
         statistiche: "Statistiche", punti: "Punti da distribuire:", su: "su",
         thAttributo: "Attributo", thUtilizzo: "Utilizzo", thRazza: "Razza", thMod: "Mod", thValore: "Valore",
-        abilita: "Abilità", guidaAbilita: "Scegline tre. Il valore è il modificatore dell'attributo collegato; le abilità scelte aggiungono anche il livello del personaggio.",
+        abilita: "Abilità", guidaAbilita: "Scegline quattro. Il valore è il modificatore dell'attributo collegato; le abilità scelte aggiungono anche il livello del personaggio.",
         equipaggiamento: "Equipaggiamento", arma: "Arma", armatura: "Armatura", scudo: "Scudo", dotazione: "Dotazione", guidaDotazione: "Scegline tre.",
         dadoVita: "Dado vita", saluteFisica: "Salute fisica", saluteMentale: "Salute mentale", classeArmatura: "Classe armatura", entra: "Entra nel dungeon",
         sceglineUna: "Scegline una.", nonDisponibili: (c) => ` Alcune non sono disponibili per la classe ${c}.`,
@@ -286,7 +286,7 @@
         cambiaClasse: "Cambiando classe il tiro si azzera.", primaClasse: "Scegli prima una classe.",
         lanciaDadoVita: "Lancia il dado vita", scegliArmatura: "Scegli l'armatura",
         diminuisci: (n) => `Diminuisci ${n}`, aumenta: (n) => `Aumenta ${n}`,
-        punti4: "+4 punti attributo da assegnare a scelta del giocatore",
+        punti4: `+${(window.Regole && Regole.RAZZE.Umano.punti) || 3} punti attributo da assegnare a scelta del giocatore`,
         tipoDanno: "Tipo di danno", mani: "Mani", testoMani: (n) => `${n} ${n === 1 ? "mano" : "mani"}`, dannoTit: (t) => `Danno ${t}`,
         notaDueMani: "Un'arma a due mani occupa entrambe le mani: per usare altri oggetti, come la torcia, dovrai prima riporla. Non si può usare insieme allo scudo.",
         notaScudo: "Occupa una mano: non si può usare con un'arma a due mani, e per tenere la torcia dovrai prima riporlo.",
@@ -308,7 +308,7 @@
         razza: "Race", guidaRazza: "Choose a race.", classe: "Class", guidaClasse: "Choose a class.",
         statistiche: "Attributes", punti: "Points to assign:", su: "of",
         thAttributo: "Attribute", thUtilizzo: "Used for", thRazza: "Race", thMod: "Mod", thValore: "Value",
-        abilita: "Skills", guidaAbilita: "Choose three. The value is the modifier of the linked attribute; the skills you choose also add the character's level.",
+        abilita: "Skills", guidaAbilita: "Choose four. The value is the modifier of the linked attribute; the skills you choose also add the character's level.",
         equipaggiamento: "Equipment", arma: "Weapon", armatura: "Armor", scudo: "Shield", dotazione: "Gear", guidaDotazione: "Choose three.",
         dadoVita: "Hit die", saluteFisica: "Physical health", saluteMentale: "Mental health", classeArmatura: "Armor class", entra: "Enter the dungeon",
         sceglineUna: "Choose one.", nonDisponibili: (c) => ` Some are not available to the ${c} class.`,
@@ -317,7 +317,7 @@
         cambiaClasse: "Changing class resets the roll.", primaClasse: "Choose a class first.",
         lanciaDadoVita: "Roll the hit die", scegliArmatura: "Choose your armor",
         diminuisci: (n) => `Decrease ${n}`, aumenta: (n) => `Increase ${n}`,
-        punti4: "+4 attribute points to assign as the player chooses",
+        punti4: `+${(window.Regole && Regole.RAZZE.Umano.punti) || 3} attribute points to assign as the player chooses`,
         tipoDanno: "Damage type", mani: "Hands", testoMani: (n) => `${n} ${n === 1 ? "hand" : "hands"}`, dannoTit: (t) => `${t} damage`,
         notaDueMani: "A two-handed weapon takes up both hands: to use other items, such as the torch, you will first have to put it away. It cannot be used together with the shield.",
         notaScudo: "Takes up one hand: it cannot be used with a two-handed weapon, and to hold the torch you will first have to put it away.",
@@ -385,14 +385,9 @@
       ["Socialità", "Spirito", { it: "Il modo di trattare con gli altri, gentile o duro: convincere, negoziare, intimidire. Conta l'approccio che scegli.", en: "How you deal with others, kindly or harshly: convincing, negotiating, intimidating. The approach you choose matters." }],
       ["Intuizione", "Spirito", { it: "Leggere le intenzioni altrui: capire chi mente, cosa nasconde un silenzio, cosa vuole davvero chi ti sta davanti.", en: "Reading other people's intentions: telling who is lying, what a silence hides, what the person before you truly wants." }]
     ];
-    /* PROVVISORIO: bonus attributo per razza (ex bonus di classe, abbinamento da confermare) */
-    const RAZZE = {
-      Umano: {},
-      Elfo: { "Agilità": 2, Vigore: 1, Spirito: 1 },
-      Nano: { Vigore: 2, Spirito: 1, Mente: 1 }, /* PROVVISORIO: era +2 Corpo +1 Lotta +1 Carisma, cioè +3 Vigore +1 Spirito */
-      Gnomo: { Spirito: 2, Mente: 1, "Agilità": 1 }
-    };
-    const PUNTI_RAZZA = { Umano: 4 }; /* punti attributo in più da distribuire */
+    /* bonus attributo per razza e punti liberi dell'Umano: da regole.js */
+    const RAZZE = Object.fromEntries(Object.entries(R_.RAZZE || {}).map(([k, v]) => [k, v.bonus || {}]));
+    const PUNTI_RAZZA = Object.fromEntries(Object.entries(R_.RAZZE || {}).filter(([, v]) => v.punti).map(([k, v]) => [k, v.punti])); /* punti attributo in più da distribuire */
     const DANNI = {
       Tagliente: {
         it: "Causato da armi dotate di un filo affilato, il danno tagliente opera per incisione e scissione dei tessuti. Separa nettamente pelle e muscoli, provocando ferite ampie, sanguinamenti profusi e mutilazioni immediate. È il tipo di danno ideale per recidere le difese leggere e disattivare gli arti avversari.",
@@ -472,24 +467,25 @@
     }
 
     /* ---------- Tecniche speciali (Guerriero): 4 tra quelle di livello 1 del tipo dell'arma e, con lo scudo, dello scudo ---------- */
-    const TECNICHE = window.TECNICHE || [], MAX_TECNICHE = R_.MAX_TECNICHE ?? 4;
+    const TECNICHE = window.TECNICHE || [], TEC_BASE = R_.MAX_TECNICHE ?? 2, TEC_SCUDO = R_.TECNICHE_SCUDO ?? 1;
+    const maxTecniche = () => TEC_BASE + (scudoScelto() ? TEC_SCUDO : 0); /* 2, oppure 3 con lo scudo */
     const usaTecniche = () => classe === "Soldato" && TECNICHE.length > 0;
     let chiaveTecniche = null;
     const opzioniTec = () => { const a = armaScelta(); return a ? TECNICHE.filter(x => x.liv === 1 && (x.tipo === a.tipo || (x.tipo === "Scudo" && scudoScelto()))) : []; };
     const tecnicheScelte = () => usaTecniche() ? [...document.querySelectorAll('input[name="tecnica"]:checked')].map(c => c.value) : [];
-    const tecNecessarie = () => Math.min(MAX_TECNICHE, opzioniTec().length);
+    const tecNecessarie = () => Math.min(maxTecniche(), opzioniTec().length);
     function disegnaTecniche() {
       const sez = $("tecniche"), si = usaTecniche();
       sez.hidden = !si;
       if (si) document.querySelector(".pagina").classList.add("magia");
       const opz = si ? opzioniTec() : [];
       const chiave = si ? opz.map(x => x.id).join(",") : "";
-      if (chiave === chiaveTecniche) return;
+      if (chiave === chiaveTecniche) { [...$("lista-tecniche").querySelectorAll('input[name="tecnica"]:checked')].slice(maxTecniche()).forEach(c => { c.checked = false; }); return; }
       const prima = new Set(tecnicheScelte());
       chiaveTecniche = chiave;
       const box = $("lista-tecniche");
       box.replaceChildren();
-      $("guida-tecniche").textContent = t.guidaTec(Math.min(MAX_TECNICHE, opz.length), opz.length);
+      $("guida-tecniche").textContent = t.guidaTec(tecNecessarie(), opz.length);
       opz.forEach((x, i) => {
         const l = document.createElement("label");
         l.innerHTML = `<input type="checkbox" name="tecnica" value="${x.id}" aria-describedby="tip-tec-${i}"><span><b>${L(x.nome)}</b></span>` +
@@ -498,6 +494,7 @@
         c.addEventListener("change", aggiorna);
         box.appendChild(l);
       });
+      [...box.querySelectorAll('input[name="tecnica"]:checked')].slice(maxTecniche()).forEach(c => { c.checked = false; }); /* tolto lo scudo: si torna a 2 */
     }
 
     let classe = null, tiro = null, razza = null;
@@ -710,7 +707,7 @@
       document.querySelectorAll('input[name="incantesimo"]').forEach(c => { c.disabled = !c.checked && nInc >= MAX_INCANTESIMI; });
       disegnaTecniche();
       const nTec = tecnicheScelte().length;
-      document.querySelectorAll('input[name="tecnica"]').forEach(c => { c.disabled = !c.checked && nTec >= MAX_TECNICHE; });
+      document.querySelectorAll('input[name="tecnica"]').forEach(c => { c.disabled = !c.checked && nTec >= maxTecniche(); });
 
       aggiornaImmagine();
 

@@ -10,10 +10,10 @@ window.Regole = Object.freeze({
   VALORE_MASSIMO: 20,          /* bonus della razza compreso */
   PUNTI_BASE: 8,               /* punti da distribuire in creazione */
   RAZZE: {
-    Umano: { punti: 4 },       /* punti liberi in più */
-    Elfo: { bonus: { "Agilità": 2, Vigore: 1, Spirito: 1 } },
-    Nano: { bonus: { Vigore: 2, Spirito: 1, Mente: 1 } },
-    Gnomo: { bonus: { Spirito: 2, Mente: 1, "Agilità": 1 } }
+    Umano: { punti: 3 },       /* punti liberi in più */
+    Elfo: { bonus: { "Agilità": 2, Mente: 1 } },
+    Nano: { bonus: { Vigore: 2, Spirito: 1 } },
+    Gnomo: { bonus: { Spirito: 2, "Agilità": 1 } }
   },
 
   /* abilità: due per attributo */
@@ -23,7 +23,7 @@ window.Regole = Object.freeze({
     ["Investigazione", "Mente"], ["Sapienza", "Mente"],
     ["Socialità", "Spirito"], ["Intuizione", "Spirito"]
   ],
-  MAX_ABILITA: 3,
+  MAX_ABILITA: 4,
   MAX_DOTAZIONE: 3,
 
   /* classi (chiavi interne: Soldato = Guerriero, Forestiero = Sciamano, Sapiente = Arcanista, Accolito = Monaco) */
@@ -36,7 +36,8 @@ window.Regole = Object.freeze({
   ARMATURE_CLASSI: { Forestiero: ["Armatura leggera", "Armatura media"], Sapiente: ["Armatura leggera"], Accolito: ["Armatura leggera", "Armatura media"] },
   RISORSA_BASE: 10,            /* mana, fede, ira, natura = 10 + modificatore */
   MAX_INCANTESIMI: 4,
-  MAX_TECNICHE: 4,             /* tecniche speciali preparate dalle classi marziali */
+  MAX_TECNICHE: 2,             /* tecniche speciali preparate dalle classi marziali */
+  TECNICHE_SCUDO: 1,           /* una tecnica in più con lo scudo imbracciato */
   SALUTE_BASE: 10,             /* salute fisica e mentale = 10 + dado vita + modificatore */
   CA_BASE: 10,
   TETTO_AGILITA: { "Armatura leggera": 3, "Armatura media": 2, "Armatura pesante": 0 },

@@ -4020,7 +4020,7 @@
     /* testi delle regole nuove: livelli, risorse, riposo, morte, mente spezzata */
     const RG_TUTTI = ({
       it: {
-        ira: "Punti ira", natura: "Punti natura", livelloMax: "livello massimo",
+        ira: "Punti ira", natura: "Punti natura", livelloMax: "livello massimo", giorno: "Giorno",
         livello: {
           titolo: (n) => `Livello ${n}!`,
           salute: (dv, t, da, a) => `Salute fisica: 1d${dv} = ${t.d} ${fmtN(t.m)} (mod. Vigore) → +${t.v} · massimo ${da} → ${a}`,
@@ -4046,7 +4046,7 @@
           costo: (ris, a, max) => `${ris}: ${a} / ${max}`
         },
         riposo: {
-          titolo: (g) => `Riposo — giorno ${g}:`,
+          titolo: (g) => `Riposo — è il giorno ${g}:`,
           razioni: (tiro, mangiate, resto) => `Razioni di Adele: 1d4 = ${tiro} · ne consumi ${mangiate} · ne restano ${resto}`,
           recupero: (d, liv, tot) => `Recupero: 1d4 + livello = ${d} + ${liv} = ${tot}`,
           digiuno: "Nessuna razione di Adele: a stomaco vuoto recuperi soltanto 1 punto.",
@@ -4085,7 +4085,7 @@
         ]
       },
       en: {
-        ira: "Rage points", natura: "Nature points", livelloMax: "max level",
+        ira: "Rage points", natura: "Nature points", livelloMax: "max level", giorno: "Day",
         livello: {
           titolo: (n) => `Level ${n}!`,
           salute: (dv, t, da, a) => `Physical health: 1d${dv} = ${t.d} ${fmtN(t.m)} (Vigour mod.) → +${t.v} · maximum ${da} → ${a}`,
@@ -4111,7 +4111,7 @@
           costo: (ris, a, max) => `${ris}: ${a} / ${max}`
         },
         riposo: {
-          titolo: (g) => `Rest — day ${g}:`,
+          titolo: (g) => `Rest — it is day ${g}:`,
           razioni: (tiro, mangiate, resto) => `Adele's rations: 1d4 = ${tiro} · you eat ${mangiate} · ${resto} left`,
           recupero: (d, liv, tot) => `Recovery: 1d4 + level = ${d} + ${liv} = ${tot}`,
           digiuno: "No rations of Adele's: on an empty stomach you recover only 1 point.",
@@ -4173,6 +4173,7 @@
         tsTiro: (d, m, tot, cd) => `Tiro: d20 ${d} ${m < 0 ? "−" : "+"} ${Math.abs(m)} = ${tot} contro difficoltà ${cd}`, tsOk: "Resiste", tsKo: "Non resiste", resiste: "Il nemico resiste all'effetto.",
         mancato: "mancato", colpito: "colpito", critico: "critico",
         nuovoPosto: (l) => `Hai sbloccato le tecniche di livello ${l}: puoi prepararle riposando.`,
+        investiga: { domanda: "Come vuoi investigare?", cerca: "Cerco attivamente nella stanza (Indagare)", sensi: "Uso i sensi: vista, udito, olfatto (Percezione)" },
         speciali: (n, max) => `Tecniche speciali (${n}/${max})`, altrePiuTardi: (n) => `${n === 1 ? "1 posto libero" : n + " posti liberi"}: altre tecniche si sbloccano salendo di livello o imbracciando lo scudo.`, postiVuoti: (n) => n === 1 ? "1 posto libero" : `${n} posti liberi`,
         prep: { btnTec: "Prepara tecniche", btnInc: "Prepara incantesimi", nonOra: "Non ora", titoloTec: "Prepara le tecniche", titoloInc: "Prepara gli incantesimi",
           guidaTec: (n) => `Scegli ${n} tecniche speciali tra quelle sbloccate del tipo d'arma che impugni e, con lo scudo imbracciato, dello scudo.`,
@@ -4198,6 +4199,7 @@
         tsTiro: (d, m, tot, cd) => `Roll: d20 ${d} ${m < 0 ? "−" : "+"} ${Math.abs(m)} = ${tot} against difficulty ${cd}`, tsOk: "Resists", tsKo: "Fails", resiste: "The enemy resists the effect.",
         mancato: "missed", colpito: "hit", critico: "critical",
         nuovoPosto: (l) => `You have unlocked level ${l} techniques: you can prepare them when you rest.`,
+        investiga: { domanda: "How do you want to investigate?", cerca: "I search the room actively (Investigate)", sensi: "I use my senses: sight, hearing, smell (Perception)" },
         speciali: (n, max) => `Special techniques (${n}/${max})`, altrePiuTardi: (n) => `${n === 1 ? "1 free slot" : n + " free slots"}: more techniques unlock as you level up or take up a shield.`, postiVuoti: (n) => n === 1 ? "1 free slot" : `${n} free slots`,
         prep: { btnTec: "Prepare techniques", btnInc: "Prepare spells", nonOra: "Not now", titoloTec: "Prepare your techniques", titoloInc: "Prepare your spells",
           guidaTec: (n) => `Choose ${n} special techniques among the unlocked ones for the weapon type you hold and, with the shield on your arm, the shield.`,
@@ -4950,6 +4952,7 @@
         document.body.classList.toggle("salute-critica", r <= 0.2);
       }
       const sep = (c) => { const d = document.createElement("div"); d.className = c; if (c === "sep-linea") d.setAttribute("role", "separator"); vit.append(d); };
+      riga(vit, RG.giorno, String(Number(usate.giorno) || 1), "giorno"); /* i giorni passano a ogni riposo */
       riga(vit, CB.esperienza, testoPE(), "xp");
       sep("sep-linea");
       riga(vit, U.puntiSalute, testoSalute(), "salute");
@@ -5069,7 +5072,7 @@
         testa.append(b, c); og.append(testa, testo); box.append(og); }
       TEC.filter(t => t.tipo === "Utilita" && livelloPg() >= t.liv).forEach(t => voce(t, true));
       const prep = tecnichePreparate();
-      titolo(RT.speciali(prep.length, MAX_TECNICHE));
+      titolo(RT.speciali(prep.length, maxTecniche()));
       prep.forEach(t => voce(t, tipoOk(t), tipoOk(t) ? null : RT.tipoSbagliato(nomeTec(t), RT.richiede[t.tipo])));
       if (postiLiberi() > 0) { /* posti ancora vuoti: si possono riempire subito con le tecniche sbloccate */
         const libere = opzioniTecniche().filter(t => !prep.includes(t));
@@ -5094,7 +5097,7 @@
       const conferma = el("button", "primario", P.conferma), annulla = el("button", "", P.annulla), nota = el("span");
       let maxT = 0;
       if (haTecniche()) {
-        maxT = MAX_TECNICHE;
+        maxT = maxTecniche();
         const prep = tecnichePreparate(), opz = [...prep, ...opzioniTecniche().filter(t => !prep.includes(t))];
         box.append(el("h2", "", P.titoloTec), el("p", "guida", P.guidaTec(maxT)));
         const fs = el("fieldset");
@@ -7326,6 +7329,10 @@
         else if (usate.aldo_esito) aggiungi({ tipo: "narra", righe: A.aldo.sparito });
         if (aldoInSala() && usate.aldo_scontro !== "in_corso" && (!usate.dialogo_aldo || usate.dialogo_aldo === "fine")) { usate.dialogo_aldo = "ritorno"; salvaUsate(); nodoDialogo("aldo", "ritorno", true); }
       }
+      if (tornato) { /* la pagina parte dalla testa (immagine), non dall'ultima descrizione */
+        const testa = elDiario.querySelector("img.scena");
+        vistaFissa = false; (testa ? testa.closest(".voce") : elDiario.firstElementChild || elDiario).scrollIntoView({ block: "start" }); vistaFissa = true;
+      }
       if (id === "cripta") entraCripta();
       if (id === "sala_caccia" && usate.q4 === "prova" && (!usate.dialogo_aldo_caccia || usate.dialogo_aldo_caccia === "fine")) setTimeout(() => { if (luogo === "sala_caccia" && usate.q4 === "prova") fuoriDallaTendina(consegnaAldo); }, 900);
       if (id === "atrio" && usate.q4 === "prova" && !usate.avviso_porta_sx) { usate.avviso_porta_sx = true; salvaUsate(); sist(A.ui.avvisoPortaSx); }
@@ -7343,7 +7350,7 @@
     const PROVE_ABILITA = [
       ["Atletica", /\batletica|\bathletics?\b/], ["Sopravvivenza", /\bsopravvivenza|\bsurvival\b/],
       ["Furtività", /\bfurtivita|\bstealth\b/], ["Acrobazia", /\bacrobazi|\bacrobatics?\b/],
-      ["Investigazione", /\binvestigazion\w*|\binvestigation\b/], ["Sapienza", /\bsapienza\b|\blore\b/],
+      ["Investigazione", /\binvestig\w*|\binvestigation\b/], ["Sapienza", /\bsapienza\b|\blore\b/],
       ["Socialità", /\bsocialita\b|\binfluence\b|\binfluenza\b/], ["Intuizione", /\bintuizion\w*|\binsight\b/],
       /* vecchi nomi: si riconoscono ancora e puntano alla prova giusta della stanza */
       ["Indagare", /\bindagare\b|\bindagine/], ["Medicina", /\bmedicina\b|\bmedicine\b/], ["Arcano", /\barcano\b|\barcana\b/],
@@ -7351,9 +7358,17 @@
       ["Persuasione", /\bpersuasione|\bpersuasion\b/], ["Intimidire", /\bintimidire|\bintimidazione|\bintimidation\b/]
     ];
     /* abilità accorpate: la prova della stanza è quella della vecchia abilità non ancora superata */
-    const CANDIDATE_ABILITA = { Investigazione: ["Percezione", "Indagare"], Sapienza: ["Arcano", "Misticismo", "Medicina"], "Socialità": ["Persuasione", "Intimidire"] };
+    const CANDIDATE_ABILITA = { Sapienza: ["Arcano", "Misticismo", "Medicina"], "Socialità": ["Persuasione", "Intimidire"] };
     function provaAbilita(nome) {
-      if (luogo === "cantina" && nome === "Investigazione") nome = "Indagare"; /* nella cantina illuminata si cerca la scaletta */
+      if (luogo === "cantina" && nome === "Investigazione" && usate.cantina_luce) nome = "Indagare"; /* nella cantina illuminata si cerca la scaletta */
+      if (nome === "Investigazione") { /* Investigazione = Indagare (cercare attivamente) + Percezione (i sensi): si chiede quale delle due */
+        const I = RT.investiga;
+        aggiungi({ tipo: "narra", righe: [I.domanda] });
+        return scelte([
+          { testo: I.cerca, fn: () => { chiudiScelte(); provaAbilita("Indagare"); } },
+          { testo: I.sensi, fn: () => { chiudiScelte(); provaAbilita("Percezione"); } }
+        ]);
+      }
       const cand = CANDIDATE_ABILITA[nome];
       if (cand) {
         const disp = PROVE_DICHIARATE[luogo] || {};
@@ -7453,7 +7468,7 @@
         /* se la frase indica un elemento con una prova di quella stessa abilità (es. "prova di indagare sull'arazzo a sinistra"), parte quella prova */
         const bersaglio = fuori ? null : luogo === "atrio" ? interpreta(t) : interpretaAltrove(t);
         const lb = bersaglio && LUOGHI[bersaglio];
-        if (lb && lb.prova && lb.prova.abilita === ab[0]) return esamina(bersaglio);
+        if (lb && lb.prova && (abNuova(lb.prova.abilita) === abNuova(ab[0]) || (ab[0] === "Investigazione" && ["Indagare", "Percezione"].includes(lb.prova.abilita)))) return esamina(bersaglio); /* «indago sull'arazzo»: la prova di quell'elemento */
         if ((ab[0] === "Persuasione" || ab[0] === "Intimidire") && luogo === "sala_ballo" && aldoInSala()) return parlaAldo(); /* davanti ad Aldo si parla con lui */
         return provaAbilita(ab[0]);
       }
@@ -8057,18 +8072,18 @@
     const nomeTec = (t) => Lingua.t(t.nome);
     const tipoArmaInMano = () => (arma && arma.nome !== "—" && arma.tipoDanno) || null;
     const tipoOk = (t) => t.tipo === "Utilita" || (t.tipo === "Scudo" ? !!scudo : t.tipo === tipoArmaInMano());
-    const MAX_TECNICHE = (window.Regole && Regole.MAX_TECNICHE) || 4;
+    const maxTecniche = () => ((window.Regole && Regole.MAX_TECNICHE) || 2) + (scudo ? ((window.Regole && Regole.TECNICHE_SCUDO) || 1) : 0); /* 2, oppure 3 con lo scudo imbracciato */
     /* tecniche sbloccate dal livello e adatte a ciò che si impugna (le possibili scelte quando si prepara) */
     const opzioniTecniche = () => { const tipo = tipoArmaInMano() || eqPg().armaTipoDanno; return TEC.filter(t => t.tipo !== "Utilita" && t.liv <= livelloPg() && (t.tipo === tipo || (t.tipo === "Scudo" && scudo))); };
     /* le 4 tecniche speciali preparate: scelte in creazione (pg.tecniche) e cambiate riposando (usate.tecPreparate) */
     function tecnichePreparate() {
       if (!Array.isArray(usate.tecPreparate)) {
-        const dalla = Array.isArray(pg.tecniche) && pg.tecniche.length ? pg.tecniche : opzioniTecniche().slice(0, MAX_TECNICHE).map(t => t.id); /* personaggi creati prima: le prime disponibili */
-        usate.tecPreparate = dalla.slice(0, MAX_TECNICHE);
+        const dalla = Array.isArray(pg.tecniche) && pg.tecniche.length ? pg.tecniche : opzioniTecniche().slice(0, maxTecniche()).map(t => t.id); /* personaggi creati prima: le prime disponibili */
+        usate.tecPreparate = dalla.slice(0, maxTecniche());
       }
       return usate.tecPreparate.map(id => TEC.find(t => t.id === id)).filter(Boolean);
     }
-    const postiLiberi = () => MAX_TECNICHE - tecnichePreparate().length;
+    const postiLiberi = () => Math.max(0, maxTecniche() - tecnichePreparate().length);
     /* le tecniche da mostrare nella scheda: { t, attiva, motivo } */
     function tecnicheDelPg() {
       if (!haTecniche()) return [];

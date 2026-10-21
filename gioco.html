@@ -4560,18 +4560,21 @@
             fallbackLibera: ["Il corridoio è silenzioso e vuoto. Le finestre, la porta della sala da ballo e le scale per il secondo piano: nient'altro."],
             ritorno: ["Torni nel corridoio finestrato. La luce delle lune disegna lunghi rettangoli pallidi sul pavimento."]
           },
-          fatti: "Corridoio finestrato, primo piano, in cima alla rampa di destra dello scalone: lungo, alte finestre sulla sinistra con la luce fredda delle lune, sulla destra a metà un'unica porta a doppio battente intagliata che dà sulla sala da ballo (ingresso degli ospiti); appena finite le scale, un corridoio più stretto a destra porta alle scale per il secondo piano, chiuse a chiave."
+          fatti: "Corridoio finestrato, primo piano, in cima alla rampa di destra dello scalone: lungo, alte finestre sulla sinistra che danno sul retro della casa (un giardino semplice, alberi da frutta, foreste in lontananza; giardino con fontana, cappella e pini si vedono invece dalle vetrate della sala da ballo, a est), sulla destra a metà un'unica porta a doppio battente intagliata che dà sulla sala da ballo (ingresso degli ospiti); appena finite le scale, un corridoio più stretto a destra porta alle scale per il secondo piano, chiuse a chiave."
         },
         rampaDomanda: "Dal pianerottolo dell'armatura lo scalone si divide in due rampe: una sale a sinistra, l'altra a destra. Quale prendi?",
         rampaSx: "Rampa di sinistra", rampaDx: "Rampa di destra",
         respinge: ["Fai un passo verso il portone. Le due teste scattano in piedi all'unisono e il ringhio diventa un ruggito che ti rimbomba nel petto; dalle fauci socchiuse sfugge una lingua di fuoco azzurro che lambisce il pavimento a un palmo dai tuoi stivali.", "Non c'è niente da discutere. Indietreggi, gradino dopo gradino, finché non ti ritrovi sul pianerottolo dell'armatura, con il cuore in gola."],
-        attacco: ["Ti lanci contro la belva. È l'ultima cosa che ricordi con chiarezza: una delle teste ti afferra a mezz'aria, l'altra ti investe con un fiato di fuoco gelido. Il mondo diventa azzurro, poi nero."],
-        risveglio: ["Ti risvegli sul pavimento della cucina, il viso di Guendalina chino su di te. «Il cane del Signore» mormora, senza bisogno di chiedere. «Nessuno passa, senza Aldo. Nessuno.»"],
+        attacco: ["Fai per scagliarti contro la belva, ma il mastino non si alza nemmeno. Solleva una zampa e la abbatte sul pavimento: il colpo rimbomba per tutta l'anticamera, le rune sulle piastre divampano e le due teste ringhiano insieme, un suono così profondo che lo senti nelle ossa prima che nelle orecchie.", "Le gambe non ti reggono più. Il cuore martella, la vista si restringe a due paia di occhi bianchi."],
+        statoPaura: "Stato: Impaurito",
+        paura: ["Il terrore ti svuota. Le ginocchia cedono, l'arma ti scivola dalle dita e il pavimento ti viene incontro. Poi, il buio."],
+        risveglio: ["Ti risvegli sul pavimento della cucina, una coperta sulle spalle e il calore del focolare sul viso. Guendalina è china su di te. «Ti ho trovato svenuto sulla scalinata» dice piano, porgendoti una tazza fumante. «Il cane del Signore. Nessuno passa, senza Aldo. Nessuno.»", "Bevi. Il tremito passa, il respiro torna regolare: sei di nuovo in forze, come se l'anticamera fosse stata solo un brutto sogno."],
+        risveglioAtrio: ["Ti risvegli ai piedi dello scalone, disteso sul marmo, una coperta di lana grezza sulle spalle. Qualcuno ti ha portato giù. Nell'aria resta un profumo di lavanda e di pane, e da qualche parte, oltre la sala da pranzo, una porta si richiude piano.", "Il tremito passa, il respiro torna regolare: sei di nuovo in forze."],
         secondoPiano: ["Raggiungi la rampa che sale al secondo piano. In cima, una porta massiccia con una serratura di ferro lucido sbarra la strada: è chiusa a chiave. Qualcuno, in questa casa, deve averne la chiave."],
         luoghi: {
           anti_mastino: ["Il mastino ti fissa con quattro occhi bianchi. Una testa ringhia piano, l'altra resta in silenzio, ed è quella che ti fa più paura. Le rune sulle piastre pulsano a ogni respiro, come un secondo cuore."],
           anti_portone: ["Il portone è alto il doppio di un uomo, di ferro battuto e legno annerito dal fuoco. Da sotto la soglia filtra un calore secco e una luce azzurra che non illumina niente."],
-          corr1_finestre: ["Dalle finestre vedi il giardino, la fontana e, più in là, il profilo della cappella. Oltre, una fila scura di pini chiude l'orizzonte."],
+          corr1_finestre: ["Le finestre danno sul retro della casa: un giardino semplice, senza statue né fontane, e qualche filare di alberi da frutta dai rami spogli. Più in là, fin dove arriva lo sguardo, solo la massa scura delle foreste."],
           corr1_porta: ["La porta della sala da ballo è a doppio battente, intagliata con coppie di danzatori che girano in eterno. Le maniglie d'ottone sono lucide, come se gli ospiti dovessero arrivare da un momento all'altro."]
         }
       },
@@ -4594,18 +4597,21 @@
             fallbackLibera: ["The corridor is silent and empty. The windows, the ballroom door and the stairs to the second floor: nothing else."],
             ritorno: ["You return to the windowed corridor. The moonlight draws long pale rectangles on the floor."]
           },
-          fatti: "Windowed corridor, first floor, at the top of the right flight of the great staircase: long, tall windows on the left with the cold light of the moons, on the right halfway along a single carved double door opening onto the ballroom (guests' entrance); right after the stairs, a narrower corridor on the right leads to the stairs to the second floor, locked."
+          fatti: "Windowed corridor, first floor, at the top of the right flight of the great staircase: long, tall windows on the left overlooking the back of the house (a plain garden, fruit trees, forests in the distance; the garden with the fountain, the chapel and the pines are seen instead from the ballroom windows, to the east), on the right halfway along a single carved double door opening onto the ballroom (guests' entrance); right after the stairs, a narrower corridor on the right leads to the stairs to the second floor, locked."
         },
         rampaDomanda: "From the landing with the armour the great staircase splits into two flights: one rises to the left, the other to the right. Which do you take?",
         rampaSx: "Left flight", rampaDx: "Right flight",
         respinge: ["You take a step towards the door. Both heads spring up as one and the growl becomes a roar that booms in your chest; from the half-open jaws a tongue of blue fire licks the floor a hand's breadth from your boots.", "There is nothing to discuss. You back away, step after step, until you find yourself on the landing with the armour, your heart in your throat."],
-        attacco: ["You hurl yourself at the beast. It is the last thing you remember clearly: one head catches you in mid-air, the other engulfs you in a breath of icy fire. The world turns blue, then black."],
-        risveglio: ["You wake on the kitchen floor, Guendalina's face bent over you. “The Master's hound,” she murmurs, without needing to ask. “No one passes without Aldo. No one.”"],
+        attacco: ["You move to hurl yourself at the beast, but the mastiff does not even rise. It lifts a paw and slams it down on the floor: the blow booms through the whole antechamber, the runes on its plates flare and both heads growl together, a sound so deep you feel it in your bones before your ears.", "Your legs will no longer hold you. Your heart pounds, your sight narrows to two pairs of white eyes."],
+        statoPaura: "Condition: Frightened",
+        paura: ["Terror empties you. Your knees give way, your weapon slips from your fingers and the floor rushes up to meet you. Then, darkness."],
+        risveglio: ["You wake on the kitchen floor, a blanket over your shoulders and the warmth of the hearth on your face. Guendalina is bent over you. “I found you fainted on the great staircase,” she says softly, handing you a steaming cup. “The Master's hound. No one passes without Aldo. No one.”", "You drink. The trembling passes, your breath steadies: you are back in strength, as if the antechamber had been only a bad dream."],
+        risveglioAtrio: ["You wake at the foot of the great staircase, lying on the marble, a coarse wool blanket over your shoulders. Someone carried you down. A scent of lavender and bread lingers in the air, and somewhere beyond the dining hall a door softly closes.", "The trembling passes, your breath steadies: you are back in strength."],
         secondoPiano: ["You reach the flight rising to the second floor. At the top, a massive door with a lock of polished iron bars the way: it is locked. Someone in this house must have the key."],
         luoghi: {
           anti_mastino: ["The mastiff stares at you with four white eyes. One head growls softly, the other stays silent, and that is the one that frightens you most. The runes on its plates pulse with every breath, like a second heart."],
           anti_portone: ["The door is twice the height of a man, of wrought iron and wood blackened by fire. From under the threshold seeps a dry heat and a blue light that illuminates nothing."],
-          corr1_finestre: ["From the windows you see the garden, the fountain and, further off, the outline of the chapel. Beyond, a dark row of pines closes the horizon."],
+          corr1_finestre: ["The windows look out over the back of the house: a plain garden, without statues or fountains, and a few rows of fruit trees with bare branches. Further off, as far as the eye can reach, only the dark mass of the forests."],
           corr1_porta: ["The ballroom door is a double door, carved with pairs of dancers turning for ever. The brass handles are polished, as if the guests might arrive at any moment."]
         }
       }
@@ -4764,7 +4770,7 @@
         if (torna || /corridoi|corridor/.test(t)) return "torna";
       }
       if (luogo === "anticamera_trono") {
-        if (/attacc\w*|colpi\w*|combatt\w*|ferisc\w*|\battack\w*|\bfight\w*|\bhit\b|\bstrike\w*/.test(t)) return "mastino_attacco";
+        if (/attacc\w*|colpi\w*|combatt\w*|ferisc\w*|aggred\w*|assal\w*|uccid\w*|ammazz\w*|scagli\w*|lancio contro|mi lancio|carico il|affront\w*|\battack\w*|\bfight\w*|\bhit\b|\bstrike\w*|\bkill\w*|\bcharge\w*|\bassault\w*|\bslash\w*|\bstab\w*/.test(t)) return "mastino_attacco";
         if (torna || atrio || /\bscend\w*|\bgiu\b|\bdown\b|\bscal[ae]\b|\bstairs?\b/.test(t)) return "torna";
         if (!guarda && (muovi || /\bapr\w*|\bopen\w*|oltre|\bpast\b/.test(t)) && /portone|\bport[ae]\b|\btrono\b|throne|\bdoors?\b|oltre|\bpast\b/.test(t)) return "mastino_respinge";
         if (/mastin\w*|\bcane\b|bestia|belva|test[ae]\b|hound|\bdog\b|beast|heads?/.test(t)) return "anti_mastino";
@@ -5253,7 +5259,8 @@
       frastornato: { tono: "mal", d: `<circle cx="12" cy="13" r="5"/><path d="M5 5.5l1.5 1.5M19 5.5l-1.5 1.5M12 3v2.2" opacity=".8"/>` },
       guardia: { tono: "dif", d: `<path d="${SHIELD}"/><path d="M8.5 11.5l2.5 2.5 4.5-5" opacity=".8"/>` },
       furore: { tono: "off", d: `<path d="M12 3c1 3.5 4.5 5 4.5 9a4.5 4.5 0 0 1-9 0c0-2 1-3.2 2-4.2.3 1.6 1 2.4 2 2.7-.6-2.5-.2-5.2.5-7.5z"/>` },
-      cieco: { tono: "mal", d: `<path d="M2.5 12s3.6-6 9.5-6 9.5 6 9.5 6-3.6 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.6"/><path d="M4.5 19.5l15-15"/>` }
+      cieco: { tono: "mal", d: `<path d="M2.5 12s3.6-6 9.5-6 9.5 6 9.5 6-3.6 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.6"/><path d="M4.5 19.5l15-15"/>` },
+      impaurito: { tono: "mal", d: `<circle cx="12" cy="12" r="8.5"/><circle cx="9" cy="10" r="1"/><circle cx="15" cy="10" r="1"/><ellipse cx="12" cy="15.5" rx="2" ry="2.4"/>` }
     };
     function medaglione(k) {
       const ic = ICONE_EFF[k], m = document.createElement("span");
@@ -7980,7 +7987,7 @@
         cond: ["Ringhia furioso: sembra ancora del tutto integro.", "È ferito: dal pelo strappato cadono braci.", "Barcolla, il respiro rotto: le fiamme sulla groppa si affievoliscono.", "Giace a terra, ridotto in cenere."],
         effetti: "Effetti", effettiTit: "Effetti attivi", turniRim: (n) => n === 1 ? "1 turno" : `${n} turni`,
         turnoTit: (n) => `${n}° turno`, lblAttacco: "Attacco", lblTorcia: "Attacco con la torcia", lblPozione: "Pozione", lblBloccato: "Mastino bloccato",
-        effNomi: { sanguina: "Sanguinamento", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Senza attacchi speciali", frastornato: "Frastornato", guardia: "Guardia alzata", furore: "Furore inarrestabile", scudo: "Scudo", bloccato: "Nemico bloccato", invuln: "Invulnerabilità", armaPiu: "Arma migliorata", pietra: "Pelle di pietra", cieco: "Nemico accecato", potenza: "Aumento di potenza" },
+        effNomi: { sanguina: "Sanguinamento", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Senza attacchi speciali", frastornato: "Frastornato", guardia: "Guardia alzata", furore: "Furore inarrestabile", scudo: "Scudo", bloccato: "Nemico bloccato", invuln: "Invulnerabilità", armaPiu: "Arma migliorata", pietra: "Pelle di pietra", cieco: "Nemico accecato", potenza: "Aumento di potenza", impaurito: "Impaurito" },
         effFinito: (n) => `L'effetto «${n}» svanisce.`, resisteBreve: "resiste", effettoBreve: "a segno",
         iniziativa: (a, b) => `Iniziativa: la tua Agilità (${a}) contro quella del Mastino (${b}).`,
         pari: (x, y) => `Agilità pari: si tira un d20 a testa. Tu ${x}, il Mastino ${y}.`,
@@ -8093,7 +8100,7 @@
         cond: ["Snarling with fury: it looks completely unharmed.", "It is wounded: embers fall from its torn hide.", "It staggers, breath ragged: the flames on its back are dying down.", "It lies on the ground, reduced to ash."],
         effetti: "Effects", effettiTit: "Active effects", turniRim: (n) => n === 1 ? "1 round" : `${n} rounds`,
         turnoTit: (n) => `Round ${n}`, lblAttacco: "Attack", lblTorcia: "Torch attack", lblPozione: "Potion", lblBloccato: "Mastiff held",
-        effNomi: { sanguina: "Bleeding", debole: "Weakened", sbilanciato: "Off-balance", silenzio: "No special attacks", frastornato: "Dazed", guardia: "Guard up", furore: "Unstoppable Fury", scudo: "Shield", bloccato: "Enemy held", invuln: "Invulnerability", armaPiu: "Empowered weapon", pietra: "Stoneskin", cieco: "Enemy blinded", potenza: "Surge of power" },
+        effNomi: { sanguina: "Bleeding", debole: "Weakened", sbilanciato: "Off-balance", silenzio: "No special attacks", frastornato: "Dazed", guardia: "Guard up", furore: "Unstoppable Fury", scudo: "Shield", bloccato: "Enemy held", invuln: "Invulnerability", armaPiu: "Empowered weapon", pietra: "Stoneskin", cieco: "Enemy blinded", potenza: "Surge of power", impaurito: "Frightened" },
         effFinito: (n) => `The “${n}” effect fades.`, resisteBreve: "resisted", effettoBreve: "takes hold",
         iniziativa: (a, b) => `Initiative: your Agility (${a}) against the Mastiff's (${b}).`,
         pari: (x, y) => `Agility tied: each side rolls a d20. You ${x}, the Mastiff ${y}.`,
@@ -8677,14 +8684,18 @@
     }
     /* Sconfitta: salute piena e −1d4 di salute mentale; si torna nella sala della caccia (durante la caccia, Aldo)
        o in cucina (esplorazione, Guendalina). Il nemico si riprende del tutto. Con Aldo lo scontro lo interrompe lui. */
-    /* attaccare il mastino a due teste da soli: travolti, si applicano le regole della sconfitta e ci si risveglia in cucina */
+    /* attaccare il mastino a due teste da soli: la belva batte la zampa e ringhia, il personaggio resta Impaurito e sviene.
+       Nessuna penalità: Guendalina lo porta in cucina (se non l'ha ancora conosciuta, si risveglia ai piedi dello scalone)
+       e il personaggio torna com'era prima di entrare nell'anticamera. */
     function assaltoMastino() {
       aggiungi({ tipo: "narra", box: "ko", righe: P1.attacco });
       stato(true, U.scrive);
       setTimeout(() => {
-        const pena = penaMorte();
-        fuoriDallaTendina(() => { vai("cucina", { righe: P1.risveglio }); aggiungi({ tipo: "narra", box: "ko", righe: [pena] }); });
-        stato(false);
+        aggiungi({ tipo: "narra", box: "ko", esito: P1.statoPaura, righe: P1.paura });
+        setTimeout(() => {
+          fuoriDallaTendina(() => guendalinaInCucina() ? vai("cucina", { righe: P1.risveglio }) : vai("atrio", { righe: P1.risveglioAtrio }));
+          stato(false);
+        }, 2600);
       }, 2200);
     }
     function sconfittaScontro() {

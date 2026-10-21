@@ -97,6 +97,7 @@
     .allenamento:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
     .allenamento .fatto { font-style: normal; font-size: 0.85rem; color: #6fd39a; }
     .personaggi .allenamento { display: flex; justify-content: center; margin: 1rem auto 0; width: fit-content; }
+    .allenamento.regolamento { display: flex; width: fit-content; margin: 0.6rem auto 0; } /* sotto la sala d'allenamento */
     #risposta { margin: 1.75rem 0 0; font-size: 1.4rem; min-height: 2rem; font-style: italic; text-shadow: 0 2px 10px rgba(0,0,0,0.9); }
 
 
@@ -233,6 +234,7 @@
       </div>
       <p id="risposta" aria-live="polite"></p>
       <a class="allenamento" id="allenamento" href="tutorial.html"></a>
+      <a class="allenamento regolamento" id="regolamento" href="regolamento.html"></a>
     </section>
 
     <section class="personaggi" id="personaggi" hidden aria-labelledby="titoloPersonaggi">
@@ -241,6 +243,7 @@
       <ul class="lista" id="lista"></ul>
       <p class="avviso" id="avviso" aria-live="polite"></p>
       <a class="allenamento" id="allenamento2" href="tutorial.html"></a>
+      <a class="allenamento regolamento" id="regolamento2" href="regolamento.html"></a>
     </section>
   </main>
 
@@ -281,7 +284,7 @@
         elimina: "Elimina", conferma: "Confermi?", eliminaPg: "Elimina il personaggio ",
         nuova: "Nuova partita", pieno: "Hai già tre personaggi", crea: "Crea un nuovo personaggio",
         avvisoPieno: "Per iniziare una nuova partita elimina uno dei tre personaggi.",
-        allenamento: "⚔ Sala d'allenamento: impara a combattere", allenamentoFatto: "✓ completato",
+        allenamento: "⚔ Sala d'allenamento: impara a combattere", allenamentoFatto: "✓ completato", regolamento: "📜 Regolamento",
         accedi: "☁ Accedi con Google", esci: "Esci dall'account?", accessoKo: "Accesso non riuscito. Riprova.",
         syncKo: "Cloud non raggiungibile: uso i salvataggi di questo dispositivo.",
         conflitto: (n) => `Posto ${n}: due versioni diverse`,
@@ -298,7 +301,7 @@
         elimina: "Delete", conferma: "Confirm?", eliminaPg: "Delete the character ",
         nuova: "New game", pieno: "You already have three characters", crea: "Create a new character",
         avvisoPieno: "To start a new game, delete one of your three characters.",
-        allenamento: "⚔ Training hall: learn to fight", allenamentoFatto: "✓ completed",
+        allenamento: "⚔ Training hall: learn to fight", allenamentoFatto: "✓ completed", regolamento: "📜 Rules",
         accedi: "☁ Sign in with Google", esci: "Sign out?", accessoKo: "Sign-in failed. Try again.",
         syncKo: "Cloud unreachable: using the saves on this device.",
         conflitto: (n) => `Slot ${n}: two different versions`,
@@ -485,6 +488,7 @@
         a.textContent = t.allenamento;
         if (fatto) a.append(el("span", "fatto", t.allenamentoFatto));
       });
+      ["regolamento", "regolamento2"].forEach(id => { document.getElementById(id).textContent = t.regolamento; });
       document.querySelectorAll(".bandiera").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lingua === Lingua.get())));
       if (typeof disegnaAccount === "function" && window.Cloud && Cloud.attivo) disegnaAccount();
       if (!document.getElementById("personaggi").hidden) disegnaLista(leggiPosti());

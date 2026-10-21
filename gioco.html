@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
   <meta name="theme-color" content="#161b22">
   <title>Il dungeon</title>
+  <script src="regole.js"></script>
   <script src="lingua.js"></script>
   <script src="volume.js"></script>
   <script src="cloud.js"></script>
@@ -197,6 +198,17 @@
       display: inline-flex; align-items: center;
     }
     #audio { display: inline-flex; align-items: center; }
+    #regole {
+      font: inherit; font-size: 1.1rem; font-weight: 700; line-height: 1; padding: 0.5rem 0.8rem; border-radius: 0.5rem; cursor: pointer;
+      background: transparent; color: var(--text); border: 2px solid var(--line); display: inline-flex; align-items: center; justify-content: center;
+    }
+    #regole:hover { border-color: var(--accent); }
+    /* regolamento aperto sopra la partita, senza lasciare la pagina */
+    #finestraRegole { position: fixed; inset: 0; z-index: 60; background: rgba(0, 0, 0, 0.55); display: flex; align-items: center; justify-content: center; padding: 1rem; }
+    #finestraRegole[hidden] { display: none; }
+    #finestraRegole .box { position: relative; width: min(48rem, 100%); height: min(90vh, 100%); background: var(--bg); border: 1px solid var(--line); border-radius: 0.8rem; overflow: hidden; }
+    #finestraRegole iframe { width: 100%; height: 100%; border: 0; display: block; }
+    #finestraRegole .chiudi { position: absolute; top: 0.5rem; right: 0.5rem; z-index: 1; font: inherit; font-size: 1.1rem; width: 2.5rem; height: 2.5rem; border-radius: 50%; border: 1px solid var(--line); background: var(--bg); color: var(--text); cursor: pointer; }
     #home:hover { border-color: var(--accent); }
     #home:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
     #diario {
@@ -462,7 +474,7 @@
       .barra { gap: 0.5rem; padding: calc(env(safe-area-inset-top, 0px) + 0.45rem) 0.75rem 0.45rem; }
       #statoSalvataggio, #statoCloud { display: none; }
       .barra-dx { gap: 0.4rem; }
-      #salva, #audio, #home { min-width: 2.75rem; min-height: 2.75rem; padding: 0 0.6rem; justify-content: center; }
+      #salva, #audio, #home, #regole { min-width: 2.75rem; min-height: 2.75rem; padding: 0 0.6rem; justify-content: center; }
       #salva { display: inline-flex; align-items: center; position: relative; background: transparent; color: var(--text); border-color: var(--line); }
       #salva .ico { display: block; }
       #salva .txt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -574,6 +586,7 @@
         <span><span id="statoSalvataggio" role="status"></span><span id="statoCloud" role="status"></span></span>
         <div class="barra-dx">
           <button type="button" id="salva"><svg class="ico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11l3 3v13H5z" fill="currentColor" fill-opacity="0.12"/><path d="M8 4v5h7V4"/><rect x="8" y="13" width="8" height="5"/></svg><span class="txt" data-t="salva">Salva partita</span></button>
+          <button type="button" id="regole" data-t-aria="regole" aria-haspopup="dialog">?</button>
           <button type="button" id="audio" aria-pressed="true">🔊</button>
           <a id="home" href="index.html" data-t-aria="home"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 21V11.5a6.5 6.5 0 0 1 13 0V21" fill="currentColor" fill-opacity="0.15"/><path d="M3.5 21h17"/><path d="M12 5v16"/><circle cx="10.2" cy="14" r="0.7" fill="currentColor"/><circle cx="13.8" cy="14" r="0.7" fill="currentColor"/></svg></a>
         </div>
@@ -1005,7 +1018,7 @@
         ui: {
           titoloPagina: "Il dungeon", schedaPg: "Scheda del personaggio", completa: "Scheda completa",
           caratteristiche: "Caratteristiche", abilita: "Abilità", equipaggiamento: "Equipaggiamento", zaino: "Zaino", incantesimi: "Incantesimi", mana: "Mana", lanciaInc: "Lancia",
-          home: "Torna alla pagina iniziale", audioOn: "Suoni attivi: clicca per disattivarli", audioOff: "Suoni disattivati: clicca per attivarli", salva: "Salva partita", diario: "Diario dell'avventura", ariaTesto: "Cosa fa il tuo personaggio?", invia: "Invia",
+          home: "Torna alla pagina iniziale", regole: "Regolamento", audioOn: "Suoni attivi: clicca per disattivarli", audioOff: "Suoni disattivati: clicca per attivarli", salva: "Salva partita", diario: "Diario dell'avventura", ariaTesto: "Cosa fa il tuo personaggio?", invia: "Invia",
           placeholder: "Cosa fai? Per esempio: esamino l'arazzo sulla sinistra", scegliAzione: "Scegli un'azione qui sopra",
           scrive: "Il narratore sta scrivendo…", notaInizio: "Scrivi qui sotto cosa fa il tuo personaggio.",
           nonSalvate: "Modifiche non salvate", salvataAlle: (h) => `Partita salvata alle ${h}`, nessunSalvataggio: "Nessun salvataggio",
@@ -1431,7 +1444,7 @@
         ui: {
           titoloPagina: "The dungeon", schedaPg: "Character sheet", completa: "Full sheet",
           caratteristiche: "Attributes", abilita: "Skills", equipaggiamento: "Equipment", zaino: "Pack", incantesimi: "Spells", mana: "Mana", lanciaInc: "Cast",
-          home: "Back to the home page", audioOn: "Sound on: click to turn it off", audioOff: "Sound off: click to turn it on", salva: "Save game", diario: "Adventure journal", ariaTesto: "What does your character do?", invia: "Send",
+          home: "Back to the home page", regole: "Rules", audioOn: "Sound on: click to turn it off", audioOff: "Sound off: click to turn it on", salva: "Save game", diario: "Adventure journal", ariaTesto: "What does your character do?", invia: "Send",
           placeholder: "What do you do? For example: I examine the tapestry on the left", scegliAzione: "Choose an action above",
           scrive: "The narrator is writing…", notaInizio: "Write below what your character does.",
           nonSalvate: "Unsaved changes", salvataAlle: (h) => `Game saved at ${h}`, nessunSalvataggio: "No save yet",
@@ -4575,7 +4588,7 @@
     if (pg) pg.statistiche = conAttrVecchi(pg.statistiche || {});
     if (pg && pg.classe === "Accolito") U.mana = LINGUA === "en" ? "Faith points" : "Punti fede"; /* il Monaco lancia incantesimi con i punti fede */
     /* Agilità: il suo modificatore va sulla Classe armatura, fino al tetto dell'armatura indossata */
-    const TETTO_AGILITA = { "Armatura leggera": 3, "Armatura media": 2, "Armatura pesante": 0 };
+    const TETTO_AGILITA = (window.Regole && Regole.TETTO_AGILITA) || { "Armatura leggera": 3, "Armatura media": 2, "Armatura pesante": 0 };
     function bonusAgilitaCA() {
       const eq = (pg && pg.equipaggiamento) || {};
       const tetto = eq.armatura ? (TETTO_AGILITA[eq.armatura] ?? 3) : 3;
@@ -4624,13 +4637,14 @@
        - Guerriero: punti ira (10 + mod Lotta); Sciamano: punti natura (10 + mod Spirito). Tutte le risorse si ricaricano solo riposando.
        - Livello e crescita fanno parte della partita (salvataggio), il personaggio di partenza resta quello della creazione.
        ===================================================================== */
-    const LIVELLO_MAX = 5;
-    const SOGLIE_PE = [0, 500, 1500, 3000, 5000]; /* PE totali per raggiungere il livello 2, 3, 4, 5 (indice = livello attuale) */
+    const R_ = window.Regole || {};
+    const LIVELLO_MAX = R_.LIVELLO_MAX ?? 5;
+    const SOGLIE_PE = R_.SOGLIE_PE || [0, 500, 1500, 3000, 5000]; /* PE totali per raggiungere il livello 2, 3, 4, 5 (indice = livello attuale) */
     const PE_NEMICI = { mastino: 150, mastinoSpecifico: 350, custode: 500 };
     const RISORSA_CLASSE = { Soldato: { id: "ira", attr: "Vigore" }, Forestiero: { id: "natura", attr: "Spirito" } };
     const ATTR_RISORSA_MAGIA = { Sapiente: "Mente", Accolito: "Spirito" };
     const DADO_VITA = { Soldato: 10, Forestiero: 8, Sapiente: 6, Accolito: 6 };
-    const RAZIONI_MAX = 10, RAZIONI_AL_GIORNO = 2;
+    const RAZIONI_MAX = R_.RAZIONI_MAX ?? 10, RAZIONI_AL_GIORNO = R_.RAZIONI_AL_GIORNO ?? 2;
     let crescita = { salute: 0, mente: 0, risorsa: 0 };
     if (salvata && salvata.crescita && typeof salvata.crescita === "object") crescita = { salute: Number(salvata.crescita.salute) || 0, mente: Number(salvata.crescita.mente) || 0, risorsa: Number(salvata.crescita.risorsa) || 0 };
     if (pg && salvata && Number(salvata.livello) > 0) pg.livello = Math.min(LIVELLO_MAX, Number(salvata.livello));
@@ -4713,7 +4727,7 @@
     /* ---------- Mente incrollabile (Guerriero e Sciamano) ----------
        dopo una prova fallita si può spendere 1 punto ira / natura per un tiro salvezza:
        d20 + mod Vigore (Guerriero) o Spirito (Sciamano) + livello, CD 10; se riesce, il punto mentale perso torna */
-    const CD_INCROLLABILE = 10;
+    const CD_INCROLLABILE = R_.CD_INCROLLABILE ?? 10;
     let offertaIncrollabile = false;
     const attrIncrollabile = () => (pg.classe === "Soldato" ? "Vigore" : "Spirito");
     const modIncrollabile = () => Math.floor(((Number(pg.statistiche[attrIncrollabile()]) || 10) - 10) / 2) + livelloPg();
@@ -8180,6 +8194,22 @@
       let inFondo = true;
       elDiario.addEventListener("scroll", () => { inFondo = elDiario.scrollHeight - elDiario.scrollTop - elDiario.clientHeight < 40; }, { passive: true });
       new ResizeObserver(() => { if (inFondo) elDiario.scrollTop = elDiario.scrollHeight; }).observe(elDiario);
+    })();
+  </script>
+  <div id="finestraRegole" role="dialog" aria-modal="true" hidden>
+    <div class="box"><button type="button" class="chiudi" aria-label="Chiudi">✕</button><iframe title="Regolamento"></iframe></div>
+  </div>
+  <script>
+    /* Regolamento consultabile durante la partita: si apre sopra il gioco, che resta com'è */
+    (() => {
+      const f = document.getElementById("finestraRegole"), fr = f.querySelector("iframe"), btn = document.getElementById("regole");
+      const apri = () => { if (!fr.src) fr.src = "regolamento.html?dentro"; f.hidden = false; f.querySelector(".chiudi").focus(); };
+      const chiudi = () => { f.hidden = true; btn.focus(); };
+      btn.addEventListener("click", apri);
+      f.querySelector(".chiudi").addEventListener("click", chiudi);
+      f.addEventListener("click", (e) => { if (e.target === f) chiudi(); });
+      document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !f.hidden) { e.stopPropagation(); chiudi(); } }, true);
+      if (window.Lingua && Lingua.get() === "en") { f.querySelector(".chiudi").setAttribute("aria-label", "Close"); fr.title = "Rules"; }
     })();
   </script>
 </body>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Regolamento</title>
+  <script src="regole.js"></script>
+  <script src="lingua.js"></script>
+  <style>
+    :root {
+      --bg: #f5f7fa; --text: #1d2733; --muted: #5b6675; --line: #c9d1db;
+      --accent: #2f6fed; --tip-bg: #e9f0fd; --tip-line: #b4c9f2;
+      --ok-bg: #e7f5ec; --ok-line: #b0dbbf; --ko-bg: #fbeaea; --ko-line: #e6b3b3;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #161b22; --text: #e8edf3; --muted: #9aa5b4; --line: #2f3844;
+        --accent: #5b92ff; --tip-bg: #1e2a3f; --tip-line: #38527d;
+        --ok-bg: #1f3328; --ok-line: #3f6b4f; --ko-bg: #3a2226; --ko-line: #7d444b;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: Georgia, "Times New Roman", serif; line-height: 1.55; padding: 2rem 16px 3rem; }
+    main { max-width: 46rem; margin: 0 auto; }
+    .torna { color: var(--muted); text-decoration: none; font-size: 0.95rem; }
+    .torna:hover { color: var(--accent); }
+    body.dentro .torna { display: none; } /* aperto dal gioco: si chiude con la ✕ della finestra */
+    h1 { font-size: clamp(1.8rem, 5vw, 2.4rem); margin: 0.8rem 0 0.3rem; font-weight: 600; text-align: center; }
+    .sotto { text-align: center; color: var(--muted); font-style: italic; margin: 0 0 2rem; }
+    details { border: 1px solid var(--line); border-radius: 0.6rem; margin: 0 0 0.75rem; background: color-mix(in srgb, var(--bg) 92%, var(--text)); }
+    summary { cursor: pointer; padding: 0.85rem 1.1rem; font-size: 1.12rem; font-weight: 600; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "▸"; color: var(--muted); transition: transform 0.2s; }
+    details[open] summary::after { transform: rotate(90deg); }
+    summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 0.6rem; }
+    .corpo { padding: 0 1.1rem 1rem; }
+    .corpo h3 { font-size: 1rem; margin: 1.1rem 0 0.35rem; font-weight: 600; }
+    .corpo p, .corpo li { margin: 0.35rem 0; }
+    .corpo ul { padding-left: 1.2rem; margin: 0.35rem 0; }
+    .formula { display: block; margin: 0.5rem 0; padding: 0.45rem 0.8rem; border-left: 3px solid var(--tip-line); background: var(--tip-bg); border-radius: 0 0.4rem 0.4rem 0; font-variant-numeric: tabular-nums; }
+    .esempio { color: var(--muted); font-style: italic; font-size: 0.93rem; }
+    .scroll { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: 0.93rem; margin: 0.4rem 0; }
+    th, td { text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color: var(--muted); font-weight: 400; }
+    .tendine { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0; }
+    .tendine span { padding: 0.25rem 0.7rem; border-radius: 0.4rem; border: 1px solid var(--line); font-size: 0.9rem; }
+    .t-azz { background: var(--tip-bg); border-color: var(--tip-line) !important; }
+    .t-ok { background: var(--ok-bg); border-color: var(--ok-line) !important; }
+    .t-ko { background: var(--ko-bg); border-color: var(--ko-line) !important; }
+  </style>
+</head>
+<body>
+  <main>
+    <a class="torna" id="torna" href="index.html"></a>
+    <h1 id="titolo"></h1>
+    <p class="sotto" id="sotto"></p>
+    <div id="sezioni"></div>
+  </main>
+
+  <script>
+    /* Regolamento del giocatore: solo meccaniche, niente dinamiche di trama.
+       I numeri vengono da regole.js, gli stessi usati dal gioco. */
+    if (new URLSearchParams(location.search).has("dentro")) document.body.classList.add("dentro");
+    const R = window.Regole, EN = Lingua.get() === "en";
+    const N = (cat, k) => Lingua.nome(cat, k);
+    const mod = (v) => Math.floor((v - 10) / 2);
+    const segno = (n) => (n < 0 ? "−" : "+") + Math.abs(n);
+    const per = (o) => Object.entries(o).map(([k, v]) => `${segno(v)} ${N("attributi", k)}`).join(", ");
+    const tetti = Object.entries(R.TETTO_AGILITA).map(([a, t]) => `${N("oggetti", a)} ${t ? "+" + t : (EN ? "none" : "nessuno")}`).join(" · ");
+    const soglie = R.SOGLIE_PE.slice(1).map((s, i) => `<tr><td>${i + 2}</td><td>${s - R.SOGLIE_PE[i]}</td><td>${s}</td></tr>`).join("");
+    const risorse = { it: { mana: "Mana", fede: "Punti fede", ira: "Punti ira", natura: "Punti natura" }, en: { mana: "Mana", fede: "Faith points", ira: "Rage points", natura: "Nature points" } }[EN ? "en" : "it"];
+    const armatureClasse = (c) => (R.ARMATURE_CLASSI[c] || ["Armatura leggera", "Armatura media", "Armatura pesante"]).map(a => N("oggetti", a)).join(", ");
+    const righeClassi = Object.entries(R.CLASSI).map(([c, d]) => `<tr><td>${N("classi", c)}</td><td>d${d.dado}</td><td>${risorse[d.risorsa]} (${N("attributi", d.attrRisorsa)})</td><td>${armatureClasse(c)}</td></tr>`).join("");
+    const righeRazze = Object.entries(R.RAZZE).map(([r, d]) => `<tr><td>${N("razze", r)}</td><td>${d.punti ? (EN ? `+${d.punti} free points` : `+${d.punti} punti liberi`) : per(d.bonus)}</td></tr>`).join("");
+    const righeAbilita = R.ABILITA.map(([a, at]) => `<tr><td>${N("abilita", a)}</td><td>${N("attributi", at)}</td></tr>`).join("");
+
+    const T = {
+      it: {
+        torna: "← Pagina iniziale", titolo: "Regolamento", sotto: "Le regole del gioco, da consultare quando vuoi.",
+        sezioni: [
+          ["Il personaggio", `
+            <h3>Attributi</h3>
+            <p>Ogni attributo parte da ${R.VALORE_MINIMO}; in creazione distribuisci ${R.PUNTI_BASE} punti. Nessun attributo può superare ${R.VALORE_MASSIMO}, bonus della razza compreso.</p>
+            <span class="formula">Modificatore = (valore − 10) ÷ 2, arrotondato per difetto</span>
+            <p class="esempio">Esempio: 12 → +1, 14 → +2, 17 → +3.</p>
+            <ul>
+              <li><b>Vigore</b>: forza in combattimento, salute fisica, Atletica e Sopravvivenza.</li>
+              <li><b>Agilità</b>: iniziativa, difesa (Classe armatura), Furtività e Acrobazia.</li>
+              <li><b>Mente</b>: sensi e logica, Investigazione e Sapienza, incantesimi dell'Arcanista.</li>
+              <li><b>Spirito</b>: salute mentale e volontà, Socialità e Intuizione, incantesimi del Monaco.</li>
+            </ul>
+            <h3>Razze</h3><div class="scroll"><table><tr><th>Razza</th><th>Bonus</th></tr>${righeRazze}</table></div>
+            <h3>Classi</h3><div class="scroll"><table><tr><th>Classe</th><th>Dado vita</th><th>Risorsa</th><th>Armature</th></tr>${righeClassi}</table></div>
+            <p>Le armi «da battaglia» sono riservate al Guerriero. Arcanista e Monaco scelgono ${R.MAX_INCANTESIMI} incantesimi.</p>
+            <p><b>Mente incrollabile</b> (Guerriero e Sciamano): dopo una prova fallita puoi spendere 1 punto ira o natura per un tiro salvezza (d20 + modificatore di Vigore per il Guerriero o di Spirito per lo Sciamano + livello, CD ${R.CD_INCROLLABILE}). Se lo superi, non perdi salute mentale.</p>
+            <h3>Salute e risorse</h3>
+            <span class="formula">Salute fisica = ${R.SALUTE_BASE} + dado vita + mod. Vigore</span>
+            <span class="formula">Salute mentale = ${R.SALUTE_BASE} + dado vita + mod. Spirito</span>
+            <span class="formula">Mana, fede, ira, natura = ${R.RISORSA_BASE} + modificatore dell'attributo della classe</span>
+            <h3>Abilità</h3>
+            <p>Ne scegli ${R.MAX_ABILITA}. Il valore di un'abilità è il modificatore del suo attributo; quelle scelte aggiungono anche il tuo livello.</p>
+            <div class="scroll"><table><tr><th>Abilità</th><th>Attributo</th></tr>${righeAbilita}</table></div>
+            <p>Armatura media e pesante e scudo danno un malus alle abilità di Agilità.</p>`],
+          ["Prove di abilità", `
+            <p>Scrivi ciò che fa il tuo personaggio («esamino l'arazzo», «uso investigazione»). Quando l'esito è incerto il gioco ti chiede una prova e ti mostra difficoltà, dado e modificatore.</p>
+            <span class="formula">d20 + valore dell'abilità ≥ difficoltà (CD) → prova superata</span>
+            <p><b>Ogni prova fallita costa ${R.COSTO_PROVA_FALLITA} punto di salute mentale.</b> Scegli con cura quando tentare.</p>
+            <p>Il colore della tendina della tua azione ti dice cosa è successo:</p>
+            <div class="tendine"><span class="t-azz">azzurra: nessuna prova</span><span class="t-ok">verde: prova superata</span><span class="t-ko">rossa: prova fallita</span></div>
+            <p>Nei dialoghi conta anche l'approccio che scegli, gentile o duro: ogni interlocutore reagisce a modo suo.</p>`],
+          ["Combattimento", `
+            <p><b>Iniziativa</b>: agisce per primo chi ha più Agilità (a parità, un d20 a testa).</p>
+            <p>A ogni turno hai un'azione: attaccare, lanciare un incantesimo o usare un oggetto. Prendere in mano la torcia o imbracciare lo scudo non consuma l'azione.</p>
+            <span class="formula">Attacco: d20 + mod. Vigore, colpisce se supera la Classe armatura del bersaglio</span>
+            <span class="formula">Danno: dado dell'arma + mod. Vigore (torcia 1d4, a mani nude 1d2)</span>
+            <p><b>Colpo critico</b>: un 20 sul dado colpisce sempre e tira il doppio dei dadi di danno. Vale anche per i nemici.</p>
+            <h3>Classe armatura</h3>
+            <span class="formula">CA = ${R.CA_BASE} + armatura + mod. Agilità (fino al tetto dell'armatura) + scudo</span>
+            <p>Tetto del bonus di Agilità: ${tetti}.</p>
+            <p>Le armi a due mani non lasciano libera la mano per torcia o scudo: devi prima riporre l'arma.</p>
+            <h3>Incantesimi</h3>
+            <p>Ogni incantesimo costa mana o punti fede. Quando un nemico può resistere, tira contro la tua difficoltà:</p>
+            <span class="formula">CD degli incantesimi = 8 + modificatore dell'attributo della classe + livello</span>`],
+          ["Riposo e razioni", `
+            <p>Si riposa solo accanto a un fuoco caldo, dalle fiamme arancioni, in un luogo di cui ti fidi. Alcuni fuochi si consumano dopo un riposo.</p>
+            <p><b>Ogni riposo dura un giorno</b>:</p>
+            <ul>
+              <li>consumi fino a 1d4 razioni;</li>
+              <li>recuperi 1d4 + livello su salute fisica, salute mentale e sulla tua risorsa (mana, fede, ira o natura);</li>
+              <li>ogni giorno ricevi ${R.RAZIONI_AL_GIORNO} razioni nuove (scorta massima ${R.RAZIONI_MAX}).</li>
+            </ul>
+            <p>Senza razioni la fame non ti fa dormire, tranne in un luogo particolarmente accogliente, dove recuperi comunque 1 punto.</p>
+            <p><b>Mana, fede, ira e natura si ricaricano solo riposando.</b> Pozione di cura e pozione di mana recuperano 1d6 + livello.</p>`],
+          ["Livelli ed esperienza", `
+            <p>Guadagni punti esperienza sconfiggendo i nemici e completando missioni. Il livello massimo è ${R.LIVELLO_MAX}.</p>
+            <div class="scroll"><table><tr><th>Livello</th><th>PE necessari</th><th>PE totali</th></tr>${soglie}</table></div>
+            <p>A ogni livello tiri il dado vita: salute fisica + (dado vita + mod. Vigore), salute mentale + (dado vita + mod. Spirito), risorsa + (dado vita + modificatore del suo attributo). Le abilità scelte crescono con il livello.</p>`],
+          ["Morte e salute mentale", `
+            <p>Se la salute fisica arriva a 0 non muori davvero: ti risvegli in un luogo sicuro con la salute piena, ma perdi 1d4 punti di salute mentale. Il nemico che ti ha sconfitto si riprende del tutto.</p>
+            <p><b>Se la salute mentale arriva a 0, la partita finisce.</b> Tienila d'occhio: prove fallite, sconfitte e certi luoghi la consumano.</p>`],
+          ["Salvataggi", `
+            <p>Puoi tenere fino a tre personaggi. Salva con il pulsante in alto nella pagina di gioco.</p>
+            <p>Accedendo con Google dalla pagina iniziale, i salvataggi sono condivisi tra computer e telefono.</p>`]
+        ]
+      },
+      en: {
+        torna: "← Home page", titolo: "Rules", sotto: "The rules of the game, to look up whenever you like.",
+        sezioni: [
+          ["Your character", `
+            <h3>Attributes</h3>
+            <p>Each attribute starts at ${R.VALORE_MINIMO}; at creation you spread ${R.PUNTI_BASE} points. No attribute can go above ${R.VALORE_MASSIMO}, race bonus included.</p>
+            <span class="formula">Modifier = (score − 10) ÷ 2, rounded down</span>
+            <p class="esempio">Example: 12 → +1, 14 → +2, 17 → +3.</p>
+            <ul>
+              <li><b>Vigour</b>: fighting strength, physical health, Athletics and Survival.</li>
+              <li><b>Agility</b>: initiative, defence (Armor class), Stealth and Acrobatics.</li>
+              <li><b>Mind</b>: senses and logic, Investigation and Lore, the Arcanist's spells.</li>
+              <li><b>Spirit</b>: mental health and willpower, Influence and Insight, the Monk's spells.</li>
+            </ul>
+            <h3>Races</h3><div class="scroll"><table><tr><th>Race</th><th>Bonus</th></tr>${righeRazze}</table></div>
+            <h3>Classes</h3><div class="scroll"><table><tr><th>Class</th><th>Hit die</th><th>Resource</th><th>Armor</th></tr>${righeClassi}</table></div>
+            <p>“Battle” weapons are reserved for the Warrior. Arcanist and Monk choose ${R.MAX_INCANTESIMI} spells.</p>
+            <p><b>Unshakeable Mind</b> (Warrior and Shaman): after a failed check you may spend 1 rage or nature point on a saving throw (d20 + Vigour modifier for the Warrior or Spirit for the Shaman + level, DC ${R.CD_INCROLLABILE}). On a success you lose no mental health.</p>
+            <h3>Health and resources</h3>
+            <span class="formula">Physical health = ${R.SALUTE_BASE} + hit die + Vigour mod.</span>
+            <span class="formula">Mental health = ${R.SALUTE_BASE} + hit die + Spirit mod.</span>
+            <span class="formula">Mana, faith, rage, nature = ${R.RISORSA_BASE} + modifier of the class attribute</span>
+            <h3>Skills</h3>
+            <p>You choose ${R.MAX_ABILITA}. A skill's value is its attribute modifier; the ones you choose also add your level.</p>
+            <div class="scroll"><table><tr><th>Skill</th><th>Attribute</th></tr>${righeAbilita}</table></div>
+            <p>Medium and heavy armor and the shield give a penalty to Agility skills.</p>`],
+          ["Skill checks", `
+            <p>Write what your character does (“I examine the tapestry”, “I use investigation”). When the outcome is uncertain the game asks for a check and shows you difficulty, die and modifier.</p>
+            <span class="formula">d20 + skill value ≥ difficulty (DC) → check passed</span>
+            <p><b>Every failed check costs ${R.COSTO_PROVA_FALLITA} point of mental health.</b> Choose carefully when to try.</p>
+            <p>The colour of your action's drop-down tells you what happened:</p>
+            <div class="tendine"><span class="t-azz">blue: no check</span><span class="t-ok">green: check passed</span><span class="t-ko">red: check failed</span></div>
+            <p>In conversations the approach you choose, kind or harsh, matters too: everyone reacts in their own way.</p>`],
+          ["Combat", `
+            <p><b>Initiative</b>: whoever has more Agility acts first (on a tie, a d20 each).</p>
+            <p>Each turn you have one action: attack, cast a spell or use an item. Taking up the torch or the shield does not use your action.</p>
+            <span class="formula">Attack: d20 + Vigour mod., hits if it beats the target's Armor class</span>
+            <span class="formula">Damage: weapon die + Vigour mod. (torch 1d4, bare hands 1d2)</span>
+            <p><b>Critical hit</b>: a 20 on the die always hits and rolls double the damage dice. Enemies too.</p>
+            <h3>Armor class</h3>
+            <span class="formula">AC = ${R.CA_BASE} + armor + Agility mod. (up to the armor's cap) + shield</span>
+            <p>Agility bonus cap: ${tetti}.</p>
+            <p>Two-handed weapons leave no hand free for torch or shield: put the weapon away first.</p>
+            <h3>Spells</h3>
+            <p>Every spell costs mana or faith points. When an enemy can resist, it rolls against your difficulty:</p>
+            <span class="formula">Spell DC = 8 + class attribute modifier + level</span>`],
+          ["Rest and rations", `
+            <p>You can only rest by a warm fire, one with orange flames, in a place you trust. Some fires are spent after one rest.</p>
+            <p><b>Each rest lasts a day</b>:</p>
+            <ul>
+              <li>you eat up to 1d4 rations;</li>
+              <li>you recover 1d4 + level on physical health, mental health and your resource (mana, faith, rage or nature);</li>
+              <li>each day you receive ${R.RAZIONI_AL_GIORNO} new rations (up to ${R.RAZIONI_MAX} in store).</li>
+            </ul>
+            <p>Without rations hunger keeps you awake, except in a particularly welcoming place, where you still recover 1 point.</p>
+            <p><b>Mana, faith, rage and nature recharge only by resting.</b> Healing and mana potions restore 1d6 + level.</p>`],
+          ["Levels and experience", `
+            <p>You earn experience points by defeating enemies and completing quests. The maximum level is ${R.LIVELLO_MAX}.</p>
+            <div class="scroll"><table><tr><th>Level</th><th>XP needed</th><th>Total XP</th></tr>${soglie}</table></div>
+            <p>At each level you roll your hit die: physical health + (hit die + Vigour mod.), mental health + (hit die + Spirit mod.), resource + (hit die + its attribute modifier). Your chosen skills grow with your level.</p>`],
+          ["Death and mental health", `
+            <p>If your physical health reaches 0 you do not truly die: you wake up in a safe place at full health, but lose 1d4 points of mental health. The enemy that beat you recovers fully.</p>
+            <p><b>If your mental health reaches 0, the game is over.</b> Keep an eye on it: failed checks, defeats and certain places wear it down.</p>`],
+          ["Saving", `
+            <p>You can keep up to three characters. Save with the button at the top of the game page.</p>
+            <p>If you sign in with Google on the home page, your saves are shared between computer and phone.</p>`]
+        ]
+      }
+    }[EN ? "en" : "it"];
+
+    document.title = T.titolo;
+    document.getElementById("torna").textContent = T.torna;
+    document.getElementById("titolo").textContent = T.titolo;
+    document.getElementById("sotto").textContent = T.sotto;
+    document.getElementById("sezioni").innerHTML = T.sezioni.map(([t, c], i) => `<details${i === 0 ? " open" : ""}><summary>${t}</summary><div class="corpo">${c}</div></details>`).join("");
+  </script>
+</body>
+</html>

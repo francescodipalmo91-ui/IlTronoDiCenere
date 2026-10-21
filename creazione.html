@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Creazione personaggio</title>
+  <script src="regole.js"></script>
   <script src="lingua.js"></script>
   <style>
     :root {
@@ -322,11 +323,12 @@
     document.getElementById("galleria").setAttribute("aria-label", t.immagine);
 
     /* ---------- Regole e dati ---------- */
-    const VALORE_MASSIMO = 20; /* nessun attributo può superare 20, bonus della razza compreso */
-    const VALORE_MINIMO = 10, PUNTI_BASE = 8, LATO_MAX_IMMAGINE = 400; /* 4 attributi: 8 punti da distribuire (erano 10 su 6) */
-    const PV_BASE = 10, LIVELLO = 1, CA_BASE = 10, MAX_ABILITA = 3, MAX_DOTAZIONE = 3;
+    const R_ = window.Regole || {};
+    const VALORE_MASSIMO = R_.VALORE_MASSIMO ?? 20; /* nessun attributo può superare 20, bonus della razza compreso */
+    const VALORE_MINIMO = R_.VALORE_MINIMO ?? 10, PUNTI_BASE = R_.PUNTI_BASE ?? 8, LATO_MAX_IMMAGINE = 400; /* 4 attributi: 8 punti da distribuire (erano 10 su 6) */
+    const PV_BASE = R_.SALUTE_BASE ?? 10, LIVELLO = 1, CA_BASE = R_.CA_BASE ?? 10, MAX_ABILITA = R_.MAX_ABILITA ?? 3, MAX_DOTAZIONE = R_.MAX_DOTAZIONE ?? 3;
     /* Agilità dà il suo modificatore alla Classe armatura, con un tetto che dipende dall'armatura */
-    const TETTO_AGILITA = { "Armatura leggera": 3, "Armatura media": 2, "Armatura pesante": 0 };
+    const TETTO_AGILITA = R_.TETTO_AGILITA || { "Armatura leggera": 3, "Armatura media": 2, "Armatura pesante": 0 };
 
     const ATTRIBUTI = [
       ["Vigore", { it: "Potenza e resistenza fisica, salute fisica, doti atletiche, forza in combattimento", en: "Physical power and endurance, physical health, athletic prowess, fighting strength" }],
@@ -422,7 +424,7 @@
 
     /* ---------- Incantesimi (Sapiente e Accolito) ----------
        Mana = 10 + modificatore di Mente. Se ne scelgono 4; si potranno cambiare riposando (meccanica non ancora implementata). */
-    const MANA_BASE = 10, MAX_INCANTESIMI = 4;
+    const MANA_BASE = R_.RISORSA_BASE ?? 10, MAX_INCANTESIMI = R_.MAX_INCANTESIMI ?? 4;
     const INCANTESIMI = {
       Sapiente: [
         { id: "luce", costo: 1, nome: { it: "Luce", en: "Light" },

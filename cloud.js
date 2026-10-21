@@ -70,6 +70,7 @@ window.Cloud = (() => {
       await Promise.all([carica(b + "firebase-auth-compat.js"), carica(b + "firebase-firestore-compat.js")]);
       firebase.initializeApp(CONFIG);
       auth = firebase.auth(); db = firebase.firestore();
+      try { await auth.getRedirectResult(); } catch (e) { stato.erroreAccesso = e && e.code; } /* ritorno da un accesso con redirect */
       await new Promise(primo => {
         let fatto = false;
         auth.onAuthStateChanged(u => {
@@ -79,7 +80,7 @@ window.Cloud = (() => {
         });
       });
       return true;
-    })().catch(() => { stato.pronto = true; notifica(); return false; });
+    })().catch((e) => { stato.erroreAvvio = (e && (e.code || e.message)) || "avvio"; stato.pronto = true; notifica(); return false; });
     return avvio;
   }
   const connesso = async () => (await avvia()) && auth && auth.currentUser;
@@ -91,7 +92,11 @@ window.Cloud = (() => {
     if (!await avvia()) return false;
     const p = new firebase.auth.GoogleAuthProvider();
     p.setCustomParameters({ prompt: "select_account" });
-    await auth.signInWithPopup(p); /* popup: il redirect su domini diversi da firebaseapp.com è inaffidabile nei browser moderni */
+    try { await auth.signInWithPopup(p); } /* popup: il redirect su domini diversi da firebaseapp.com è inaffidabile nei browser moderni */
+    catch (e) { /* popup bloccato (succede spesso sul telefono): si ripiega sul redirect, che ricarica la pagina */
+      if (e && (e.code === "auth/popup-blocked" || e.code === "auth/operation-not-supported-in-this-environment")) { await auth.signInWithRedirect(p); return false; }
+      throw e;
+    }
     return true;
   }
   async function esci() {
@@ -195,6 +200,8 @@ window.Cloud = (() => {
     get attivo() { return stato.attivo; },
     get pronto() { return stato.pronto; },
     utente: () => stato.utente,
+    erroreAvvio: () => stato.erroreAvvio || null,
+    erroreAccesso: () => stato.erroreAccesso || null,
     onStato(fn) { ascoltatori.push(fn); },
     avvia, accedi, esci, inviaSlot, eliminaSlot, sincronizza, risolvi
   };

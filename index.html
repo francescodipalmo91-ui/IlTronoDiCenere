@@ -540,8 +540,14 @@
         }
         await Cloud.esci(); conflitti = []; disegnaAccount(); ridisegna(); return;
       }
-      try { await Cloud.accedi(); }
-      catch (e) { if (e && e.code !== "auth/popup-closed-by-user" && e.code !== "auth/cancelled-popup-request") ridisegna(t.accessoKo); return; }
+      let entrato = false;
+      try { entrato = await Cloud.accedi(); }
+      catch (e) { if (e && e.code !== "auth/popup-closed-by-user" && e.code !== "auth/cancelled-popup-request") ridisegna(t.accessoKo + " (" + ((e && (e.code || e.message)) || "?") + ")"); return; }
+      if (!entrato) { /* Firebase non si è caricato, oppure è partito il redirect */
+        const err = Cloud.erroreAvvio && Cloud.erroreAvvio();
+        if (err) ridisegna(t.accessoKo + " (" + err + ")");
+        return;
+      }
       disegnaAccount();
       const esito = await sincronizzaOra();
       ridisegna(esito === false ? t.syncKo : "");
@@ -579,7 +585,7 @@
     }
     if (window.Cloud && Cloud.attivo) {
       Cloud.onStato(disegnaAccount);
-      Cloud.avvia(); /* carica Firebase subito: quando il giocatore preme «Sì» è già pronto */
+      Cloud.avvia().then(() => { const e = Cloud.erroreAccesso(); if (e) ridisegna(tx().accessoKo + " (" + e + ")"); }); /* carica Firebase subito: quando il giocatore preme «Sì» è già pronto */
     }
 
     applicaLingua();

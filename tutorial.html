@@ -267,7 +267,7 @@
     const LINGUA = (window.Lingua && Lingua.get && Lingua.get()) === "en" ? "en" : "it";
     document.documentElement.lang = LINGUA;
 
-    const ATTR = ["Lotta", "Agilità", "Mente", "Corpo", "Carisma", "Spirito"];
+    const ATTR = ["Vigore", "Agilità", "Mente", "Spirito"];
 
     const T = {
       it: {
@@ -287,28 +287,28 @@
         alt: "La sala d'armi della fortezza: pavimento di pietra con un cerchio di gesso, rastrelliere d'armi, manichini e torce azzurre; al centro un mastino infernale avvolto dalle fiamme.",
         saluteFisica: "Salute fisica", saluteMentale: "Salute mentale", classeArmatura: "Classe armatura", dadoVita: "Dado vita",
         statistiche: "Statistiche", abilita: "Abilità", equipaggiamento: "Equipaggiamento", attacchi: "Attacchi", diario: "Diario dello scontro",
-        attr: { Lotta: "Lotta", "Agilità": "Agilità", Mente: "Mente", Corpo: "Corpo", Carisma: "Carisma", Spirito: "Spirito" },
-        ab: { Percezione: "Percezione", Indagare: "Indagare", Medicina: "Medicina", Atletica: "Atletica" },
+        attr: { Vigore: "Vigore", "Agilità": "Agilità", Mente: "Mente", Spirito: "Spirito" },
+        ab: { Percezione: "Investigazione", Indagare: "Investigazione", Medicina: "Sapienza", Atletica: "Atletica" },
         pgNome: "Recluta", pgSotto: "Umano — Guerriero · Livello 1",
         eq: {
-          spada: ["Spada corta", "1d6 + Lotta · tagliente · 1 mano"],
+          spada: ["Spada corta", "1d6 + Vigore · tagliente · 1 mano"],
           armatura: ["Armatura leggera", "+2 classe armatura"],
           scudo: ["Scudo", "+1 classe armatura · malus Agilità −1"],
           pozione: ["Pozione di salute", (n) => n ? "1 utilizzo · cura 2d4" : "Esaurita"],
-          torcia: ["Torcia", (n) => n ? `${n} utilizzi · 1d4 + Lotta · contundente` : "Consumata"]
+          torcia: ["Torcia", (n) => n ? `${n} utilizzi · 1d4 + Vigore · contundente` : "Consumata"]
         },
         nemNome: "Mastino Infernale", nemSotto: "Belva infernale · Livello 1",
         nemVelata: "Scheda sconosciuta. Ne scoprirai i segreti solo quando la belva sarà a terra.",
         cond: ["Ringhia furioso: sembra ancora del tutto integro.", "È ferito: dal pelo strappato cadono braci.", "Barcolla, il respiro rotto: le fiamme sulla groppa si affievoliscono.", ""],
         morso: "Morso", zampata: "Zampata", presaNome: "Presa (speciale)",
-        attMorso: "1d4 + Lotta · perforante", attZampata: "1d4 + Lotta · tagliente", attPresa: "una volta per scontro, a sorpresa · prova contrapposta di Lotta · +1d4 danni",
+        attMorso: "1d4 + Vigore · perforante", attZampata: "1d4 + Vigore · tagliente", attPresa: "una volta per scontro, a sorpresa · prova contrapposta di Vigore · +1d4 danni",
 
         turnoIntro: "Preparazione", round: (n) => `Round ${n}`, tuo: "tocca a te", suo: "tocca al Mastino",
         esplora: "Dopo lo scontro", fine: "Addestramento completato", caduto: "Sei caduto",
 
         cIntro: [
           "Questa è la tua scheda: un guerriero umano di prova, con tutte le statistiche a <b>14</b> (modificatore <b>+2</b>).",
-          "<span class='regola'><b>Come si combatte.</b> Per colpire tiri un d20 e aggiungi il modificatore di Lotta: se il totale raggiunge la Classe armatura del bersaglio, lo colpisci. Il danno è il dado dell'arma più il modificatore di Lotta.</span>",
+          "<span class='regola'><b>Come si combatte.</b> Per colpire tiri un d20 e aggiungi il modificatore di Vigore: se il totale raggiunge la Classe armatura del bersaglio, lo colpisci. Il danno è il dado dell'arma più il modificatore di Vigore.</span>",
           "<span class='regola'><b>Chi comincia.</b> Agisce per primo chi ha il valore di Agilità più alto. A ogni turno puoi compiere un'azione: attaccare oppure bere la pozione. Cambiare l'oggetto nella mano sinistra fa parte dell'azione e non ti fa perdere il turno.</span>",
           "Del Mastino non sai nulla: la sua scheda resterà coperta finché non lo avrai abbattuto."
         ],
@@ -349,7 +349,7 @@
         presaLog: "Il Mastino non molla: approfitta del colpo, ti serra tra le fauci e ti trascina verso il centro del cerchio!",
         cPresa: [
           "<b>Azione speciale: la Presa.</b> Una volta per scontro, quando meno te lo aspetti, la belva può afferrarti.",
-          "<span class='regola'>Prova contrapposta di Lotta: tu tiri d20 + 2, il Mastino d20 + 0. Se il suo totale è più alto, ti infligge 1d4 danni aggiuntivi. Se vinci tu, ti liberi senza altri vantaggi. In caso di parità prevale chi si difende: tu.</span>"
+          "<span class='regola'>Prova contrapposta di Vigore: tu tiri d20 + 2, il Mastino d20 + 0. Se il suo totale è più alto, ti infligge 1d4 danni aggiuntivi. Se vinci tu, ti liberi senza altri vantaggi. In caso di parità prevale chi si difende: tu.</span>"
         ],
         presaTira: "Lancia d20 + Lotta (+2)", presaTiraSub: "prova contrapposta",
         presaTiro: (a, b, c, d) => `Tu: d20 <b>${a}</b> + 2 = <b>${b}</b> · Mastino: d20 <b>${c}</b> + 0 = <b>${d}</b>`,
@@ -422,28 +422,28 @@
         alt: "The fortress armoury: a stone floor with a chalk circle, weapon racks, training dummies and blue torches; in the centre, a hellhound wreathed in flames.",
         saluteFisica: "Physical health", saluteMentale: "Mental health", classeArmatura: "Armor class", dadoVita: "Hit die",
         statistiche: "Attributes", abilita: "Skills", equipaggiamento: "Equipment", attacchi: "Attacks", diario: "Combat log",
-        attr: { Lotta: "Might", "Agilità": "Agility", Mente: "Mind", Corpo: "Body", Carisma: "Charisma", Spirito: "Spirit" },
-        ab: { Percezione: "Perception", Indagare: "Investigation", Medicina: "Medicine", Atletica: "Athletics" },
+        attr: { Vigore: "Vigour", "Agilità": "Agility", Mente: "Mind", Spirito: "Spirit" },
+        ab: { Percezione: "Investigation", Indagare: "Investigation", Medicina: "Lore", Atletica: "Athletics" },
         pgNome: "Recruit", pgSotto: "Human — Warrior · Level 1",
         eq: {
-          spada: ["Short sword", "1d6 + Might · slashing · 1 hand"],
+          spada: ["Short sword", "1d6 + Vigour · slashing · 1 hand"],
           armatura: ["Light armor", "+2 armor class"],
           scudo: ["Shield", "+1 armor class · Agility penalty −1"],
           pozione: ["Health potion", (n) => n ? "1 use · heals 2d4" : "Used up"],
-          torcia: ["Torch", (n) => n ? `${n} uses · 1d4 + Might · bludgeoning` : "Burnt out"]
+          torcia: ["Torch", (n) => n ? `${n} uses · 1d4 + Vigour · bludgeoning` : "Burnt out"]
         },
         nemNome: "Hellhound", nemSotto: "Infernal beast · Level 1",
         nemVelata: "Unknown sheet. You will learn its secrets only once the beast is down.",
         cond: ["Snarling with fury: it looks completely unharmed.", "It is wounded: embers fall from its torn hide.", "It staggers, breath ragged: the flames on its back are dying down.", ""],
         morso: "Bite", zampata: "Claw", presaNome: "Grab (special)",
-        attMorso: "1d4 + Might · piercing", attZampata: "1d4 + Might · slashing", attPresa: "once per fight, by surprise · opposed Might check · +1d4 damage",
+        attMorso: "1d4 + Vigour · piercing", attZampata: "1d4 + Vigour · slashing", attPresa: "once per fight, by surprise · opposed Vigour check · +1d4 damage",
 
         turnoIntro: "Preparation", round: (n) => `Round ${n}`, tuo: "your turn", suo: "the Hellhound's turn",
         esplora: "After the fight", fine: "Training complete", caduto: "You have fallen",
 
         cIntro: [
           "This is your sheet: a test human warrior, with every attribute at <b>14</b> (modifier <b>+2</b>).",
-          "<span class='regola'><b>How to fight.</b> To hit, roll a d20 and add your Might modifier: if the total reaches the target's Armor class, you hit. Damage is the weapon die plus your Might modifier.</span>",
+          "<span class='regola'><b>How to fight.</b> To hit, roll a d20 and add your Vigour modifier: if the total reaches the target's Armor class, you hit. Damage is the weapon die plus your Vigour modifier.</span>",
           "<span class='regola'><b>Who goes first.</b> Whoever has the higher Agility acts first. Each turn you take one action: attack or drink the potion. Swapping the item in your left hand is part of the action and does not cost you the turn.</span>",
           "You know nothing about the Hellhound: its sheet stays hidden until you bring it down."
         ],
@@ -484,7 +484,7 @@
         presaLog: "The Hellhound does not let go: it follows up its blow, clamps you in its jaws and drags you towards the centre of the circle!",
         cPresa: [
           "<b>Special action: the Grab.</b> Once per fight, when you least expect it, the beast can seize you.",
-          "<span class='regola'>Opposed Might check: you roll d20 + 2, the Hellhound d20 + 0. If its total is higher, it deals 1d4 extra damage. If you win, you break free with no further advantage. On a tie the defender wins: you.</span>"
+          "<span class='regola'>Opposed Vigour check: you roll d20 + 2, the Hellhound d20 + 0. If its total is higher, it deals 1d4 extra damage. If you win, you break free with no further advantage. On a tie the defender wins: you.</span>"
         ],
         presaTira: "Roll d20 + Might (+2)", presaTiraSub: "opposed check",
         presaTiro: (a, b, c, d) => `You: d20 <b>${a}</b> + 2 = <b>${b}</b> · Hellhound: d20 <b>${c}</b> + 0 = <b>${d}</b>`,
@@ -547,14 +547,14 @@
         caratteristiche: "Caratteristiche", puntiSalute: "Punti salute", puntiMentali: "Punti mentali", classeArmaturaG: "Classe Armatura",
         manoPrimaria: "Mano primaria", manoSecondaria: "Mano secondaria", armaturaG: "Armatura", livello: "livello",
         caBonus: (n) => `CA +${n}`, malusAg: (n) => `Malus Agilità −${n}`, noMalus: "Nessun malus Agilità", mani: (n) => (n === 1 ? "1 mano" : n + " mani"),
-        modLotta: "mod. Lotta", malusEquip: (n) => ` (equipaggiamento −${n})`, zainoVuoto: "Lo zaino è vuoto.",
-        abTutte: { "Furtività": "Furtività", Indagare: "Indagare", Medicina: "Medicina", Persuasione: "Persuasione", Intimidire: "Intimidire", Percezione: "Percezione", Atletica: "Atletica", Acrobazia: "Acrobazia", Arcano: "Arcano", Misticismo: "Misticismo" },
+        modLotta: "mod. Vigore", malusEquip: (n) => ` (equipaggiamento −${n})`, zainoVuoto: "Lo zaino è vuoto.",
+        abTutte: { Atletica: "Atletica", Sopravvivenza: "Sopravvivenza", "Furtività": "Furtività", Acrobazia: "Acrobazia", Investigazione: "Investigazione", Sapienza: "Sapienza", "Socialità": "Socialità", Intuizione: "Intuizione" },
         danni: { Tagliente: "Tagliente", Perforante: "Perforante", Contundente: "Contundente" },
         subPg: "Umano — Guerriero, livello 1", subNem: "Belva infernale, livello 1",
         armiNaturali: "Armi naturali", speciale: "Speciale", collareVoce: "Collo",
         descPozione: "Una fiala di vetro spesso, chiusa da un tappo di cera. Il liquido rosso scuro riluce debolmente. Cura 2d4 punti salute.",
-        descTorcia: "Un bastone di legno avvolto in stracci imbevuti di pece. Fa luce e, all'occorrenza, colpisce: 1d4 + mod. Lotta, contundente.",
-        descPresa: "Una volta per scontro, dopo un attacco andato a segno, la belva afferra il bersaglio tra le fauci: prova contrapposta di Lotta. Se vince la belva, 1d4 danni aggiuntivi.",
+        descTorcia: "Un bastone di legno avvolto in stracci imbevuti di pece. Fa luce e, all'occorrenza, colpisce: 1d4 + mod. Vigore, contundente.",
+        descPresa: "Una volta per scontro, dopo un attacco andato a segno, la belva afferra il bersaglio tra le fauci: prova contrapposta di Vigore. Se vince la belva, 1d4 danni aggiuntivi.",
         esci: "Esci dall'addestramento", completa: "Scheda completa", zaino: "Zaino", invia: "Invia",
         arma: "Arma", armaturaL: "Armatura", manoSec: "Mano secondaria", vuota: "libera", zainoVuoto: "Vuoto.",
         manuale: "Manuale di combattimento", ignoto: "???", nemSottoVelato: "Belva · livello sconosciuto",
@@ -569,7 +569,7 @@
           "<span class='evid'>Come si combatte?</span>",
           "Qui, come nel dungeon, sei tu a scrivere cosa fa il tuo personaggio.",
           "Per avviare lo scontro prova a scrivere: <kbd class='nem'>combattiamo</kbd> oppure <kbd class='nem'>sono pronto a combattere</kbd>, e chi ha l'Agilità più alta inizierà.",
-          "Per colpire tirerò automaticamente un d20 e aggiungerò il modificatore di Lotta: se il totale supera la Classe armatura del bersaglio, lo colpisci. Poi tirerò il danno: il dado dell'arma più il modificatore di Lotta."
+          "Per colpire tirerò automaticamente un d20 e aggiungerò il modificatore di Vigore: se il totale supera la Classe armatura del bersaglio, lo colpisci. Poi tirerò il danno: il dado dell'arma più il modificatore di Vigore."
         ],
         cPrimoTurno: [
           "<b>Il tuo turno.</b> A ogni turno compi un'azione. Prova a scrivere:",
@@ -580,7 +580,7 @@
         cFerito: ["<b>Sei ferito.</b> Se la salute scende troppo, prova a scrivere <kbd>bevi la pozione</kbd>: cura 2d4, ma occupa tutto il turno."],
         cPresa: [
           "Quando un suo attacco va a segno, una volta per scontro la belva può afferrarti.",
-          "Prova contrapposta di Lotta: tu tiri d20 + 2, il Mastino d20 + 0. Se il suo totale è più alto, ti infligge 1d4 danni aggiuntivi. Se vinci tu, ti liberi senza altri vantaggi. In caso di parità prevale chi si difende: tu. Lancia il dado qui sotto."
+          "Prova contrapposta di Vigore: tu tiri d20 + 2, il Mastino d20 + 0. Se il suo totale è più alto, ti infligge 1d4 danni aggiuntivi. Se vinci tu, ti liberi senza altri vantaggi. In caso di parità prevale chi si difende: tu. Lancia il dado qui sotto."
         ],
         cEsplora: [
           "<b>Lo scontro è finito.</b> Ora impara a interagire con l'ambiente: ogni cosa nella sala può nascondere qualcosa.",
@@ -644,14 +644,14 @@
         caratteristiche: "Attributes", puntiSalute: "Health points", puntiMentali: "Mental points", classeArmaturaG: "Armor Class",
         manoPrimaria: "Main hand", manoSecondaria: "Off hand", armaturaG: "Armor", livello: "level",
         caBonus: (n) => `AC +${n}`, malusAg: (n) => `Agility penalty −${n}`, noMalus: "No Agility penalty", mani: (n) => (n === 1 ? "1 hand" : n + " hands"),
-        modLotta: "Might mod.", malusEquip: (n) => ` (gear −${n})`, zainoVuoto: "Your pack is empty.",
-        abTutte: { "Furtività": "Stealth", Indagare: "Investigation", Medicina: "Medicine", Persuasione: "Persuasion", Intimidire: "Intimidation", Percezione: "Perception", Atletica: "Athletics", Acrobazia: "Acrobatics", Arcano: "Arcana", Misticismo: "Mysticism" },
+        modLotta: "Vigour mod.", malusEquip: (n) => ` (gear −${n})`, zainoVuoto: "Your pack is empty.",
+        abTutte: { Atletica: "Athletics", Sopravvivenza: "Survival", "Furtività": "Stealth", Acrobazia: "Acrobatics", Investigazione: "Investigation", Sapienza: "Lore", "Socialità": "Influence", Intuizione: "Insight" },
         danni: { Tagliente: "Slashing", Perforante: "Piercing", Contundente: "Bludgeoning" },
         subPg: "Human — Warrior, level 1", subNem: "Infernal beast, level 1",
         armiNaturali: "Natural weapons", speciale: "Special", collareVoce: "Neck",
         descPozione: "A vial of thick glass sealed with a wax stopper. The dark red liquid glows faintly. Heals 2d4 health points.",
-        descTorcia: "A wooden stick wrapped in pitch-soaked rags. It gives light and, if need be, strikes: 1d4 + Might mod., bludgeoning.",
-        descPresa: "Once per fight, after an attack that lands, the beast seizes its target in its jaws: opposed Might check. If the beast wins, 1d4 extra damage.",
+        descTorcia: "A wooden stick wrapped in pitch-soaked rags. It gives light and, if need be, strikes: 1d4 + Vigour mod., bludgeoning.",
+        descPresa: "Once per fight, after an attack that lands, the beast seizes its target in its jaws: opposed Vigour check. If the beast wins, 1d4 extra damage.",
         esci: "Leave the training", completa: "Full sheet", zaino: "Backpack", invia: "Send",
         arma: "Weapon", armaturaL: "Armor", manoSec: "Off hand", vuota: "free", zainoVuoto: "Empty.",
         manuale: "Combat manual", ignoto: "???", nemSottoVelato: "Beast · unknown level",
@@ -666,7 +666,7 @@
           "<span class='evid'>How do you fight?</span>",
           "Here, just like in the dungeon, you write what your character does.",
           "To start the fight, try writing: <kbd class='nem'>let's fight</kbd> or <kbd class='nem'>I'm ready to fight</kbd>, and whoever has the higher Agility goes first.",
-          "To hit, I will automatically roll a d20 and add your Might modifier: if the total beats the target's Armor class, you hit. Then I will roll the damage: the weapon die plus your Might modifier."
+          "To hit, I will automatically roll a d20 and add your Vigour modifier: if the total beats the target's Armor class, you hit. Then I will roll the damage: the weapon die plus your Vigour modifier."
         ],
         cPrimoTurno: [
           "<b>Your turn.</b> Each turn you take one action. Try writing:",
@@ -677,7 +677,7 @@
         cFerito: ["<b>You are wounded.</b> If your health drops too far, try writing <kbd>drink the potion</kbd>: it heals 2d4, but takes your whole turn."],
         cPresa: [
           "When one of its attacks lands, once per fight the beast can seize you.",
-          "Opposed Might check: you roll d20 + 2, the Hellhound d20 + 0. If its total is higher, it deals 1d4 extra damage. If you win, you break free with no further advantage. On a tie the defender wins: you. Roll the die below."
+          "Opposed Vigour check: you roll d20 + 2, the Hellhound d20 + 0. If its total is higher, it deals 1d4 extra damage. If you win, you break free with no further advantage. On a tie the defender wins: you. Roll the die below."
         ],
         cEsplora: [
           "<b>The fight is over.</b> Now learn to interact with your surroundings: anything in the hall may hide something.",
@@ -748,19 +748,20 @@
     const tira = (n) => 1 + Math.floor(Math.random() * n);
     const scegli = (lista) => lista[Math.floor(Math.random() * lista.length)];
 
-    /* PROVVISORIO: salute del guerriero di prova = 10 + 6 (tiro fisso del d10) + mod Corpo */
+    /* PROVVISORIO: salute del guerriero di prova = 10 + 6 (tiro fisso del d10) + mod Vigore */
     const PG_BASE = {
       stat: Object.fromEntries(ATTR.map(a => [a, 14])),
       livello: 1, dadoVita: 10, tiroVita: 6,
-      abilita: [["Percezione", "Corpo"], ["Indagare", "Mente"], ["Medicina", "Mente"], ["Atletica", "Lotta"]], /* addestrate: aggiungono il livello */
+      abilita: [["Investigazione", "Mente"], ["Sapienza", "Mente"], ["Atletica", "Vigore"]], /* addestrate: aggiungono il livello */
       armi: { spada: { dado: 6 }, torcia: { dado: 4 } },
       caArmatura: 2, caScudo: 1,
       ritratto: "immagini/pg/Umano_Soldato_1" /* se l'immagine c'è viene mostrata, altrimenti la scheda resta senza ritratto */
     };
-    /* Nemico: tutte le statistiche a 10, dado vita d6 → salute 10 + 1d6 + mod Corpo (tirata a inizio scontro, nascosta) */
-    const ABILITA_TUTTE = [["Furtività", "Agilità"], ["Indagare", "Mente"], ["Medicina", "Mente"], ["Persuasione", "Carisma"], ["Intimidire", "Carisma"],
-      ["Percezione", "Corpo"], ["Atletica", "Lotta"], ["Acrobazia", "Agilità"], ["Arcano", "Mente"], ["Misticismo", "Mente"]];
-    const NEM_BASE = { stat: Object.fromEntries(ATTR.map(a => [a, 10])), dadoVita: 6, ca: 10 };
+    /* Nemico: tutte le statistiche a 10, dado vita d6 → salute 10 + 1d6 + mod Vigore (tirata a inizio scontro, nascosta) */
+    const ABILITA_TUTTE = [["Atletica", "Vigore"], ["Sopravvivenza", "Vigore"], ["Furtività", "Agilità"], ["Acrobazia", "Agilità"],
+      ["Investigazione", "Mente"], ["Sapienza", "Mente"], ["Socialità", "Spirito"], ["Intuizione", "Spirito"]];
+    const MAPPA_ABILITA = { Indagare: "Investigazione", Percezione: "Investigazione", Medicina: "Sapienza", Arcano: "Sapienza", Misticismo: "Sapienza", Persuasione: "Socialità", Intimidire: "Socialità" };
+    const NEM_BASE = { stat: Object.fromEntries(ATTR.map(a => [a, 10])), dadoVita: 6, ca: 10, attacco: 1 }; /* +1 a colpire: compensa il bonus di Agilità alla CA */
     const PROB_PRESA = 0.6;    /* probabilità dopo un attacco del Mastino andato a segno, finché la presa non è stata usata */
     const SCARTO_AGILE = 4;    /* senza scudo: se il Mastino resta sotto la CA di almeno 4 punti, la schivata è "agile" */
     const PAUSA = 900;
@@ -768,16 +769,16 @@
     let pg, nem, fase, round, primo, cambioFatto, tuoTurno, primoTurnoMostrato, feritoMostrato, prove, collarePreso;
 
     function nuovaPartita() {
-      const pvMax = 10 + PG_BASE.tiroVita + mod(PG_BASE.stat.Corpo);
+      const pvMax = 10 + PG_BASE.tiroVita + mod(PG_BASE.stat.Vigore);
       pg = { pv: pvMax, pvMax, sm: 10 + PG_BASE.tiroVita + mod(PG_BASE.stat.Spirito), smMax: 10 + PG_BASE.tiroVita + mod(PG_BASE.stat.Spirito), sinistra: "scudo", pozioni: 1, torcia: 5 };
       nem = { pv: 0, pvMax: 0, presaUsata: false, tiroVita: null };
       fase = "intro"; round = 0; primo = null; cambioFatto = false; tuoTurno = false;
       primoTurnoMostrato = false; feritoMostrato = false; collarePreso = false;
       prove = { medicina: null, percezione: null, indagare: null };
     }
-    const caPg = () => 10 + PG_BASE.caArmatura + (pg.sinistra === "scudo" ? PG_BASE.caScudo : 0);
-    const modLotta = () => mod(PG_BASE.stat.Lotta);
-    const valAbilita = (nome) => { const a = PG_BASE.abilita.find(x => x[0] === nome); return mod(PG_BASE.stat[a[1]]) + PG_BASE.livello; };
+    const caPg = () => 10 + PG_BASE.caArmatura + Math.max(0, Math.min(mod(PG_BASE.stat["Agilità"]), 3)) + (pg.sinistra === "scudo" ? PG_BASE.caScudo : 0); /* armatura leggera: bonus di Agilità fino a +3 */
+    const modLotta = () => mod(PG_BASE.stat.Vigore);
+    const valAbilita = (nome) => { nome = MAPPA_ABILITA[nome] || nome; const a = PG_BASE.abilita.find(x => x[0] === nome); return mod(PG_BASE.stat[a[1]]) + PG_BASE.livello; };
     const nemMorto = () => nem.pvMax > 0 && nem.pv <= 0;
 
     /* ---------- Interfaccia ---------- */
@@ -999,7 +1000,7 @@
       fase = "scontro";
       Musica.avvia();
       nem.tiroVita = tira(NEM_BASE.dadoVita);
-      nem.pvMax = nem.pv = 10 + nem.tiroVita + mod(NEM_BASE.stat.Corpo);
+      nem.pvMax = nem.pv = 10 + nem.tiroVita + mod(NEM_BASE.stat.Vigore);
       log(t.risveglio);
       const a = PG_BASE.stat["Agilità"], b = NEM_BASE.stat["Agilità"];
       let testo = t.iniziativa(a, b) + " ";
@@ -1073,16 +1074,16 @@
       turno(`${t.round(round)} — ${t.suo}`);
       attaccoNemico();
     }
-    /* Azione speciale: una volta per partita, a caso. Prova contrapposta di Lotta; se vince il Mastino, +1d4 danni. */
+    /* Azione speciale: una volta per partita, a caso. Prova contrapposta di Vigore; se vince il Mastino, +1d4 danni. */
     function presa() {
       nem.presaUsata = true;
       log(t.presaLog);
       scuoti("schedaPg");
-      riquadroProva(t.presaNome, pulisci(t.cPresa[0]), [`${t.attr.Lotta} ${fmt(modLotta())}`, "d20", `${t.nemNome} ${fmt(mod(NEM_BASE.stat.Lotta))}`], pulisci(t.cPresa[1]), true); /* mossa speciale del Mastino: riquadro arancione */
+      riquadroProva(t.presaNome, pulisci(t.cPresa[0]), [`${t.attr.Vigore} ${fmt(modLotta())}`, "d20", `${t.nemNome} ${fmt(mod(NEM_BASE.stat.Vigore))}`], pulisci(t.cPresa[1]), true); /* mossa speciale del Mastino: riquadro arancione */
       turno(`${t.round(round)} — ${t.presaNome}`, true);
       scelte([{ testo: t.presaTira, fn: () => {
         chiudiScelte();
-        const a = tira(20), ta = a + modLotta(), b = tira(20), tb = b + mod(NEM_BASE.stat.Lotta);
+        const a = tira(20), ta = a + modLotta(), b = tira(20), tb = b + mod(NEM_BASE.stat.Vigore);
         const tiri = `<span class="tiro tiro-pg">${t.presaTuo(a, ta)}</span><span class="tiro tiro-nem">${t.presaSuo(b, tb)}</span>`;
         if (tb > ta) {
           const d = tira(4), prima = pg.pv;
@@ -1098,7 +1099,7 @@
     }
     function attaccoNemico() {
       const morso = Math.random() < 0.5, nome = morso ? t.morso : t.zampata;
-      const m = mod(NEM_BASE.stat.Lotta), d = tira(20), tot = d + m, ca = caPg(), ok = tot > ca; /* colpisce se supera la CA */
+      const m = mod(NEM_BASE.stat.Vigore) + NEM_BASE.attacco, d = tira(20), tot = d + m, ca = caPg(), ok = tot > ca; /* colpisce se supera la CA */
       let testo = "", tiri = tiroHtml(t.tiroAtt(tot, ca));
       if (ok) {
         const dd = tira(4), danno = Math.max(1, dd + m);

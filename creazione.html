@@ -104,6 +104,7 @@
     .tip .nota-mani { display: block; margin-top: 0.3rem; font-style: italic; color: var(--muted); }
     .tip-riga { display: block; max-width: none; font-style: normal; padding-bottom: 0.3rem; margin-bottom: 0.35rem; border-bottom: 1px solid var(--tip-line); }
     .tip-riga i { display: flex; justify-content: space-between; gap: 1rem; font-style: normal; font-size: 0.8rem; padding: 0; }
+    .tip-riga i.cap-classe { display: block; margin-top: 0.35rem; font-style: italic; }
     .tip-riga b:first-child { font-weight: 400; color: var(--muted); }
     .tip-riga b:last-child { font-weight: 600; }
     .opzioni small.tip { white-space: normal; color: var(--text); font-size: 0.8rem; }
@@ -263,7 +264,7 @@
         razza: "Razza", guidaRazza: "Scegli una razza.", classe: "Classe", guidaClasse: "Scegli una classe.",
         statistiche: "Statistiche", punti: "Punti da distribuire:", su: "su",
         thAttributo: "Attributo", thUtilizzo: "Utilizzo", thRazza: "Razza", thMod: "Mod", thValore: "Valore",
-        abilita: "Abilità", guidaAbilita: "Scegline quattro. Il valore è il modificatore dell'attributo collegato; le abilità scelte aggiungono anche il livello del personaggio.",
+        abilita: "Abilità", guidaAbilita: "Scegline tre. Il valore è il modificatore dell'attributo collegato; le abilità scelte aggiungono anche il livello del personaggio.",
         equipaggiamento: "Equipaggiamento", arma: "Arma", armatura: "Armatura", scudo: "Scudo", dotazione: "Dotazione", guidaDotazione: "Scegline tre.",
         dadoVita: "Dado vita", saluteFisica: "Salute fisica", saluteMentale: "Salute mentale", classeArmatura: "Classe armatura", entra: "Entra nel dungeon",
         sceglineUna: "Scegline una.", nonDisponibili: (c) => ` Alcune non sono disponibili per la classe ${c}.`,
@@ -276,7 +277,7 @@
         tipoDanno: "Tipo di danno", mani: "Mani", testoMani: (n) => `${n} ${n === 1 ? "mano" : "mani"}`, dannoTit: (t) => `Danno ${t}`,
         notaDueMani: "Un'arma a due mani occupa entrambe le mani: per usare altri oggetti, come la torcia, dovrai prima riporla. Non si può usare insieme allo scudo.",
         notaScudo: "Occupa una mano: non si può usare con un'arma a due mani, e per tenere la torcia dovrai prima riporlo.",
-        modLotta: "modificatore Lotta", malusAgilita: "Malus Agilità", infoScudo: "+1 classe armatura · malus Agilità −1",
+        modLotta: "modificatore Vigore", malusAgilita: "Malus Agilità", bonusAgilita: "Bonus Agilità max", infoScudo: "+1 classe armatura · malus Agilità −1",
         utilizzi: (n) => (n > 1 ? `${n} utilizzi` : "1 utilizzo"), riutilizzabile: "Riutilizzabile",
         manca: { razza: "la razza", classe: "la classe", tiro: "il tiro dei punti vita", punti: (n) => `${n} punti attributo da distribuire`, abilita: (n) => `${n} abilità`, arma: "un'arma", armatura: "un'armatura", ritratto: "il ritratto", dot: (n) => `${n} ${n === 1 ? "oggetto" : "oggetti"} di dotazione` },
         ancora: "Ancora da fare: ", pronto: (n) => `${n} è pronto a entrare nel dungeon.`,
@@ -291,7 +292,7 @@
         razza: "Race", guidaRazza: "Choose a race.", classe: "Class", guidaClasse: "Choose a class.",
         statistiche: "Attributes", punti: "Points to assign:", su: "of",
         thAttributo: "Attribute", thUtilizzo: "Used for", thRazza: "Race", thMod: "Mod", thValore: "Value",
-        abilita: "Skills", guidaAbilita: "Choose four. The value is the modifier of the linked attribute; the skills you choose also add the character's level.",
+        abilita: "Skills", guidaAbilita: "Choose three. The value is the modifier of the linked attribute; the skills you choose also add the character's level.",
         equipaggiamento: "Equipment", arma: "Weapon", armatura: "Armor", scudo: "Shield", dotazione: "Gear", guidaDotazione: "Choose three.",
         dadoVita: "Hit die", saluteFisica: "Physical health", saluteMentale: "Mental health", classeArmatura: "Armor class", entra: "Enter the dungeon",
         sceglineUna: "Choose one.", nonDisponibili: (c) => ` Some are not available to the ${c} class.`,
@@ -304,7 +305,7 @@
         tipoDanno: "Damage type", mani: "Hands", testoMani: (n) => `${n} ${n === 1 ? "hand" : "hands"}`, dannoTit: (t) => `${t} damage`,
         notaDueMani: "A two-handed weapon takes up both hands: to use other items, such as the torch, you will first have to put it away. It cannot be used together with the shield.",
         notaScudo: "Takes up one hand: it cannot be used with a two-handed weapon, and to hold the torch you will first have to put it away.",
-        modLotta: "Might modifier", malusAgilita: "Agility penalty", infoScudo: "+1 armor class · Agility penalty −1",
+        modLotta: "Vigour modifier", malusAgilita: "Agility penalty", bonusAgilita: "Max Agility bonus", infoScudo: "+1 armor class · Agility penalty −1",
         utilizzi: (n) => (n > 1 ? `${n} uses` : "1 use"), riutilizzabile: "Reusable",
         manca: { razza: "the race", classe: "the class", tiro: "the hit point roll", punti: (n) => `${n} attribute points to assign`, abilita: (n) => `${n} ${n === 1 ? "skill" : "skills"}`, arma: "a weapon", armatura: "an armor", ritratto: "the portrait", dot: (n) => `${n} gear ${n === 1 ? "item" : "items"}` },
         ancora: "Still to do: ", pronto: (n) => `${n} is ready to enter the dungeon.`,
@@ -322,16 +323,16 @@
 
     /* ---------- Regole e dati ---------- */
     const VALORE_MASSIMO = 20; /* nessun attributo può superare 20, bonus della razza compreso */
-    const VALORE_MINIMO = 10, PUNTI_BASE = 10, LATO_MAX_IMMAGINE = 400;
-    const PV_BASE = 10, LIVELLO = 1, CA_BASE = 10, MAX_ABILITA = 4, MAX_DOTAZIONE = 3;
+    const VALORE_MINIMO = 10, PUNTI_BASE = 8, LATO_MAX_IMMAGINE = 400; /* 4 attributi: 8 punti da distribuire (erano 10 su 6) */
+    const PV_BASE = 10, LIVELLO = 1, CA_BASE = 10, MAX_ABILITA = 3, MAX_DOTAZIONE = 3;
+    /* Agilità dà il suo modificatore alla Classe armatura, con un tetto che dipende dall'armatura */
+    const TETTO_AGILITA = { "Armatura leggera": 3, "Armatura media": 2, "Armatura pesante": 0 };
 
     const ATTRIBUTI = [
-      ["Lotta", { it: "Doti atletiche, potenza fisica", en: "Athletic prowess, physical power" }],
-      ["Agilità", { it: "Agilità fisica, riflessi, equilibrio, prontezza", en: "Physical agility, reflexes, balance, readiness" }],
-      ["Mente", { it: "Acume mentale, doti analitiche, conoscenza arcana", en: "Mental acuity, analytical skill, arcane knowledge" }],
-      ["Corpo", { it: "Salute fisica, resistenza fisica, sensi", en: "Physical health, physical endurance, senses" }],
-      ["Carisma", { it: "Interazioni sociali, autorità", en: "Social interaction, authority" }],
-      ["Spirito", { it: "Salute mentale, resistenza mentale, fede", en: "Mental health, mental endurance, faith" }]
+      ["Vigore", { it: "Potenza e resistenza fisica, salute fisica, doti atletiche, forza in combattimento", en: "Physical power and endurance, physical health, athletic prowess, fighting strength" }],
+      ["Agilità", { it: "Riflessi, equilibrio, prontezza, coordinazione; difesa (bonus alla Classe armatura)", en: "Reflexes, balance, readiness, coordination; defence (bonus to Armor class)" }],
+      ["Mente", { it: "Acume mentale, doti analitiche, conoscenza arcana, sensi e percezione", en: "Mental acuity, analytical skill, arcane knowledge, senses and perception" }],
+      ["Spirito", { it: "Interazioni sociali, autorità, salute e resistenza mentale, volontà, fede", en: "Social interaction, authority, mental health and endurance, willpower, faith" }]
     ];
     const NOMI = ATTRIBUTI.map(a => a[0]);
     const CLASSI = { Soldato: 10, Forestiero: 8, Sapiente: 6, Accolito: 6 };
@@ -353,23 +354,22 @@
         en: "You have devoted your life to the service of a deity or a pantheon, acting as a bridge between the sacred and mortals. You lead rites, celebrations and prayers to spread the faith of your patron. You may have been a humble temple servant, a priest, or a former cult member who chose a new spiritual path."
       }
     };
+    /* 8 abilità, due per attributo; se ne scelgono 3 */
     const ABILITA = [
-      ["Furtività", "Agilità", { it: "Capacità di muoversi in silenzio, nascondersi nell'ombra e passare inosservati agli occhi dei nemici.", en: "The ability to move silently, hide in shadows and slip past enemies unseen." }],
-      ["Indagare", "Mente", { it: "Capacità di analizzare indizi, dedurre dettagli nascosti, decifrare codici o ricostruire eventi passati.", en: "The ability to analyse clues, deduce hidden details, decipher codes or reconstruct past events." }],
-      ["Medicina", "Mente", { it: "Conoscenza del corpo e dei rimedi per stabilizzare feriti, diagnosticare malattie, curare veleni e applicare primi soccorsi.", en: "Knowledge of the body and of remedies to stabilise the wounded, diagnose illnesses, cure poisons and give first aid." }],
-      ["Persuasione", "Carisma", { it: "Arte di convincere gli altri con la diplomazia, la gentilezza, la dialettica e la negoziazione in buona fede.", en: "The art of convincing others through diplomacy, kindness, rhetoric and good-faith negotiation." }],
-      ["Intimidire", "Carisma", { it: "Capacità di piegare la volontà altrui attraverso minacce, presenza fisica imponente o pressione psicologica.", en: "The ability to bend others' will through threats, an imposing physical presence or psychological pressure." }],
-      ["Percezione", "Corpo", { it: "Acume visivo e uditivo per notare pericoli imminenti, trappole, nemici nascosti o piccoli dettagli nell'ambiente.", en: "Sharp eyes and ears to notice imminent dangers, traps, hidden enemies or small details in the surroundings." }],
-      ["Atletica", "Lotta", { it: "Abilità nell'eseguire prove di forza fisica, come arrampicarsi, nuotare in acque agitate, saltare grandi distanze o sfondare ostacoli.", en: "Skill at feats of physical strength, such as climbing, swimming in rough water, leaping great distances or breaking through obstacles." }],
-      ["Acrobazia", "Agilità", { it: "Controllo dell'equilibrio e dei riflessi per schivare ostacoli, compiere salti acrobatici, atterrare senza farsi male ed uscire da trattenute.", en: "Control of balance and reflexes to dodge obstacles, perform acrobatic leaps, land without injury and escape from grapples." }],
-      ["Arcano", "Mente", { it: "Studio teorico e pratico delle leggi della magia, dei costrutti, dei piani d'esistenza e degli incantesimi.", en: "The theoretical and practical study of the laws of magic, constructs, planes of existence and spells." }],
-      ["Misticismo", "Mente", { it: "Comprensione delle forze divine, degli spiriti, delle energie sacre o profane e dei rituali legati alla fede.", en: "Understanding of divine forces, spirits, sacred or profane energies and the rituals bound to faith." }]
+      ["Atletica", "Vigore", { it: "Forza fisica, resistenza e doti atletiche: arrampicarsi, nuotare in acque agitate, saltare, sfondare ostacoli.", en: "Physical strength, endurance and athletic prowess: climbing, swimming in rough water, leaping, breaking through obstacles." }],
+      ["Sopravvivenza", "Vigore", { it: "Seguire tracce, orientarsi, resistere all'ambiente ostile e prestare un primo soccorso pratico.", en: "Following tracks, finding your way, enduring hostile surroundings and giving practical first aid." }],
+      ["Furtività", "Agilità", { it: "Muoversi nell'ombra, nascondersi e passare inosservati agli occhi dei nemici.", en: "Moving in the shadows, hiding and slipping past enemies unseen." }],
+      ["Acrobazia", "Agilità", { it: "Equilibrio, prontezza e destrezza nei movimenti: schivare, saltare, atterrare senza farsi male, liberarsi da una presa.", en: "Balance, readiness and deftness of movement: dodging, leaping, landing unhurt, slipping free of a grip." }],
+      ["Investigazione", "Mente", { it: "Percezione e indagine in un'unica abilità: notare dettagli, pericoli e indizi, e trarne deduzioni.", en: "Perception and investigation in a single skill: noticing details, dangers and clues, and drawing conclusions." }],
+      ["Sapienza", "Mente", { it: "Conoscenza arcana, mistica e medica: magia, spiriti, rituali, rimedi e il funzionamento del corpo.", en: "Arcane, mystical and medical knowledge: magic, spirits, rituals, remedies and the workings of the body." }],
+      ["Socialità", "Spirito", { it: "Il modo di trattare con gli altri, gentile o duro: convincere, negoziare, intimidire. Conta l'approccio che scegli.", en: "How you deal with others, kindly or harshly: convincing, negotiating, intimidating. The approach you choose matters." }],
+      ["Intuizione", "Spirito", { it: "Leggere le intenzioni altrui: capire chi mente, cosa nasconde un silenzio, cosa vuole davvero chi ti sta davanti.", en: "Reading other people's intentions: telling who is lying, what a silence hides, what the person before you truly wants." }]
     ];
     /* PROVVISORIO: bonus attributo per razza (ex bonus di classe, abbinamento da confermare) */
     const RAZZE = {
       Umano: {},
-      Elfo: { "Agilità": 2, Corpo: 1, Spirito: 1 },
-      Nano: { Corpo: 2, Lotta: 1, Carisma: 1 },
+      Elfo: { "Agilità": 2, Vigore: 1, Spirito: 1 },
+      Nano: { Vigore: 2, Spirito: 1, Mente: 1 }, /* PROVVISORIO: era +2 Corpo +1 Lotta +1 Carisma, cioè +3 Vigore +1 Spirito */
       Gnomo: { Spirito: 2, Mente: 1, "Agilità": 1 }
     };
     const PUNTI_RAZZA = { Umano: 4 }; /* punti attributo in più da distribuire */
@@ -443,7 +443,7 @@
         { id: "invulnerabilita", costo: 2, nome: { it: "Invulnerabilità", en: "Invulnerability" },
           desc: { it: "Ti avvolgi in un'aura di assoluto rifiuto della morte. Ogni lama scivola via, ogni stretta fallisce; per un breve attimo sei una fortezza inespugnabile.",
                   en: "You wrap yourself in an aura of utter refusal of death. Every blade slides away, every grip fails; for a brief moment you are an impregnable fortress." },
-          effetto: { it: "Immunità ai danni e successi automatici in Lotta/Corpo per 2 turni", en: "Immunity to damage and automatic success on Might/Body for 2 turns" } },
+          effetto: { it: "Immunità ai danni e successi automatici in Vigore per 2 turni", en: "Immunity to damage and automatic success on Vigour for 2 turns" } },
         { id: "scopri_carte", costo: 2, nome: { it: "Scopri Carte", en: "Reveal Cards" },
           desc: { it: "Punti lo sguardo sulla creatura di fronte a te. La sua mente si spalanca come un tomo proibito: la sua essenza, le sue ferite e i suoi punti deboli ti vengono rivelati.",
                   en: "You fix your gaze on the creature before you. Its mind opens like a forbidden tome: its essence, its wounds and its weak points are revealed to you." },
@@ -487,7 +487,7 @@
     const ATTR_MANA = { Sapiente: "Mente", Accolito: "Spirito" };
     const usaMagia = () => !!(classe && INCANTESIMI[classe]);
     /* risorsa di Guerriero e Sciamano, calcolata come il mana: 10 + modificatore (si ricarica solo riposando) */
-    const RISORSA_CLASSE = { Soldato: { id: "ira", attr: "Lotta" }, Forestiero: { id: "natura", attr: "Spirito" } };
+    const RISORSA_CLASSE = { Soldato: { id: "ira", attr: "Vigore" }, Forestiero: { id: "natura", attr: "Spirito" } };
     const incantesimiScelti = () => usaMagia() ? [...document.querySelectorAll('input[name="incantesimo"]:checked')].map(c => INCANTESIMI[classe][c.value]) : [];
 
     let classeIncantesimi = null; /* classe per cui è stata costruita la lista: cambiando classe si riparte da zero */
@@ -527,12 +527,17 @@
     const armaScelta = () => scelto("arma") ? ARMI[scelto("arma").value] : null;
     const armaturaScelta = () => scelto("armatura") ? ARMATURE[scelto("armatura").value] : null;
     const scudoScelto = () => !!scelto("scudo");
+    const bonusAgilitaCA = (arm) => Math.max(0, Math.min(modDi("Agilità"), TETTO_AGILITA[arm.nome] ?? 3));
     const malusAgilita = () => { const a = armaturaScelta(); return (a ? a.malus : 0) + (scudoScelto() ? SCUDO.malus : 0); };
     const valoreAbilita = (attr) => modDi(attr) - (attr === "Agilità" ? malusAgilita() : 0);
     const dotazioneScelta = () => [...document.querySelectorAll('input[name="dotazione"]:checked')].map(c => DOTAZIONE[c.value]);
 
     /* ---------- Costruzione liste ---------- */
-    const riepilogoClasse = (nome) => `<i><b>${t.dadoVita}</b><b>d${CLASSI[nome]}</b></i>`;
+    const CAPACITA_CLASSE = {
+      Soldato: { it: "Mente incrollabile: dopo una prova fallita puoi spendere 1 punto ira per un tiro salvezza (d20 + mod Vigore + livello, CD 10); se lo superi non perdi salute mentale.", en: "Unshakeable Mind: after a failed check you may spend 1 rage point on a saving throw (d20 + Vigour mod + level, DC 10); on a success you lose no mental health." },
+      Forestiero: { it: "Mente incrollabile: dopo una prova fallita puoi spendere 1 punto natura per un tiro salvezza (d20 + mod Spirito + livello, CD 10); se lo superi non perdi salute mentale.", en: "Unshakeable Mind: after a failed check you may spend 1 nature point on a saving throw (d20 + Spirit mod + level, DC 10); on a success you lose no mental health." }
+    };
+    const riepilogoClasse = (nome) => `<i><b>${t.dadoVita}</b><b>d${CLASSI[nome]}</b></i>` + (CAPACITA_CLASSE[nome] ? `<i class="cap-classe">${L(CAPACITA_CLASSE[nome])}</i>` : "");
     const riepilogoRazza = (nome) => PUNTI_RAZZA[nome] ? t.punti4 : NOMI.filter(n => RAZZE[nome][n]).map(n => `<i><b>${N("attributi", n)}</b><b>+${RAZZE[nome][n]}</b></i>`).join("");
     Object.keys(CLASSI).forEach(nome => {
       const l = document.createElement("label");
@@ -575,7 +580,7 @@
         `<strong class="tit">${t.dannoTit(N("danni", a.tipo))}</strong>${L(DANNI[a.tipo])}` +
         (a.mani === 2 ? `<em class="nota-mani">${t.notaDueMani}</em>` : ""));
     creaOpzioni("armature", ARMATURE, "radio", "armatura", () => "",
-      a => `<em class="tip-riga"><i><b>${t.classeArmatura}</b><b>+${a.ca}</b></i><i><b>${t.malusAgilita}</b><b>${a.malus ? "−" + a.malus : "–"}</b></i></em>${L(a.desc)}`);
+      a => `<em class="tip-riga"><i><b>${t.classeArmatura}</b><b>+${a.ca}</b></i><i><b>${t.malusAgilita}</b><b>${a.malus ? "−" + a.malus : "–"}</b></i><i><b>${t.bonusAgilita}</b><b>${TETTO_AGILITA[a.nome] ? "+" + TETTO_AGILITA[a.nome] : "–"}</b></i></em>${L(a.desc)}`);
     creaOpzioni("scudi", [SCUDO], "checkbox", "scudo", () => t.infoScudo,
       s => `<em class="tip-riga"><i><b>${t.classeArmatura}</b><b>+${s.ca}</b></i><i><b>${t.malusAgilita}</b><b>−${s.malus}</b></i></em>${Lingua.desc("Scudo")}<em class="nota-mani">${t.notaScudo}</em>`);
     creaOpzioni("dotazione", DOTAZIONE, "checkbox", "dotazione",
@@ -695,13 +700,14 @@
       document.querySelectorAll('input[name="dotazione"]').forEach(c => { c.disabled = !c.checked && dot.length >= MAX_DOTAZIONE; });
 
       const segno = (n) => (n < 0 ? "−" : "+") + " " + Math.abs(n);
-      const modC = modDi("Corpo"), modM = modDi("Spirito");
+      const modC = modDi("Vigore"), modM = modDi("Spirito");
       $("sf-v").textContent = tiro === null ? "–" : PV_BASE + tiro + modC;
       $("sf-f").textContent = tiro === null ? t.lanciaDadoVita : `${PV_BASE} + ${tiro} ${segno(modC)}`;
       $("sm-v").textContent = tiro === null ? "–" : PV_BASE + tiro + modM;
       $("sm-f").textContent = tiro === null ? t.lanciaDadoVita : `${PV_BASE} + ${tiro} ${segno(modM)}`;
-      $("ca-v").textContent = arm ? CA_BASE + arm.ca + (sc ? SCUDO.ca : 0) : "–";
-      $("ca-f").textContent = arm ? `${CA_BASE} + ${arm.ca}${sc ? " + " + SCUDO.ca : ""}` : t.scegliArmatura;
+      const bAg = arm ? bonusAgilitaCA(arm) : 0;
+      $("ca-v").textContent = arm ? CA_BASE + arm.ca + bAg + (sc ? SCUDO.ca : 0) : "–";
+      $("ca-f").textContent = arm ? `${CA_BASE} + ${arm.ca}${bAg ? " + " + bAg + " (" + N("attributi", "Agilità") + ")" : ""}${sc ? " + " + SCUDO.ca : ""}` : t.scegliArmatura;
 
       /* mana: solo Sapiente e Accolito */
       disegnaIncantesimi();
@@ -805,7 +811,7 @@
           (usaMagia() && incantesimiScelti().length !== MAX_INCANTESIMI)) return;
 
       const base = Object.fromEntries(NOMI.map((n, i) => [n, totale(i)]));
-      const stat = { ...base }; /* l'arma non modifica più la Lotta: dà il dado di danno */
+      const stat = { ...base }; /* l'arma non modifica il Vigore: dà il dado di danno */
       const pg = {
         nome: $("nome").value.trim(),
         razza, classe, livello: LIVELLO, immagine,
@@ -813,9 +819,9 @@
         statistiche: stat,
         modificatori: Object.fromEntries(Object.entries(stat).map(([k, v]) => [k, mod(v)])),
         tiroDado: { dado: CLASSI[classe], valore: tiro },
-        puntiVita: PV_BASE + tiro + mod(stat.Corpo),
+        puntiVita: PV_BASE + tiro + mod(stat.Vigore),
         saluteMentale: PV_BASE + tiro + mod(stat.Spirito),
-        classeArmatura: CA_BASE + arm.ca + (sc ? SCUDO.ca : 0), /* comprende lo scudo, se scelto */
+        classeArmatura: CA_BASE + arm.ca + (sc ? SCUDO.ca : 0), /* comprende lo scudo, se scelto; il bonus di Agilità si calcola in gioco */
         mana: usaMagia() ? MANA_BASE + mod(stat[ATTR_MANA[classe]]) : null, /* solo Sapiente (Mente) e Accolito (Spirito) */
         risorsa: RISORSA_CLASSE[classe] ? { id: RISORSA_CLASSE[classe].id, max: MANA_BASE + mod(stat[RISORSA_CLASSE[classe].attr]) } : null, /* punti ira (Guerriero) o punti natura (Sciamano) */
         incantesimi: incantesimiScelti().map(inc => ({ id: inc.id, nome: inc.nome, costo: inc.costo, desc: inc.desc, effetto: inc.effetto || null })),

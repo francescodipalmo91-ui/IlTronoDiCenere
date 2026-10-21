@@ -1015,7 +1015,7 @@
           malusEquip: (n) => ` (equipaggiamento −${n})`, malusTitle: "Il malus di armatura e scudo è già incluso nel valore",
           arma: "Arma", armatura: "Armatura", scudo: "Scudo", manoLibera: "Mano libera", libera: "Libera", manoPrimaria: "Mano primaria", manoSecondaria: "Mano secondaria",
           occDueMani: "Occupata (arma a due mani)", occScudo: (s) => `Occupata (${s})`,
-          modLotta: "mod. Lotta", mani: (n) => (n === 1 ? "1 mano" : n + " mani"),
+          modLotta: "mod. Vigore", mani: (n) => (n === 1 ? "1 mano" : n + " mani"),
           caBonus: (n) => `CA +${n}`, malusAg: (n) => `Malus Agilità −${n}`, noMalus: "Nessun malus Agilità",
           riponiBtn: (n) => `Riponi ${n}`, usaBtn: (n) => `Usa ${n}`, equipaggia: "Equipaggia", usa: "Usa", zainoVuoto: "Lo zaino è vuoto.",
           prova: (n) => `Prova di ${n}`, difficolta: (n) => `Difficoltà ${n}`, modificatore: (m) => `Modificatore ${m}`,
@@ -1441,7 +1441,7 @@
           malusEquip: (n) => ` (gear −${n})`, malusTitle: "The armor and shield penalty is already included in the value",
           arma: "Weapon", armatura: "Armor", scudo: "Shield", manoLibera: "Free hand", libera: "Free", manoPrimaria: "Main hand", manoSecondaria: "Off hand",
           occDueMani: "Busy (two-handed weapon)", occScudo: (s) => `Busy (${s})`,
-          modLotta: "Might mod.", mani: (n) => (n === 1 ? "1 hand" : n + " hands"),
+          modLotta: "Vigour mod.", mani: (n) => (n === 1 ? "1 hand" : n + " hands"),
           caBonus: (n) => `AC +${n}`, malusAg: (n) => `Agility penalty −${n}`, noMalus: "No Agility penalty",
           riponiBtn: (n) => `Put away ${n}`, usaBtn: (n) => `Use ${n}`, equipaggia: "Equip", usa: "Use", zainoVuoto: "Your pack is empty.",
           prova: (n) => `${n} check`, difficolta: (n) => `Difficulty ${n}`, modificatore: (m) => `Modifier ${m}`,
@@ -2057,7 +2057,7 @@
           discesa: { titolo: "Discesa in cantina", alt: "Una stretta scala di pietra scende tra alte rastrelliere di legno cariche di bottiglie impolverate e ragnatele; due fiaccole dalla fiamma azzurra illuminano l'arco buio in fondo ai gradini." },
           stanza: {
             intro: ["Scendi gli ultimi gradini della scala a chiocciola. Il bagliore azzurro della fiaccola resta alle tue spalle, e la cantina ti accoglie in un buio pesto: non distingui nemmeno le tue mani."], /* PROVVISORIO: descrizione in arrivo */
-            nota: "È buio pesto. Puoi muoverti con cautela (Furtività), tendere l'orecchio (Percezione), cercare a tentoni (Indagare) oppure fare luce con una torcia o con l'incantesimo Luce. Per tornare su scrivi «torno su».",
+            nota: "È buio pesto. Puoi muoverti con cautela (Furtività), tendere l'orecchio o cercare a tentoni (Investigazione) oppure fare luce con una torcia o con l'incantesimo Luce. Per tornare su scrivi «torno su».",
             fallbackLibera: ["Nel buio pesto della cantina non riesci a fare granché. Puoi muoverti con cautela, tendere l'orecchio, cercare a tentoni o fare luce."],
             ritorno: ["Scendi di nuovo la scala a chiocciola. Il bagliore azzurro resta alle tue spalle e il buio della cantina ti inghiotte."] /* PROVVISORIO */
           },
@@ -2272,7 +2272,7 @@
           discesa: { titolo: "Descent into the cellar", alt: "A narrow stone staircase goes down between tall wooden racks laden with dusty bottles and cobwebs; two torches with blue flames light the dark arch at the bottom of the steps." },
           stanza: {
             intro: ["You descend the last steps of the spiral staircase. The blue glow of the torch stays behind you, and the cellar greets you with pitch darkness: you cannot even make out your own hands."],
-            nota: "It is pitch dark. You can move carefully (Stealth), strain your ears (Perception), grope around (Investigation) or make light with a torch or the Light spell. To go back up write “I go back up”.",
+            nota: "It is pitch dark. You can move carefully (Stealth), strain your ears or grope around (Investigation) or make light with a torch or the Light spell. To go back up write “I go back up”.",
             fallbackLibera: ["In the pitch darkness of the cellar there is little you can do. You can move carefully, strain your ears, grope around or make light."],
             ritorno: ["You go down the spiral staircase again. The blue glow stays behind you and the darkness of the cellar swallows you."]
           },
@@ -2897,7 +2897,7 @@
             pari: (x, y) => `Agilità pari: si tira un d20 a testa. Tu ${x}, Ettore ${y}.`,
             iniziaNem: "Ettore è più rapido: agisce per primo.",
             manuale: (m, dado, inc) => [
-              `Per colpire tiri un d20 e aggiungi il modificatore di Lotta (${fmtN(m)}): se il totale supera la Classe armatura di Ettore, lo colpisci e infliggi ${dado} ${fmtN(m)} danni.`,
+              `Per colpire tiri un d20 e aggiungi il modificatore di Vigore (${fmtN(m)}): se il totale supera la Classe armatura di Ettore, lo colpisci e infliggi ${dado} ${fmtN(m)} danni.`,
               "Se sul d20 esce 20 è un colpo critico: colpisci sempre e tiri il doppio dei dadi di danno. Vale anche per Ettore.",
               "A ogni turno puoi compiere un'azione: «attacco Ettore», «colpisco con la torcia» oppure «bevo la pozione»." + (inc ? " Puoi anche lanciare un incantesimo, per esempio «lancio " + inc + "»." : ""),
               "Ettore attacca con fendenti e affondi di spada. È un combattente esperto, ma stanco: se lo metti alle strette, potrebbe arrendersi."
@@ -2937,7 +2937,7 @@
               aumento_potenza: "Un'ondata di vigore divino ti pervade: +2 a tutte le caratteristiche per 3 turni."
             },
             tsTitolo: "Tiro salvezza di Ettore",
-            tsRegola: (cd) => `Ettore prova a resistere al tuo incantesimo: tira un d20 e aggiunge il suo modificatore di Corpo. Se arriva almeno a ${cd} (la difficoltà dei tuoi incantesimi) resiste e l'incantesimo non ha effetto; altrimenti ne subisce l'effetto.`,
+            tsRegola: (cd) => `Ettore prova a resistere al tuo incantesimo: tira un d20 e aggiunge il suo modificatore di Vigore. Se arriva almeno a ${cd} (la difficoltà dei tuoi incantesimi) resiste e l'incantesimo non ha effetto; altrimenti ne subisce l'effetto.`,
             tsTiro: (d, m, tot, cd) => `Tiro di Ettore: d20 ${d} ${m < 0 ? "−" : "+"} ${Math.abs(m)} = ${tot} contro difficoltà ${cd}`,
             tsEffetto: { stop: "Ettore resta pietrificato, incapace di muoversi, per 2 turni.", folgorazione: "Ettore resta paralizzato dalla scarica per 2 turni.", accecare: "Ettore è accecato: per 2 turni avrà il 50% di possibilità di mancarti." },
             resistito: "Ettore scuote il capo e si libera dalla presa dell'incantesimo: non ha alcun effetto.",
@@ -3444,7 +3444,7 @@
               aumento_potenza: "A wave of divine vigour courses through you: +2 to all attributes for 3 turns."
             },
             tsTitolo: "Ettore's saving throw",
-            tsRegola: (cd) => `Ettore tries to resist your spell: he rolls a d20 and adds his Body modifier. If he reaches at least ${cd} (your spell difficulty) he resists and the spell has no effect; otherwise he suffers the effect.`,
+            tsRegola: (cd) => `Ettore tries to resist your spell: he rolls a d20 and adds his Vigour modifier. If he reaches at least ${cd} (your spell difficulty) he resists and the spell has no effect; otherwise he suffers the effect.`,
             tsTiro: (d, m, tot, cd) => `Ettore's roll: d20 ${d} ${m < 0 ? "−" : "+"} ${Math.abs(m)} = ${tot} vs difficulty ${cd}`,
             tsEffetto: { stop: "Ettore stays frozen, unable to move, for 2 turns.", folgorazione: "Ettore stays paralysed by the shock for 2 turns.", accecare: "Ettore is blinded: for 2 turns he has a 50% chance to miss you." },
             resistito: "Ettore shakes his head and shrugs off the spell's grip: it has no effect.",
@@ -3536,6 +3536,14 @@
             fallimento: ["Le parole sono scritte in una lingua antica, piena di abbreviazioni e di sigle che non conosci. Più le guardi, più si confondono. Richiudi il libro con un senso di vertigine."],
             gia: { ok: "Hai già letto tutto ciò che il libro di preghiere poteva dirti.", ko: "" },
             lascia: "Richiudi il libro e lo rimetti sul leggio."
+          },
+          cappella_tracce: { /* PROVVISORIO: testi da riscrivere */
+            fisso: ["Il pavimento della cappella è coperto da un velo di polvere e cenere. Qualcuno è passato di qui, più di una volta."],
+            azione: "Ti chini sulle lastre e cerchi i segni di chi è passato di qui.",
+            successo: ["Tra la polvere trovi impronte di stivali, sempre le stesse, che vanno e vengono dalla botola della cripta: un solo uomo, che trascina appena la gamba sinistra.", "Sui gradini c'è cera fresca e dal basso sale un filo di fumo: là sotto qualcuno tiene acceso un fuoco. Chi si nasconde nella cripta è sveglio, ma non ti aspetta.", "Scendendo in silenzio sarà più facile coglierlo di sorpresa (Furtività: CD 10 invece di 13)."],
+            fallimento: ["La polvere è stata calpestata così tante volte che le impronte si confondono in un'unica macchia grigia. Non riesci a capire chi sia passato di qui, né quando."],
+            gia: { ok: "Le impronte portano alla botola della cripta: là sotto c'è un uomo, sveglio, accanto a un fuoco.", ko: "Hai già cercato tracce sul pavimento: la polvere non ti dirà altro." },
+            lascia: "Lasci perdere le tracce."
           },
           cripta_furtiva: {
             fisso: [], azione: "Scendi la scala della cripta un gradino alla volta, trattenendo il respiro e tenendoti all'ombra del muro.",
@@ -3673,6 +3681,14 @@
             fallimento: ["The words are written in an ancient tongue, full of abbreviations and signs you do not know. The longer you look, the more they blur. You close the book with a sense of vertigo."],
             gia: { ok: "You have already read everything the prayer book could tell you.", ko: "" },
             lascia: "You close the book and put it back on the lectern."
+          },
+          cappella_tracce: {
+            fisso: ["The chapel floor is covered by a veil of dust and ash. Someone has passed this way, more than once."],
+            azione: "You crouch over the flagstones and look for signs of whoever came this way.",
+            successo: ["In the dust you find boot prints, always the same ones, coming and going from the crypt hatch: a single man, slightly dragging his left leg.", "There is fresh wax on the steps and a thread of smoke rises from below: someone down there keeps a fire lit. Whoever hides in the crypt is awake, but not expecting you.", "If you go down quietly it will be easier to take him by surprise (Stealth: DC 10 instead of 13)."],
+            fallimento: ["The dust has been trampled so many times that the prints blur into a single grey smudge. You cannot tell who came this way, or when."],
+            gia: { ok: "The prints lead to the crypt hatch: down there is a man, awake, beside a fire.", ko: "You have already searched the floor for tracks: the dust will tell you nothing more." },
+            lascia: "You leave the tracks be."
           },
           cripta_furtiva: {
             fisso: [], azione: "You go down the crypt stair one step at a time, holding your breath and keeping to the shadow of the wall.",
@@ -3964,13 +3980,21 @@
         ira: "Punti ira", natura: "Punti natura", livelloMax: "livello massimo",
         livello: {
           titolo: (n) => `Livello ${n}!`,
-          salute: (dv, t, da, a) => `Salute fisica: 1d${dv} = ${t.d} ${fmtN(t.m)} (mod. Corpo) → +${t.v} · massimo ${da} → ${a}`,
+          salute: (dv, t, da, a) => `Salute fisica: 1d${dv} = ${t.d} ${fmtN(t.m)} (mod. Vigore) → +${t.v} · massimo ${da} → ${a}`,
           mente: (dv, t, da, a) => `Salute mentale: 1d${dv} = ${t.d} ${fmtN(t.m)} (mod. Spirito) → +${t.v} · massimo ${da} → ${a}`,
           risorsa: (nome, dv, t, da, a) => `${nome}: 1d${dv} = ${t.d} ${fmtN(t.m)} → +${t.v} · massimo ${da} → ${a}`,
           abilita: (n) => `Le abilità addestrate ora aggiungono +${n}.`,
           massimo: "Hai raggiunto il livello massimo."
         },
         pe: (n, tot) => `+${n} punti esperienza (totale ${tot}).`,
+        incrollabile: {
+          offerta: (ris, attr, m, cd) => `Mente incrollabile: puoi spendere 1 ${ris.toLowerCase().replace(/^punti/, "punto")} per resistere alla fitta (tiro salvezza d20 ${fmtN(m)} — ${attr} + livello — contro CD ${cd}).`,
+          usa: (ris) => `Resisti (−1 ${ris.toLowerCase().replace(/^punti/, "punto")})`, no: "Subisci la fitta",
+          esito: (d, m, tot, cd, ok) => `Tiro salvezza: d20 ${d} ${fmtN(m)} = ${tot} contro CD ${cd} — ${ok ? "superato" : "fallito"}`,
+          ok: (da, a) => `Stringi i denti e la fitta si spegne prima di affondare. Salute mentale ${da} → ${a}`,
+          ko: "Ci provi, ma la fitta passa lo stesso: qualcosa dentro di te ha ceduto.",
+          costo: (ris, a, max) => `${ris}: ${a} / ${max}`
+        },
         riposo: {
           titolo: (g) => `Riposo — giorno ${g}:`,
           razioni: (tiro, mangiate, resto) => `Razioni di Adele: 1d4 = ${tiro} · ne consumi ${mangiate} · ne restano ${resto}`,
@@ -4014,13 +4038,21 @@
         ira: "Rage points", natura: "Nature points", livelloMax: "max level",
         livello: {
           titolo: (n) => `Level ${n}!`,
-          salute: (dv, t, da, a) => `Physical health: 1d${dv} = ${t.d} ${fmtN(t.m)} (Body mod.) → +${t.v} · maximum ${da} → ${a}`,
+          salute: (dv, t, da, a) => `Physical health: 1d${dv} = ${t.d} ${fmtN(t.m)} (Vigour mod.) → +${t.v} · maximum ${da} → ${a}`,
           mente: (dv, t, da, a) => `Mental health: 1d${dv} = ${t.d} ${fmtN(t.m)} (Spirit mod.) → +${t.v} · maximum ${da} → ${a}`,
           risorsa: (nome, dv, t, da, a) => `${nome}: 1d${dv} = ${t.d} ${fmtN(t.m)} → +${t.v} · maximum ${da} → ${a}`,
           abilita: (n) => `Trained skills now add +${n}.`,
           massimo: "You have reached the maximum level."
         },
         pe: (n, tot) => `+${n} experience points (total ${tot}).`,
+        incrollabile: {
+          offerta: (ris, attr, m, cd) => `Unshakeable Mind: you may spend 1 ${ris.toLowerCase().replace(/ points$/, " point")} to resist the pang (saving throw d20 ${fmtN(m)} — ${attr} + level — against DC ${cd}).`,
+          usa: (ris) => `Resist (−1 ${ris.toLowerCase().replace(/ points$/, " point")})`, no: "Take the pang",
+          esito: (d, m, tot, cd, ok) => `Saving throw: d20 ${d} ${fmtN(m)} = ${tot} against DC ${cd} — ${ok ? "success" : "failure"}`,
+          ok: (da, a) => `You grit your teeth and the pang fades before it sinks in. Mental health ${da} → ${a}`,
+          ko: "You try, but the pang gets through anyway: something inside you has given way.",
+          costo: (ris, a, max) => `${ris}: ${a} / ${max}`
+        },
         riposo: {
           titolo: (g) => `Rest — day ${g}:`,
           razioni: (tiro, mangiate, resto) => `Adele's rations: 1d4 = ${tiro} · you eat ${mangiate} · ${resto} left`,
@@ -4173,6 +4205,7 @@
       cappella_vetrata: { prova: { abilita: "Misticismo", dado: 20, cd: 14 }, poi: (ok) => { if (ok) { usate.adele_viva = true; salvaUsate(); sblocco([A2.vetrataViva], "mis"); } } },
       cappella_libro: { prova: { abilita: "Arcano", dado: 20, cd: 12 }, riprova: true, poi: (ok) => { if (ok) libroPreghiere(); } },
       cripta_furtiva: { prova: { abilita: "Furtività", dado: 20, cd: 13 }, nessunDanno: true, poi: (ok) => { usate.ettore_sorpreso = ok; salvaUsate(); setTimeout(() => fuoriDallaTendina(() => vai("cripta")), 900); } },
+      cappella_tracce: { prova: { abilita: "Sopravvivenza", dado: 20, cd: 12 }, poi: (ok) => { if (ok) { usate.ettore_tracce = true; salvaUsate(); applicaTracce(); } } },
       cripta_tomba: {},
       cripta_nicchie: { prova: { abilita: "Misticismo", dado: 20, cd: 12 }, poi: (ok) => { if (ok) trovaPagina(4); } },
       cripta_sarcofago: { prova: { abilita: "Atletica", dado: 20, cd: 14 }, riprova: true, nessunDanno: true, poi: (ok) => sarcofago(ok) },
@@ -4192,9 +4225,20 @@
     PROVE_DICHIARATE.cantina = { "Furtività": "cant_furtivita", Percezione: "cant_percezione", Indagare: "cant_indagare" };
     PROVE_DICHIARATE.dispensa = { Percezione: "disp_percezione", Indagare: "disp_indagare" };
     PROVE_DICHIARATE.giardino = { Misticismo: "fontana_mis", Arcano: "fontana_arc", Medicina: "fontana_med", Percezione: "giardino_statue" };
-    PROVE_DICHIARATE.cappella = { Misticismo: "cappella_vetrata", Arcano: "cappella_libro", "Furtività": "cripta_furtiva" };
+    PROVE_DICHIARATE.cappella = { Misticismo: "cappella_vetrata", Arcano: "cappella_libro", "Furtività": "cripta_furtiva", Sopravvivenza: "cappella_tracce" };
     PROVE_DICHIARATE.cripta = { Misticismo: "cripta_nicchie", Atletica: "cripta_sarcofago" };
     for (const id in MECCANICA) LUOGHI[id] = { ...MECCANICA[id], ...TX.luoghi[id] };
+    /* tracce di Ettore trovate con Sopravvivenza: scendere in silenzio diventa più facile */
+    function applicaTracce() { if (usate.ettore_tracce && LUOGHI.cripta_furtiva && LUOGHI.cripta_furtiva.prova) LUOGHI.cripta_furtiva.prova = { ...LUOGHI.cripta_furtiva.prova, cd: 10 }; }
+    /* risposte generiche per le abilità nuove (quando nella stanza non c'è una prova per loro) */
+    Object.assign(TESTI.it.prove.generiche, {
+      Sopravvivenza: ["Non ci sono tracce da seguire né insidie dell'ambiente da affrontare, qui.", "Il luogo non offre nulla che richieda istinto di sopravvivenza o primo soccorso."],
+      Intuizione: ["Non c'è nessuno qui di cui leggere le intenzioni.", "Senza un interlocutore, il tuo istinto non ha nulla su cui lavorare."]
+    });
+    Object.assign(TESTI.en.prove.generiche, {
+      Sopravvivenza: ["There are no tracks to follow and no hazards of the surroundings to face here.", "This place offers nothing that calls for survival instinct or first aid."],
+      Intuizione: ["There is no one here whose intentions you could read.", "Without someone to face, your instinct has nothing to work on."]
+    });
 
     const STANZE_FATTI = {
       foresta: "Radura nella foresta al tramonto, cielo arancione e porpora tra alberi secolari dai rami contorti; l'ingresso di una grotta nella roccia, incorniciato da radici e muschio, buio all'interno; davanti l'accampamento del personaggio: falò crepitante con legna accatastata accanto, zaino da esploratore con giaciglio arrotolato, coperta a righe sull'erba, lanterna quasi a secco, un pugnale su un ciocco e una spada appoggiata alla roccia. Nei villaggi la grotta è detta dimora del male: nessuno ne è mai uscito vivo.",
@@ -4383,6 +4427,7 @@
         if (torna || /giardin|garden|fontan|fountain|fuori|outside/.test(t)) return "torna";
         if (atrio || /\bcasa\b|house|manor|conversazion|drawing|pranzo|dining|cucin|kitchen/.test(t)) return "casa_lontana";
         if (/\blibr[oi]\b|preghier\w*|leggio|ampoll\w*|\bbooks?\b|prayer|lectern|vials?/.test(t)) return "cappella_libro";
+        if (/tracc\w*|impront\w*|\borm[ae]\b|pavimento|polvere|tracks?|footprints?|prints|\bfloor\b|\bdust\b/.test(t)) return "cappella_tracce";
         if (/altar\w*|tovagli\w*|\bcloth\b/.test(t)) return "cappella_altare_scelta";
         if (/vetrat\w*|finestr\w*|\bdama\b|cavalier\w*|crep[ae]\b|window|stained|glass|\blady\b|knight|crack\w*/.test(t)) return "cappella_vetrata";
         if (/\bpanc[ah]\w*|tacch\w*|incision\w*|\bpews?\b|bench\w*|notch\w*/.test(t)) return "cappella_panche";
@@ -4479,11 +4524,54 @@
     if (!pg || !pg.classe) { pg = null; window.location.replace("index.html"); }
     else if (!pg.equipaggiamento) { pg = null; window.location.replace("index.html"); }
 
+    /* =====================================================================
+       REVISIONE ATTRIBUTI E ABILITÀ
+       4 attributi: Vigore (ex Lotta + Corpo), Agilità, Mente, Spirito (ex Carisma + Spirito).
+       8 abilità: Atletica, Sopravvivenza (Vigore) · Furtività, Acrobazia (Agilità) ·
+                  Investigazione = Percezione + Indagare, Sapienza = Arcano + Misticismo + Medicina (Mente) ·
+                  Socialità = Persuasione + Intimidire, Intuizione (Spirito).
+       Le prove scritte nei testi usano ancora i vecchi nomi: qui vengono tradotti nei nuovi.
+       I personaggi creati prima vengono convertiti una volta sola (il valore più alto dei due attributi uniti).
+       ===================================================================== */
+    const MAPPA_ATTR = { Lotta: "Vigore", Corpo: "Vigore", Carisma: "Spirito" };
+    const MAPPA_ABILITA = { Indagare: "Investigazione", Percezione: "Investigazione", Medicina: "Sapienza", Arcano: "Sapienza", Misticismo: "Sapienza", Persuasione: "Socialità", Intimidire: "Socialità" };
+    const abNuova = (n) => MAPPA_ABILITA[n] || n;
+    /* le statistiche rispondono anche ai vecchi nomi (statistiche.Lotta → Vigore) */
+    const conAttrVecchi = (st) => new Proxy(st, { get: (o, k) => (typeof k === "string" && !(k in o) && MAPPA_ATTR[k]) ? o[MAPPA_ATTR[k]] : o[k] });
+    function convertiPg(p) {
+      const st = p.statistiche || {};
+      if (!("Lotta" in st) && !("Corpo" in st) && !("Carisma" in st)) return false;
+      const unisci = (o) => { const n = (k) => Number(o[k]) || 10; return { Vigore: Math.max(n("Lotta"), n("Corpo")), "Agilità": n("Agilità"), Mente: n("Mente"), Spirito: Math.max(n("Spirito"), n("Carisma")) }; };
+      p.statistiche = unisci(st);
+      if (p.statisticheBase) p.statisticheBase = unisci(p.statisticheBase);
+      p.modificatori = Object.fromEntries(Object.entries(p.statistiche).map(([k, v]) => [k, Math.floor((v - 10) / 2)]));
+      const viste = new Set();
+      p.abilita = (p.abilita || []).map(a => ({ ...a, nome: abNuova(a.nome), attributo: MAPPA_ATTR[a.attributo] || a.attributo })).filter(a => !viste.has(a.nome) && viste.add(a.nome));
+      const ris = { Soldato: ["ira", "Vigore"], Forestiero: ["natura", "Spirito"] }[p.classe];
+      if (ris) p.risorsa = { id: ris[0], max: 10 + Math.floor((p.statistiche[ris[1]] - 10) / 2) };
+      return true;
+    }
+    if (pg && convertiPg(pg)) { /* il personaggio convertito si salva subito, anche nel suo posto */
+      try {
+        localStorage.setItem("personaggio", JSON.stringify(pg));
+        const n = localStorage.getItem("slot_attivo"), sl = n && JSON.parse(localStorage.getItem("slot" + n));
+        if (sl) { sl.pg = pg; localStorage.setItem("slot" + n, JSON.stringify(sl)); }
+      } catch (e) {}
+    }
+    if (pg) pg.statistiche = conAttrVecchi(pg.statistiche || {});
+    /* Agilità: il suo modificatore va sulla Classe armatura, fino al tetto dell'armatura indossata */
+    const TETTO_AGILITA = { "Armatura leggera": 3, "Armatura media": 2, "Armatura pesante": 0 };
+    function bonusAgilitaCA() {
+      const eq = (pg && pg.equipaggiamento) || {};
+      const tetto = eq.armatura ? (TETTO_AGILITA[eq.armatura] ?? 3) : 3;
+      return Math.max(0, Math.min(Math.floor(((Number(pg.statistiche["Agilità"]) || 10) - 10) / 2), tetto));
+    }
+
     const fmtN = (n) => (n < 0 ? "−" : "+") + Math.abs(n);
     const mod = (v) => Math.floor((Number(v) - 10) / 2);
     const spirito = () => Number(pg.statistiche && pg.statistiche.Spirito) || 0;
     /* Tutte le abilità: quelle scelte in creazione aggiungono il livello al modificatore dell'attributo */
-    const ABILITA_TUTTE = [["Atletica", "Lotta"], ["Furtività", "Agilità"], ["Acrobazia", "Agilità"], ["Indagare", "Mente"], ["Medicina", "Mente"], ["Arcano", "Mente"], ["Misticismo", "Mente"], ["Percezione", "Corpo"], ["Persuasione", "Carisma"], ["Intimidire", "Carisma"]];
+    const ABILITA_TUTTE = [["Atletica", "Vigore"], ["Sopravvivenza", "Vigore"], ["Furtività", "Agilità"], ["Acrobazia", "Agilità"], ["Investigazione", "Mente"], ["Sapienza", "Mente"], ["Socialità", "Spirito"], ["Intuizione", "Spirito"]];
     let scudo = null; /* lo scudo imbracciato (null se non c'è o è nello zaino) */
     const eqPg = () => (pg && pg.equipaggiamento) || {};
     /* malus alle abilità di Agilità: armatura + scudo, solo se imbracciato */
@@ -4492,11 +4580,12 @@
     const caAttuale = () => {
       if (pg.classeArmatura == null) return "—";
       const base = Number(pg.classeArmatura) - (eqPg().scudo ? Number(eqPg().scudo.ca) || 0 : 0);
-      return base + (scudo ? Number(scudo.ca) || 0 : 0) + (anelloAlDito() ? 1 : 0); /* l'anello del Primo Vespera: +1 */
+      return base + bonusAgilitaCA() + (scudo ? Number(scudo.ca) || 0 : 0) + (anelloAlDito() ? 1 : 0); /* l'anello del Primo Vespera: +1 */
     };
     function anelloAlDito() { return !!(usate && usate.anello_indossato && zaino.some(x => x.id === "anello_vespera")); }
-    const addestrata = (n) => (pg.abilita || []).some(a => a.nome === n);
+    const addestrata = (n) => (pg.abilita || []).some(a => abNuova(a.nome) === abNuova(n));
     const valoreAbilita = (n) => {
+      n = abNuova(n);
       const attr = (ABILITA_TUTTE.find(x => x[0] === n) || [])[1];
       const base = attr ? mod(Number(pg.statistiche && pg.statistiche[attr]) || 10) : 0;
       return base - (attr === "Agilità" ? malusArmatura() : 0) + (addestrata(n) ? (Number(pg.livello) || 1) : 0);
@@ -4515,7 +4604,7 @@
        - Livello massimo 5. PE per salire: 500 (1→2), 1000 (2→3), 1500 (3→4), 2000 (4→5): totali 500 / 1500 / 3000 / 5000.
        - Ricompense: 150 PE mastini generici, 350 mastini specifici, 500 nemici che custodiscono ricompense o segreti
          (la stessa se il nemico viene risparmiato).
-       - A ogni livello: salute fisica + (dado vita + mod Corpo), salute mentale + (dado vita + mod Spirito),
+       - A ogni livello: salute fisica + (dado vita + mod Vigore), salute mentale + (dado vita + mod Spirito),
          mana / punti ira / punti natura + (dado vita + mod dell'attributo della risorsa). Minimo +1 ciascuno.
        - Guerriero: punti ira (10 + mod Lotta); Sciamano: punti natura (10 + mod Spirito). Tutte le risorse si ricaricano solo riposando.
        - Livello e crescita fanno parte della partita (salvataggio), il personaggio di partenza resta quello della creazione.
@@ -4523,7 +4612,7 @@
     const LIVELLO_MAX = 5;
     const SOGLIE_PE = [0, 500, 1500, 3000, 5000]; /* PE totali per raggiungere il livello 2, 3, 4, 5 (indice = livello attuale) */
     const PE_NEMICI = { mastino: 150, mastinoSpecifico: 350, custode: 500 };
-    const RISORSA_CLASSE = { Soldato: { id: "ira", attr: "Lotta" }, Forestiero: { id: "natura", attr: "Spirito" } };
+    const RISORSA_CLASSE = { Soldato: { id: "ira", attr: "Vigore" }, Forestiero: { id: "natura", attr: "Spirito" } };
     const ATTR_RISORSA_MAGIA = { Sapiente: "Mente", Accolito: "Spirito" };
     const DADO_VITA = { Soldato: 10, Forestiero: 8, Sapiente: 6, Accolito: 6 };
     const RAZIONI_MAX = 10, RAZIONI_AL_GIORNO = 2;
@@ -4558,7 +4647,7 @@
       const st = (a) => mod(Number(pg.statistiche && pg.statistiche[a]) || 10);
       const t = (m) => { const d = tira(dv); return { d, m, v: Math.max(1, d + m) }; };
       const prima = { s: saluteMaxPg(), m: maxMentali(), r: manaMax() != null ? manaMax() : (risorsaPg() ? risorsaPg().max : null) };
-      const ts = t(st("Corpo")), tm = t(st("Spirito"));
+      const ts = t(st("Vigore")), tm = t(st("Spirito"));
       crescita.salute += ts.v; crescita.mente += tm.v;
       const righe = [RG.livello.salute(dv, ts, prima.s, saluteMaxPg()), RG.livello.mente(dv, tm, prima.m, maxMentali())];
       const attrR = (RISORSA_CLASSE[pg.classe] || {}).attr || ATTR_RISORSA_MAGIA[pg.classe];
@@ -4582,7 +4671,7 @@
       const max = maxMentali(), ora = mentaliAttuali(), r = max ? ora / max : 1;
       document.body.classList.toggle("mente-incrinata", r <= 0.5 && r > 0.25);
       document.body.classList.toggle("mente-spezzata", r <= 0.25);
-      if (ora <= 0 && !finePartita && !attesaGuardiano) attesaGuardiano = setTimeout(() => { attesaGuardiano = null; if (mentaliAttuali() <= 0) diventaGuardiano(); }, 1800);
+      if (ora <= 0 && !finePartita && !attesaGuardiano && !offertaIncrollabile) attesaGuardiano = setTimeout(() => { attesaGuardiano = null; if (mentaliAttuali() <= 0) diventaGuardiano(); }, 1800);
     }
     function diventaGuardiano() {
       if (finePartita) return;
@@ -4604,6 +4693,37 @@
       if (v.tipo !== "narra" || v.box || v.prova || !v.righe || !v.righe.length || v.sussurro) return;
       if (Math.random() >= 0.35) return;
       v.distorta = true; v.sussurro = RG.sussurri[Math.floor(Math.random() * RG.sussurri.length)];
+    }
+
+    /* ---------- Mente incrollabile (Guerriero e Sciamano) ----------
+       dopo una prova fallita si può spendere 1 punto ira / natura per un tiro salvezza:
+       d20 + mod Vigore (Guerriero) o Spirito (Sciamano) + livello, CD 10; se riesce, il punto mentale perso torna */
+    const CD_INCROLLABILE = 10;
+    let offertaIncrollabile = false;
+    const attrIncrollabile = () => (pg.classe === "Soldato" ? "Vigore" : "Spirito");
+    const modIncrollabile = () => Math.floor(((Number(pg.statistiche[attrIncrollabile()]) || 10) - 10) / 2) + livelloPg();
+    const puoIncrollabile = () => !!(RISORSA_CLASSE[pg.classe] && (risorsaAttuale() || 0) >= 1 && !finePartita);
+    function offriIncrollabile() {
+      if (!offertaIncrollabile) return;
+      setTimeout(() => {
+        if (!elAzioni.hidden || (typeof scontro !== "undefined" && scontro) || !puoIncrollabile()) { offertaIncrollabile = false; statoMente(); return; } /* è partito altro: niente offerta */
+        const R = RG.incrollabile;
+        aggiungi({ tipo: "sistema", box: "cap", righe: [R.offerta(nomeRisorsa(), N("attributi", attrIncrollabile()), modIncrollabile(), CD_INCROLLABILE)] });
+        scelte([
+          { testo: R.usa(nomeRisorsa()), fn: () => tiroIncrollabile() },
+          { testo: R.no, fn: () => { chiudiScelte(); offertaIncrollabile = false; statoMente(); } }
+        ]);
+      }, 0);
+    }
+    function tiroIncrollabile() {
+      chiudiScelte();
+      const R = RG.incrollabile, m = modIncrollabile(), d = tira(20), tot = d + m, ok = tot >= CD_INCROLLABILE;
+      pg.risorsaUsata = (pg.risorsaUsata || 0) + 1;
+      const da = mentaliAttuali();
+      if (ok) pg.dannoMentale = Math.max(0, (pg.dannoMentale || 0) - 1);
+      offertaIncrollabile = false;
+      disegnaVitali(); aggiornaMentali(); modificato();
+      aggiungi({ tipo: "narra", box: ok ? "ok" : "ko", esito: R.esito(d, m, tot, CD_INCROLLABILE, ok), righe: [ok ? R.ok(da, mentaliAttuali()) : R.ko, R.costo(nomeRisorsa(), risorsaAttuale(), risorsaPg().max)] });
     }
 
     /* ---------- Morte: la casa non lascia morire i suoi prigionieri ----------
@@ -6150,8 +6270,11 @@
           chiudiScelte();
           const testoEsito = ok ? ((dopoFallimento && l.successoDopoFallimento) || l.successo) : l.fallimento;
           const fitta = [];
+          let fittaSubita = false;
           if (!ok && !l.nessunDanno) { /* prova fallita: una fitta alla mente, −1 salute mentale (come nel tutorial) */
             const prima = Math.max(0, maxMentali() - (pg.dannoMentale || 0));
+            fittaSubita = prima > 0;
+            if (fittaSubita && puoIncrollabile()) offertaIncrollabile = true; /* il game over aspetta la scelta */
             if (prima > 0) pg.dannoMentale = (pg.dannoMentale || 0) + 1;
             salvaPg(); aggiornaMentali(); scuotiScheda();
             const fitte = l.fitte || U.fitte;
@@ -6167,6 +6290,7 @@
           if (ok && l.dopo === "giocattoli") offriGiocattoli();
           if (l.stanza) controllaDannoStanza(l.stanza);
           if (l.poi) l.poi(ok);
+          if (fittaSubita) offriIncrollabile();
         } },
         { testo: U.lasciaPerdere, fn: () => { chiudiScelte(); aggiungi({ tipo: "narra", righe: [l.lascia] }); } }
       ]);
@@ -6950,12 +7074,24 @@
        Si riconosce il nome dell'abilità (italiano o inglese). Se la stanza prevede un riscontro per quell'abilità
        (TX.prove.stanze) si mostra quello, altrimenti una delle risposte generiche a caso. */
     const PROVE_ABILITA = [
-      ["Atletica", /\batletica|\bathletics?\b/], ["Furtività", /\bfurtivita|\bstealth\b/], ["Acrobazia", /\bacrobazi|\bacrobatics?\b/],
-      ["Indagare", /\bindagare\b|\bindagine|\binvestigation\b/], ["Medicina", /\bmedicina\b|\bmedicine\b/], ["Arcano", /\barcano\b|\barcana\b/],
+      ["Atletica", /\batletica|\bathletics?\b/], ["Sopravvivenza", /\bsopravvivenza|\bsurvival\b/],
+      ["Furtività", /\bfurtivita|\bstealth\b/], ["Acrobazia", /\bacrobazi|\bacrobatics?\b/],
+      ["Investigazione", /\binvestigazion\w*|\binvestigation\b/], ["Sapienza", /\bsapienza\b|\blore\b/],
+      ["Socialità", /\bsocialita\b|\binfluence\b|\binfluenza\b/], ["Intuizione", /\bintuizion\w*|\binsight\b/],
+      /* vecchi nomi: si riconoscono ancora e puntano alla prova giusta della stanza */
+      ["Indagare", /\bindagare\b|\bindagine/], ["Medicina", /\bmedicina\b|\bmedicine\b/], ["Arcano", /\barcano\b|\barcana\b/],
       ["Misticismo", /\bmisticismo|\bmysticism\b/], ["Percezione", /\bpercezione|\bperception\b/],
       ["Persuasione", /\bpersuasione|\bpersuasion\b/], ["Intimidire", /\bintimidire|\bintimidazione|\bintimidation\b/]
     ];
+    /* abilità accorpate: la prova della stanza è quella della vecchia abilità non ancora superata */
+    const CANDIDATE_ABILITA = { Investigazione: ["Percezione", "Indagare"], Sapienza: ["Arcano", "Misticismo", "Medicina"], "Socialità": ["Persuasione", "Intimidire"] };
     function provaAbilita(nome) {
+      if (luogo === "cantina" && nome === "Investigazione") nome = "Indagare"; /* nella cantina illuminata si cerca la scaletta */
+      const cand = CANDIDATE_ABILITA[nome];
+      if (cand) {
+        const disp = PROVE_DICHIARATE[luogo] || {};
+        nome = cand.find(c => disp[c] && usate[disp[c]] !== "ok") || cand.find(c => disp[c]) || cand[Math.floor(Math.random() * cand.length)];
+      }
       if (luogo === "cantina" && nome === "Indagare" && usate.cantina_cane === "sconfitto" && usate.cantina_luce) return (usate.q1 === "scaletta" || usate.q1 === "completata") ? aggiungi({ tipo: "narra", righe: Q.cantina.scalettaGia }) : esamina("cant_cerca");
       const conTiro = ((luogo === "cucina" && usate.portaCucina !== "aperta") || (luogo === "cantina" && usate.cantina_luce)) ? null /* cantina con la luce: prove in arrivo */ /* Guendalina non è ancora arrivata */ : PROVE_DICHIARATE[luogo] && PROVE_DICHIARATE[luogo][nome];
       if (conTiro === "VUOTA") return aggiungi({ tipo: "narra", righe: ["PROVA VUOTA"] });
@@ -7164,17 +7300,18 @@
        Mastino del seminterrato: ogni caratteristica = 10 + 1d4, tirata a ogni incontro (PROVVISORIO).
        Effetti degli incantesimi "per N turni": durano N round e scalano alla fine del turno del nemico.
        ===================================================================== */
-    const ATTR_NEM = ["Lotta", "Agilità", "Mente", "Corpo", "Carisma", "Spirito"];
+    const ATTR_NEM = ["Vigore", "Agilità", "Mente", "Spirito"];
     const NEMICI = {
       mastino: {
         ca: 10, dadoVita: 6, dannoDado: 4, xp: 150, /* mastino generico */
+        attacco: 1,                     /* bonus per colpire: compensa il bonus di Agilità alla Classe armatura */
         probPresa: 0.6,                 /* dopo un colpo a segno, una volta per scontro */
         probSoffio: 0.4,                /* PROVVISORIO: probabilità di usare il soffio quando è carico */
         soffio: { cd: 12, dadi: 2, dado: 6, ricarica: 5 }, /* tiro salvezza su Agilità CD 12 o 2d6; si ricarica con 5-6 su 1d6 */
         ritratto: "immagini/house/mastino_cantina.webp" /* immagine di riserva: di norma si usa quella caricata alla comparsa */
       },
       /* Ettore, l'esploratore della cripta (PROVVISORIO): spada 1d6, niente attacchi speciali; si arrende a un terzo della salute */
-      esploratore: { ca: 13, dadoVita: 8, dannoDado: 6, xp: 500, /* custode del sigillo: 500 PE, gli stessi se risparmiato */ probPresa: 0, probSoffio: 0, soffio: null, ritratto: "immagini/nemici/Ettore.webp" } /* immagine da aggiungere */
+      esploratore: { ca: 13, dadoVita: 8, dannoDado: 6, xp: 500, attacco: 1, /* custode del sigillo: 500 PE, gli stessi se risparmiato */ probPresa: 0, probSoffio: 0, soffio: null, ritratto: "immagini/nemici/Ettore.webp" } /* immagine da aggiungere */
     };
     const caNem = () => { const n = scontro || ultimoNemico; return NEMICI[n.id].ca + (Number(n.caMod) || 0); }; /* il consiglio di Aldo abbassa la CA di Ettore */
     /* classe difficoltà degli incantesimi: 8 + modificatore (Mente per il Sapiente, Spirito per l'Accolito) + livello */
@@ -7191,7 +7328,7 @@
         velato: "Non sai ancora nulla di questa belva: la sua scheda resterà coperta finché non l'avrai abbattuta.",
         attMorso: "Morso", attZampata: "Zampata", attPresa: "Presa", attSoffio: "Soffio Infuocato",
         descMorso: (m) => `1d4 ${fmtN(m)} · perforante`, descZampata: (m) => `1d4 ${fmtN(m)} · tagliente`,
-        descPresa: "Una volta per scontro, dopo un morso andato a segno, afferra il bersaglio tra le fauci: prova contrapposta di Lotta. Se vince la belva, 1d4 danni aggiuntivi.",
+        descPresa: "Una volta per scontro, dopo un morso andato a segno, afferra il bersaglio tra le fauci: prova contrapposta di Vigore. Se vince la belva, 1d4 danni aggiuntivi.",
         descSoffio: (pronto) => `Il segugio espira un cono di fuoco eterno di 4,5 metri: tiro salvezza su Agilità CD 12 o 2d6 danni. Ricarica: 5-6 su 1d6. ${pronto ? "(carico)" : "(scarico)"}`,
         round: (n) => `Round ${n}`, tuo: "tocca a te", suo: "tocca al Mastino",
         placeholder: "Cosa fai? Per esempio: attacco il mastino", attesa: "Il Mastino sta agendo…",
@@ -7205,7 +7342,7 @@
         iniziaPg: "Sei più rapido: agisci per primo.", iniziaNem: "La belva è più rapida: agisce per prima.",
         manualeTit: "Combattimento",
         manuale: (m, dado, inc) => [
-          `Per colpire tiri un d20 e aggiungi il modificatore di Lotta (${fmtN(m)}): se il totale supera la Classe armatura del Mastino, lo colpisci e infliggi ${dado} ${fmtN(m)} danni.`,
+          `Per colpire tiri un d20 e aggiungi il modificatore di Vigore (${fmtN(m)}): se il totale supera la Classe armatura del Mastino, lo colpisci e infliggi ${dado} ${fmtN(m)} danni.`,
           "Se sul d20 esce 20 è un colpo critico: colpisci sempre e tiri il doppio dei dadi di danno. Vale anche per il Mastino.",
           "A ogni turno puoi compiere un'azione: «attacca il mastino», «colpisci con la torcia» oppure «bevi la pozione». Prendere in mano la torcia o lo scudo non consuma l'azione (una volta per turno)." +
             (inc ? " Puoi anche lanciare un incantesimo, per esempio «lancio " + inc + "», oppure con il pulsante «Lancia» nella scheda." : ""),
@@ -7237,7 +7374,7 @@
         pietraTxt: "La tua pelle di pietra assorbe metà del colpo.",
         presaLog: "Il Mastino non molla: approfitta del colpo, ti serra tra le fauci e ti trascina sul pavimento di pietra!",
         presaNome: "Presa (speciale)",
-        presaRegola: (m, n) => `Prova contrapposta di Lotta: tu tiri d20 ${fmtN(m)}, il Mastino d20 ${fmtN(n)}. Se il suo totale è più alto, ti infligge 1d4 danni aggiuntivi. Se vinci tu, ti liberi. In caso di parità prevale chi si difende: tu.`,
+        presaRegola: (m, n) => `Prova contrapposta di Vigore: tu tiri d20 ${fmtN(m)}, il Mastino d20 ${fmtN(n)}. Se il suo totale è più alto, ti infligge 1d4 danni aggiuntivi. Se vinci tu, ti liberi. In caso di parità prevale chi si difende: tu.`,
         presaTira: (m) => `Lancia d20 + Lotta (${fmtN(m)})`,
         presaTiri: (a, ta, b, tb) => `Tu: d20 ${a} → ${ta} · Mastino: d20 ${b} → ${tb}`,
         presaInvuln: "La tua aura di invulnerabilità ti rende inamovibile: le fauci della belva non riescono a stringere.",
@@ -7284,7 +7421,7 @@
         incDanno: (d, m) => `Danni: 1d8 = ${d}`,
         cdInc: "CD incantesimi",
         tsTitolo: "Tiro salvezza del Mastino infernale",
-        tsRegola: (cd) => `La belva prova a resistere al tuo incantesimo: tira un d20 e aggiunge il suo modificatore di Corpo. Se arriva almeno a ${cd} (la difficoltà dei tuoi incantesimi) resiste e l'incantesimo non ha effetto; altrimenti ne subisce l'effetto.`,
+        tsRegola: (cd) => `La belva prova a resistere al tuo incantesimo: tira un d20 e aggiunge il suo modificatore di Vigore. Se arriva almeno a ${cd} (la difficoltà dei tuoi incantesimi) resiste e l'incantesimo non ha effetto; altrimenti ne subisce l'effetto.`,
         tsTiro: (d, m, tot, cd) => `Tiro della belva: d20 ${d} ${m < 0 ? "−" : "+"} ${Math.abs(m)} = ${tot} contro difficoltà ${cd}`,
         tsFallito: "Tiro salvezza FALLITO: l'incantesimo ha effetto!",
         tsSuperato: "Tiro salvezza SUPERATO: l'incantesimo non ha effetto.",
@@ -7304,7 +7441,7 @@
         velato: "You know nothing about this beast yet: its sheet will stay hidden until you bring it down.",
         attMorso: "Bite", attZampata: "Claw", attPresa: "Grab", attSoffio: "Fiery Breath",
         descMorso: (m) => `1d4 ${fmtN(m)} · piercing`, descZampata: (m) => `1d4 ${fmtN(m)} · slashing`,
-        descPresa: "Once per fight, after a successful bite, it seizes the target in its jaws: opposed Might check. If the beast wins, 1d4 extra damage.",
+        descPresa: "Once per fight, after a successful bite, it seizes the target in its jaws: opposed Vigour check. If the beast wins, 1d4 extra damage.",
         descSoffio: (pronto) => `The hound exhales a 15-foot cone of eternal fire: Agility saving throw DC 12 or 2d6 damage. Recharge: 5-6 on 1d6. ${pronto ? "(charged)" : "(spent)"}`,
         round: (n) => `Round ${n}`, tuo: "your turn", suo: "the Mastiff's turn",
         placeholder: "What do you do? For example: I attack the mastiff", attesa: "The Mastiff is acting…",
@@ -7387,7 +7524,7 @@
           scudo: "A veil of translucent energy rises between you and the beast: +2 Armor Class for 2 turns.",
           stop: "You fling your hands open and the heartbeat of the world falters: if the beast does not resist, it will stay frozen for 2 turns.",
           folgorazione: "A silver lightning bolt strikes the beast: if it does not resist, it will stay paralysed for 2 turns.",
-          invulnerabilita: "An aura of utter refusal of death wraps around you: for 2 turns no blow can hurt you, and Might and Body checks succeed on their own.",
+          invulnerabilita: "An aura of utter refusal of death wraps around you: for 2 turns no blow can hurt you, and Vigour checks succeed on their own.",
           pelle_pietra: "Your skin takes on the grain of ancient rock: for 2 turns piercing and slashing damage is halved.",
           accecare: "A flash of divine glory bursts in the beast's eyes: if it does not resist, for 2 turns it has a 50% chance to miss you.",
           scopri_carte: "The beast's mind opens like a forbidden tome: its sheet is revealed to you.",
@@ -7397,7 +7534,7 @@
         incDanno: (d) => `Damage: 1d8 = ${d}`,
         cdInc: "Spell DC",
         tsTitolo: "Infernal Mastiff's saving throw",
-        tsRegola: (cd) => `The beast tries to resist your spell: it rolls a d20 and adds its Body modifier. If it reaches at least ${cd} (your spell difficulty) it resists and the spell has no effect; otherwise it suffers the effect.`,
+        tsRegola: (cd) => `The beast tries to resist your spell: it rolls a d20 and adds its Vigour modifier. If it reaches at least ${cd} (your spell difficulty) it resists and the spell has no effect; otherwise it suffers the effect.`,
         tsTiro: (d, m, tot, cd) => `Beast's roll: d20 ${d} ${m < 0 ? "−" : "+"} ${Math.abs(m)} = ${tot} vs difficulty ${cd}`,
         tsFallito: "Saving throw FAILED: the spell takes effect!",
         tsSuperato: "Saving throw PASSED: the spell has no effect.",
@@ -7510,7 +7647,7 @@
       opz = opz || {};
       CB = testiScontro(opz.testi || id);
       const D = NEMICI[id];
-      const stat = Object.fromEntries(ATTR_NEM.map(a => [a, 10 + (["Lotta", "Corpo", "Agilità"].includes(a) ? tira(6) : 0)])); /* ogni nemico del seminterrato è diverso */
+      const stat = conAttrVecchi(Object.fromEntries(ATTR_NEM.map(a => [a, 10 + (["Vigore", "Agilità"].includes(a) ? tira(6) : 0)]))); /* ogni nemico del seminterrato è diverso */
       const pv = 10 + tira(D.dadoVita) + mod(stat.Corpo);
       scontro = { id, img: ultimaImmagineNemico || D.ritratto, stat, pv, pvMax: pv, presaUsata: false, soffioPronto: true, round: 0, primo: null, tuoTurno: false, cambio: false, turno: null, svelata: false, eff: {}, effMax: {}, ctx: opz.ctx || null, caMod: Number(opz.caMod) || 0, resa: false, sid: "s" + Date.now().toString(36) };
       if (opz.soffioScarico) scontro.soffioPronto = false;
@@ -7668,7 +7805,7 @@
         segnaTurno(`${nome}: ${esitoBreve(CB.mancato)}`);
         return fineTurnoNem();
       }
-      const m = modNem("Lotta"), d = tira(20), tot = d + m, ca = caScontro(), crit = d === 20, ok = crit || tot > ca;
+      const m = modNem("Lotta") + (Number(NEMICI[(scontro || ultimoNemico).id].attacco) || 0), d = tira(20), tot = d + m, ca = caScontro(), crit = d === 20, ok = crit || tot > ca;
       const righe = [];
       if (ok) {
         const nd = crit ? 2 : 1, tiri = tiraDadi(nd, D.dannoDado), danno = Math.max(1, somma(tiri) + m);
@@ -7681,7 +7818,7 @@
       if (ok && morso && !scontro.presaUsata && Math.random() < D.probPresa) return setTimeout(presaScontro, PAUSA_SCONTRO * 0.7); /* la presa segue solo un morso a segno */
       fineTurnoNem();
     }
-    /* Presa: una volta per scontro, dopo un colpo a segno. Prova contrapposta di Lotta; se vince il mastino, +1d4 danni */
+    /* Presa: una volta per scontro, dopo un colpo a segno. Prova contrapposta di Vigore; se vince il mastino, +1d4 danni */
     function presaScontro() {
       if (!scontro) return;
       scontro.presaUsata = true;
@@ -7839,6 +7976,7 @@
 
       [arma, ...zaino].forEach(o => { if (o && o.nome === SPADA.oggetto.nome) { o.bonus = 0; if (!o.danno) o.danno = SPADA.oggetto.danno; if (!o.mani) { o.mani = SPADA.oggetto.mani; o.tipoDanno = SPADA.oggetto.tipoDanno; } if (!o.alias || !o.alias.includes("sword")) o.alias = SPADA.oggetto.alias; } }); /* salvataggi vecchi */
       LUOGHI.trofei_targhe.successo = LUOGHI.trofei_targhe.successo.map(r => r.replace("{nome}", pg.nome)); /* la tredicesima targa porta il nome del personaggio */
+      applicaTracce();
       if (usate.riposo === "sbloccato" && !usate.razioni_date) { usate.razioni_date = true; if (razioni() < RAZIONI_AL_GIORNO) impostaRazioni(RAZIONI_AL_GIORNO); } /* salvataggi precedenti alle razioni di Adele */
       disegnaScheda();
       if (!diario.length) { /* nuova partita: si comincia all'accampamento, fuori dal dungeon */

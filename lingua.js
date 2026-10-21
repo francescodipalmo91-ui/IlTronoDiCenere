@@ -11,10 +11,12 @@
   const EN = {
     razze: { Umano: "Human", Elfo: "Elf", Nano: "Dwarf", Gnomo: "Gnome" },
     classi: { Soldato: "Warrior", Forestiero: "Shaman", Sapiente: "Arcanist", Accolito: "Monk" },
-    attributi: { Lotta: "Might", "Agilità": "Agility", Mente: "Mind", Corpo: "Body", Carisma: "Charisma", Spirito: "Spirit" },
+    attributi: { Vigore: "Vigour", "Agilità": "Agility", Mente: "Mind", Spirito: "Spirit", Lotta: "Vigour", Corpo: "Vigour", Carisma: "Spirit" },
     abilita: {
-      "Furtività": "Stealth", Indagare: "Investigation", Medicina: "Medicine", Persuasione: "Persuasion", Intimidire: "Intimidation",
-      Percezione: "Perception", Atletica: "Athletics", Acrobazia: "Acrobatics", Arcano: "Arcana", Misticismo: "Mysticism"
+      Atletica: "Athletics", Sopravvivenza: "Survival", "Furtività": "Stealth", Acrobazia: "Acrobatics",
+      Investigazione: "Investigation", Sapienza: "Lore", "Socialità": "Influence", Intuizione: "Insight",
+      /* nomi delle abilità accorpate (personaggi e prove scritti prima della revisione) */
+      Indagare: "Investigation", Percezione: "Investigation", Medicina: "Lore", Arcano: "Lore", Misticismo: "Lore", Persuasione: "Influence", Intimidire: "Influence"
     },
     danni: { Tagliente: "Slashing", Contundente: "Bludgeoning", Perforante: "Piercing" },
     oggetti: {
@@ -33,7 +35,10 @@
      Le classi sono state rinominate, ma la chiave resta quella vecchia: è salvata nei personaggi già creati
      e nei nomi dei file dei ritratti (immagini/pg/Razza_Classe_N.webp). */
   const IT = {
-    classi: { Soldato: "Guerriero", Forestiero: "Sciamano", Sapiente: "Arcanista", Accolito: "Monaco" }
+    classi: { Soldato: "Guerriero", Forestiero: "Sciamano", Sapiente: "Arcanista", Accolito: "Monaco" },
+    /* attributi e abilità accorpati: le vecchie chiavi si mostrano con il nome nuovo */
+    attributi: { Lotta: "Vigore", Corpo: "Vigore", Carisma: "Spirito" },
+    abilita: { Indagare: "Investigazione", Percezione: "Investigazione", Medicina: "Sapienza", Arcano: "Sapienza", Misticismo: "Sapienza", Persuasione: "Socialità", Intimidire: "Socialità" }
   };
 
   /* Descrizioni di dotazione e scudo */
@@ -55,8 +60,8 @@
       en: "A heavy wooden brand wrapped in cloth soaked in pitch and still-sticky resin. An essential thing to keep close... unless you expect to find your way through the depths guided only by the ragged breathing of whatever awaits you in the dark."
     },
     "Piede di porco": {
-      it: "L'utilizzo di un piede di porco conferisce vantaggio alle prove di lotta in cui è possibile usare il piede di porco per fare leva.",
-      en: "Using a crowbar grants advantage on Might checks where the crowbar can be used for leverage."
+      it: "L'utilizzo di un piede di porco conferisce vantaggio alle prove di Vigore in cui è possibile usare il piede di porco per fare leva.",
+      en: "Using a crowbar grants advantage on Vigour checks where the crowbar can be used for leverage."
     },
     "Ampolla di fuoco": {
       it: "Questo fluido giallognolo ed aranciato si infiamma quando è esposto all'aria. Il personaggio può lanciare questa ampolla causando al bersaglio, se lo colpisce, 1d4 danni da fuoco.",

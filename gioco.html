@@ -111,6 +111,19 @@
     /* fermaglio del grado di caccia, appuntato sul petto del personaggio */
     .fermaglio { display: inline-block; margin-top: 0.45rem; padding: 0.15rem 0.7rem; border-radius: 1rem; font-size: 0.85rem; font-weight: 600; border: 1px solid; }
     .fermaglio[hidden] { display: none; }
+    .bach .bach-tit { font-weight: 600; margin: 0 0 0.4rem; }
+    .bach .bach-sez { color: var(--muted); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.06em; margin: 0.8rem 0 0.3rem; }
+    .bach .bach-riga { display: grid; grid-template-columns: 4.2rem 1fr; gap: 0.1rem 0.6rem; align-items: start; padding: 0.5rem 0; border-top: 1px solid var(--line); }
+    .bach .bach-riga .stelle { grid-row: span 2; padding-top: 0.1rem; }
+    .bach .bach-testo b { display: block; font-weight: 600; }
+    .bach .bach-testo small { color: var(--muted); font-size: 0.85rem; }
+    .bach .bach-stato { grid-column: 2; font-size: 0.85rem; color: var(--muted); font-style: italic; }
+    .bach .pronta .bach-stato { color: var(--ok, #3fa66b); font-weight: 600; }
+    .bach .completata .bach-testo b { text-decoration: line-through; opacity: 0.7; }
+    .bach .stelle { font-size: 1.05rem; letter-spacing: 0.05rem; white-space: nowrap; }
+    .bach .stelle.rosse .stella { color: #d64545; }
+    .bach .stelle.oro .stella { color: #e3b341; }
+    .bach .stella.spenta { color: var(--muted) !important; opacity: 0.45; }
     .fermaglio.bronzo { color: #c98a4b; border-color: #c98a4b; background: color-mix(in srgb, #c98a4b 14%, transparent); }
     .fermaglio.argento { color: #c0c7d0; border-color: #c0c7d0; background: color-mix(in srgb, #c0c7d0 14%, transparent); }
     .fermaglio.oro { color: #e3b341; border-color: #e3b341; background: color-mix(in srgb, #e3b341 14%, transparent); }
@@ -4295,19 +4308,26 @@
         udienza: {
           bronzo: {
             invito: ["Aldo si volta verso di te, e per la prima volta ti guarda come si guarda qualcosa che potrebbe valere la pena tenere.", "«Il Signore vuole vedervi. Seguitemi. Non parlate se non vi viene chiesto, e non guardate il cane negli occhi.»"],
-            cammino: ["Aldo ti conduce oltre una porta che non avevi mai notato, dietro l'arazzo più scuro della sala. Scale strette, pareti nere di fuliggine, un calore che sale dal basso come il respiro di una bestia addormentata.", "In fondo, un portale di ferro battuto si apre da solo al vostro arrivo."],
-            sala: ["La sala è immensa e quasi buia. In fondo, su una pedana di gradini anneriti, un trono di pietra arde senza consumarsi: le fiamme sono azzurre, e non danno luce.", "Ai piedi dei gradini è sdraiata una belva enorme, un mastino con due teste. Una dorme. L'altra no: ti segue con un occhio color brace, e il suo respiro fa tremare la cenere sul pavimento.", "Sul trono c'è una figura. Non riesci a distinguerne il volto: solo una sagoma alta, immobile, avvolta nell'ombra."],
+            cammino: ["Aldo ti conduce su per la scalinata dell'atrio, oltre l'armatura del pianerottolo, e piega a sinistra, verso un'ala della casa che non hai mai visto. Il calore cresce a ogni passo, come il respiro di una bestia addormentata.", "Prima della sala del trono c'è un'anticamera. Lì veglia una belva enorme: un mastino dal pelo nero con due teste, coperto da piastre d'armatura di metallo scuro incise di rune che brillano d'azzurro. Un collare irto di punte gli stringe i due colli; fiamme azzurre e fredde gli scorrono lungo il dorso e le zampe senza bruciarlo, e gli occhi ardono di una luce bianca.", "Le due teste si sollevano insieme e un ringhio basso fa vibrare il pavimento. Poi vedono Aldo. La belva abbassa il capo e si fa da parte, lasciandovi passare."],
+            sala: ["La sala del trono è immensa e quasi buia. In fondo, su una pedana di gradini anneriti, un trono di pietra arde senza consumarsi: le fiamme sono azzurre, e non danno luce.", "Sul trono c'è una figura. Non riesci a distinguerne il volto: solo una sagoma alta, immobile, avvolta nell'ombra."],
             voce: ["«Bronzo.» La voce non viene dal trono: viene da ogni parete, da sotto il pavimento, da dentro la tua testa.", "«Un altro. Sempre un altro.» Una pausa lunga, pesante. «Vediamo quanto durerai.»"],
-            ritorno: ["Quando ti ritrovi nella sala della caccia non ricordi la strada del ritorno. Aldo è già al suo posto, accanto al camino, come se non si fosse mai mosso.", "La porta dietro l'arazzo non c'è più."]
+            ritorno: ["Quando ti ritrovi nella sala della caccia non ricordi la strada del ritorno. Aldo è già al suo posto, accanto al camino, come se non si fosse mai mosso.", "Senza di lui, il mastino a due teste non ti lascerebbe passare."]
           },
           argento: { invito: ["«Il Signore vi attende di nuovo. Seguitemi.»"], cammino: ["Le stesse scale, lo stesso calore."], sala: ["Il mastino a due teste è sveglio, questa volta. Entrambe le teste."], voce: ["«Argento.»"], ritorno: ["Ti ritrovi nella sala della caccia."] },
           oro: { invito: ["«Il Signore vi attende. È l'ultima volta che vi porto da lui come ospite.»"], cammino: ["Le scale sembrano più corte."], sala: ["La figura sul trono si sporge in avanti, per la prima volta."], voce: ["«Oro.»"], ritorno: ["Ti ritrovi nella sala della caccia."] }
         },
         bacheca: {
-          intro: "Le cacce del Signore:",
-          nomi: { bronzo: "Caccia di bronzo — La Preda della Cripta", argento: "Caccia d'argento — ???", oro: "Caccia d'oro — ???", platino: "Caccia di platino — ???" },
-          completata: "completata", prossima: "disponibile presto", livello: (l) => `richiede il livello ${l}`,
-          comuni: "Le cacce comuni (avventurieri entrati da altri portali, altre bestie) arriveranno più avanti."
+          intro: "Le cacce del Signore", guardiani: "Cacce dei guardiani", comuniTit: "Cacce comuni",
+          gradi: { bronzo: "Bronzo", argento: "Argento", oro: "Oro", platino: "Platino" },
+          g: {
+            bronzo: { nome: "Ettore", luogo: "La cripta sotto la cappella" },
+            argento: { nome: "Enea", luogo: "Il cimitero dietro la cappella" },
+            oro: { nome: "Dafne", luogo: "La foresta dei pini, oltre il cimitero" },
+            platino: { nome: "Atena", luogo: "Il sottotetto di Casa Vespera" }
+          },
+          ignoto: "Aldo non ne parla ancora.", completata: "Fermaglio consegnato", pronta: "Aldo ti manderà a caccia",
+          livello: (l) => `Aldo non ti ritiene pronto (livello ${l})`, bloccata: "Si sbloccherà con il fermaglio precedente",
+          comuni: "Avventurieri entrati da altri portali, altre bestie: da 1 a 3 stelle d'oro secondo la difficoltà. Arriveranno presto."
         }
       },
       en: {
@@ -4324,19 +4344,26 @@
         udienza: {
           bronzo: {
             invito: ["Aldo turns to you, and for the first time he looks at you the way one looks at something that might be worth keeping.", "“The Master wishes to see you. Follow me. Do not speak unless spoken to, and do not look the hound in the eyes.”"],
-            cammino: ["Aldo leads you through a door you had never noticed, behind the darkest tapestry in the room. Narrow stairs, walls black with soot, a heat rising from below like the breath of a sleeping beast.", "At the bottom, a wrought-iron gate opens by itself as you arrive."],
-            sala: ["The hall is immense and almost dark. At the far end, on a dais of blackened steps, a stone throne burns without being consumed: its flames are blue, and give no light.", "At the foot of the steps lies a huge beast, a mastiff with two heads. One sleeps. The other does not: it follows you with an ember-coloured eye, and its breath stirs the ash on the floor.", "There is a figure on the throne. You cannot make out its face: only a tall shape, motionless, wrapped in shadow."],
+            cammino: ["Aldo leads you up the great staircase of the hall, past the armour on the landing, and turns left, towards a wing of the house you have never seen. The heat grows with every step, like the breath of a sleeping beast.", "Before the throne room there is an antechamber. A huge beast keeps watch there: a black-furred mastiff with two heads, covered in plates of dark metal engraved with runes glowing blue. A spiked collar grips both necks; cold blue flames run along its back and legs without burning it, and its eyes blaze with a white light.", "Both heads rise together and a low growl makes the floor tremble. Then they see Aldo. The beast lowers its heads and steps aside, letting you pass."],
+            sala: ["The throne room is immense and almost dark. At the far end, on a dais of blackened steps, a stone throne burns without being consumed: its flames are blue, and give no light.", "There is a figure on the throne. You cannot make out its face: only a tall shape, motionless, wrapped in shadow."],
             voce: ["“Bronze.” The voice does not come from the throne: it comes from every wall, from beneath the floor, from inside your head.", "“Another one. Always another one.” A long, heavy pause. “Let us see how long you last.”"],
-            ritorno: ["When you find yourself back in the hunting room you do not remember the way back. Aldo is already in his place by the fireplace, as if he had never moved.", "The door behind the tapestry is gone."]
+            ritorno: ["When you find yourself back in the hunting room you do not remember the way back. Aldo is already in his place by the fireplace, as if he had never moved.", "Without him, the two-headed mastiff would never let you pass."]
           },
           argento: { invito: ["“The Master awaits you again. Follow me.”"], cammino: ["The same stairs, the same heat."], sala: ["The two-headed mastiff is awake this time. Both heads."], voce: ["“Silver.”"], ritorno: ["You find yourself back in the hunting room."] },
           oro: { invito: ["“The Master awaits you. This is the last time I bring you to him as a guest.”"], cammino: ["The stairs seem shorter."], sala: ["The figure on the throne leans forward, for the first time."], voce: ["“Gold.”"], ritorno: ["You find yourself back in the hunting room."] }
         },
         bacheca: {
-          intro: "The Master's hunts:",
-          nomi: { bronzo: "Bronze hunt — The Prey in the Crypt", argento: "Silver hunt — ???", oro: "Gold hunt — ???", platino: "Platinum hunt — ???" },
-          completata: "completed", prossima: "available soon", livello: (l) => `requires level ${l}`,
-          comuni: "Common hunts (adventurers who came through other portals, other beasts) will come later."
+          intro: "The Master's hunts", guardiani: "Guardian hunts", comuniTit: "Common hunts",
+          gradi: { bronzo: "Bronze", argento: "Silver", oro: "Gold", platino: "Platinum" },
+          g: {
+            bronzo: { nome: "Ettore", luogo: "The crypt beneath the chapel" },
+            argento: { nome: "Enea", luogo: "The cemetery behind the chapel" },
+            oro: { nome: "Dafne", luogo: "The pine forest, beyond the cemetery" },
+            platino: { nome: "Atena", luogo: "The attic of Casa Vespera" }
+          },
+          ignoto: "Aldo does not speak of it yet.", completata: "Clasp delivered", pronta: "Aldo will send you hunting",
+          livello: (l) => `Aldo does not think you ready (level ${l})`, bloccata: "Unlocks with the previous clasp",
+          comuni: "Adventurers who came through other portals, other beasts: 1 to 3 gold stars by difficulty. Coming soon."
         }
       }
     };
@@ -5389,7 +5416,7 @@
       }
       const el = document.createElement("div");
       if (v.box === "sblocco") v = { ...v, box: "cap" }; /* vecchi salvataggi */
-      el.className = "voce " + (v.tipo || "narra") + (v.pg ? " pg" : "") + (v.box ? " riquadro " + v.box : "") + (v.tipo === "missioni" ? " riquadro mis" : "") + (v.tipo === "laboratorio" ? " riquadro mis lab" : "") + (v.tipo === "armeria" ? " riquadro mis arm" : "") + (v.distorta ? " distorta" : "");
+      el.className = "voce " + (v.tipo || "narra") + (v.pg ? " pg" : "") + (v.box ? " riquadro " + v.box : "") + (v.tipo === "missioni" ? " riquadro mis" : "") + (v.tipo === "laboratorio" ? " riquadro mis lab" : "") + (v.tipo === "armeria" ? " riquadro mis arm" : "") + (v.tipo === "bacheca" ? " riquadro mis bach" : "") + (v.distorta ? " distorta" : "");
       if (v.img && v.img.src === "atrio.webp") { v = { ...v, img: { ...v.img, src: IMMAGINI.atrio }, titolo: v.titolo || TX.viste.atrio.titolo }; } /* vecchi salvataggi */
       if (v.img && !v.imgFissa && IMMAGINI[v.stanza] && v.img.src !== IMMAGINI[v.stanza]) v = { ...v, img: { ...v.img, src: IMMAGINI[v.stanza] } }; /* salvataggi con il vecchio percorso immagini/ */
       if (v.titolo && v.tipo !== "prova") {
@@ -5418,6 +5445,7 @@
       if (v.tipo === "missioni") { riempiProposte(el, v.ids || []); if (v.titoloMis) el.firstChild.textContent = v.titoloMis; }
       if (v.tipo === "laboratorio") riempiLaboratorio(el);
       if (v.tipo === "armeria") riempiArmeria(el);
+      if (v.tipo === "bacheca") riempiBacheca(el);
       if (v.tipo === "dialogo") {
         let etichetta = false, dest = el, box = null; const seq = [];
         const riga = (t, c) => { const e = document.createElement("p"); e.textContent = t; e.className = c; dest.append(e); return e; };
@@ -6192,7 +6220,9 @@
        - Bacheca delle cacce: le cacce speciali (fermagli) con il livello richiesto. TESTI PROVVISORI.
        ===================================================================== */
     const GRADI = ["bronzo", "argento", "oro", "platino"];
-    const LIVELLO_CACCIA = { bronzo: 1, argento: 2, oro: 3, platino: 4 }; /* PROVVISORIO */
+    const LIVELLO_CACCIA = { bronzo: 1, argento: 3, oro: 4, platino: 5 }; /* livello minimo: Aldo manda a caccia solo chi ritiene pronto */
+    /* cacce dei guardiani: una alla volta, la successiva si sblocca consegnando il fermaglio ad Aldo */
+    const statoCaccia = (i) => gradoFermaglio() >= i ? "completata" : gradoFermaglio() < i - 1 ? "bloccata" : livelloPg() >= LIVELLO_CACCIA[GRADI[i]] ? "pronta" : "livello";
     const gradoFermaglio = () => GRADI.indexOf(usate.fermaglio); /* -1 = nessuno */
     const udienzaFatta = (g) => Array.isArray(usate.udienze) && usate.udienze.includes(g);
     function proponiUdienza() {
@@ -6214,14 +6244,24 @@
         sist(AL.domandeSbloccate);
       }));
     }
-    function bachecaCacce() {
-      const B = AL.bacheca, righe = [B.intro];
+    function bachecaCacce() { aggiungi({ tipo: "bacheca", fuori: true }); }
+    /* riquadro della bacheca: stelle rosse a sei punte per le cacce dei guardiani (una per grado), d'oro (1-3) per le cacce comuni */
+    function riempiBacheca(el) {
+      const B = AL.bacheca, e = (tag, cls, txt) => { const x = document.createElement(tag); if (cls) x.className = cls; if (txt != null) x.textContent = txt; return x; };
+      el.append(e("p", "bach-tit", B.intro), e("p", "bach-sez", B.guardiani));
       GRADI.forEach((g, i) => {
-        const fatto = gradoFermaglio() >= i, liv = LIVELLO_CACCIA[g];
-        righe.push(`${B.nomi[g]} — ${fatto ? B.completata : livelloPg() >= liv ? B.prossima : B.livello(liv)}`);
+        const st = statoCaccia(i), G = B.g[g], noto = st !== "bloccata";
+        const riga = e("div", "bach-riga " + st);
+        const stelle = e("span", "stelle rosse"); for (let k = 0; k <= i; k++) stelle.append(e("span", "stella" + (noto ? "" : " spenta"), "✶"));
+        const testo = e("div", "bach-testo");
+        testo.append(e("b", "", `${B.gradi[g]} — ${noto ? G.nome : "???"}`), e("small", "", noto ? G.luogo : B.ignoto));
+        const stato = e("span", "bach-stato", st === "completata" ? B.completata : st === "pronta" ? B.pronta : st === "livello" ? B.livello(LIVELLO_CACCIA[g]) : B.bloccata);
+        riga.append(stelle, testo, stato); el.append(riga);
       });
-      righe.push(B.comuni);
-      aggiungi({ tipo: "sistema", box: "mis", fuori: true, righe });
+      el.append(e("p", "bach-sez", B.comuniTit));
+      const c = e("div", "bach-riga bloccata"), st = e("span", "stelle oro");
+      for (let k = 0; k < 3; k++) st.append(e("span", "stella", "✶"));
+      c.append(st, e("div", "bach-testo", B.comuni)); el.append(c);
     }
     Object.assign(FINE_DIALOGO, {
       aldo_bacheca() { bachecaCacce(); }

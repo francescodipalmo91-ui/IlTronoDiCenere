@@ -428,7 +428,7 @@
         d.append(
           el("span", "nome", pg.nome || t.senzaNome),
           el("span", "info", [pg.razza && Lingua.nome("razze", pg.razza), pg.classe && Lingua.nome("classi", pg.classe)].filter(Boolean).join(" — ")),
-          el("span", "info", t.livello + " " + (pg.livello || 1))
+          el("span", "info", t.livello + " " + ((sl.partita && sl.partita.livello) || pg.livello || 1))
         );
         const quando = (sl.partita && sl.partita.ora) ? new Date(Number(sl.partita.ora)) : null;
         d.append(el("span", "salvato", quando && !isNaN(quando)
@@ -553,7 +553,7 @@
       const pg = sl.pg, p = sl.partita || {};
       const luogo = p.luogo ? String(p.luogo).replace(/_/g, " ").replace(/^./, c => c.toUpperCase()) : null;
       const quando = p.ora ? new Date(Number(p.ora)).toLocaleString(Lingua.locale(), { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : t.nessunSalvataggio;
-      return [[pg.nome || t.senzaNome, t.livello + " " + (pg.livello || 1), luogo].filter(Boolean).join(" · "), quando];
+      return [[pg.nome || t.senzaNome, t.livello + " " + (p.livello || pg.livello || 1), luogo].filter(Boolean).join(" · "), quando];
     }
     function disegnaConflitti() {
       const box = document.getElementById("conflitti"), t = tx();

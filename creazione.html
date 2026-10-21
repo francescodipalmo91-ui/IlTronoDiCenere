@@ -232,7 +232,7 @@
         <div class="tonda rosso"><b data-t="saluteFisica">Salute fisica</b><span class="num" id="sf-v">–</span><small id="sf-f"></small></div>
         <div class="tonda blu"><b data-t="saluteMentale">Salute mentale</b><span class="num" id="sm-v">–</span><small id="sm-f"></small></div>
         <div class="tonda verde"><b data-t="classeArmatura">Classe armatura</b><span class="num" id="ca-v">–</span><small id="ca-f"></small></div>
-        <div class="tonda giallo" id="mana-box" hidden><b data-t="mana">Mana</b><span class="num" id="mana-v">–</span><small id="mana-f"></small></div>
+        <div class="tonda giallo" id="mana-box" hidden><b id="mana-t">Mana</b><span class="num" id="mana-v">–</span><small id="mana-f"></small></div>
       </div>
 
       <div class="fine">
@@ -272,7 +272,7 @@
         ancora: "Ancora da fare: ", pronto: (n) => `${n} è pronto a entrare nel dungeon.`,
         errore: "Salvataggio non riuscito: prova con un'immagine più piccola.", nessunaImmagine: (r, c) => `Nessuna immagine per ${r} ${c}.`,
         scegliRitratto: "Scegli il tuo ritratto.", ritrattoN: (n) => `Ritratto ${n}`,
-        incantesimi: "Incantesimi lv 1", guidaIncantesimi: "Scegline quattro.", mana: "Mana", modAttr: (a) => `mod. ${a}`,
+        incantesimi: "Incantesimi lv 1", guidaIncantesimi: "Scegline quattro.", mana: "Mana", ira: "Punti ira", natura: "Punti natura", modAttr: (a) => `mod. ${a}`,
         notaRiposo: "Gli incantesimi scelti si potranno cambiare quando ti riposi.",
         costo: "Costo", costoMana: (n) => `${n} Mana`, mancaInc: (n) => `${n} ${n === 1 ? "incantesimo" : "incantesimi"}`
       },
@@ -300,7 +300,7 @@
         ancora: "Still to do: ", pronto: (n) => `${n} is ready to enter the dungeon.`,
         errore: "Saving failed: try a smaller image.", nessunaImmagine: (r, c) => `No image for ${r} ${c}.`,
         scegliRitratto: "Choose your portrait.", ritrattoN: (n) => `Portrait ${n}`,
-        incantesimi: "Spells lv 1", guidaIncantesimi: "Choose four.", mana: "Mana", modAttr: (a) => `${a} mod.`,
+        incantesimi: "Spells lv 1", guidaIncantesimi: "Choose four.", mana: "Mana", ira: "Rage points", natura: "Nature points", modAttr: (a) => `${a} mod.`,
         notaRiposo: "You will be able to change your chosen spells when you rest.",
         costo: "Cost", costoMana: (n) => `${n} Mana`, mancaInc: (n) => `${n} ${n === 1 ? "spell" : "spells"}`
       }
@@ -406,7 +406,6 @@
     const DOTAZIONE = [
       { nome: "Pozione di cura", usi: 1 },
       { nome: "Pozione di mana", usi: 1 },
-      { nome: "Razioni da viaggio", usi: 5 },
       { nome: "Torcia", usi: 5, impugnabile: true },
       { nome: "Piede di porco" }
     ];
@@ -477,6 +476,8 @@
     /* attributo da cui dipende il mana: Mente per il Sapiente, Spirito per l'Accolito */
     const ATTR_MANA = { Sapiente: "Mente", Accolito: "Spirito" };
     const usaMagia = () => !!(classe && INCANTESIMI[classe]);
+    /* risorsa di Guerriero e Sciamano, calcolata come il mana: 10 + modificatore (si ricarica solo riposando) */
+    const RISORSA_CLASSE = { Soldato: { id: "ira", attr: "Lotta" }, Forestiero: { id: "natura", attr: "Spirito" } };
     const incantesimiScelti = () => usaMagia() ? [...document.querySelectorAll('input[name="incantesimo"]:checked')].map(c => INCANTESIMI[classe][c.value]) : [];
 
     let classeIncantesimi = null; /* classe per cui è stata costruita la lista: cambiando classe si riparte da zero */
@@ -694,8 +695,9 @@
 
       /* mana: solo Sapiente e Accolito */
       disegnaIncantesimi();
-      const magia = usaMagia(), attrMana = ATTR_MANA[classe] || "Mente", modMe = modDi(attrMana);
-      $("mana-box").hidden = !magia;
+      const magia = usaMagia(), ris = RISORSA_CLASSE[classe], attrMana = ris ? ris.attr : (ATTR_MANA[classe] || "Mente"), modMe = modDi(attrMana);
+      $("mana-box").hidden = !magia && !ris;
+      $("mana-t").textContent = ris ? t[ris.id] : t.mana;
       $("mana-v").textContent = MANA_BASE + modMe;
       $("mana-f").textContent = `${MANA_BASE} ${segno(modMe)} (${t.modAttr(N("attributi", attrMana))})`;
       const nInc = incantesimiScelti().length;
@@ -805,6 +807,7 @@
         saluteMentale: PV_BASE + tiro + mod(stat.Spirito),
         classeArmatura: CA_BASE + arm.ca + (sc ? SCUDO.ca : 0), /* comprende lo scudo, se scelto */
         mana: usaMagia() ? MANA_BASE + mod(stat[ATTR_MANA[classe]]) : null, /* solo Sapiente (Mente) e Accolito (Spirito) */
+        risorsa: RISORSA_CLASSE[classe] ? { id: RISORSA_CLASSE[classe].id, max: MANA_BASE + mod(stat[RISORSA_CLASSE[classe].attr]) } : null, /* punti ira (Guerriero) o punti natura (Sciamano) */
         incantesimi: incantesimiScelti().map(inc => ({ id: inc.id, nome: inc.nome, costo: inc.costo, desc: inc.desc, effetto: inc.effetto || null })),
         abilita: abilitaScelte().map(([n, a]) => ({ nome: n, attributo: a, valore: valoreAbilita(a) + LIVELLO })),
         equipaggiamento: {

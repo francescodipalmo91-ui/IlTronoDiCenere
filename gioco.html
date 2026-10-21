@@ -105,6 +105,19 @@
     }
     @media (prefers-reduced-motion: reduce) { body.salute-critica #ritratto, body.salute-critica #testo, body.salute-critica #form button { animation: none; box-shadow: 0 0 20px 6px rgba(255, 45, 45, 0.75); } }
     #sub { color: var(--muted); font-size: 0.95rem; margin-top: 0.15rem; }
+    /* salute mentale: sotto metà il ritratto si incrina, sotto un quarto si spezza e le descrizioni si distorcono */
+    #ritratto, #miniRitratto { position: relative; overflow: hidden; }
+    body.mente-incrinata #ritratto::after, body.mente-incrinata #miniRitratto::after,
+    body.mente-spezzata #ritratto::after, body.mente-spezzata #miniRitratto::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.5;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 125' preserveAspectRatio='none'%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath stroke='rgba(0,0,0,.65)' stroke-width='2.4' d='M62 0 L55 18 L66 31 L52 49 L58 63 L44 82 L50 97 L38 125 M55 18 L40 24 L30 21 M52 49 L70 56 L86 52 L100 60 M58 63 L72 78 L80 98 M44 82 L26 88 L12 84 L0 92 M66 31 L82 26 L94 12'/%3E%3Cpath stroke='rgba(255,255,255,.75)' stroke-width='.9' d='M62 0 L55 18 L66 31 L52 49 L58 63 L44 82 L50 97 L38 125 M55 18 L40 24 L30 21 M52 49 L70 56 L86 52 L100 60 M58 63 L72 78 L80 98 M44 82 L26 88 L12 84 L0 92 M66 31 L82 26 L94 12'/%3E%3C/g%3E%3C/svg%3E") center / 100% 100% no-repeat;
+    }
+    body.mente-spezzata #ritratto::after, body.mente-spezzata #miniRitratto::after { opacity: 1; }
+    body.mente-spezzata #ritratto, body.mente-spezzata #miniRitratto { filter: grayscale(0.5) contrast(1.15); }
+    .voce.distorta p:not(.sussurro) { text-shadow: 1px 0 rgba(255, 45, 45, 0.28), -1px 0 rgba(80, 160, 255, 0.24); }
+    .voce p.sussurro { font-style: italic; color: var(--ko, #c0392b); letter-spacing: 0.06em; animation: sussurro 4s ease-in-out infinite; }
+    @keyframes sussurro { 0%, 100% { opacity: 0.9; filter: blur(0); } 45% { opacity: 0.55; filter: blur(0.6px); } 50% { opacity: 0.95; filter: blur(0); transform: translateX(1px); } }
+    @media (prefers-reduced-motion: reduce) { .voce p.sussurro { animation: none; } }
     .scheda h2 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 0.5rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--line); }
     .scheda dl { display: grid; grid-template-columns: auto 1fr; gap: 0.3rem 1rem; margin: 0; font-size: 0.97rem; }
     .scheda dt { color: var(--muted); }
@@ -472,6 +485,7 @@
       .mini-dati .r-salute i { background: #e0524a; }
       .mini-dati .r-mentali i { background: #9a7be0; }
       .mini-dati .r-mana i { background: #4c8dff; }
+      .mini-dati .r-risorsa i { background: #e0a23a; }
       .mini-dati [hidden] { display: none; }
       #miniPg.colpito { animation: scuoti 0.35s ease-in-out; }
 
@@ -554,6 +568,7 @@
             <span class="ml r-salute-l"></span><span class="mb r-salute"><i></i></span><span class="mn r-salute-n"></span>
             <span class="ml r-mentali-l"></span><span class="mb r-mentali"><i></i></span><span class="mn r-mentali-n"></span>
             <span class="ml r-mana-l" hidden></span><span class="mb r-mana" hidden><i></i></span><span class="mn r-mana-n" hidden></span>
+            <span class="ml r-risorsa-l" hidden></span><span class="mb r-risorsa" hidden><i></i></span><span class="mn r-risorsa-n" hidden></span>
           </span>
         </button>
         <span><span id="statoSalvataggio" role="status"></span><span id="statoCloud" role="status"></span></span>
@@ -1983,7 +1998,7 @@
         sblocco: {
           riposo: ["Nuova capacità sbloccata: Riposo",
             "Puoi riposare accanto a un fuoco caldo, dalle fiamme arancioni: per ora qui in cucina e nella sala da conversazione. Scrivi «riposo» oppure usa il pulsante «Riposa» nella scheda, alla voce «Capacità».",
-            "Riposando recuperi 1d6 di salute fisica e 1d6 di salute mentale. Il focolare della cucina, curato da Guendalina, non si spegne mai: qui puoi riposare quante volte vuoi. Gli altri fuochi invece si consumano: dopo il riposo le fiamme diventano azzurre e fredde."],
+            "Ogni riposo dura un giorno: consumi fino a 1d4 razioni di Adele e recuperi 1d4 + livello su tutte le risorse (salute fisica, salute mentale e mana, ira o natura). Guendalina cucina 2 razioni al giorno (scorta massima 10). Il focolare della cucina non si spegne mai: qui puoi riposare quante volte vuoi, anche senza razioni (recuperi solo 1 punto). Gli altri fuochi invece si consumano: dopo il riposo le fiamme diventano azzurre e fredde."],
           missione: ["Missione accettata: «Ciò che giace nell'Alto»",
             "Scendi in cantina, recupera la vecchia scaletta di legno e riportala a Guendalina, qui in cucina.",
             "La cantina si raggiunge dalla stanza di servizio, oltre la porta a sinistra della cucina: scrivi ad esempio «vado nella stanza di servizio» e poi «scendo in cantina». Laggiù è buio e girano i guardiani del Signore: muoviti in silenzio e non correre.",
@@ -2160,7 +2175,7 @@
               "«Se mai doveste trovarlo, vi prego, incastratelo nell'apposito riquadro sul camino. Quella stanza era il luogo prediletto della mia padrona, la Signora Adele, e mi si stringe il cuore a saperla così, incompleta. Ma muovetevi con cautela: i guardiani del Signore azzannano prima di chiedere il nome.»",
               "«Abbiate cura di voi... non vorrei dover piangere anche per voi.»"
             ] },
-          riposo: { nome: "Riposo", desc: "Accanto a un fuoco caldo, dalle fiamme arancioni, recuperi 1d6 di salute fisica e 1d6 di salute mentale. In cucina puoi riposare quante volte vuoi; il camino della sala da conversazione invece si consuma dopo un riposo (le fiamme diventano azzurre e fredde).", btn: "Riposa" },
+          riposo: { nome: "Riposo", desc: "Accanto a un fuoco caldo, dalle fiamme arancioni, riposi per un giorno intero: consumi fino a 1d4 razioni di Adele e recuperi 1d4 + livello su tutte le risorse. Guendalina cucina 2 razioni al giorno (massimo 10). In cucina puoi riposare quante volte vuoi, anche senza razioni (recuperi solo 1 punto); il camino della sala da conversazione invece si consuma dopo un riposo (le fiamme diventano azzurre e fredde).", btn: "Riposa" },
           laboratorio: { nome: "Laboratorio di Guendalina", desc: "Porta a Guendalina, in cucina, i resti dei mastini infernali: con quelli potrà prepararti",
             preparati: ["Siero di rosa cenerea (2 ciuffi di pelo di mastino): ripristina 1d6 di salute fisica", "Olio della falena (3 larve di falena): ripristina 1d6 di mana", "Distillato di serenità (3 ghiandole del fuoco): ripristina 1d4 di salute mentale"] }
         },
@@ -2177,6 +2192,7 @@
           lacrima: { nome: "La Lacrima della Regina", testo: "Un piccolo zaffiro di altissima purezza, tagliato a forma di goccia perfetta. È innaturalmente gelido al tatto, quasi fosse fatto di ghiaccio perenne, e risplende di una luce bluastra nel buio. Sulla custodia: «Alla mia sovrana, affinché il dolore non oscuri la luce.»" },
           scaletta: { nome: "Scala a pioli", testo: "Una piccola scaletta a pioli, tutt'altro che robusta, ma sicuramente ancora utilizzabile." },
           unguento: { nome: "Unguento della Rosa di Cenere", testo: "Un impasto denso e profumato di cera e petali essiccati che lenisce subito il dolore delle ferite da taglio. Recupera 1d6 + livello di salute fisica." },
+          razioni_adele: { nome: "Razioni di Adele", testo: "Pane nero, formaggio stagionato e carne secca avvolti in un panno di lino, preparati ogni giorno da Guendalina con le provviste della Signora. Si consumano riposando accanto a un fuoco caldo (fino a 1d4 per riposo)." },
           pelo_mastino: { nome: "Ciuffi di pelo di mastino", testo: "Ciuffi di pelo ispido e bruciacchiato, strappati ai resti fumanti di un mastino infernale. Ne servono 2 a Guendalina per un Siero di rosa cenerea." },
           larve_falena: { nome: "Larve di falena", testo: "Larve minuscole e pallide, annidate nel cuoio dei collari dei mastini. Ne servono 3 a Guendalina per un Olio della falena." },
           ghiandola_fuoco: { nome: "Ghiandole del fuoco", testo: "Le ghiandole con cui i mastini producono il fuoco eterno: ancora tiepide, pulsano di un debole bagliore azzurro. Ne servono 3 a Guendalina per un Distillato di serenità." },
@@ -2197,7 +2213,7 @@
         sblocco: {
           riposo: ["New ability unlocked: Rest",
             "You can rest by a warm fire, one with orange flames: for now here in the kitchen and in the drawing room. Write “rest” or use the “Rest” button on your sheet, under “Abilities”.",
-            "Resting restores 1d6 physical health and 1d6 mental health. The kitchen hearth, tended by Guendalina, never goes out: here you can rest as many times as you like. Other fires are spent instead: after you rest, their flames turn blue and cold."],
+            "Each rest lasts a day: you eat up to 1d4 of Adele's rations and recover 1d4 + level on all your resources (physical health, mental health and mana, rage or nature). Guendalina cooks 2 rations a day (up to 10 in store). The kitchen hearth never goes out: here you can rest as many times as you like, even without rations (you only recover 1 point). Other fires are spent instead: after you rest, their flames turn blue and cold."],
           missione: ["Quest accepted: “What Lies Up High”",
             "Go down to the cellar, retrieve the old wooden step-ladder and bring it back to Guendalina, here in the kitchen.",
             "The cellar is reached from the service room, beyond the door on the left of the kitchen: write for example “I go to the service room” and then “I go down to the cellar”. It is dark down there and the Master's guardians roam: move silently and do not run.",
@@ -2370,7 +2386,7 @@
               "«Should you ever find it, I beg you, fit it into its slot on the fireplace. That room was the favourite place of my mistress, Lady Adele, and it pains my heart to know it so, incomplete. But move carefully: the Master's guardians bite before they ask your name.»",
               "«Take care of yourself... I would not want to have to weep for you too.»"
             ] },
-          riposo: { nome: "Rest", desc: "By a warm fire, one with orange flames, you recover 1d6 physical health and 1d6 mental health. In the kitchen you can rest as many times as you like; the drawing room fireplace is spent after one rest (its flames turn blue and cold).", btn: "Rest" },
+          riposo: { nome: "Rest", desc: "By a warm fire, one with orange flames, you rest for a whole day: you eat up to 1d4 of Adele's rations and recover 1d4 + level on all your resources. Guendalina cooks 2 rations a day (up to 10). In the kitchen you can rest as many times as you like, even without rations (you only recover 1 point); the drawing room fireplace is spent after one rest (its flames turn blue and cold).", btn: "Rest" },
           laboratorio: { nome: "Guendalina's Workshop", desc: "Bring Guendalina, in the kitchen, the remains of the infernal mastiffs: with them she can prepare for you",
             preparati: ["Ashen rose serum (2 tufts of mastiff fur): restores 1d6 physical health", "Moth oil (3 moth larvae): restores 1d6 mana", "Distillate of serenity (3 fire glands): restores 1d4 mental health"] }
         },
@@ -2387,6 +2403,7 @@
           lacrima: { nome: "The Queen's Tear", testo: "A small sapphire of the highest purity, cut in the shape of a perfect drop. It is unnaturally cold to the touch, as if made of everlasting ice, and it glows with a bluish light in the dark. On the case: «To my sovereign, so that sorrow may not darken the light.»" },
           scaletta: { nome: "Rung ladder", testo: "A small rung ladder, far from sturdy, but surely still usable." },
           unguento: { nome: "Ash Rose Ointment", testo: "A thick, fragrant paste of wax and dried petals that instantly soothes the pain of cuts. Restores 1d6 + level physical health." },
+          razioni_adele: { nome: "Adele's rations", testo: "Black bread, aged cheese and dried meat wrapped in a linen cloth, prepared every day by Guendalina from the Lady's provisions. They are eaten while resting by a warm fire (up to 1d4 per rest)." },
           pelo_mastino: { nome: "Tufts of mastiff fur", testo: "Tufts of bristly, singed fur, torn from the smoking remains of an infernal mastiff. Guendalina needs 2 for an Ashen rose serum." },
           larve_falena: { nome: "Moth larvae", testo: "Tiny, pale larvae nesting in the leather of the mastiffs' collars. Guendalina needs 3 for a Moth oil." },
           ghiandola_fuoco: { nome: "Fire glands", testo: "The glands the mastiffs use to make the eternal fire: still warm, they pulse with a faint blue glow. Guendalina needs 3 for a Distillate of serenity." },
@@ -2927,7 +2944,7 @@
             vittoria: ["Ettore crolla in ginocchio. Ti guarda, e per un attimo sembra quasi sollevato. Poi il suo corpo comincia a sgretolarsi come tutto ciò che muore in questa casa: prima le mani, poi il viso, infine la spilla di bronzo, che cade tintinnando su un mucchietto di cenere grigia.", "Raccogli il sigillo. È ancora tiepido."],
             sconfitta: ["Le gambe ti cedono e crolli sulla pietra della cripta. Vedi la spada di Ettore sollevarsi sopra di te... e fermarsi.", "«No», sussurra. «Io non sono come lui. Non ancora.»"],
             risveglio: ["Riapri gli occhi sul pavimento freddo della cappella, sotto la vetrata incrinata. Qualcuno ti ha trascinato su per le scale e ti ha lasciato lì, con le mani incrociate sul petto, come un morto in veglia."],
-            sistRisveglio: "Salute fisica: 1. Ettore ti aspetta ancora nella cripta."
+            sistRisveglio: "Ettore ti aspetta ancora nella cripta, di nuovo in piene forze."
           }
         }
       },
@@ -3434,7 +3451,7 @@
             vittoria: ["Ettore falls to his knees. He looks at you, and for a moment he seems almost relieved. Then his body begins to crumble like everything that dies in this house: first the hands, then the face, finally the bronze brooch, which falls ringing onto a little heap of grey ash.", "You pick up the seal. It is still warm."],
             sconfitta: ["Your legs give way and you collapse on the stone of the crypt. You see Ettore's sword rise above you... and stop.", "«No,» he whispers. «I am not like him. Not yet.»"],
             risveglio: ["You open your eyes on the cold floor of the chapel, beneath the cracked window. Someone dragged you up the stairs and left you there, hands crossed on your chest, like a corpse at a wake."],
-            sistRisveglio: "Physical health: 1. Ettore is still waiting for you in the crypt."
+            sistRisveglio: "Ettore is still waiting for you in the crypt, back at full strength."
           }
         }
       }
@@ -3940,6 +3957,111 @@
       E.arcano_ko = { testo: P.ettore.arcano_ko, poi: "scelta" };
     }
     const Q = QT[LINGUA] || QT.it;
+
+    /* testi delle regole nuove: livelli, risorse, riposo, morte, mente spezzata */
+    const RG_TUTTI = ({
+      it: {
+        ira: "Punti ira", natura: "Punti natura", livelloMax: "livello massimo",
+        livello: {
+          titolo: (n) => `Livello ${n}!`,
+          salute: (dv, t, da, a) => `Salute fisica: 1d${dv} = ${t.d} ${fmtN(t.m)} (mod. Corpo) → +${t.v} · massimo ${da} → ${a}`,
+          mente: (dv, t, da, a) => `Salute mentale: 1d${dv} = ${t.d} ${fmtN(t.m)} (mod. Spirito) → +${t.v} · massimo ${da} → ${a}`,
+          risorsa: (nome, dv, t, da, a) => `${nome}: 1d${dv} = ${t.d} ${fmtN(t.m)} → +${t.v} · massimo ${da} → ${a}`,
+          abilita: (n) => `Le abilità addestrate ora aggiungono +${n}.`,
+          massimo: "Hai raggiunto il livello massimo."
+        },
+        pe: (n, tot) => `+${n} punti esperienza (totale ${tot}).`,
+        riposo: {
+          titolo: (g) => `Riposo — giorno ${g}:`,
+          razioni: (tiro, mangiate, resto) => `Razioni di Adele: 1d4 = ${tiro} · ne consumi ${mangiate} · ne restano ${resto}`,
+          recupero: (d, liv, tot) => `Recupero: 1d4 + livello = ${d} + ${liv} = ${tot}`,
+          digiuno: "Nessuna razione di Adele: a stomaco vuoto recuperi soltanto 1 punto.",
+          riga: (nome, da, a) => `${nome}: ${da} → ${a}`,
+          cucinate: (n, tot) => `Guendalina ha preparato ${n} ${n === 1 ? "razione" : "razioni"} di Adele · scorta ${tot}/${RAZIONI_MAX}`,
+          scortaPiena: () => `Guendalina ha cucinato, ma la scorta di razioni di Adele è già piena (${RAZIONI_MAX}).`,
+          fame: ["Il fuoco è caldo e il sonno ti chiama, ma lo stomaco vuoto ti tiene sveglio. Senza le razioni di Adele non riesci a riposare lontano dalla cucina."],
+          prime: (n) => `Guendalina ti affida le prime ${n} razioni di Adele: si consumano riposando (fino a 1d4 per riposo), e lei ne cucina ${RAZIONI_AL_GIORNO} al giorno.`
+        },
+        morte: {
+          esito: (d, da, a, sMax) => `La casa non lascia morire i suoi prigionieri. Salute fisica: ${sMax} / ${sMax} · Salute mentale: −1d4 = −${d} · ${da} → ${a}`,
+          caccia: [ /* PROVVISORIO */
+            "Riapri gli occhi su una pelle d'orso, davanti al grande camino spento della sala della caccia. Non ricordi il viaggio di ritorno: solo il freddo della pietra e una presa ferrea sotto le braccia.",
+            "Aldo è in piedi accanto a te, le mani intrecciate dietro la schiena. Ti osserva come si osserva un cane da riporto tornato senza la preda.",
+            "«La casa non lascia morire i suoi ospiti. Io non ho la sua pazienza. La vostra preda vi aspetta ancora: vedete di non farmi perdere altro tempo.»"
+          ]
+        },
+        guardiano: { /* PROVVISORIO */
+          titolo: "La tua mente si è spezzata",
+          righe: [
+            "Le voci non sussurrano più: parlano con la tua bocca. Il ricordo del tuo nome si sfalda come cenere tra le dita, e con lui la strada che ti ha portato fin qui.",
+            "Quando Guendalina ti ritrova, sei in piedi in mezzo all'atrio, immobile, lo sguardo fisso sulla porta. Non la riconosci. Aspetti qualcuno.",
+            "Il prossimo novellino che varcherà la soglia di Casa Vespera troverà un nuovo guardiano ad attenderlo.",
+            "FINE — sei diventato un guardiano della casa."
+          ],
+          placeholder: "La partita è finita.",
+          btn: "Torna alla pagina iniziale"
+        },
+        sussurri: [ /* PROVVISORI */
+          "…le pareti respirano, piano, al ritmo del tuo cuore…",
+          "…qualcuno ha pronunciato il tuo nome. Dietro di te. Di nuovo…",
+          "…le fiamme ti guardano. Hanno occhi azzurri…",
+          "…non sei mai uscito da questa stanza. Non ne uscirai…",
+          "…l'odore della cenere ti riempie la bocca…",
+          "…ricordi una casa che non è questa. O forse sì…"
+        ]
+      },
+      en: {
+        ira: "Rage points", natura: "Nature points", livelloMax: "max level",
+        livello: {
+          titolo: (n) => `Level ${n}!`,
+          salute: (dv, t, da, a) => `Physical health: 1d${dv} = ${t.d} ${fmtN(t.m)} (Body mod.) → +${t.v} · maximum ${da} → ${a}`,
+          mente: (dv, t, da, a) => `Mental health: 1d${dv} = ${t.d} ${fmtN(t.m)} (Spirit mod.) → +${t.v} · maximum ${da} → ${a}`,
+          risorsa: (nome, dv, t, da, a) => `${nome}: 1d${dv} = ${t.d} ${fmtN(t.m)} → +${t.v} · maximum ${da} → ${a}`,
+          abilita: (n) => `Trained skills now add +${n}.`,
+          massimo: "You have reached the maximum level."
+        },
+        pe: (n, tot) => `+${n} experience points (total ${tot}).`,
+        riposo: {
+          titolo: (g) => `Rest — day ${g}:`,
+          razioni: (tiro, mangiate, resto) => `Adele's rations: 1d4 = ${tiro} · you eat ${mangiate} · ${resto} left`,
+          recupero: (d, liv, tot) => `Recovery: 1d4 + level = ${d} + ${liv} = ${tot}`,
+          digiuno: "No rations of Adele's: on an empty stomach you recover only 1 point.",
+          riga: (nome, da, a) => `${nome}: ${da} → ${a}`,
+          cucinate: (n, tot) => `Guendalina has prepared ${n} ${n === 1 ? "ration" : "rations"} of Adele's · store ${tot}/${RAZIONI_MAX}`,
+          scortaPiena: () => `Guendalina has cooked, but the store of Adele's rations is already full (${RAZIONI_MAX}).`,
+          fame: ["The fire is warm and sleep is calling, but your empty stomach keeps you awake. Without Adele's rations you cannot rest away from the kitchen."],
+          prime: (n) => `Guendalina entrusts you with the first ${n} of Adele's rations: they are eaten while resting (up to 1d4 per rest), and she cooks ${RAZIONI_AL_GIORNO} a day.`
+        },
+        morte: {
+          esito: (d, da, a, sMax) => `The house does not let its prisoners die. Physical health: ${sMax} / ${sMax} · Mental health: −1d4 = −${d} · ${da} → ${a}`,
+          caccia: [
+            "You open your eyes on a bearskin, before the great cold fireplace of the hunting room. You do not remember the way back: only the chill of stone and an iron grip under your arms.",
+            "Aldo stands beside you, hands clasped behind his back. He watches you the way one watches a retriever that came back without the prey.",
+            "«The house does not let its guests die. I do not have its patience. Your prey is still waiting for you: see that you do not waste more of my time.»"
+          ]
+        },
+        guardiano: {
+          titolo: "Your mind has shattered",
+          righe: [
+            "The voices no longer whisper: they speak with your mouth. The memory of your name crumbles like ash between your fingers, and with it the road that brought you here.",
+            "When Guendalina finds you, you are standing in the middle of the entrance hall, motionless, staring at the door. You do not recognise her. You are waiting for someone.",
+            "The next newcomer to cross the threshold of Casa Vespera will find a new guardian waiting.",
+            "THE END — you have become a guardian of the house."
+          ],
+          placeholder: "The game is over.",
+          btn: "Back to the main page"
+        },
+        sussurri: [
+          "…the walls are breathing, slowly, in time with your heart…",
+          "…someone said your name. Behind you. Again…",
+          "…the flames are watching you. They have blue eyes…",
+          "…you never left this room. You never will…",
+          "…the smell of ash fills your mouth…",
+          "…you remember a house that is not this one. Or perhaps it is…"
+        ]
+      }
+    });
+    const RG = RG_TUTTI[LINGUA] || RG_TUTTI.it;
     const A = CACCIA[LINGUA] || CACCIA.it; /* testi di Aldo, della caccia e delle stanze nuove */
     const A2 = CACCIA2[LINGUA] || CACCIA2.it; /* diari di Adele, fontana e prove di giardino, cappella e cripta */
     document.title = U.titoloPagina;
@@ -4379,14 +4501,120 @@
       const base = attr ? mod(Number(pg.statistiche && pg.statistiche[attr]) || 10) : 0;
       return base - (attr === "Agilità" ? malusArmatura() : 0) + (addestrata(n) ? (Number(pg.livello) || 1) : 0);
     };
-    const maxMentali = () => (pg.saluteMentale != null ? Number(pg.saluteMentale) : 10 + mod(spirito()));
-    /* mana (Sapiente e Accolito): il massimo viene dalla creazione, quello speso fa parte della partita */
-    const manaMax = () => (pg.mana != null ? Number(pg.mana) : null);
+    const maxMentali = () => (pg.saluteMentale != null ? Number(pg.saluteMentale) : 10 + mod(spirito())) + crescitaPg().mente;
+    /* mana (Sapiente e Accolito): il massimo viene dalla creazione (più la crescita di livello), quello speso fa parte della partita */
+    const manaMax = () => (pg.mana != null ? Number(pg.mana) + crescitaPg().risorsa : null);
     /* incantesimi salvati in creazione: { id, nome: { it, en }, costo, desc: { it, en }, effetto } */
     const listaIncantesimi = () => [].concat(pg.incantesimi || []).filter(Boolean).map(x => typeof x === "string" ? { id: x, nome: x } : x);
     const nomeInc = (inc) => Lingua.t(inc.nome) || inc.id || "";
     const nomiInc = (inc) => (inc.nome && typeof inc.nome === "object" ? Object.values(inc.nome) : [inc.nome, inc.id]).filter(Boolean).map(String);
     const manaAttuale = () => Math.max(0, manaMax() - (pg.manaUsato || 0));
+
+    /* =====================================================================
+       LIVELLI, RISORSE E GIORNI (regole decise)
+       - Livello massimo 5. PE per salire: 500 (1→2), 1000 (2→3), 1500 (3→4), 2000 (4→5): totali 500 / 1500 / 3000 / 5000.
+       - Ricompense: 150 PE mastini generici, 350 mastini specifici, 500 nemici che custodiscono ricompense o segreti
+         (la stessa se il nemico viene risparmiato).
+       - A ogni livello: salute fisica + (dado vita + mod Corpo), salute mentale + (dado vita + mod Spirito),
+         mana / punti ira / punti natura + (dado vita + mod dell'attributo della risorsa). Minimo +1 ciascuno.
+       - Guerriero: punti ira (10 + mod Lotta); Sciamano: punti natura (10 + mod Spirito). Tutte le risorse si ricaricano solo riposando.
+       - Livello e crescita fanno parte della partita (salvataggio), il personaggio di partenza resta quello della creazione.
+       ===================================================================== */
+    const LIVELLO_MAX = 5;
+    const SOGLIE_PE = [0, 500, 1500, 3000, 5000]; /* PE totali per raggiungere il livello 2, 3, 4, 5 (indice = livello attuale) */
+    const PE_NEMICI = { mastino: 150, mastinoSpecifico: 350, custode: 500 };
+    const RISORSA_CLASSE = { Soldato: { id: "ira", attr: "Lotta" }, Forestiero: { id: "natura", attr: "Spirito" } };
+    const ATTR_RISORSA_MAGIA = { Sapiente: "Mente", Accolito: "Spirito" };
+    const DADO_VITA = { Soldato: 10, Forestiero: 8, Sapiente: 6, Accolito: 6 };
+    const RAZIONI_MAX = 10, RAZIONI_AL_GIORNO = 2;
+    let crescita = { salute: 0, mente: 0, risorsa: 0 };
+    if (salvata && salvata.crescita && typeof salvata.crescita === "object") crescita = { salute: Number(salvata.crescita.salute) || 0, mente: Number(salvata.crescita.mente) || 0, risorsa: Number(salvata.crescita.risorsa) || 0 };
+    if (pg && salvata && Number(salvata.livello) > 0) pg.livello = Math.min(LIVELLO_MAX, Number(salvata.livello));
+    if (pg) pg.risorsaUsata = salvata ? (Number(salvata.risorsaUsata) || 0) : 0;
+    function crescitaPg() { return crescita; }
+    function livelloPg() { return Number(pg && pg.livello) || 1; }
+    function saluteMaxPg() { return (Number(pg.puntiVita ?? pg.saluteFisica) || 0) + crescita.salute; }
+    /* punti ira / punti natura: { id, max } oppure null (anche per i personaggi creati prima di questa regola) */
+    function risorsaPg() {
+      const c = RISORSA_CLASSE[pg && pg.classe]; if (!c) return null;
+      const base = (pg.risorsa && Number(pg.risorsa.max)) || (10 + mod(Number(pg.statistiche && pg.statistiche[c.attr]) || 10));
+      return { id: c.id, max: base + crescita.risorsa };
+    }
+    function risorsaAttuale() { const r = risorsaPg(); return r ? Math.max(0, r.max - (pg.risorsaUsata || 0)) : null; }
+    function prossimaSogliaPE() { const l = livelloPg(); return l >= LIVELLO_MAX ? null : SOGLIE_PE[l]; }
+    function testoPE() { const s = prossimaSogliaPE(); return s == null ? `${pg.esperienza || 0} (${RG.livelloMax})` : `${pg.esperienza || 0} / ${s}`; }
+    function mentaliAttuali() { return Math.max(0, maxMentali() - (pg.dannoMentale || 0)); }
+
+    /* punti esperienza: aggiunge, annuncia e controlla il passaggio di livello */
+    function guadagnaPE(n) {
+      pg.esperienza = (pg.esperienza || 0) + n; disegnaVitali(); modificato();
+      return n;
+    }
+    function controllaLivello() {
+      while (livelloPg() < LIVELLO_MAX && (pg.esperienza || 0) >= SOGLIE_PE[livelloPg()]) saliDiLivello();
+    }
+    function saliDiLivello() {
+      const dv = DADO_VITA[pg.classe] || Number(pg.tiroDado && pg.tiroDado.dado) || 6;
+      const st = (a) => mod(Number(pg.statistiche && pg.statistiche[a]) || 10);
+      const t = (m) => { const d = tira(dv); return { d, m, v: Math.max(1, d + m) }; };
+      const prima = { s: saluteMaxPg(), m: maxMentali(), r: manaMax() != null ? manaMax() : (risorsaPg() ? risorsaPg().max : null) };
+      const ts = t(st("Corpo")), tm = t(st("Spirito"));
+      crescita.salute += ts.v; crescita.mente += tm.v;
+      const righe = [RG.livello.salute(dv, ts, prima.s, saluteMaxPg()), RG.livello.mente(dv, tm, prima.m, maxMentali())];
+      const attrR = (RISORSA_CLASSE[pg.classe] || {}).attr || ATTR_RISORSA_MAGIA[pg.classe];
+      if (prima.r != null && attrR) {
+        const tr = t(st(attrR)); crescita.risorsa += tr.v;
+        const ora = manaMax() != null ? manaMax() : risorsaPg().max;
+        righe.push(RG.livello.risorsa(nomeRisorsa(), dv, tr, prima.r, ora));
+      }
+      pg.livello = livelloPg() + 1;
+      righe.push(RG.livello.abilita(pg.livello));
+      if (pg.livello >= LIVELLO_MAX) righe.push(RG.livello.massimo);
+      aggiungi({ tipo: "narra", box: "cap", fuori: true, esito: RG.livello.titolo(pg.livello), esitoRighe: righe, righe: [] });
+      disegnaScheda(); modificato();
+    }
+    function nomeRisorsa() { const r = risorsaPg(); return r ? RG[r.id] : U.mana; }
+
+    /* ---------- Salute mentale: ritratto incrinato, descrizioni distorte, a zero il personaggio diventa un guardiano ---------- */
+    let finePartita = false, attesaGuardiano = null;
+    function statoMente() {
+      if (!pg) return;
+      const max = maxMentali(), ora = mentaliAttuali(), r = max ? ora / max : 1;
+      document.body.classList.toggle("mente-incrinata", r <= 0.5 && r > 0.25);
+      document.body.classList.toggle("mente-spezzata", r <= 0.25);
+      if (ora <= 0 && !finePartita && !attesaGuardiano) attesaGuardiano = setTimeout(() => { attesaGuardiano = null; if (mentaliAttuali() <= 0) diventaGuardiano(); }, 1800);
+    }
+    function diventaGuardiano() {
+      if (finePartita) return;
+      finePartita = true;
+      const gia = !!usate.guardiano;
+      try { if (scontro) { scontro = null; MusicaScontro.ferma(); barraScontro(); } } catch (e) {}
+      chiudiScelte();
+      if (!gia) {
+        usate.guardiano = true;
+        fuoriDallaTendina(() => aggiungi({ tipo: "narra", box: "ko", esito: RG.guardiano.titolo, righe: RG.guardiano.righe }));
+        salvaPartita();
+      }
+      stato(true, RG.guardiano.placeholder);
+      scelte([{ testo: RG.guardiano.btn, fn: () => { window.location.href = "index.html"; } }]);
+    }
+    /* sussurri della mente spezzata: compaiono a volte in coda alle descrizioni (PROVVISORI, da riscrivere) */
+    function distorci(v) {
+      if (!document.body.classList.contains("mente-spezzata") || finePartita) return;
+      if (v.tipo !== "narra" || v.box || v.prova || !v.righe || !v.righe.length || v.sussurro) return;
+      if (Math.random() >= 0.35) return;
+      v.distorta = true; v.sussurro = RG.sussurri[Math.floor(Math.random() * RG.sussurri.length)];
+    }
+
+    /* ---------- Morte: la casa non lascia morire i suoi prigionieri ----------
+       salute fisica piena, −1d4 di salute mentale; il nemico si riprende del tutto (lo scontro successivo riparte da capo) */
+    function penaMorte() {
+      const d = tira(4), da = mentaliAttuali();
+      pg.dannoFisico = 0;
+      pg.dannoMentale = Math.min(maxMentali(), (pg.dannoMentale || 0) + d);
+      disegnaVitali(); aggiornaMentali(); modificato();
+      return RG.morte.esito(d, da, mentaliAttuali(), saluteMaxPg());
+    }
 
     let usate = (salvata && salvata.usate && typeof salvata.usate === "object" && !Array.isArray(salvata.usate)) ? salvata.usate : {};
     if (pg) pg.dannoFisico = salvata ? (Number(salvata.dannoFisico) || 0) : 0;
@@ -4478,22 +4706,24 @@
       vit.replaceChildren();
       disegnaStat();
       { /* cornice del ritratto e pulsante Invia: rossi sotto il 50% di salute, rossi pulsanti sotto il 20% */
-        const max = Number(pg.puntiVita ?? pg.saluteFisica) || 0, ora = Math.max(0, max - (pg.dannoFisico || 0)), r = max ? ora / max : 1;
+        const max = saluteMaxPg(), ora = Math.max(0, max - (pg.dannoFisico || 0)), r = max ? ora / max : 1;
         document.body.classList.toggle("salute-bassa", r <= 0.5 && r > 0.2);
         document.body.classList.toggle("salute-critica", r <= 0.2);
       }
       const sep = (c) => { const d = document.createElement("div"); d.className = c; if (c === "sep-linea") d.setAttribute("role", "separator"); vit.append(d); };
-      riga(vit, CB.esperienza, `${pg.esperienza || 0} / ${XP_LIVELLO}`, "xp");
+      riga(vit, CB.esperienza, testoPE(), "xp");
       sep("sep-linea");
       riga(vit, U.puntiSalute, testoSalute(), "salute");
       riga(vit, U.puntiMentali, testoMentali(), "mentali");
       riga(vit, U.classeArmatura, String(caAttuale()));
-      const magia = manaMax() != null || cdIncantesimi() != null;
+      const magia = manaMax() != null || cdIncantesimi() != null || risorsaPg() != null;
       if (magia) sep("sep-spazio");
       if (manaMax() != null) riga(vit, U.mana, `${manaAttuale()} / ${manaMax()}`, "mana");
+      if (risorsaPg()) riga(vit, nomeRisorsa(), `${risorsaAttuale()} / ${risorsaPg().max}`, "risorsa"); /* punti ira o punti natura */
       if (cdIncantesimi() != null) riga(vit, CB.cdInc, String(cdIncantesimi()), "cdinc");
       const sc = (() => { try { return scontro; } catch (e) { return null; } })();
       if (sc) righeEffetti(vit, sc, EFF_PG, sep);
+      statoMente();
     }
 
     /* Effetti a durata: medaglione con simbolo, nome e turni rimasti (rombi pieni = turni ancora attivi) */
@@ -4574,9 +4804,9 @@
     }
 
     function testoSalute() {
-      const v = pg.puntiVita ?? pg.saluteFisica;
-      if (v == null) return "—";
-      return `${Math.max(0, Number(v) - (pg.dannoFisico || 0))} / ${Number(v)}`;
+      if ((pg.puntiVita ?? pg.saluteFisica) == null) return "—";
+      const v = saluteMaxPg();
+      return `${Math.max(0, v - (pg.dannoFisico || 0))} / ${v}`;
     }
     function testoMentali() {
       const max = maxMentali();
@@ -4586,6 +4816,7 @@
     function aggiornaMentali() {
       const dd = document.querySelector('#vitali dd[data-k="mentali"]');
       if (dd) dd.textContent = testoMentali();
+      statoMente();
     }
 
     /* ---------- Diario ---------- */
@@ -4660,7 +4891,7 @@
       }
       const el = document.createElement("div");
       if (v.box === "sblocco") v = { ...v, box: "cap" }; /* vecchi salvataggi */
-      el.className = "voce " + (v.tipo || "narra") + (v.pg ? " pg" : "") + (v.box ? " riquadro " + v.box : "") + (v.tipo === "missioni" ? " riquadro mis" : "") + (v.tipo === "laboratorio" ? " riquadro mis lab" : "") + (v.tipo === "armeria" ? " riquadro mis arm" : "");
+      el.className = "voce " + (v.tipo || "narra") + (v.pg ? " pg" : "") + (v.box ? " riquadro " + v.box : "") + (v.tipo === "missioni" ? " riquadro mis" : "") + (v.tipo === "laboratorio" ? " riquadro mis lab" : "") + (v.tipo === "armeria" ? " riquadro mis arm" : "") + (v.distorta ? " distorta" : "");
       if (v.img && v.img.src === "atrio.webp") { v = { ...v, img: { ...v.img, src: IMMAGINI.atrio }, titolo: v.titolo || TX.viste.atrio.titolo }; } /* vecchi salvataggi */
       if (v.img && !v.imgFissa && IMMAGINI[v.stanza] && v.img.src !== IMMAGINI[v.stanza]) v = { ...v, img: { ...v.img, src: IMMAGINI[v.stanza] } }; /* salvataggi con il vecchio percorso immagini/ */
       if (v.titolo && v.tipo !== "prova") {
@@ -4710,6 +4941,7 @@
         }
       } else
       (v.righe || []).forEach(t => p(t, (t.startsWith("«") || t.startsWith("“")) ? "lettera" : ""));
+      if (v.sussurro) p(v.sussurro, "sussurro");
       if (v.banner) p(v.banner, "banner");
       if (v.nota && !NOTE_TOLTE.includes(v.nota)) p(v.nota, "nota");
       (v.fuori ? elDiario : (gruppo || elDiario)).append(el); /* i messaggi dei pulsanti stanno fuori dalla tendina dell'azione */
@@ -4880,8 +5112,10 @@
     const vaiDaSolo = (id) => { if (luogo !== "cantina") return; vistaFissa = false; fuoriTendina = true; try { vai(id); } finally { fuoriTendina = false; } };
     function sbloccaRiposo() {
       if (usate.riposo === "sbloccato") return;
-      usate.riposo = "sbloccato"; salvaUsate();
+      usate.riposo = "sbloccato"; usate.razioni_date = true; salvaUsate();
       sblocco(Q.sblocco.riposo, "cap"); disegnaMissioni();
+      if (razioni() < RAZIONI_AL_GIORNO) impostaRazioni(RAZIONI_AL_GIORNO); /* le razioni della prima giornata */
+      sist(RG.riposo.prime(RAZIONI_AL_GIORNO));
     }
     const FINE_DIALOGO = {
       guendalina() { offriMissioni(1500); }, /* il riposo si sblocca altrove: domanda sui rifugi (gentile) o fine della missione della scaletta (brusco) */
@@ -5093,22 +5327,58 @@
       sblocco(Q.sblocco.completata3, "mis"); disegnaMissioni();
     }
 
-    /* il riposo cura 1d6 di salute fisica e 1d6 di salute mentale; null se non serve */
-    function curaRiposo() {
-      if (!(pg.dannoMentale > 0) && !(pg.dannoFisico > 0)) return null;
-      const maxF = pvMaxPg(), daF = pvPg(), tF = tira(6);
-      pg.dannoFisico = Math.max(0, (pg.dannoFisico || 0) - tF);
-      const maxM = maxMentali(), daM = Math.max(0, maxM - (pg.dannoMentale || 0)), tM = tira(6);
-      pg.dannoMentale = Math.max(0, (pg.dannoMentale || 0) - tM);
+    /* ---------- Razioni di Adele (nello zaino, come materiale) ---------- */
+    const razioni = () => { const it = zaino.find(x => x.id === "razioni_adele"); return it ? Number(it.qta) || 0 : 0; };
+    function impostaRazioni(n) {
+      n = Math.max(0, Math.min(RAZIONI_MAX, n));
+      const it = zaino.find(x => x.id === "razioni_adele");
+      if (it) { if (n > 0) it.qta = n; else zaino = zaino.filter(x => x !== it); }
+      else if (n > 0) zaino.push({ id: "razioni_adele", nome: Q.oggetti.razioni_adele.nome, tipo: "materiale", qta: n });
+      aggiornaZaino(); modificato();
+    }
+
+    /* Riposo (regola decisa): ogni riposo è un giorno.
+       - con almeno una razione: si consumano fino a 1d4 razioni di Adele e si recupera 1d4 + livello su TUTTE le risorse
+         (salute fisica, salute mentale, mana o punti ira / natura);
+       - senza razioni si riposa solo in cucina, recuperando 1 punto per risorsa; altrove la fame tiene svegli;
+       - al risveglio Guendalina ha cucinato 2 razioni (scorta massima 10);
+       - i nemici sconfitti ricompaiono: un nuovo mastino aspetta in cantina (al massimo uno per riposo).
+       Restituisce null se non c'è niente da recuperare, { fame: true } se servono razioni. */
+    function curaRiposo(conDigiuno) {
+      const ris = risorsaPg();
+      const pieno = !(pg.dannoFisico > 0) && !(pg.dannoMentale > 0) && !(pg.manaUsato > 0 && manaMax() != null) && !(pg.risorsaUsata > 0 && ris);
+      if (pieno) return null;
+      let scorta = razioni();
+      if (scorta <= 0 && !conDigiuno) return { fame: true };
+      const R = RG.riposo, righe = [];
+      let rec;
+      if (scorta > 0) {
+        const tr = tira(4), mangiate = Math.min(tr, scorta); scorta -= mangiate;
+        righe.push(R.razioni(tr, mangiate, scorta));
+        const d = tira(4), lv = livelloPg(); rec = d + lv;
+        righe.push(R.recupero(d, lv, rec));
+      } else { rec = 1; righe.push(R.digiuno); }
+      { const da = pvPg(); pg.dannoFisico = Math.max(0, (pg.dannoFisico || 0) - rec); righe.push(R.riga(U.puntiSalute, da, pvPg())); }
+      { const da = mentaliAttuali(); pg.dannoMentale = Math.max(0, (pg.dannoMentale || 0) - rec); righe.push(R.riga(U.puntiMentali, da, mentaliAttuali())); }
+      if (manaMax() != null) { const da = manaAttuale(); pg.manaUsato = Math.max(0, (pg.manaUsato || 0) - rec); righe.push(R.riga(U.mana, da, manaAttuale())); }
+      if (ris) { const da = risorsaAttuale(); pg.risorsaUsata = Math.max(0, (pg.risorsaUsata || 0) - rec); righe.push(R.riga(nomeRisorsa(), da, risorsaAttuale())); }
+      usate.giorno = (Number(usate.giorno) || 1) + 1;
+      if (!usate.guendalinaAssente) { /* Guendalina cucina per il nuovo giorno */
+        const prima = scorta; scorta = Math.min(RAZIONI_MAX, scorta + RAZIONI_AL_GIORNO);
+        righe.push(scorta > prima ? R.cucinate(scorta - prima, scorta) : R.scortaPiena());
+      }
+      impostaRazioni(scorta);
+      if (usate.cantina_cane === "sconfitto") usate.cantina_ricompare = true; /* ricomparsa dei nemici legata al riposo */
+      salvaUsate();
       disegnaVitali(); aggiornaMentali(); modificato();
-      const R = Q.riposo;
-      return { esito: R.titolo, esitoRighe: [R.fisica(tF, daF, pvPg()), R.mentale(tM, daM, Math.max(0, maxM - pg.dannoMentale))] };
+      return { esito: R.titolo(usate.giorno), esitoRighe: righe };
     }
     function riposa() {
       if (luogo === "cripta" && braciereAcceso() && !scontro) { /* Ettore ti lascia dormire accanto al suo fuoco */
         if (usate.riposo !== "sbloccato") return aggiungi({ tipo: "narra", righe: Q.riposo.bloccato });
-        const cura = curaRiposo();
+        const cura = curaRiposo(false);
         if (!cura) return aggiungi({ tipo: "narra", righe: Q.riposo.inutile });
+        if (cura.fame) return aggiungi({ tipo: "narra", righe: RG.riposo.fame });
         usate.fuoco_cripta = "spento"; salvaUsate();
         return aggiungi({ tipo: "narra", box: "ok", ...cura, righe: [...A2.braciere.dorme, ...A2.braciere.sveglia] });
       }
@@ -5118,8 +5388,9 @@
       const eterno = luogo === "cucina"; /* il focolare di Guendalina non si spegne mai */
       if (!eterno && usate["fuoco_" + luogo] === "spento") return aggiungi({ tipo: "narra", righe: Q.riposo.spento });
       if (usate.riposo !== "sbloccato") return aggiungi({ tipo: "narra", righe: Q.riposo.bloccato });
-      const cura = curaRiposo();
+      const cura = curaRiposo(eterno); /* in cucina si riposa anche senza razioni */
       if (!cura) return aggiungi({ tipo: "narra", righe: Q.riposo.inutile });
+      if (cura.fame) return aggiungi({ tipo: "narra", righe: RG.riposo.fame });
       if (!eterno) usate["fuoco_" + luogo] = "spento";
       salvaUsate();
       aggiungi({ tipo: "narra", box: "ok", ...cura, righe: [...Q.riposo.dorme, ...(eterno ? Q.riposo.svegliaCucina : Q.riposo.sveglia)] });
@@ -5372,6 +5643,9 @@
       if (usate.ettore_lato === "signore") { aggiungiZaino({ id: "taccuino", nome: "Taccuino del cacciatore", tipo: "reperto", alias: ["taccuino", "notebook"] }); righe.push(A.sblocco.taccuino); }
       salvaUsate();
       sblocco(righe, "mis"); disegnaMissioni();
+      guadagnaPE(NEMICI.esploratore.xp); /* risparmiato: stessa ricompensa */
+      fuoriDallaTendina(() => aggiungi({ tipo: "narra", box: "ok", righe: [RG.pe(NEMICI.esploratore.xp, pg.esperienza)] }));
+      controllaLivello();
     }
 
     /* ---------- La consegna del sigillo, nella sala della caccia ---------- */
@@ -5745,6 +6019,7 @@
     const clic = (fn) => () => { vistaFissa = false; fuoriTendina = true; try { fn(); } finally { fuoriTendina = false; } };
     function aggiungi(v) {
       if (!v.stanza) v.stanza = luogo;
+      distorci(v);
       if (scontro && v.tipo !== "giocatore") { if (!scontro.turno) v.fuori = true; else if (v.fuori !== true) v.fuori = false; } /* scontro: prima del 1° turno fuori, poi nella tendina del turno */
       else if (fuoriTendina) v.fuori = true;
       diario.push(v);
@@ -5756,12 +6031,12 @@
     function salvaPartita() {
       const conta = {}, tenute = [];
       for (let i = diario.length - 1; i >= 0; i--) { const k = diario[i].stanza || "atrio"; conta[k] = (conta[k] || 0) + 1; if (conta[k] <= 80) tenute.unshift(diario[i]); }
-      const dati = { usate, diario: tenute, luogo, dannoMentale: pg.dannoMentale || 0, dannoFisico: pg.dannoFisico || 0, manaUsato: pg.manaUsato || 0, esperienza: pg.esperienza || 0, zaino, arma, mano, scudo, armatura: armaturaPartita, ora: Date.now() };
+      const dati = { usate, diario: tenute, luogo, dannoMentale: pg.dannoMentale || 0, dannoFisico: pg.dannoFisico || 0, manaUsato: pg.manaUsato || 0, esperienza: pg.esperienza || 0, livello: livelloPg(), crescita, risorsaUsata: pg.risorsaUsata || 0, zaino, arma, mano, scudo, armatura: armaturaPartita, ora: Date.now() };
       try { localStorage.setItem(CHIAVE_SALVATAGGIO, JSON.stringify(dati)); }
       catch (e) { document.getElementById("statoSalvataggio").textContent = U.salvataggioErr; return; }
       try { /* copia nel posto del personaggio attivo, così dalla pagina iniziale si riprende da qui */
         const n = localStorage.getItem("slot_attivo"), sl = n && JSON.parse(localStorage.getItem("slot" + n));
-        if (sl) { sl.partita = dati; sl.aggiornato = dati.ora; localStorage.setItem("slot" + n, JSON.stringify(sl)); }
+        if (sl) { sl.partita = dati; sl.aggiornato = dati.ora; if (sl.pg) sl.pg.livello = dati.livello; localStorage.setItem("slot" + n, JSON.stringify(sl)); }
       } catch (e) {}
       daSalvare = false; ultimoSalvataggio = dati.ora; aggiornaBarra();
       if (window.Cloud && Cloud.attivo) { /* copia anche nel cloud, così si riprende dall'altro dispositivo */
@@ -5813,6 +6088,7 @@
     let occupato = false;
 
     function stato(blocca, suggerimento) {
+      blocca = blocca || finePartita; /* personaggio diventato guardiano: la partita è finita */
       elTesto.disabled = blocca; elInvia.disabled = blocca;
       elTesto.placeholder = suggerimento || ((luogo === "foresta" || luogo === "buio") ? TX.esterno.placeholder : U.placeholder);
       if (!blocca) elTesto.focus({ preventScroll: true });
@@ -6664,10 +6940,9 @@
       if (id === "atrio" && usate.q4 === "prova" && !usate.avviso_porta_sx) { usate.avviso_porta_sx = true; salvaUsate(); sist(A.ui.avvisoPortaSx); }
       if (id === "cucina" && usate.q1 === "scaletta" && usate.portaCucina === "aperta") avviaDialogo("quest1_fine"); /* torni con la scaletta */
       if (id === "cantina" && usate.cantina_cane === "apparso") { aggiungi({ tipo: "narra", righe: Q.cantina.caneGia }); avviaScontro("mastino"); } /* il mastino ti aspetta ancora */
-      else if (id === "cantina" && usate.cantina_cane === "sconfitto") { /* rientrando dopo una vittoria: probabilità che scende del 5% a ogni ingresso */
-        const prob = usate.cantina_prob != null ? Number(usate.cantina_prob) : PROB_NUOVO_NEMICO * 100;
-        usate.cantina_prob = Math.max(0, prob - 5); salvaUsate();
-        if (Math.random() * 100 < prob) appareCane();
+      else if (id === "cantina" && usate.cantina_cane === "sconfitto" && usate.cantina_ricompare) { /* dopo un riposo un nuovo mastino aspetta in cantina */
+        usate.cantina_ricompare = false; salvaUsate();
+        appareCane();
       }
     }
 
@@ -6892,21 +7167,20 @@
     const ATTR_NEM = ["Lotta", "Agilità", "Mente", "Corpo", "Carisma", "Spirito"];
     const NEMICI = {
       mastino: {
-        ca: 10, dadoVita: 6, dannoDado: 4, xp: 200,
+        ca: 10, dadoVita: 6, dannoDado: 4, xp: 150, /* mastino generico */
         probPresa: 0.6,                 /* dopo un colpo a segno, una volta per scontro */
         probSoffio: 0.4,                /* PROVVISORIO: probabilità di usare il soffio quando è carico */
         soffio: { cd: 12, dadi: 2, dado: 6, ricarica: 5 }, /* tiro salvezza su Agilità CD 12 o 2d6; si ricarica con 5-6 su 1d6 */
         ritratto: "immagini/house/mastino_cantina.webp" /* immagine di riserva: di norma si usa quella caricata alla comparsa */
       },
       /* Ettore, l'esploratore della cripta (PROVVISORIO): spada 1d6, niente attacchi speciali; si arrende a un terzo della salute */
-      esploratore: { ca: 13, dadoVita: 8, dannoDado: 6, xp: 300, probPresa: 0, probSoffio: 0, soffio: null, ritratto: "immagini/nemici/Ettore.webp" } /* immagine da aggiungere */
+      esploratore: { ca: 13, dadoVita: 8, dannoDado: 6, xp: 500, /* custode del sigillo: 500 PE, gli stessi se risparmiato */ probPresa: 0, probSoffio: 0, soffio: null, ritratto: "immagini/nemici/Ettore.webp" } /* immagine da aggiungere */
     };
     const caNem = () => { const n = scontro || ultimoNemico; return NEMICI[n.id].ca + (Number(n.caMod) || 0); }; /* il consiglio di Aldo abbassa la CA di Ettore */
-    const XP_LIVELLO = 1000; /* punti esperienza per il livello successivo */
     /* classe difficoltà degli incantesimi: 8 + modificatore (Mente per il Sapiente, Spirito per l'Accolito) + livello */
     const ATTR_INC = { Sapiente: "Mente", Accolito: "Spirito" };
     const cdIncantesimi = () => { const a = pg && ATTR_INC[pg.classe]; return a ? 8 + mod(statPg(a)) + (Number(pg.livello) || 1) : null; };
-    const PROB_NUOVO_NEMICO = 0.3, SCARTO_AGILE = 4, PAUSA_SCONTRO = 900;
+    const SCARTO_AGILE = 4, PAUSA_SCONTRO = 900;
     const MUSICHE_SCONTRO = ["audio/combat1.mp3", "audio/combat2.mp3", "audio/sala_addestramento.mp3"]; /* una a caso a ogni scontro */
 
     const CB_BASE = ({
@@ -7020,8 +7294,8 @@
         bannerVinto: "Hai vinto lo scontro!",
         xp: (n, tot) => `+${n} punti esperienza (totale ${tot}).`,
         sconfitta: ["Le gambe ti cedono e crolli sulla pietra fredda. L'ultima cosa che vedi sono due braci rosse sopra di te, poi il buio."], /* PROVVISORIO */
-        risveglio: ["Quando riapri gli occhi sei disteso sul pavimento della cucina, il viso di Guendalina chino su di te: deve averti trascinato su per la scala. Ti resta appena un filo di forze."], /* PROVVISORIO */
-        sistRisveglio: "Salute fisica: 1. Il Mastino ti aspetta ancora in cantina."
+        risveglio: ["Quando riapri gli occhi sei disteso sul pavimento della cucina, il viso di Guendalina chino su di te: deve averti trascinato su per la scala. Le ferite si sono richiuse come se non fossero mai esistite, ma qualcosa nella tua mente si è incrinato."], /* PROVVISORIO */
+        sistRisveglio: "Il Mastino ti aspetta ancora in cantina, di nuovo in piene forze."
       },
       en: {
         nome: "Infernal Mastiff", nomeLungo: "Infernal Mastiff", esperienza: "Experience",
@@ -7133,8 +7407,8 @@
         bannerVinto: "You won the fight!",
         xp: (n, tot) => `+${n} experience points (total ${tot}).`,
         sconfitta: ["Your legs give way and you collapse on the cold stone. The last thing you see is two red embers above you, then darkness."],
-        risveglio: ["When you open your eyes again you are lying on the kitchen floor, Guendalina's face bent over you: she must have dragged you up the stairs. You have barely a thread of strength left."],
-        sistRisveglio: "Physical health: 1. The Mastiff is still waiting for you in the cellar."
+        risveglio: ["When you open your eyes again you are lying on the kitchen floor, Guendalina's face bent over you: she must have dragged you up the stairs. Your wounds have closed as if they had never been, but something in your mind has cracked."],
+        sistRisveglio: "The Mastiff is still waiting for you in the cellar, back at full strength."
       }
     })[LINGUA === "en" ? "en" : "it"];
     /* testi dello scontro: quelli del mastino, con le varianti del nemico (Ettore) o del luogo (la sala da ballo) */
@@ -7145,7 +7419,7 @@
     let scontro = null, ultimoNemico = null; /* ultimoNemico: dati mostrati nella scheda a destra (resta aperta dopo la vittoria, fino al cambio di stanza) */
     const pesca = (a) => a[Math.floor(Math.random() * a.length)];
     const eff = (k) => !!(scontro && scontro.eff[k] > 0);
-    const pvMaxPg = () => Number(pg.puntiVita ?? pg.saluteFisica) || 0;
+    const pvMaxPg = () => saluteMaxPg();
     const pvPg = () => Math.max(0, pvMaxPg() - (pg.dannoFisico || 0));
     const statPg = (a) => (Number(pg.statistiche && pg.statistiche[a]) || 10) + (eff("potenza") ? 2 : 0);
     const modLottaPg = () => mod(statPg("Lotta"));
@@ -7466,8 +7740,9 @@
         if (c) { c.classList.add("dissolto"); setTimeout(() => { const v = c.closest(".voce"); c.remove(); if (v && !v.textContent.trim()) v.remove(); }, 3100); }
       }
       aggiungi({ tipo: "narra", fuori: true, righe: CB.vittoria });
-      pg.esperienza = (pg.esperienza || 0) + D.xp; disegnaVitali(); modificato();
+      guadagnaPE(D.xp);
       aggiungi({ tipo: "narra", box: "ok", fuori: true, righe: [CB.bannerVinto, CB.xp(D.xp, pg.esperienza)] });
+      controllaLivello();
       if (idNem === "mastino") { /* bottino: i mastini lasciano sempre pelo, il collare con le larve e le ghiandole del fuoco */
         const pelo = tira(4), larve = tira(4), ghi = tira(2);
         aggiungiMateriale("pelo_mastino", pelo); aggiungiMateriale("larve_falena", larve); aggiungiMateriale("ghiandola_fuoco", ghi);
@@ -7488,7 +7763,9 @@
       }
       stato(false);
     }
-    function sconfittaScontro() { /* PROVVISORIO: ci si risveglia in cucina con 1 di salute; il mastino resta in cantina */
+    /* Sconfitta: salute piena e −1d4 di salute mentale; si torna nella sala della caccia (durante la caccia, Aldo)
+       o in cucina (esplorazione, Guendalina). Il nemico si riprende del tutto. Con Aldo lo scontro lo interrompe lui. */
+    function sconfittaScontro() {
       if (scontro && scontro.ctx === "aldo") return interrompiAldo();
       if (scontro && scontro.ctx === "ettore") { /* Ettore non ti finisce: ti risvegli nella cappella e lui ti aspetta ancora */
         chiudiScontro("perso");
@@ -7496,9 +7773,9 @@
         aggiungi({ tipo: "narra", box: "ko", righe: CB.sconfitta });
         stato(true, CB.attesa);
         return setTimeout(() => {
-          pg.dannoFisico = Math.max(0, pvMaxPg() - 1); disegnaVitali(); modificato();
+          const pena = penaMorte();
           usate.ettore = "tregua"; usate.dialogo_ettore = "tregua"; salvaUsate();
-          fuoriDallaTendina(() => { vai("cappella", { righe: CB.risveglio }); sist(CB.sistRisveglio); });
+          fuoriDallaTendina(() => { vai("sala_caccia", { righe: RG.morte.caccia }); aggiungi({ tipo: "narra", box: "ko", righe: [pena] }); sist(CB.sistRisveglio); });
           stato(false);
         }, 2200);
       }
@@ -7507,9 +7784,9 @@
       aggiungi({ tipo: "narra", box: "ko", righe: CB.sconfitta });
       stato(true, CB.attesa);
       setTimeout(() => {
-        pg.dannoFisico = Math.max(0, pvMaxPg() - 1); disegnaVitali(); modificato();
+        const pena = penaMorte();
         vaiDaSolo("cucina");
-        fuoriTendina = true; try { aggiungi({ tipo: "narra", righe: CB.risveglio }); sist(CB.sistRisveglio); } finally { fuoriTendina = false; }
+        fuoriTendina = true; try { aggiungi({ tipo: "narra", righe: CB.risveglio }); aggiungi({ tipo: "narra", box: "ko", righe: [pena] }); sist(CB.sistRisveglio); } finally { fuoriTendina = false; }
         stato(false);
       }, 2200);
     }
@@ -7562,6 +7839,7 @@
 
       [arma, ...zaino].forEach(o => { if (o && o.nome === SPADA.oggetto.nome) { o.bonus = 0; if (!o.danno) o.danno = SPADA.oggetto.danno; if (!o.mani) { o.mani = SPADA.oggetto.mani; o.tipoDanno = SPADA.oggetto.tipoDanno; } if (!o.alias || !o.alias.includes("sword")) o.alias = SPADA.oggetto.alias; } }); /* salvataggi vecchi */
       LUOGHI.trofei_targhe.successo = LUOGHI.trofei_targhe.successo.map(r => r.replace("{nome}", pg.nome)); /* la tredicesima targa porta il nome del personaggio */
+      if (usate.riposo === "sbloccato" && !usate.razioni_date) { usate.razioni_date = true; if (razioni() < RAZIONI_AL_GIORNO) impostaRazioni(RAZIONI_AL_GIORNO); } /* salvataggi precedenti alle razioni di Adele */
       disegnaScheda();
       if (!diario.length) { /* nuova partita: si comincia all'accampamento, fuori dal dungeon */
         luogo = "foresta";
@@ -7598,10 +7876,10 @@
       const $ = (id) => document.getElementById(id);
       const en = () => window.Lingua && Lingua.get() === "en";
       const L = () => en()
-        ? { salute: "Health", mentali: "Mind", mana: "Mana", apriPg: "Open character sheet", apriNem: "Open enemy sheet", chiudi: "Close",
+        ? { salute: "Health", mentali: "Mind", mana: "Mana", ira: "Rage", natura: "Nature", apriPg: "Open character sheet", apriNem: "Open enemy sheet", chiudi: "Close",
             invio: "☁ syncing…", ok: "☁ synced", locale: "", errore: "☁ cloud unreachable: saved on this device only",
             conflitto: "☁ another device saved later: choose from the home page", troppo: "☁ save too large for the cloud" }
-        : { salute: "Salute", mentali: "Mente", mana: "Mana", apriPg: "Apri la scheda del personaggio", apriNem: "Apri la scheda del nemico", chiudi: "Chiudi",
+        : { salute: "Salute", mentali: "Mente", mana: "Mana", ira: "Ira", natura: "Natura", apriPg: "Apri la scheda del personaggio", apriNem: "Apri la scheda del nemico", chiudi: "Chiudi",
             invio: "☁ sincronizzo…", ok: "☁ sincronizzata", locale: "", errore: "☁ cloud non raggiungibile: salvata solo qui",
             conflitto: "☁ un altro dispositivo ha salvato dopo: scegli dalla pagina iniziale", troppo: "☁ salvataggio troppo grande per il cloud" };
 
@@ -7657,14 +7935,15 @@
       });
 
       /* ---------- barra compatta del personaggio ---------- */
+      const pgClasse = () => { try { return JSON.parse(localStorage.getItem("personaggio")).classe; } catch (e) { return null; } };
       const parti = (k) => { const dd = document.querySelector(`#vitali dd[data-k="${k}"]`); if (!dd) return null; const m = dd.textContent.match(/(-?\d+)\s*\/\s*(\d+)/); return m ? [Number(m[1]), Number(m[2])] : null; };
       function aggiornaMini() {
         const t = L();
-        ["salute", "mentali", "mana"].forEach(k => {
+        ["salute", "mentali", "mana", "risorsa"].forEach(k => {
           const v = parti(k), riga = btnPg.querySelectorAll(`.r-${k}-l, .r-${k}, .r-${k}-n`);
           riga.forEach(e => e.hidden = !v);
           if (!v) return;
-          btnPg.querySelector(`.r-${k}-l`).textContent = t[k];
+          btnPg.querySelector(`.r-${k}-l`).textContent = k === "risorsa" ? t[{ Soldato: "ira", Forestiero: "natura" }[pgClasse()]] || "" : t[k];
           btnPg.querySelector(`.r-${k}-n`).textContent = `${Math.max(0, v[0])}/${v[1]}`;
           btnPg.querySelector(`.r-${k} i`).style.width = (v[1] ? Math.max(0, Math.min(100, v[0] / v[1] * 100)) : 0) + "%";
         });

@@ -129,6 +129,16 @@
     td.mod { text-align: center; font-weight: 600; }
     td input { width: 4rem; text-align: center; padding: 0.4rem; }
     @media (min-width: 901px) and (max-width: 1250px) { td.uso, th:nth-child(2) { display: none; } }
+    /* telefono: la colonna «Utilizzo» spinge fuori dallo schermo valori e pulsanti; la descrizione va sotto il nome */
+    .uso-mini { display: none; }
+    @media (max-width: 600px) {
+      td.uso, th:nth-child(2) { display: none; }
+      .uso-mini { display: block; color: var(--muted); font-size: 0.78rem; line-height: 1.25; margin-top: 0.15rem; }
+      th, td { padding: 0.55rem 0.3rem; }
+      td input { width: 2.6rem; padding: 0.35rem 0.1rem; -moz-appearance: textfield; appearance: textfield; }
+      td input::-webkit-inner-spin-button, td input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+      .step { width: 2rem; height: 2rem; margin: 0 0.1rem; }
+    }
     .step { font: inherit; font-size: 1.1rem; line-height: 1; width: 2.25rem; height: 2.25rem; padding: 0; margin: 0 0.15rem; background: transparent; color: var(--text); border: 2px solid var(--line); border-radius: 0.5rem; cursor: pointer; }
     .step:disabled { opacity: 0.4; cursor: not-allowed; }
 
@@ -594,7 +604,7 @@
       const n = N("attributi", nome);
       const riga = document.createElement("tr");
       riga.innerHTML =
-        `<td><label for="stat${i}" style="margin:0">${n}</label></td>` +
+        `<td><label for="stat${i}" style="margin:0">${n}</label><small class="uso-mini">${L(uso)}</small></td>` +
         `<td class="uso">${L(uso)}</td><td class="bonus">–</td><td class="mod">+0</td>` +
         `<td><button type="button" class="step" data-i="${i}" data-d="-1" aria-label="${t.diminuisci(n)}">−</button>` +
         `<input id="stat${i}" type="number" min="${VALORE_MINIMO}" value="${VALORE_MINIMO}">` +

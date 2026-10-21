@@ -4256,10 +4256,11 @@
     /* ---------- Il mondo: regole delle scene (i testi sono in TESTI) ---------- */
     const FATTI_ATRIO = "Atrio sontuoso di un dungeon: pavimento di marmo bianco lucidissimo con bei tappeti; alle pareti imponenti arazzi illuminati da fiaccole eterne, a sinistra uno con un cervo dai palchi imponenti, a destra uno con un leone; due porte di legno pregiato intarsiato, una a sinistra e una a destra, con due fiaccole ai lati; di fronte una scalinata sale al piano superiore, ai cui piedi stanno due armature decorative di ferro (una a sinistra e una a destra); sul pianerottolo riposa un'armatura scintillante con una lunga spada, davanti a una vetrata che raffigura il padrone di casa con la stessa armatura; alle spalle di chi entra un imponente portone d'ingresso finemente intagliato, chiuso a chiave (dove prima c'era l'ingresso della grotta).";
 
-    const PROVA_INDAGARE = { abilita: "Indagare", dado: 10, cd: 8 };
-    const PROVA_INDAGARE_10 = { abilita: "Indagare", dado: 10, cd: 10 };
-    const PROVA_PERCEZIONE = { abilita: "Percezione", dado: 10, cd: 10 };
-    const PROVA_MENTE = { attributo: "Mente", dado: 10, cd: 8 }; /* prova sull'attributo Mente, non su un'abilità */
+    /* prove di atrio e sala da conversazione: nate con il d10, ora d20 come tutte le altre (difficoltà riscalate: 8 → 10, 10 → 12) */
+    const PROVA_INDAGARE = { abilita: "Indagare", dado: 20, cd: 10 };
+    const PROVA_INDAGARE_10 = { abilita: "Indagare", dado: 20, cd: 12 };
+    const PROVA_PERCEZIONE = { abilita: "Percezione", dado: 20, cd: 12 };
+    const PROVA_MENTE = { attributo: "Mente", dado: 20, cd: 10 }; /* prova sull'attributo Mente, non su un'abilità */
     /* Se in queste stanze tutte le prove vengono fallite, il giocatore subisce danni mentali */
     const DANNO_STANZA = {}; /* il danno mentale della sala da conversazione è stato tolto insieme alle sue prove */
 

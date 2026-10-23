@@ -91,7 +91,19 @@ window.Sonoro = (() => {
   function effetto(src, volume = 1) {
     if (!H) return { suona: () => Promise.resolve(false) };
     const h = new Howl({ src: [src], volume, preload: true });
-    return { suona: () => new Promise(fine => { if (muto()) return fine(false); const id = h.play(); h.once("end", () => fine(true), id); h.once("playerror", () => fine(false), id); h.once("loaderror", () => fine(false)); }) };
+    let pronto = false, errore = false;
+    h.once("load", () => { pronto = true; });
+    h.once("loaderror", (id, e) => { errore = true; try { console.warn("Audio: impossibile caricare " + src, e); } catch (x) {} });
+    return { suona: () => new Promise(fine => {
+      if (muto()) return fine(false);
+      if (errore) return fine(false);
+      /* il contesto audio può essere sospeso (nessun gesto recente): lo si riattiva prima di suonare */
+      try { if (Howler.ctx && Howler.ctx.state !== "running") Howler.ctx.resume().catch(() => {}); } catch (e) {}
+      const id = h.play();
+      h.once("end", () => fine(true), id);
+      h.once("playerror", () => { try { console.warn("Audio: riproduzione bloccata per " + src); } catch (e) {} fine(false); }, id);
+      h.once("loaderror", () => fine(false));
+    }) };
   }
 
   /* ---------- contesto per i suoni generati (fuoco del camino) ---------- */

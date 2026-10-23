@@ -5,16 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Il Trono di Cenere</title>
   <script src="lib/purify.min.js"></script>
-  <script src="sicuro.js"></script>
-  <script src="lingua.js"></script>
+  <script src="js/sicuro.js"></script>
+  <script src="js/lingua.js"></script>
   <script>
     /* Volume di partenza: 10%. Vale solo finché il giocatore non lo cambia (la scelta resta salvata). */
     try { if (localStorage.getItem("audio_volume") === null) localStorage.setItem("audio_volume", "0.1"); } catch (e) {}
   </script>
-  <script src="volume.js"></script>
+  <script src="js/volume.js"></script>
   <script src="lib/howler.core.min.js"></script>
-  <script src="audio.js"></script>
-  <script src="cloud.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/cloud.js"></script>
   <link rel="stylesheet" href="tema.css">
   <style>
     * { box-sizing: border-box; }

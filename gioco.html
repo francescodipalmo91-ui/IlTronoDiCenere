@@ -6,15 +6,15 @@
   <meta name="theme-color" content="#161b22">
   <title>Il dungeon</title>
   <script src="lib/purify.min.js"></script>
-  <script src="sicuro.js"></script>
-  <script src="regole.js"></script>
-  <script src="incantesimi.js"></script>
-  <script src="tecniche.js"></script>
-  <script src="lingua.js"></script>
-  <script src="volume.js"></script>
+  <script src="js/sicuro.js"></script>
+  <script src="js/regole.js"></script>
+  <script src="js/incantesimi.js"></script>
+  <script src="js/tecniche.js"></script>
+  <script src="js/lingua.js"></script>
+  <script src="js/volume.js"></script>
   <script src="lib/howler.core.min.js"></script>
-  <script src="audio.js"></script>
-  <script src="cloud.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/cloud.js"></script>
   <link rel="stylesheet" href="tema.css">
   <style>
 
@@ -392,7 +392,7 @@
     .missione .nome-btn { font-weight: 600; }
     .missione .testa { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; }
     .missione .mini { padding: 0.25rem 0.75rem; margin-top: 0.25rem; }
-    .voce p.banner { font-weight: 700; font-size: 1.25rem; text-align: center; margin-top: 1.5rem; }
+    .voce p.banner { font-weight: 700; font-size: 1.25rem; text-align: center; margin-top: 1.5rem; color: var(--ok); } /* successo: verde come una prova superata */
     .voce p.nota { color: var(--muted); }
     .voce.riquadro { padding: 1.25rem 1.5rem; border: 2px solid; border-radius: 0.5rem; }
     .voce.riquadro p.esito-prova { color: var(--text); }
@@ -774,8 +774,8 @@
           conv_indagare: {
             fisso: [],
             azione: "Ti aggiri per la sala con attenzione, deciso a non lasciarti sfuggire alcun dettaglio.",
-            successo: ["La suola s'inchioda con un sordo scricchiolio tra il divano e le finestre. Sotto il tuo peso: figurine di legno intagliato, piccoli omini rigidi e scheggiati, null'altro che giocattoli."],
-            fallimento: ["Ti aggiri per la sala in cerca di qualcosa di utile, di indizi, ma vieni rapito dal tepore del bracere che arde allegro, avvicini le mani come a volerti scaldare. Il ricordo di casa ti assale e riprendi la ricerca, di cosa in fondo non lo sai nemmeno tu."],
+            successo: ["Ti muovi con attenzione nella penombra della sala. Due divani di velluto scuro si fronteggiano attorno a un tavolino basso, coperto da un velo sottile di cenere; ai lati, poltrone dai braccioli consumati e tappeti spessi che attutiscono ogni passo. Il braciere in un angolo e il camino sotto il grande ritratto gettano sulle pareti una luce rossastra che fa sembrare vivi i quadri e le tende pesanti.", "Sul tavolino ci sono bicchieri di cristallo vuoti e un candelabro spento. Nulla qui sembra toccato da anni, eppure nulla è davvero impolverato: la cenere si posa soltanto dove nessuno ha mai camminato.", "La suola s'inchioda con un sordo scricchiolio tra il divano e le finestre. Sotto il tuo peso: figurine di legno intagliato, piccoli omini rigidi e scheggiati, null'altro che giocattoli."],
+            fallimento: ["Ti aggiri per la sala in cerca di qualcosa di utile, di indizi. Due divani di velluto scuro si fronteggiano attorno a un tavolino basso, coperto da un velo di cenere; poltrone consumate, tappeti spessi, un camino sotto un grande ritratto. Ma vieni rapito dal tepore del braciere che arde allegro e avvicini le mani come a volerti scaldare. Il ricordo di casa ti assale e riprendi la ricerca, di cosa in fondo non lo sai nemmeno tu."],
             gia: { ok: "Hai già frugato la sala da cima a fondo: oltre alle figurine di legno non c'è altro.", ko: "Hai già frugato la sala senza trovare nulla." },
             lascia: "Lasci perdere la ricerca."
           },
@@ -820,7 +820,7 @@
           luceTorcia: ["La torcia prende fuoco con un crepitio improvviso. La fiamma strappa un lembo d'ombra al buio e ciò che rivela ti mozza il fiato."],
           luceIncantesimo: ["Pronunci la formula e una sfera di luce pallida si accende sul palmo della tua mano, respingendo l'oscurità. Ciò che rivela ti lascia senza fiato."],
           incantesimoUsato: (c, r) => `Lanci l'incantesimo Luce: −${c} mana (rimasti ${r}).`,
-          pocoMana: (c, r) => `Raccogli le energie, ma non ne hai abbastanza: Luce richiede ${c} mana e te ne restano ${r}.`,
+          pocoMana: (c, r) => `Raccogli le energie, ma non ne hai abbastanza: Luce richiede ${c} ${U.mana.toLowerCase()} e te ne restano ${r}.`,
           /* l'atrio dopo la luce */
           portone: "Istintivamente ti volti. L'ingresso della grotta da cui sei entrato è scomparso: al suo posto si erge un imponente portone di legno scuro, finemente intagliato e sigillato.",
           torciaSpenta: "In quell'istante, la fiamma della torcia si spegne soffocata da una morsa invisibile. Il tizzone è subito freddo, la pece ormai pietrificata. Inutile. Lo lasci cadere sul marmo con un tonfo sordo.",
@@ -901,6 +901,8 @@
               "Le pentole sobbolliscono sui fornelli senza che nessuno le stia mescolando, e gli utensili da cucina pendono dalle pareti in un ordine quasi maniacale.",
               "In questo luogo, il confortevole focolare domestico ed il profumo del cibo ti riportano per un attimo a casa."
             ],
+            esamina: ["Ti aggiri tra i mobili aprendo ante e cassetti, ma non trovi nulla di utile: solo stoviglie lucide e utensili in ordine perfetto. Ti fermi davanti ai fuochi al centro della stanza, dove alcune pentole sobbollono placide, senza che nessuno le mescoli."],
+            esaminaG: ["Guendalina ti osserva da lontano, immobile, con le mani giunte davanti al grembiule."],
             nota: "Per tornare indietro scrivi, ad esempio, «torno nel corridoio».",
             fallbackLibera: ["Ci provi, ma la cucina non ti offre nulla di utile in questo senso. Per tornare nel corridoio basta dirlo."],
             ritorno: ["Torni in cucina. Il focolare dell'isola crepita ancora, e le pentole continuano a sobbollire sui fornelli senza che nessuno le mescoli."] /* PROVVISORIO */
@@ -965,7 +967,7 @@
             "D'istinto ritrai la mano. Il lamento svanisce, il tremore cessa e il mondo torna immobile, come se nulla fosse accaduto.",
             "Dopo qualche secondo, raccogli il coraggio e provi a toccare di nuovo l'armatura. Questa volta, però, non succede nulla. Nessun lamento. Nessuna scossa. Solo il freddo metallo sotto le tue dita."
           ],
-          banner: "SUCCESSO, hai ferito il lord del trono di cenere !!",
+          banner: "SUCCESSO, hai ferito il sovrano del trono di cenere !!",
           no: ["Questa scena non è ancora stata scritta."],
           respinge: (d) => `L'armatura non si lascia toccare: subisci danni mentali pari a 1d${d}.`,
           respinto: [
@@ -1020,7 +1022,7 @@
         },
         ui: {
           titoloPagina: "Il dungeon", schedaPg: "Scheda del personaggio", completa: "Scheda completa",
-          caratteristiche: "Caratteristiche", abilita: "Abilità", equipaggiamento: "Equipaggiamento", zaino: "Zaino", incantesimi: "Incantesimi", mana: "Mana", lanciaInc: "Lancia",
+          caratteristiche: "Caratteristiche", abilita: "Abilità", equipaggiamento: "Equipaggiamento", zaino: "Zaino", incantesimi: "Incantesimi", mana: "Punti arcano", lanciaInc: "Lancia",
           home: "Torna alla pagina iniziale", regole: "Regolamento", audioOn: "Suoni attivi: clicca per disattivarli", audioOff: "Suoni disattivati: clicca per attivarli", salva: "Salva partita", diario: "Diario dell'avventura", ariaTesto: "Cosa fa il tuo personaggio?", invia: "Invia",
           placeholder: "Cosa fai? Per esempio: esamino l'arazzo sulla sinistra", scegliAzione: "Scegli un'azione qui sopra",
           scrive: "Il narratore sta scrivendo…", notaInizio: "Scrivi qui sotto cosa fa il tuo personaggio.",
@@ -1037,6 +1039,8 @@
           prova: (n) => `Prova di ${n}`, difficolta: (n) => `Difficoltà ${n}`, modificatore: (m) => `Modificatore ${m}`,
           istruzioni: (d, cd) => `Tira un d${d} e aggiungi il modificatore: serve almeno ${cd}.`,
           nonAddestrata: " Non hai scelto questa abilità: conta solo il modificatore dell'attributo, senza il livello.",
+          avvisoRiposo: " Attenzione: se fallisci, non potrai ripetere questa prova finché non avrai riposato.",
+          dopoRiposo: " Potrai riprovare dopo aver riposato.",
           lancia: (d) => `Lancia d${d}`, lasciaPerdere: "Lascia perdere",
           esito: (tiro, m, tot, cd, ok) => `Tiro: ${tiro} ${m < 0 ? "−" : "+"} ${Math.abs(m)} = ${tot} contro difficoltà ${cd}: prova ${ok ? "superata" : "fallita"}.`,
           serveNaturale: (n) => `Serve un ${n} naturale`, istrNaturale: (d, n) => `Tira un d${d}: la prova riesce solo se esce ${n}. Il modificatore non conta.`,
@@ -1206,8 +1210,8 @@
           conv_indagare: {
             fisso: [],
             azione: "You move around the room carefully, determined not to let a single detail escape you.",
-            successo: ["Your sole jams with a dull creak between the sofa and the windows. Under your weight: carved wooden figurines, little stiff, chipped men, nothing more than toys."],
-            fallimento: ["You wander the room looking for something useful, for clues, but you are caught by the warmth of the brazier burning merrily and you hold out your hands as if to warm them. The memory of home overwhelms you and you resume your search, though for what, deep down, you don't even know."],
+            successo: ["You move carefully through the half-light of the room. Two dark velvet sofas face each other around a low table covered with a thin veil of ash; at the sides, armchairs with worn arms and thick rugs that muffle every step. The brazier in a corner and the fireplace beneath the great portrait cast a reddish light on the walls that makes the paintings and heavy curtains seem alive.", "On the table there are empty crystal glasses and an unlit candelabra. Nothing here seems to have been touched in years, yet nothing is truly dusty: the ash settles only where no one has ever walked.", "Your sole jams with a dull creak between the sofa and the windows. Under your weight: carved wooden figurines, little stiff, chipped men, nothing more than toys."],
+            fallimento: ["You wander the room looking for something useful, for clues. Two dark velvet sofas face each other around a low table covered with a veil of ash; worn armchairs, thick rugs, a fireplace beneath a great portrait. But you are caught by the warmth of the brazier burning merrily and you hold out your hands as if to warm them. The memory of home overwhelms you and you resume your search, though for what, deep down, you don't even know."],
             gia: { ok: "You have already searched the room from top to bottom: beyond the wooden figurines there is nothing else.", ko: "You have already searched the room and found nothing." },
             lascia: "You give up the search."
           },
@@ -1247,7 +1251,7 @@
           luceTorcia: ["The torch catches with a sudden crackle. The flame tears a shred of shadow from the dark, and what it reveals takes your breath away."],
           luceIncantesimo: ["You speak the formula and a sphere of pale light kindles on your palm, driving back the darkness. What it reveals takes your breath away."],
           incantesimoUsato: (c, r) => `You cast the Light spell: −${c} mana (${r} left).`,
-          pocoMana: (c, r) => `You gather your power, but it is not enough: Light needs ${c} mana and you have ${r} left.`,
+          pocoMana: (c, r) => `You gather your power, but it is not enough: Light needs ${c} ${U.mana.toLowerCase()} and you have ${r} left.`,
           portone: "Instinctively you turn around. The mouth of the cave you came through has vanished: in its place stands an imposing door of dark wood, finely carved and sealed.",
           torciaSpenta: "At that very moment, the torch flame dies, smothered by an invisible grip. The brand is instantly cold, the pitch already turned to stone. Useless. You let it fall onto the marble with a dull thud.",
           sistTorciaSpenta: "The torch has gone out and is now useless: your off hand is free.",
@@ -1327,6 +1331,8 @@
               "Pots simmer on the stove with no one stirring them, and the kitchen utensils hang from the walls in an almost obsessive order.",
               "In this place, the comfort of the hearth and the smell of food take you back home for a moment."
             ],
+            esamina: ["You wander among the furniture, opening doors and drawers, but find nothing useful: only gleaming crockery and utensils in perfect order. You stop before the fires in the middle of the room, where a few pots simmer placidly with no one stirring them."],
+            esaminaG: ["Guendalina watches you from a distance, motionless, her hands clasped before her apron."],
             nota: "To go back, write for example “I go back to the corridor”.",
             fallbackLibera: ["You try, but the kitchen offers nothing useful in that regard. To return to the corridor, just say so."],
             ritorno: ["You return to the kitchen. The hearth in the island is still crackling, and the pots keep simmering on the stove with no one stirring them."]
@@ -1391,7 +1397,7 @@
             "Instinctively you pull your hand back. The wail fades, the tremor stops and the world falls still again, as if nothing had happened.",
             "After a few seconds, you gather your courage and touch the armor again. This time, however, nothing happens. No wail. No tremor. Only the cold metal beneath your fingers."
           ],
-          banner: "SUCCESS, you have wounded the lord of the throne of ashes!!",
+          banner: "SUCCESS, you have wounded the sovereign of the throne of ashes!!",
           no: ["This scene has not been written yet."],
           respinge: (d) => `The armor will not let itself be touched: you take 1d${d} mental damage.`,
           respinto: [
@@ -1444,7 +1450,7 @@
         },
         ui: {
           titoloPagina: "The dungeon", schedaPg: "Character sheet", completa: "Full sheet",
-          caratteristiche: "Attributes", abilita: "Skills", equipaggiamento: "Equipment", zaino: "Pack", incantesimi: "Spells", mana: "Mana", lanciaInc: "Cast",
+          caratteristiche: "Attributes", abilita: "Skills", equipaggiamento: "Equipment", zaino: "Pack", incantesimi: "Spells", mana: "Arcane points", lanciaInc: "Cast",
           home: "Back to the home page", regole: "Rules", audioOn: "Sound on: click to turn it off", audioOff: "Sound off: click to turn it on", salva: "Save game", diario: "Adventure journal", ariaTesto: "What does your character do?", invia: "Send",
           placeholder: "What do you do? For example: I examine the tapestry on the left", scegliAzione: "Choose an action above",
           scrive: "The narrator is writing…", notaInizio: "Write below what your character does.",
@@ -1461,6 +1467,8 @@
           prova: (n) => `${n} check`, difficolta: (n) => `Difficulty ${n}`, modificatore: (m) => `Modifier ${m}`,
           istruzioni: (d, cd) => `Roll a d${d} and add the modifier: you need at least ${cd}.`,
           nonAddestrata: " You did not choose this skill: only the attribute modifier counts, without your level.",
+          avvisoRiposo: " Warning: if you fail, you cannot repeat this check until you have rested.",
+          dopoRiposo: " You can try again after resting.",
           lancia: (d) => `Roll d${d}`, lasciaPerdere: "Let it go",
           esito: (tiro, m, tot, cd, ok) => `Roll: ${tiro} ${m < 0 ? "−" : "+"} ${Math.abs(m)} = ${tot} against difficulty ${cd}: check ${ok ? "passed" : "failed"}.`,
           serveNaturale: (n) => `Needs a natural ${n}`, istrNaturale: (d, n) => `Roll a d${d}: the check succeeds only on a ${n}. The modifier does not count.`,
@@ -2010,7 +2018,7 @@
         sblocco: {
           riposo: ["Nuova capacità sbloccata: Riposo",
             "Puoi riposare accanto a un fuoco caldo, dalle fiamme arancioni: per ora qui in cucina e nella sala da conversazione. Scrivi «riposo» oppure usa il pulsante «Riposa» nella scheda, alla voce «Capacità».",
-            "Ogni riposo dura un giorno: consumi fino a 1d4 razioni di Adele e recuperi 1d4 + livello su tutte le risorse (salute fisica, salute mentale e mana, fede, ira o natura). Guendalina cucina 2 razioni al giorno (scorta massima 10). Il focolare della cucina non si spegne mai: qui puoi riposare quante volte vuoi, anche senza razioni (recuperi solo 1 punto). Gli altri fuochi invece si consumano: dopo il riposo le fiamme diventano azzurre e fredde."],
+            "Ogni riposo dura un giorno: consumi fino a 1d4 razioni di Adele e recuperi 1d4 + livello su tutte le risorse (salute fisica, salute mentale e punti arcano, fede, ira o natura). Guendalina cucina 2 razioni al giorno (scorta massima 10). Il focolare della cucina non si spegne mai: qui puoi riposare quante volte vuoi, anche senza razioni (recuperi solo 1 punto). Gli altri fuochi invece si consumano: dopo il riposo le fiamme diventano azzurre e fredde."],
           missione: ["Missione accettata: «Ciò che giace nell'Alto»",
             "Scendi in cantina, recupera la vecchia scaletta di legno e riportala a Guendalina, qui in cucina.",
             "La cantina si raggiunge dalla stanza di servizio, oltre la porta a sinistra della cucina: scrivi ad esempio «vado nella stanza di servizio» e poi «scendo in cantina». Laggiù è buio e girano i guardiani del Signore: muoviti in silenzio e non correre.",
@@ -2046,6 +2054,14 @@
           spento: ["Le fiamme qui sono ormai azzurre e fredde: non emanano alcun calore, e il sonno non arriva. Dovrai cercare un altro fuoco."],
           inutile: ["Ti siedi per un momento accanto al fuoco, ma sei in forze e la tua mente è lucida: non hai bisogno di dormire, adesso. Meglio non sprecare il calore di queste fiamme."],
           dorme: ["Ti siedi accanto al fuoco e lasci che il calore ti avvolga. Le palpebre si fanno pesanti, il crepitio della legna si allontana... e per la prima volta da quando hai varcato la soglia di questa casa, dormi."],
+          /* 5 descrizioni brevi dell'addormentarsi, scelte a caso a ogni riposo (la prima è quella storica) */
+          dormeVar: [
+            ["Ti siedi accanto al fuoco e lasci che il calore ti avvolga. Le palpebre si fanno pesanti, il crepitio della legna si allontana... e per la prima volta da quando hai varcato la soglia di questa casa, dormi."],
+            ["Appoggi la schiena al muro e ti accomodi vicino alle fiamme. Le ombre danzano sul soffitto, il fuoco ti ipnotizza e, senza accorgertene, scivoli in un sonno senza sogni."],
+            ["Ti avvolgi nel mantello e ti stendi a poca distanza dal calore. Per un po' ascolti i rumori della casa, poi anche quelli si spengono, e il sonno ti prende."],
+            ["Chiudi gli occhi solo per un istante, ti dici. Il tepore ti scioglie i muscoli uno a uno, e quell'istante diventa ore."],
+            ["Ti accucci davanti al fuoco con l'arma a portata di mano. La stanchezza ha la meglio sulla paura, e sprofondi in un sonno popolato da voci lontane e volti che non ricordi."]
+          ],
           sveglia: ["Quando riapri gli occhi, il fuoco è cambiato: le fiamme si sono fatte azzurre e fredde, e non scaldano più. Qualunque cosa ti abbia concesso quel sonno, l'ha presa da qui."],
           svegliaCucina: ["Quando riapri gli occhi, il focolare crepita ancora, vivo e caldo. Guendalina deve averlo alimentato mentre dormivi: accanto a te, una coperta che prima non c'era."],
           esito: (tiro, da, a) => `Riposo: 1d6 = ${tiro} · salute mentale ${da} → ${a}`, /* vecchio formato, non più usato */
@@ -2176,8 +2192,8 @@
               "«Ma c'è una speranza... Cerca i ragazzi. I giovani padroncini non hanno mai smesso di cercarla; hanno dedicato tutti questi anni alla ricerca della madre e non si danno pace. Trova le loro tracce, scopri cosa hanno scoperto. Loro non sono legati dal mio stesso silenzio.»"
             ] },
           /* Missione 3: solo con l'approccio gentile. PROVVISORIA: testo inserito così com'è, da rivedere */
-          q3: { nome: "Il Blasone dei Vespera", da: "Da: Guendalina, la governante", riassunto: "Trova il Blasone d'Argento dei Vespera, disperso da qualche parte in casa, e incastralo nel riquadro vuoto sopra il camino della sala da conversazione.",
-            consiglio: "Tieni gli occhi aperti esplorando la casa. Quando avrai il blasone, nella sala da conversazione scrivi ad esempio «incastro il blasone sul camino».",
+          q3: { nome: "Il Blasone dei Vespera", da: "Da: Guendalina, la governante", riassunto: "Trova il Blasone d'Argento dei Vespera, disperso da qualche parte in casa, e incastralo nel riquadro vuoto sopra il camino della sala da conversazione. Dietro il dipinto si nasconde una custodia con tre incavi per le Lacrime di Adele (tre zaffiri a goccia): ne troverai una soltanto, le altre due sono perdute.",
+            consiglio: "Tieni gli occhi aperti esplorando la casa. Quando avrai il blasone, nella sala da conversazione scrivi ad esempio «incastro il blasone sul camino». La custodia nascosta ha tre incavi, ma uno solo contiene uno zaffiro: le altre due Lacrime di Adele vanno cercate altrove.",
             obiettivi: ["Trova il Blasone d'Argento, disperso da qualche parte in Casa Vespera", "Incastra il Blasone nel riquadro sopra il camino della sala da conversazione"],
             testo: [
               "Guendalina esita un istante, poi solleva lo sguardo verso di voi con una timida speranza negli occhi.",
@@ -2189,19 +2205,20 @@
             ] },
           riposo: { nome: "Riposo", desc: "Accanto a un fuoco caldo, dalle fiamme arancioni, riposi per un giorno intero: consumi fino a 1d4 razioni di Adele e recuperi 1d4 + livello su tutte le risorse. Guendalina cucina 2 razioni al giorno (massimo 10). In cucina puoi riposare quante volte vuoi, anche senza razioni (recuperi solo 1 punto); il camino della sala da conversazione invece si consuma dopo un riposo (le fiamme diventano azzurre e fredde).", btn: "Riposa" },
           laboratorio: { nome: "Laboratorio di Guendalina", desc: "Porta a Guendalina, in cucina, i resti dei mastini infernali: con quelli potrà prepararti",
-            preparati: ["Siero di rosa cenerea (2 ciuffi di pelo di mastino): ripristina 1d6 di salute fisica", "Olio della falena (3 larve di falena): ripristina 1d6 di mana", "Distillato di serenità (3 ghiandole del fuoco): ripristina 1d4 di salute mentale"] }
+            preparati: ["Siero di rosa cenerea (2 ciuffi di pelo di mastino): ripristina 1d6 di salute fisica", "Olio della falena (3 larve di falena): ripristina 1d6 di {risorsa}", "Distillato di serenità (3 ghiandole del fuoco): ripristina 1d4 di salute mentale"] }
         },
         q3: { /* PROVVISORIO */
           inserisci: [
             "Ti avvicini al camino di marmo nero. Sopra la cornice, tra gli intarsi, c'è un riquadro vuoto dalla forma inconfondibile. Sollevi il Blasone d'Argento e lo incastri nella sagoma: combacia alla perfezione.",
             "Il peso dell'argento aziona un contrappeso nascosto. Con un sordo scatto di pietra e ingranaggi arrugginiti, il maestoso dipinto della Signora Adele trasla di lato, rivelando una piccola alcova segreta incassata nella parete.",
-            "Nell'alcova c'è una custodia di pregio in velluto nero consunto e filigrana d'oro. La apri: dentro riposa un piccolo zaffiro di altissima purezza, tagliato a forma di goccia perfetta. È innaturalmente gelido al tatto, quasi fosse fatto di ghiaccio perenne, e risplende di una luce bluastra nel buio.",
-            "Sul coperchio di velluto della custodia è incisa un'iscrizione sbiadita: «Alla mia sovrana, affinché il dolore non oscuri la luce.»"
+            "Nell'alcova c'è una custodia di pregio in velluto nero consunto e filigrana d'oro. La apri: sul fondo, in fila, ci sono tre incavi a forma di goccia. Solo uno è occupato: un piccolo zaffiro di altissima purezza, tagliato a goccia perfetta, innaturalmente gelido al tatto, quasi fosse fatto di ghiaccio perenne, che risplende di una luce bluastra nel buio. Gli altri due incavi sono vuoti.",
+            "Sul coperchio di velluto della custodia è incisa un'iscrizione sbiadita: «Alla mia sovrana, affinché il dolore non oscuri la luce.»",
+            "Tre incavi, tre lacrime: sono le Lacrime di Adele. Ne hai trovata una; le altre due non sono più qui, e chiunque le abbia prese ha lasciato la custodia incompleta. Dovranno essere ritrovate da qualche parte, in questa casa."
           ]
         },
         oggetti: {
           blasone: { nome: "Blasone d'Argento dei Vespera", testo: "Uno stemma d'argento massiccio, annerito dal fumo, strappato dal camino della sala da conversazione la notte dell'incendio. Va incastrato nel riquadro vuoto sopra il camino." },
-          lacrima: { nome: "La Lacrima della Regina", testo: "Un piccolo zaffiro di altissima purezza, tagliato a forma di goccia perfetta. È innaturalmente gelido al tatto, quasi fosse fatto di ghiaccio perenne, e risplende di una luce bluastra nel buio. Sulla custodia: «Alla mia sovrana, affinché il dolore non oscuri la luce.»" },
+          lacrima: { nome: "La Lacrima della Regina", testo: "Un piccolo zaffiro di altissima purezza, tagliato a forma di goccia perfetta. È innaturalmente gelido al tatto, quasi fosse fatto di ghiaccio perenne, e risplende di una luce bluastra nel buio. È una delle tre Lacrime di Adele: la custodia da cui proviene ha tre incavi, e solo uno era occupato. Sulla custodia: «Alla mia sovrana, affinché il dolore non oscuri la luce.»" },
           scaletta: { nome: "Scala a pioli", testo: "Una piccola scaletta a pioli, tutt'altro che robusta, ma sicuramente ancora utilizzabile." },
           unguento: { nome: "Unguento della Rosa di Cenere", testo: "Un impasto denso e profumato di cera e petali essiccati che lenisce subito il dolore delle ferite da taglio. Recupera 1d6 + livello di salute fisica." },
           razioni_adele: { nome: "Razioni di Adele", testo: "Pane nero, formaggio stagionato e carne secca avvolti in un panno di lino, preparati ogni giorno da Guendalina con le provviste della Signora. Si consumano riposando accanto a un fuoco caldo (fino a 1d4 per riposo)." },
@@ -2209,15 +2226,15 @@
           larve_falena: { nome: "Larve di falena", testo: "Larve minuscole e pallide, annidate nel cuoio dei collari dei mastini. Ne servono 3 a Guendalina per un Olio della falena." },
           ghiandola_fuoco: { nome: "Ghiandole del fuoco", testo: "Le ghiandole con cui i mastini producono il fuoco eterno: ancora tiepide, pulsano di un debole bagliore azzurro. Ne servono 3 a Guendalina per un Distillato di serenità." },
           siero: { nome: "Siero di rosa cenerea", testo: "Un siero ricavato dalla bollitura dei ciuffi di pelo di mastino infernale, recuperati a fatica dai resti fumanti lasciati sul campo di battaglia. Ripristina 1d6 di salute fisica." },
-          olio: { nome: "Olio della falena", testo: "Un olio denso e viscoso, ottenuto lasciando macerare e bollire i pesanti collari di cuoio dei mastini. L'intruglio è intriso delle larve di piccolissimi parassiti infestanti, ribattezzati «falene» da Guendalina. Ripristina 1d6 di mana." },
+          olio: { nome: "Olio della falena", testo: "Un olio denso e viscoso, ottenuto lasciando macerare e bollire i pesanti collari di cuoio dei mastini. L'intruglio è intriso delle larve di piccolissimi parassiti infestanti, ribattezzati «falene» da Guendalina. Ripristina 1d6 di {risorsa}." },
           distillato: { nome: "Distillato di serenità", testo: "Una rozza fiaschetta colma di un liquore fin troppo forte e grezzo. Una sola sorsata brucia la gola, ma irradia un calore improvviso che dona un fugace attimo di conforto. Per la sua produzione sono richieste le ghiandole che i mastini usano per produrre il fuoco eterno. Ripristina 1d4 di salute mentale." },
-          effettoTesto: { pozCura: "Ripristina 1d6 + livello di salute fisica.", pozMana: "Ripristina 1d6 + livello di mana." },
+          effettoTesto: { pozCura: "Ripristina 1d6 + livello di salute fisica.", pozMana: "Ripristina 1d6 + livello di {risorsa}." },
           cura: (d, da, a) => `Applichi l'unguento sulle ferite: il dolore si placa. Salute fisica +${d} · ${da} → ${a}`,
           bevi: { pozCura: (t, d, da, liv, a) => `Bevi ${t}: un calore buono ti scorre nelle vene. Salute fisica +${d} (${liv ? "1d6 + " + liv : "1d6"}) · ${da} → ${a}`,
-                  pozMana: (t, d, da, liv, a) => `Bevi ${t}: un formicolio ti risale le dita e la mente si fa limpida. ${U.mana} +${d} (${liv ? "1d6 + " + liv : "1d6"}) · ${da} → ${a}`,
+                  pozMana: (t, d, da, liv, a) => `Bevi ${t}: un formicolio ti risale le dita e la mente si fa limpida. ${nomeRisorsa()} +${d} (${liv ? "1d6 + " + liv : "1d6"}) · ${da} → ${a}`,
                   serenita: (t, d, da, a) => `Bevi ${t}: brucia la gola, poi un calore improvviso ti scioglie i pensieri. Salute mentale +${d} (1d4) · ${da} → ${a}`,
                   razione: (t, d, da, liv, a) => `Mangi una razione: è secca, salata e sa di cuoio, ma ti rimette in piedi. Salute fisica +${d} (1 + livello ${liv}) · ${da} → ${a}` },
-          inutile: { pozCura: "Sei già in piena salute: meglio conservarla.", pozMana: "Il tuo mana è già al massimo: meglio conservarla.", serenita: "La tua mente è già serena: meglio conservarlo.", razione: "Non hai bisogno di mangiare adesso: sei in piena salute.", noMana: "Non conosci incantesimi: questa pozione non ti servirebbe a nulla." },
+          inutile: { pozCura: "Sei già in piena salute: meglio conservarla.", pozMana: "Hai già tutti i tuoi punti al massimo: meglio conservarla.", serenita: "La tua mente è già serena: meglio conservarlo.", razione: "Non hai bisogno di mangiare adesso: sei in piena salute.", noMana: "La tua classe non ha punti da recuperare: questa pozione non ti servirebbe a nulla." },
           bottino: (pelo, larve, ghi) => `Bottino: frughi tra i resti fumanti del mastino. Ciuffi di pelo di mastino ×${pelo} · dal suo collare di cuoio, Larve di falena ×${larve} · Ghiandole del fuoco ×${ghi}.`
         }
       },
@@ -2225,7 +2242,7 @@
         sblocco: {
           riposo: ["New ability unlocked: Rest",
             "You can rest by a warm fire, one with orange flames: for now here in the kitchen and in the drawing room. Write “rest” or use the “Rest” button on your sheet, under “Abilities”.",
-            "Each rest lasts a day: you eat up to 1d4 of Adele's rations and recover 1d4 + level on all your resources (physical health, mental health and mana, faith, rage or nature). Guendalina cooks 2 rations a day (up to 10 in store). The kitchen hearth never goes out: here you can rest as many times as you like, even without rations (you only recover 1 point). Other fires are spent instead: after you rest, their flames turn blue and cold."],
+            "Each rest lasts a day: you eat up to 1d4 of Adele's rations and recover 1d4 + level on all your resources (physical health, mental health and arcane, faith, rage or nature points). Guendalina cooks 2 rations a day (up to 10 in store). The kitchen hearth never goes out: here you can rest as many times as you like, even without rations (you only recover 1 point). Other fires are spent instead: after you rest, their flames turn blue and cold."],
           missione: ["Quest accepted: “What Lies Up High”",
             "Go down to the cellar, retrieve the old wooden step-ladder and bring it back to Guendalina, here in the kitchen.",
             "The cellar is reached from the service room, beyond the door on the left of the kitchen: write for example “I go to the service room” and then “I go down to the cellar”. It is dark down there and the Master's guardians roam: move silently and do not run.",
@@ -2261,6 +2278,13 @@
           spento: ["The flames here are now blue and cold: they give off no warmth, and sleep will not come. You will have to find another fire."],
           inutile: ["You sit by the fire for a moment, but you are hale and your mind is clear: you do not need to sleep right now. Better not to waste the warmth of these flames."],
           dorme: ["You sit by the fire and let the warmth wrap around you. Your eyelids grow heavy, the crackling of the wood drifts away... and for the first time since you entered this house, you sleep."],
+          dormeVar: [
+            ["You sit by the fire and let the warmth wrap around you. Your eyelids grow heavy, the crackling of the wood drifts away... and for the first time since you entered this house, you sleep."],
+            ["You lean your back against the wall and settle near the flames. Shadows dance on the ceiling, the fire hypnotises you and, without noticing, you slip into a dreamless sleep."],
+            ["You wrap yourself in your cloak and lie down a little way from the heat. For a while you listen to the sounds of the house, then those fade too, and sleep takes you."],
+            ["Just for a moment, you tell yourself, you will close your eyes. The warmth loosens your muscles one by one, and the moment becomes hours."],
+            ["You crouch before the fire with your weapon within reach. Weariness wins over fear, and you sink into a sleep crowded with distant voices and faces you cannot remember."]
+          ],
           sveglia: ["When you open your eyes again, the fire has changed: its flames have turned blue and cold, and they no longer warm. Whatever granted you that sleep took it from here."],
           svegliaCucina: ["When you open your eyes again, the hearth is still crackling, alive and warm. Guendalina must have fed it while you slept: beside you lies a blanket that was not there before."],
           esito: (tiro, da, a) => `Rest: 1d6 = ${tiro} · mental health ${da} → ${a}`,
@@ -2387,8 +2411,8 @@
               "«You can free her, can't you? You can help Lady Adele? I am the only one who knows how to get to her rooms, but I cannot share anything. By the Master's will, a blood bond weighs upon me: if I so much as tried to reveal the way to you, my life would vanish in an instant, before I could finish the sentence.»",
               "«But there is hope... Look for the children. The young masters never stopped searching for her; they have spent all these years looking for their mother and they find no peace. Find their traces, learn what they discovered. They are not bound by my silence.»"
             ] },
-          q3: { nome: "The Crest of the Vespera", da: "From: Guendalina, the housekeeper", riassunto: "Find the Silver Crest of the Vespera, lost somewhere in the house, and fit it into the empty slot above the drawing room fireplace.",
-            consiglio: "Keep your eyes open as you explore the house. Once you have the crest, in the drawing room write for example “I fit the crest into the fireplace”.",
+          q3: { nome: "The Crest of the Vespera", da: "From: Guendalina, the housekeeper", riassunto: "Find the Silver Crest of the Vespera, lost somewhere in the house, and fit it into the empty slot above the drawing room fireplace. Behind the portrait hides a case with three hollows for Adele's Tears (three drop-shaped sapphires): you will find only one, the other two are lost.",
+            consiglio: "Keep your eyes open as you explore the house. Once you have the crest, in the drawing room write for example “I fit the crest into the fireplace”. The hidden case has three hollows, but only one holds a sapphire: Adele's other two Tears must be sought elsewhere.",
             obiettivi: ["Find the Silver Crest, lost somewhere in Casa Vespera", "Fit the Crest into the slot above the drawing room fireplace"],
             testo: [
               "Guendalina hesitates for a moment, then raises her eyes to you with a timid hope in them.",
@@ -2400,19 +2424,20 @@
             ] },
           riposo: { nome: "Rest", desc: "By a warm fire, one with orange flames, you rest for a whole day: you eat up to 1d4 of Adele's rations and recover 1d4 + level on all your resources. Guendalina cooks 2 rations a day (up to 10). In the kitchen you can rest as many times as you like, even without rations (you only recover 1 point); the drawing room fireplace is spent after one rest (its flames turn blue and cold).", btn: "Rest" },
           laboratorio: { nome: "Guendalina's Workshop", desc: "Bring Guendalina, in the kitchen, the remains of the infernal mastiffs: with them she can prepare for you",
-            preparati: ["Ashen rose serum (2 tufts of mastiff fur): restores 1d6 physical health", "Moth oil (3 moth larvae): restores 1d6 mana", "Distillate of serenity (3 fire glands): restores 1d4 mental health"] }
+            preparati: ["Ashen rose serum (2 tufts of mastiff fur): restores 1d6 physical health", "Moth oil (3 moth larvae): restores 1d6 of {risorsa}", "Distillate of serenity (3 fire glands): restores 1d4 mental health"] }
         },
         q3: {
           inserisci: [
             "You approach the black marble fireplace. Above the frame, among the inlays, there is an empty slot of unmistakable shape. You lift the Silver Crest and fit it into the outline: it matches perfectly.",
             "The weight of the silver triggers a hidden counterweight. With a dull click of stone and rusty gears, the majestic portrait of Lady Adele slides aside, revealing a small secret alcove set into the wall.",
-            "In the alcove lies a fine case of worn black velvet and gold filigree. You open it: inside rests a small sapphire of the highest purity, cut in the shape of a perfect drop. It is unnaturally cold to the touch, as if made of everlasting ice, and it glows with a bluish light in the dark.",
-            "On the velvet lid of the case a faded inscription is engraved: «To my sovereign, so that sorrow may not darken the light.»"
+            "In the alcove lies a fine case of worn black velvet and gold filigree. You open it: at the bottom, in a row, are three drop-shaped hollows. Only one is filled: a small sapphire of the highest purity, cut in the shape of a perfect drop, unnaturally cold to the touch, as if made of everlasting ice, glowing with a bluish light in the dark. The other two hollows are empty.",
+            "On the velvet lid of the case a faded inscription is engraved: «To my sovereign, so that sorrow may not darken the light.»",
+            "Three hollows, three tears: these are Adele's Tears. You have found one; the other two are no longer here, and whoever took them left the case incomplete. They will have to be found somewhere in this house."
           ]
         },
         oggetti: {
           blasone: { nome: "Silver Crest of the Vespera", testo: "A crest of solid silver, blackened by smoke, torn from the drawing room fireplace on the night of the fire. It must be fitted into the empty slot above the fireplace." },
-          lacrima: { nome: "The Queen's Tear", testo: "A small sapphire of the highest purity, cut in the shape of a perfect drop. It is unnaturally cold to the touch, as if made of everlasting ice, and it glows with a bluish light in the dark. On the case: «To my sovereign, so that sorrow may not darken the light.»" },
+          lacrima: { nome: "The Queen's Tear", testo: "A small sapphire of the highest purity, cut in the shape of a perfect drop. It is unnaturally cold to the touch, as if made of everlasting ice, and it glows with a bluish light in the dark. It is one of Adele's three Tears: the case it came from has three hollows, and only one was filled. On the case: «To my sovereign, so that sorrow may not darken the light.»" },
           scaletta: { nome: "Rung ladder", testo: "A small rung ladder, far from sturdy, but surely still usable." },
           unguento: { nome: "Ash Rose Ointment", testo: "A thick, fragrant paste of wax and dried petals that instantly soothes the pain of cuts. Restores 1d6 + level physical health." },
           razioni_adele: { nome: "Adele's rations", testo: "Black bread, aged cheese and dried meat wrapped in a linen cloth, prepared every day by Guendalina from the Lady's provisions. They are eaten while resting by a warm fire (up to 1d4 per rest)." },
@@ -2420,15 +2445,15 @@
           larve_falena: { nome: "Moth larvae", testo: "Tiny, pale larvae nesting in the leather of the mastiffs' collars. Guendalina needs 3 for a Moth oil." },
           ghiandola_fuoco: { nome: "Fire glands", testo: "The glands the mastiffs use to make the eternal fire: still warm, they pulse with a faint blue glow. Guendalina needs 3 for a Distillate of serenity." },
           siero: { nome: "Ashen rose serum", testo: "A serum made by boiling tufts of infernal mastiff fur, painstakingly recovered from the smoking remains left on the battlefield. Restores 1d6 physical health." },
-          olio: { nome: "Moth oil", testo: "A thick, viscous oil, obtained by steeping and boiling the heavy leather collars of the mastiffs. The brew is riddled with the larvae of tiny infesting parasites, nicknamed “moths” by Guendalina. Restores 1d6 mana." },
+          olio: { nome: "Moth oil", testo: "A thick, viscous oil, obtained by steeping and boiling the heavy leather collars of the mastiffs. The brew is riddled with the larvae of tiny infesting parasites, nicknamed “moths” by Guendalina. Restores 1d6 of {risorsa}." },
           distillato: { nome: "Distillate of serenity", testo: "A crude flask full of a liquor far too strong and raw. A single sip burns the throat, but radiates a sudden warmth that grants a fleeting moment of comfort. Making it requires the glands the mastiffs use to produce the eternal fire. Restores 1d4 mental health." },
-          effettoTesto: { pozCura: "Restores 1d6 + level physical health.", pozMana: "Restores 1d6 + level mana." },
+          effettoTesto: { pozCura: "Restores 1d6 + level physical health.", pozMana: "Restores 1d6 + level of {risorsa}." },
           cura: (d, da, a) => `You apply the ointment to your wounds: the pain subsides. Physical health +${d} · ${da} → ${a}`,
           bevi: { pozCura: (t, d, da, liv, a) => `You drink ${t}: a kindly warmth runs through your veins. Physical health +${d} (${liv ? "1d6 + " + liv : "1d6"}) · ${da} → ${a}`,
-                  pozMana: (t, d, da, liv, a) => `You drink ${t}: a tingling climbs your fingers and your mind clears. ${U.mana} +${d} (${liv ? "1d6 + " + liv : "1d6"}) · ${da} → ${a}`,
+                  pozMana: (t, d, da, liv, a) => `You drink ${t}: a tingling climbs your fingers and your mind clears. ${nomeRisorsa()} +${d} (${liv ? "1d6 + " + liv : "1d6"}) · ${da} → ${a}`,
                   serenita: (t, d, da, a) => `You drink ${t}: it burns your throat, then a sudden warmth loosens your thoughts. Mental health +${d} (1d4) · ${da} → ${a}`,
                   razione: (t, d, da, liv, a) => `You eat a ration: dry, salty and tasting of leather, but it puts you back on your feet. Physical health +${d} (1 + level ${liv}) · ${da} → ${a}` },
-          inutile: { pozCura: "You are already at full health: better keep it.", pozMana: "Your mana is already full: better keep it.", serenita: "Your mind is already at peace: better keep it.", razione: "You do not need to eat right now: you are in full health.", noMana: "You know no spells: this potion would be of no use to you." },
+          inutile: { pozCura: "You are already at full health: better keep it.", pozMana: "Your points are already full: better keep it.", serenita: "Your mind is already at peace: better keep it.", razione: "You do not need to eat right now: you are in full health.", noMana: "Your class has no points to restore: this potion would be of no use to you." },
           bottino: (pelo, larve, ghi) => `Loot: you search the smoking remains of the mastiff. Tufts of mastiff fur ×${pelo} · from its leather collar, Moth larvae ×${larve} · Fire glands ×${ghi}.`
         }
       }
@@ -2501,18 +2526,24 @@
         },
         /* la sala della caccia diventa anche l'armeria */
         sala_caccia: {
-          vista: { titolo: "Sala della caccia", alt: "Una lunga sala rivestita di quercia con teste imbalsamate, un grande camino spento, un tavolo di quercia e rastrelliere piene di armi e armature." },
+          vista: { titolo: "Sala della caccia", alt: "Una lunga sala alta e buia, con travi scure, lampadari di ferro battuto e fiaccole azzurre. Teste imbalsamate di cervi dalle corna immense, stendardi, rastrelliere di armi, armature su manichini e teche di vetro luminose; in fondo, sotto un arco ornato, una porta.", altAldo: "La stessa sala, con Aldo, il maggiordomo, in frac scuro: di spalle, le mani dietro la schiena, fermo davanti a una teca di vetro luminosa." },
           stanza: {
             intro: [
-              "Varchi la porta di sinistra, finalmente aperta, ed entri in una sala lunga dal soffitto basso, rivestita di pannelli di quercia scura. Alle pareti si allineano teste imbalsamate di cervi, cinghiali e lupi, i cui occhi di vetro riflettono la luce delle fiaccole azzurre. Un enorme camino di pietra, spento da chissà quanto tempo, domina la parete di fondo; sul pavimento, pelli d'orso fanno da tappeto.",
-              "Ma non è una semplice sala dei trofei. Su entrambi i lati corrono lunghe rastrelliere di legno e ferro: spade, asce, mazze e martelli allineati come soldati sull'attenti, armature montate su manichini senza volto, scudi appesi in file ordinate. Alcune armi sono semplici e consumate dall'uso; altre, dietro una grata chiusa da un lucchetto, emanano un bagliore sottile, quasi un respiro.",
-              "Un lungo tavolo di quercia occupa il centro della sala. In fondo, accanto al camino, una porta più piccola conduce in un'altra stanza. L'aria sa di cuoio, d'olio per lame e di vecchia cenere."
+              "Varchi la porta di sinistra, finalmente aperta, ed entri in una sala lunga e alta, dal soffitto a travi scure, rischiarata da grandi lampadari di ferro battuto e dalla fiamma azzurra delle fiaccole. Alle pareti si susseguono teste imbalsamate di cervi dalle corna immense, tra stendardi appesi e alte finestre a sesto acuto. Un camino di pietra, spento da chissà quanto tempo, sporge dalla parete di destra.",
+              "Ma non è una semplice sala dei trofei. Ai lati corrono rastrelliere di legno e ferro: spade, asce, lance e alabarde allineate come soldati sull'attenti, armature complete montate su manichini senza volto, scudi, frecce, botti e un forziere rinforzato di ferro. Tra le armature si innalzano teche di vetro che custodiscono calici, gioielli e armi minute, e brillano di luce propria. In una di esse, sbarrata da una grata e da un lucchetto, ciò che riposa emana un bagliore sottile, quasi un respiro.",
+              "Davanti a una delle teche, immobile, c'è Aldo, le mani intrecciate dietro la schiena. Fissa ciò che c'è dentro il vetro con un'attenzione che non gli hai mai visto, e non si volta quando entri.",
+              "In fondo alla sala, sotto un arco ornato, una porta conduce in un'altra stanza. L'aria sa di cuoio, d'olio per lame e di vecchia cenere."
+            ],
+            /* versione senza Aldo, per quando la sala è vuota */
+            introSenzaAldo: [
+              "Varchi la porta di sinistra, finalmente aperta, ed entri in una sala lunga e alta, dal soffitto a travi scure, rischiarata da grandi lampadari di ferro battuto e dalla fiamma azzurra delle fiaccole. Alle pareti si susseguono teste imbalsamate di cervi dalle corna immense, tra stendardi appesi e alte finestre a sesto acuto.",
+              "Ai lati corrono rastrelliere di legno e ferro, armature su manichini senza volto e teche di vetro luminose. In fondo, sotto un arco ornato, una porta conduce in un'altra stanza."
             ],
             nota: "Per esaminare le armi scrivi, ad esempio, «guardo le rastrelliere»; la porta in fondo conduce alla saletta dei trofei; per tornare «torno nell'atrio».",
-            fallbackLibera: ["Ci provi, ma la sala non ti offre nulla di utile in questo senso. Le rastrelliere, la grata, le teste imbalsamate, il camino spento e la porta in fondo sono ciò che hai intorno."],
-            ritorno: ["Torni nella sala della caccia. Gli occhi di vetro delle teste imbalsamate sembrano seguirti, e le rastrelliere luccicano lungo le pareti."]
+            fallbackLibera: ["Ci provi, ma la sala non ti offre nulla di utile in questo senso. Le rastrelliere, le teche, le teste imbalsamate, il camino spento e la porta in fondo sono ciò che hai intorno."],
+            ritorno: ["Torni nella sala della caccia. Gli occhi di vetro delle teste imbalsamate sembrano seguirti, e le teche brillano di luce azzurra lungo le pareti."]
           },
-          fatti: "Sala della caccia e armeria di Casa Vespera, a sinistra dell'atrio: lunga, soffitto basso, pannelli di quercia scura; teste imbalsamate di cervi, cinghiali e lupi con occhi di vetro; enorme camino di pietra spento sulla parete di fondo; pelli d'orso sul pavimento; un lungo tavolo di quercia al centro; ai lati lunghe rastrelliere con spade, asce, mazze, martelli, armature su manichini senza volto e scudi; dietro una grata chiusa da un lucchetto armi incantate che emanano un bagliore sottile; in fondo, accanto al camino, una porta più piccola verso la saletta dei giochi e dei trofei; odore di cuoio, olio per lame e vecchia cenere. Si torna nell'atrio dalla porta da cui si è entrati."
+          fatti: "Sala della caccia e armeria di Casa Vespera, a sinistra dell'atrio: lunga, soffitto basso, pannelli di quercia scura; teste imbalsamate di cervi, cinghiali e lupi con occhi di vetro; camino di pietra spento sulla parete di destra; lampadari di ferro battuto e fiaccole azzurre; stendardi; un tavolino in fondo; ai lati rastrelliere con spade, asce, lance, alabarde, frecce, armature su manichini senza volto, scudi, botti e un forziere; teche di vetro luminose con calici, gioielli e armi minute; in una teca sbarrata da una grata e da un lucchetto armi incantate che emanano un bagliore sottile; Aldo, fermo davanti a una teca con le mani dietro la schiena; in fondo, sotto un arco ornato, una porta verso la saletta dei giochi e dei trofei; odore di cuoio, olio per lame e vecchia cenere. Si torna nell'atrio dalla porta da cui si è entrati."
         },
         /* ---------- descrizioni fisse ed esami ---------- */
         luoghi: {
@@ -2603,6 +2634,7 @@
         ettore: {
           aspetta: ["Ettore è seduto sul suo giaciglio, accanto al braciere. Alza la testa quando ti sente scendere, ma non si alza. La spada è posata sulle ginocchia."],
           vuota: ["La cripta è silenziosa. Il braciere si è spento, e del rifugio di Ettore non restano che stracci e cenere fredda."],
+          diarioMorto: ["Tra le sue cose, sotto il mantello consumato, trovi un quaderno dalla copertina di pelle, logoro per le mani di un ragazzo. Lo aveva con sé fino all'ultimo."],
           vuotaMorto: ["La cripta è silenziosa. Sul giaciglio di Ettore resta soltanto un velo di cenere grigia, che nessun respiro muove."],
           resa: ["Ettore barcolla, il sangue che gli cola dalla fronte nella barba. La gamba sinistra cede: cade su un ginocchio e la spada gli sfugge di mano, rotolando sulla pietra.", "«Basta... basta. Hai vinto.» Alza le mani, i palmi aperti e tremanti. «Fai quello che devi. Ma guardami in faccia mentre lo fai.»"],
           finiscilo: "Finiscilo", risparmialo: "Risparmialo",
@@ -2832,7 +2864,7 @@
             nodi: {
               inizio: {
                 testo: [
-                  "Aldo ti aspetta in piedi accanto al camino spento, le mani intrecciate dietro la schiena. Non si volta quando entri: ti ha sentito arrivare dall'atrio, forse dal giardino, forse da sempre.",
+                  "Aldo non stacca gli occhi dalla teca, le mani intrecciate dietro la schiena. Non si volta quando ti avvicini: ti ha sentito arrivare dall'atrio, forse dal giardino, forse da sempre.",
                   "«Ebbene?»"
                 ],
                 risposte: [
@@ -2867,7 +2899,7 @@
                   "Aldo sorride. È la prima volta che lo vedi sorridere, e vorresti non averlo visto.",
                   "La sua mano guantata scatta e si chiude sulla tua gola, sollevandoti sulle punte dei piedi senza il minimo sforzo.",
                   "«Il fermaglio è tiepido. I morti non scaldano il bronzo.» Ti lascia andare, e crolli in ginocchio, tossendo.",
-                  "«Lo terrò io, e la caccia la finirò io. Le rastrelliere restano chiuse, per voi. E la prossima volta che mi mentite, viandante, finirete su una mensola.»"
+                  "«Lo terrò io, e la caccia la finirò io. Le rastrelliere restano chiuse, per voi, finché il Signore non vi avrà visto. E la prossima volta che mi mentite, viandante, finirete su una mensola.»"
                 ],
                 alla_fine: "aldo_punizione"
               },
@@ -2876,7 +2908,7 @@
                   "Aldo ti guarda a lungo, senza dire nulla. Poi prende la spilla tra due dita, la soppesa, la infila in tasca.",
                   "«Onesto. Sciocco, ma onesto. La caccia la finirò io.»",
                   "Ti si avvicina finché senti l'odore di cera e di cenere del suo frac, e abbassa la voce.",
-                  "«Il Signore non ricompensa la pietà. Le rastrelliere restano chiuse, per voi. Ma il portone resta aperto: avrete altre occasioni per dimostrare da che parte state.»",
+                  "«Il Signore non ricompensa la pietà. Le rastrelliere restano chiuse, per voi, finché il Signore non vi avrà visto. Ma il portone resta aperto: avrete altre occasioni per dimostrare da che parte state.»",
                   "Le sue parole ti scivolano dentro come acqua gelata, e per un istante ti senti vuoto, inutile, già dimenticato."
                 ],
                 alla_fine: "aldo_delusione"
@@ -3015,16 +3047,21 @@
           }
         },
         sala_caccia: {
-          vista: { titolo: "Hunting hall", alt: "A long oak-panelled hall with mounted heads, a great cold fireplace, an oak table and racks full of weapons and armor." },
+          vista: { titolo: "Hunting hall", alt: "A long, tall, dark hall with dark beams, wrought-iron chandeliers and blue torches. Mounted stag heads with immense antlers, banners, weapon racks, armor on mannequins and glowing glass display cases; at the far end, under an ornate arch, a door.", altAldo: "The same hall, with Aldo the butler in a dark tailcoat: seen from behind, hands clasped at his back, standing before a glowing glass display case." },
           stanza: {
             intro: [
-              "You step through the left-hand door, open at last, into a long, low-ceilinged hall panelled in dark oak. Along the walls hang the mounted heads of stags, boars and wolves, their glass eyes reflecting the light of the blue torches. A huge stone fireplace, cold for who knows how long, dominates the far wall; on the floor, bearskins serve as rugs.",
-              "But this is no mere trophy room. Along both sides run long racks of wood and iron: swords, axes, maces and hammers lined up like soldiers at attention, suits of armor mounted on faceless mannequins, shields hung in orderly rows. Some weapons are plain and worn with use; others, behind a grate held shut by a padlock, give off a faint glow, almost a breath.",
-              "A long oak table fills the middle of the hall. At the far end, beside the fireplace, a smaller door leads into another room. The air smells of leather, blade oil and old ash."
+              "You step through the left-hand door, open at last, into a long, tall hall with a ceiling of dark beams, lit by great wrought-iron chandeliers and the blue flame of the torches. Along the walls run mounted stag heads with immense antlers, between hanging banners and tall pointed-arch windows. A stone fireplace, cold for who knows how long, juts from the right-hand wall.",
+              "But this is no mere trophy room. Along the sides run racks of wood and iron: swords, axes, spears and halberds lined up like soldiers at attention, full suits of armor on faceless mannequins, shields, arrows, barrels and an iron-bound chest. Between the armors rise glass display cases holding goblets, jewels and small weapons, glowing with a light of their own. In one of them, barred by a grate and a padlock, whatever rests inside gives off a faint glow, almost a breath.",
+              "Before one of the cases, motionless, stands Aldo, hands clasped behind his back. He stares at what lies inside the glass with an attention you have never seen in him, and does not turn when you enter.",
+              "At the far end of the hall, beneath an ornate arch, a door leads into another room. The air smells of leather, blade oil and old ash."
+            ],
+            introSenzaAldo: [
+              "You step through the left-hand door, open at last, into a long, tall hall with a ceiling of dark beams, lit by great wrought-iron chandeliers and the blue flame of the torches. Along the walls run mounted stag heads with immense antlers, between hanging banners and tall pointed-arch windows.",
+              "Along the sides run racks of wood and iron, armor on faceless mannequins and glowing glass display cases. At the far end, beneath an ornate arch, a door leads into another room."
             ],
             nota: "To examine the weapons write, for example, “I look at the racks”; the door at the back leads to the trophy room; to go back, “I return to the hall”.",
-            fallbackLibera: ["You try, but the hall offers you nothing useful in that respect. The racks, the grate, the mounted heads, the cold fireplace and the door at the back are what lie around you."],
-            ritorno: ["You return to the hunting hall. The glass eyes of the mounted heads seem to follow you, and the racks gleam along the walls."]
+            fallbackLibera: ["You try, but the hall offers you nothing useful in that respect. The racks, the display cases, the mounted heads, the cold fireplace and the door at the back are what lie around you."],
+            ritorno: ["You return to the hunting hall. The glass eyes of the mounted heads seem to follow you, and the cases glow blue along the walls."]
           }
         },
         luoghi: {
@@ -3113,6 +3150,7 @@
         ettore: {
           aspetta: ["Ettore is sitting on his bed of rags, beside the brazier. He raises his head when he hears you coming down, but does not get up. The sword rests across his knees."],
           vuota: ["The crypt is silent. The brazier has gone out, and of Ettore's shelter only rags and cold ash remain."],
+          diarioMorto: ["Among his belongings, beneath the worn cloak, you find a leather-covered notebook, worn by a boy's hands. He kept it with him to the very end."],
           vuotaMorto: ["The crypt is silent. On Ettore's bed only a veil of grey ash remains, stirred by no breath."],
           resa: ["Ettore staggers, blood running from his brow into his beard. His left leg gives way: he falls to one knee and the sword slips from his hand, rolling across the stone.", "“Enough... enough. You have won.” He raises his hands, palms open and trembling. “Do what you must. But look me in the face while you do it.”"],
           finiscilo: "Finish him", risparmialo: "Spare him",
@@ -3340,7 +3378,7 @@
             nodi: {
               inizio: {
                 testo: [
-                  "Aldo is waiting for you, standing beside the cold fireplace, hands clasped behind his back. He does not turn when you enter: he heard you coming from the hall, perhaps from the garden, perhaps for ever.",
+                  "Aldo does not take his eyes off the display case, hands clasped behind his back. He does not turn as you approach: he heard you coming from the hall, perhaps from the garden, perhaps for ever.",
                   "«Well?»"
                 ],
                 risposte: [
@@ -3375,7 +3413,7 @@
                   "Aldo smiles. It is the first time you have seen him smile, and you wish you had not.",
                   "His gloved hand darts out and closes around your throat, lifting you onto the tips of your toes without the slightest effort.",
                   "«The clasp is warm. The dead do not warm bronze.» He lets you go, and you fall to your knees, coughing.",
-                  "«I shall keep it, and I shall finish the hunt myself. The racks stay closed, for you. And the next time you lie to me, wanderer, you will end up on a shelf.»"
+                  "«I shall keep it, and I shall finish the hunt myself. The racks stay closed, for you, until the Master has seen you. And the next time you lie to me, wanderer, you will end up on a shelf.»"
                 ],
                 alla_fine: "aldo_punizione"
               },
@@ -3384,7 +3422,7 @@
                   "Aldo looks at you for a long time, saying nothing. Then he takes the brooch between two fingers, weighs it, slips it into his pocket.",
                   "«Honest. Foolish, but honest. I shall finish the hunt myself.»",
                   "He steps closer until you can smell the wax and ash of his tailcoat, and lowers his voice.",
-                  "«The Master does not reward mercy. The racks stay closed, for you. But the great door stays open: you will have other chances to show which side you are on.»",
+                  "«The Master does not reward mercy. The racks stay closed, for you, until the Master has seen you. But the great door stays open: you will have other chances to show which side you are on.»",
                   "His words slide into you like icy water, and for a moment you feel empty, useless, already forgotten."
                 ],
                 alla_fine: "aldo_delusione"
@@ -3550,13 +3588,20 @@
             gia: { ok: "Hai già letto tutto ciò che il libro di preghiere poteva dirti.", ko: "" },
             lascia: "Richiudi il libro e lo rimetti sul leggio."
           },
-          cappella_tracce: { /* PROVVISORIO: testi da riscrivere */
+          cappella_tracce: {
             fisso: ["Il pavimento della cappella è coperto da un velo di polvere e cenere. Qualcuno è passato di qui, più di una volta."],
-            azione: "Ti chini sulle lastre e cerchi i segni di chi è passato di qui.",
-            successo: ["Tra la polvere trovi impronte di stivali, sempre le stesse, che vanno e vengono dalla botola della cripta: un solo uomo, che trascina appena la gamba sinistra.", "Sui gradini c'è cera fresca e dal basso sale un filo di fumo: là sotto qualcuno tiene acceso un fuoco. Chi si nasconde nella cripta è sveglio, ma non ti aspetta.", "Scendendo in silenzio sarà più facile coglierlo di sorpresa (Furtività: CD 10 invece di 13)."],
+            azione: "Ti aggiri tra i banchi della piccola cappella, chinandoti sulle lastre e sulle panche in cerca di qualcosa fuori posto.",
+            successo: ["Aggirandoti tra i banchi della piccola cappella trovi segni di passaggi recenti: laddove ti aspetteresti di vedere polvere ci sono scie di dita, e impronte relativamente fresche. Tra la polvere distingui impronte di stivali, sempre le stesse, che vanno e vengono dalla botola della cripta: un solo uomo, che trascina appena la gamba sinistra.", "Sui gradini c'è cera fresca e dal basso sale un filo di fumo: là sotto qualcuno tiene acceso un fuoco. Chi si nasconde nella cripta è sveglio, ma non ti aspetta.", "Scendendo in silenzio sarà più facile coglierlo di sorpresa (Furtività: CD 10 invece di 13)."],
             fallimento: ["La polvere è stata calpestata così tante volte che le impronte si confondono in un'unica macchia grigia. Non riesci a capire chi sia passato di qui, né quando."],
             gia: { ok: "Le impronte portano alla botola della cripta: là sotto c'è un uomo, sveglio, accanto a un fuoco.", ko: "Hai già cercato tracce sul pavimento: la polvere non ti dirà altro." },
             lascia: "Lasci perdere le tracce."
+          },
+          cappella_percezione: {
+            fisso: [], azione: "Trattieni il respiro e tendi l'orecchio, cercando di cogliere ogni rumore nella cappella.",
+            successo: ["Dal pavimento, attraverso la botola della cripta, salgono rumori sospetti: un raschiare metallico, come di una lama affilata su una pietra, e un borbottio sommesso di voce d'uomo.", "Aldo sapeva esattamente cosa stava dicendo: là sotto c'è davvero qualcuno."],
+            fallimento: ["Tendi l'orecchio, ma la cappella è piena dei suoi rumori consueti: il vento tra le crepe della vetrata, il tetto che scricchiola. Se qualcosa si muove là sotto, non riesci a distinguerlo."],
+            gia: { ok: "Dalla botola della cripta salgono ancora quei rumori sospetti: qualcuno, là sotto, è sveglio.", ko: "Hai già teso l'orecchio senza distinguere nulla." },
+            lascia: "Smetti di ascoltare."
           },
           cripta_furtiva: {
             fisso: [], azione: "Scendi la scala della cripta un gradino alla volta, trattenendo il respiro e tenendoti all'ombra del muro.",
@@ -3571,7 +3616,7 @@
           cripta_tomba_pagina: ["Sollevi il cavallino di legno. Sotto, ripiegata in quattro, c'è una pagina strappata da un diario. La carta è macchiata da gocce rotonde, asciugate da tempo."],
           cripta_nicchie: {
             fisso: ["Accanto all'ingresso, due nicchie sono ancora vuote. Sopra la prima è inciso «Rodolfo»; sopra la seconda, «Adele». Nessuna data."],
-            azione: "Appoggi le mani sulla pietra delle due nicchie vuote e cerchi di sentire che cosa le abita.",
+            azione: "Passi le mani sulla pietra delle due nicchie vuote e le ispezioni con cura, cercando segni, incisioni, qualcosa di nascosto.",
             successo: [
               "La nicchia di Rodolfo è tiepida, come un focolare spento da poco, e sa di cenere. Quella di Adele è gelida: un velo di brina la ricopre, e sotto la brina, schiacciata contro la pietra, c'è una pagina di diario, intatta come se il freddo l'avesse protetta.",
               "Nessuno dei due è mai stato sepolto qui. Lui è diventato fuoco; lei, lacrime."
@@ -3698,11 +3743,18 @@
           },
           cappella_tracce: {
             fisso: ["The chapel floor is covered by a veil of dust and ash. Someone has passed this way, more than once."],
-            azione: "You crouch over the flagstones and look for signs of whoever came this way.",
-            successo: ["In the dust you find boot prints, always the same ones, coming and going from the crypt hatch: a single man, slightly dragging his left leg.", "There is fresh wax on the steps and a thread of smoke rises from below: someone down there keeps a fire lit. Whoever hides in the crypt is awake, but not expecting you.", "If you go down quietly it will be easier to take him by surprise (Stealth: DC 10 instead of 13)."],
+            azione: "You walk between the pews of the little chapel, crouching over the flagstones and benches, looking for anything out of place.",
+            successo: ["Moving between the pews of the little chapel you find signs of recent passage: where you would expect dust there are finger trails, and relatively fresh footprints. In the dust you make out boot prints, always the same ones, coming and going from the crypt hatch: a single man, slightly dragging his left leg.", "There is fresh wax on the steps and a thread of smoke rises from below: someone down there keeps a fire lit. Whoever hides in the crypt is awake, but not expecting you.", "If you go down quietly it will be easier to take him by surprise (Stealth: DC 10 instead of 13)."],
             fallimento: ["The dust has been trampled so many times that the prints blur into a single grey smudge. You cannot tell who came this way, or when."],
             gia: { ok: "The prints lead to the crypt hatch: down there is a man, awake, beside a fire.", ko: "You have already searched the floor for tracks: the dust will tell you nothing more." },
             lascia: "You leave the tracks be."
+          },
+          cappella_percezione: {
+            fisso: [], azione: "You hold your breath and strain your ears, trying to catch every sound in the chapel.",
+            successo: ["Through the crypt hatch in the floor rise suspicious noises: a metallic scraping, like a sharpened blade on stone, and the low muttering of a man's voice.", "Aldo knew exactly what he was saying: there really is someone down there."],
+            fallimento: ["You strain your ears, but the chapel is full of its usual sounds: the wind in the cracks of the window, the roof creaking. If something is moving down there, you cannot make it out."],
+            gia: { ok: "Those suspicious noises still rise from the crypt hatch: someone down there is awake.", ko: "You have already listened without making out anything." },
+            lascia: "You stop listening."
           },
           cripta_furtiva: {
             fisso: [], azione: "You go down the crypt stair one step at a time, holding your breath and keeping to the shadow of the wall.",
@@ -3717,7 +3769,7 @@
           cripta_tomba_pagina: ["You lift the wooden horse. Beneath it, folded in four, lies a page torn from a diary. The paper is stained with round drops, long since dried."],
           cripta_nicchie: {
             fisso: ["Beside the entrance, two niches are still empty. Above the first is carved “Rodolfo”; above the second, “Adele”. No dates."],
-            azione: "You rest your hands on the stone of the two empty niches and try to feel what dwells in them.",
+            azione: "You run your hands over the stone of the two empty niches and inspect them carefully, looking for marks, carvings, anything hidden.",
             successo: [
               "Rodolfo's niche is warm, like a hearth recently gone out, and smells of ash. Adele's is icy: a veil of frost covers it, and beneath the frost, pressed against the stone, lies a diary page, untouched, as if the cold had protected it.",
               "Neither of them was ever buried here. He became fire; she, tears."
@@ -3966,7 +4018,7 @@
         passaggi: ["Aldo ti guarda il fermaglio sul petto, poi distoglie lo sguardo.", "«Ci sono porte che questa casa apre solo a chi ha portato l'oro. Voi non l'avete portato.»"],
         passaggi_oro: ["«Ora sì.» (Da scrivere: i passaggi segreti.)"],
         cacce: ["Aldo indica con un cenno la parete delle teste imbalsamate.", "«Il Signore ha sempre fame. Ogni preda, un grado. Ogni grado, una porta in più.»"],
-        fine: ["Aldo torna a fissare il camino spento. La conversazione, per lui, è già finita da un pezzo."]
+        fine: ["Aldo torna a fissare la teca. La conversazione, per lui, è già finita da un pezzo."]
       } : {
         intro: ["Aldo does not turn. “Speak. I have little time and less patience.”"],
         q: { casa: "What is this house, really?", vespera: "Who were the Vespera?", signore: "Tell me about the Master.", mastini: "The mastiffs: where do they come from?", guendalina: "What do you think of Guendalina?", signora: "Do you know where Lady Adele is?", diari: "Do you know anything about the Lady's diary?", passaggi: "Are there hidden passages in this house?", cacce: "What other hunts are there?", fine: "I have nothing else to ask." },
@@ -3984,7 +4036,7 @@
         passaggi: ["Aldo glances at the clasp on your chest, then looks away.", "“There are doors this house opens only to those who have brought gold. You have not brought it.”"],
         passaggi_oro: ["“Now, yes.” (To be written: the secret passages.)"],
         cacce: ["Aldo nods towards the wall of stuffed heads.", "“The Master is always hungry. Every prey, a rank. Every rank, one more door.”"],
-        fine: ["Aldo goes back to staring at the cold fireplace. For him, the conversation ended long ago."]
+        fine: ["Aldo goes back to staring at the display case. For him, the conversation ended long ago."]
       };
       const Q = T.q;
       const domande = [
@@ -4254,7 +4306,9 @@
         fermaglioOttenuto: "Fermaglio di bronzo: ora lo porti appuntato sul petto. Ogni caccia speciale ti farà salire di grado.",
         fermaglioNome: (g) => ({ bronzo: "Fermaglio di bronzo", argento: "Fermaglio d'argento", oro: "Fermaglio d'oro", platino: "Fermaglio di platino" })[g],
         segui: "Segui Aldo", signore: "Il Signore", salaTrono: "La sala del trono",
-        presente: "Aldo è in piedi accanto al camino spento, le mani intrecciate dietro la schiena. Ti segue con lo sguardo, senza dire una parola.",
+        anticameraGenerica: ["Il mastino a due teste si scosta al passaggio di Aldo, e ti lascia andare oltre."],
+        rastrelliereDopoUdienza: ["Aldo si schiarisce la voce, con l'espressione di chi concede un favore a malincuore.", "«Il Signore ha parlato. Le rastrelliere si aprono anche per voi: prendete una cosa, una sola, e non fatemi pentire di averlo permesso.»", "Con un cenno del capo indica poi la bacheca di legno accanto al camino: «Queste sono le cacce del Signore. Guardatele, e prima di chiedermene un'altra, sopravvivete.»"],
+        presente: "Aldo è in piedi davanti a una teca, le mani intrecciate dietro la schiena. Ti segue con lo sguardo, senza dire una parola.",
         domandeSbloccate: "Ora puoi parlare con Aldo nella sala della caccia: fagli domande sulla casa.",
         udienza: {
           bronzo: {
@@ -4290,7 +4344,9 @@
         fermaglioOttenuto: "Bronze clasp: you now wear it pinned to your chest. Every special hunt will raise your rank.",
         fermaglioNome: (g) => ({ bronzo: "Bronze clasp", argento: "Silver clasp", oro: "Gold clasp", platino: "Platinum clasp" })[g],
         segui: "Follow Aldo", signore: "The Master", salaTrono: "The throne room",
-        presente: "Aldo stands by the cold fireplace, hands clasped behind his back. He follows you with his eyes, without a word.",
+        anticameraGenerica: ["The two-headed mastiff draws aside as Aldo passes, and lets you go beyond."],
+        rastrelliereDopoUdienza: ["Aldo clears his throat, with the look of one granting a favour reluctantly.", "“The Master has spoken. The racks open for you too: take one thing, only one, and do not make me regret allowing it.”", "With a nod he then points to the wooden board beside the fireplace: “These are the Master's hunts. Look at them, and before you ask me for another, survive.”"],
+        presente: "Aldo stands before a display case, hands clasped behind his back. He follows you with his eyes, without a word.",
         domandeSbloccate: "You can now talk to Aldo in the hunting room: ask him about the house.",
         udienza: {
           bronzo: {
@@ -4325,6 +4381,7 @@
     document.querySelectorAll("[data-t]").forEach(e => { e.textContent = U[e.dataset.t]; });
     document.querySelectorAll("[data-t-aria]").forEach(e => e.setAttribute("aria-label", U[e.dataset.tAria]));
     document.getElementById("home").title = U.home;
+    document.getElementById("regole").title = U.regole; /* al passaggio del cursore: «Regolamento» */
 
     /* ---------- Salvataggio manuale ----------
        Il gioco NON salva da solo: i progressi restano in memoria finché non si preme «Salva partita».
@@ -4427,16 +4484,17 @@
       cant_cerca: { prova: { abilita: "Indagare", dado: 20, cd: 6 }, riprova: true, poi: (ok) => { if (ok) prendiScaletta(); } },
       disp_percezione: {}, disp_indagare: {}, disp_mobili: {}, disp_sgabuzzino: {}, disp_porta: {},
       /* giardino, cappella e cripta: descrizioni fisse; l'altare nasconde il blasone (solo con la missione del blasone accettata) */
-      giardino_fontana: { riprova: true, poi: (ok) => { if (ok) trovaPagina(1); } }, /* prova a scelta: Medicina, Arcano o Misticismo (esaminaFontana) */
-      fontana_med: { prova: { abilita: "Medicina", dado: 20, cd: 12 } }, fontana_arc: { prova: { abilita: "Arcano", dado: 20, cd: 12 } }, fontana_mis: { prova: { abilita: "Misticismo", dado: 20, cd: 12 } },
+      giardino_fontana: { riprova: true, poi: (ok) => { if (ok) trovaPagina(1); } }, /* prova a scelta: Sapienza, Sopravvivenza o Intuizione (esaminaFontana) */
+      fontana_med: { prova: { abilita: "Sopravvivenza", dado: 20, cd: 12 } }, fontana_arc: { prova: { abilita: "Sapienza", dado: 20, cd: 12 } }, fontana_mis: { prova: { abilita: "Intuizione", dado: 20, cd: 12 } },
       giardino_statue: { prova: { abilita: "Percezione", dado: 20, cd: 13 }, poi: (ok) => { if (ok) { usate.q2_candela = true; salvaUsate(); sblocco([A2.statueEst], "mis"); } } },
       giardino_siepi: {}, giardino_cielo: {}, giardino_cappella: {}, giardino_portone: {},
       cappella_vetrata: { prova: { abilita: "Misticismo", dado: 20, cd: 14 }, poi: (ok) => { if (ok) { usate.adele_viva = true; salvaUsate(); sblocco([A2.vetrataViva], "mis"); } } },
       cappella_libro: { prova: { abilita: "Arcano", dado: 20, cd: 12 }, riprova: true, poi: (ok) => { if (ok) libroPreghiere(); } },
       cripta_furtiva: { prova: { abilita: "Furtività", dado: 20, cd: 13 }, nessunDanno: true, poi: (ok) => { usate.ettore_sorpreso = ok; salvaUsate(); setTimeout(() => fuoriDallaTendina(() => vai("cripta")), 900); } },
-      cappella_tracce: { prova: { abilita: "Sopravvivenza", dado: 20, cd: 12 }, poi: (ok) => { if (ok) { usate.ettore_tracce = true; salvaUsate(); applicaTracce(); } } },
+      cappella_percezione: { prova: { abilita: "Percezione", dado: 20, cd: 11 }, nessunDanno: true },
+      cappella_tracce: { prova: { abilita: "Indagare", dado: 20, cd: 12 }, poi: (ok) => { if (ok) { usate.ettore_tracce = true; salvaUsate(); applicaTracce(); } } },
       cripta_tomba: {},
-      cripta_nicchie: { prova: { abilita: "Misticismo", dado: 20, cd: 12 }, poi: (ok) => { if (ok) trovaPagina(4); } },
+      cripta_nicchie: { prova: { abilita: "Indagare", dado: 20, cd: 12 }, poi: (ok) => { if (ok) trovaPagina(4); } },
       cripta_sarcofago: { prova: { abilita: "Atletica", dado: 20, cd: 14 }, riprova: true, nessunDanno: true, poi: (ok) => sarcofago(ok) },
       cripta_braciere_spento: {},
       cappella_altare: { prova: { abilita: "Indagare", dado: 20, cd: 12 }, riprova: true, nessunDanno: true, poi: (ok) => { if (ok && usate.q3 === "accettata") prendiBlasone(); } },
@@ -4453,9 +4511,9 @@
     PROVE_DICHIARATE.cucina = { Indagare: "cucina_indagare", Percezione: "cucina_percezione" };
     PROVE_DICHIARATE.cantina = { "Furtività": "cant_furtivita", Percezione: "cant_percezione", Indagare: "cant_indagare" };
     PROVE_DICHIARATE.dispensa = { Percezione: "disp_percezione", Indagare: "disp_indagare" };
-    PROVE_DICHIARATE.giardino = { Misticismo: "fontana_mis", Arcano: "fontana_arc", Medicina: "fontana_med", Percezione: "giardino_statue" };
-    PROVE_DICHIARATE.cappella = { Misticismo: "cappella_vetrata", Arcano: "cappella_libro", "Furtività": "cripta_furtiva", Sopravvivenza: "cappella_tracce" };
-    PROVE_DICHIARATE.cripta = { Misticismo: "cripta_nicchie", Atletica: "cripta_sarcofago" };
+    PROVE_DICHIARATE.giardino = { Sapienza: "fontana_arc", Sopravvivenza: "fontana_med", Intuizione: "fontana_mis", Misticismo: "fontana_mis", Arcano: "fontana_arc", Medicina: "fontana_med", Percezione: "giardino_statue" };
+    PROVE_DICHIARATE.cappella = { Percezione: "cappella_percezione", Indagare: "cappella_tracce", Sopravvivenza: "cappella_tracce", Misticismo: "cappella_vetrata", Arcano: "cappella_libro", "Furtività": "cripta_furtiva" };
+    PROVE_DICHIARATE.cripta = { Indagare: "cripta_nicchie", Intuizione: "cripta_nicchie", Misticismo: "cripta_nicchie", Atletica: "cripta_sarcofago" };
     for (const id in MECCANICA) LUOGHI[id] = { ...MECCANICA[id], ...TX.luoghi[id] };
     /* tracce di Ettore trovate con Sopravvivenza: scendere in silenzio diventa più facile */
     function applicaTracce() { if (usate.ettore_tracce && LUOGHI.cripta_furtiva && LUOGHI.cripta_furtiva.prova) LUOGHI.cripta_furtiva.prova = { ...LUOGHI.cripta_furtiva.prova, cd: 10 }; }
@@ -4581,8 +4639,8 @@
     }
 
     /* il buio usa l'immagine dell'esterno, spenta fino al nero (classe "nera") */
-    const IMMAGINI = { foresta: "immagini/house/esterno_dungeon.webp", buio: "immagini/house/esterno_dungeon.webp", atrio: "immagini/house/atrio.webp", sala_caccia: "immagini/house/sala_caccia.webp", sala_conversazione: "immagini/house/sala_conversazione.webp", giardino: "immagini/house/giardino.webp", cappella: "immagini/house/cappella.webp", cripta: "immagini/house/cripta.webp", sala_trofei: "immagini/house/sala_trofei.webp", sala_pranzo: "immagini/house/sala_pranzo.webp", corridoio: "immagini/house/corridoio.webp", sala_ballo: "immagini/house/sala_ballo.webp", cucina: "immagini/house/cucina.webp", dispensa: "immagini/house/dispensa.webp", cantina: "immagini/house/cantina.webp", discesa_cantina: "immagini/house/discesa_cantina.webp", mastino: "immagini/house/mastino_cantina.webp", servizio: "immagini/house/discesa_cantina.webp", guendalina: "immagini/house/guendalina.webp" };
-    const DIM_IMMAGINI = { foresta: [1920, 1079], buio: [1920, 1079], corridoio: [2848, 1600], sala_ballo: [2304, 1728], giardino: [2848, 1600], cucina: [1920, 1079], dispensa: [2848, 1600], cantina: [2848, 1600], discesa_cantina: [2780, 1308], servizio: [2780, 1308], guendalina: [2048, 1536], atrio: [1920, 1079], sala_conversazione: [1358, 679] }; /* le altre sono 1536 × 1024 */
+    const IMMAGINI = { foresta: "immagini/house/esterno_dungeon.webp", buio: "immagini/house/esterno_dungeon.webp", atrio: "immagini/house/atrio.webp", sala_caccia: "immagini/house/sala_caccia.webp", sala_caccia_aldo: "immagini/house/sala_caccia_aldo.webp", sala_conversazione: "immagini/house/sala_conversazione.webp", giardino: "immagini/house/giardino.webp", cappella: "immagini/house/cappella.webp", cripta: "immagini/house/cripta.webp", sala_trofei: "immagini/house/sala_trofei.webp", sala_pranzo: "immagini/house/sala_pranzo.webp", corridoio: "immagini/house/corridoio.webp", sala_ballo: "immagini/house/sala_ballo.webp", cucina: "immagini/house/cucina.webp", dispensa: "immagini/house/dispensa.webp", cantina: "immagini/house/cantina.webp", discesa_cantina: "immagini/house/discesa_cantina.webp", mastino: "immagini/house/mastino_cantina.webp", servizio: "immagini/house/discesa_cantina.webp", guendalina: "immagini/house/guendalina.webp" };
+    const DIM_IMMAGINI = { foresta: [1920, 1079], buio: [1920, 1079], corridoio: [2848, 1600], sala_ballo: [2304, 1728], giardino: [2848, 1600], cucina: [1920, 1079], dispensa: [2848, 1600], cantina: [2848, 1600], discesa_cantina: [2780, 1308], servizio: [2780, 1308], guendalina: [2048, 1536], atrio: [1920, 1079], sala_conversazione: [1358, 679], cappella: [2848, 1600] }; /* le altre sono 1536 × 1024 */
     const vista = (id) => ({ titolo: TX.viste[id].titolo, img: IMMAGINI[id] ? { src: IMMAGINI[id], alt: TX.viste[id].alt } : undefined, buia: id === "cantina" && !usate.cantina_luce }); /* cantina al buio: riquadro nero */
 
     /* Una nuova partita parte dalla foresta, fuori dal dungeon; i salvataggi già esistenti riprendono dal loro luogo */
@@ -4767,6 +4825,7 @@
         if (torna || /giardin|garden|fontan|fountain|fuori|outside/.test(t)) return "torna";
         if (atrio || /\bcasa\b|house|manor|conversazion|drawing|pranzo|dining|cucin|kitchen/.test(t)) return "casa_lontana";
         if (/\blibr[oi]\b|preghier\w*|leggio|ampoll\w*|\bbooks?\b|prayer|lectern|vials?/.test(t)) return "cappella_libro";
+        if (/ascolt\w*|rumor\w*|\blisten\w*|\bnoises?\b|\bsounds?\b/.test(t)) return "cappella_percezione";
         if (/tracc\w*|impront\w*|\borm[ae]\b|pavimento|polvere|tracks?|footprints?|prints|\bfloor\b|\bdust\b/.test(t)) return "cappella_tracce";
         if (/altar\w*|tovagli\w*|\bcloth\b/.test(t)) return "cappella_altare_scelta";
         if (/vetrat\w*|finestr\w*|\bdama\b|cavalier\w*|crep[ae]\b|window|stained|glass|\blady\b|knight|crack\w*/.test(t)) return "cappella_vetrata";
@@ -4899,7 +4958,8 @@
       } catch (e) {}
     }
     if (pg) pg.statistiche = conAttrVecchi(pg.statistiche || {});
-    if (pg && pg.classe === "Accolito") U.mana = LINGUA === "en" ? "Faith points" : "Punti fede"; /* il Monaco lancia incantesimi con i punti fede */
+    if (pg && pg.classe === "Accolito") U.mana = LINGUA === "en" ? "Faith points" : "Punti fede"; /* il Monaco lancia incantesimi con i punti fede; l'Arcanista i punti arcano */
+    Lingua.setRisorsa(() => (pg ? pg.classe : null)); /* {risorsa} nelle descrizioni: pozione di essenza, olio della falena */
     /* Agilità: il suo modificatore va sulla Classe armatura, fino al tetto dell'armatura indossata */
     const TETTO_AGILITA = Regole.TETTO_AGILITA;
     function bonusAgilitaCA() {
@@ -5103,9 +5163,11 @@
         });
         if (usate.arazzo_sx === "ok") zaino.push({ id: "arazzo_sx", nome: "Foglietto di Adele", tipo: "nota", testo: TX.foglietto });
       }
+      const rinomina = (o) => { if (o && o.nome === "Pozione di mana") { o.nome = "Pozione di essenza"; delete o.testo; } return o; }; /* vecchio nome nei salvataggi */
+      zaino.forEach(rinomina); if (mano) rinomina(mano);
       if (arma.danno == null && arma.nome === eqIniz.arma && eqIniz.armaDanno) arma.danno = eqIniz.armaDanno;
       if (arma.mani == null && arma.nome === eqIniz.arma && eqIniz.armaMani) { arma.mani = eqIniz.armaMani; arma.tipoDanno = eqIniz.armaTipoDanno; }
-      if (salvata && salvata.mano && typeof salvata.mano === "object" && salvata.mano.nome) mano = salvata.mano;
+      if (salvata && salvata.mano && typeof salvata.mano === "object" && salvata.mano.nome) mano = rinomina(salvata.mano);
       if (salvata && "scudo" in salvata) scudo = (salvata.scudo && typeof salvata.scudo === "object") ? salvata.scudo : null;
       else if (eqIniz.scudo) scudo = { id: "scudo", tipo: "scudo", nome: eqIniz.scudo.nome || "Scudo", ca: Number(eqIniz.scudo.ca) || 1, malus: Number(eqIniz.scudo.malus) || 0 };
       if (armaturaPartita && armaturaPartita.nome) applicaArmatura(armaturaPartita); /* armatura presa dalle rastrelliere */
@@ -5113,7 +5175,7 @@
 
     /* ---------- Nomi e descrizioni degli oggetti nella lingua scelta ---------- */
     const nomeOg = (o) => { const n = (o.id === "giocattoli" ? TX.giocattoli.nome : Q.oggetti[o.id] ? Q.oggetti[o.id].nome : N("oggetti", o.nome)); return o.bonus ? `${n} (+${o.bonus})` : n; };
-    const testoOggetto = (it) => (it.id === "diario_adele" ? testoDiarioAdele() : it.id === "arazzo_sx" ? TX.foglietto : it.id === "giocattoli" ? TX.giocattoli.desc : Q.oggetti[it.id] ? Q.oggetti[it.id].testo : (Lingua.desc(it.nome) || it.testo));
+    const testoOggetto = (it) => Lingua.conRisorsa(it.id === "diario_adele" ? testoDiarioAdele() : it.id === "arazzo_sx" ? TX.foglietto : it.id === "giocattoli" ? TX.giocattoli.desc : Q.oggetti[it.id] ? Q.oggetti[it.id].testo : (Lingua.desc(it.nome) || it.testo));
     const maniArma = (o) => Number(o && o.mani) || 1;
     const dettaglioArma = (o) => [o && o.tipoDanno ? N("danni", o.tipoDanno) : null, o && o.mani ? U.mani(maniArma(o)) : null].filter(Boolean).join(" · ");
     const testoDanno = (o) => {
@@ -5451,6 +5513,9 @@
       }
       gruppo = null; tendinaAperta = null;
     }
+    /* posizione del diario: in fondo dopo ogni azione, in testa (titolo e immagine) quando si entra in una stanza */
+    function fondoDiario() { elDiario.scrollTop = elDiario.scrollHeight; }
+    function testaDiario(el) { elDiario.scrollTop += el.getBoundingClientRect().top - elDiario.getBoundingClientRect().top - (parseFloat(getComputedStyle(elDiario).paddingTop) || 0); }
     function mostraStanza(id) {
       elDiario.replaceChildren(); involucri.clear();
       gruppo = null; tendinaAperta = null;
@@ -5476,7 +5541,7 @@
         if (chiuso) { det.open = false; involucroScontro(v.sid, chiuso).append(det); } /* turni di uno scontro concluso: dentro la tendina «Scontro» */
         else elDiario.append(det);
         gruppo = corpo; tendinaAperta = det;
-        if (!ridisegno && !vistaFissa) det.scrollIntoView({ block: "nearest" });
+        if (!ridisegno && !vistaFissa) fondoDiario();
         return;
       }
       const el = document.createElement("div");
@@ -5493,9 +5558,11 @@
         img.className = "scena" + (v.stanza === "buio" ? " nera" : v.anim === "esce" ? " esce" : "") + (v.buia ? " buia" : "") + (ridisegno ? " subito" : ""); img.src = v.img.src; img.alt = v.img.alt; img.width = dim[0]; img.height = dim[1];
         const cornice = document.createElement("div"); cornice.className = "cornice" + (v.cane ? " cenere" + (ridisegno ? " subito" : "") + (v.dissolto ? " dissolto" : "") : ""); cornice.append(img);
         img.addEventListener("error", () => cornice.remove()); /* immagine non ancora caricata: niente icona rotta */
+        if (!ridisegno && v.titolo) img.addEventListener("load", () => { if (vistaFissa && el.isConnected && luogo === v.stanza) testaDiario(el); }); /* primo ingresso: l'immagine arriva dopo, la vista resta in testa */
         el.append(cornice);
         if (v.stanza === "cucina") portaCucina(cornice);
         if (v.stanza === "sala_ballo" && !v.imgFissa) statoSalaBallo(img);
+        if (v.stanza === "sala_caccia" && !v.imgFissa) statoSalaCaccia(img);
       }
       const p = (t, c) => { const e = document.createElement("p"); e.textContent = t; if (c) e.className = c; el.append(e); };
       if (v.tipo === "prova") {
@@ -5539,8 +5606,8 @@
       /* esito di una prova di abilità: la tendina dell'azione diventa verde o rossa (anche nei salvataggi vecchi) */
       if (!v.fuori && gruppo && tendinaAperta && v.box && (v.prova || /difficolt|difficulty/i.test(v.esito || ""))) tendinaAperta.classList.add(v.box === "ok" ? "t-ok" : "t-ko");
       /* entrando in una stanza la vista si ferma sul titolo e sull'immagine; i messaggi che seguono nella stessa mossa non la spostano */
-      if (!ridisegno && v.titolo && v.img) { el.scrollIntoView({ block: "start" }); vistaFissa = true; }
-      else if (!ridisegno && !vistaFissa) el.scrollIntoView({ block: v.tipo === "narra" ? "start" : "nearest" });
+      if (!ridisegno && v.titolo && v.img) { testaDiario(el); vistaFissa = true; }
+      else if (!ridisegno && !vistaFissa) fondoDiario(); /* dopo un'azione si resta in fondo, così il testo si vede per intero */
     }
 
     /* Cucina: il giocatore entra e può agire liberamente (prove comprese). 5 secondi dopo la sua PRIMA azione in cucina
@@ -5555,11 +5622,17 @@
       img.src = IMMAGINI.guendalina; img.alt = TX.viste.cucina.altGuendalina; img.width = w; img.height = h;
     }
     let portaApre = null, portaChiude = null; /* caricati la prima volta che servono (audio.js) */
+    /* i due suoni si caricano in anticipo (alla prima azione in cucina), così alle porte aperte sono già pronti */
+    function precaricaPorta() {
+      try {
+        portaApre = portaApre || Sonoro.effetto(SUONO_PORTA_CUCINA, VOLUME_PORTA);
+        portaChiude = portaChiude || Sonoro.effetto(SUONO_CHIUSURA_CUCINA, VOLUME_PORTA);
+      } catch (e) {}
+    }
     function suonaPorta() {
       try {
         if (typeof Volume !== "undefined" && (Volume.muto || Volume.livello === 0)) return;
-        portaApre = portaApre || Sonoro.effetto(SUONO_PORTA_CUCINA, VOLUME_PORTA);
-        portaChiude = portaChiude || Sonoro.effetto(SUONO_CHIUSURA_CUCINA, VOLUME_PORTA);
+        precaricaPorta();
         portaApre.suona().then(ok => { if (ok) setTimeout(() => portaChiude.suona(), PAUSA_CHIUSURA); }); /* la porta si richiude */
       } catch (e) {}
     }
@@ -5571,6 +5644,7 @@
     let attesaGuendalina = null;
     function programmaGuendalina() {
       if (attesaGuendalina || usate.portaCucina === "aperta") return;
+      precaricaPorta();
       const prova = (ms) => {
         attesaGuendalina = setTimeout(() => {
           attesaGuendalina = null;
@@ -5814,6 +5888,10 @@
         if (luogo === "cucina" && usate.portaCucina === "aperta") nodoDialogo("quest1", accetta ? "accetta" : "rimanda"); /* risponde Guendalina */
       }
       disegnaMissioni();
+      if (accetta && id === "q2") { /* ciò che hai già trovato prima di accettare viene registrato subito */
+        const gia = [usate.q2_diario ? (LINGUA === "en" ? "the elder son's diary" : "il diario del figlio maggiore") : null, usate.giocattoli === "presi" ? (LINGUA === "en" ? "Agnese's wooden toys" : "i giocattoli di legno di Agnese") : null].filter(Boolean);
+        if (gia.length) sist(LINGUA === "en" ? `Quest updated: you had already found ${gia.join(" and ")}.` : `Missione aggiornata: avevi già trovato ${gia.join(" e ")}.`);
+      }
     }
     /* «parlo con Guendalina» scritto dal giocatore: la tendina diventa viola come i dialoghi */
     function tendinaDialogo() {
@@ -5862,8 +5940,8 @@
     }
 
     function entraCantina() {
+      if (luogo !== "servizio") return vai("servizio"); /* la cantina si raggiunge sempre dalla stanza di servizio */
       if (usate.q1 === "accettata" || usate.q1 === "scaletta" || usate.q1 === "completata") return vai("cantina");
-      if (luogo !== "servizio") return vai("servizio"); /* la cantina si raggiunge dalla stanza di servizio */
       return aggiungi({ tipo: "narra", righe: Q.servizio.chiusa });
     }
 
@@ -5970,6 +6048,7 @@
       if (manaMax() != null) { const da = manaAttuale(); pg.manaUsato = Math.max(0, (pg.manaUsato || 0) - rec); righe.push(R.riga(U.mana, da, manaAttuale())); }
       if (ris) { const da = risorsaAttuale(); pg.risorsaUsata = Math.max(0, (pg.risorsaUsata || 0) - rec); righe.push(R.riga(nomeRisorsa(), da, risorsaAttuale())); }
       usate.giorno = (Number(usate.giorno) || 1) + 1;
+      for (const id in LUOGHI) if (usate[id] === "ko" && provaRipetibileDopoRiposo(id, LUOGHI[id])) delete usate[id]; /* il riposo sblocca le prove fallite */
       if (!usate.guendalinaAssente) { /* Guendalina cucina per il nuovo giorno */
         const prima = scorta; scorta = Math.min(RAZIONI_MAX, scorta + RAZIONI_AL_GIORNO);
         righe.push(scorta > prima ? R.cucinate(scorta - prima, scorta) : R.scortaPiena());
@@ -5980,6 +6059,7 @@
       disegnaVitali(); aggiornaMentali(); modificato();
       return { esito: R.titolo(usate.giorno), esitoRighe: righe };
     }
+    let ultimoRiposoTesto = -1;
     function riposa() {
       if (luogo === "cripta" && braciereAcceso() && !scontro) { /* Ettore ti lascia dormire accanto al suo fuoco */
         if (usate.riposo !== "sbloccato") return aggiungi({ tipo: "narra", righe: Q.riposo.bloccato });
@@ -6001,7 +6081,9 @@
       if (cura.fame) return aggiungi({ tipo: "narra", righe: RG.riposo.fame });
       if (!eterno) usate["fuoco_" + luogo] = "spento";
       salvaUsate();
-      aggiungi({ tipo: "narra", box: "ok", ...cura, righe: [...Q.riposo.dorme, ...(eterno ? Q.riposo.svegliaCucina : Q.riposo.sveglia)] });
+      let vr; do { vr = Math.floor(Math.random() * Q.riposo.dormeVar.length); } while (vr === ultimoRiposoTesto && Q.riposo.dormeVar.length > 1); /* mai la stessa descrizione due volte di fila */
+      ultimoRiposoTesto = vr;
+      aggiungi({ tipo: "narra", box: "ok", ...cura, righe: [...Q.riposo.dormeVar[vr], ...(eterno ? Q.riposo.svegliaCucina : Q.riposo.sveglia)] });
       disegnaMissioni();
       offriPreparazione();
     }
@@ -6148,6 +6230,13 @@
       occupato = false; stato(false); vistaFissa = false;
     }
     /* l'immagine della sala da ballo nel diario: con Aldo finché è nella sala, vuota quando se ne è andato */
+    /* sala della caccia: con Aldo davanti alla teca finché è nella sala, vuota quando non c'è (usate.aldo_fuori) */
+    function aldoNellaSalaCaccia() { return cacciaAperta() && !usate.aldo_fuori; }
+    function statoSalaCaccia(img) {
+      const conAldo = aldoNellaSalaCaccia();
+      img.src = conAldo ? IMMAGINI.sala_caccia_aldo : IMMAGINI.sala_caccia;
+      img.alt = conAldo ? TX.viste.sala_caccia.altAldo : TX.viste.sala_caccia.alt;
+    }
     function statoSalaBallo(img) {
       const conAldo = usate.aldo_incontrato && !usate.aldo_esito;
       img.src = conAldo ? IMG_ALDO : IMMAGINI.sala_ballo; if (conAldo) img.alt = A.aldo.alt;
@@ -6266,12 +6355,16 @@
         } }
       ]);
     }
+    function consegnaDiarioFiglio() {
+      aggiungiZaino({ id: "diario_figlio", nome: "Diario del figlio maggiore", tipo: "reperto", alias: ["diario", "diary", "quaderno", "notebook"] });
+      usate.q2_diario = true; salvaUsate(); disegnaMissioni();
+    }
     function risparmiaEttore() {
       usate.ettore = "risparmiato"; usate.q4_esito = "risparmiata";
       if (usate.q4 === "accettata") usate.q4 = "prova";
       const righe = [A.sblocco.sigillo];
       aggiungiZaino({ id: "sigillo", nome: "Sigillo del cacciatore", tipo: "missione" });
-      if (usate.ettore_lato === "signora") { aggiungiZaino({ id: "diario_figlio", nome: "Diario del figlio maggiore", tipo: "reperto", alias: ["diario", "diary", "quaderno", "notebook"] }); usate.q2_diario = true; righe.push(A.sblocco.diario); }
+      if (!usate.q2_diario) { consegnaDiarioFiglio(); righe.push(A.sblocco.diario); } /* il diario arriva da Ettore, che viva o muoia */
       if (usate.ettore_lato === "signore") { aggiungiZaino({ id: "taccuino", nome: "Taccuino del cacciatore", tipo: "reperto", alias: ["taccuino", "notebook"] }); righe.push(A.sblocco.taccuino); }
       salvaUsate();
       sblocco(righe, "mis"); disegnaMissioni();
@@ -6305,15 +6398,35 @@
     function udienza(g) {
       const U_ = AL.udienza[g];
       usate.udienze = [...(usate.udienze || []), g]; salvaUsate();
-      fuoriDallaTendina(() => {
-        aggiungi({ tipo: "narra", titolo: AL.salaTrono, righe: U_.cammino });
-        aggiungi({ tipo: "narra", righe: U_.sala });
-        aggiungi({ tipo: "dialogo", fuori: true, tuttoBox: true, chi: AL.signore, macchina: true, righe: U_.voce });
-      });
-      scrittura.then(() => fuoriDallaTendina(() => {
-        aggiungi({ tipo: "narra", righe: U_.ritorno });
-        sist(AL.domandeSbloccate);
-      }));
+      /* intermezzo: Aldo lascia la sala della caccia, il personaggio lo segue fino all'anticamera, poi nella sala del trono; alla fine si ritrova nella sala della caccia */
+      const salita = U_.cammino.slice(0, 3), anticamera = U_.cammino.length > 3 ? U_.cammino.slice(3) : AL.anticameraGenerica;
+      stato(true, U.scrive);
+      fuoriDallaTendina(() => aggiungi({ tipo: "narra", righe: salita }));
+      setTimeout(() => {
+        fuoriDallaTendina(() => vai("anticamera_trono", { righe: anticamera })); /* qui si ripete la descrizione dell'anticamera, con il mastino */
+        stato(true, U.scrive);
+        setTimeout(() => {
+          fuoriDallaTendina(() => {
+            aggiungi({ tipo: "narra", titolo: AL.salaTrono, righe: U_.sala });
+            aggiungi({ tipo: "dialogo", fuori: true, tuttoBox: true, chi: AL.signore, macchina: true, righe: U_.voce });
+          });
+          scrittura.then(() => setTimeout(() => {
+            fuoriDallaTendina(() => vai("sala_caccia", { righe: U_.ritorno }));
+            sist(AL.domandeSbloccate);
+            if (g === "bronzo" && usate.armeria_differita) apriRastrelliereDifferite();
+            stato(false);
+          }, 600));
+        }, 2200);
+      }, 1800);
+    }
+    /* Ettore risparmiato (o menzogna scoperta): le rastrelliere si aprono solo dopo l'incontro con il Signore, insieme alle cacce */
+    function apriRastrelliereDifferite() {
+      usate.armeria_differita = false;
+      usate.armeria_scelte = (Number(usate.armeria_scelte) || 0) + 1;
+      usate.trofeo_ettore = usate.trofeo_ettore || "vuoto";
+      salvaUsate();
+      aggiungi({ tipo: "dialogo", fuori: true, tuttoBox: true, chi: "Aldo", macchina: true, righe: AL.rastrelliereDopoUdienza });
+      scrittura.then(() => { if (luogo === "sala_caccia") { aggiungi({ tipo: "armeria", fuori: true }); bachecaCacce(); } });
     }
     function bachecaCacce() { aggiungi({ tipo: "bacheca", fuori: true }); }
     /* riquadro della bacheca: stelle rosse a sei punte per le cacce dei guardiani (una per grado), d'oro (1-3) per le cacce comuni */
@@ -6372,6 +6485,7 @@
       zaino = zaino.filter(x => x.id !== "sigillo"); aggiornaZaino();
       const n = conPremio ? 1 + (usate.aldo_esito === "vinto" ? 1 : 0) : 0; /* chi ha vinto lo scontro con i mastini ha una scelta in più */
       usate.armeria_scelte = (Number(usate.armeria_scelte) || 0) + n;
+      if (!conPremio) usate.armeria_differita = true; /* le rastrelliere si apriranno dopo l'udienza con il Signore */
       usate.trofeo_ettore = conPremio ? "esposto" : "vuoto";
       salvaUsate();
       sblocco([...A.sblocco.completata, n ? A.sblocco.premio(n) : A.sblocco.nessunPremio], "mis"); disegnaMissioni();
@@ -6380,7 +6494,7 @@
       usate.fermaglio = "bronzo"; salvaUsate();
       aggiungi({ tipo: "dialogo", fuori: true, tuttoBox: true, chi: "Aldo", macchina: true, righe: AL.fermaglioBronzo });
       scrittura.then(() => { aggiungi({ tipo: "sistema", box: "cap", fuori: true, righe: [AL.fermaglioOttenuto] }); disegnaScheda(); });
-      scrittura.then(() => { if (luogo === "sala_caccia") aggiungi({ tipo: "armeria", fuori: true }); });
+      scrittura.then(() => { if (luogo === "sala_caccia" && n) aggiungi({ tipo: "armeria", fuori: true }); });
       scrittura.then(() => setTimeout(() => fuoriDallaTendina(proponiUdienza), 400));
     }
     const testoMensolaEttore = () => usate.trofeo_ettore === "esposto" ? A.trofei.ettoreMorto : usate.q4 === "completata" ? A.trofei.ettoreVivo : A.trofei.ettoreIgnoto;
@@ -6428,7 +6542,7 @@
       { cat: "armature", nome: "Armatura pesante", tipo: "armatura", ca: 4, malus: 2 },
       { cat: "armature", nome: "Scudo", tipo: "scudo", ca: 1, malus: 1 },
       { cat: "dotazione", nome: "Pozione di cura", tipo: "dotazione", usi: 1 },
-      { cat: "dotazione", nome: "Pozione di mana", tipo: "dotazione", usi: 1 },
+      { cat: "dotazione", nome: "Pozione di essenza", tipo: "dotazione", usi: 1 },
       { cat: "dotazione", nome: "Torcia", tipo: "dotazione", usi: 5, impugnabile: true },
       { cat: "dotazione", nome: "Ampolla di fuoco", tipo: "dotazione", usi: 1 },
       { cat: "dotazione", nome: "Corda e rampino", tipo: "dotazione" },
@@ -6549,15 +6663,15 @@
       it: {
         scegli: "Come vuoi studiare la fontana?",
         opz: {
-          Medicina: { btn: "La esamino come un rimedio sconosciuto.",
+          Sopravvivenza: { btn: "La provo come un rimedio d'emergenza.",
             azione: "Raccogli l'acqua nel palmo, la annusi, ne assaggi una goccia e ne studi il colore controluce, come faresti con un rimedio sconosciuto.",
             apre: ["L'acqua ha un sapore leggermente salato, che non appartiene a nessuna sorgente: il sapore delle lacrime. E il tuo corpo la riconosce prima della tua mente: il graffio che avevi sul dorso della mano si richiude sotto i tuoi occhi, lasciando la pelle liscia e fresca."],
             fallimento: ["L'acqua è limpida, fredda, senza odore né sapore. Per quanto ne sai, potrebbe essere acqua qualunque... ed è proprio questo, in un giardino di pietra, a inquietarti."] },
-          Arcano: { btn: "Cerco tracce di magia.",
+          Sapienza: { btn: "Cerco tracce di magia nella vasca.",
             azione: "Tracci sul bordo della vasca i segni di una formula di rivelazione e osservi come l'acqua risponde alla magia.",
             apre: ["I segni si accendono e subito si spengono, inghiottiti: nessun incantesimo, nessuna runa, nessun legame arcano. Ciò che tiene viva quest'acqua non l'ha scritto nessun mago. È qualcosa di più antico e più semplice: una promessa.", "Per un istante, tra i riflessi della vasca, vedi il volto di una donna che piange."],
             fallimento: ["I segni restano inerti sulla pietra. O qui non c'è alcuna magia, o è di un genere che i tuoi libri non conoscono."] },
-          Misticismo: { btn: "Cerco di sentire che cosa la tiene viva.",
+          Intuizione: { btn: "Cerco di sentire che cosa la tiene viva.",
             azione: "Immergi le mani nella vasca, chiudi gli occhi e cerchi di sentire che cosa tiene viva quest'acqua.",
             apre: ["L'acqua è fredda, poi d'improvviso tiepida, come una mano che stringe la tua. Dietro gli occhi chiusi vedi una donna dal volto severo, la stessa del ritratto sopra il camino, china su questa vasca. Piange in silenzio, e le sue lacrime cadono nell'acqua senza increspare la superficie."],
             fallimento: ["L'acqua ti scorre tra le dita, fresca e limpida, ma non ti dice nulla. Ti resta soltanto la sensazione, sgradevole, che sia lei a guardare te."] }
@@ -6566,23 +6680,23 @@
       en: {
         scegli: "How do you want to study the fountain?",
         opz: {
-          Medicina: { btn: "I examine it like an unknown remedy.",
+          Sopravvivenza: { btn: "I try it as an emergency remedy.",
             azione: "You scoop the water into your palm, smell it, taste a drop and study its colour against the light, as you would an unknown remedy.",
             apre: ["The water has a faintly salty taste that belongs to no spring: the taste of tears. And your body recognises it before your mind does: the scratch on the back of your hand closes before your eyes, leaving the skin smooth and cool."],
             fallimento: ["The water is clear, cold, without smell or taste. For all you know it could be any water... and that, in a garden of stone, is exactly what unsettles you."] },
-          Arcano: { btn: "I look for traces of magic.",
+          Sapienza: { btn: "I look for traces of magic in the basin.",
             azione: "You trace the signs of a revealing formula on the rim of the basin and watch how the water answers the magic.",
             apre: ["The signs flare and at once go out, swallowed: no spell, no rune, no arcane bond. Whatever keeps this water alive was written by no mage. It is something older and simpler: a promise.", "For an instant, among the reflections in the basin, you see the face of a woman weeping."],
             fallimento: ["The signs lie inert on the stone. Either there is no magic here, or it is of a kind your books do not know."] },
-          Misticismo: { btn: "I try to feel what keeps it alive.",
+          Intuizione: { btn: "I try to feel what keeps it alive.",
             azione: "You plunge your hands into the basin, close your eyes and try to feel what keeps this water alive.",
             apre: ["The water is cold, then suddenly warm, like a hand squeezing yours. Behind your closed eyes you see a woman with a stern face, the same as the portrait above the fireplace, bent over this basin. She weeps in silence, and her tears fall into the water without rippling its surface."],
             fallimento: ["The water runs through your fingers, cool and clear, but tells you nothing. You are left only with the unpleasant feeling that it is the water watching you."] }
         }
       }
     };
-    const FONTANA_ABILITA = ["Medicina", "Arcano", "Misticismo"];
-    const ID_FONTANA = { fontana_med: "Medicina", fontana_arc: "Arcano", fontana_mis: "Misticismo" };
+    const FONTANA_ABILITA = ["Sapienza", "Sopravvivenza", "Intuizione"]; /* tre strade, tre attributi: Mente, Vigore, Spirito */
+    const ID_FONTANA = { fontana_med: "Sopravvivenza", fontana_arc: "Sapienza", fontana_mis: "Intuizione" };
     function esaminaFontana(abil) {
       if (haLacrima() && usate.giardino_fontana !== "ok") return fontanaConLacrima();
       const l = LUOGHI.giardino_fontana, F = FONTANA_PROVE[LINGUA] || FONTANA_PROVE.it;
@@ -6665,7 +6779,7 @@
       const box = document.getElementById("missioni"); box.replaceChildren();
       const fattiDi = {
         q1: (q) => [q === "scaletta" || q === "completata" || diario.some(e => e.stanza === "cantina"), q === "scaletta" || q === "completata", q === "completata"],
-        q2: (q) => M.q2.obiettivi.map((_, i) => q === "completata" || (i === 1 && !!usate.q2_diario)), /* il diario del figlio maggiore può arrivare da Ettore */
+        q2: (q) => M.q2.obiettivi.map((_, i) => q === "completata" || (i === 1 && !!usate.q2_diario) || (i === 2 && usate.giocattoli === "presi")), /* diario (da Ettore) e giocattoli (sparsi per casa) restano in memoria anche prima di accettare la missione */
         q3: (q) => [q === "blasone" || q === "completata", q === "completata"],
         q4: (q) => [!!usate.portone_aperto, !!usate.ettore, q === "prova" || q === "completata", q === "completata"]
       };
@@ -6712,7 +6826,7 @@
         capacita("cap-riposo", M.riposo.nome, M.riposo.desc, null, b);
       }
       if (usate.laboratorio === "sbloccato") {
-        const ul = document.createElement("ul"); M.laboratorio.preparati.forEach(x => { const li = document.createElement("li"); li.textContent = x; ul.append(li); });
+        const ul = document.createElement("ul"); M.laboratorio.preparati.forEach(x => { const li = document.createElement("li"); li.textContent = Lingua.conRisorsa(x); ul.append(li); });
         capacita("cap-laboratorio", M.laboratorio.nome, M.laboratorio.desc + ":", ul);
       }
       cb.hidden = !cap.children.length;
@@ -6824,7 +6938,7 @@
       if (l.bassi && (pg.razza === "Nano" || pg.razza === "Gnomo")) return aggiungi({ tipo: "narra", righe: l.bassi }); /* troppo in alto per loro */
       if (l.prova && (id in usate)) {
         if (usate[id] === "ok") { aggiungi({ tipo: "narra", righe: [l.gia.ok] }); if (l.dopo === "giocattoli") offriGiocattoli(); return; }
-        if (!l.riprova) { aggiungi({ tipo: "narra", righe: [l.gia.ko] }); return; }
+        if (!l.riprova) { aggiungi({ tipo: "narra", righe: [(l.gia.ko + (provaRipetibileDopoRiposo(id, l) ? U.dopoRiposo : "")).trim()] }); return; }
       }
       const riprovando = !!(l.prova && l.riprova && usate[id] === "ko");
       const righe = riprovando ? l.ancora : (l.fisso || (await narra(COMPITI.osserva, l.fatti, ultimoTesto)) || l.fallback);
@@ -6832,6 +6946,8 @@
       if (l.prova) proponiProva(id, l);
     }
 
+    /* prova fallita: si può ripetere solo dopo un riposo (tranne le prove della trama, che hanno regole proprie) */
+    const provaRipetibileDopoRiposo = (id, l) => !!(l.prova && !l.riprova && !l.prova.naturale && id !== "cripta_furtiva");
     function proponiProva(id, l) {
       const p = l.prova;
       let m = 0, nota = "", nome;
@@ -6845,7 +6961,7 @@
       }
       /* Riquadro che mostra al giocatore cosa sta facendo e come funziona la prova */
       if (p.naturale) aggiungi({ tipo: "prova", titolo: U.prova(nome), azione: l.azione || "", dati: [U.serveNaturale(p.naturale), `d${p.dado}`], righe: [U.istrNaturale(p.dado, p.naturale)] });
-      else aggiungi({ tipo: "prova", titolo: U.prova(nome), azione: l.azione || "", dati: [U.difficolta(p.cd), `d${p.dado}`, U.modificatore(fmtN(m))], righe: [U.istruzioni(p.dado, p.cd) + nota] });
+      else aggiungi({ tipo: "prova", titolo: U.prova(nome), azione: l.azione || "", dati: [U.difficolta(p.cd), `d${p.dado}`, U.modificatore(fmtN(m))], righe: [U.istruzioni(p.dado, p.cd) + nota + (provaRipetibileDopoRiposo(id, l) ? U.avvisoRiposo : "")] });
       scelte([
         { testo: U.lancia(p.dado), fn: () => {
           const tiro = tira(p.dado), tot = tiro + m, ok = p.naturale ? tiro === p.naturale : tot >= p.cd; /* naturale: conta solo il numero uscito sul dado */
@@ -7040,7 +7156,7 @@
         const n = document.createElement("span"); n.className = "p-nome"; n.textContent = O.nome; sm.append(n);
         const badge = document.createElement("span"); badge.className = "p-badge" + (ok ? "" : " deciso"); badge.textContent = ok ? L.pronto : L.manca; sm.append(badge);
         const corpo = document.createElement("div"); corpo.className = "p-corpo";
-        const d = document.createElement("p"); d.textContent = O.testo; corpo.append(d);
+        const d = document.createElement("p"); d.textContent = Lingua.conRisorsa(O.testo); corpo.append(d);
         const ing = document.createElement("ul"); ing.className = "lab-ing";
         Object.entries(r.richiede).forEach(([m, q]) => {
           const li = document.createElement("li"), h = qtaMateriale(m);
@@ -7130,7 +7246,7 @@
     }
 
     /* effetti dei consumabili: dalla dotazione (per nome) o dal laboratorio (per effetto) */
-    const effettoDi = (it) => it && (it.effetto || { "Pozione di cura": "pozCura", "Pozione di mana": "pozMana", "Razioni da viaggio": "razione" }[it.nome]);
+    const effettoDi = (it) => it && (it.effetto || { "Pozione di cura": "pozCura", "Pozione di essenza": "pozMana", "Pozione di mana": "pozMana", "Razioni da viaggio": "razione" }[it.nome]);
     const EFFETTI_BEVANDA = ["pozCura", "pozMana", "serenita", "razione"]; /* consumabili con un effetto immediato (in combattimento sono l'azione del turno) */
     /* applica l'effetto di una bevanda; restituisce il testo, oppure null se è inutile (in quel caso non si consuma) */
     function effettoBevanda(it) {
@@ -7142,12 +7258,19 @@
         const d = tira(6) + liv; pg.dannoFisico = Math.max(0, (pg.dannoFisico || 0) - d);
         return { ok: B.pozCura(nome, d, prima, liv, Math.max(0, max - pg.dannoFisico)) };
       }
-      if (ef === "pozMana") {
-        if (manaMax() == null) return { no: Q.oggetti.inutile.noMana };
-        const prima = manaAttuale();
-        if (prima >= manaMax()) return { no: Q.oggetti.inutile.pozMana };
-        const d = tira(6) + liv; pg.manaUsato = Math.max(0, (pg.manaUsato || 0) - d);
-        return { ok: B.pozMana(nome, d, prima, liv, manaAttuale()) };
+      if (ef === "pozMana") { /* «essenza»: punti arcano, fede, ira o natura, secondo la classe */
+        if (manaMax() != null) {
+          const prima = manaAttuale();
+          if (prima >= manaMax()) return { no: Q.oggetti.inutile.pozMana };
+          const d = tira(6) + liv; pg.manaUsato = Math.max(0, (pg.manaUsato || 0) - d);
+          return { ok: B.pozMana(nome, d, prima, liv, manaAttuale()) };
+        }
+        const ris = risorsaPg();
+        if (!ris) return { no: Q.oggetti.inutile.noMana };
+        const prima = risorsaAttuale();
+        if (prima >= ris.max) return { no: Q.oggetti.inutile.pozMana };
+        const d = tira(6) + liv; pg.risorsaUsata = Math.max(0, (pg.risorsaUsata || 0) - d);
+        return { ok: B.pozMana(nome, d, prima, liv, risorsaAttuale()) };
       }
       if (ef === "razione") { /* razioni da viaggio: 1 + livello di salute fisica */
         const max = Number(pg.puntiVita ?? pg.saluteFisica) || 0, prima = Math.max(0, max - (pg.dannoFisico || 0));
@@ -7267,6 +7390,21 @@
     }
 
     /* ---------- Il tesoro: la spada ---------- */
+    /* flashback della spada: arriva solo a chi ha superato la prova dell'armatura; è un dono, non un colpo alla mente (nessun danno) */
+    const FLASH_SPADA = {
+      it: { titolo: "Flashback", righe: [
+        "Mentre l'elsa ti scalda il palmo, la sala sfuma. Non cadi, non senti dolore: è come ricordare qualcosa che non hai mai vissuto.",
+        "Un uomo dal portamento fiero, con la stessa armatura che ti sta davanti, è inginocchiato in un giardino pieno di luce. Davanti a lui una donna dal volto severo e dolce insieme, la stessa del ritratto sopra il camino, gli porge questa spada tenendola per la lama, con entrambe le mani, come si offre un giuramento.",
+        "«Finché questa lama resterà tua, io resterò con te» dice lei. Lui sorride; lei sorride a sua volta, ma i suoi occhi sono già pieni di lacrime.",
+        "La visione si dissolve con la stessa dolcezza con cui era arrivata. Resti con il fiato corto, ma la mente è lucida: è un ricordo che la spada ha scelto di donarti, non di imporre."],
+        nota: "Nessun danno alla salute mentale: il ricordo ti è stato donato." },
+      en: { titolo: "Flashback", righe: [
+        "As the hilt warms your palm, the hall fades. You do not fall, you feel no pain: it is like remembering something you never lived.",
+        "A proud-bearing man, wearing the very armour that stands before you, kneels in a garden full of light. Before him a woman with a face both stern and gentle, the same as the portrait above the fireplace, offers him this sword holding it by the blade, with both hands, as one offers an oath.",
+        "“As long as this blade remains yours, I shall remain with you,” she says. He smiles; she smiles back, but her eyes are already full of tears.",
+        "The vision dissolves as gently as it came. You are left short of breath, but your mind is clear: it is a memory the sword chose to give you, not to force upon you."],
+        nota: "No mental health damage: the memory was given to you." }
+    }[LINGUA] || null;
     const SPADA = { ...TX.spada, oggetto: { id: "retaggio", nome: "Retaggio del Padrone", tipo: "arma", alias: ["spada", "sword", "lama", "blade"], desc: "Spada magica", danno: "1d10", tipoDanno: "Tagliente", mani: 1 } };
 
     function offriSpada() {
@@ -7277,6 +7415,7 @@
           aggiungi({ tipo: "narra", righe: SPADA.presa });
           aggiungiZaino({ ...SPADA.oggetto });
           sist(U.zainoSpada(nomeOg(SPADA.oggetto)));
+          if (FLASH_SPADA && !usate.flash_spada) { usate.flash_spada = true; salvaUsate(); aggiungi({ tipo: "narra", box: "ok", esito: FLASH_SPADA.titolo, righe: FLASH_SPADA.righe }); sist(FLASH_SPADA.nota); }
         } },
         { testo: SPADA.no_btn, fn: () => { usate.spada = "lasciata"; salvaUsate(); chiudiScelte(); aggiungi({ tipo: "narra", righe: SPADA.lasciata }); } }
       ]);
@@ -7597,7 +7736,7 @@
       }
       else if (tornato && id === "cucina") aggiungi({ tipo: "narra", ...vista(id), righe: s.ritorno }); /* in cucina l'immagine si vede sempre (con Guendalina, dopo l'incontro) */
       else if (tornato) aggiungi({ tipo: "narra", righe: s.ritorno });
-      else aggiungi({ tipo: "narra", ...vista(id), righe: s.intro, nota: s.nota });
+      else aggiungi({ tipo: "narra", ...vista(id), righe: (id === "sala_caccia" && !aldoNellaSalaCaccia() && s.introSenzaAldo) ? s.introSenzaAldo : s.intro, nota: s.nota });
       riprendiDialoghi();
       /* Aldo, la caccia, Ettore */
       if (id === "sala_ballo" && tornato) {
@@ -7606,9 +7745,11 @@
         else if (usate.aldo_esito) aggiungi({ tipo: "narra", righe: A.aldo.sparito });
         if (aldoInSala() && usate.aldo_scontro !== "in_corso" && (!usate.dialogo_aldo || usate.dialogo_aldo === "fine")) { usate.dialogo_aldo = "ritorno"; salvaUsate(); nodoDialogo("aldo", "ritorno", true); }
       }
-      if (tornato) { /* la pagina parte dalla testa (immagine), non dall'ultima descrizione */
+      { /* la pagina parte dalla testa (titolo e immagine), non dall'ultima descrizione: vale anche al primo ingresso */
         const testa = elDiario.querySelector("img.scena");
-        vistaFissa = false; (testa ? testa.closest(".voce") : elDiario.firstElementChild || elDiario).scrollIntoView({ block: "start" }); vistaFissa = true;
+        const primo = testa ? testa.closest(".voce") : elDiario.firstElementChild;
+        if (primo) testaDiario(primo); else elDiario.scrollTop = 0;
+        vistaFissa = true;
       }
       if (id === "cripta") entraCripta();
       if (id === "sala_caccia" && usate.q4 === "completata" && udienzaFatta("bronzo")) aggiungi({ tipo: "narra", righe: [AL.presente] }); /* Aldo resta nella sala della caccia */
@@ -7647,7 +7788,7 @@
           { testo: I.sensi, fn: () => { chiudiScelte(); provaAbilita("Percezione"); } }
         ]);
       }
-      const cand = CANDIDATE_ABILITA[nome];
+      const cand = (PROVE_DICHIARATE[luogo] && PROVE_DICHIARATE[luogo][nome]) ? null : CANDIDATE_ABILITA[nome]; /* se la stanza prevede già quell'abilità, niente scelta tra le vecchie */
       if (cand) {
         const disp = PROVE_DICHIARATE[luogo] || {};
         nome = cand.find(c => disp[c] && usate[disp[c]] !== "ok") || cand.find(c => disp[c]) || cand[Math.floor(Math.random() * cand.length)];
@@ -7821,6 +7962,7 @@
       if (id === "ballo_lontano") return aggiungi({ tipo: "narra", righe: [TX.esterno.balloLontano] });
       if (id === "corr_lontano") return aggiungi({ tipo: "narra", righe: [TX.esterno.corrLontano] });
       if (id === "pranzo_camino") return aggiungi({ tipo: "narra", righe: [TX.esterno.caminoPranzo[Math.floor(Math.random() * TX.esterno.caminoPranzo.length)]] });
+      if (id === "stanza_corrente" && stanza.esamina) return aggiungi({ tipo: "narra", righe: [...stanza.esamina, ...(usate.portaCucina === "aperta" && stanza.esaminaG ? stanza.esaminaG : [])] }); /* esame libero con testo fisso (cucina) */
       if (id === "stanza_corrente") return aggiungi({ tipo: "narra", righe: (await narra(COMPITI.osserva, stanza.fatti, testo)) || stanza.fallback });
       if (id === "porta_sx") return cacciaAperta() ? aggiungi({ tipo: "narra", righe: A.ui.portaSxAperta }) : portaChiusa(false);
       /* Aldo, la caccia, il giardino, la cappella, la cripta, la sala della caccia e i trofei */
@@ -7978,7 +8120,7 @@
         guarda: "Il Mastino non stacca gli occhi da te. Ringhia, e a ogni respiro le fiamme sulla groppa si gonfiano come un mantice.",
         nonCapisco: "Durante lo scontro puoi scrivere: «attacca il mastino», «colpisci con la torcia», «impugna lo scudo», «bevi la pozione» oppure «lancio» e il nome di un incantesimo.",
         nonTuoTurno: "Aspetta il tuo turno.",
-        pocoMana: (c, r) => `Non hai abbastanza mana: l'incantesimo costa ${c} e te ne restano ${r}.`,
+        pocoMana: (c, r) => `Non hai abbastanza ${U.mana.toLowerCase()}: l'incantesimo costa ${c} e te ne restano ${r}.`,
         costo: (c, r) => `−${c} mana (rimasti ${r})`,
         luceInutile: "La luce non ti serve a nulla contro il Mastino: lasci svanire l'energia senza consumarla.",
         inc: {
@@ -8091,7 +8233,7 @@
         guarda: "The Mastiff never takes its eyes off you. It growls, and with every breath the flames on its back swell like a bellows.",
         nonCapisco: "During the fight you can write: “attack the mastiff”, “strike with the torch”, “take the shield”, “drink the potion” or “I cast” and the name of a spell.",
         nonTuoTurno: "Wait for your turn.",
-        pocoMana: (c, r) => `Not enough mana: the spell costs ${c} and you have ${r} left.`,
+        pocoMana: (c, r) => `Not enough ${U.mana.toLowerCase()}: the spell costs ${c} and you have ${r} left.`,
         costo: (c, r) => `−${c} mana (${r} left)`,
         luceInutile: "Light is of no use against the Mastiff: you let the energy fade without spending it.",
         inc: {
@@ -8148,7 +8290,7 @@
     const torciaInMano = () => !!(mano && mano.nome === "Torcia" && Number(mano.usi) > 0);
     const pozioneCura = () => zaino.find(it => effettoDi(it) === "pozCura" && Number(it.usi) > 0);
     const bevandaDa = (t) => { /* «bevo l'olio», «bevo il distillato», «bevo la pozione di mana»; altrimenti una cura */
-      const ef = /\bman[ao]\b|\bolio\b|\boil\b|falen|moth/.test(t) ? "pozMana" : /distillat|serenit|liquor|fiaschett/.test(t) ? "serenita" : /razion|mangi|\bcib|\beat\b|ration|food/.test(t) ? "razione" : "pozCura";
+      const ef = /\bman[ao]\b|essenz|essence|\bolio\b|\boil\b|falen|moth/.test(t) ? "pozMana" : /distillat|serenit|liquor|fiaschett/.test(t) ? "serenita" : /razion|mangi|\bcib|\beat\b|ration|food/.test(t) ? "razione" : "pozCura";
       const lista = zaino.filter(it => effettoDi(it) === ef && Number(it.usi) > 0);
       return lista.find(it => /siero|serum/.test(t) ? it.id === "siero" : true) || lista[0];
     };
@@ -8590,6 +8732,11 @@
       guadagnaPE(D.xp);
       aggiungi({ tipo: "narra", box: "ok", fuori: true, righe: [CB.bannerVinto, CB.xp(D.xp, pg.esperienza)] });
       controllaLivello();
+      if (ctx === "ettore" && !usate.q2_diario) { /* Ettore morto: il diario del figlio maggiore è tra le sue cose */
+        consegnaDiarioFiglio();
+        aggiungi({ tipo: "narra", fuori: true, righe: A.ettore.diarioMorto });
+        sist(A.sblocco.diario);
+      }
       if (idNem === "mastino") { /* bottino: i mastini lasciano sempre pelo, il collare con le larve e le ghiandole del fuoco */
         const pelo = tira(4), larve = tira(4), ghi = tira(2);
         aggiungiMateriale("pelo_mastino", pelo); aggiungiMateriale("larve_falena", larve); aggiungiMateriale("ghiandola_fuoco", ghi);
@@ -8740,10 +8887,10 @@
       const $ = (id) => document.getElementById(id);
       const en = () => window.Lingua && Lingua.get() === "en";
       const L = () => en()
-        ? { salute: "Health", mentali: "Mind", mana: "Mana", fede: "Faith", ira: "Rage", natura: "Nature", apriPg: "Open character sheet", apriNem: "Open enemy sheet", chiudi: "Close",
+        ? { salute: "Health", mentali: "Mind", mana: "Arcane", fede: "Faith", ira: "Rage", natura: "Nature", apriPg: "Open character sheet", apriNem: "Open enemy sheet", chiudi: "Close",
             invio: "☁ syncing…", ok: "☁ synced", locale: "", errore: "☁ cloud unreachable: saved on this device only",
             conflitto: "☁ another device saved later: choose from the home page", troppo: "☁ save too large for the cloud" }
-        : { salute: "Salute", mentali: "Mente", mana: "Mana", fede: "Fede", ira: "Ira", natura: "Natura", apriPg: "Apri la scheda del personaggio", apriNem: "Apri la scheda del nemico", chiudi: "Chiudi",
+        : { salute: "Salute", mentali: "Mente", mana: "Arcano", fede: "Fede", ira: "Ira", natura: "Natura", apriPg: "Apri la scheda del personaggio", apriNem: "Apri la scheda del nemico", chiudi: "Chiudi",
             invio: "☁ sincronizzo…", ok: "☁ sincronizzata", locale: "", errore: "☁ cloud non raggiungibile: salvata solo qui",
             conflitto: "☁ un altro dispositivo ha salvato dopo: scegli dalla pagina iniziale", troppo: "☁ salvataggio troppo grande per il cloud" };
 
@@ -8871,7 +9018,14 @@
       const elDiario = $("diario");
       let inFondo = true;
       elDiario.addEventListener("scroll", () => { inFondo = elDiario.scrollHeight - elDiario.scrollTop - elDiario.clientHeight < 40; }, { passive: true });
-      new ResizeObserver(() => { if (inFondo) elDiario.scrollTop = elDiario.scrollHeight; }).observe(elDiario);
+      /* solo se l'altezza SI RIDUCE (tastiera, scelte che compaiono) e la vista non è fissata sulla testa di una stanza:
+         prima scattava anche per la comparsa della barra di scorrimento e portava in fondo all'ingresso nelle stanze */
+      let altezzaPrec = elDiario.clientHeight;
+      new ResizeObserver(() => {
+        const h = elDiario.clientHeight;
+        if (h < altezzaPrec && inFondo && !vistaFissa) elDiario.scrollTop = elDiario.scrollHeight;
+        altezzaPrec = h;
+      }).observe(elDiario);
     })();
   </script>
   <div id="finestraPrep" role="dialog" aria-modal="true" hidden><div class="box" id="prepBox"></div></div>

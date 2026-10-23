@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Creazione personaggio</title>
   <script src="lib/purify.min.js"></script>
-  <script src="sicuro.js"></script>
-  <script src="regole.js"></script>
-  <script src="incantesimi.js"></script>
-  <script src="tecniche.js"></script>
-  <script src="lingua.js"></script>
+  <script src="js/sicuro.js"></script>
+  <script src="js/regole.js"></script>
+  <script src="js/incantesimi.js"></script>
+  <script src="js/tecniche.js"></script>
+  <script src="js/lingua.js"></script>
   <link rel="stylesheet" href="tema.css">
   <style>
 
@@ -156,10 +156,10 @@
     .tonda b { font-weight: 600; font-size: 0.95rem; }
     .tonda .num { font-size: 2.25rem; line-height: 1.1; }
     .tonda small { color: var(--muted); font-size: 0.8rem; line-height: 1.2; }
-    .tonda.rosso { background: var(--rosso-bg); border-color: var(--rosso-line); }
-    .tonda.blu { background: var(--blu-bg); border-color: var(--blu-line); }
-    .tonda.verde { background: var(--verde-bg); border-color: var(--verde-line); }
-    .tonda.giallo { background: var(--giallo-bg); border-color: var(--giallo-line); }
+    /* i cerchi hanno la tonalità dei luoghi di riposo (bronzo del Tomo Proibito), così sono ben presenti */
+    .tonda, .tonda.rosso, .tonda.blu, .tonda.verde, .tonda.giallo { background: var(--riposo-bg); border-color: var(--riposo-line); border-width: 2px; }
+    .tonda b { color: var(--riposo-num); }
+    .tonda .num { color: var(--riposo-num); }
     .tonda[hidden] { display: none; }
     .fine { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--line); text-align: center; }
     #esito { min-height: 1.5rem; margin: 0.75rem 0 0; }
@@ -247,7 +247,7 @@
         <div class="tonda rosso"><b data-t="saluteFisica">Salute fisica</b><span class="num" id="sf-v">–</span><small id="sf-f"></small></div>
         <div class="tonda blu"><b data-t="saluteMentale">Salute mentale</b><span class="num" id="sm-v">–</span><small id="sm-f"></small></div>
         <div class="tonda verde"><b data-t="classeArmatura">Classe armatura</b><span class="num" id="ca-v">–</span><small id="ca-f"></small></div>
-        <div class="tonda giallo" id="mana-box" hidden><b id="mana-t">Mana</b><span class="num" id="mana-v">–</span><small id="mana-f"></small></div>
+        <div class="tonda giallo" id="mana-box" hidden><b id="mana-t">Punti arcano</b><span class="num" id="mana-v">–</span><small id="mana-f"></small></div>
       </div>
 
       <div class="fine">
@@ -287,12 +287,12 @@
         ancora: "Ancora da fare: ", pronto: (n) => `${n} è pronto a entrare nel dungeon.`,
         errore: "Salvataggio non riuscito: prova con un'immagine più piccola.", nessunaImmagine: (r, c) => `Nessuna immagine per ${r} ${c}.`,
         scegliRitratto: "Scegli il tuo ritratto.", ritrattoN: (n) => `Ritratto ${n}`,
-        incantesimi: "Incantesimi lv 1", guidaIncantesimi: "Scegline quattro.", mana: "Mana", fede: "Punti fede", ira: "Punti ira", natura: "Punti natura", modAttr: (a) => `mod. ${a}`,
+        incantesimi: "Incantesimi lv 1", guidaIncantesimi: "Scegline quattro.", mana: "Punti arcano", fede: "Punti fede", ira: "Punti ira", natura: "Punti natura", modAttr: (a) => `mod. ${a}`,
         notaRiposo: "Gli incantesimi scelti si potranno cambiare quando ti riposi.",
         tecnicheTit: "Tecniche speciali lv 1", notaRiposoTec: "Le tecniche scelte si potranno cambiare quando ti riposi; salendo di livello se ne sbloccano di nuove.",
         guidaTec: (n, tot) => tot ? `Scegline ${n}, tra quelle del tipo della tua arma${tot > 3 ? " e dello scudo" : ""}.` : "Scegli prima l'arma.", costoIra: (n) => `${n} ira`,
         mancaTec: (n) => `${n} ${n === 1 ? "tecnica" : "tecniche"}`,
-        costo: "Costo", costoMana: (n) => `${n} ${classe === "Accolito" ? "Fede" : "Mana"}`, mancaInc: (n) => `${n} ${n === 1 ? "incantesimo" : "incantesimi"}`
+        costo: "Costo", costoMana: (n) => `${n} ${classe === "Accolito" ? "Fede" : "Arcano"}`, mancaInc: (n) => `${n} ${n === 1 ? "incantesimo" : "incantesimi"}`
       },
       en: {
         titoloPagina: "Character creation", titolo: "Character creation", nome: "Name", immagine: "Character portrait",
@@ -318,12 +318,12 @@
         ancora: "Still to do: ", pronto: (n) => `${n} is ready to enter the dungeon.`,
         errore: "Saving failed: try a smaller image.", nessunaImmagine: (r, c) => `No image for ${r} ${c}.`,
         scegliRitratto: "Choose your portrait.", ritrattoN: (n) => `Portrait ${n}`,
-        incantesimi: "Spells lv 1", guidaIncantesimi: "Choose four.", mana: "Mana", fede: "Faith points", ira: "Rage points", natura: "Nature points", modAttr: (a) => `${a} mod.`,
+        incantesimi: "Spells lv 1", guidaIncantesimi: "Choose four.", mana: "Arcane points", fede: "Faith points", ira: "Rage points", natura: "Nature points", modAttr: (a) => `${a} mod.`,
         notaRiposo: "You will be able to change your chosen spells when you rest.",
         tecnicheTit: "Special techniques lv 1", notaRiposoTec: "You will be able to change your chosen techniques when you rest; new ones unlock as you level up.",
         guidaTec: (n, tot) => tot ? `Choose ${n}, among those for your weapon type${tot > 3 ? " and the shield" : ""}.` : "Choose your weapon first.", costoIra: (n) => `${n} rage`,
         mancaTec: (n) => `${n} ${n === 1 ? "technique" : "techniques"}`,
-        costo: "Cost", costoMana: (n) => `${n} ${classe === "Accolito" ? "Faith" : "Mana"}`, mancaInc: (n) => `${n} ${n === 1 ? "spell" : "spells"}`
+        costo: "Cost", costoMana: (n) => `${n} ${classe === "Accolito" ? "Faith" : "Arcane"}`, mancaInc: (n) => `${n} ${n === 1 ? "spell" : "spells"}`
       }
     };
     const t = T[LINGUA];
@@ -423,13 +423,13 @@
     /* senza "usi" = oggetto riutilizzabile; le descrizioni stanno in lingua.js */
     const DOTAZIONE = [
       { nome: "Pozione di cura", usi: 1 },
-      { nome: "Pozione di mana", usi: 1 },
+      { nome: "Pozione di essenza", usi: 1 }, /* recupera la risorsa della classe: punti arcano, fede, ira o natura */
       { nome: "Torcia", usi: 5, impugnabile: true },
       { nome: "Piede di porco" }
     ];
 
     /* ---------- Incantesimi (Sapiente e Accolito) ----------
-       Mana = 10 + modificatore di Mente. Se ne scelgono 4; si cambiano riposando. */
+       Punti arcano = 10 + modificatore di Mente (punti fede per il Monaco). Se ne scelgono 4; si cambiano riposando. */
     const MANA_BASE = R_.RISORSA_BASE, MAX_INCANTESIMI = R_.MAX_INCANTESIMI;
     const INCANTESIMI = window.INCANTESIMI; /* in incantesimi.js, condivisi con il gioco */
     /* attributo da cui dipende il mana: Mente per il Sapiente, Spirito per l'Accolito */
@@ -491,6 +491,7 @@
     }
 
     let classe = null, tiro = null, razza = null;
+    Lingua.setRisorsa(() => classe); /* {risorsa} nelle descrizioni (pozione di essenza): la risorsa della classe scelta */
     let bonus = NOMI.map(() => 0);
     const extra = NOMI.map(() => 0);
 

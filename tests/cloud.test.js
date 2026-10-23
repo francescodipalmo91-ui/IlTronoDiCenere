@@ -48,7 +48,7 @@ function ambiente() {
     auth: Object.assign(() => ({ currentUser: utente, getRedirectResult: async () => null, onAuthStateChanged: (cb) => cb(utente) }), { GoogleAuthProvider: function () {} }),
     firestore: () => db
   };
-  const sorgente = fs.readFileSync(path.join(__dirname, "..", "cloud.js"), "utf8");
+  const sorgente = fs.readFileSync(path.join(__dirname, "..", "js", "cloud.js"), "utf8");
   new Function(sorgente)();
   return { Cloud: global.window.Cloud, remoto, ls };
 }

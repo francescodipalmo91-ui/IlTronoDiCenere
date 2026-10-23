@@ -63,6 +63,12 @@ body.fuoco-caldo {
   --fine: var(--gold); --fine-bg: #28200F; --fine-line: #6a5426;
 }
 
+/* colori del «luogo di riposo»: la tonalità del Tomo Proibito, fissa, per le pagine che restano in Cenere
+   ma vogliono un elemento ben presente (es. i cerchi di salute, mente e risorsa in creazione) */
+:root, body.fuoco-caldo {
+  --riposo: #C09563; --riposo-bg: #211c17; --riposo-line: #C09563; --riposo-num: #CFA862;
+}
+
 /* alias usati da tutorial e creazione */
 :root, body.fuoco-caldo {
   --pg-bg: var(--tip-bg); --pg-line: var(--accent); --fuoco: var(--nem);

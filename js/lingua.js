@@ -25,7 +25,7 @@
       "Retaggio del Padrone": "The Master's Legacy",
       "Armatura leggera": "Light armor", "Armatura media": "Medium armor", "Armatura pesante": "Heavy armor",
       Scudo: "Shield",
-      "Pozione di cura": "Healing potion", "Pozione di mana": "Mana potion", "Razioni da viaggio": "Travel rations",
+      "Pozione di cura": "Healing potion", "Pozione di essenza": "Essence potion", "Pozione di mana": "Essence potion", "Razioni da viaggio": "Travel rations",
       Torcia: "Torch", "Piede di porco": "Crowbar", "Ampolla di fuoco": "Fire flask", "Corda e rampino": "Rope and grappling hook",
       "Foglietto di Adele": "Adele's note"
     }
@@ -47,9 +47,9 @@
       it: "Quando un personaggio beve il fluido magico rossastro contenuto in questa fiala, recupera 1d6 + il livello del personaggio in salute fisica.",
       en: "When a character drinks the reddish magical fluid in this vial, they recover 1d6 + the character's level in physical health."
     },
-    "Pozione di mana": {
-      it: "Quando un personaggio beve il fluido magico violaceo contenuto in questa fiala, recupera 1d6 + il livello del personaggio in mana.",
-      en: "When a character drinks the violet magical fluid in this vial, they recover 1d6 + the character's level in mana."
+    "Pozione di essenza": {
+      it: "Quando un personaggio beve il fluido magico violaceo contenuto in questa fiala, recupera 1d6 + il livello del personaggio in {risorsa}.",
+      en: "When a character drinks the violet magical fluid in this vial, they recover 1d6 + the character's level in {risorsa}."
     },
     "Razioni da viaggio": {
       it: "Non sai se troverai da mangiare dove stai andando: queste razioni ti terranno in vita per qualche giorno, anche se fanno schifo. Recupera 1 punto salute + il livello del personaggio. Si può utilizzare una razione a turno.",
@@ -77,6 +77,19 @@
     }
   };
 
+  DESC["Pozione di mana"] = DESC["Pozione di essenza"]; /* vecchio nome nei salvataggi esistenti */
+
+  /* Risorsa di ogni classe (i nomi interni delle classi restano quelli vecchi). Serve alle descrizioni che dipendono dalla classe:
+     pozione di essenza, olio della falena. Le pagine registrano con setRisorsa() una funzione che dice quale classe è in uso. */
+  const RISORSE = {
+    Soldato: { it: "punti ira", en: "rage points" }, Forestiero: { it: "punti natura", en: "nature points" },
+    Sapiente: { it: "punti arcano", en: "arcane points" }, Accolito: { it: "punti fede", en: "faith points" }
+  };
+  let classeFn = () => null;
+  const risorsaDi = (classe) => (RISORSE[classe] ? RISORSE[classe][corrente] : null);
+  const FALLBACK_RIS = { it: "punti ira, natura, arcano o fede (secondo la tua classe)", en: "rage, nature, arcane or faith points (depending on your class)" };
+  const conRisorsa = (t) => (typeof t === "string" ? t.replace(/\{risorsa\}/g, risorsaDi(classeFn()) || FALLBACK_RIS[corrente]) : t);
+
   window.Lingua = {
     get: () => corrente,
     set(l) {
@@ -88,7 +101,10 @@
     nome: (cat, k) => (corrente === "en" && EN[cat] && EN[cat][k]) || (IT[cat] && IT[cat][k]) || k,
     /* tutti i nomi di una chiave nelle due lingue (per riconoscere ciò che scrive il giocatore) */
     nomi: (k) => [k, ...[...Object.values(IT), ...Object.values(EN)].map(c => c[k]).filter(Boolean)],
-    desc: (k) => (DESC[k] ? (DESC[k][corrente] || DESC[k].it) : null),
+    desc: (k) => (DESC[k] ? conRisorsa(DESC[k][corrente] || DESC[k].it) : null),
+    risorsaClasse: risorsaDi,                       /* «punti arcano» per la classe Sapiente, ecc. */
+    setRisorsa(fn) { classeFn = typeof fn === "function" ? fn : () => null; },
+    conRisorsa,                                     /* sostituisce {risorsa} in un testo */
     locale: () => (corrente === "en" ? "en-GB" : "it-IT"),
     /* testo bilingue { it, en } → testo nella lingua corrente */
     t: (o) => (o && typeof o === "object" && !Array.isArray(o) && "it" in o) ? (o[corrente] ?? o.it) : o

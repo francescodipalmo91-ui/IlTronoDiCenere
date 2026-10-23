@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Regolamento</title>
   <script src="lib/purify.min.js"></script>
-  <script src="sicuro.js"></script>
-  <script src="regole.js"></script>
-  <script src="lingua.js"></script>
+  <script src="js/sicuro.js"></script>
+  <script src="js/regole.js"></script>
+  <script src="js/lingua.js"></script>
   <link rel="stylesheet" href="tema.css">
   <style>
     * { box-sizing: border-box; }
@@ -63,7 +63,7 @@
     const per = (o) => Object.entries(o).map(([k, v]) => `${segno(v)} ${N("attributi", k)}`).join(", ");
     const tetti = Object.entries(R.TETTO_AGILITA).map(([a, t]) => `${N("oggetti", a)} ${t ? "+" + t : (EN ? "none" : "nessuno")}`).join(" · ");
     const soglie = R.SOGLIE_PE.slice(1).map((s, i) => `<tr><td>${i + 2}</td><td>${s - R.SOGLIE_PE[i]}</td><td>${s}</td></tr>`).join("");
-    const risorse = { it: { mana: "Mana", fede: "Punti fede", ira: "Punti ira", natura: "Punti natura" }, en: { mana: "Mana", fede: "Faith points", ira: "Rage points", natura: "Nature points" } }[EN ? "en" : "it"];
+    const risorse = { it: { mana: "Punti arcano", fede: "Punti fede", ira: "Punti ira", natura: "Punti natura" }, en: { mana: "Arcane points", fede: "Faith points", ira: "Rage points", natura: "Nature points" } }[EN ? "en" : "it"];
     const armatureClasse = (c) => (R.ARMATURE_CLASSI[c] || ["Armatura leggera", "Armatura media", "Armatura pesante"]).map(a => N("oggetti", a)).join(", ");
     const righeClassi = Object.entries(R.CLASSI).map(([c, d]) => `<tr><td>${N("classi", c)}</td><td>d${d.dado}</td><td>${risorse[d.risorsa]} (${N("attributi", d.attrRisorsa)})</td><td>${armatureClasse(c)}</td></tr>`).join("");
     const righeRazze = Object.entries(R.RAZZE).map(([r, d]) => `<tr><td>${N("razze", r)}</td><td>${d.punti ? (EN ? `+${d.punti} free points` : `+${d.punti} punti liberi`) : per(d.bonus)}</td></tr>`).join("");
@@ -91,7 +91,7 @@
             <h3>Salute e risorse</h3>
             <span class="formula">Salute fisica = ${R.SALUTE_BASE} + dado vita + mod. Vigore</span>
             <span class="formula">Salute mentale = ${R.SALUTE_BASE} + dado vita + mod. Spirito</span>
-            <span class="formula">Mana, fede, ira, natura = ${R.RISORSA_BASE} + modificatore dell'attributo della classe</span>
+            <span class="formula">Punti arcano, fede, ira, natura = ${R.RISORSA_BASE} + modificatore dell'attributo della classe</span>
             <h3>Abilità</h3>
             <p>Ne scegli ${R.MAX_ABILITA}. Il valore di un'abilità è il modificatore del suo attributo; quelle scelte aggiungono anche il tuo livello.</p>
             <div class="scroll"><table><tr><th>Abilità</th><th>Attributo</th></tr>${righeAbilita}</table></div>
@@ -99,23 +99,41 @@
           ["Prove di abilità", `
             <p>Scrivi ciò che fa il tuo personaggio («esamino l'arazzo», «uso investigazione»). Quando l'esito è incerto il gioco ti chiede una prova e ti mostra difficoltà, dado e modificatore.</p>
             <span class="formula">d20 + valore dell'abilità ≥ difficoltà (CD) → prova superata</span>
+            <p class="esempio">Esempio: Furtività +3 contro CD 13. Tiri 11: 11 + 3 = 14, che è almeno 13, quindi la prova è superata. Con un 9 avresti totalizzato 12 e la prova sarebbe fallita.</p>
+            <p>Il <b>valore dell'abilità</b> è il modificatore dell'attributo; se hai scelto quell'abilità in creazione si aggiunge anche il tuo livello. La difficoltà (CD) dipende dalla situazione: più è alta, più è difficile riuscire.</p>
+            <p>Puoi anche dichiarare una prova a parole, nominando l'abilità: «faccio una prova di percezione», «uso furtività», «cerco tracce». Se in quel luogo l'abilità non serve, il gioco ti risponde con una breve descrizione e nessun tiro.</p>
+            <p>Alcune prove richiedono un <b>20 naturale</b>: conta solo il numero uscito sul dado, il modificatore non si somma. Alcuni oggetti danno <b>vantaggio</b>: tiri due dadi e tieni il risultato migliore.</p>
             <p><b>Investigazione</b> comprende due modi di esplorare: <b>cercare attivamente</b> (frugare, spostare, toccare) e <b>usare i sensi</b> (vista, udito, olfatto). Se scrivi «faccio una prova di investigazione» il gioco ti chiede quale; se nomini un oggetto («investigo l'arazzo») la prova riguarda quell'oggetto.</p>
-            <p><b>Ogni prova fallita costa ${R.COSTO_PROVA_FALLITA} punto di salute mentale.</b> Scegli con cura quando tentare.</p>
+            <p><b>Ogni prova fallita costa ${R.COSTO_PROVA_FALLITA} punto di salute mentale.</b> Scegli con cura quando tentare. Alcune prove, segnalate dal gioco, non fanno perdere salute mentale.</p>
+            <p><b>Una prova fallita non si può ripetere finché non riposi.</b> Se in un luogo fallisci una prova (per esempio indagare nella sala da conversazione), quella prova resta bloccata: il gioco te lo ricorda ogni volta che provi a ripeterla, e ti avvisa prima del tiro. Dopo un riposo la prova torna disponibile. Le prove superate restano superate e non servono più. Fanno eccezione le prove che il gioco indica come ripetibili: quelle si possono riprovare subito.</p>
             <p>Il colore della tendina della tua azione ti dice cosa è successo:</p>
             <div class="tendine"><span class="t-azz">azzurra: nessuna prova</span><span class="t-ok">verde: prova superata</span><span class="t-ko">rossa: prova fallita</span></div>
             <p>Nei dialoghi conta anche l'approccio che scegli, gentile o duro: ogni interlocutore reagisce a modo suo.</p>`],
+          ["Muoversi ed esplorare", `
+            <p>Il gioco si controlla scrivendo ciò che fa il tuo personaggio, con parole tue. Non servono formule precise: il gioco riconosce i verbi più comuni.</p>
+            <ul>
+              <li><b>Muoversi</b>: «vado in cucina», «scendo in cantina», «torno indietro». Puoi andare solo nelle stanze vicine: se la stanza è lontana, il gioco ti dice da dove passare.</li>
+              <li><b>Guardare</b>: «guardo il camino», «esamino la stanza», «ascolto». Descrizioni e dettagli non costano nulla.</li>
+              <li><b>Agire</b>: «prendo la spada», «apro la porta», «parlo con Guendalina».</li>
+              <li><b>Oggetti</b>: «bevo la pozione di cura», «impugno la torcia», «indosso l'armatura». Lo zaino e la scheda mostrano ciò che porti e come usarlo.</li>
+            </ul>
+            <p class="esempio">Esempio: in una stanza nuova scrivi «guardo il tavolo». Se c'è qualcosa da scoprire, il gioco ti propone una prova.</p>
+            <p>Quando il gioco ti offre dei pulsanti (una scelta, un tiro, «lascia perdere») usali al posto del testo. Le missioni accettate compaiono nella scheda, con obiettivi e consigli.</p>
+            <p>Nei dialoghi scegli la risposta con i pulsanti: l'approccio, gentile o duro, cambia come reagisce chi hai davanti.</p>`],
           ["Combattimento", `
             <p><b>Iniziativa</b>: agisce per primo chi ha più Agilità (a parità, un d20 a testa).</p>
             <p>A ogni turno hai un'azione: attaccare, lanciare un incantesimo o usare un oggetto. Prendere in mano la torcia o imbracciare lo scudo non consuma l'azione.</p>
             <span class="formula">Attacco: d20 + mod. Vigore, colpisce se supera la Classe armatura del bersaglio</span>
             <span class="formula">Danno: dado dell'arma + mod. Vigore (torcia 1d4, a mani nude 1d2)</span>
             <p><b>Colpo critico</b>: un 20 sul dado colpisce sempre e tira il doppio dei dadi di danno. Vale anche per i nemici.</p>
+            <p class="esempio">Esempio: attacchi con una spada corta (1d6) e Vigore +2. Tiri 14 sul d20: 14 + 2 = 16. Se la Classe armatura del nemico è 13, colpisci e fai 1d6 + 2 danni.</p>
+            <p>In combattimento scrivi l'azione («attacco», «lancio un incantesimo», «bevo la pozione di cura») oppure usa i pulsanti che compaiono.</p>
             <h3>Classe armatura</h3>
             <span class="formula">CA = ${R.CA_BASE} + armatura + mod. Agilità (fino al tetto dell'armatura) + scudo</span>
             <p>Tetto del bonus di Agilità: ${tetti}.</p>
             <p>Le armi a due mani non lasciano libera la mano per torcia o scudo: devi prima riporre l'arma.</p>
             <h3>Incantesimi</h3>
-            <p>Ogni incantesimo costa mana o punti fede. Quando un nemico può resistere, tira contro la tua difficoltà:</p>
+            <p>Ogni incantesimo costa punti arcano (Arcanista) o punti fede (Monaco). Quando un nemico può resistere, tira contro la tua difficoltà:</p>
             <span class="formula">CD degli incantesimi = 8 + modificatore dell'attributo della classe + livello</span>
             <p>Arcanista e Monaco conoscono tutti e 7 gli incantesimi della loro classe e ne preparano ${R.MAX_INCANTESIMI}: si cambiano riposando.</p>
             <h3>Tecniche del Guerriero</h3>
@@ -132,11 +150,14 @@
             <p><b>Riposare ti porta al giorno successivo.</b> Il gioco tiene il conto dei giorni passati nella casa: lo trovi in cima alla scheda del personaggio. Quando riposi:</p>
             <ul>
               <li>consumi fino a 1d4 razioni;</li>
-              <li>recuperi 1d4 + livello su salute fisica, salute mentale e sulla tua risorsa (mana, fede, ira o natura);</li>
+              <li>recuperi 1d4 + livello su salute fisica, salute mentale e sulla tua risorsa (punti arcano, fede, ira o natura);</li>
               <li>ogni giorno ricevi ${R.RAZIONI_AL_GIORNO} razioni nuove (scorta massima ${R.RAZIONI_MAX}).</li>
             </ul>
             <p>Senza razioni la fame non ti fa dormire, tranne in un luogo particolarmente accogliente, dove recuperi comunque 1 punto.</p>
-            <p><b>Mana, fede, ira e natura si ricaricano solo riposando.</b> Pozione di cura e pozione di mana recuperano 1d6 + livello.</p>`],
+            <p class="esempio">Esempio: sei al livello 2 e hai perso 6 punti di salute fisica. Riposando tiri 1d4 e ottieni 3: recuperi 3 + 2 = 5 punti su salute fisica, salute mentale e risorsa di classe.</p>
+            <p><b>Riposare sblocca anche le prove fallite.</b> Le prove in cui hai fallito (e che il gioco segnala come non ripetibili subito) tornano disponibili al risveglio.</p>
+            <p>Se sei già in piena forma, non c'è bisogno di dormire: il gioco non consuma il fuoco né le razioni.</p>
+            <p><b>I punti arcano, fede, ira e natura si ricaricano solo riposando.</b> La pozione di cura recupera 1d6 + livello di salute fisica; la pozione di essenza recupera 1d6 + livello nella risorsa della tua classe (punti arcano, fede, ira o natura).</p>`],
           ["Livelli ed esperienza", `
             <p>Guadagni punti esperienza sconfiggendo i nemici e completando missioni. Il livello massimo è ${R.LIVELLO_MAX}.</p>
             <div class="scroll"><table><tr><th>Livello</th><th>PE necessari</th><th>PE totali</th></tr>${soglie}</table></div>
@@ -171,7 +192,7 @@
             <h3>Health and resources</h3>
             <span class="formula">Physical health = ${R.SALUTE_BASE} + hit die + Vigour mod.</span>
             <span class="formula">Mental health = ${R.SALUTE_BASE} + hit die + Spirit mod.</span>
-            <span class="formula">Mana, faith, rage, nature = ${R.RISORSA_BASE} + modifier of the class attribute</span>
+            <span class="formula">Arcane, faith, rage, nature points = ${R.RISORSA_BASE} + modifier of the class attribute</span>
             <h3>Skills</h3>
             <p>You choose ${R.MAX_ABILITA}. A skill's value is its attribute modifier; the ones you choose also add your level.</p>
             <div class="scroll"><table><tr><th>Skill</th><th>Attribute</th></tr>${righeAbilita}</table></div>
@@ -179,23 +200,41 @@
           ["Skill checks", `
             <p>Write what your character does (“I examine the tapestry”, “I use investigation”). When the outcome is uncertain the game asks for a check and shows you difficulty, die and modifier.</p>
             <span class="formula">d20 + skill value ≥ difficulty (DC) → check passed</span>
+            <p class="esempio">Example: Stealth +3 against DC 13. You roll 11: 11 + 3 = 14, which is at least 13, so the check is passed. With a 9 you would have totalled 12 and the check would have failed.</p>
+            <p>The <b>skill value</b> is the attribute modifier; if you chose that skill at creation your level is added too. The difficulty (DC) depends on the situation: the higher it is, the harder to succeed.</p>
+            <p>You can also declare a check in words, naming the skill: “I make a perception check”, “I use stealth”, “I look for tracks”. If the skill is of no use in that place, the game answers with a short description and no roll.</p>
+            <p>Some checks require a <b>natural 20</b>: only the number on the die counts, the modifier is not added. Some items give <b>advantage</b>: you roll two dice and keep the better result.</p>
             <p><b>Investigation</b> covers two ways of exploring: <b>searching actively</b> (rummaging, moving, touching) and <b>using your senses</b> (sight, hearing, smell). If you write “I make an investigation check” the game asks which; if you name an object (“I investigate the tapestry”) the check is about that object.</p>
-            <p><b>Every failed check costs ${R.COSTO_PROVA_FALLITA} point of mental health.</b> Choose carefully when to try.</p>
+            <p><b>Every failed check costs ${R.COSTO_PROVA_FALLITA} point of mental health.</b> Choose carefully when to try. Some checks, flagged by the game, cost no mental health.</p>
+            <p><b>A failed check cannot be repeated until you rest.</b> If you fail a check in a place (for example investigating in the drawing room), that check stays locked: the game reminds you each time you try again, and warns you before the roll. After a rest the check is available again. Passed checks stay passed and are no longer needed. The exceptions are checks the game marks as repeatable: those can be retried at once.</p>
             <p>The colour of your action's drop-down tells you what happened:</p>
             <div class="tendine"><span class="t-azz">blue: no check</span><span class="t-ok">green: check passed</span><span class="t-ko">red: check failed</span></div>
             <p>In conversations the approach you choose, kind or harsh, matters too: everyone reacts in their own way.</p>`],
+          ["Moving and exploring", `
+            <p>You control the game by writing what your character does, in your own words. No exact formulas are needed: the game recognises the most common verbs.</p>
+            <ul>
+              <li><b>Moving</b>: “I go to the kitchen”, “I go down to the cellar”, “I go back”. You can only reach neighbouring rooms: if a room is far away, the game tells you which way to go.</li>
+              <li><b>Looking</b>: “I look at the fireplace”, “I examine the room”, “I listen”. Descriptions and details cost nothing.</li>
+              <li><b>Acting</b>: “I take the sword”, “I open the door”, “I talk to Guendalina”.</li>
+              <li><b>Items</b>: “I drink the healing potion”, “I wield the torch”, “I wear the armor”. The backpack and the sheet show what you carry and how to use it.</li>
+            </ul>
+            <p class="esempio">Example: in a new room you write “I look at the table”. If there is something to discover, the game offers you a check.</p>
+            <p>When the game offers you buttons (a choice, a roll, “let it go”) use them instead of typing. Accepted quests appear on the sheet, with objectives and hints.</p>
+            <p>In conversations choose your reply with the buttons: the approach, kind or harsh, changes how the other person reacts.</p>`],
           ["Combat", `
             <p><b>Initiative</b>: whoever has more Agility acts first (on a tie, a d20 each).</p>
             <p>Each turn you have one action: attack, cast a spell or use an item. Taking up the torch or the shield does not use your action.</p>
             <span class="formula">Attack: d20 + Vigour mod., hits if it beats the target's Armor class</span>
             <span class="formula">Damage: weapon die + Vigour mod. (torch 1d4, bare hands 1d2)</span>
             <p><b>Critical hit</b>: a 20 on the die always hits and rolls double the damage dice. Enemies too.</p>
+            <p class="esempio">Example: you attack with a shortsword (1d6) and Vigour +2. You roll 14 on the d20: 14 + 2 = 16. If the enemy's Armor class is 13, you hit and deal 1d6 + 2 damage.</p>
+            <p>In combat write your action (“I attack”, “I cast a spell”, “I drink the healing potion”) or use the buttons that appear.</p>
             <h3>Armor class</h3>
             <span class="formula">AC = ${R.CA_BASE} + armor + Agility mod. (up to the armor's cap) + shield</span>
             <p>Agility bonus cap: ${tetti}.</p>
             <p>Two-handed weapons leave no hand free for torch or shield: put the weapon away first.</p>
             <h3>Spells</h3>
-            <p>Every spell costs mana or faith points. When an enemy can resist, it rolls against your difficulty:</p>
+            <p>Every spell costs arcane points (Arcanist) or faith points (Monk). When an enemy can resist, it rolls against your difficulty:</p>
             <span class="formula">Spell DC = 8 + class attribute modifier + level</span>
             <p>Arcanist and Monk know all 7 spells of their class and prepare ${R.MAX_INCANTESIMI}: they are changed by resting.</p>
             <h3>Warrior techniques</h3>
@@ -212,11 +251,14 @@
             <p><b>Resting takes you to the next day.</b> The game keeps count of the days spent in the house: you will find it at the top of your character sheet. When you rest:</p>
             <ul>
               <li>you eat up to 1d4 rations;</li>
-              <li>you recover 1d4 + level on physical health, mental health and your resource (mana, faith, rage or nature);</li>
+              <li>you recover 1d4 + level on physical health, mental health and your resource (arcane, faith, rage or nature points);</li>
               <li>each day you receive ${R.RAZIONI_AL_GIORNO} new rations (up to ${R.RAZIONI_MAX} in store).</li>
             </ul>
             <p>Without rations hunger keeps you awake, except in a particularly welcoming place, where you still recover 1 point.</p>
-            <p><b>Mana, faith, rage and nature recharge only by resting.</b> Healing and mana potions restore 1d6 + level.</p>`],
+            <p class="esempio">Example: you are level 2 and have lost 6 points of physical health. Resting you roll 1d4 and get 3: you recover 3 + 2 = 5 points on physical health, mental health and class resource.</p>
+            <p><b>Resting also unlocks failed checks.</b> Checks you failed (and that the game marks as not immediately repeatable) become available again when you wake.</p>
+            <p>If you are already in top shape there is no need to sleep: the game consumes neither the fire nor the rations.</p>
+            <p><b>Arcane, faith, rage and nature points recharge only by resting.</b> The healing potion restores 1d6 + level physical health; the essence potion restores 1d6 + level of your class resource (arcane, faith, rage or nature points).</p>`],
           ["Levels and experience", `
             <p>You earn experience points by defeating enemies and completing quests. The maximum level is ${R.LIVELLO_MAX}.</p>
             <div class="scroll"><table><tr><th>Level</th><th>XP needed</th><th>Total XP</th></tr>${soglie}</table></div>

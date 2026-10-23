@@ -25,13 +25,10 @@
 @property --gold { syntax: "<color>"; inherits: true; initial-value: #e6e6e6; }
 @property --tip-bg { syntax: "<color>"; inherits: true; initial-value: #1c1c1c; }
 @property --tip-line { syntax: "<color>"; inherits: true; initial-value: #333333; }
-@property --cap { syntax: "<color>"; inherits: true; initial-value: #e6e6e6; }
 @property --cap-bg { syntax: "<color>"; inherits: true; initial-value: #222222; }
 @property --cap-line { syntax: "<color>"; inherits: true; initial-value: #4d4d4d; }
-@property --mis { syntax: "<color>"; inherits: true; initial-value: #c8c8c8; }
 @property --mis-bg { syntax: "<color>"; inherits: true; initial-value: #1f1f1f; }
 @property --mis-line { syntax: "<color>"; inherits: true; initial-value: #464646; }
-@property --fine { syntax: "<color>"; inherits: true; initial-value: #e6e6e6; }
 @property --fine-bg { syntax: "<color>"; inherits: true; initial-value: #222222; }
 @property --fine-line { syntax: "<color>"; inherits: true; initial-value: #555555; }
 
@@ -46,10 +43,10 @@
   --ok: #8fbf7a; --ok-bg: #18201a; --ok-line: #3f5a3c;       /* prova superata */
   --ko: #e0705f; --ko-bg: #2a1716; --ko-line: #74302a;       /* prova fallita */
   --dlg: #b4a2dc; --dlg-bg: #1f1b28; --dlg-line: #4a3f66;    /* dialoghi */
-  --nem: #d98a57; --nem-bg: #261c14; --nem-line: #6e4626;    /* nemico */
-  --cap: #e6e6e6; --cap-bg: #222222; --cap-line: #4d4d4d;    /* capacità: grigie nella cenere */
-  --mis: #c8c8c8; --mis-bg: #1f1f1f; --mis-line: #464646;    /* missioni: grigie nella cenere */
-  --fine: #e6e6e6; --fine-bg: #222222; --fine-line: #555555; /* missione completata */
+  --nem: var(--ko); --nem-bg: var(--ko-bg); --nem-line: var(--ko-line); /* nemico = pericolo: rosso */
+  --cap: var(--gold); --cap-bg: #222222; --cap-line: #4d4d4d;           /* ricompense (capacità, missioni, completate): oro */
+  --mis: var(--gold); --mis-bg: #1f1f1f; --mis-line: #464646;
+  --fine: var(--gold); --fine-bg: #222222; --fine-line: #555555;
 }
 
 /* ---------- «Tomo Proibito»: dove il fuoco è caldo ---------- */
@@ -60,10 +57,10 @@ body.fuoco-caldo {
   --ok: #9DBB7A; --ok-bg: #1A2116; --ok-line: #45573a;
   --ko: #E07A6A; --ko-bg: #2B1715; --ko-line: #7a2e28;
   --dlg: #B9A3E0; --dlg-bg: #211B2D; --dlg-line: #4f3f6e;
-  --nem: #E0905A; --nem-bg: #2A1C12; --nem-line: #7a4a2a;
-  --cap: #CFA862; --cap-bg: #28200F; --cap-line: #6a5426;    /* oro */
-  --mis: #7DB8AE; --mis-bg: #14221F; --mis-line: #2f5a54;    /* verderame */
-  --fine: #D497B2; --fine-bg: #29171F; --fine-line: #6e3a52;
+  --nem: var(--ko); --nem-bg: var(--ko-bg); --nem-line: var(--ko-line);
+  --cap: var(--gold); --cap-bg: #28200F; --cap-line: #6a5426;
+  --mis: var(--gold); --mis-bg: #28200F; --mis-line: #6a5426;
+  --fine: var(--gold); --fine-bg: #28200F; --fine-line: #6a5426;
 }
 
 /* alias usati da tutorial e creazione */
@@ -80,8 +77,8 @@ body {
   font-family: var(--f-testo);
   font-variant-numeric: lining-nums; /* cifre allineate nelle schede e nei tiri */
   transition: --bg 1.2s ease, --text 1.2s ease, --muted 1.2s ease, --line 1.2s ease, --accent 1.2s ease, --gold 1.2s ease,
-    --tip-bg 1.2s ease, --tip-line 1.2s ease, --cap 1.2s ease, --cap-bg 1.2s ease, --cap-line 1.2s ease,
-    --mis 1.2s ease, --mis-bg 1.2s ease, --mis-line 1.2s ease, --fine 1.2s ease, --fine-bg 1.2s ease, --fine-line 1.2s ease;
+    --tip-bg 1.2s ease, --tip-line 1.2s ease, --cap-bg 1.2s ease, --cap-line 1.2s ease,
+    --mis-bg 1.2s ease, --mis-line 1.2s ease, --fine-bg 1.2s ease, --fine-line 1.2s ease;
 }
 @media (prefers-reduced-motion: reduce) { body { transition: none; } }
 button, input, select, textarea { font-family: inherit; }
@@ -94,3 +91,26 @@ h1, .voce h2.luogo, .scheda #nome, #nomeNem, #nomePg, .scheda h2, .scheda detail
   letter-spacing: 0.06em;
 }
 .voce h2.luogo, .scheda #nome, #nomePg { color: var(--gold); }
+
+/* =====================================================================
+   COLORI RIDOTTI — il colore indica, non riempie.
+   Tendine e riquadri hanno sempre il fondo neutro; il significato sta nella barretta o nel bordo
+   sinistro, nella freccia e nella parola dell'esito. «body» davanti ai selettori: vince sulle regole delle pagine.
+   ===================================================================== */
+body details.voce.giocatore.t-ok, body details.voce.giocatore.t-ko, body details.voce.giocatore.t-dlg, body details.voce.giocatore.t-scontro {
+  background: var(--tip-bg); border-color: var(--tip-line);
+}
+body .voce.riquadro.ok, body .voce.riquadro.ko, body .voce.riquadro.nem, body .voce.riquadro.cap, body .voce.riquadro.mis, body .voce.riquadro.fine,
+body .voce.riquadro.mia, body .voce.dialogo .dlg-box, body #barraScontro,
+body .voce.mia, body .voce.nemico, body .voce.ok, body .voce.ko, body .voce.esito-scontro {
+  background: var(--tip-bg); border-color: var(--tip-line); border-left: 3px solid var(--sx, var(--tip-line));
+}
+body .voce.ok, body .voce.esito-scontro.ok { --sx: var(--ok); }
+body .voce.ko, body .voce.esito-scontro.ko, body .voce.riquadro.nem, body .voce.nemico, body #barraScontro { --sx: var(--ko); }
+body .voce.riquadro.cap, body .voce.riquadro.mis, body .voce.riquadro.fine { --sx: var(--gold); }
+body .voce.riquadro.mia, body .voce.mia { --sx: var(--accent); }
+body .voce.dialogo .dlg-box { --sx: var(--dlg); }
+body .voce.prova.nemica { background: transparent; }
+/* con il fondo neutro è la parola dell'esito a portare il colore */
+body .voce.riquadro.ok p.esito-prova, body .voce.ok .esito { color: var(--ok); }
+body .voce.riquadro.ko p.esito-prova, body .voce.ko .esito { color: var(--ko); }

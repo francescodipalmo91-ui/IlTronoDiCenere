@@ -224,17 +224,17 @@
       -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: 50% 82%; mask-position: 50% 82%;
       -webkit-mask-size: 0% 0%; mask-size: 0% 0%;
     }
-    /* il mastino compare da una nube di cenere che si dissolve */
+    /* il mastino compare da una nube di cenere grigia che si dissolve */
     .voce .cornice.cenere img.scena { animation: dallaCenere 3.2s ease-out both; }
     .voce .cornice.cenere::after {
       content: ""; position: absolute; inset: -15%; pointer-events: none;
       background:
-        radial-gradient(circle at 30% 40%, rgba(120,170,255,0.9) 0 6%, transparent 18%),
-        radial-gradient(circle at 58% 55%, rgba(70,120,220,0.95) 0 10%, transparent 30%),
-        radial-gradient(circle at 72% 32%, rgba(150,200,255,0.85) 0 5%, transparent 16%),
-        radial-gradient(circle at 42% 72%, rgba(50,90,190,0.95) 0 8%, transparent 26%),
-        radial-gradient(circle at 50% 50%, rgba(25,45,110,0.98) 0 35%, rgba(15,25,70,0.92) 60%, transparent 85%),
-        radial-gradient(circle, rgba(170,210,255,0.6) 1px, transparent 2px) 0 0 / 12px 12px;
+        radial-gradient(circle at 30% 40%, rgba(205,205,205,0.9) 0 6%, transparent 18%),
+        radial-gradient(circle at 58% 55%, rgba(140,140,140,0.95) 0 10%, transparent 30%),
+        radial-gradient(circle at 72% 32%, rgba(225,225,225,0.85) 0 5%, transparent 16%),
+        radial-gradient(circle at 42% 72%, rgba(105,105,105,0.95) 0 8%, transparent 26%),
+        radial-gradient(circle at 50% 50%, rgba(40,40,40,0.98) 0 35%, rgba(25,25,25,0.92) 60%, transparent 85%),
+        radial-gradient(circle, rgba(210,210,210,0.6) 1px, transparent 2px) 0 0 / 12px 12px;
       animation: cenere 3.4s ease-out forwards;
     }
     .voce .cornice.cenere.subito img.scena, .voce .cornice.cenere.subito::after { animation: none; }
@@ -244,7 +244,7 @@
     .voce .cornice.cenere.dissolto.subito img.scena { animation: none; filter: grayscale(1) blur(6px) brightness(0.45); opacity: 0.35; }
     @keyframes inCenere { 0% { filter: none; opacity: 1; } 60% { filter: grayscale(1) blur(2px) brightness(0.7); } 100% { filter: grayscale(1) blur(6px) brightness(0.45); opacity: 0.35; } }
     @keyframes cenere { 0% { opacity: 1; transform: scale(1); filter: blur(1px); } 45% { opacity: 0.85; } 100% { opacity: 0; transform: scale(1.3) translateY(-8%); filter: blur(16px); } }
-    @keyframes dallaCenere { 0% { opacity: 0; filter: blur(12px) brightness(0.5) hue-rotate(20deg) saturate(1.6); } 50% { opacity: 0.7; } 100% { opacity: 1; filter: none; } }
+    @keyframes dallaCenere { 0% { opacity: 0; filter: blur(12px) brightness(0.5) grayscale(1); } 50% { opacity: 0.7; } 100% { opacity: 1; filter: none; } }
     @media (prefers-reduced-motion: reduce) { .voce .cornice.cenere::after { animation-duration: 0.8s; } .voce .cornice.cenere img.scena { animation-duration: 0.8s; } }
     @keyframes dentro { from { transform: scale(1); filter: brightness(1); } 55% { filter: brightness(0.45); } to { transform: scale(2.6); filter: brightness(0); } }
     @keyframes fuori { from { transform: scale(2.6); filter: brightness(0); } 45% { filter: brightness(0.4); } to { transform: scale(1); filter: brightness(1); } }
@@ -497,10 +497,9 @@
       .mini-dati .mn { font-variant-numeric: tabular-nums; text-align: right; }
       .mini-dati .mb { height: 0.32rem; border-radius: 1rem; background: color-mix(in srgb, var(--line) 80%, transparent); overflow: hidden; }
       .mini-dati .mb i { display: block; height: 100%; width: 100%; border-radius: inherit; transition: width 0.3s ease; }
-      .mini-dati .r-salute i { background: #e0524a; }
-      .mini-dati .r-mentali i { background: #9a7be0; }
-      .mini-dati .r-mana i { background: #4c8dff; }
-      .mini-dati .r-risorsa i { background: #e0a23a; }
+      .mini-dati .mb i { background: var(--muted); } /* barre neutre: diventano rosse solo sotto metà */
+      body.salute-bassa .mini-dati .r-salute i, body.salute-critica .mini-dati .r-salute i,
+      body.mente-incrinata .mini-dati .r-mentali i, body.mente-spezzata .mini-dati .r-mentali i { background: var(--allarme); }
       .mini-dati [hidden] { display: none; }
       #miniPg.colpito { animation: scuoti 0.35s ease-in-out; }
 

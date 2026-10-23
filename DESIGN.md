@@ -11,10 +11,6 @@ colors:
   ash-light: "#e6e6e6"
   ash-box: "#222222"
   ash-box-edge: "#4d4d4d"
-  ash-quest: "#c8c8c8"
-  ash-quest-wash: "#1f1f1f"
-  ash-quest-edge: "#464646"
-  ash-done-edge: "#555555"
   leather-black: "#181512"
   leather-surface: "#211c17"
   leather-line: "#3a3129"
@@ -24,12 +20,6 @@ colors:
   old-gold: "#CFA862"
   old-gold-wash: "#28200F"
   old-gold-edge: "#6a5426"
-  verdigris: "#7DB8AE"
-  verdigris-wash: "#14221F"
-  verdigris-edge: "#2f5a54"
-  requiem-rose: "#D497B2"
-  requiem-rose-wash: "#29171F"
-  requiem-rose-edge: "#6e3a52"
   moss: "#8fbf7a"
   moss-wash: "#18201a"
   moss-edge: "#3f5a3c"
@@ -48,17 +38,7 @@ colors:
   arcane-violet-warm: "#B9A3E0"
   arcane-violet-warm-wash: "#211B2D"
   arcane-violet-warm-edge: "#4f3f6e"
-  rust: "#d98a57"
-  rust-wash: "#261c14"
-  rust-edge: "#6e4626"
-  rust-warm: "#E0905A"
-  rust-warm-wash: "#2A1C12"
-  rust-warm-edge: "#7a4a2a"
   alarm-red: "#ff2d2d"
-  bar-health: "#e0524a"
-  bar-mind: "#9a7be0"
-  bar-mana: "#4c8dff"
-  bar-resource: "#e0a23a"
   clasp-bronze: "#c98a4b"
   clasp-silver: "#c0c7d0"
   clasp-gold: "#e3b341"
@@ -143,38 +123,28 @@ components:
     rounded: "{rounded.md}"
     padding: "0.75rem 1rem"
   action-drawer-pass:
-    backgroundColor: "{colors.moss-wash}"
+    backgroundColor: "{colors.ash-surface}"
     textColor: "{colors.moss}"
     rounded: "{rounded.md}"
     padding: "0.75rem 1rem"
   action-drawer-fail:
-    backgroundColor: "{colors.blood-wash}"
+    backgroundColor: "{colors.ash-surface}"
     textColor: "{colors.blood}"
     rounded: "{rounded.md}"
     padding: "0.75rem 1rem"
   action-drawer-dialogue:
-    backgroundColor: "{colors.arcane-violet-wash}"
+    backgroundColor: "{colors.ash-surface}"
     textColor: "{colors.arcane-violet}"
     rounded: "{rounded.md}"
     padding: "0.75rem 1rem"
   box-enemy:
-    backgroundColor: "{colors.rust-wash}"
-    textColor: "{colors.rust}"
+    backgroundColor: "{colors.ash-surface}"
+    textColor: "{colors.blood}"
     rounded: "{rounded.md}"
     padding: "1.25rem 1.5rem"
-  box-ability-warm:
-    backgroundColor: "{colors.old-gold-wash}"
+  box-reward-warm:
+    backgroundColor: "{colors.leather-surface}"
     textColor: "{colors.old-gold}"
-    rounded: "{rounded.md}"
-    padding: "1.25rem 1.5rem"
-  box-quest-warm:
-    backgroundColor: "{colors.verdigris-wash}"
-    textColor: "{colors.verdigris}"
-    rounded: "{rounded.md}"
-    padding: "1.25rem 1.5rem"
-  box-quest-done-warm:
-    backgroundColor: "{colors.requiem-rose-wash}"
-    textColor: "{colors.requiem-rose}"
     rounded: "{rounded.md}"
     padding: "1.25rem 1.5rem"
   chip-check-data:
@@ -186,7 +156,7 @@ components:
 
 # Design System: Il Trono di Cenere
 
-<!-- Aggiornato il 23 ottobre: palette «Cenere» / «Tomo Proibito» e caratteri Lora + Cinzel. I token vivono in tema.css; i colori «-warm» sono quelli di body.fuoco-caldo. -->
+<!-- Aggiornato il 23 ottobre: palette «Cenere» / «Tomo Proibito», caratteri Lora + Cinzel, colori ridotti a quattro significati. I token vivono in tema.css; i colori «-warm» sono quelli di body.fuoco-caldo. -->
 
 ## Overview
 
@@ -194,7 +164,7 @@ components:
 
 Il gioco è un diario che si scrive mentre lo si vive. Ogni azione del giocatore apre una tendina, e dentro la tendina cade tutto ciò che quell'azione ha provocato: la narrazione, la prova di abilità, il colpo del mastino, la voce di Guendalina. La pagina è una colonna di testo lunga e scorrevole, letta come un libro, con l'interfaccia ridotta a una scheda del personaggio a sinistra e a una riga di comando in basso.
 
-Tutto è **cenere**: fondo, testo, pulsanti e scheda sono grigi neutri, e il colore compare solo quando ha un significato (esito delle prove, dialoghi, nemico, salute bassa). Dove il fuoco è caldo e si può riposare, la casa si scalda: l'interfaccia sfuma in 1,2 secondi verso il **Tomo Proibito**, cuoio nero, pergamena, bronzo e oro. Quando il fuoco si consuma, torna la cenere. Il giocatore sente la sicurezza prima ancora di leggerla.
+Tutto è **cenere**: fondo, testo, pulsanti e scheda sono grigi neutri, e **il colore indica, non riempie**: quattro significati soltanto (verde = riuscito, rosso = pericolo, viola = voce di un altro personaggio, oro = ricompensa), sempre su una barretta, un bordo o una parola, mai sul fondo. Dove il fuoco è caldo e si può riposare, la casa si scalda: l'interfaccia sfuma in 1,2 secondi verso il **Tomo Proibito**, cuoio nero, pergamena, bronzo e oro. Quando il fuoco si consuma, torna la cenere. Il giocatore sente la sicurezza prima ancora di leggerla.
 
 Densità media, ritmo da romanzo: righe alte (1.75), spazi generosi tra le voci (1.5rem), niente ombre decorative. La pagina iniziale è l'unica superficie "cinematografica" (video a tutto schermo, titolo in Cinzel spaziato); il resto lavora in modalità lettura.
 
@@ -215,14 +185,14 @@ Cenere neutra come base; il calore è un premio legato al fuoco; ogni colore acc
 - **Ash Light** (ash-light) → **Old Gold** (old-gold): nome della stanza, nome del personaggio.
 
 ### Secondary
-- **Arcane Violet** (arcane-violet): tutto ciò che è dialogo. Tendina della domanda, riquadro delle risposte, nome di chi parla.
-- **Rust** (rust): il nemico. Riquadro delle sue mosse, scheda del nemico, barra dello scontro.
+- **Arcane Violet** (arcane-violet): voce di un altro personaggio. Barretta della tendina della domanda, bordo del riquadro delle risposte, nome di chi parla.
+- **Blood** (blood): pericolo. Prova fallita, colpo del nemico, scheda e barra dello scontro. Testo schiarito (5.4:1) per restare leggibile.
 
 ### Tertiary
-- **Moss / Blood** (moss, blood): esito delle prove; tingono l'intera tendina dell'azione. Il testo rosso è schiarito (5.4:1) per restare leggibile.
-- **Old Gold / Verdigris / Requiem Rose** (col fuoco caldo): capacità, missioni, missione completata. Nella cenere diventano grigi e si distinguono dal titolo.
-- **Alarm Red** (alarm-red): solo salute fisica bassa. È l'unico colore saturo: deve spaventare.
-- **Barre e fermagli** (bar-*, clasp-*): salute, mente, mana e risorsa nella barra del telefono; gradi di caccia sotto il nome.
+- **Moss** (moss): prova superata.
+- **Old Gold / Ash Light** (old-gold col fuoco caldo, ash-light nella cenere): ricompensa. Capacità sbloccate, missioni, missioni completate.
+- **Alarm Red** (alarm-red): solo salute bassa (ritratto, campo di scrittura, barre del telefono sotto metà). È l'unico colore saturo: deve spaventare.
+- **Fermagli e stelle** (clasp-*, star-red): gradi di caccia; il loro colore è l'informazione stessa.
 
 ### Neutral
 - **Ash Black / Leather Black** (ash-black, leather-black): fondo di tutte le pagine.
@@ -230,12 +200,14 @@ Cenere neutra come base; il calore è un premio legato al fuoco; ogni colore acc
 - **Ash Muted / Parchment Muted**: etichette, azioni del giocatore nelle tendine, note di sistema (6.5:1 e 6.4:1).
 - **Ash Line / Leather Line**: divisori, bordi secondari, campo di scrittura a riposo.
 
-Ogni colore semantico ha tre gradi: tinta piena (testo), `-wash` (fondo del riquadro), `-edge` (bordo). Tutti i colori di testo superano 4.5:1 sul loro fondo in entrambe le palette.
+Tendine e riquadri hanno sempre il fondo neutro (`--tip-bg`) e il bordo neutro; il significato sta nella barretta o nel bordo sinistro da 3px, nella freccia e nella parola dell'esito. Tutti i colori di testo superano 4.5:1 in entrambe le palette.
 
 ### Named Rules
 **The Warmth Is Safety Rule.** Il Tomo Proibito appare solo dove il fuoco è caldo e si può riposare (cucina, sala da conversazione finché il fuoco non è consumato, cripta col braciere acceso). Mai altrove, mai come decorazione.
 
-**The One Meaning Rule.** Ogni tinta ha un solo significato. Un nuovo tipo di contenuto riceve un colore nuovo, mai uno già usato con un altro senso.
+**The Four Meanings Rule.** Solo quattro colori di significato: verde, rosso, viola, oro. Un nuovo tipo di contenuto entra in una di queste famiglie, oppure resta neutro e si distingue dal titolo. Mai un quinto colore.
+
+**The Color Points, Never Fills Rule.** Il colore sta su barrette, bordi sinistri, frecce e parole chiave. Mai fondi colorati su tendine e riquadri.
 
 **The Alarm Is Not a Verdict Rule.** Alarm Red parla solo della salute del personaggio. Una prova fallita usa Blood, mai l'allarme.
 
@@ -263,7 +235,7 @@ Ogni colore semantico ha tre gradi: tinta piena (testo), `-wash` (fondo del riqu
 
 Tre colonne su schermo largo: scheda del personaggio (20rem), un divisore da 1px che sfuma alle estremità, e il gioco. Durante uno scontro compare una quarta colonna con la scheda del nemico (18rem). Il gioco è una pila verticale: barra in alto, diario scorrevole, comandi in basso. La colonna del diario è centrata con un massimo di 62rem.
 
-Sotto gli 820px tutto lo schermo va al diario. In alto una barra compatta con mini-ritratto e tre barre (salute, mente, risorsa); toccandola la scheda completa entra come pannello da sinistra (88vw, massimo 23rem). Durante uno scontro una striscia color ruggine apre la scheda del nemico da destra. Bersagli tattili di almeno 2.75rem; safe-area rispettate.
+Sotto gli 820px tutto lo schermo va al diario. In alto una barra compatta con mini-ritratto e tre barre (salute, mente, risorsa); toccandola la scheda completa entra come pannello da sinistra (88vw, massimo 23rem). Durante uno scontro una striscia apre la scheda del nemico da destra. Bersagli tattili di almeno 2.75rem; safe-area rispettate.
 
 Ritmo verticale: 1.5rem tra le voci del diario (1.1rem su telefono), 1.1rem tra i paragrafi, 1.25rem tra il titolo di una tendina e il suo contenuto. Le immagini delle stanze entrano sempre intere nello schermo.
 
@@ -293,10 +265,10 @@ Angoli morbidi e costanti: 0.5rem per tendine, riquadri, pulsanti e campo di scr
 - **Focus:** contorno da 3px accento con offset 3px.
 
 ### Cards / Containers
-- **Tendina d'azione** (componente firma): `<details>` con fondo superficie e bordo linea, sommario in corsivo con barra verticale e freccia ▸/▾. Varianti: neutra (nessuna prova), muschio (superata), sangue (fallita), viola (dialogo), grassetto per il turno di combattimento, "Scontro" per raccogliere i turni di uno scontro concluso.
+- **Tendina d'azione** (componente firma): `<details>` sempre con fondo superficie e bordo linea; barretta, freccia e testo del sommario nel colore dell'esito: accento (nessuna prova), muschio (superata), sangue (fallita), viola (dialogo). Grassetto per il turno di combattimento, "Scontro" per raccogliere i turni di uno scontro concluso.
 - **Riquadro di prova:** bordo accento, titolo in Cinzel, azione in corsivo, dati (CD, dado, modificatore) come pillole.
-- **Riquadri semantici:** stessa forma con la coppia wash/edge del loro colore: mia, nemico, capacità, missioni, missione completata.
-- **Riquadro dialogo:** fondo viola, nome di chi parla in Cinzel, battute in corsivo che si scrivono a macchina.
+- **Riquadri semantici:** fondo neutro con bordo sinistro da 3px: accento (mia mossa), sangue (nemico), oro (capacità, missioni, completate); la parola dell'esito prende lo stesso colore.
+- **Riquadro dialogo:** fondo neutro con bordo sinistro viola, nome di chi parla in Cinzel, battute in corsivo che si scrivono a macchina.
 
 ### Inputs / Fields
 - **Campo di comando:** fondo trasparente, bordo 2px linea, 16px su telefono.
@@ -304,13 +276,15 @@ Angoli morbidi e costanti: 0.5rem per tendine, riquadri, pulsanti e campo di scr
 
 ### Effetti di stato (signature)
 - **Cambio di palette col fuoco:** dissolvenza di 1,2 s delle variabili di colore (`@property`), disattivata con `prefers-reduced-motion`.
-- **Ritratto incrinato**, **testo distorto**, **cenere del mastino**, **fermagli di grado**: invariati.
+- **Cenere del mastino:** nube grigia (non più azzurra) da cui compare e in cui si sgretola.
+- **Barre del telefono:** neutre; salute e mente diventano Alarm Red sotto metà.
+- **Ritratto incrinato**, **testo distorto**, **fermagli di grado**: invariati.
 
 ## Do's and Don'ts
 
 ### Do:
 - **Do** usare le variabili di `tema.css` (`--bg`, `--text`, `--accent`, `--ok`, `--ko`, `--dlg`, `--nem`, `--cap`, `--mis`, `--fine`): così ogni elemento nuovo segue da solo il cambio di palette.
-- **Do** dare a ogni nuovo colore semantico i valori per entrambe le palette, con contrasto di almeno 4.5:1.
+- **Do** far entrare ogni nuovo contenuto in una delle quattro famiglie (verde, rosso, viola, oro) o lasciarlo neutro.
 - **Do** tenere le battute dei personaggi in corsivo e le descrizioni in tondo.
 - **Do** rispettare `prefers-reduced-motion` per ogni animazione.
 - **Do** mantenere bersagli tattili di almeno 2.75rem e il campo di comando a 16px su telefono.
@@ -320,4 +294,4 @@ Angoli morbidi e costanti: 0.5rem per tendine, riquadri, pulsanti e campo di scr
 - **Don't** usare il Tomo Proibito dove non c'è un fuoco caldo.
 - **Don't** usare Alarm Red per qualcosa che non sia la salute fisica bassa.
 - **Don't** usare Cinzel per frasi o pulsanti, né aggiungere un terzo carattere.
-- **Don't** aggiungere aloni colorati o ombre decorative.
+- **Don't** aggiungere aloni colorati, ombre decorative o fondi colorati su tendine e riquadri.

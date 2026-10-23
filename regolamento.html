@@ -4,24 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Regolamento</title>
+  <script src="lib/purify.min.js"></script>
+  <script src="sicuro.js"></script>
   <script src="regole.js"></script>
   <script src="lingua.js"></script>
+  <link rel="stylesheet" href="tema.css">
   <style>
-    :root {
-      --bg: #f5f7fa; --text: #1d2733; --muted: #5b6675; --line: #c9d1db;
-      --accent: #2f6fed; --tip-bg: #e9f0fd; --tip-line: #b4c9f2;
-      --ok-bg: #e7f5ec; --ok-line: #b0dbbf; --ko-bg: #fbeaea; --ko-line: #e6b3b3;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #161b22; --text: #e8edf3; --muted: #9aa5b4; --line: #2f3844;
-        --accent: #5b92ff; --tip-bg: #1e2a3f; --tip-line: #38527d;
-        --ok-bg: #1f3328; --ok-line: #3f6b4f; --ko-bg: #3a2226; --ko-line: #7d444b;
-      }
-    }
     * { box-sizing: border-box; }
     html { background: var(--bg); }
-    body { margin: 0; background: var(--bg); color: var(--text); font-family: Georgia, "Times New Roman", serif; line-height: 1.55; padding: 2rem 16px 3rem; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--f-testo); line-height: 1.55; padding: 2rem 16px 3rem; }
     main { max-width: 46rem; margin: 0 auto; }
     .torna { color: var(--muted); text-decoration: none; font-size: 0.95rem; }
     .torna:hover { color: var(--accent); }
@@ -31,6 +22,7 @@
     details { border: 1px solid var(--line); border-radius: 0.6rem; margin: 0 0 0.75rem; background: color-mix(in srgb, var(--bg) 92%, var(--text)); }
     summary { cursor: pointer; padding: 0.85rem 1.1rem; font-size: 1.12rem; font-weight: 600; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
     summary::-webkit-details-marker { display: none; }
+    summary, .corpo h3 { font-family: var(--f-titoli); letter-spacing: 0.05em; }
     summary::after { content: "▸"; color: var(--muted); transition: transform 0.2s; }
     details[open] summary::after { transform: rotate(90deg); }
     summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 0.6rem; }
@@ -150,7 +142,8 @@
             <p>A ogni livello tiri il dado vita: salute fisica + (dado vita + mod. Vigore), salute mentale + (dado vita + mod. Spirito), risorsa + (dado vita + modificatore del suo attributo). Le abilità scelte crescono con il livello.</p>`],
           ["Morte e salute mentale", `
             <p>Se la salute fisica arriva a 0 non muori davvero: ti risvegli in un luogo sicuro con la salute piena, ma perdi 1d4 punti di salute mentale. Il nemico che ti ha sconfitto si riprende del tutto.</p>
-            <p><b>Se la salute mentale arriva a 0, la partita finisce.</b> Tienila d'occhio: prove fallite, sconfitte e certi luoghi la consumano.</p>`],
+            <p><b>Se la salute mentale arriva a 0, la partita finisce.</b> Tienila d'occhio: prove fallite, sconfitte e certi luoghi la consumano.</p>
+            <p>Anche certe scoperte sulla casa feriscono la mente (da 1 a 4 punti, solo la prima volta), ma da sole non la portano mai a 0: lasciano sempre almeno 1 punto.</p>`],
           ["Salvataggi", `
             <p>Puoi tenere fino a tre personaggi. Salva con il pulsante in alto nella pagina di gioco.</p>
             <p>Accedendo con Google dalla pagina iniziale, i salvataggi sono condivisi tra computer e telefono.</p>`]
@@ -229,7 +222,8 @@
             <p>At each level you roll your hit die: physical health + (hit die + Vigour mod.), mental health + (hit die + Spirit mod.), resource + (hit die + its attribute modifier). Your chosen skills grow with your level.</p>`],
           ["Death and mental health", `
             <p>If your physical health reaches 0 you do not truly die: you wake up in a safe place at full health, but lose 1d4 points of mental health. The enemy that beat you recovers fully.</p>
-            <p><b>If your mental health reaches 0, the game is over.</b> Keep an eye on it: failed checks, defeats and certain places wear it down.</p>`],
+            <p><b>If your mental health reaches 0, the game is over.</b> Keep an eye on it: failed checks, defeats and certain places wear it down.</p>
+            <p>Some discoveries about the house also wound the mind (1 to 4 points, only the first time), but on their own they never bring it to 0: they always leave at least 1 point.</p>`],
           ["Saving", `
             <p>You can keep up to three characters. Save with the button at the top of the game page.</p>
             <p>If you sign in with Google on the home page, your saves are shared between computer and phone.</p>`]
@@ -241,7 +235,7 @@
     document.getElementById("torna").textContent = T.torna;
     document.getElementById("titolo").textContent = T.titolo;
     document.getElementById("sotto").textContent = T.sotto;
-    document.getElementById("sezioni").innerHTML = T.sezioni.map(([t, c], i) => `<details${i === 0 ? " open" : ""}><summary>${t}</summary><div class="corpo">${c}</div></details>`).join("");
+    Sicuro.html(document.getElementById("sezioni"), T.sezioni.map(([t, c], i) => `<details${i === 0 ? " open" : ""}><summary>${t}</summary><div class="corpo">${c}</div></details>`).join(""));
   </script>
 </body>
 </html>

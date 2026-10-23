@@ -3,7 +3,16 @@
    Si cambia un valore qui e cambia ovunque: il regolamento non resta mai indietro rispetto al gioco.
    Contiene solo meccaniche visibili al giocatore, niente dinamiche di trama.
    ===================================================================== */
-window.Regole = Object.freeze({
+window.Regole = (() => {
+  const CLASSI = { /* chiavi interne: Soldato = Guerriero, Forestiero = Sciamano, Sapiente = Arcanista, Accolito = Monaco */
+    Soldato: { dado: 10, risorsa: "ira", attrRisorsa: "Vigore" },
+    Forestiero: { dado: 8, risorsa: "natura", attrRisorsa: "Spirito" },
+    Sapiente: { dado: 6, risorsa: "mana", attrRisorsa: "Mente" },
+    Accolito: { dado: 6, risorsa: "fede", attrRisorsa: "Spirito" }
+  };
+  const perClasse = (filtro, valore) => Object.fromEntries(Object.entries(CLASSI).filter(([, c]) => filtro(c)).map(([k, c]) => [k, valore(c)]));
+  const marziale = (c) => c.risorsa === "ira" || c.risorsa === "natura";
+  return Object.freeze({
   /* attributi */
   ATTRIBUTI: ["Vigore", "Agilità", "Mente", "Spirito"],
   VALORE_MINIMO: 10,
@@ -26,13 +35,11 @@ window.Regole = Object.freeze({
   MAX_ABILITA: 4,
   MAX_DOTAZIONE: 3,
 
-  /* classi (chiavi interne: Soldato = Guerriero, Forestiero = Sciamano, Sapiente = Arcanista, Accolito = Monaco) */
-  CLASSI: {
-    Soldato: { dado: 10, risorsa: "ira", attrRisorsa: "Vigore" },
-    Forestiero: { dado: 8, risorsa: "natura", attrRisorsa: "Spirito" },
-    Sapiente: { dado: 6, risorsa: "mana", attrRisorsa: "Mente" },
-    Accolito: { dado: 6, risorsa: "fede", attrRisorsa: "Spirito" }
-  },
+  CLASSI,
+  /* ricavati da CLASSI, così creazione e gioco non li ricopiano */
+  DADO_VITA: perClasse(() => true, c => c.dado),
+  RISORSA_MARZIALE: perClasse(marziale, c => ({ id: c.risorsa, attr: c.attrRisorsa })), /* punti ira (Guerriero), punti natura (Sciamano) */
+  ATTR_MAGIA: perClasse(c => !marziale(c), c => c.attrRisorsa),                         /* attributo del mana (Arcanista) e della fede (Monaco) */
   ARMATURE_CLASSI: { Forestiero: ["Armatura leggera", "Armatura media"], Sapiente: ["Armatura leggera"], Accolito: ["Armatura leggera", "Armatura media"] },
   RISORSA_BASE: 10,            /* mana, fede, ira, natura = 10 + modificatore */
   MAX_INCANTESIMI: 4,
@@ -54,3 +61,4 @@ window.Regole = Object.freeze({
   LIVELLO_MAX: 5,
   SOGLIE_PE: [0, 500, 1500, 3000, 5000] /* PE totali per raggiungere il livello 2, 3, 4, 5 */
 });
+})();

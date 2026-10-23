@@ -4,29 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sala d'allenamento</title>
+  <script src="lib/purify.min.js"></script>
+  <script src="sicuro.js"></script>
   <script src="lingua.js"></script>
   <script src="volume.js"></script>
+  <script src="lib/howler.core.min.js"></script>
+  <script src="audio.js"></script>
+  <link rel="stylesheet" href="tema.css">
   <style>
     /* Stessa impostazione di pagina di gioco.html, con in più la scheda del nemico a destra:
        scheda personaggio | linea | gioco | linea | scheda nemico */
-    :root {
-      /* azzurro = personaggio, arancione = nemico */
-      --bg: #f5f7fa; --text: #1d2733; --muted: #5b6675; --line: #c9d1db; --accent: #2f6fed;
-      --tip-bg: #e9f0fd; --tip-line: #b4c9f2; --pg-bg: #e6eefd; --pg-line: #8fb0f0;
-      --fuoco: #c2531b; --nem-bg: #fcece2; --nem-line: #eba987;
-      --ok: #23824a; --ok-bg: #e5f4ea; --ok-line: #8fcba3; --ko: #c0392b; --ko-bg: #fae6e4; --ko-line: #e3a29b;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #161b22; --text: #e8edf3; --muted: #9aa5b4; --line: #2f3844; --accent: #5b92ff;
-        --tip-bg: #1e2a3f; --tip-line: #38527d; --pg-bg: #1b2a44; --pg-line: #4a74c4;
-        --fuoco: #ff8a4c; --nem-bg: #33231a; --nem-line: #a85a32;
-        --ok: #6fd39a; --ok-bg: #1b2e23; --ok-line: #3f7a55; --ko: #ff7b6b; --ko-bg: #34201f; --ko-line: #8a4640;
-      }
-    }
+
     * { box-sizing: border-box; }
     html, body { height: 100%; }
-    body { margin: 0; background: var(--bg); color: var(--text); font-family: Georgia, "Times New Roman", serif; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--f-testo); }
 
     /* ---------- Struttura ---------- */
     .app { display: grid; grid-template-columns: 20rem 1px minmax(0, 1fr) 1px 20rem; height: 100vh; height: 100dvh; }
@@ -103,7 +94,7 @@
     details.voce.giocatore.t-ok > summary::before { color: var(--ok); }
     details.voce.giocatore.t-ko > summary::before { color: var(--ko); }
     .voce .attenzione { color: var(--ko); }
-    .voce.prova { padding: 1rem 1.25rem; border: 1px solid var(--accent); border-radius: 0.5rem; background: rgba(91,146,255,0.07); }
+    .voce.prova { padding: 1rem 1.25rem; border: 1px solid var(--accent); border-radius: 0.5rem; background: color-mix(in srgb, var(--accent) 7%, transparent); }
     .voce.prova p { margin: 0 0 0.5rem; }
     .voce.prova p.prova-titolo { font-weight: 700; font-size: 1.15rem; color: var(--accent); letter-spacing: 0.03em; }
     .voce.prova p.prova-azione { font-style: italic; }
@@ -114,7 +105,7 @@
     .voce.prova kbd.nem { color: var(--fuoco); }
     .voce.prova .evid { color: var(--accent); font-weight: 700; }
     /* riquadro di una mossa speciale del nemico (Presa) */
-    .voce.prova.nemica { border-color: var(--fuoco); background: rgba(255,138,76,0.08); }
+    .voce.prova.nemica { border-color: var(--fuoco); background: color-mix(in srgb, var(--fuoco) 8%, transparent); }
     .voce.prova.nemica p.prova-titolo { color: var(--fuoco); }
     .voce.sistema p { color: var(--muted); font-size: 1rem; margin: 0; }
     .voce.sistema kbd { font-family: inherit; font-style: italic; color: var(--text); }
@@ -791,28 +782,21 @@
        Pulsante 🔊/🔇 come in gioco.html; la scelta è condivisa con il gioco (localStorage "audio"). */
     const AUDIO_TXT = { it: { home: "Torna alla pagina iniziale" }, en: { home: "Back to the home page" } }[LINGUA];
     const Musica = (() => {
-      const a = new Audio("audio/sala_addestramento.mp3");
-      a.loop = true; a.preload = "none";
-      a.addEventListener("error", () => console.warn("Musica dello scontro non trovata:", a.src));
-      const VOL = 0.7; /* volume massimo del brano; il cursore lo scala */
-      let attiva = false, timer = null;
+      const VOL = 0.7; /* volume massimo del brano; il cursore lo scala (audio.js) */
+      const a = Sonoro.traccia("audio/sala_addestramento.mp3", { loop: true, volume: VOL, preload: false })
+        .onErrore(tipo => { if (tipo === "carico") console.warn("Musica dello scontro non trovata: audio/sala_addestramento.mp3"); });
+      let attiva = false;
       const spento = () => Volume.muto || Volume.livello === 0;
-      const sfuma = (verso, ms, poi) => {
-        clearInterval(timer);
-        const da = a.volume, passi = 20; let i = 0;
-        timer = setInterval(() => { i++; a.volume = Math.max(0, Math.min(1, da + (verso - da) * i / passi)); if (i >= passi) { clearInterval(timer); if (poi) poi(); } }, ms / passi);
-      };
-      const suona = () => { if (spento() || !attiva || document.hidden) return; a.volume = 0; a.play().then(() => sfuma(VOL * Volume.livello, 1200)).catch(() => {}); };
-      const taci = (ms = 600) => sfuma(0, ms, () => a.pause());
+      const suona = () => { if (spento() || !attiva || document.hidden) return; a.suona(1200); };
+      const taci = (ms = 600) => a.ferma(ms);
       document.addEventListener("visibilitychange", () => (document.hidden ? taci(200) : suona()));
       return {
-        avvia() { attiva = true; a.currentTime = 0; suona(); },          /* inizio dello scontro */
+        avvia() { attiva = true; a.riavvolgi(); suona(); },              /* inizio dello scontro */
         ferma(ms) { attiva = false; taci(ms); },                          /* fine dello scontro */
-        /* il giocatore ha cambiato volume o silenziato */
+        /* il giocatore ha cambiato volume o silenziato (il volume lo applica audio.js) */
         aggiorna() {
           if (spento()) return taci(200);
-          if (!attiva) return;
-          if (a.paused) suona(); else { clearInterval(timer); a.volume = Math.min(1, VOL * Volume.livello); }
+          if (attiva && a.inPausa()) suona();
         }
       };
     })();
@@ -866,30 +850,28 @@
     function disegnaPg() {
       $("nomePg").textContent = t.pgNome;
       $("subPg").textContent = t.subPg;
-      $("vitaliPg").innerHTML =
-        riga(t.puntiSalute, `${Math.max(0, pg.pv)} / ${pg.pvMax}`) +
+      Sicuro.html($("vitaliPg"), riga(t.puntiSalute, `${Math.max(0, pg.pv)} / ${pg.pvMax}`) +
         riga(t.puntiMentali, `${pg.sm} / ${pg.smMax}`) +
-        riga(t.classeArmaturaG, caPg());
-      $("statPg").innerHTML = ATTR.map(a => riga(t.attr[a], `${PG_BASE.stat[a]} (${fmt(mod(PG_BASE.stat[a]))})`)).join("");
-      $("abilPg").innerHTML = ABILITA_TUTTE.map(([n, a]) => {
+        riga(t.classeArmaturaG, caPg()));
+      Sicuro.html($("statPg"), ATTR.map(a => riga(t.attr[a], `${PG_BASE.stat[a]} (${fmt(mod(PG_BASE.stat[a]))})`)).join(""));
+      Sicuro.html($("abilPg"), ABILITA_TUTTE.map(([n, a]) => {
         const addestrata = PG_BASE.abilita.some(x => x[0] === n);
         const malus = a === "Agilità" && malusPg() ? `<small class="malus">${t.malusEquip(malusPg())}</small>` : "";
         return `<dt class="${addestrata ? "addestrata" : ""}">${t.abTutte[n]}</dt><dd>${fmt(valoreAbilitaPg(n, a))}${malus}</dd>`;
-      }).join("");
+      }).join(""));
       const e = t.eq;
-      $("equipPg").innerHTML =
-        voceEquip(t.manoPrimaria, e.spada[0], [`1d6 + ${t.modLotta}`, t.danni.Tagliente, t.mani(1)], "spada") +
+      Sicuro.html($("equipPg"), voceEquip(t.manoPrimaria, e.spada[0], [`1d6 + ${t.modLotta}`, t.danni.Tagliente, t.mani(1)], "spada") +
         (pg.sinistra === "scudo" ? voceEquip(t.manoSecondaria, e.scudo[0], [t.caBonus(1), t.malusAg(1)], "scudo")
           : pg.sinistra === "torcia" ? voceEquip(t.manoSecondaria, `${e.torcia[0]} ×${pg.torcia}`, [`1d4 + ${t.modLotta}`, t.danni.Contundente], "torcia")
           : riga(t.manoSecondaria, "—")) +
-        voceEquip(t.armaturaG, e.armatura[0], [t.caBonus(2), t.noMalus], "armatura");
+        voceEquip(t.armaturaG, e.armatura[0], [t.caBonus(2), t.noMalus], "armatura"));
       /* zaino: pozione, torcia se non è in mano, scudo se riposto, collare se preso */
       let z = "";
       if (pg.pozioni) z += oggettoZaino(`${e.pozione[0]} ×${pg.pozioni}`, t.descPozione, "", "pozione");
       if (pg.sinistra !== "torcia" && pg.torcia) z += oggettoZaino(`${e.torcia[0]} ×${pg.torcia}`, t.descTorcia, "", "torcia");
       if (pg.sinistra !== "scudo") z += oggettoZaino(e.scudo[0], `${t.caBonus(1)} · ${t.malusAg(1)}`, `${t.caBonus(1)} · ${t.malusAg(1)}`, "scudo");
       if (collarePreso) z += collareHtml("collare");
-      $("zainoPg").innerHTML = z || `<p class="vuoto">${t.zainoVuoto}</p>`;
+      Sicuro.html($("zainoPg"), z || `<p class="vuoto">${t.zainoVuoto}</p>`);
     }
 
     /* Scheda del nemico: stessa struttura del personaggio; tutto coperto finché la belva è viva */
@@ -900,19 +882,19 @@
       let cond = "";
       if (nem.pvMax) { const r = nem.pv / nem.pvMax; cond = t.cond[r <= 0 ? 3 : r > 0.66 ? 0 : r > 0.33 ? 1 : 2]; }
       $("condNem").textContent = cond;
-      $("vitaliNem").innerHTML = morto
+      Sicuro.html($("vitaliNem"), morto
         ? riga(t.puntiSalute, `0 / ${nem.pvMax}`) + riga(t.classeArmaturaG, NEM_BASE.ca)
-        : riga(t.puntiSalute, ig) + riga(t.classeArmaturaG, ig);
+        : riga(t.puntiSalute, ig) + riga(t.classeArmaturaG, ig));
       const velo = `<p class="vuoto">${t.nemVelataStat}</p>`;
-      if (!morto) { $("statNem").innerHTML = velo; $("abilNem").innerHTML = velo; $("equipNem").innerHTML = velo; return; }
-      $("statNem").innerHTML = `<dl>${ATTR.map(a => riga(t.attr[a], `${NEM_BASE.stat[a]} (${fmt(mod(NEM_BASE.stat[a]))})`)).join("")}</dl>`;
-      $("abilNem").innerHTML = `<dl>${ABILITA_TUTTE.map(([n, a]) => riga(t.abTutte[n], fmt(mod(NEM_BASE.stat[a])))).join("")}</dl>`;
-      $("equipNem").innerHTML = `<dl>` +
+      if (!morto) { Sicuro.html($("statNem"), velo); Sicuro.html($("abilNem"), velo); Sicuro.html($("equipNem"), velo); return; }
+      Sicuro.html($("statNem"), `<dl>${ATTR.map(a => riga(t.attr[a], `${NEM_BASE.stat[a]} (${fmt(mod(NEM_BASE.stat[a]))})`)).join("")}</dl>`);
+      Sicuro.html($("abilNem"), `<dl>${ABILITA_TUTTE.map(([n, a]) => riga(t.abTutte[n], fmt(mod(NEM_BASE.stat[a])))).join("")}</dl>`);
+      Sicuro.html($("equipNem"), `<dl>` +
         voceEquip(t.morso, `1d4 + ${t.modLotta}`, [t.danni.Perforante], "n-morso") +
         voceEquip(t.zampata, `1d4 + ${t.modLotta}`, [t.danni.Tagliente], "n-zampata") +
         voceEquip(t.speciale, t.presaNome, [t.descPresa], "n-presa") +
         (collarePreso ? riga(t.collareVoce, "—") : voceEquip(t.collareVoce, t.collare, [`<b>${t.collareTit}</b>${t.collareDesc}`], "n-collare")) +
-        `</dl>`;
+        `</dl>`);
     }
 
     function disegna() { disegnaPg(); disegnaNemico(); }
@@ -923,7 +905,7 @@
     function voce(html, classe) {
       const d = document.createElement("div");
       d.className = "voce" + (classe ? " " + classe : "");
-      d.innerHTML = html;
+      Sicuro.html(d, html);
       ((!fuori && gruppo) || $("diario")).append(d);
       d.scrollIntoView({ block: "nearest" });
       return d;

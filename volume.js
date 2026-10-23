@@ -16,6 +16,7 @@ window.Volume = (() => {
     if (Number.isFinite(v)) livello = Math.min(1, Math.max(0, v));
   } catch (e) {}
   const ascoltatori = [];
+  const html = (el, markup) => (window.Sicuro ? Sicuro.html(el, markup) : (el.innerHTML = markup)); /* sicuro.js se la pagina lo carica */
   const salva = () => { try { localStorage.setItem(K_MUTO, muto ? "off" : "on"); localStorage.setItem(K_LIV, String(livello)); } catch (e) {} };
   const notifica = () => { salva(); ascoltatori.forEach(f => { try { f(); } catch (e) {} }); disegna(); };
 
@@ -36,7 +37,7 @@ window.Volume = (() => {
   function disegna() {
     if (!btn) return;
     const t = TX[lingua()], spento = muto || livello === 0;
-    btn.innerHTML = icona(muto, livello);
+    html(btn, icona(muto, livello));
     btn.title = spento ? t.muto : `${t.volume} ${Math.round(livello * 100)}%`;
     btn.setAttribute("aria-label", t.apri + " — " + btn.title);
     cursore.value = Math.round(livello * 100);
@@ -79,9 +80,9 @@ window.Volume = (() => {
     pannello = document.createElement("div"); pannello.className = "volume-pannello"; pannello.hidden = true;
     pannello.id = "volume-pannello"; btn.setAttribute("aria-controls", pannello.id);
     const t = TX[lingua()];
-    pannello.innerHTML = `<div class="volume-riga"><b>${t.volume}</b><span class="volume-valore"></span></div>` +
+    html(pannello, `<div class="volume-riga"><b>${t.volume}</b><span class="volume-valore"></span></div>` +
       `<input class="volume-cursore" type="range" min="0" max="100" step="1" aria-label="${t.volume}">` +
-      `<button type="button" class="volume-muto"></button>`;
+      `<button type="button" class="volume-muto"></button>`);
     box.append(pannello);
     cursore = pannello.querySelector(".volume-cursore");
     valore = pannello.querySelector(".volume-valore");

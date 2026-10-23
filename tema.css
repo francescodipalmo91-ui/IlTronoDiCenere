@@ -1,0 +1,96 @@
+/* =====================================================================
+   TEMA — colori e caratteri condivisi da tutte le pagine (vedi DESIGN.md)
+
+   Due palette:
+   - «Cenere» (di base): grigi neutri; il colore resta solo dove ha un significato
+     (esito delle prove, dialoghi, nemico, salute bassa).
+   - «Tomo Proibito» (body.fuoco-caldo): cuoio, pergamena, bronzo e oro. In gioco.html si accende
+     nelle stanze dove il fuoco è caldo e si può riposare; si torna a Cenere con una dissolvenza.
+   Caratteri: Lora per tutto il testo, Cinzel solo per i titoli brevi. File in lib/fonts (licenza OFL).
+   I nomi delle variabili sono quelli già usati dalle pagine; gli alias in fondo servono a tutorial e creazione.
+   ===================================================================== */
+@font-face { font-family: "Lora"; font-style: normal; font-weight: 400; font-display: swap; src: url("lib/fonts/lora-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Lora"; font-style: italic; font-weight: 400; font-display: swap; src: url("lib/fonts/lora-latin-400-italic.woff2") format("woff2"); }
+@font-face { font-family: "Lora"; font-style: normal; font-weight: 600; font-display: swap; src: url("lib/fonts/lora-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "Lora"; font-style: italic; font-weight: 600; font-display: swap; src: url("lib/fonts/lora-latin-600-italic.woff2") format("woff2"); }
+@font-face { font-family: "Cinzel"; font-style: normal; font-weight: 600; font-display: swap; src: url("lib/fonts/cinzel-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "Cinzel"; font-style: normal; font-weight: 700; font-display: swap; src: url("lib/fonts/cinzel-latin-700-normal.woff2") format("woff2"); }
+
+/* colori registrati come <color>: così il passaggio Cenere ↔ Tomo Proibito sfuma invece di scattare */
+@property --bg { syntax: "<color>"; inherits: true; initial-value: #141414; }
+@property --text { syntax: "<color>"; inherits: true; initial-value: #d6d6d6; }
+@property --muted { syntax: "<color>"; inherits: true; initial-value: #9a9a9a; }
+@property --line { syntax: "<color>"; inherits: true; initial-value: #333333; }
+@property --accent { syntax: "<color>"; inherits: true; initial-value: #b5b5b5; }
+@property --gold { syntax: "<color>"; inherits: true; initial-value: #e6e6e6; }
+@property --tip-bg { syntax: "<color>"; inherits: true; initial-value: #1c1c1c; }
+@property --tip-line { syntax: "<color>"; inherits: true; initial-value: #333333; }
+@property --cap { syntax: "<color>"; inherits: true; initial-value: #e6e6e6; }
+@property --cap-bg { syntax: "<color>"; inherits: true; initial-value: #222222; }
+@property --cap-line { syntax: "<color>"; inherits: true; initial-value: #4d4d4d; }
+@property --mis { syntax: "<color>"; inherits: true; initial-value: #c8c8c8; }
+@property --mis-bg { syntax: "<color>"; inherits: true; initial-value: #1f1f1f; }
+@property --mis-line { syntax: "<color>"; inherits: true; initial-value: #464646; }
+@property --fine { syntax: "<color>"; inherits: true; initial-value: #e6e6e6; }
+@property --fine-bg { syntax: "<color>"; inherits: true; initial-value: #222222; }
+@property --fine-line { syntax: "<color>"; inherits: true; initial-value: #555555; }
+
+/* ---------- «Cenere» ---------- */
+:root {
+  color-scheme: dark;
+  --f-testo: "Lora", Georgia, "Times New Roman", serif;
+  --f-titoli: "Cinzel", Georgia, serif;
+  --bg: #141414; --text: #d6d6d6; --muted: #9a9a9a; --line: #333333;
+  --accent: #b5b5b5; --accent-text: #141414; --gold: #e6e6e6;
+  --tip-bg: #1c1c1c; --tip-line: #333333;                     /* tendina d'azione senza prova */
+  --ok: #8fbf7a; --ok-bg: #18201a; --ok-line: #3f5a3c;       /* prova superata */
+  --ko: #e0705f; --ko-bg: #2a1716; --ko-line: #74302a;       /* prova fallita */
+  --dlg: #b4a2dc; --dlg-bg: #1f1b28; --dlg-line: #4a3f66;    /* dialoghi */
+  --nem: #d98a57; --nem-bg: #261c14; --nem-line: #6e4626;    /* nemico */
+  --cap: #e6e6e6; --cap-bg: #222222; --cap-line: #4d4d4d;    /* capacità: grigie nella cenere */
+  --mis: #c8c8c8; --mis-bg: #1f1f1f; --mis-line: #464646;    /* missioni: grigie nella cenere */
+  --fine: #e6e6e6; --fine-bg: #222222; --fine-line: #555555; /* missione completata */
+}
+
+/* ---------- «Tomo Proibito»: dove il fuoco è caldo ---------- */
+body.fuoco-caldo {
+  --bg: #181512; --text: #D8C9B2; --muted: #A69882; --line: #3a3129;
+  --accent: #C09563; --accent-text: #181512; --gold: #CFA862;
+  --tip-bg: #211c17; --tip-line: #3a3129;
+  --ok: #9DBB7A; --ok-bg: #1A2116; --ok-line: #45573a;
+  --ko: #E07A6A; --ko-bg: #2B1715; --ko-line: #7a2e28;
+  --dlg: #B9A3E0; --dlg-bg: #211B2D; --dlg-line: #4f3f6e;
+  --nem: #E0905A; --nem-bg: #2A1C12; --nem-line: #7a4a2a;
+  --cap: #CFA862; --cap-bg: #28200F; --cap-line: #6a5426;    /* oro */
+  --mis: #7DB8AE; --mis-bg: #14221F; --mis-line: #2f5a54;    /* verderame */
+  --fine: #D497B2; --fine-bg: #29171F; --fine-line: #6e3a52;
+}
+
+/* alias usati da tutorial e creazione */
+:root, body.fuoco-caldo {
+  --pg-bg: var(--tip-bg); --pg-line: var(--accent); --fuoco: var(--nem);
+  --errore: var(--ko); --rosso-bg: var(--ko-bg); --rosso-line: var(--ko-line);
+  --blu-bg: var(--tip-bg); --blu-line: var(--tip-line);
+  --verde-bg: var(--ok-bg); --verde-line: var(--ok-line);
+  --giallo-bg: var(--cap-bg); --giallo-line: var(--cap-line);
+}
+
+html { background: var(--bg); }
+body {
+  font-family: var(--f-testo);
+  font-variant-numeric: lining-nums; /* cifre allineate nelle schede e nei tiri */
+  transition: --bg 1.2s ease, --text 1.2s ease, --muted 1.2s ease, --line 1.2s ease, --accent 1.2s ease, --gold 1.2s ease,
+    --tip-bg 1.2s ease, --tip-line 1.2s ease, --cap 1.2s ease, --cap-bg 1.2s ease, --cap-line 1.2s ease,
+    --mis 1.2s ease, --mis-bg 1.2s ease, --mis-line 1.2s ease, --fine 1.2s ease, --fine-bg 1.2s ease, --fine-line 1.2s ease;
+}
+@media (prefers-reduced-motion: reduce) { body { transition: none; } }
+button, input, select, textarea { font-family: inherit; }
+
+/* Cinzel: solo titoli brevi (non ha vere minuscole: niente frasi lunghe) */
+h1, .voce h2.luogo, .scheda #nome, #nomeNem, #nomePg, .scheda h2, .scheda details.sez > summary,
+.voce.prova p.prova-titolo, .voce.dialogo p.chi, .voce.mis .proposta .p-chi, #finestraPrep h2 {
+  font-family: var(--f-titoli);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.voce h2.luogo, .scheda #nome, #nomePg { color: var(--gold); }

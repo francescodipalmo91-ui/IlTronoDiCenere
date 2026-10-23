@@ -121,8 +121,11 @@ window.Cloud = (() => {
     scrivi("sync_elim" + n, null);
     return "ok";
   }
-  /* sostituisce il posto locale con quello del cloud */
+  /* un posto scaricato dal cloud è valido solo se è un JSON con un personaggio dentro */
+  const valido = (json) => { try { const o = JSON.parse(json); return !!(o && typeof o === "object" && o.pg && typeof o.pg === "object"); } catch (e) { return false; } };
+  /* sostituisce il posto locale con quello del cloud (dati illeggibili o manomessi: il locale resta com'è) */
   function scarica(n, R) {
+    if (R && !R.eliminato && R.dati && !valido(R.dati)) return;
     if (!R || R.eliminato || !R.dati) {
       scrivi("slot" + n, null);
       if (localStorage.getItem("slot_attivo") === String(n)) ["slot_attivo", "personaggio", "partita"].forEach(k => scrivi(k, null));

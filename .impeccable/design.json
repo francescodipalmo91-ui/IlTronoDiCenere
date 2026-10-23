@@ -1,0 +1,719 @@
+{
+ "schemaVersion": 2,
+ "generatedAt": "2026-10-23T06:15:42+00:00",
+ "title": "Design System: Il Trono di Cenere",
+ "extensions": {
+  "colorMeta": {
+   "ink-night": {
+    "role": "neutral",
+    "displayName": "Ink Night",
+    "canonical": "#161b22",
+    "light": "#f5f7fa",
+    "cssVar": "--bg",
+    "tonalRamp": [
+     "#06080a",
+     "#0b0d11",
+     "#0f1217",
+     "#13181e",
+     "#383d43",
+     "#73767a",
+     "#adafb1",
+     "#e3e3e4"
+    ]
+   },
+   "ink-night-text": {
+    "role": "neutral",
+    "displayName": "Ink Night Text",
+    "canonical": "#e8edf3",
+    "light": "#1d2733",
+    "cssVar": "--text",
+    "tonalRamp": [
+     "#454748",
+     "#747679",
+     "#a2a5aa",
+     "#d0d5da",
+     "#ebeff4",
+     "#f1f4f7",
+     "#f6f8fa",
+     "#fcfcfd"
+    ]
+   },
+   "ash-muted": {
+    "role": "neutral",
+    "displayName": "Ash Muted",
+    "canonical": "#9aa5b4",
+    "light": "#5b6675",
+    "cssVar": "--muted",
+    "tonalRamp": [
+     "#2e3136",
+     "#4d525a",
+     "#6b737d",
+     "#8a94a2",
+     "#a9b2bf",
+     "#c2c9d2",
+     "#dbdfe4",
+     "#f2f4f6"
+    ]
+   },
+   "ash-line": {
+    "role": "neutral",
+    "displayName": "Ash Line",
+    "canonical": "#2f3844",
+    "light": "#c9d1db",
+    "cssVar": "--line",
+    "tonalRamp": [
+     "#0e1014",
+     "#171c22",
+     "#20272f",
+     "#2a323d",
+     "#4e5560",
+     "#82878e",
+     "#b6b9bd",
+     "#e6e7e8"
+    ]
+   },
+   "lantern-blue": {
+    "role": "primary",
+    "displayName": "Lantern Blue",
+    "canonical": "#5b92ff",
+    "light": "#2f6fed",
+    "cssVar": "--accent",
+    "tonalRamp": [
+     "#1b2b4c",
+     "#2d497f",
+     "#3f66b2",
+     "#5183e5",
+     "#73a2ff",
+     "#9cbdff",
+     "#c5d8ff",
+     "#ebf1ff"
+    ]
+   },
+   "lantern-blue-wash": {
+    "role": "primary",
+    "displayName": "Lantern Blue Wash",
+    "canonical": "#1e2a3f",
+    "light": "#e9f0fd",
+    "cssVar": "--tip-bg",
+    "tonalRamp": [
+     "#090c12",
+     "#0f151f",
+     "#151d2c",
+     "#1b2538",
+     "#3f495b",
+     "#787f8b",
+     "#b0b4bb",
+     "#e4e5e7"
+    ]
+   },
+   "lantern-blue-edge": {
+    "role": "primary",
+    "displayName": "Lantern Blue Edge",
+    "canonical": "#38527d",
+    "light": "#b4c9f2",
+    "cssVar": "--tip-line",
+    "tonalRamp": [
+     "#101825",
+     "#1c293e",
+     "#273957",
+     "#324970",
+     "#556b90",
+     "#8797b1",
+     "#b9c2d1",
+     "#e7eaef"
+    ]
+   },
+   "verdict-green": {
+    "role": "tertiary",
+    "displayName": "Verdict Green",
+    "canonical": "#6fd39a",
+    "light": "#23824a",
+    "cssVar": "--ok",
+    "tonalRamp": [
+     "#213f2e",
+     "#37694d",
+     "#4d936b",
+     "#63bd8a",
+     "#84d9a9",
+     "#a8e4c2",
+     "#ccefdb",
+     "#edf9f2"
+    ]
+   },
+   "verdict-green-wash": {
+    "role": "tertiary",
+    "displayName": "Verdict Green Wash",
+    "canonical": "#1d2c23",
+    "light": "#e7f3ea",
+    "cssVar": "--ok-bg",
+    "tonalRamp": [
+     "#080d0a",
+     "#0e1611",
+     "#141e18",
+     "#1a271f",
+     "#3e4b44",
+     "#77807b",
+     "#afb5b2",
+     "#e3e5e4"
+    ]
+   },
+   "verdict-green-edge": {
+    "role": "tertiary",
+    "displayName": "Verdict Green Edge",
+    "canonical": "#3f6b4c",
+    "light": "#a3cbab",
+    "cssVar": "--ok-line",
+    "tonalRamp": [
+     "#122016",
+     "#1f3526",
+     "#2c4a35",
+     "#386044",
+     "#5b8166",
+     "#8ba693",
+     "#bbcbc0",
+     "#e7ede9"
+    ]
+   },
+   "verdict-red": {
+    "role": "tertiary",
+    "displayName": "Verdict Red",
+    "canonical": "#ff7b6b",
+    "light": "#c0392b",
+    "cssVar": "--ko",
+    "tonalRamp": [
+     "#4c2420",
+     "#7f3d35",
+     "#b2564a",
+     "#e56e60",
+     "#ff8e81",
+     "#ffafa6",
+     "#ffd0cb",
+     "#ffefed"
+    ]
+   },
+   "verdict-red-wash": {
+    "role": "tertiary",
+    "displayName": "Verdict Red Wash",
+    "canonical": "#2f2022",
+    "light": "#f8e8e8",
+    "cssVar": "--ko-bg",
+    "tonalRamp": [
+     "#0e090a",
+     "#171011",
+     "#201617",
+     "#2a1c1e",
+     "#4e4143",
+     "#82797a",
+     "#b6b0b1",
+     "#e6e4e4"
+    ]
+   },
+   "verdict-red-edge": {
+    "role": "tertiary",
+    "displayName": "Verdict Red Edge",
+    "canonical": "#7b4549",
+    "light": "#dcaaaa",
+    "cssVar": "--ko-line",
+    "tonalRamp": [
+     "#241415",
+     "#3d2224",
+     "#563033",
+     "#6e3e41",
+     "#8e6064",
+     "#af8f91",
+     "#d0bdbf",
+     "#efe8e9"
+    ]
+   },
+   "whisper-violet": {
+    "role": "secondary",
+    "displayName": "Whisper Violet",
+    "canonical": "#bb9cf0",
+    "light": "#7a4fb5",
+    "cssVar": "--dlg",
+    "tonalRamp": [
+     "#382e48",
+     "#5d4e78",
+     "#826da8",
+     "#a88cd8",
+     "#c5aaf2",
+     "#d6c3f6",
+     "#e7dcf9",
+     "#f6f3fd"
+    ]
+   },
+   "whisper-violet-wash": {
+    "role": "secondary",
+    "displayName": "Whisper Violet Wash",
+    "canonical": "#2a2238",
+    "light": "#f2ecfa",
+    "cssVar": "--dlg-bg",
+    "tonalRamp": [
+     "#0c0a10",
+     "#15111c",
+     "#1d1727",
+     "#251e32",
+     "#494355",
+     "#7f7a87",
+     "#b4b1b9",
+     "#e5e4e7"
+    ]
+   },
+   "whisper-violet-edge": {
+    "role": "secondary",
+    "displayName": "Whisper Violet Edge",
+    "canonical": "#5b4880",
+    "light": "#cdb8ea",
+    "cssVar": "--dlg-line",
+    "tonalRamp": [
+     "#1b1526",
+     "#2d2440",
+     "#3f3259",
+     "#514073",
+     "#736393",
+     "#9c91b2",
+     "#c5bed2",
+     "#ebe9ef"
+    ]
+   },
+   "ember-amber": {
+    "role": "tertiary",
+    "displayName": "Ember Amber",
+    "canonical": "#f0b45c",
+    "light": "#9a5b0c",
+    "cssVar": "--cap",
+    "tonalRamp": [
+     "#48361b",
+     "#785a2e",
+     "#a87d40",
+     "#d8a252",
+     "#f2bf74",
+     "#f6d29d",
+     "#f9e4c5",
+     "#fdf6eb"
+    ]
+   },
+   "ember-amber-wash": {
+    "role": "tertiary",
+    "displayName": "Ember Amber Wash",
+    "canonical": "#2e2416",
+    "light": "#fbf1e1",
+    "cssVar": "--cap-bg",
+    "tonalRamp": [
+     "#0d0a06",
+     "#17120b",
+     "#20190f",
+     "#292013",
+     "#4d4438",
+     "#817b73",
+     "#b5b2ad",
+     "#e5e4e3"
+    ]
+   },
+   "ember-amber-edge": {
+    "role": "tertiary",
+    "displayName": "Ember Amber Edge",
+    "canonical": "#6f5328",
+    "light": "#e5c48f",
+    "cssVar": "--cap-line",
+    "tonalRamp": [
+     "#21180c",
+     "#372914",
+     "#4d3a1c",
+     "#634a24",
+     "#846c48",
+     "#a8977e",
+     "#ccc2b3",
+     "#edeae5"
+    ]
+   },
+   "vow-teal": {
+    "role": "tertiary",
+    "displayName": "Vow Teal",
+    "canonical": "#5fd0c8",
+    "light": "#12706f",
+    "cssVar": "--mis",
+    "tonalRamp": [
+     "#1c3e3c",
+     "#2f6864",
+     "#42918c",
+     "#55bbb4",
+     "#77d7d0",
+     "#9fe2de",
+     "#c7eeeb",
+     "#ebf9f8"
+    ]
+   },
+   "vow-teal-wash": {
+    "role": "tertiary",
+    "displayName": "Vow Teal Wash",
+    "canonical": "#162b2a",
+    "light": "#e2f3f2",
+    "cssVar": "--mis-bg",
+    "tonalRamp": [
+     "#060c0c",
+     "#0b1515",
+     "#0f1e1d",
+     "#132625",
+     "#384a49",
+     "#737f7f",
+     "#adb4b4",
+     "#e3e5e5"
+    ]
+   },
+   "vow-teal-edge": {
+    "role": "tertiary",
+    "displayName": "Vow Teal Edge",
+    "canonical": "#2f6461",
+    "light": "#9ccfcc",
+    "cssVar": "--mis-line",
+    "tonalRamp": [
+     "#0e1e1d",
+     "#173230",
+     "#204643",
+     "#2a5a57",
+     "#4e7b78",
+     "#82a2a0",
+     "#b6c8c7",
+     "#e6ecec"
+    ]
+   },
+   "hound-orange": {
+    "role": "secondary",
+    "displayName": "Hound Orange",
+    "canonical": "#ff9b5e",
+    "light": "#b4541a",
+    "cssVar": "--nem",
+    "tonalRamp": [
+     "#4c2e1c",
+     "#7f4d2f",
+     "#b26c41",
+     "#e58b54",
+     "#ffaa76",
+     "#ffc39e",
+     "#ffdcc6",
+     "#fff3eb"
+    ]
+   },
+   "hound-orange-wash": {
+    "role": "secondary",
+    "displayName": "Hound Orange Wash",
+    "canonical": "#2e2016",
+    "light": "#fbeee4",
+    "cssVar": "--nem-bg",
+    "tonalRamp": [
+     "#0d0906",
+     "#17100b",
+     "#20160f",
+     "#291c13",
+     "#4d4138",
+     "#817973",
+     "#b5b0ad",
+     "#e5e4e3"
+    ]
+   },
+   "hound-orange-edge": {
+    "role": "secondary",
+    "displayName": "Hound Orange Edge",
+    "canonical": "#7a4a2a",
+    "light": "#e6b48f",
+    "cssVar": "--nem-line",
+    "tonalRamp": [
+     "#24160c",
+     "#3d2515",
+     "#55331d",
+     "#6d4225",
+     "#8d6549",
+     "#af927f",
+     "#d0bfb4",
+     "#efe9e5"
+    ]
+   },
+   "requiem-rose": {
+    "role": "tertiary",
+    "displayName": "Requiem Rose",
+    "canonical": "#f08bb8",
+    "light": "#a4285e",
+    "cssVar": "--fine",
+    "tonalRamp": [
+     "#482937",
+     "#78455c",
+     "#a86180",
+     "#d87da5",
+     "#f29cc2",
+     "#f6b9d4",
+     "#f9d6e6",
+     "#fdf1f6"
+    ]
+   },
+   "requiem-rose-wash": {
+    "role": "tertiary",
+    "displayName": "Requiem Rose Wash",
+    "canonical": "#2e1923",
+    "light": "#fbe9f1",
+    "cssVar": "--fine-bg",
+    "tonalRamp": [
+     "#0d070a",
+     "#170c11",
+     "#201118",
+     "#29161f",
+     "#4d3b44",
+     "#81757b",
+     "#b5aeb2",
+     "#e5e3e4"
+    ]
+   },
+   "requiem-rose-edge": {
+    "role": "tertiary",
+    "displayName": "Requiem Rose Edge",
+    "canonical": "#7a3a58",
+    "light": "#e6a9c4",
+    "cssVar": "--fine-line",
+    "tonalRamp": [
+     "#24111a",
+     "#3d1d2c",
+     "#55283d",
+     "#6d344f",
+     "#8d5771",
+     "#af889a",
+     "#d0bac4",
+     "#efe7ea"
+    ]
+   },
+   "alarm-red": {
+    "role": "tertiary",
+    "displayName": "Alarm Red",
+    "canonical": "#ff2d2d",
+    "light": "#ff2d2d",
+    "cssVar": "--allarme",
+    "tonalRamp": [
+     "#4c0d0d",
+     "#7f1616",
+     "#b21f1f",
+     "#e52828",
+     "#ff4c4c",
+     "#ff8181",
+     "#ffb5b5",
+     "#ffe5e5"
+    ]
+   },
+   "threshold-black": {
+    "role": "neutral",
+    "displayName": "Threshold Black",
+    "canonical": "#07090d",
+    "light": "#07090d",
+    "cssVar": "--bg (index.html)",
+    "tonalRamp": [
+     "#020203",
+     "#030406",
+     "#040609",
+     "#06080b",
+     "#2c2d31",
+     "#6a6b6d",
+     "#a8a8aa",
+     "#e1e1e1"
+    ]
+   }
+  },
+  "typographyMeta": {
+   "display": {
+    "displayName": "Display",
+    "purpose": "Solo il titolo della pagina iniziale."
+   },
+   "headline": {
+    "displayName": "Headline",
+    "purpose": "Nome della stanza (h2.luogo)."
+   },
+   "title": {
+    "displayName": "Title",
+    "purpose": "Titoli dei riquadri di prova e semantici."
+   },
+   "body": {
+    "displayName": "Body",
+    "purpose": "Narrazione del diario."
+   },
+   "body-sheet": {
+    "displayName": "Body Sheet",
+    "purpose": "Schede di personaggio e nemico."
+   },
+   "label": {
+    "displayName": "Label",
+    "purpose": "Nome di chi parla, categorie, titoli degli effetti (maiuscolo)."
+   }
+  },
+  "shadows": [
+   {
+    "name": "pannello",
+    "value": "0 0 40px rgba(0,0,0,0.45)",
+    "purpose": "Scheda a scomparsa su telefono."
+   },
+   {
+    "name": "toast",
+    "value": "0 6px 20px rgba(0,0,0,0.3)",
+    "purpose": "Conferme brevi su telefono."
+   },
+   {
+    "name": "allarme-salute",
+    "value": "0 0 10px 2px rgba(255,45,45,0.55)",
+    "purpose": "Salute fisica bassa (pulsa sotto il 20%)."
+   }
+  ],
+  "motion": [
+   {
+    "name": "pannello",
+    "value": "transform 0.25s ease",
+    "purpose": "Apertura delle schede su telefono."
+   },
+   {
+    "name": "macchina-da-scrivere",
+    "value": "una lettera ogni ~24ms, cursore ▌ 0.9s steps(1)",
+    "purpose": "Battute dei dialoghi."
+   },
+   {
+    "name": "pulsa-rosso",
+    "value": "1.1s ease-in-out infinite",
+    "purpose": "Salute critica."
+   },
+   {
+    "name": "cenere",
+    "value": "3.2–3.4s ease-out",
+    "purpose": "Comparsa e dissoluzione del mastino."
+   },
+   {
+    "name": "ingresso-grotta",
+    "value": "2.6s cubic-bezier(0.55,0,0.75,0.45)",
+    "purpose": "Zoom nel buio entrando nella grotta."
+   }
+  ],
+  "breakpoints": [
+   {
+    "name": "telefono",
+    "value": "820px"
+   },
+   {
+    "name": "stretto",
+    "value": "480px"
+   }
+  ]
+ },
+ "components": [
+  {
+   "name": "Salva partita",
+   "kind": "button",
+   "refersTo": "button-primary",
+   "description": "Unico pulsante pieno: salva la partita (e la copia nel cloud).",
+   "html": "<button class=\"ds-btn-primary\">Salva partita</button>",
+   "css": ".ds-btn-primary{font:600 1rem Georgia,\"Times New Roman\",serif;padding:.55rem 1.2rem;border-radius:.5rem;cursor:pointer;background:var(--accent,#5b92ff);color:var(--bg,#161b22);border:2px solid var(--accent,#5b92ff)}.ds-btn-primary:hover{filter:brightness(1.1)}.ds-btn-primary:focus-visible{outline:3px solid var(--accent,#5b92ff);outline-offset:3px}"
+  },
+  {
+   "name": "Pulsante di scelta",
+   "kind": "button",
+   "refersTo": "button-action",
+   "description": "Scelte proposte dal gioco (tiri di dado, sì/no) e «Invia».",
+   "html": "<button class=\"ds-btn-action\">Tira il d20</button>",
+   "css": ".ds-btn-action{font:1.05rem Georgia,\"Times New Roman\",serif;padding:.7rem 1.1rem;border-radius:.5rem;cursor:pointer;background:transparent;color:var(--text,#e8edf3);border:2px solid var(--accent,#5b92ff)}.ds-btn-action:hover{background:color-mix(in srgb,var(--accent,#5b92ff) 12%,transparent)}.ds-btn-action:focus-visible{outline:3px solid var(--accent,#5b92ff);outline-offset:3px}.ds-btn-action:disabled{opacity:.45;border-color:var(--line,#2f3844);cursor:not-allowed}"
+  },
+  {
+   "name": "Campo di comando",
+   "kind": "input",
+   "refersTo": "input-command",
+   "description": "Dove il giocatore scrive cosa fa il personaggio.",
+   "html": "<input class=\"ds-input-cmd\" placeholder=\"Cosa fai? Per esempio: guardo il falò\">",
+   "css": ".ds-input-cmd{font:1.05rem Georgia,\"Times New Roman\",serif;padding:.7rem 1rem;border-radius:.5rem;border:2px solid var(--line,#2f3844);background:transparent;color:var(--text,#e8edf3);width:100%}.ds-input-cmd::placeholder{color:var(--muted,#9aa5b4)}.ds-input-cmd:focus-visible{outline:3px solid var(--accent,#5b92ff);outline-offset:3px}"
+  },
+  {
+   "name": "Tendina d'azione",
+   "kind": "custom",
+   "refersTo": "action-drawer",
+   "description": "Un'azione del giocatore e tutte le sue conseguenze. Varianti verde/rossa/viola.",
+   "html": "<details class=\"ds-drawer\" open><summary>esamino il fuoco</summary><p>Ti accovacci accanto al falò e tendi le mani verso le fiamme.</p></details><details class=\"ds-drawer ok\"><summary>uso investigazione</summary><p>Prova superata.</p></details><details class=\"ds-drawer ko\"><summary>forzo la porta</summary><p>Prova fallita.</p></details><details class=\"ds-drawer dlg\"><summary>«Chi siete?»</summary><p>«Casa Vespera.»</p></details>",
+   "css": ".ds-drawer{font-family:Georgia,\"Times New Roman\",serif;margin:0 0 1rem;padding:.75rem 1rem;border:1px solid var(--tip-line,#38527d);border-radius:.5rem;background:var(--tip-bg,#1e2a3f);color:var(--text,#e8edf3)}.ds-drawer>summary{display:flex;gap:.6rem;cursor:pointer;list-style:none;color:var(--muted,#9aa5b4);font-style:italic;font-size:1.12rem;line-height:1.75;padding-left:1rem;border-left:2px solid var(--accent,#5b92ff)}.ds-drawer>summary::-webkit-details-marker{display:none}.ds-drawer>summary::before{content:\"▸\";font-style:normal;color:var(--accent,#5b92ff)}.ds-drawer[open]>summary::before{content:\"▾\"}.ds-drawer>summary:focus-visible{outline:3px solid var(--accent,#5b92ff);outline-offset:3px}.ds-drawer p{font-size:1.12rem;line-height:1.75}.ds-drawer.ok{background:var(--ok-bg,#1d2c23);border-color:var(--ok-line,#3f6b4c)}.ds-drawer.ok>summary,.ds-drawer.ok>summary::before{color:var(--ok,#6fd39a);border-left-color:var(--ok,#6fd39a)}.ds-drawer.ko{background:var(--ko-bg,#2f2022);border-color:var(--ko-line,#7b4549)}.ds-drawer.ko>summary,.ds-drawer.ko>summary::before{color:var(--ko,#ff7b6b);border-left-color:var(--ko,#ff7b6b)}.ds-drawer.dlg{background:var(--dlg-bg,#2a2238);border-color:var(--dlg-line,#5b4880)}.ds-drawer.dlg>summary,.ds-drawer.dlg>summary::before{color:var(--dlg,#bb9cf0);border-left-color:var(--dlg,#bb9cf0)}"
+  },
+  {
+   "name": "Riquadro di prova",
+   "kind": "card",
+   "refersTo": "box-check",
+   "description": "Annuncia una prova di abilità con difficoltà, dado e modificatore.",
+   "html": "<div class=\"ds-check\"><p class=\"t\">Prova di Investigazione</p><p class=\"a\">Frughi tra la cenere del camino.</p><div class=\"d\"><span>CD 12</span><span>d20</span><span>Investigazione +1</span></div></div>",
+   "css": ".ds-check{font-family:Georgia,\"Times New Roman\",serif;padding:1rem 1.25rem;border:1px solid var(--accent,#5b92ff);border-radius:.5rem;background:rgba(91,146,255,.07);color:var(--text,#e8edf3)}.ds-check p{margin:0 0 .5rem}.ds-check .t{font-weight:700;font-size:1.15rem;color:var(--accent,#5b92ff);letter-spacing:.03em}.ds-check .a{font-style:italic}.ds-check .d{display:flex;flex-wrap:wrap;gap:.5rem}.ds-check .d span{border:1px solid var(--line,#2f3844);border-radius:999px;padding:.15rem .8rem;font-size:.95rem}"
+  },
+  {
+   "name": "Riquadro del nemico",
+   "kind": "card",
+   "refersTo": "box-enemy",
+   "description": "Mossa del nemico in combattimento.",
+   "html": "<div class=\"ds-enemy\"><p><b>Colpito.</b> Una zampata ardente ti squarcia il fianco.</p><p><b>Danni</b> = 3</p></div>",
+   "css": ".ds-enemy{font-family:Georgia,\"Times New Roman\",serif;padding:1.25rem 1.5rem;border:1px solid var(--nem-line,#7a4a2a);border-radius:.5rem;background:var(--nem-bg,#2e2016);color:var(--text,#e8edf3)}.ds-enemy p{margin:0 0 .4rem;font-size:1.12rem}.ds-enemy p:last-child{margin:0}.ds-enemy b{color:var(--nem,#ff9b5e)}"
+  },
+  {
+   "name": "Riquadro dialogo",
+   "kind": "card",
+   "refersTo": "action-drawer-dialogue",
+   "description": "Risposta di un personaggio: nome in maiuscoletto, battute in corsivo.",
+   "html": "<div class=\"ds-dlg\"><p class=\"chi\">Guendalina</p><p class=\"descr\">Posa il mestolo e ti squadra.</p><p class=\"battuta\">«Un altro novellino.»</p></div>",
+   "css": ".ds-dlg{font-family:Georgia,\"Times New Roman\",serif;padding:.9rem 1.1rem;border:1px solid var(--dlg-line,#5b4880);border-radius:.5rem;background:var(--dlg-bg,#2a2238);color:var(--text,#e8edf3)}.ds-dlg p{margin:0 0 .6rem;font-size:1.12rem;line-height:1.75}.ds-dlg p:last-child{margin:0}.ds-dlg .chi{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dlg,#bb9cf0);margin-bottom:.35rem}.ds-dlg .battuta{font-style:italic}"
+  },
+  {
+   "name": "Fermaglio di grado",
+   "kind": "chip",
+   "description": "Grado di caccia sotto il nome del personaggio.",
+   "html": "<span class=\"ds-clasp bronzo\">Fermaglio di bronzo</span> <span class=\"ds-clasp argento\">Argento</span> <span class=\"ds-clasp oro\">Oro</span> <span class=\"ds-clasp platino\">Platino</span>",
+   "css": ".ds-clasp{display:inline-block;padding:.15rem .7rem;border-radius:1rem;font:600 .85rem Georgia,serif;border:1px solid}.ds-clasp.bronzo{color:#c98a4b;background:color-mix(in srgb,#c98a4b 14%,transparent)}.ds-clasp.argento{color:#c0c7d0;background:color-mix(in srgb,#c0c7d0 14%,transparent)}.ds-clasp.oro{color:#e3b341;background:color-mix(in srgb,#e3b341 14%,transparent)}.ds-clasp.platino{color:#a8d8e8;background:color-mix(in srgb,#a8d8e8 14%,transparent)}"
+  }
+ ],
+ "narrative": {
+  "northStar": "Il Diario di Cenere",
+  "overview": "Il gioco è un diario che si scrive mentre lo si vive. Ogni azione del giocatore apre una tendina, e dentro la tendina cade tutto ciò che quell'azione ha provocato: la narrazione, la prova di abilità, il colpo del mastino, la voce di Guendalina. La pagina è una colonna di testo serif lunga e scorrevole, letta come un libro, con l'interfaccia ridotta a una scheda del personaggio a sinistra e a una riga di comando in basso. Il testo è il protagonista; immagini delle stanze e riquadri colorati sono punteggiatura.\n\nLa personalità sta nel **colore come significato**: ogni tinta ha un solo compito (azzurro = tu, verde = prova superata, rosso = prova fallita, viola = dialogo, arancione = nemico, ambra = capacità, verde acqua = missioni, rosa antico = missione completata). Il giocatore impara il codice in pochi minuti e legge l'esito di una mossa prima ancora delle parole. Su questo codice si innestano gli effetti di stato del personaggio: cornice rossa che pulsa con la salute bassa, ritratto incrinato e testo sdoppiato con la mente che cede.\n\nDensità media, ritmo da romanzo: righe alte (1.75), spazi generosi tra le voci (1.5rem), niente ombre decorative. La pagina iniziale è l'unica superficie \"cinematografica\" (video a tutto schermo, titolo spaziato in maiuscolo); il resto lavora in modalità lettura.",
+  "keyCharacteristics": [
+   "Un'unica famiglia serif (Georgia) per tutto, gerarchia affidata a peso, corsivo e maiuscoletto spaziato.",
+   "Tendine `<details>` come unità narrativa: un'azione = una tendina.",
+   "Codice cromatico semantico stabile su tutte le pagine (tutorial, gioco, regolamento).",
+   "Stato del personaggio reso visibile sul corpo dell'interfaccia (cornici, crepe, distorsioni), non solo nei numeri.",
+   "Tema chiaro e scuro seguono il sistema operativo (`prefers-color-scheme`)."
+  ],
+  "rules": [
+   {
+    "name": "The One Meaning Rule",
+    "body": "Ogni tinta ha un solo significato in tutto il gioco. Un nuovo tipo di contenuto riceve un colore nuovo, mai uno già usato con un altro senso (i dialoghi hanno avuto il viola proprio per questo).",
+    "section": "colors"
+   },
+   {
+    "name": "The Wash-and-Edge Rule",
+    "body": "I riquadri semantici usano sempre la coppia `-wash` per il fondo e `-edge` per il bordo da 1px; la tinta piena è riservata al titolo del riquadro e alla freccia della tendina.",
+    "section": "colors"
+   },
+   {
+    "name": "The Alarm Is Not a Verdict Rule",
+    "body": "Alarm Red parla solo della salute del personaggio. Una prova fallita usa Verdict Red, mai l'allarme.",
+    "section": "colors"
+   },
+   {
+    "name": "The Voice Rule",
+    "body": "Le parole dei personaggi (righe che iniziano con «) sono in corsivo; descrizioni e narrazione restano in tondo. Le azioni del giocatore nelle tendine sono in corsivo e color cenere, come una nota a margine.",
+    "section": "typography"
+   },
+   {
+    "name": "The One Family Rule",
+    "body": "Nessun secondo font. La gerarchia si costruisce con peso, corsivo, maiuscoletto e dimensione.",
+    "section": "typography"
+   },
+   {
+    "name": "The Flat Page Rule",
+    "body": "Il diario è carta: niente ombre su voci, tendine o riquadri. Un'ombra significa \"questo sta sopra la partita\" oppure \"sei in pericolo\".",
+    "section": "elevation"
+   }
+  ],
+  "dos": [
+   "**Do** dare a ogni nuovo tipo di contenuto un colore proprio con tinta, `-wash` e `-edge`, in entrambi i temi.",
+   "**Do** mettere le conseguenze di un'azione dentro la sua tendina; fuori dalla tendina vanno solo i messaggi dei pulsanti e i riquadri dei dialoghi \"fuori\".",
+   "**Do** tenere le battute dei personaggi in corsivo e le descrizioni in tondo.",
+   "**Do** rispettare `prefers-reduced-motion` per ogni animazione (macchina da scrivere, cenere, pulsazioni).",
+   "**Do** mantenere bersagli tattili di almeno 2.75rem e il testo del campo di comando a 16px su telefono."
+  ],
+  "donts": [
+   "**Don't** usare Alarm Red per qualcosa che non sia la salute fisica bassa.",
+   "**Don't** aggiungere un secondo font o ombre decorative su voci e riquadri del diario.",
+   "**Don't** riusare il viola dei dialoghi o l'arancione del nemico per altri significati."
+  ]
+ }
+}

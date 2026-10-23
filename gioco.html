@@ -5,60 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
   <meta name="theme-color" content="#161b22">
   <title>Il dungeon</title>
+  <script src="lib/purify.min.js"></script>
+  <script src="sicuro.js"></script>
   <script src="regole.js"></script>
   <script src="incantesimi.js"></script>
   <script src="tecniche.js"></script>
   <script src="lingua.js"></script>
   <script src="volume.js"></script>
+  <script src="lib/howler.core.min.js"></script>
+  <script src="audio.js"></script>
   <script src="cloud.js"></script>
+  <link rel="stylesheet" href="tema.css">
   <style>
-    :root {
-      --bg: #f5f7fa;
-      --text: #1d2733;
-      --muted: #5b6675;
-      --line: #c9d1db;
-      --accent: #2f6fed;
-      --ok-bg: #e7f3ea;
-      --ok-line: #a3cbab;
-      --ko-bg: #f8e8e8;
-      --ko-line: #dcaaaa;
-      --tip-bg: #e9f0fd;
-      --tip-line: #b4c9f2;
-      --ok: #23824a; --ko: #c0392b;
-      --dlg: #7a4fb5; --dlg-bg: #f2ecfa; --dlg-line: #cdb8ea; /* dialoghi */
-      --cap: #9a5b0c; --cap-bg: #fbf1e1; --cap-line: #e5c48f; /* capacità sbloccate (ambra) */
-      --mis: #12706f; --mis-bg: #e2f3f2; --mis-line: #9ccfcc; /* missioni (verde acqua) */
-      --nem: #b4541a; --nem-bg: #fbeee4; --nem-line: #e6b48f; /* nemico (arancione), come nel tutorial */
-      --fine: #a4285e; --fine-bg: #fbe9f1; --fine-line: #e6a9c4; /* missione completata (rosa antico) */
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #161b22;
-        --text: #e8edf3;
-        --muted: #9aa5b4;
-        --line: #2f3844;
-        --accent: #5b92ff;
-        --ok-bg: #1d2c23;
-        --ok-line: #3f6b4c;
-        --ko-bg: #2f2022;
-        --ko-line: #7b4549;
-        --tip-bg: #1e2a3f;
-        --tip-line: #38527d;
-        --ok: #6fd39a; --ko: #ff7b6b;
-        --dlg: #bb9cf0; --dlg-bg: #2a2238; --dlg-line: #5b4880;
-        --cap: #f0b45c; --cap-bg: #2e2416; --cap-line: #6f5328;
-        --mis: #5fd0c8; --mis-bg: #162b2a; --mis-line: #2f6461;
-        --nem: #ff9b5e; --nem-bg: #2e2016; --nem-line: #7a4a2a;
-        --fine: #f08bb8; --fine-bg: #2e1923; --fine-line: #7a3a58;
-      }
-    }
+
     * { box-sizing: border-box; }
     html, body { height: 100%; }
     body {
       margin: 0;
       background: var(--bg);
       color: var(--text);
-      font-family: Georgia, "Times New Roman", serif;
+      font-family: var(--f-testo);
     }
 
     /* ---------- Struttura: scheda | linea | gioco ---------- */
@@ -118,7 +84,7 @@
     .bach .bach-testo b { display: block; font-weight: 600; }
     .bach .bach-testo small { color: var(--muted); font-size: 0.85rem; }
     .bach .bach-stato { grid-column: 2; font-size: 0.85rem; color: var(--muted); font-style: italic; }
-    .bach .pronta .bach-stato { color: var(--ok, #3fa66b); font-weight: 600; }
+    .bach .pronta .bach-stato { color: var(--ok); font-weight: 600; }
     .bach .completata .bach-testo b { text-decoration: line-through; opacity: 0.7; }
     .bach .stelle { font-size: 1.05rem; letter-spacing: 0.05rem; white-space: nowrap; }
     .bach .stelle.rosse .stella { color: #d64545; }
@@ -138,7 +104,7 @@
     body.mente-spezzata #ritratto::after, body.mente-spezzata #miniRitratto::after { opacity: 1; }
     body.mente-spezzata #ritratto, body.mente-spezzata #miniRitratto { filter: grayscale(0.5) contrast(1.15); }
     .voce.distorta p:not(.sussurro) { text-shadow: 1px 0 rgba(255, 45, 45, 0.28), -1px 0 rgba(80, 160, 255, 0.24); }
-    .voce p.sussurro { font-style: italic; color: var(--ko, #c0392b); letter-spacing: 0.06em; animation: sussurro 4s ease-in-out infinite; }
+    .voce p.sussurro { font-style: italic; color: var(--ko); letter-spacing: 0.06em; animation: sussurro 4s ease-in-out infinite; }
     @keyframes sussurro { 0%, 100% { opacity: 0.9; filter: blur(0); } 45% { opacity: 0.55; filter: blur(0.6px); } 50% { opacity: 0.95; filter: blur(0); transform: translateX(1px); } }
     @media (prefers-reduced-motion: reduce) { .voce p.sussurro { animation: none; } }
     .scheda h2 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 0.5rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--line); }
@@ -178,19 +144,17 @@
     #completa > summary { display: none; }
     #zaino .oggetto { margin: 0.45rem 0; font-size: 0.97rem; }
     #zaino .testa { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; }
-    #zaino .nome-btn, #equip .nome-btn { font: inherit; color: var(--text); background: none; border: 0; padding: 0; cursor: pointer; text-align: left; text-decoration: underline dotted var(--muted); text-underline-offset: 0.25rem; }
+    /* pulsanti-nome, schede di testo e mini-pulsanti della scheda: una regola sola per tutte le sezioni */
+    #zaino .nome-btn, #equip .nome-btn, #tecniche .nome-btn, #incantesimi .nome-btn, .missione .nome-btn { font: inherit; color: var(--text); background: none; border: 0; padding: 0; cursor: pointer; text-align: left; text-decoration: underline dotted var(--muted); text-underline-offset: 0.25rem; }
     #equip .nome-btn { text-align: right; }
     #zaino .desc, #zaino .vuoto, #equip .desc { color: var(--muted); font-size: 0.88rem; margin: 0; }
-    #zaino .testo, #equip .testo { margin: 0.4rem 0 0; padding: 0.6rem 0.8rem; background: var(--tip-bg); border: 1px solid var(--tip-line); border-radius: 0.5rem; font-size: 0.9rem; line-height: 1.5; }
+    #zaino .testo, #equip .testo, #tecniche .testo, #incantesimi .testo, .missione .testo { margin: 0.4rem 0 0; padding: 0.6rem 0.8rem; background: var(--tip-bg); border: 1px solid var(--tip-line); border-radius: 0.5rem; font-size: 0.9rem; line-height: 1.5; }
     #zaino .testo.lettera { font-style: italic; }
     #zaino .azioni-og { display: flex; gap: 0.4rem; flex: none; }
     #equipAzioni { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.6rem 0 0; }
     #equipAzioni:empty { display: none; }
-    #zaino .mini, #equipAzioni .mini {
-      font: inherit; font-size: 0.85rem; padding: 0.25rem 0.65rem; border-radius: 0.4rem; cursor: pointer;
-      background: transparent; color: var(--text); border: 1px solid var(--accent);
-    }
-    #zaino .mini:hover, #equipAzioni .mini:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+    #zaino .mini, #equipAzioni .mini, #tecniche .mini, #incantesimi .mini, .missione .mini { font: inherit; font-size: 0.85rem; padding: 0.25rem 0.65rem; border-radius: 0.4rem; cursor: pointer; background: transparent; color: var(--text); border: 1px solid var(--accent); }
+    #zaino .mini:hover, #equipAzioni .mini:hover, #tecniche .mini:hover, #incantesimi .mini:hover, .missione .mini:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
     .scheda small.malus { color: var(--muted); font-size: 0.85rem; }
     .colpito { animation: scuoti 0.35s ease-in-out; }
     @keyframes scuoti { 0%,100% { transform: none; } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
@@ -290,13 +254,9 @@
     }
     #incantesimi .oggetto, #tecniche .oggetto { margin: 0.45rem 0; font-size: 0.97rem; }
     #tecniche .testa { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; }
-    #tecniche .nome-btn { font: inherit; color: var(--text); background: none; border: 0; padding: 0; cursor: pointer; text-align: left; text-decoration: underline dotted var(--muted); text-underline-offset: 0.25rem; }
     #tecniche .costo { color: var(--muted); font-size: 0.88rem; flex: none; }
     #tecniche .azioni-inc { display: flex; align-items: center; gap: 0.5rem; flex: none; }
-    #tecniche .mini { font: inherit; font-size: 0.85rem; padding: 0.25rem 0.65rem; border-radius: 0.4rem; cursor: pointer; background: transparent; color: var(--text); border: 1px solid var(--accent); }
-    #tecniche .mini:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
     #tecniche .mini:disabled { opacity: 0.45; cursor: not-allowed; }
-    #tecniche .testo { margin: 0.4rem 0 0; padding: 0.6rem 0.8rem; background: var(--tip-bg); border: 1px solid var(--tip-line); border-radius: 0.5rem; font-size: 0.9rem; line-height: 1.5; }
     #tecniche .spenta .nome-btn { color: var(--muted); }
     #tecniche .livello { color: var(--muted); font-size: 0.82rem; margin: 0.7rem 0 0.1rem; text-transform: uppercase; letter-spacing: 0.06em; }
     #tecniche .vuoto { color: var(--muted); font-style: italic; }
@@ -317,13 +277,9 @@
     #finestraPrep button.primario { background: var(--accent); color: var(--bg); font-weight: 600; }
     #finestraPrep button:disabled { opacity: 0.45; cursor: not-allowed; }
     #incantesimi .testa { display: flex; align-items: baseline; justify-content: space-between; gap: 0.6rem; }
-    #incantesimi .nome-btn { font: inherit; color: var(--text); background: none; border: 0; padding: 0; cursor: pointer; text-align: left; text-decoration: underline dotted var(--muted); text-underline-offset: 0.25rem; }
     #incantesimi .costo { color: var(--muted); font-size: 0.88rem; flex: none; }
     #incantesimi .testa { align-items: center; }
     #incantesimi .azioni-inc { display: flex; align-items: center; gap: 0.5rem; flex: none; }
-    #incantesimi .mini { font: inherit; font-size: 0.85rem; padding: 0.25rem 0.65rem; border-radius: 0.4rem; cursor: pointer; background: transparent; color: var(--text); border: 1px solid var(--accent); }
-    #incantesimi .mini:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
-    #incantesimi .testo { margin: 0.4rem 0 0; padding: 0.6rem 0.8rem; background: var(--tip-bg); border: 1px solid var(--tip-line); border-radius: 0.5rem; font-size: 0.9rem; line-height: 1.5; }
     details.voce.giocatore > summary {
       display: flex; align-items: baseline; gap: 0.6rem; cursor: pointer; list-style: none;
       color: var(--muted); font-style: italic; font-size: 1.12rem; line-height: 1.75;
@@ -342,7 +298,7 @@
     details.voce.giocatore.t-ko > summary { border-left-color: var(--ko); color: var(--ko); }
     details.voce.giocatore.t-ok > summary::before { color: var(--ok); }
     details.voce.giocatore.t-ko > summary::before { color: var(--ko); }
-    .voce.prova { padding: 1rem 1.25rem; border: 1px solid var(--accent); border-radius: 0.5rem; background: rgba(91,146,255,0.07); }
+    .voce.prova { padding: 1rem 1.25rem; border: 1px solid var(--accent); border-radius: 0.5rem; background: color-mix(in srgb, var(--accent) 7%, transparent); }
     .voce.prova p { margin: 0 0 0.5rem; }
     .voce.prova p.prova-titolo { font-weight: 700; font-size: 1.15rem; color: var(--accent); letter-spacing: 0.03em; }
     .voce.prova p.prova-azione { font-style: italic; }
@@ -369,7 +325,7 @@
     .voce.dialogo p.battuta { font-style: italic; }
     .voce.dialogo p.battuta.scrive::after { content: "▌"; margin-left: 1px; font-style: normal; animation: cursore 0.9s steps(1) infinite; color: var(--muted); }
     @keyframes cursore { 50% { opacity: 0; } }
-    /* sblocchi (capacità, missioni): riquadro viola come i dialoghi */
+    /* sblocchi: capacità in ambra, missioni in verde acqua */
     .voce.riquadro.cap, .voce.riquadro.mis { border-width: 1px; }
     .voce.riquadro.cap { border-color: var(--cap-line); background: var(--cap-bg); }
     .voce.riquadro.mis { border-color: var(--mis-line); background: var(--mis-bg); }
@@ -433,11 +389,9 @@
     .missione ul { margin: 0.3rem 0 0.4rem; padding-left: 0.2rem; list-style: none; }
     .missione li { margin: 0.15rem 0; line-height: 1.4; }
     .missione li.fatto { color: var(--muted); text-decoration: line-through; }
-    .missione .nome-btn { font: inherit; font-weight: 600; color: var(--text); background: none; border: 0; padding: 0; cursor: pointer; text-align: left; text-decoration: underline dotted var(--muted); text-underline-offset: 0.25rem; }
+    .missione .nome-btn { font-weight: 600; }
     .missione .testa { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; }
-    .missione .testo { margin: 0.4rem 0 0; padding: 0.6rem 0.8rem; background: var(--tip-bg); border: 1px solid var(--tip-line); border-radius: 0.5rem; font-size: 0.9rem; line-height: 1.5; }
-    .missione .mini { font: inherit; font-size: 0.85rem; padding: 0.25rem 0.75rem; border-radius: 0.4rem; cursor: pointer; background: transparent; color: var(--text); border: 1px solid var(--accent); margin-top: 0.25rem; }
-    .missione .mini:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+    .missione .mini { padding: 0.25rem 0.75rem; margin-top: 0.25rem; }
     .voce p.banner { font-weight: 700; font-size: 1.25rem; text-align: center; margin-top: 1.5rem; }
     .voce p.nota { color: var(--muted); }
     .voce.riquadro { padding: 1.25rem 1.5rem; border: 2px solid; border-radius: 0.5rem; }
@@ -516,8 +470,8 @@
       #completa > summary { display: none; }
       .scheda #vitali { margin-top: 0.75rem; }
       .scheda details.sez > summary { padding: 0.65rem 0; } /* bersagli più alti per il dito */
-      #zaino .mini, #equipAzioni .mini, #incantesimi .mini, .missione .mini { padding: 0.45rem 0.85rem; font-size: 0.95rem; }
-      #zaino .nome-btn, #equip .nome-btn, #incantesimi .nome-btn, .missione .nome-btn { padding: 0.3rem 0; }
+      #zaino .mini, #equipAzioni .mini, #tecniche .mini, #incantesimi .mini, .missione .mini { padding: 0.45rem 0.85rem; font-size: 0.95rem; }
+      #zaino .nome-btn, #equip .nome-btn, #tecniche .nome-btn, #incantesimi .nome-btn, .missione .nome-btn { padding: 0.3rem 0; }
 
       /* barra in alto: personaggio | salva | volume | casa */
       .barra { gap: 0.5rem; padding: calc(env(safe-area-inset-top, 0px) + 0.45rem) 0.75rem 0.45rem; }
@@ -1088,8 +1042,6 @@
           esito: (tiro, m, tot, cd, ok) => `Tiro: ${tiro} ${m < 0 ? "−" : "+"} ${Math.abs(m)} = ${tot} contro difficoltà ${cd}: prova ${ok ? "superata" : "fallita"}.`,
           serveNaturale: (n) => `Serve un ${n} naturale`, istrNaturale: (d, n) => `Tira un d${d}: la prova riesce solo se esce ${n}. Il modificatore non conta.`,
           esitoNaturale: (tiro, n, ok) => `Tiro: ${tiro} ${ok ? "— è uscito " + n + ": prova superata." : "contro un " + n + " naturale: prova fallita."}`,
-          dannoStanza: (d) => `Nessuna delle tue ricerche in questa sala ha dato frutto, e quel susseguirsi di risposte mancate ti pesa sulla mente. Subisci danni mentali pari a 1d${d}.`, /* PROVVISORIO */
-          dannoStanzaEsito: "Una vaga nausea ti stringe lo stomaco, e per un istante la tua mente fatica a restare lucida.", /* PROVVISORIO */
           dannoSubito: (d) => `Danni mentali subiti: ${d}.`,
           dannoMentale: (da, a) => `Danni mentali = 1 · salute mentale ${da} → ${a}`,
           fitte: [
@@ -1514,8 +1466,6 @@
           esito: (tiro, m, tot, cd, ok) => `Roll: ${tiro} ${m < 0 ? "−" : "+"} ${Math.abs(m)} = ${tot} against difficulty ${cd}: check ${ok ? "passed" : "failed"}.`,
           serveNaturale: (n) => `Needs a natural ${n}`, istrNaturale: (d, n) => `Roll a d${d}: the check succeeds only on a ${n}. The modifier does not count.`,
           esitoNaturale: (tiro, n, ok) => `Roll: ${tiro} ${ok ? "— a " + n + "! Check passed." : "against a natural " + n + ": check failed."}`,
-          dannoStanza: (d) => `None of your searches in this room has borne fruit, and that string of missing answers weighs on your mind. You take 1d${d} mental damage.`,
-          dannoStanzaEsito: "A vague nausea grips your stomach, and for a moment your mind struggles to stay clear.",
           dannoSubito: (d) => `Mental damage taken: ${d}.`,
           dannoMentale: (da, a) => `Mental damage = 1 · mental health ${da} → ${a}`,
           fitte: [
@@ -3555,7 +3505,8 @@
         ],
         diario: { nome: "Diario di Adele", testo: "Pagine strappate dal diario segreto della Signora Adele.", mancante: "— pagina mancante —",
           trovata: (n, tot) => `Pagina del diario di Adele ritrovata (${n} di ${tot}). La rileggi quando vuoi dallo zaino, nel «Diario di Adele».`,
-          conteggio: (n, tot) => `Pagine ritrovate: ${n} di ${tot}.` },
+          conteggio: (n, tot) => `Pagine ritrovate: ${n} di ${tot}.`,
+          ferisce: (d) => `Le parole di Adele ti restano addosso come cenere: subisci danni mentali pari a 1d${d}.` }, /* PROVVISORIO */
         luoghi: {
           giardino_fontana: {
             fisso: ["Ti avvicini alla fontana. La vasca è di marmo bianco, scolpita con tralci e cervi rampanti, e l'acqua che vi ricade è così limpida da sembrare vetro in movimento.", "È l'unica cosa in questo giardino che sembra non sapere di essere morta. Per un istante ti chiedi da dove venga, e chi la faccia scorrere ancora."],
@@ -3700,7 +3651,8 @@
         ],
         diario: { nome: "Adele's diary", testo: "Pages torn from Lady Adele's secret diary.", mancante: "— missing page —",
           trovata: (n, tot) => `Page of Adele's diary found (${n} of ${tot}). You can read it again any time from your pack, in “Adele's diary”.`,
-          conteggio: (n, tot) => `Pages found: ${n} of ${tot}.` },
+          conteggio: (n, tot) => `Pages found: ${n} of ${tot}.`,
+          ferisce: (d) => `Adele's words cling to you like ash: you take 1d${d} mental damage.` },
         luoghi: {
           giardino_fontana: {
             fisso: ["You walk up to the fountain. The basin is white marble, carved with vines and rampant stags, and the water falling into it is so clear it looks like moving glass.", "It is the only thing in this garden that seems not to know it is dead. For a moment you wonder where it comes from, and who keeps it flowing."],
@@ -4392,7 +4344,13 @@
       el.textContent = daSalvare ? U.nonSalvate : ultimoSalvataggio ? U.salvataAlle(ora(ultimoSalvataggio)) : U.nessunSalvataggio;
       el.classList.toggle("da-salvare", daSalvare);
     }
-    function modificato() { daSalvare = true; aggiornaBarra(); }
+    function modificato() { daSalvare = true; aggiornaBarra(); aggiornaFuoco(); }
+    /* palette: «Tomo Proibito» dove il fuoco è caldo e si può riposare, «Cenere» altrove (tema.css, dissolvenza 1,2 s) */
+    function fuocoCaldoQui() {
+      if (luogo === "cripta") return braciereAcceso();
+      return FUOCHI_CALDI.includes(luogo) && (luogo === "cucina" || usate["fuoco_" + luogo] !== "spento");
+    }
+    function aggiornaFuoco() { try { document.body.classList.toggle("fuoco-caldo", fuocoCaldoQui()); } catch (e) {} } /* chiamata anche prima che luogo e usate esistano */
     window.addEventListener("beforeunload", (e) => { if (daSalvare) { e.preventDefault(); e.returnValue = ""; } });
 
     /* ---------- Configurazione del narratore IA ----------
@@ -4419,10 +4377,7 @@
     /* prove di atrio e sala da conversazione: nate con il d10, ora d20 come tutte le altre (difficoltà riscalate: 8 → 10, 10 → 12) */
     const PROVA_INDAGARE = { abilita: "Indagare", dado: 20, cd: 10 };
     const PROVA_INDAGARE_10 = { abilita: "Indagare", dado: 20, cd: 12 };
-    const PROVA_PERCEZIONE = { abilita: "Percezione", dado: 20, cd: 12 };
-    const PROVA_MENTE = { attributo: "Mente", dado: 20, cd: 10 }; /* prova sull'attributo Mente, non su un'abilità */
     /* Se in queste stanze tutte le prove vengono fallite, il giocatore subisce danni mentali */
-    const DANNO_STANZA = {}; /* il danno mentale della sala da conversazione è stato tolto insieme alle sue prove */
 
     /* Luoghi con "fisso": testi scritti a mano, uguali in ogni partita (l'IA non interviene).
        Luoghi con "fatti" + "fallback": descrizione generata dall'IA se disponibile, altrimenti il testo di riserva. */
@@ -4459,7 +4414,7 @@
       portone: {}
     };
     /* «faccio una prova di …»: abilità che in questa stanza hanno un tiro vero; le altre danno le frasi predefinite */
-    const PROVE_DICHIARATE = { sala_conversazione: { Percezione: "conv_percezione", Indagare: "ritratto" }, sala_pranzo: { Percezione: "pranzo_percezione", Indagare: "credenza" }, corridoio: { Percezione: "corr_percezione" }, atrio: { Percezione: "atrio_percezione", Indagare: "atrio_indagare" } }; /* VUOTA: da definire */
+    const PROVE_DICHIARATE = { sala_conversazione: { Percezione: "conv_percezione", Indagare: "ritratto" }, sala_pranzo: { Percezione: "pranzo_percezione", Indagare: "credenza" }, corridoio: { Percezione: "corr_percezione" }, atrio: { Percezione: "atrio_percezione", Indagare: "atrio_indagare" } }; /* prove dichiarate a parole («faccio una prova di percezione»), stanza per stanza */
     const LUOGHI = {};
     /* cucina: prove dichiarate, disponibili quando Guendalina è arrivata (le descrizioni parlano di lei) */
     Object.assign(MECCANICA, {
@@ -4947,7 +4902,7 @@
     if (pg) pg.statistiche = conAttrVecchi(pg.statistiche || {});
     if (pg && pg.classe === "Accolito") U.mana = LINGUA === "en" ? "Faith points" : "Punti fede"; /* il Monaco lancia incantesimi con i punti fede */
     /* Agilità: il suo modificatore va sulla Classe armatura, fino al tetto dell'armatura indossata */
-    const TETTO_AGILITA = (window.Regole && Regole.TETTO_AGILITA) || { "Armatura leggera": 3, "Armatura media": 2, "Armatura pesante": 0 };
+    const TETTO_AGILITA = Regole.TETTO_AGILITA;
     function bonusAgilitaCA() {
       const eq = (pg && pg.equipaggiamento) || {};
       const tetto = eq.armatura ? (TETTO_AGILITA[eq.armatura] ?? 3) : 3;
@@ -4958,7 +4913,7 @@
     const mod = (v) => Math.floor((Number(v) - 10) / 2);
     const spirito = () => Number(pg.statistiche && pg.statistiche.Spirito) || 0;
     /* Tutte le abilità: quelle scelte in creazione aggiungono il livello al modificatore dell'attributo */
-    const ABILITA_TUTTE = [["Atletica", "Vigore"], ["Sopravvivenza", "Vigore"], ["Furtività", "Agilità"], ["Acrobazia", "Agilità"], ["Investigazione", "Mente"], ["Sapienza", "Mente"], ["Socialità", "Spirito"], ["Intuizione", "Spirito"]];
+    const ABILITA_TUTTE = Regole.ABILITA; /* [abilità, attributo], in regole.js */
     let scudo = null; /* lo scudo imbracciato (null se non c'è o è nello zaino) */
     const eqPg = () => (pg && pg.equipaggiamento) || {};
     /* malus alle abilità di Agilità: armatura + scudo, solo se imbracciato */
@@ -5000,14 +4955,12 @@
        - Guerriero: punti ira (10 + mod Lotta); Sciamano: punti natura (10 + mod Spirito). Tutte le risorse si ricaricano solo riposando.
        - Livello e crescita fanno parte della partita (salvataggio), il personaggio di partenza resta quello della creazione.
        ===================================================================== */
-    const R_ = window.Regole || {};
-    const LIVELLO_MAX = R_.LIVELLO_MAX ?? 5;
-    const SOGLIE_PE = R_.SOGLIE_PE || [0, 500, 1500, 3000, 5000]; /* PE totali per raggiungere il livello 2, 3, 4, 5 (indice = livello attuale) */
+    const R_ = window.Regole; /* tutti i numeri delle regole stanno in regole.js */
+    const LIVELLO_MAX = R_.LIVELLO_MAX;
+    const SOGLIE_PE = R_.SOGLIE_PE; /* PE totali per raggiungere il livello 2, 3, 4, 5 (indice = livello attuale) */
     const PE_NEMICI = { mastino: 150, mastinoSpecifico: 350, custode: 500 };
-    const RISORSA_CLASSE = { Soldato: { id: "ira", attr: "Vigore" }, Forestiero: { id: "natura", attr: "Spirito" } };
-    const ATTR_RISORSA_MAGIA = { Sapiente: "Mente", Accolito: "Spirito" };
-    const DADO_VITA = { Soldato: 10, Forestiero: 8, Sapiente: 6, Accolito: 6 };
-    const RAZIONI_MAX = R_.RAZIONI_MAX ?? 10, RAZIONI_AL_GIORNO = R_.RAZIONI_AL_GIORNO ?? 2;
+    const RISORSA_CLASSE = R_.RISORSA_MARZIALE, ATTR_RISORSA_MAGIA = R_.ATTR_MAGIA, DADO_VITA = R_.DADO_VITA;
+    const RAZIONI_MAX = R_.RAZIONI_MAX, RAZIONI_AL_GIORNO = R_.RAZIONI_AL_GIORNO;
     let crescita = { salute: 0, mente: 0, risorsa: 0 };
     if (salvata && salvata.crescita && typeof salvata.crescita === "object") crescita = { salute: Number(salvata.crescita.salute) || 0, mente: Number(salvata.crescita.mente) || 0, risorsa: Number(salvata.crescita.risorsa) || 0 };
     if (pg && salvata && Number(salvata.livello) > 0) pg.livello = Math.min(LIVELLO_MAX, Number(salvata.livello));
@@ -5091,7 +5044,7 @@
     /* ---------- Mente incrollabile (Guerriero e Sciamano) ----------
        dopo una prova fallita si può spendere 1 punto ira / natura per un tiro salvezza:
        d20 + mod Vigore (Guerriero) o Spirito (Sciamano) + livello, CD 10; se riesce, il punto mentale perso torna */
-    const CD_INCROLLABILE = R_.CD_INCROLLABILE ?? 10;
+    const CD_INCROLLABILE = R_.CD_INCROLLABILE;
     let offertaIncrollabile = false;
     const attrIncrollabile = () => (pg.classe === "Soldato" ? "Vigore" : "Spirito");
     const modIncrollabile = () => Math.floor(((Number(pg.statistiche[attrIncrollabile()]) || 10) - 10) / 2) + livelloPg();
@@ -5181,9 +5134,10 @@
     function disegnaScheda() {
       document.getElementById("nome").textContent = pg.nome || "";
       document.getElementById("sub").textContent = [pg.razza && N("razze", pg.razza), `${N("classi", pg.classe)}${pg.livello ? ", " + U.livello + " " + pg.livello : ""}`].filter(Boolean).join(" — ");
-      if (pg.immagine) {
+      const srcRitratto = pg.immagine && Sicuro.immagine(pg.immagine); /* solo immagini locali; i vecchi salvataggi puntavano a immagini/, ora i ritratti stanno in immagini/pg/ */
+      if (srcRitratto) {
         const r = document.getElementById("ritratto");
-        r.style.backgroundImage = `url("${String(pg.immagine).replace(/^immagini\/(?!pg\/)/, "immagini/pg/").replace(/"/g, "%22")}")`; /* i vecchi salvataggi puntavano a immagini/, ora i ritratti stanno in immagini/pg/ */
+        r.style.backgroundImage = `url("${srcRitratto}")`;
         r.hidden = false;
       }
       disegnaVitali();
@@ -5265,7 +5219,7 @@
     function medaglione(k) {
       const ic = ICONE_EFF[k], m = document.createElement("span");
       m.className = "medaglione " + ic.tono; m.setAttribute("aria-hidden", "true");
-      m.innerHTML = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ic.d}</svg>`;
+      Sicuro.html(m, `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ic.d}</svg>`);
       return m;
     }
     function righeEffetti(dl, sc, chiavi, sep) {
@@ -5388,7 +5342,7 @@
       let max = 0;
       if (prepIncantesimi() && !soloVuoti) {
         const tutti = window.INCANTESIMI[pg.classe], att = listaIncantesimi().map(x => x.id);
-        max = (window.Regole && Regole.MAX_INCANTESIMI) || 4;
+        max = Regole.MAX_INCANTESIMI;
         box.append(el("h2", "", P.titoloInc), el("p", "guida", P.guidaInc(max)));
         const fs = el("fieldset");
         tutti.forEach(inc => {
@@ -5601,15 +5555,13 @@
       const [w, h] = DIM_IMMAGINI.guendalina;
       img.src = IMMAGINI.guendalina; img.alt = TX.viste.cucina.altGuendalina; img.width = w; img.height = h;
     }
+    let portaApre = null, portaChiude = null; /* caricati la prima volta che servono (audio.js) */
     function suonaPorta() {
       try {
-        const muto = typeof Volume !== "undefined" && (Volume.muto || Volume.livello === 0);
-        if (muto) return;
-        const vol = Math.min(1, VOLUME_PORTA * (typeof Volume !== "undefined" ? Volume.livello : 1));
-        const a = new Audio(SUONO_PORTA_CUCINA), c = new Audio(SUONO_CHIUSURA_CUCINA);
-        a.volume = vol; c.volume = vol; c.preload = "auto";
-        a.addEventListener("ended", () => setTimeout(() => c.play().catch(() => {}), PAUSA_CHIUSURA), { once: true }); /* la porta si richiude */
-        a.play().catch(() => {});
+        if (typeof Volume !== "undefined" && (Volume.muto || Volume.livello === 0)) return;
+        portaApre = portaApre || Sonoro.effetto(SUONO_PORTA_CUCINA, VOLUME_PORTA);
+        portaChiude = portaChiude || Sonoro.effetto(SUONO_CHIUSURA_CUCINA, VOLUME_PORTA);
+        portaApre.suona().then(ok => { if (ok) setTimeout(() => portaChiude.suona(), PAUSA_CHIUSURA); }); /* la porta si richiude */
       } catch (e) {}
     }
     /* Guendalina resta in cucina finché è al piano terra: per toglierla imposta usate.guendalinaAssente = true */
@@ -6088,6 +6040,14 @@
       aggiornaMentali(); scuotiScheda(); modificato();
       return [prima, Math.max(0, max - pg.dannoMentale)];
     }
+    /* diari e flashback: la verità ferisce la mente, ma da sola non la porta mai a 0 (resta almeno 1) */
+    function dannoMenteNonLetale(d) {
+      const max = maxMentali(), prima = Math.max(0, max - (pg.dannoMentale || 0));
+      const subito = Math.max(0, Math.min(d, prima - 1));
+      pg.dannoMentale = (pg.dannoMentale || 0) + subito;
+      aggiornaMentali(); scuotiScheda(); modificato();
+      return subito;
+    }
     function dannoCorpoNonLetale(d) {
       const max = pvMaxPg(), prima = pvPg();
       pg.dannoFisico = Math.max(0, Math.min(max - 1, (pg.dannoFisico || 0) + d));
@@ -6550,6 +6510,7 @@
 
     /* ---------- I diari di Adele e le prove di giardino, cappella e cripta ---------- */
     const PAGINE_ADELE = () => A2.pagine.length;
+    const DANNO_DIARIO = { bronzo: 2, argento: 2, oro: 4, platino: 4 }; /* dado del danno mentale per grado della pagina (campo «grado», di base bronzo) */
     const pagineTrovate = () => (Array.isArray(usate.pagine_adele) ? usate.pagine_adele : []).filter(n => n >= 1 && n <= PAGINE_ADELE()).sort((a, b) => a - b);
     /* la pagina n (da 1) entra nel «Diario di Adele» e viene mostrata per intero */
     function trovaPagina(n) {
@@ -6561,6 +6522,8 @@
       const P = A2.pagine[n - 1];
       aggiungi({ tipo: "narra", box: "mis", righe: [P.titolo, ...P.testo] });
       sist(A2.diario.trovata(usate.pagine_adele.length, PAGINE_ADELE()));
+      const dado = DANNO_DIARIO[P.grado || "bronzo"], d = dannoMenteNonLetale(tira(dado)); /* solo alla prima lettura: trovaPagina esce se la pagina è già presa */
+      aggiungi({ tipo: "narra", box: "ko", esito: U.dannoSubito(d), righe: [A2.diario.ferisce(dado)] });
     }
     /* testo del diario nello zaino: le pagine in ordine di tempo, con i vuoti per quelle mancanti */
     function testoDiarioAdele() {
@@ -6772,7 +6735,7 @@
 
     function salvaPartita() {
       const conta = {}, tenute = [];
-      for (let i = diario.length - 1; i >= 0; i--) { const k = diario[i].stanza || "atrio"; conta[k] = (conta[k] || 0) + 1; if (conta[k] <= 80) tenute.unshift(diario[i]); }
+      for (let i = diario.length - 1; i >= 0; i--) { const k = diario[i].stanza || "atrio"; conta[k] = (conta[k] || 0) + 1; if (conta[k] <= 30) tenute.unshift(diario[i]); }
       const dati = { usate, diario: tenute, luogo, dannoMentale: pg.dannoMentale || 0, dannoFisico: pg.dannoFisico || 0, manaUsato: pg.manaUsato || 0, esperienza: pg.esperienza || 0, livello: livelloPg(), crescita, risorsaUsata: pg.risorsaUsata || 0, zaino, arma, mano, scudo, armatura: armaturaPartita, ora: Date.now() };
       try { localStorage.setItem(CHIAVE_SALVATAGGIO, JSON.stringify(dati)); }
       catch (e) { document.getElementById("statoSalvataggio").textContent = U.salvataggioErr; return; }
@@ -6910,7 +6873,6 @@
             sist(U.zainoAgg(N("oggetti", l.zaino.nome)));
           }
           if (ok && l.dopo === "giocattoli") offriGiocattoli();
-          if (l.stanza) controllaDannoStanza(l.stanza);
           if (l.poi) l.poi(ok);
           if (fittaSubita) offriIncrollabile();
         } },
@@ -6918,20 +6880,6 @@
       ]);
     }
 
-    /* Tutte le prove della stanza fallite: danni mentali (1d4), da tirare una sola volta */
-    function controllaDannoStanza(stanzaId) {
-      const cfg = DANNO_STANZA[stanzaId];
-      if (!cfg || cfg.chiave in usate) return;
-      if (!cfg.ids.every(i => usate[i] === "ko")) return;
-      aggiungi({ tipo: "narra", righe: [U.dannoStanza(cfg.dado)] });
-      scelte([{ testo: U.lancia(cfg.dado), fn: () => {
-        const d = tira(cfg.dado);
-        pg.dannoMentale = (pg.dannoMentale || 0) + d; salvaPg(); aggiornaMentali();
-        usate[cfg.chiave] = "ok"; salvaUsate();
-        chiudiScelte();
-        aggiungi({ tipo: "narra", box: "ko", esito: U.dannoSubito(d), righe: [U.dannoStanzaEsito] });
-      } }]);
-    }
 
     /* =====================================================================
        ZAINO, EQUIPAGGIAMENTO E OGGETTI
@@ -7080,7 +7028,6 @@
       if (c) c.usi = (Number(c.usi) || 0) + 1; else zaino.push({ id: r.id, nome: Q.oggetti[r.id].nome, tipo: "consumabile", usi: 1, effetto: r.effetto });
       aggiornaZaino(); modificato();
     }
-    const laboratorioAperto = () => usate.laboratorio === "sbloccato" && usate.portaCucina === "aperta";
     function riempiLaboratorio(el) {
       const L = Q.lab;
       el.replaceChildren();
@@ -7354,8 +7301,7 @@
       } else {
         aggiungi({ tipo: "narra", righe: [...SCALE.testo, SCALE.respinge(SCALE.dannoDado)] });
         scelte([{ testo: U.lancia(SCALE.dannoDado), fn: () => {
-          const d = tira(SCALE.dannoDado);
-          pg.dannoMentale = (pg.dannoMentale || 0) + d; salvaPg(); aggiornaMentali();
+          const d = dannoMenteNonLetale(tira(SCALE.dannoDado)); salvaPg(); /* flashback: 1d4, non letale */
           usate.scale = "ko"; salvaUsate();
           chiudiScelte();
           aggiungi({ tipo: "narra", box: "ko", esito: U.dannoSubito(d), righe: SCALE.respinto });
@@ -7569,14 +7515,14 @@
 
     const VOLUME_FUOCO = 1.4; /* volume complessivo del fuoco generato */
     const Suono = (() => {
-      let ctx = null, master = null, sorgenti = [], timer = null, attivo = false;
-      let modo = null, el = null, elSrc = null, fade = null; const fileKo = new Set(); /* lettore del file audio */
+      let ctx = null, master = null, timer = null, attivo = false;
+      let modo = null; const tracce = {}, fileKo = new Set(); /* una traccia per file audio (audio.js) */
       let fuoco = null; /* il fuoco generato (FuocoSintetico) */
       function avviaSintetico() {
-        try { ctx = ctx || new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return; }
-        if (ctx.state === "suspended") ctx.resume().catch(() => {});
-        master = ctx.createGain(); master.gain.value = 0; master.connect(ctx.destination);
-        master.gain.linearRampToValueAtTime(VOLUME_FUOCO * Volume.livello, ctx.currentTime + 2.5); /* entra piano */
+        const c = Sonoro.contesto(); if (!c) return; /* stesso contesto di howler: passa dal volume generale */
+        ctx = c.ctx; Sonoro.trattieni(true);
+        master = ctx.createGain(); master.gain.value = 0; master.connect(c.uscita);
+        master.gain.linearRampToValueAtTime(VOLUME_FUOCO * Sonoro.scala(), ctx.currentTime + 2.5); /* entra piano */
         fuoco = FuocoSintetico(ctx, master);
         fuoco.programma(ctx.currentTime + 0.6);
         timer = setInterval(() => fuoco.programma(ctx.currentTime + 0.6), 200); /* si programma sempre un po' in anticipo */
@@ -7589,54 +7535,33 @@
         m.gain.setValueAtTime(m.gain.value, ctx.currentTime);
         m.gain.linearRampToValueAtTime(0, ctx.currentTime + 1); /* esce piano */
         f.ferma(ctx.currentTime + 1.1);
-        setTimeout(() => m.disconnect(), 1300);
+        setTimeout(() => { m.disconnect(); if (!attivo || modo !== "sintetico") Sonoro.trattieni(false); }, 1300);
       }
 
-      /* dissolvenza del volume del file audio */
-      function sfuma(target, ms, poi) {
-        clearInterval(fade);
-        const passi = Math.max(1, Math.round(ms / 50)), delta = (target - el.volume) / passi;
-        let i = 0;
-        fade = setInterval(() => {
-          i++; el.volume = Math.min(1, Math.max(0, el.volume + delta));
-          if (i >= passi) { clearInterval(fade); el.volume = target; if (poi) poi(); }
-        }, 50);
-      }
       function avviaFile(src) {
-        if (!el || elSrc !== src) {
-          if (el) el.pause();
-          el = new Audio(src); elSrc = src; el.loop = true; el.preload = "auto";
-          el.addEventListener("error", () => { /* file mancante o non leggibile: si passa al suono generato */
-            fileKo.add(src);
-            if (attivo && modo === "file") { attivo = false; avvia(src); }
-          });
-        }
+        const t = tracce[src] || (tracce[src] = Sonoro.traccia(src, { loop: true, volume: VOLUME_AMBIENTE }).onErrore(tipo => {
+          if (tipo === "bloccato") { if (modo === "file") attivo = false; return; } /* serve prima un gesto: si riprova al primo tocco */
+          fileKo.add(src); /* file mancante o non leggibile: si passa al suono generato */
+          if (attivo && modo === "file") { attivo = false; avvia(src); }
+        }));
+        Object.entries(tracce).forEach(([k, x]) => { if (k !== src) x.ferma(); }); /* un solo ambiente alla volta */
         attivo = true; modo = "file";
-        clearInterval(fade); /* annulla un'eventuale dissolvenza in uscita ancora in corso */
-        el.volume = 0;
-        el.play().then(() => { if (attivo && modo === "file") sfuma(VOLUME_AMBIENTE * Volume.livello, 800); else el.pause(); })
-          .catch(err => {
-            if (err && err.name === "NotAllowedError") { attivo = false; return; } /* serve prima un clic: si riprova al primo gesto */
-            fileKo.add(src);
-            if (attivo && modo === "file") { attivo = false; avvia(src); }
-          });
+        if (!t.suona(800)) { fileKo.add(src); attivo = false; avvia(src); }
       }
       function avvia(src) {
         if (attivo || Volume.muto || Volume.livello === 0) return;
         if (src && src.includes("/") && !fileKo.has(src)) avviaFile(src); else avviaSintetico();
       }
       function ferma() {
-        if (!attivo) return;
-        if (modo === "file") { attivo = false; const e = el; sfuma(0, 1000, () => e.pause()); }
+        if (!attivo) { Object.values(tracce).forEach(x => x.ferma()); return; } /* anche una traccia bloccata in attesa del primo tocco non deve ripartire */
+        if (modo === "file") { attivo = false; Object.values(tracce).forEach(x => x.ferma(1000)); }
         else fermaSintetico();
       }
       return {
-        aggiorna() { (SUONI_STANZE[luogo] && !Volume.muto && Volume.livello > 0 && !document.hidden) ? avvia(SUONI_STANZE[luogo]) : ferma(); },
+        aggiorna() { aggiornaFuoco(); (SUONI_STANZE[luogo] && !Volume.muto && Volume.livello > 0 && !document.hidden) ? avvia(SUONI_STANZE[luogo]) : ferma(); },
         /* il giocatore ha spostato il cursore del volume: si adegua il suono in corso */
-        volume() {
-          const l = Volume.livello;
-          if (attivo && modo === "sintetico" && master) master.gain.setTargetAtTime(VOLUME_FUOCO * l, ctx.currentTime, 0.08);
-          if (attivo && modo === "file" && el) { clearInterval(fade); el.volume = Math.min(1, VOLUME_AMBIENTE * l); }
+        volume() { /* i file li scala audio.js; il fuoco generato senza howler va scalato qui */
+          if (attivo && modo === "sintetico" && master) master.gain.setTargetAtTime(VOLUME_FUOCO * Sonoro.scala(), ctx.currentTime, 0.08);
         }
       };
     })();
@@ -8283,13 +8208,17 @@
 
     /* musica dello scontro: una traccia a caso tra quelle disponibili */
     const MusicaScontro = (() => {
-      let a = null;
+      let a = null; const tracce = {};
       const spento = () => typeof Volume !== "undefined" && (Volume.muto || Volume.livello === 0);
-      const liv = () => (typeof Volume !== "undefined" ? Volume.livello : 1);
-      if (typeof Volume !== "undefined") Volume.onCambio(() => { if (!a) return; if (spento()) a.pause(); else { a.volume = Math.min(1, 0.7 * liv()); if (a.paused && scontro) a.play().catch(() => {}); } });
+      if (typeof Volume !== "undefined") Volume.onCambio(() => { if (!a) return; if (spento()) a.ferma(); else if (a.inPausa() && scontro) a.suona(); }); /* il volume lo applica audio.js */
       return {
-        avvia() { if (a) a.pause(); a = new Audio(pesca(MUSICHE_SCONTRO)); a.loop = true; if (spento()) return; a.volume = Math.min(1, 0.7 * liv()); a.play().catch(() => {}); },
-        ferma() { if (!a) return; const x = a; let v = x.volume; const t = setInterval(() => { v -= 0.05; if (v <= 0) { clearInterval(t); x.pause(); } else x.volume = v; }, 80); a = null; }
+        avvia() {
+          if (a) a.ferma();
+          const src = pesca(MUSICHE_SCONTRO);
+          a = tracce[src] || (tracce[src] = Sonoro.traccia(src, { loop: true, volume: 0.7, preload: false }));
+          a.riavvolgi(); if (spento()) return; a.suona();
+        },
+        ferma() { if (!a) return; a.ferma(1100); a = null; } /* sfuma in circa un secondo */
       };
     })();
 
@@ -8442,7 +8371,7 @@
     const nomeTec = (t) => Lingua.t(t.nome);
     const tipoArmaInMano = () => (arma && arma.nome !== "—" && arma.tipoDanno) || null;
     const tipoOk = (t) => t.tipo === "Utilita" || (t.tipo === "Scudo" ? !!scudo : t.tipo === tipoArmaInMano());
-    const maxTecniche = () => ((window.Regole && Regole.MAX_TECNICHE) || 2) + (scudo ? ((window.Regole && Regole.TECNICHE_SCUDO) || 1) : 0); /* 2, oppure 3 con lo scudo imbracciato */
+    const maxTecniche = () => Regole.MAX_TECNICHE + (scudo ? Regole.TECNICHE_SCUDO : 0); /* 2, oppure 3 con lo scudo imbracciato */
     /* tecniche sbloccate dal livello e adatte a ciò che si impugna (le possibili scelte quando si prepara) */
     const opzioniTecniche = () => { const tipo = tipoArmaInMano() || eqPg().armaTipoDanno; return TEC.filter(t => t.tipo !== "Utilita" && t.liv <= livelloPg() && (t.tipo === tipo || (t.tipo === "Scudo" && scudo))); };
     /* le 4 tecniche speciali preparate: scelte in creazione (pg.tecniche) e cambiate riposando (usate.tecPreparate) */

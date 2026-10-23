@@ -1,7 +1,7 @@
 /* =====================================================================
    TECNICHE DEL GUERRIERO — livelli 1 e 2 (i livelli 3-5 arriveranno con i contenuti)
    - tipo: tipo di danno dell'arma che serve ("Tagliente", "Contundente", "Perforante") oppure "Scudo" (scudo imbracciato)
-   - Si preparano 4 «tecniche speciali» (come i 4 incantesimi), scelte in creazione e cambiate riposando,
+   - Si preparano 2 «tecniche speciali» (3 con lo scudo imbracciato; vedi Regole.MAX_TECNICHE), scelte in creazione e cambiate riposando,
      tra quelle sbloccate (livello ≤ livello del personaggio) del tipo dell'arma in mano e, con lo scudo imbracciato, dello scudo.
    - Le tecniche di utilità (Mente incrollabile, Furore inarrestabile) sono della classe e non occupano posti.
    - costo in punti ira. Gli effetti sono tradotti nel sistema a dadi del gioco (un nemico alla volta, un'azione per turno).

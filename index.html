@@ -4,29 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Il Trono di Cenere</title>
+  <script src="lib/purify.min.js"></script>
+  <script src="sicuro.js"></script>
   <script src="lingua.js"></script>
   <script>
     /* Volume di partenza: 10%. Vale solo finché il giocatore non lo cambia (la scelta resta salvata). */
     try { if (localStorage.getItem("audio_volume") === null) localStorage.setItem("audio_volume", "0.1"); } catch (e) {}
   </script>
   <script src="volume.js"></script>
+  <script src="lib/howler.core.min.js"></script>
+  <script src="audio.js"></script>
   <script src="cloud.js"></script>
+  <link rel="stylesheet" href="tema.css">
   <style>
-    :root {
-      --bg: #07090d;
-      --text: #e8edf3;
-      --muted: #aeb8c5;
-      --accent: #5b92ff;
-      --accent-text: #0d1117;
-      --line: rgba(174,184,197,0.35); /* usato dal pannello del volume */
-    }
     * { box-sizing: border-box; }
     html { background: var(--bg); }
     body {
       margin: 0;
       min-height: 100vh;
       color: var(--text);
-      font-family: Georgia, "Times New Roman", serif;
+      font-family: var(--f-testo);
       text-align: center;
     }
 
@@ -55,7 +52,7 @@
       font-weight: 600;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      text-shadow: 0 2px 24px rgba(91,146,255,0.35), 0 2px 6px rgba(0,0,0,0.8);
+      text-shadow: 0 2px 24px rgba(0,0,0,0.9), 0 2px 6px rgba(0,0,0,0.8);
     }
     h1::after {
       content: ""; display: block; width: 6rem; height: 1px; margin: 1.1rem auto 0;
@@ -80,8 +77,8 @@
       cursor: pointer;
       transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
     }
-    #si { background: var(--accent); color: var(--accent-text); box-shadow: 0 0 22px rgba(91,146,255,0.35); }
-    #si:hover { background: #7aa7ff; transform: translateY(-1px); }
+    #si { background: var(--accent); color: var(--accent-text); }
+    #si:hover { background: var(--text); border-color: var(--text); transform: translateY(-1px); }
     #no { background: rgba(7,9,13,0.55); color: var(--muted); border-color: var(--muted); backdrop-filter: blur(4px); }
     #no:hover { background: rgba(7,9,13,0.8); color: var(--text); }
     button:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
@@ -89,13 +86,13 @@
     .allenamento {
       display: inline-flex; align-items: center; gap: 0.6rem; margin-top: 1.4rem;
       color: var(--muted); text-decoration: none; font-size: 1.02rem; font-style: italic;
-      padding: 0.45rem 1.1rem; border: 1px solid rgba(174,184,197,0.3); border-radius: 0.5rem;
+      padding: 0.45rem 1.1rem; border: 1px solid rgba(180,180,180,0.3); border-radius: 0.5rem;
       background: rgba(7,9,13,0.55); backdrop-filter: blur(4px); text-shadow: 0 2px 8px rgba(0,0,0,0.9);
       transition: color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
     }
     .allenamento:hover { color: var(--text); border-color: var(--accent); transform: translateY(-1px); }
     .allenamento:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
-    .allenamento .fatto { font-style: normal; font-size: 0.85rem; color: #6fd39a; }
+    .allenamento .fatto { font-style: normal; font-size: 0.85rem; color: var(--ok); }
     .personaggi .allenamento { display: flex; justify-content: center; margin: 1rem auto 0; width: fit-content; }
     .allenamento.regolamento { display: flex; width: fit-content; margin: 0.6rem auto 0; } /* sotto la sala d'allenamento */
     #risposta { margin: 1.75rem 0 0; font-size: 1.4rem; min-height: 2rem; font-style: italic; text-shadow: 0 2px 10px rgba(0,0,0,0.9); }
@@ -110,10 +107,10 @@
     .scheda {
       flex: 1; min-width: 0; display: flex; align-items: center; gap: 1.1rem;
       padding: 0.7rem 1rem; text-align: left; color: var(--text);
-      background: rgba(7,9,13,0.72); border: 2px solid rgba(174,184,197,0.28); border-radius: 0.75rem;
+      background: rgba(7,9,13,0.72); border: 2px solid rgba(180,180,180,0.28); border-radius: 0.75rem;
       backdrop-filter: blur(6px);
     }
-    .scheda:hover:not(:disabled) { border-color: var(--accent); background: rgba(13,17,23,0.88); transform: translateY(-1px); box-shadow: 0 0 22px rgba(91,146,255,0.25); }
+    .scheda:hover:not(:disabled) { border-color: var(--accent); background: rgba(13,17,23,0.88); transform: translateY(-1px); }
     .scheda:disabled { opacity: 0.55; cursor: not-allowed; }
     .token {
       flex: none; width: 4.75rem; height: 4.75rem; border-radius: 50%; overflow: hidden;
@@ -122,12 +119,12 @@
     }
     .token img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; display: block; }
     .dettagli { min-width: 0; }
-    .nome { display: block; font-size: 1.35rem; font-weight: 600; overflow-wrap: anywhere; }
+    .nome { display: block; font-family: var(--f-titoli); font-size: 1.3rem; font-weight: 600; letter-spacing: 0.05em; overflow-wrap: anywhere; }
     .info { display: block; color: var(--muted); font-size: 1.02rem; }
     .salvato { display: block; color: var(--muted); font-size: 0.85rem; font-style: italic; margin-top: 0.15rem; }
     .elimina {
       min-width: 0; padding: 0 1rem; font-size: 0.95rem; color: var(--muted);
-      background: rgba(7,9,13,0.72); border: 2px solid rgba(174,184,197,0.28); border-radius: 0.75rem;
+      background: rgba(7,9,13,0.72); border: 2px solid rgba(180,180,180,0.28); border-radius: 0.75rem;
     }
     .elimina:hover, .elimina[data-conferma] { color: #ffb4b4; border-color: #d96b6b; }
     .nuova .token { border-style: dashed; border-color: var(--muted); color: var(--text); font-size: 2.4rem; }
@@ -141,21 +138,21 @@
     }
     .lingue .bandiera {
       min-width: 0; width: 2.25rem; height: 1.5rem; padding: 0; overflow: hidden;
-      border-radius: 0.25rem; border: 1px solid rgba(174,184,197,0.45); background: none;
+      border-radius: 0.25rem; border: 1px solid rgba(180,180,180,0.45); background: none;
       opacity: 0.5; box-shadow: 0 2px 8px rgba(0,0,0,0.65);
     }
     .lingue .bandiera svg { display: block; width: 100%; height: 100%; }
     .lingue .bandiera:hover { opacity: 0.85; transform: translateY(-1px); }
     .lingue .bandiera[aria-pressed="true"] {
       opacity: 1; border-color: rgba(232,237,243,0.9);
-      box-shadow: 0 0 0 1px rgba(232,237,243,0.25), 0 0 14px rgba(91,146,255,0.5);
+      box-shadow: 0 0 0 1px rgba(232,237,243,0.35), 0 2px 8px rgba(0,0,0,0.65);
     }
 
     /* ---------- Musica: pulsante in basso a destra ---------- */
     #audio {
       position: fixed; right: 1.1rem; bottom: 1rem; z-index: 3;
       min-width: 0; padding: 0.45rem 0.65rem; font-size: 1.05rem; line-height: 1;
-      color: var(--text); background: rgba(7,9,13,0.6); border: 1px solid rgba(174,184,197,0.45);
+      color: var(--text); background: rgba(7,9,13,0.6); border: 1px solid rgba(180,180,180,0.45);
       backdrop-filter: blur(4px); box-shadow: 0 2px 8px rgba(0,0,0,0.65);
     }
     #audio:hover { border-color: var(--accent); }
@@ -186,7 +183,7 @@
     .account[hidden] { display: none; }
     .account button {
       min-width: 0; padding: 0.45rem 0.8rem; font-size: 0.92rem; line-height: 1.2;
-      color: var(--text); background: rgba(7,9,13,0.6); border: 1px solid rgba(174,184,197,0.45);
+      color: var(--text); background: rgba(7,9,13,0.6); border: 1px solid rgba(180,180,180,0.45);
       backdrop-filter: blur(4px); box-shadow: 0 2px 8px rgba(0,0,0,0.65);
       max-width: 42vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
@@ -204,7 +201,7 @@
     @media (max-width: 480px) { .conflitto .c-scelte { grid-template-columns: 1fr; } }
     .conflitto .c-scelta {
       min-width: 0; padding: 0.6rem 0.8rem; font-size: 0.95rem; text-align: left; color: var(--text);
-      background: rgba(13,17,23,0.9); border: 1px solid rgba(174,184,197,0.35); display: flex; flex-direction: column; gap: 0.15rem;
+      background: rgba(13,17,23,0.9); border: 1px solid rgba(180,180,180,0.35); display: flex; flex-direction: column; gap: 0.15rem;
     }
     .conflitto .c-scelta:hover:not(:disabled) { border-color: var(--accent); }
     .conflitto .c-scelta b { font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
@@ -249,7 +246,6 @@
 
   <div class="account" id="account" hidden><button type="button" id="accedi"></button></div>
   <button type="button" id="audio" aria-pressed="true" title="Musica">🔊</button>
-  <audio id="musica" src="audio/intro.mp3" loop preload="auto"></audio>
 
   <nav class="lingue" aria-label="Lingua / Language">
     <button type="button" class="bandiera" data-lingua="it" aria-label="Italiano" title="Italiano">
@@ -327,35 +323,27 @@
        Parte da sola se il browser lo permette, altrimenti al primo clic, tocco o tasto. Ripete all'infinito.
        Il pulsante 🔊 la spegne e la riaccende (con volume.js la scelta vale anche per il gioco).
        Uscendo dalla pagina (Sì / scelta del personaggio) sfuma. */
-    const VOLUME_MUSICA = 0.6; /* da 0 a 1 */
-    const musica = document.getElementById("musica"), btnAudio = document.getElementById("audio");
+    const VOLUME_MUSICA = 0.6; /* da 0 a 1; il cursore del volume lo scala (audio.js) */
+    const musica = Sonoro.traccia("audio/intro.mp3", { loop: true, volume: VOLUME_MUSICA }), btnAudio = document.getElementById("audio");
     const conVolume = typeof Volume !== "undefined";
     let mutoLocale = false;
     const muto = () => (conVolume ? (Volume.muto || Volume.livello === 0) : mutoLocale);
-    const livello = () => (conVolume ? Volume.livello : 1);
-    let sfumatura = null;
     function aggiornaMusica() {
-      clearInterval(sfumatura);
-      musica.volume = Math.min(1, VOLUME_MUSICA * livello());
-      if (muto()) musica.pause(); else musica.play().catch(() => {}); /* bloccata: si riprova al primo gesto */
+      if (muto()) musica.ferma(); else musica.suona(); /* bloccata: riparte da sola al primo gesto */
       if (!conVolume) { btnAudio.textContent = mutoLocale ? "🔇" : "🔊"; btnAudio.setAttribute("aria-pressed", String(!mutoLocale)); }
     }
-    function sfumaMusica(ms) {
-      clearInterval(sfumatura);
-      const passi = Math.max(1, Math.round(ms / 50)), delta = musica.volume / passi;
-      sfumatura = setInterval(() => { musica.volume = Math.max(0, musica.volume - delta); if (musica.volume <= 0) { clearInterval(sfumatura); musica.pause(); } }, 50);
-    }
+    const sfumaMusica = (ms) => musica.ferma(ms);
     if (conVolume) { Volume.monta(btnAudio); Volume.onCambio(aggiornaMusica); }
     else btnAudio.addEventListener("click", () => { mutoLocale = !mutoLocale; aggiornaMusica(); });
     aggiornaMusica();
     const GESTI = ["pointerdown", "keydown", "touchstart"];
     const sblocca = (e) => {
       if (e.target === btnAudio) return; /* il clic sul pulsante lo gestisce il pulsante */
-      if (!muto() && musica.paused) aggiornaMusica();
-      if (!musica.paused) GESTI.forEach(g => document.removeEventListener(g, sblocca, true));
+      if (!muto() && musica.inPausa()) aggiornaMusica();
+      if (!musica.inPausa()) GESTI.forEach(g => document.removeEventListener(g, sblocca, true));
     };
     GESTI.forEach(g => document.addEventListener(g, sblocca, true));
-    document.addEventListener("visibilitychange", () => { if (document.hidden) musica.pause(); else if (!muto()) musica.play().catch(() => {}); });
+    document.addEventListener("visibilitychange", () => { if (document.hidden) musica.ferma(); else if (!muto()) musica.suona(); });
 
     /* ---------- Personaggi salvati (massimo tre) ----------
        Ogni posto è salvato in localStorage come "slot1", "slot2", "slot3": { pg, partita, aggiornato }.
@@ -409,8 +397,9 @@
     function token(pg) {
       const t = el("span", "token");
       t.setAttribute("aria-hidden", "true");
-      if (pg && pg.immagine) {
-        const img = el("img"); img.src = String(pg.immagine).replace(/^immagini\/(?!pg\/)/, "immagini/pg/"); img.alt = ""; /* vecchi salvataggi: ritratti spostati in immagini/pg/ */
+      const src = pg && pg.immagine && Sicuro.immagine(pg.immagine); /* solo immagini locali (anche per i salvataggi scaricati dal cloud) */
+      if (src) {
+        const img = el("img"); img.src = src; img.alt = ""; /* vecchi salvataggi: ritratti spostati in immagini/pg/ */
         img.addEventListener("error", () => { img.remove(); t.textContent = (pg.nome || "?").charAt(0).toUpperCase(); });
         t.append(img);
       } else t.textContent = (pg && pg.nome ? pg.nome.charAt(0).toUpperCase() : "?");

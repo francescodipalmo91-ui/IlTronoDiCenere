@@ -43,7 +43,9 @@ window.Regole = (() => {
   ARMATURE_CLASSI: { Forestiero: ["Armatura leggera", "Armatura media"], Sapiente: ["Armatura leggera"], Accolito: ["Armatura leggera", "Armatura media"] },
   RISORSA_BASE: 10,            /* mana, fede, ira, natura = 10 + modificatore */
   MAX_INCANTESIMI: 4,
-  MAX_TECNICHE: 2,             /* tecniche speciali preparate dalle classi marziali */
+  MAX_TECNICHE: 2,             /* tecniche speciali preparate al livello 1 */
+  TECNICHE_PER_LIVELLO: [2, 2, 1, 1, 1], /* scelte nuove a ogni livello: posti 2, 4, 5, 6, 7 */
+  IRA_PER_COLPO: [1, 1, 2, 2, 3], /* ira guadagnata per ogni colpo subito, per livello (doppia sui critici) */
   TECNICHE_SCUDO: 1,           /* una tecnica in più con lo scudo imbracciato */
   SALUTE_BASE: 10,             /* salute fisica e mentale = 10 + dado vita + modificatore */
   CA_BASE: 10,

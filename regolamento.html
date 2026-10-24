@@ -61,6 +61,9 @@
     const mod = (v) => Math.floor((v - 10) / 2);
     const segno = (n) => (n < 0 ? "−" : "+") + Math.abs(n);
     const per = (o) => Object.entries(o).map(([k, v]) => `${segno(v)} ${N("attributi", k)}`).join(", ");
+    /* posti delle tecniche per livello (2, 4, 5, 6, 7) e ira per colpo subito, ricavati da regole.js */
+    const posti = (en) => R.TECNICHE_PER_LIVELLO.map((_, i) => R.TECNICHE_PER_LIVELLO.slice(0, i + 1).reduce((a, b) => a + b, 0)).map((n, i) => `${n} (${en ? "level" : "livello"} ${i + 1})`).join(", ");
+    const iraColpi = (en) => [[1, 2], [3, 4], [5]].map(ls => `+${R.IRA_PER_COLPO[ls[0] - 1]} ${en ? (ls.length > 1 ? "at levels" : "at level") : (ls.length > 1 ? "ai livelli" : "al livello")} ${ls.join("-")}`).join(", ");
     const tetti = Object.entries(R.TETTO_AGILITA).map(([a, t]) => `${N("oggetti", a)} ${t ? "+" + t : (EN ? "none" : "nessuno")}`).join(" · ");
     const soglie = R.SOGLIE_PE.slice(1).map((s, i) => `<tr><td>${i + 2}</td><td>${s - R.SOGLIE_PE[i]}</td><td>${s}</td></tr>`).join("");
     const risorse = { it: { mana: "Punti arcano", fede: "Punti fede", ira: "Punti ira", natura: "Punti natura" }, en: { mana: "Arcane points", fede: "Faith points", ira: "Rage points", natura: "Nature points" } }[EN ? "en" : "it"];
@@ -138,10 +141,15 @@
             <p>Arcanista e Monaco conoscono tutti e 7 gli incantesimi della loro classe e ne preparano ${R.MAX_INCANTESIMI}: si cambiano riposando.</p>
             <h3>Tecniche del Guerriero</h3>
             <ul>
-              <li>Come gli incantatori con i loro incantesimi, il Guerriero prepara ${R.MAX_TECNICHE} tecniche speciali (${R.MAX_TECNICHE + R.TECNICHE_SCUDO} con lo scudo imbracciato): le sceglie in creazione e le cambia riposando.</li>
+              <li>Come gli incantatori con i loro incantesimi, il Guerriero prepara delle tecniche speciali: le sceglie in creazione e le cambia riposando.</li>
+              <li>Per ogni livello ci sono tre tecniche: se ne scelgono ${R.TECNICHE_PER_LIVELLO[0]} ai livelli 1 e 2 e ${R.TECNICHE_PER_LIVELLO[2]} dal livello 3 in poi. I posti sono quindi ${posti(false)}; con lo scudo imbracciato hai un posto in più, di qualsiasi livello.</li>
               <li>Si sceglie tra le tecniche sbloccate (il tuo livello o inferiore) del tipo d'arma che impugni (taglio, contundente, perforante) e, con lo scudo imbracciato, dello scudo. Salendo di livello se ne sbloccano di nuove.</li>
               <li>Mente incrollabile e Furore inarrestabile appartengono alla classe e non occupano posti.</li>
-              <li>Le tecniche costano punti ira. L'ira cresce durante lo scontro: +1 a ogni colpo subito, +2 su ogni colpo critico.</li>
+              <li>Le tecniche costano punti ira, che partono da ${R.RISORSA_BASE} + mod. Vigore e a ogni livello aumentano di mod. Vigore + il nuovo livello. Una tecnica che manca il bersaglio costa comunque.</li>
+              <li>L'ira cresce durante lo scontro: a ogni colpo subito guadagni ${iraColpi()}, il doppio se è un colpo critico. Un attacco che ti manca o che pari non dà ira. Anche un tuo colpo critico ti dà 2 punti ira.</li>
+              <li>Dal livello 3 il Guerriero sceglie una <b>via di prestigio</b>: tre abilità, una ai livelli 3, 4 e 5, sempre pronte e senza occupare posti. La scelta è definitiva.</li>
+              <li>Alcune tecniche si usano una sola volta tra un riposo e l'altro.</li>
+              <li>Gli avversari più temibili non subiscono gli effetti che tolgono azioni o attacchi (Frastornato, Stordito, niente attacchi speciali); su di loro gli altri effetti durano al massimo 2 turni.</li>
               <li>Una tecnica di un tipo d'arma diverso da quella che impugni resta preparata, ma non si può usare.</li>
               <li>Quando un effetto concede al nemico un tiro salvezza: d20 + suo Vigore contro 8 + il tuo modificatore di Vigore + livello.</li>
             </ul>`],
@@ -239,10 +247,15 @@
             <p>Arcanist and Monk know all 7 spells of their class and prepare ${R.MAX_INCANTESIMI}: they are changed by resting.</p>
             <h3>Warrior techniques</h3>
             <ul>
-              <li>Like casters with their spells, the Warrior prepares ${R.MAX_TECNICHE} special techniques (${R.MAX_TECNICHE + R.TECNICHE_SCUDO} with the shield on the arm): chosen at creation and changed by resting.</li>
+              <li>Like casters with their spells, the Warrior prepares special techniques: chosen at creation and changed by resting.</li>
+              <li>Each level has three techniques: you choose ${R.TECNICHE_PER_LIVELLO[0]} at levels 1 and 2 and ${R.TECNICHE_PER_LIVELLO[2]} from level 3 on. Your slots are therefore ${posti(true)}; with the shield on your arm you get one extra slot, of any level.</li>
               <li>You choose among the unlocked techniques (your level or lower) for the weapon type you hold (slashing, bludgeoning, piercing) and, with the shield on your arm, the shield. New ones unlock as you level up.</li>
               <li>Unshakeable Mind and Unstoppable Fury belong to the class and do not take up slots.</li>
-              <li>Techniques cost rage points. Rage builds during the fight: +1 for every hit you take, +2 for every critical hit.</li>
+              <li>Techniques cost rage points, which start at ${R.RISORSA_BASE} + Vigour mod. and grow at every level by Vigour mod. + the new level. A technique that misses still costs.</li>
+              <li>Rage builds during the fight: for every hit you take you gain ${iraColpi(true)}, double on a critical hit. An attack that misses you or that you parry gives no rage. Your own critical hits also give you 2 rage points.</li>
+              <li>From level 3 the Warrior chooses a <b>prestige path</b>: three abilities, one at levels 3, 4 and 5, always ready and taking no slots. The choice is final.</li>
+              <li>Some techniques can be used only once between one rest and the next.</li>
+              <li>The most fearsome opponents are immune to effects that take away actions or attacks (Dazed, Stunned, no special attacks); on them other effects last at most 2 turns.</li>
               <li>A technique for a different weapon type than the one you hold stays prepared but cannot be used.</li>
               <li>When an effect allows the enemy a saving throw: d20 + its Vigour against 8 + your Vigour modifier + level.</li>
             </ul>`],

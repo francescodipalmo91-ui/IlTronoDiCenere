@@ -164,7 +164,7 @@
       case "ritmo": r = hit({ piuDadi: 1 }); if (r.ok) { fx("debole", 3); if (vivo(s)) conTSn({ frastornato: 1 }); } s.sconto = 2; E.push({ k: "sconto", n: 2 }); break;
       case "veglia_inflessibile":
         r = hit({ piuDadi: 1 }); if (r.ok) { fx("debole", 3); fx("sbilanciato", 3); }
-        E.push(guardia(s, 2, 3)); s.eff.incrollabile = Math.max(s.eff.incrollabile || 0, 3); s.effMax.incrollabile = Math.max(s.effMax.incrollabile || 0, 3); E.push({ k: "incrollabile", turni: 3 });
+        E.push(guardia(s, 2, 3)); s.eff.furore = Math.max(s.eff.furore || 0, 3); s.effMax.furore = Math.max(s.effMax.furore || 0, 3); E.push({ k: "furore", turni: 3 }); /* +4 ai tiri salvezza e alle prove contrapposte */
         break;
 
       /* ---- contundenti (invariate) ---- */

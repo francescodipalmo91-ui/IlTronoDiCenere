@@ -4270,7 +4270,7 @@
         parataOk: "Pari il colpo e rispondi subito: nessun danno.", contrattacco: "Contrattacco:",
         marchio: "Il nemico è marchiato: finché sanguina, i tuoi attacchi normali gli fanno 1d4 danni in più.", marchioDanno: (x) => `Marchio: +${x} danni.`,
         sconto: (n) => `La tua prossima tecnica costerà ${n} punti ira in meno.`, scontoUsato: (n) => `Ritmo del Duello: −${n} punti ira.`,
-        gratuito: "E subito un altro colpo, senza fermarti:", incrollabile: (n) => `Per ${n} turni Mente incrollabile non costa ira e ha +2 al tiro.`,
+        gratuito: "E subito un altro colpo, senza fermarti:", furoreTurni: (n) => `+4 ai tiri salvezza e alle prove contrapposte per ${n} turni.`,
         guardiaTurni: (v, n) => n > 1 ? `+${v} alla Classe armatura per ${n} turni.` : `+${v} alla Classe armatura fino al tuo prossimo turno.`,
         giaUsataRiposo: "Questa tecnica si usa una volta per riposo: la ritroverai dopo aver dormito.", unaPerRiposo: "una volta per riposo",
         via: { titolo: "Via di prestigio", daScegliere: "Hai raggiunto il livello 3: puoi scegliere una via di prestigio.", scegli: "Scegli",
@@ -4313,7 +4313,7 @@
         parataOk: "You parry the blow and answer at once: no damage.", contrattacco: "Counterattack:",
         marchio: "The enemy is branded: while it bleeds, your normal attacks deal it 1d4 extra damage.", marchioDanno: (x) => `Brand: +${x} damage.`,
         sconto: (n) => `Your next technique will cost ${n} rage points less.`, scontoUsato: (n) => `Rhythm of the Duel: −${n} rage points.`,
-        gratuito: "And at once another blow, without stopping:", incrollabile: (n) => `For ${n} turns Unshakeable Mind costs no rage and gets +2 to the roll.`,
+        gratuito: "And at once another blow, without stopping:", furoreTurni: (n) => `+4 to saving throws and opposed checks for ${n} turns.`,
         guardiaTurni: (v, n) => n > 1 ? `+${v} Armor class for ${n} turns.` : `+${v} Armor class until your next turn.`,
         giaUsataRiposo: "This technique can be used once per rest: you will have it again after sleeping.", unaPerRiposo: "once per rest",
         via: { titolo: "Prestige path", daScegliere: "You have reached level 3: you can choose a prestige path.", scegli: "Choose",
@@ -5147,9 +5147,8 @@
     const CD_INCROLLABILE = R_.CD_INCROLLABILE;
     let offertaIncrollabile = false;
     const attrIncrollabile = () => (pg.classe === "Soldato" ? "Vigore" : "Spirito");
-    const vegliaIncrollabile = () => !!(typeof scontro !== "undefined" && scontro && scontro.eff && scontro.eff.incrollabile > 0); /* Veglia Inflessibile */
-    const modIncrollabile = () => Math.floor(((Number(pg.statistiche[attrIncrollabile()]) || 10) - 10) / 2) + livelloPg() + (vegliaIncrollabile() ? 2 : 0);
-    const puoIncrollabile = () => !!(RISORSA_CLASSE[pg.classe] && ((risorsaAttuale() || 0) >= 1 || vegliaIncrollabile()) && !finePartita);
+    const modIncrollabile = () => Math.floor(((Number(pg.statistiche[attrIncrollabile()]) || 10) - 10) / 2) + livelloPg();
+    const puoIncrollabile = () => !!(RISORSA_CLASSE[pg.classe] && (risorsaAttuale() || 0) >= 1 && !finePartita);
     function offriIncrollabile() {
       if (!offertaIncrollabile) return;
       setTimeout(() => {
@@ -5165,7 +5164,7 @@
     function tiroIncrollabile() {
       chiudiScelte();
       const R = RG.incrollabile, m = modIncrollabile(), d = tira(20), tot = d + m, ok = tot >= CD_INCROLLABILE;
-      if (!vegliaIncrollabile()) pg.risorsaUsata = (pg.risorsaUsata || 0) + 1;
+      pg.risorsaUsata = (pg.risorsaUsata || 0) + 1;
       const da = mentaliAttuali();
       if (ok) pg.dannoMentale = Math.max(0, (pg.dannoMentale || 0) - 1);
       offertaIncrollabile = false;
@@ -5300,7 +5299,7 @@
     }
 
     /* Effetti a durata: medaglione con simbolo, nome e turni rimasti (rombi pieni = turni ancora attivi) */
-    const EFF_PG = ["scudo", "invuln", "pietra", "armaPiu", "potenza", "guardia", "furore", "incrollabile"], EFF_NEM = ["bloccato", "cieco", "sanguina", "debole", "sbilanciato", "silenzio", "frastornato"];
+    const EFF_PG = ["scudo", "invuln", "pietra", "armaPiu", "potenza", "guardia", "furore"], EFF_NEM = ["bloccato", "cieco", "sanguina", "debole", "sbilanciato", "silenzio", "frastornato"];
     const SHIELD = "M12 2.8l7 2.7v5.3c0 4.6-3 8.1-7 10.4-4-2.3-7-5.8-7-10.4V5.5z";
     const ICONE_EFF = { /* tratti a 24×24, colore dal tema dell'effetto */
       scudo: { tono: "dif", d: `<path d="${SHIELD}"/><path d="M12 6.5v11M8.2 10.5h7.6" opacity=".7"/>` },
@@ -5315,7 +5314,6 @@
       silenzio: { tono: "mal", d: `<circle cx="12" cy="12" r="8"/><path d="M6.4 6.4l11.2 11.2"/>` },
       frastornato: { tono: "mal", d: `<circle cx="12" cy="13" r="5"/><path d="M5 5.5l1.5 1.5M19 5.5l-1.5 1.5M12 3v2.2" opacity=".8"/>` },
       guardia: { tono: "dif", d: `<path d="${SHIELD}"/><path d="M8.5 11.5l2.5 2.5 4.5-5" opacity=".8"/>` },
-      incrollabile: { tono: "dif", d: `<path d="${SHIELD}"/><path d="M9 10.5c0-1.7 1.3-3 3-3s3 1.3 3 3-1.3 2-3 2.5M12 15.5v.5" opacity=".8"/>` },
       furore: { tono: "off", d: `<path d="M12 3c1 3.5 4.5 5 4.5 9a4.5 4.5 0 0 1-9 0c0-2 1-3.2 2-4.2.3 1.6 1 2.4 2 2.7-.6-2.5-.2-5.2.5-7.5z"/>` },
       cieco: { tono: "mal", d: `<path d="M2.5 12s3.6-6 9.5-6 9.5 6 9.5 6-3.6 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.6"/><path d="M4.5 19.5l15-15"/>` },
       impaurito: { tono: "mal", d: `<circle cx="12" cy="12" r="8.5"/><circle cx="9" cy="10" r="1"/><circle cx="15" cy="10" r="1"/><ellipse cx="12" cy="15.5" rx="2" ry="2.4"/>` }
@@ -8142,7 +8140,7 @@
         effetti: "Effetti", effettiTit: "Effetti attivi", turniRim: (n) => n === 1 ? "1 turno" : `${n} turni`,
         turnoTit: (n) => `${n}° turno`, lblAttacco: "Attacco", lblTorcia: "Attacco con la torcia", lblPozione: "Pozione", lblBloccato: "Mastino bloccato",
         emorragia: "Emorragia", marchiato: "marchiato",
-        effNomi: { sanguina: "Sanguinamento", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Senza attacchi speciali", frastornato: "Frastornato", guardia: "Guardia alzata", furore: "Furore inarrestabile", incrollabile: "Mente incrollabile", scudo: "Scudo", bloccato: "Nemico bloccato", invuln: "Invulnerabilità", armaPiu: "Arma migliorata", pietra: "Pelle di pietra", cieco: "Nemico accecato", potenza: "Aumento di potenza", impaurito: "Impaurito" },
+        effNomi: { sanguina: "Sanguinamento", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Senza attacchi speciali", frastornato: "Frastornato", guardia: "Guardia alzata", furore: "Furore inarrestabile", scudo: "Scudo", bloccato: "Nemico bloccato", invuln: "Invulnerabilità", armaPiu: "Arma migliorata", pietra: "Pelle di pietra", cieco: "Nemico accecato", potenza: "Aumento di potenza", impaurito: "Impaurito" },
         effFinito: (n) => `L'effetto «${n}» svanisce.`, resisteBreve: "resiste", effettoBreve: "a segno",
         iniziativa: (a, b) => `Iniziativa: la tua Agilità (${a}) contro quella del Mastino (${b}).`,
         pari: (x, y) => `Agilità pari: si tira un d20 a testa. Tu ${x}, il Mastino ${y}.`,
@@ -8256,7 +8254,7 @@
         effetti: "Effects", effettiTit: "Active effects", turniRim: (n) => n === 1 ? "1 round" : `${n} rounds`,
         turnoTit: (n) => `Round ${n}`, lblAttacco: "Attack", lblTorcia: "Torch attack", lblPozione: "Potion", lblBloccato: "Mastiff held",
         emorragia: "Haemorrhage", marchiato: "branded",
-        effNomi: { sanguina: "Bleeding", debole: "Weakened", sbilanciato: "Off-balance", silenzio: "No special attacks", frastornato: "Dazed", guardia: "Guard up", furore: "Unstoppable Fury", incrollabile: "Unshakeable Mind", scudo: "Shield", bloccato: "Enemy held", invuln: "Invulnerability", armaPiu: "Empowered weapon", pietra: "Stoneskin", cieco: "Enemy blinded", potenza: "Surge of power", impaurito: "Frightened" },
+        effNomi: { sanguina: "Bleeding", debole: "Weakened", sbilanciato: "Off-balance", silenzio: "No special attacks", frastornato: "Dazed", guardia: "Guard up", furore: "Unstoppable Fury", scudo: "Shield", bloccato: "Enemy held", invuln: "Invulnerability", armaPiu: "Empowered weapon", pietra: "Stoneskin", cieco: "Enemy blinded", potenza: "Surge of power", impaurito: "Frightened" },
         effFinito: (n) => `The “${n}” effect fades.`, resisteBreve: "resisted", effettoBreve: "takes hold",
         iniziativa: (a, b) => `Initiative: your Agility (${a}) against the Mastiff's (${b}).`,
         pari: (x, y) => `Agility tied: each side rolls a d20. You ${x}, the Mastiff ${y}.`,
@@ -8678,7 +8676,7 @@
           case "soffioPerso": righe.push(RT.effetti.carica); break;
           case "sconto": righe.push(RT.sconto(e.n)); break;
           case "scontoUsato": righe.push(RT.scontoUsato(e.n)); break;
-          case "incrollabile": righe.push(RT.incrollabile(e.turni)); break;
+          case "furore": righe.push(RT.furoreTurni(e.turni)); break;
           case "ira": { const r = risorsaPg(); if (r) righe.push(RT.ira(e.n, risorsaAttuale(), r.max)); break; }
         }
       });

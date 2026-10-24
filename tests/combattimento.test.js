@@ -238,8 +238,8 @@
     prova(s, c, "ritmo"); eq(s.sconto, 2); eq(s.eff.debole, 3);
     eq(C.costo(tec("polso"), s), 1, "2 − 2 → minimo 1"); const r = prova(s, c, "polso"); eq(r.costo, 1); eq(s.sconto, 0, "lo sconto si consuma");
   });
-  caso("Veglia Inflessibile: Indebolito e Sbilanciato 3, +2 CA e Mente incrollabile per 3 turni", () => {
-    const s = scontro(); prova(s, ctx({ liv: 5, dadi: [15, 2, 2] }), "veglia_inflessibile"); eq([s.eff.debole, s.eff.sbilanciato, s.eff.guardia, s.eff.incrollabile], [3, 3, 3, 3]);
+  caso("Veglia Inflessibile: Indebolito e Sbilanciato 3, +2 CA e +4 ai tiri salvezza (Furore) per 3 turni", () => {
+    const s = scontro(); prova(s, ctx({ liv: 5, dadi: [15, 2, 2] }), "veglia_inflessibile"); eq([s.eff.debole, s.eff.sbilanciato, s.eff.guardia, s.eff.furore], [3, 3, 3, 3]); eq(s.eff.incrollabile, undefined);
   });
   caso("Guardia: una guardia scaduta non lascia il vecchio valore (Scudo Frontale +3 poi Veglia di Ferro +2)", () => {
     const s = scontro(); prova(s, ctx(), "frontale"); eq(s.guardiaVal, 3); C.fineTurnoNemico(s);

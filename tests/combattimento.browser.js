@@ -253,6 +253,19 @@ caso("Gioco: un salvataggio con le vecchie tecniche del taglio lascia i posti vu
   vero(/posti? vuot|Scegli/i.test(await page.textContent("#tecniche")), "manca l'invito a scegliere"); eq(errori, [], "errori"); await chiudi();
 });
 
+caso("Gioco: Veglia Inflessibile dà +2 CA e +4 ai tiri salvezza per 3 turni (vale sul Soffio)", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ livello: 5, usate: { riposo: "sbloccato", tecPreparate: [], via: "guendalina" } }));
+  await page.evaluate(() => avviaScontro("mastino", { primo: "pg" })); await aspettaTurnoPg(page);
+  await page.evaluate(() => { scontro.pv = 90; scontro.pvMax = 90; });
+  await accoda(page, [R(1, 20)], [0.1]); /* manchi; il mastino soffia */
+  await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "veglia_inflessibile")));
+  eq(await page.evaluate(() => [scontro.eff.furore, scontro.eff.guardia, scontro.guardiaVal]), [3, 3, 2]);
+  vero(/Furore inarrestabile/.test(await page.textContent("#schedaPg")), "manca l'effetto nella scheda");
+  await page.waitForSelector("#azioni button", { state: "visible", timeout: 10000 });
+  vero(/\+5/.test(await page.textContent("#azioni")), "tiro salvezza senza il +4 (Agilità +1 + 4)");
+  eq(errori, [], "errori"); await chiudi();
+});
+
 /* ======================= Creazione e regolamento ======================= */
 caso("Creazione: il Guerriero con la spada vede le 3 nuove tecniche di livello 1 e ne sceglie 2", async (b) => {
   const { page, errori, chiudi } = await apri(b, "creazione.html");

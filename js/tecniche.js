@@ -102,7 +102,7 @@ window.TECNICHE = [
   { id: "veglia_inflessibile", liv: 5, tipo: "Tagliente", costo: 10, via: "guendalina",
     nome: { it: "Veglia Inflessibile", en: "Unbending Vigil" },
     desc: { it: "La casa non ti piegherà.", en: "The house will not bend you." },
-    effetto: { it: "Attacco con un dado di danno in più; se colpisce, Indebolito e Sbilanciato per 3 turni. Per 3 turni hai +2 alla Classe armatura e Mente incrollabile non costa ira e ha +2 al tiro.", en: "Attack with one extra damage die; on a hit, Weakened and Off-balance for 3 turns. For 3 turns you have +2 Armor class, and Unshakeable Mind costs no rage and gets +2 to the roll." } },
+    effetto: { it: "Attacco con un dado di danno in più; se colpisce, Indebolito e Sbilanciato per 3 turni. Per 3 turni hai +2 alla Classe armatura e +4 ai tiri salvezza e alle prove contrapposte.", en: "Attack with one extra damage die; on a hit, Weakened and Off-balance for 3 turns. For 3 turns you have +2 Armor class and +4 to saving throws and opposed checks." } },
 
   /* ---------- Armi contundenti ---------- */
   { id: "spezzatendini", liv: 1, tipo: "Contundente", costo: 2,

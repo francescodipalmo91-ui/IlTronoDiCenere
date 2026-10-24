@@ -72,7 +72,7 @@ Le sei tecniche del taglio di prima (Squarcio della Belva, Taglio Arterioso…) 
 | Aldo | 5 | Sentenza del Boia | 10 | Se sanguina e colpisci: sempre critico |
 | Guendalina | 3 | Veglia di Ferro | 5 | Indebolito + Sbilanciato 2; +2 CA fino al tuo turno |
 | Guendalina | 4 | Ritmo del Duello | 8 | +1 dado; Indebolito 3 (tiro salvezza → Frastornato 1); prossima tecnica −2 ira |
-| Guendalina | 5 | Veglia Inflessibile | 10 | +1 dado; Indebolito + Sbilanciato 3; +2 CA e Mente incrollabile gratuita (+2) per 3 turni |
+| Guendalina | 5 | Veglia Inflessibile | 10 | +1 dado; Indebolito + Sbilanciato 3; per 3 turni +2 CA e +4 ai tiri salvezza e alle prove contrapposte (come Furore) |
 
 La scelta della via è **provvisoria**: al livello 3 compare un pulsante «Scegli» nella sezione Tecniche. Quando scriverai i dialoghi con Aldo e Guendalina, basterà chiamare `sceglieVia("aldo")` o `sceglieVia("guendalina")`. La scelta è definitiva.
 
@@ -84,7 +84,11 @@ La scelta della via è **provvisoria**: al livello 3 compare un pulsante «Scegl
 
 ## 6. Da decidere
 
-1. **Veglia Inflessibile:** la parte su Mente incrollabile in combattimento non fa nulla, perché la salute mentale si perde solo fuori dagli scontri. Proposta: sostituirla con +4 ai tiri salvezza e alle prove contrapposte per 3 turni (come Furore).
-2. **Critico del giocatore:** la regola già esistente (+2 ira) l'ho lasciata. Va tenuta?
-3. **Presa:** oggi non dà ira, perché è il seguito di un morso. Va bene?
-4. **Salvataggi esistenti:** l'ira già cresciuta con la vecchia regola (dado vita) resta com'è. Le vecchie tecniche del taglio diventano posti vuoti da riempire.
+Decise il 24/10/2026:
+1. **Veglia Inflessibile:** la parte su Mente incrollabile (inutile in combattimento) è sostituita da +4 ai tiri salvezza e alle prove contrapposte per 3 turni, come Furore.
+2. **Critico del giocatore:** resta il +2 ira.
+3. **Presa:** non dà ira.
+
+Da ricordare:
+- **Scelta della via nei dialoghi:** quando si scrivono i dialoghi con Aldo e Guendalina, collegarli a `sceglieVia("aldo")` / `sceglieVia("guendalina")` e togliere il pulsante provvisorio nella sezione Tecniche.
+- **Salvataggi esistenti:** l'ira già cresciuta con la vecchia regola (dado vita) resta com'è; le vecchie tecniche del taglio diventano posti vuoti da riempire.

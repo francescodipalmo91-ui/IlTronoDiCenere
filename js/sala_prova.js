@@ -32,9 +32,9 @@
     ettore: { nome: "Ettore (boss)", ca: 13, dadoVita: 8, dannoDado: 6, attacco: 1, boss: true, probPresa: 0, probSoffio: 0, soffio: null, arma: true, resa: true },
     manichino: { nome: "Manichino (non attacca)", ca: 12, pv: 60, boss: false, passivo: true, arma: false }
   };
-  const NOMI_EFF = { sanguina: "Sanguinamento", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Senza attacchi speciali", frastornato: "Frastornato", bloccato: "Stordito", guardia: "Guardia alzata", furore: "Furore inarrestabile", incrollabile: "Mente incrollabile" };
+  const NOMI_EFF = { sanguina: "Sanguinamento", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Senza attacchi speciali", frastornato: "Frastornato", bloccato: "Stordito", guardia: "Guardia alzata", furore: "Furore inarrestabile" };
   const DESC_EFF = { debole: "−2 per colpire", sbilanciato: "−2 alla Classe armatura", silenzio: "niente Presa né Soffio", frastornato: "−4 per colpire, niente critici", bloccato: "salta il prossimo turno", furore: "+4 ai tiri salvezza e alle prove contrapposte" };
-  const EFF_PG = ["guardia", "furore", "incrollabile"];
+  const EFF_PG = ["guardia", "furore"];
 
   /* ---------- dadi: coda truccata, poi caso ---------- */
   const coda = [];
@@ -99,7 +99,7 @@
         case "soffioPerso": r.push("Il soffio pronto va perso."); break;
         case "sconto": r.push(`La prossima tecnica costa ${e.n} ira in meno.`); break;
         case "scontoUsato": r.push(`Sconto di Ritmo del Duello: −${e.n} ira.`); break;
-        case "incrollabile": r.push(`Mente incrollabile gratuita e +2 per ${durata(e.turni)}.`); break;
+        case "furore": r.push(`+4 ai tiri salvezza e alle prove contrapposte per ${durata(e.turni)}.`); break;
         case "ira": r.push(`+${e.n} ira.`); break;
         case "giaUsataRiposo": r.push("Già usata in questo riposo."); break;
         default: r.push(JSON.stringify(e));

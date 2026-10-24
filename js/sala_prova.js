@@ -32,9 +32,9 @@
     ettore: { nome: "Ettore (boss)", ca: 13, dadoVita: 8, dannoDado: 6, attacco: 1, boss: true, probPresa: 0, probSoffio: 0, soffio: null, arma: true, resa: true },
     manichino: { nome: "Manichino (non attacca)", ca: 12, pv: 60, boss: false, passivo: true, arma: false }
   };
-  const NOMI_EFF = { sanguina: "Sanguinamento", frattura: "Frattura", intontito: "Intontito", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Senza attacchi speciali", frastornato: "Frastornato", bloccato: "Stordito", guardia: "Guardia alzata", furore: "Furore inarrestabile" };
-  const DESC_EFF = { frattura: "1d4 danni a ogni suo attacco", intontito: "niente critici", debole: "−2 per colpire", sbilanciato: "−2 alla Classe armatura", silenzio: "niente Presa né Soffio", frastornato: "−4 per colpire, niente critici", bloccato: "salta il prossimo turno", furore: "+4 ai tiri salvezza e alle prove contrapposte" };
-  const EFF_PG = ["guardia", "furore"];
+  const NOMI_EFF = { sanguina: "Sanguinamento", frattura: "Frattura", intontito: "Intontito", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Senza attacchi speciali", frastornato: "Frastornato", bloccato: "Stordito", guardia: "Guardia alzata", furore: "Furore inarrestabile", esposto: "Esposto", precisione: "Mille Soli" };
+  const DESC_EFF = { frattura: "1d4 danni a ogni suo attacco", intontito: "niente critici", debole: "−2 per colpire", sbilanciato: "−2 alla Classe armatura", silenzio: "niente Presa né Soffio", frastornato: "−4 per colpire, niente critici", bloccato: "salta il prossimo turno", furore: "+4 ai tiri salvezza e alle prove contrapposte", esposto: "i tuoi attacchi fanno critico con un numero in meno, mai sotto 18", precisione: "i tuoi attacchi fanno critico da 18 a 20" };
+  const EFF_PG = ["guardia", "furore", "precisione"];
 
   /* ---------- dadi: coda truccata, poi caso ---------- */
   const coda = [];
@@ -83,7 +83,7 @@
       switch (e.k) {
         case "colpo":
           if (!e.ok) { r.push(`Mancato: d20 ${e.d} ${fmt(e.mA)} = ${e.tot} contro CA ${e.ca}.`); break; }
-          r.push(`${e.crit ? "CRITICO" : "Colpito"}: d20 ${e.d} ${fmt(e.mA)} = ${e.tot} contro CA ${e.ca}. Danno ${e.nd}d${e.dado} [${e.tiri.join("+")}] ${fmt(e.mm)}${e.marchio ? ` + marchio ${e.marchio}` : ""}${e.sigillo ? ` + sigillo ${e.sigillo}` : ""} = ${e.danno}.`); break;
+          r.push(`${e.crit ? "CRITICO" : "Colpito"}: d20 ${e.d} ${fmt(e.mA)} = ${e.tot} contro CA ${e.ca}${e.critDa ? ` (critico da ${e.critDa})` : ""}. Danno ${e.nd}d${e.dado} [${e.tiri.join("+")}] ${fmt(e.mm)}${e.marchio ? ` + marchio ${e.marchio}` : ""}${e.sigillo ? ` + sigillo ${e.sigillo}` : ""}${e.segno ? ` + segno ${e.segno}` : ""} = ${e.danno}.`); break;
         case "stato": r.push(e.s === "sanguina" ? `${e.dado === 6 ? "Emorragia" : "Sanguinamento"} 1d${e.dado} per ${durata(e.turni)}.` : `${NOMI_EFF[e.s] || e.s} per ${C.perScontro(e.turni) ? "tutto lo scontro" : durata(e.turni)}${DESC_EFF[e.s] ? ` (${DESC_EFF[e.s]})` : ""}.`); if (e.ridotto) r.push(`Boss: durata ridotta a ${durata(e.turni)}.`); break;
         case "immune": r.push(`Boss: «${NOMI_EFF[e.s]}» non ha effetto.`); break;
         case "ts": r.push(`Tiro salvezza del nemico: d20 ${e.d} ${fmt(e.m)} = ${e.tot} contro CD ${e.cd} → ${e.ok ? "resiste" : "non resiste"}.`); break;
@@ -96,12 +96,15 @@
         case "marchio": r.push("Il nemico è marchiato finché sanguina (+1d4 agli attacchi normali)."); break;
         case "crepe": r.push(`Incrinatura: +${e.n} (${e.tot}/${e.max}, −${e.tot} alla CA)${e.perse ? `, ${e.perse} oltre il massimo perse` : ""}.`); break;
         case "sigillo": r.push("Sigillo: con l'Incrinatura al massimo, +1d4 agli attacchi normali."); break;
+        case "segno": r.push("Segno del Cacciatore: finché è Esposto, +1d4 agli attacchi normali."); break;
+        case "espostoConsumato": r.push("Trapasso: l'Esposto si consuma."); break;
+        case "precisione": r.push(`Per ${durata(e.turni)} i tuoi attacchi fanno critico da 18 a 20.`); break;
         case "crollo": r.push(`Crollo: ${e.n} cariche di Incrinatura consumate.`); break;
         case "parata": r.push("Parata pronta: il primo colpo che ti raggiungerebbe fa 0 danni."); break;
         case "attaccoGratuito": r.push("Attacco normale gratuito:"); break;
         case "soffioPerso": r.push("Il soffio pronto va perso."); break;
         case "sconto": r.push(`La prossima tecnica costa ${e.n} ira in meno.`); break;
-        case "scontoUsato": r.push(`Sconto di Ritmo del Duello: −${e.n} ira.`); break;
+        case "scontoUsato": r.push(`Sconto: −${e.n} ira.`); break;
         case "furore": r.push(`+4 ai tiri salvezza e alle prove contrapposte per ${durata(e.turni)}.`); break;
         case "ira": r.push(`+${e.n} ira.`); break;
         case "giaUsataRiposo": r.push("Già usata in questo riposo."); break;
@@ -189,7 +192,7 @@
         if (!ok) righe.push(`${nome}: mancato (d20 ${d} ${fmt(m)} = ${tot} contro la tua CA ${ca}). Nessuna ira.`);
         else {
           const sub = C.colpoSubito(s, c, crit);
-          if (sub.annullato) righe.push(`${nome}: colpirebbe (d20 ${d} ${fmt(m)} = ${tot} contro CA ${ca}), ma la Parata lo annulla: 0 danni, nessuna ira.`, ...testoEventi(sub.eventi.filter(e => e.k === "stato" || e.k === "crepe")), ...sub.eventi.filter(e => e.k === "contrattacco").map(e => `Contrattacco: d${e.dado} [${e.tiri.join("+")}] ${fmt(e.mm)} = ${e.danno} danni.`));
+          if (sub.annullato) righe.push(`${nome}: colpirebbe (d20 ${d} ${fmt(m)} = ${tot} contro CA ${ca}), ma la Parata lo annulla: 0 danni, nessuna ira.`, ...testoEventi(sub.eventi.filter(e => e.k === "stato" || e.k === "crepe")), ...sub.eventi.filter(e => e.k === "contrattacco").map(e => `Contrattacco${e.dCrit ? ` (critico 18-20: d20 ${e.dCrit} → ${e.crit ? "CRITICO" : "no"})` : ""}: ${e.tiri.length}d${e.dado} [${e.tiri.join("+")}] ${fmt(e.mm)} = ${e.danno} danni.`));
           else {
             const nd = crit ? 2 : 1, tiri = Array.from({ length: nd }, () => tira(nem.dannoDado)), dn = Math.max(1, tiri.reduce((a, b) => a + b, 0) + m);
             pg.pv -= dn; pg.ira = Math.min(pg.iraMax, pg.ira + sub.ira);
@@ -219,14 +222,14 @@
   function scheda(box, voci) { box.replaceChildren(); voci.forEach(([k, v]) => box.append(el("dt", { text: k }), el("dd", { text: v }))); }
   function effetti(chiavi) {
     const att = chiavi.filter(k => s && s.eff[k] > 0);
-    return att.map(k => [k === "sanguina" ? (Number(s.sangueDado) === 6 ? "Emorragia 1d6" : "Sanguinamento 1d4") + (s.marchio ? " · marchiato" : "") : NOMI_EFF[k], C.perScontro(s.eff[k]) ? "tutto lo scontro" : durata(s.eff[k])]);
+    return att.map(k => [k === "sanguina" ? (Number(s.sangueDado) === 6 ? "Emorragia 1d6" : "Sanguinamento 1d4") + (s.marchio ? " · marchiato" : "") : NOMI_EFF[k] + (k === "esposto" && s.segno ? " · segnato" : ""), C.perScontro(s.eff[k]) ? "tutto lo scontro" : durata(s.eff[k])]);
   }
   const crepeNem = () => { if (!s || !C.crepe(s)) return []; const max = C.crepeMax({ boss: nem.boss }); return [["Incrinatura" + (s.sigillo && C.crepe(s) >= max ? " · sigillo" : ""), `${C.crepe(s)}/${max} cariche (−${C.crepe(s)} CA)`]]; };
   function disegna() {
     if (!pg) pg = leggiPg();
     const st = pg.pv != null ? pg : { ...pg, pv: pg.pvMax, ira: pg.iraMax };
     scheda($("svPg"), [["Salute", `${st.pv} / ${pg.pvMax}`], ["Ira", `${st.ira} / ${pg.iraMax}`], ["CA", String(s ? caPg() : pg.ca)], ["CD dei tuoi effetti", String(8 + pg.modV + pg.liv)], ["Ira per colpo subito", `${C.iraPerColpo(pg.liv, false)} (critico ${C.iraPerColpo(pg.liv, true)})`], ...effetti(EFF_PG), ...(s && s.parata ? [["Parata", "pronta"]] : []), ...(s && s.sconto ? [["Sconto", `−${s.sconto} ira`]] : [])]);
-    if (nem) scheda($("svNem"), [["Nemico", nem.nome + (nem.boss ? " — BOSS" : "")], ["Salute", `${Math.max(0, s.pv)} / ${s.pvMax}`], ["CA", String(caNem())], ...(nem.soffio ? [["Soffio", s.soffioPronto ? "carico" : "scarico"]] : []), ...crepeNem(), ...effetti(["sanguina", "frattura", "debole", "sbilanciato", "silenzio", "frastornato", "intontito", "bloccato"])]);
+    if (nem) scheda($("svNem"), [["Nemico", nem.nome + (nem.boss ? " — BOSS" : "")], ["Salute", `${Math.max(0, s.pv)} / ${s.pvMax}`], ["CA", String(caNem())], ...(nem.soffio ? [["Soffio", s.soffioPronto ? "carico" : "scarico"]] : []), ...crepeNem(), ...effetti(["sanguina", "frattura", "esposto", "debole", "sbilanciato", "silenzio", "frastornato", "intontito", "bloccato"])]);
     else scheda($("svNem"), [["Nemico", "—"]]);
     /* posti e tecniche */
     const prep = prepT(), max = C.slotTecniche(pg.liv, pg.scudo);

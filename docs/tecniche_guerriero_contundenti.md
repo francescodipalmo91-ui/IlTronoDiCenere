@@ -105,7 +105,7 @@ Restano così, dopo verifica:
 - **Frattura:** stato `frattura` a turni; quella «per tutto lo scontro» vale 99 turni e nella scheda si legge «tutto lo scontro». Scatta con `Combattimento.frattura()` prima di morso, zampata, Soffio e Presa.
 - **Percossa al Mento:** stato nuovo `intontito` (niente critici del nemico per un turno), funziona anche sui boss.
 - **Contro-Schiacciamento:** usa la stessa Parata del taglio, con `parataCrepe` che sostituisce il sanguinamento con 1 carica di Incrinatura.
-- **Vie:** le abilità della via dipendono dall'arma in mano (taglio o contundente); con un'arma perforante non ce ne sono. La finestra di scelta mostra quelle dell'arma attuale.
+- **Vie:** le abilità della via dipendono dall'arma in mano (taglio o contundente); dal 24/10/2026 ci sono anche quelle perforanti (vedi tecniche_guerriero_perforanti.md). La finestra di scelta mostra quelle dell'arma attuale.
 - **Regolamento:** aggiunti Incrinatura e Frattura (italiano e inglese).
 - **Salvataggi:** le sei vecchie contundenti (Spezzatendini, Schiaccio-Ossa…) diventano posti vuoti.
 

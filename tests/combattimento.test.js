@@ -372,21 +372,115 @@
     const b = scontro(); prova(b, ctx({ liv: 5, boss: true, dadi: [15, 2, 2] }), "silenzio_casa"); eq([b.eff.silenzio || 0, b.eff.furore, b.eff.guardia], [0, 3, 3]);
   });
 
+  /* ================= Perforanti: Esposto e intervallo del critico ================= */
+  caso("Esposto: critico con un numero in meno anche sugli attacchi normali, mai sotto 18", () => {
+    const s = scontro({ eff: { esposto: 1 } }), c = ctx({ dadi: [19, 1, 1, 18, 1, 1, 17, 1] }); c.s = s;
+    eq(C.colpo(s, c, { base: true }).crit, true, "19 con Esposto");
+    eq(prova(s, c, "cuore").eventi[0].crit, true, "Affondo al Cuore + Esposto: 18");
+    const f = ev(prova(s, c, "fianco"), "colpo")[0]; eq([f.ok, f.crit, f.critDa], [true, false, 18], "tetto: 17 non è critico");
+    eq(C.sogliaCrit({ eff: { esposto: 1, precisione: 2 } }, 19), 18); eq(C.sogliaCrit({ eff: {} }), 20);
+  });
+  caso("Esposto sui boss: al massimo 2 turni", () => {
+    const b = scontro(), r = prova(b, ctx({ liv: 4, boss: true, dadi: [15, 1, 1] }), "ferita_profonda");
+    eq([b.eff.esposto, b.eff.debole], [2, 2]); vero(ev(r, "stato").find(e => e.s === "esposto").ridotto);
+  });
+  caso("Mirare al Varco: Esposto 2 se colpisce, niente se manca", () => {
+    const s = scontro(); prova(s, ctx({ dadi: [15, 2] }), "varco"); eq([s.eff.esposto, s.pv], [2, 35]);
+    const m = scontro(); prova(m, ctx({ dadi: [2] }), "varco"); eq(m.eff.esposto || 0, 0);
+  });
+  caso("Trafittura e Perforazione Profonda: +3 per colpire e un dado in più", () => {
+    const s = scontro(), r = ev(prova(s, ctx({ liv: 2, dadi: [8, 1, 1] }), "trafittura"), "colpo")[0]; eq([r.ok, r.mA, r.nd], [true, 6, 2]);
+    const p = scontro(), rp = ev(prova(p, ctx({ liv: 3, dadi: [10, 1, 1] }), "perforazione"), "colpo")[0]; eq([rp.mA, rp.nd, p.eff.esposto], [6, 2, 2]);
+  });
+  caso("Punta nel Fianco: critico da 18, Indebolito solo sul critico", () => {
+    const s = scontro(), r = ev(prova(s, ctx({ liv: 2, dadi: [18, 1, 1] }), "fianco"), "colpo")[0]; eq([r.crit, r.nd, s.eff.debole], [true, 2, 2]);
+    const n = scontro(); prova(n, ctx({ liv: 2, dadi: [17, 1] }), "fianco"); eq(n.eff.debole || 0, 0);
+  });
+  caso("Doppia Punta: due attacchi col solo dado, critico da 19", () => {
+    const s = scontro(), r = ev(prova(s, ctx({ liv: 3, dadi: [19, 1, 1, 2] }), "doppia_punta"), "colpo");
+    eq(r.length, 2); eq([r[0].crit, r[0].nd, r[0].mm, r[1].ok], [true, 2, 0, false]); eq(s.pv, 38);
+  });
+  caso("Colpo Mirato: se colpisce è sempre critico", () => {
+    const s = scontro(), r = ev(prova(s, ctx({ liv: 3, dadi: [15, 1, 1] }), "mirato"), "colpo")[0]; eq([r.crit, r.nd], [true, 2]);
+    const m = scontro(), rm = ev(prova(m, ctx({ liv: 3, dadi: [2] }), "mirato"), "colpo")[0]; eq([rm.ok, rm.crit], [false, false]);
+  });
+  caso("Guardia di Punta: 0 danni, contrattacco critico con 18-20 ed Esposto 2, niente ira", () => {
+    const s = scontro(), c = ctx({ liv: 4 }); prova(s, c, "guardia_punta"); eq([s.parata, s.parataPunta], [true, true]);
+    const sub = C.colpoSubito(s, ctx({ liv: 4, dadi: [18, 2, 3] }), false), k = sub.eventi.find(e => e.k === "contrattacco");
+    eq([sub.annullato, sub.ira, k.crit, k.tiri, k.danno, s.eff.esposto, s.parata], [true, 0, true, [2, 3], 8, 2, false]);
+    const n = scontro(); prova(n, ctx({ liv: 4 }), "guardia_punta"); const k2 = C.colpoSubito(n, ctx({ liv: 4, dadi: [10, 4] }), false).eventi.find(e => e.k === "contrattacco"); eq([k2.crit, k2.danno], [false, 7]);
+  });
+  caso("Colpo di Grazia: esecuzione dei comuni sotto un quarto, mai sui boss", () => {
+    const s = scontro({ pv: 14 }), r = prova(s, ctx({ liv: 4, dadi: [15, 1, 1] }), "grazia"); eq(s.pv, 0); eq(ev(r, "esecuzione").length, 1);
+    const b = scontro({ pv: 14 }); prova(b, ctx({ liv: 4, boss: true, dadi: [15, 1, 1] }), "grazia"); eq(b.pv, 9);
+    const g = scontro({ pv: 40 }); prova(g, ctx({ liv: 4, dadi: [19, 1, 1, 1, 1] }), "grazia"); eq(g.pv, 33, "critico da 19: 4 dadi");
+  });
+  caso("Tempesta di Punte: ogni critico dà Esposto; 3 su 3 → Stordito (boss: Indebolito 2)", () => {
+    const s = scontro(), r = prova(s, ctx({ liv: 5, dadi: [18, 1, 1, 15, 1, 15, 1, 2] }), "tempesta");
+    eq(ev(r, "colpo").map(e => e.crit), [true, false, false]); eq([s.eff.esposto, s.eff.bloccato], [2, 1]);
+    const b = scontro(), rb = prova(b, ctx({ liv: 5, boss: true, dadi: [15, 1, 15, 1, 15, 1] }), "tempesta"); eq([b.eff.bloccato || 0, b.eff.debole], [0, 2]); eq(ev(rb, "ts").length, 0);
+  });
+  caso("Trafittura Celeste: +5 per colpire, Esposto e Sbilanciato 3", () => {
+    const s = scontro(), r = ev(prova(s, ctx({ liv: 5, dadi: [7, 1, 1] }), "celeste"), "colpo")[0]; eq([r.ok, r.mA, s.eff.esposto, s.eff.sbilanciato], [true, 8, 3, 3]);
+  });
+  caso("Il Colpo Perfetto: una volta per riposo, critico sicuro con un dado in più (4 dadi) e attacco gratuito", () => {
+    const s = scontro({ pv: 60, pvMax: 60 }), c = ctx({ liv: 5, dadi: [15, 1, 1, 1, 1, 15, 1] }), r = prova(s, c, "colpo_perfetto"), k = ev(r, "colpo");
+    eq([k[0].crit, k[0].nd, k[1].nd, ev(r, "attaccoGratuito").length], [true, 4, 1, 1]); eq(c.usate.colpo_perfetto, true);
+    eq(prova(s, c, "colpo_perfetto").rifiutata, true);
+  });
+  caso("Segno del Cacciatore: Esposto 3 e +1d4 agli attacchi normali finché dura", () => {
+    const s = scontro(), c = ctx({ liv: 3, dadi: [15, 2, 15, 2, 4] }); c.s = s;
+    prova(s, c, "segno"); eq([s.eff.esposto, s.segno], [3, true]);
+    const b = C.colpo(s, c, { base: true }); eq([b.segno, b.danno], [4, 9]);
+    C.fineTurnoNemico(s); C.fineTurnoNemico(s); C.fineTurnoNemico(s); eq([s.eff.esposto, s.segno], [0, false]);
+  });
+  caso("Trapasso: +5 per colpire; con Esposto un altro dado e l'Esposto si consuma", () => {
+    const s = scontro({ eff: { esposto: 2 }, segno: true }), r = prova(s, ctx({ liv: 4, dadi: [10, 1, 1, 1] }), "trapasso"), k = ev(r, "colpo")[0];
+    eq([k.mA, k.nd, s.eff.esposto, s.segno, ev(r, "espostoConsumato").length], [8, 3, 0, false, 1]);
+    const n = scontro(); eq(ev(prova(n, ctx({ liv: 4, dadi: [10, 1, 1] }), "trapasso"), "colpo")[0].nd, 2);
+  });
+  caso("Il Foro Eterno: con Esposto critico sicuro ed Esposto per lo scontro (boss: 2 turni)", () => {
+    const s = scontro({ eff: { esposto: 1 } }), r = prova(s, ctx({ liv: 5, dadi: [15, 1, 1] }), "foro"); eq(ev(r, "colpo")[0].crit, true); vero(C.perScontro(s.eff.esposto));
+    const b = scontro({ eff: { esposto: 1 } }); prova(b, ctx({ liv: 5, boss: true, dadi: [15, 1, 1] }), "foro"); eq(b.eff.esposto, 2);
+    const n = scontro(); eq(ev(prova(n, ctx({ liv: 5, dadi: [15, 1] }), "foro"), "colpo")[0].crit, false);
+  });
+  caso("Occhio Vigile: critico da 19 e +2 CA fino al tuo turno", () => {
+    const s = scontro(), r = prova(s, ctx({ liv: 3, dadi: [19, 1, 1] }), "occhio_vigile"); eq([ev(r, "colpo")[0].crit, s.eff.guardia, s.guardiaVal], [true, 1, 2]);
+  });
+  caso("Stoccata a Specchio: critico da 18 → Frastornato (boss: Indebolito 2), prossima tecnica −2", () => {
+    const s = scontro(); prova(s, ctx({ liv: 4, dadi: [18, 1, 1, 1, 1, 2] }), "specchio"); eq([s.eff.frastornato, s.sconto], [1, 2]);
+    const b = scontro(); prova(b, ctx({ liv: 4, boss: true, dadi: [18, 1, 1, 1, 1] }), "specchio"); eq([b.eff.frastornato || 0, b.eff.debole], [0, 2]);
+    const n = scontro(); prova(n, ctx({ liv: 4, dadi: [15, 1, 1] }), "specchio"); eq([n.eff.frastornato || 0, n.sconto], [0, 2]);
+  });
+  caso("Affondo dei Mille Soli: Esposto e Indebolito 3, +2 CA e critico da 18 per 3 turni", () => {
+    const s = scontro(), c = ctx({ liv: 5, dadi: [15, 1, 1, 18, 1, 1] }); c.s = s;
+    prova(s, c, "mille_soli"); eq([s.eff.esposto, s.eff.debole, s.eff.guardia, s.eff.precisione], [3, 3, 3, 3]);
+    eq(C.colpo(s, c, { base: true }).crit, true, "18 è critico");
+  });
+
   /* ================= Le tecniche già esistenti funzionano ancora ================= */
-  caso("Perforanti e scudo: ognuna si risolve senza errori", () => {
-    T.filter(t => !["Tagliente", "Contundente", "Utilita"].includes(t.tipo)).forEach(t => {
+  caso("Scudo: ognuna si risolve senza errori", () => {
+    T.filter(t => t.tipo === "Scudo").forEach(t => {
       const s = scontro(), c = ctx({ liv: 2 }); c.tira = (d) => (d === 20 ? 15 : 1); c.s = s;
       const r = C.usa(t, s, c); vero(!ev(r, "sconosciuta").length, t.id + " non riconosciuta");
     });
   });
-  caso("Tutte le tecniche di taglio, contundenti e delle vie sono riconosciute, con l'inglese", () => {
-    T.filter(t => ["Tagliente", "Contundente", "Utilita"].includes(t.tipo)).forEach(t => {
+  caso("Tutte le tecniche di taglio, contundenti, perforanti e delle vie sono riconosciute, con l'inglese", () => {
+    T.filter(t => ["Tagliente", "Contundente", "Perforante", "Utilita"].includes(t.tipo)).forEach(t => {
       const s = scontro(), c = ctx({ liv: 5 }); c.tira = (d) => (d === 20 ? 15 : 1); c.s = s;
       const r = C.usa(t, s, c); vero(!ev(r, "sconosciuta").length, t.id); vero(t.nome.en && t.effetto.en, t.id + ": manca l'inglese");
     });
   });
+  caso("Ogni ramo d'arma ha 15 tecniche (3 per livello) e 6 abilità delle vie", () => {
+    ["Tagliente", "Contundente", "Perforante"].forEach(tipo => {
+      const base = T.filter(t => t.tipo === tipo && !t.via), vie = T.filter(t => t.tipo === tipo && t.via);
+      eq(base.length, 15, tipo); [1, 2, 3, 4, 5].forEach(l => eq(base.filter(t => t.liv === l).length, 3, tipo + " livello " + l));
+      eq(vie.map(t => t.via + t.liv).sort(), ["aldo3", "aldo4", "aldo5", "guendalina3", "guendalina4", "guendalina5"], tipo + " vie");
+    });
+    eq(new Set(T.map(t => t.id)).size, T.length, "id unici");
+  });
   caso("Ogni tecnica ha un costo coerente con il suo livello", () => {
-    T.filter(t => t.tipo === "Tagliente" || t.tipo === "Contundente").forEach(t => { const [lo, hi] = [[2, 3], [4, 5], [5, 6], [7, 8], [9, 10]][t.liv - 1]; vero(t.costo >= lo && t.costo <= hi, `${t.id}: ${t.costo} fuori da ${lo}-${hi}`); });
+    T.filter(t => ["Tagliente", "Contundente", "Perforante"].includes(t.tipo)).forEach(t => { const [lo, hi] = [[2, 3], [4, 5], [5, 6], [7, 8], [9, 10]][t.liv - 1]; vero(t.costo >= lo && t.costo <= hi, `${t.id}: ${t.costo} fuori da ${lo}-${hi}`); });
   });
 
   /* ---------- esecuzione ---------- */

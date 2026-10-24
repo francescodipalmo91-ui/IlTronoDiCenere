@@ -61,11 +61,11 @@ caso("Tutorial normale: parte come prima, senza la sala di prova e senza errori"
   vero(await page.$("#diario"), "manca il diario del tutorial"); eq(await page.$(".sala"), null, "la sala non deve comparire");
   await page.waitForTimeout(800); eq(errori, [], "errori"); await chiudi();
 });
-caso("Sala di prova: si apre con ?prova e i 63 test del modulo passano anche nel browser", async (b) => {
+caso("Sala di prova: si apre con ?prova e gli 82 test del modulo passano anche nel browser", async (b) => {
   const { page, errori, chiudi } = await apri(b, "tutorial.html?prova");
   vero(await page.$(".sala"), "manca la sala"); await page.click("#svTestBtn");
   const esiti = await page.evaluate(() => window.esitiTestCombattimento);
-  const ko = esiti.filter(e => !e.ok); eq(ko, [], "test falliti"); vero(esiti.length >= 63, "pochi test: " + esiti.length);
+  const ko = esiti.filter(e => !e.ok); eq(ko, [], "test falliti"); vero(esiti.length >= 82, "pochi test: " + esiti.length);
   eq(errori, [], "errori"); await chiudi();
 });
 caso("Sala di prova: Squarcia-Articolazioni su un mastino comune blocca Presa e Soffio (scheda e turno del nemico)", async (b) => {
@@ -157,6 +157,42 @@ caso("Sala di prova: Contro-Schiacciamento annulla il morso, niente ira, contrat
   await page.click('[data-tec="controschiaccio"]');
   const dopo = await page.evaluate(() => ({ pv: SalaProva.stato().pg.pv, ira: SalaProva.stato().pg.ira, crepe: SalaProva.stato().s.crepe, sang: SalaProva.stato().s.eff.sanguina || 0 }));
   eq(dopo.pv, prima.pv, "salute"); eq(dopo.ira, prima.ira - 7, "ira: solo il costo"); eq([dopo.crepe, dopo.sang], [1, 0]); await chiudi();
+});
+
+/* ---------- Sala di prova: perforanti ---------- */
+caso("Sala di prova: con la mazza chiodata compaiono le 15 perforanti e la via di Aldo perforante", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "tutorial.html?prova");
+  await page.selectOption("#pLiv", "5"); await page.selectOption("#pArma", "4"); await page.selectOption("#pVia", "aldo");
+  const ids = await page.$$eval("#svTec [data-tec]", bs => bs.map(x => x.dataset.tec));
+  ["cuore", "spillo", "varco", "giuntura", "trafittura", "fianco", "doppia_punta", "perforazione", "mirato", "ferita_profonda", "guardia_punta", "grazia", "tempesta", "celeste", "colpo_perfetto", "segno", "trapasso", "foro"].forEach(id => vero(ids.includes(id), "manca " + id));
+  vero(!ids.includes("plesso") && !ids.includes("zanzara") && !ids.includes("maglio") && !ids.includes("marchio"), "compaiono tecniche tolte o di altri rami"); eq(errori, [], "errori"); await chiudi();
+});
+caso("Sala di prova: Mirare al Varco rende il nemico Esposto e un 19 dell'attacco normale diventa critico", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "tutorial.html?prova");
+  await page.selectOption("#pArma", "4"); await page.selectOption("#nTipo", "manichino"); await page.click("#svNuovo");
+  await page.evaluate(() => SalaProva.accoda(15, 2)); await page.click('[data-tec="varco"]');
+  eq(await page.evaluate(() => SalaProva.stato().s.eff.esposto), 1, "2 turni, uno già passato"); vero(/Esposto/.test(await page.innerText("#svNem")), "scheda senza Esposto");
+  await page.evaluate(() => SalaProva.accoda(19, 1, 1)); await page.click("#svAttacca");
+  vero(/CRITICO: d20 19[^\n]*critico da 19/.test(await page.innerText("#svLog")), "il 19 doveva essere critico"); eq(errori, [], "errori"); await chiudi();
+});
+caso("Sala di prova: Guardia di Punta annulla il morso, niente ira, contrattacco critico con 18 ed Esposto", async (b) => {
+  const { page, chiudi } = await apri(b, "tutorial.html?prova");
+  await page.selectOption("#pLiv", "4"); await page.selectOption("#pArma", "4"); await page.check("#nMorso"); await page.evaluate(() => { Math.random = () => 0.99; });
+  await page.fill("#nPv", "60"); await page.dispatchEvent("#nPv", "change"); await page.click("#svNuovo");
+  await page.evaluate(() => SalaProva.accoda(/* nemico */ 19, /* critico */ 18, 2, 3));
+  const prima = await page.evaluate(() => ({ pv: SalaProva.stato().pg.pv, ira: SalaProva.stato().pg.ira }));
+  await page.click('[data-tec="guardia_punta"]');
+  const dopo = await page.evaluate(() => ({ pv: SalaProva.stato().pg.pv, ira: SalaProva.stato().pg.ira, esp: SalaProva.stato().s.eff.esposto, pvN: SalaProva.stato().s.pv }));
+  eq(dopo.pv, prima.pv, "salute"); eq(dopo.ira, prima.ira - 7, "ira: solo il costo"); eq([dopo.esp, dopo.pvN], [1, 60 - 2 - 3 - 3]);
+  vero(/critico 18-20: d20 18 → CRITICO/.test(await page.innerText("#svLog")), "manca il critico del contrattacco"); await chiudi();
+});
+caso("Sala di prova: Il Colpo Perfetto una volta per riposo, poi di nuovo dopo il riposo", async (b) => {
+  const { page, chiudi } = await apri(b, "tutorial.html?prova");
+  await page.selectOption("#pLiv", "5"); await page.selectOption("#pArma", "4"); await page.selectOption("#nTipo", "manichino"); await page.fill("#nPv", "200"); await page.dispatchEvent("#nPv", "change"); await page.click("#svNuovo");
+  await page.evaluate(() => SalaProva.accoda(15, 1, 1, 1, 1, 15, 1)); await page.click('[data-tec="colpo_perfetto"]');
+  vero(await page.evaluate(() => SalaProva.stato().perRiposo.colpo_perfetto), "non segnata");
+  vero(await page.$eval('[data-tec="colpo_perfetto"]', b => b.disabled), "il pulsante deve spegnersi");
+  await page.click("#svRiposa"); vero(!(await page.$eval('[data-tec="colpo_perfetto"]', b => b.disabled)), "dopo il riposo torna"); await chiudi();
 });
 
 /* ======================= Partita vera (gioco.html) ======================= */
@@ -370,6 +406,64 @@ caso("Gioco: un salvataggio con le vecchie tecniche contundenti lascia i posti v
   eq(await page.evaluate(() => tecnichePreparate().length), 0); eq(await page.evaluate(() => postiLiberi()), 4); eq(errori, [], "errori"); await chiudi();
 });
 
+/* ---------- Partita vera: perforanti ---------- */
+const MAZZA = { arma: "Mazza chiodata", armaDanno: "1d6", armaTipoDanno: "Perforante", armaMani: 1, armatura: "Armatura media", armaturaCA: 4, malusAgilita: 0, scudo: null, dotazione: [] };
+const PREPP = ["cuore", "varco", "giuntura", "trafittura", "perforazione", "ferita_profonda"];
+caso("Gioco: Guerriero con la mazza — Mirare al Varco, Esposto nella scheda e attacco normale critico con 19", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ tecniche: ["cuore", "varco"], equipaggiamento: MAZZA }), PARTITA({ livello: 4, usate: { riposo: "sbloccato", tecPreparate: PREPP } }));
+  await page.evaluate(() => avviaScontro("mastino", { primo: "pg", soffioScarico: true })); await aspettaTurnoPg(page);
+  await page.evaluate(() => { scontro.pv = 80; scontro.pvMax = 80; });
+  await accoda(page, [R(18, 20), R(2, 6), /* nemico: ricarica 1, zampata mancata */ R(1, 6), R(1, 20)], [0.9]);
+  await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "varco"))); await aspettaTurnoPg(page);
+  eq(await page.evaluate(() => scontro.eff.esposto), 1); vero(/Esposto/.test(await page.innerText("#schedaNem")), "scheda nemico senza Esposto");
+  vero(/critico con un numero in meno/.test(await diario(page)), "manca il testo di Esposto");
+  await accoda(page, [R(19, 20), R(1, 6), R(1, 6)]);
+  await page.evaluate(() => attaccoPgScontro(false));
+  vero(/critico con 19, colpisce sempre/.test(await diario(page)), "il 19 doveva essere critico"); eq(errori, [], "errori"); await chiudi();
+});
+caso("Gioco: via di Aldo con la mazza — Segno e Trapasso al livello 4, il segno aggiunge 1d4 finché è Esposto", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ tecniche: ["cuore", "varco"], equipaggiamento: MAZZA }), PARTITA({ livello: 4, usate: { riposo: "sbloccato", tecPreparate: PREPP, via: "aldo" } }));
+  eq(await page.evaluate(() => tecnicheDelPg().filter(x => x.via).map(x => x.t.id)), ["segno", "trapasso"]);
+  await page.evaluate(() => avviaScontro("mastino", { primo: "pg", soffioScarico: true })); await aspettaTurnoPg(page);
+  await page.evaluate(() => { scontro.pv = 90; scontro.pvMax = 90; });
+  await accoda(page, [R(18, 20), R(2, 6), R(1, 6), R(1, 20)], [0.9]);
+  await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "segno"))); await aspettaTurnoPg(page);
+  eq(await page.evaluate(() => [scontro.eff.esposto, scontro.segno]), [2, true]); vero(/segnato/.test(await page.innerText("#schedaNem")), "la scheda non mostra il segno");
+  await accoda(page, [R(15, 20), R(2, 6), R(3, 4)]);
+  await page.evaluate(() => attaccoPgScontro(false));
+  vero(/Segno: \+3 danni/.test(await diario(page)), "manca il bonus del segno"); eq(errori, [], "errori"); await chiudi();
+});
+caso("Gioco: Guardia di Punta annulla il morso, contrattacco critico con 18 ed Esposto", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ equipaggiamento: MAZZA }), PARTITA({ livello: 4, usate: { riposo: "sbloccato", tecPreparate: ["cuore", "varco", "giuntura", "trafittura", "perforazione", "guardia_punta"] } }));
+  await page.evaluate(() => avviaScontro("mastino", { primo: "pg", soffioScarico: true })); await aspettaTurnoPg(page);
+  await page.evaluate(() => { scontro.pv = 60; scontro.pvMax = 60; });
+  const prima = await page.evaluate(() => ({ df: pg.dannoFisico || 0, ira: pg.risorsaUsata || 0 }));
+  await accoda(page, [R(1, 6), R(19, 20), R(18, 20), R(2, 6), R(3, 6)], [0.1]);
+  await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "guardia_punta"))); await aspettaTurnoPg(page);
+  const dopo = await page.evaluate(() => ({ df: pg.dannoFisico || 0, ira: pg.risorsaUsata || 0, esp: scontro.eff.esposto, pv: scontro.pv }));
+  eq(dopo.df, prima.df, "danni subiti"); eq(dopo.ira, prima.ira + 7, "ira: solo il costo"); eq([dopo.esp, dopo.pv], [1, 60 - 8]);
+  vero(/Critico \(18-20\): d20 18, critico!/.test(await diario(page)), "manca il critico del contrattacco"); eq(errori, [], "errori"); await chiudi();
+});
+caso("Gioco: contro Ettore (boss) Ferita Profonda lascia l'Esposto a 2 turni", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ equipaggiamento: MAZZA }), PARTITA({ livello: 4, usate: { riposo: "sbloccato", tecPreparate: PREPP } }));
+  await page.evaluate(() => avviaScontro("esploratore", { ctx: "ettore", testi: "esploratore", primo: "pg" })); await aspettaTurnoPg(page);
+  await page.evaluate(() => { scontro.pv = 90; scontro.pvMax = 90; });
+  await accoda(page, [R(15, 20), R(1, 6), R(1, 6)]);
+  await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "ferita_profonda")));
+  eq(await page.evaluate(() => [scontro.eff.esposto, scontro.eff.debole]), [2, 2]);
+  vero(/dura al massimo 2 turni/.test(await diario(page)), "manca il messaggio dei boss"); eq(errori, [], "errori"); await chiudi();
+});
+caso("Gioco: scelta della via con la mazza mostra le abilità perforanti", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ equipaggiamento: MAZZA }), PARTITA({ livello: 3, usate: { riposo: "sbloccato", tecPreparate: [] } }));
+  await page.evaluate(() => apriSceltaVia());
+  const t = await page.textContent("#prepBox"); vero(/Segno del Cacciatore/.test(t) && /Occhio Vigile/.test(t), "mancano le abilità perforanti"); vero(!/Sigillo del Demolitore/.test(t), "compare il contundente");
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Gioco: un salvataggio con le perforanti tolte lascia i posti vuoti e tiene quelle rimaste", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ tecniche: ["plesso", "cuore"], equipaggiamento: MAZZA }), PARTITA({ livello: 2, usate: { riposo: "sbloccato", tecPreparate: ["plesso", "cuore", "zanzara", "stoccata_lat"] } }));
+  eq(await page.evaluate(() => tecnichePreparate().map(t => t.id)), ["cuore"]); eq(await page.evaluate(() => postiLiberi()), 3); eq(errori, [], "errori"); await chiudi();
+});
+
 /* ======================= Creazione e regolamento ======================= */
 caso("Creazione: il Guerriero con la spada vede le 3 nuove tecniche di livello 1 e ne sceglie 2", async (b) => {
   const { page, errori, chiudi } = await apri(b, "creazione.html");
@@ -385,13 +479,20 @@ caso("Creazione: il Guerriero col martello vede le 3 contundenti di livello 1", 
   eq(await page.$$eval('#lista-tecniche input[name="tecnica"]', cs => cs.map(c => c.value)), ["maglio", "mento", "sbilanciante"]);
   eq(errori, [], "errori"); await chiudi();
 });
+caso("Creazione: il Guerriero con la mazza chiodata vede le 3 perforanti di livello 1", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "creazione.html");
+  await page.check('input[name="classe"][value="Soldato"]', { force: true });
+  await page.check('input[name="arma"][value="4"]', { force: true });
+  eq(await page.$$eval('#lista-tecniche input[name="tecnica"]', cs => cs.map(c => c.value)), ["cuore", "spillo", "varco"]);
+  eq(errori, [], "errori"); await chiudi();
+});
 caso("Regolamento: posti, ira per livello, vie e boss in italiano e in inglese", async (b) => {
   const { page, errori, chiudi } = await apri(b, "regolamento.html");
   const t = await page.textContent("body");
-  ["2 (livello 1), 4 (livello 2), 5 (livello 3), 6 (livello 4), 7 (livello 5)", "+1 ai livelli 1-2, +2 ai livelli 3-4, +3 al livello 5", "via di prestigio", "al massimo 2 turni", "Incrinatura", "Frattura"].forEach(x => vero(t.includes(x), "manca: " + x));
+  ["2 (livello 1), 4 (livello 2), 5 (livello 3), 6 (livello 4), 7 (livello 5)", "+1 ai livelli 1-2, +2 ai livelli 3-4, +3 al livello 5", "via di prestigio", "al massimo 2 turni", "Incrinatura", "Frattura", "Esposto", "18-20"].forEach(x => vero(t.includes(x), "manca: " + x));
   await page.evaluate(() => { localStorage.setItem("lingua", "en"); }); await page.reload();
   const e = await page.textContent("body");
-  ["2 (level 1), 4 (level 2)", "+1 at levels 1-2, +2 at levels 3-4, +3 at level 5", "prestige path", "Cracked", "Fractured"].forEach(x => vero(e.includes(x), "manca: " + x));
+  ["2 (level 1), 4 (level 2)", "+1 at levels 1-2, +2 at levels 3-4, +3 at level 5", "prestige path", "Cracked", "Fractured", "Exposed", "18-20"].forEach(x => vero(e.includes(x), "manca: " + x));
   eq(errori, [], "errori"); await chiudi();
 });
 caso("Gioco in inglese: una tecnica nuova si usa senza errori e con i testi inglesi", async (b) => {

@@ -128,7 +128,7 @@
             <p>A ogni turno hai un'azione: attaccare, lanciare un incantesimo o usare un oggetto. Prendere in mano la torcia o imbracciare lo scudo non consuma l'azione.</p>
             <span class="formula">Attacco: d20 + mod. Vigore, colpisce se supera la Classe armatura del bersaglio</span>
             <span class="formula">Danno: dado dell'arma + mod. Vigore (torcia 1d4, a mani nude 1d2)</span>
-            <p><b>Colpo critico</b>: un 20 sul dado colpisce sempre e tira il doppio dei dadi di danno. Vale anche per i nemici.</p>
+            <p><b>Colpo critico</b>: un 20 sul dado colpisce sempre e tira il doppio dei dadi di danno. Vale anche per i nemici. Alcune tecniche allargano il critico a 19-20 o 18-20 (mai oltre): anche quei numeri colpiscono sempre.</p>
             <p class="esempio">Esempio: attacchi con una spada corta (1d6) e Vigore +2. Tiri 14 sul d20: 14 + 2 = 16. Se la Classe armatura del nemico è 13, colpisci e fai 1d6 + 2 danni.</p>
             <p>In combattimento scrivi l'azione («attacco», «lancio un incantesimo», «bevo la pozione di cura») oppure usa i pulsanti che compaiono.</p>
             <h3>Classe armatura</h3>
@@ -149,6 +149,7 @@
               <li>L'ira cresce durante lo scontro: a ogni colpo subito guadagni ${iraColpi()}, il doppio se è un colpo critico. Un attacco che ti manca o che pari non dà ira. Anche un tuo colpo critico ti dà 2 punti ira.</li>
               <li>Dal livello 3 il Guerriero sceglie una <b>via di prestigio</b>: tre abilità, una ai livelli 3, 4 e 5, sempre pronte e senza occupare posti. Le abilità cambiano con il tipo d'arma (taglio o contundente). La scelta è definitiva.</li>
               <li>Le armi contundenti hanno due effetti propri. <b>Incrinatura</b>: −1 alla Classe armatura del nemico per ogni carica, fino a 3, per tutto lo scontro; è l'unico effetto che si somma invece di rinnovarsi. <b>Frattura</b>: il nemico subisce 1d4 danni ogni volta che attacca.</li>
+              <li>Le armi perforanti hanno un effetto proprio. <b>Esposto</b>: i tuoi attacchi contro il nemico fanno critico con un numero in meno (19-20, oppure 18-20 se la tecnica arriva già a 19); il critico non scende mai sotto 18.</li>
               <li>Alcune tecniche si usano una sola volta tra un riposo e l'altro.</li>
               <li>Gli avversari più temibili non subiscono gli effetti che tolgono azioni o attacchi (Frastornato, Stordito, niente attacchi speciali); su di loro gli altri effetti durano al massimo 2 turni e l'Incrinatura arriva al massimo a 2 cariche.</li>
               <li>Una tecnica di un tipo d'arma diverso da quella che impugni resta preparata, ma non si può usare.</li>
@@ -235,7 +236,7 @@
             <p>Each turn you have one action: attack, cast a spell or use an item. Taking up the torch or the shield does not use your action.</p>
             <span class="formula">Attack: d20 + Vigour mod., hits if it beats the target's Armor class</span>
             <span class="formula">Damage: weapon die + Vigour mod. (torch 1d4, bare hands 1d2)</span>
-            <p><b>Critical hit</b>: a 20 on the die always hits and rolls double the damage dice. Enemies too.</p>
+            <p><b>Critical hit</b>: a 20 on the die always hits and rolls double the damage dice. Enemies too. Some techniques widen the critical to 19-20 or 18-20 (never further): those numbers always hit too.</p>
             <p class="esempio">Example: you attack with a shortsword (1d6) and Vigour +2. You roll 14 on the d20: 14 + 2 = 16. If the enemy's Armor class is 13, you hit and deal 1d6 + 2 damage.</p>
             <p>In combat write your action (“I attack”, “I cast a spell”, “I drink the healing potion”) or use the buttons that appear.</p>
             <h3>Armor class</h3>
@@ -256,6 +257,7 @@
               <li>Rage builds during the fight: for every hit you take you gain ${iraColpi(true)}, double on a critical hit. An attack that misses you or that you parry gives no rage. Your own critical hits also give you 2 rage points.</li>
               <li>From level 3 the Warrior chooses a <b>prestige path</b>: three abilities, one at levels 3, 4 and 5, always ready and taking no slots. The abilities change with the weapon type (slashing or bludgeoning). The choice is final.</li>
               <li>Bludgeoning weapons have two effects of their own. <b>Cracked</b>: −1 to the enemy's Armor class per charge, up to 3, for the whole fight; it is the only effect that stacks instead of renewing. <b>Fractured</b>: the enemy takes 1d4 damage every time it attacks.</li>
+              <li>Piercing weapons have an effect of their own. <b>Exposed</b>: your attacks against the enemy crit on one number lower (19-20, or 18-20 if the technique already crits on 19); a critical never goes below 18.</li>
               <li>Some techniques can be used only once between one rest and the next.</li>
               <li>The most fearsome opponents are immune to effects that take away actions or attacks (Dazed, Stunned, no special attacks); on them other effects last at most 2 turns and Cracked reaches at most 2 charges.</li>
               <li>A technique for a different weapon type than the one you hold stays prepared but cannot be used.</li>

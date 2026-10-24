@@ -4255,7 +4255,7 @@
         costoRiga: (a, max) => `Punti ira: ${a} / ${max}`, ira: (n, a, max) => `Furia: +${n} punti ira (${a} / ${max}).`,
         sanguina: (d, t) => `Il nemico sanguina: 1d${d} danni per ${t} turni.`, sangueTick: (d) => `Il sangue scorre: ${d} danni.`,
         sangueTutto: (n, tiri, tot) => `La ferita si apre del tutto: ${n} × dado = ${tiri.join(" + ")} = ${tot} danni.`,
-        effetti: { debole: "Indebolito: −2 per colpire.", frattura: "Frattura: −2 per colpire.", sbilanciato: "Sbilanciato: −2 alla Classe armatura.", silenzio: "Niente attacchi speciali.", frastornato: "Frastornato: −4 per colpire e niente critici.", bloccato: "Stordito: salta il prossimo turno.", carica: "L'attacco speciale pronto va perso." },
+        effetti: { debole: "Indebolito: −2 per colpire.", frattura: "Frattura: 1d4 danni ogni volta che attacca.", intontito: "Intontito: niente colpi critici.", sbilanciato: "Sbilanciato: −2 alla Classe armatura.", silenzio: "Niente attacchi speciali.", frastornato: "Frastornato: −4 per colpire e niente critici.", bloccato: "Stordito: salta il prossimo turno.", carica: "L'attacco speciale pronto va perso." },
         prossimoBonus: "Il tuo prossimo attacco avrà +2 per colpire.", prossimoDado: "Il tuo prossimo attacco infligge un dado di danno in più.",
         guardia: (n) => `+${n} alla Classe armatura fino al tuo prossimo turno.`, furore: "+4 ai tiri salvezza e alle prove contrapposte per 2 turni.",
         tsTitolo: (nome) => `Tiro salvezza: ${nome}`, tsRegola: (nome, cd) => `${nome} prova a resistere: d20 + modificatore di Vigore contro ${cd} (8 + il tuo Vigore + livello).`,
@@ -4269,6 +4269,10 @@
         parata: "Ti chiudi in guardia: il primo colpo che ti raggiungerà prima del tuo turno non ti farà nulla.",
         parataOk: "Pari il colpo e rispondi subito: nessun danno.", contrattacco: "Contrattacco:",
         marchio: "Il nemico è marchiato: finché sanguina, i tuoi attacchi normali gli fanno 1d4 danni in più.", marchioDanno: (x) => `Marchio: +${x} danni.`,
+        crepe: (n, tot, max, perse) => (n > 0 ? `L'armatura si incrina: ${n === 1 ? "1 carica" : n + " cariche"} di Incrinatura (${tot}/${max}, −${tot} alla Classe armatura).` : `L'armatura è già incrinata al massimo (${tot}/${max}).`) + (n > 0 && perse > 0 ? ` Oltre il massimo non va: ${perse === 1 ? "1 carica persa" : perse + " cariche perse"}.` : ""),
+        fratturaTick: (d) => `La frattura cede mentre attacca: ${d} danni.`, perScontro: " (per tutto lo scontro)",
+        sigillo: "Il sigillo è impresso: finché l'Incrinatura è al massimo, i tuoi attacchi normali gli fanno 1d4 danni in più.", sigilloDanno: (x) => `Sigillo: +${x} danni.`,
+        crollo: (n) => `L'armatura crolla: ${n === 1 ? "1 carica consumata" : n + " cariche consumate"}.`,
         sconto: (n) => `La tua prossima tecnica costerà ${n} punti ira in meno.`, scontoUsato: (n) => `Ritmo del Duello: −${n} punti ira.`,
         gratuito: "E subito un altro colpo, senza fermarti:", furoreTurni: (n) => `+4 ai tiri salvezza e alle prove contrapposte per ${n} turni.`,
         guardiaTurni: (v, n) => n > 1 ? `+${v} alla Classe armatura per ${n} turni.` : `+${v} alla Classe armatura fino al tuo prossimo turno.`,
@@ -4278,6 +4282,7 @@
           guida: "La via ti dà un'abilità al livello 3, una al 4 e una al 5. Le abilità della via sono sempre pronte e non occupano posti. La scelta è definitiva.",
           nomi: { aldo: "Lama del Guardiano — via di Aldo", guendalina: "Veglia — via di Guendalina" },
           desc: { aldo: "La ferita è l'arma: sanguinamento, marchio e colpi critici.", guendalina: "Controllo e resistenza: indebolire il nemico, difendersi e risparmiare ira." },
+          descContundente: { aldo: "Spezzare: incrinare l'armatura, farla crollare e colpi critici.", guendalina: "Controllo e resistenza: stordire il nemico, difendersi e risparmiare ira." },
           scelta: (n) => `Hai scelto la via: ${n}.`, conferma: "Scegli per sempre", abilita: "abilità della via" },
         investiga: { domanda: "Come vuoi investigare?", cerca: "Cerco attivamente nella stanza (Indagare)", sensi: "Uso i sensi: vista, udito, olfatto (Percezione)" },
         speciali: (n, max) => `Tecniche speciali (${n}/${max})`, altrePiuTardi: (n) => `${n === 1 ? "1 posto libero" : n + " posti liberi"}: altre tecniche si sbloccano salendo di livello o imbracciando lo scudo.`, postiVuoti: (n) => n === 1 ? "1 posto libero" : `${n} posti liberi`,
@@ -4298,7 +4303,7 @@
         costoRiga: (a, max) => `Rage points: ${a} / ${max}`, ira: (n, a, max) => `Fury: +${n} rage points (${a} / ${max}).`,
         sanguina: (d, t) => `The enemy bleeds: 1d${d} damage for ${t} turns.`, sangueTick: (d) => `Blood flows: ${d} damage.`,
         sangueTutto: (n, tiri, tot) => `The wound tears wide open: ${n} × die = ${tiri.join(" + ")} = ${tot} damage.`,
-        effetti: { debole: "Weakened: −2 to hit.", frattura: "Fracture: −2 to hit.", sbilanciato: "Off-balance: −2 Armor class.", silenzio: "No special attacks.", frastornato: "Dazed: −4 to hit and no criticals.", bloccato: "Stunned: skips its next turn.", carica: "Its readied special attack is lost." },
+        effetti: { debole: "Weakened: −2 to hit.", frattura: "Fractured: 1d4 damage every time it attacks.", intontito: "Dazzled: no critical hits.", sbilanciato: "Off-balance: −2 Armor class.", silenzio: "No special attacks.", frastornato: "Dazed: −4 to hit and no criticals.", bloccato: "Stunned: skips its next turn.", carica: "Its readied special attack is lost." },
         prossimoBonus: "Your next attack gets +2 to hit.", prossimoDado: "Your next attack deals one extra damage die.",
         guardia: (n) => `+${n} Armor class until your next turn.`, furore: "+4 to saving throws and opposed checks for 2 turns.",
         tsTitolo: (nome) => `Saving throw: ${nome}`, tsRegola: (nome, cd) => `${nome} tries to resist: d20 + Vigour modifier against ${cd} (8 + your Vigour + level).`,
@@ -4312,6 +4317,10 @@
         parata: "You lock into your guard: the first blow that reaches you before your turn will do you no harm.",
         parataOk: "You parry the blow and answer at once: no damage.", contrattacco: "Counterattack:",
         marchio: "The enemy is branded: while it bleeds, your normal attacks deal it 1d4 extra damage.", marchioDanno: (x) => `Brand: +${x} damage.`,
+        crepe: (n, tot, max, perse) => (n > 0 ? `The armour cracks: ${n === 1 ? "1 charge" : n + " charges"} of Cracked (${tot}/${max}, −${tot} Armor class).` : `The armour is already cracked to the limit (${tot}/${max}).`) + (n > 0 && perse > 0 ? ` It goes no further: ${perse === 1 ? "1 charge lost" : perse + " charges lost"}.` : ""),
+        fratturaTick: (d) => `The fracture gives way as it attacks: ${d} damage.`, perScontro: " (for the whole fight)",
+        sigillo: "The seal is set: while Cracked is at its maximum, your normal attacks deal it 1d4 extra damage.", sigilloDanno: (x) => `Seal: +${x} damage.`,
+        crollo: (n) => `The armour collapses: ${n === 1 ? "1 charge spent" : n + " charges spent"}.`,
         sconto: (n) => `Your next technique will cost ${n} rage points less.`, scontoUsato: (n) => `Rhythm of the Duel: −${n} rage points.`,
         gratuito: "And at once another blow, without stopping:", furoreTurni: (n) => `+4 to saving throws and opposed checks for ${n} turns.`,
         guardiaTurni: (v, n) => n > 1 ? `+${v} Armor class for ${n} turns.` : `+${v} Armor class until your next turn.`,
@@ -4321,6 +4330,7 @@
           guida: "The path gives you one ability at level 3, one at 4 and one at 5. Path abilities are always ready and take no slots. The choice is final.",
           nomi: { aldo: "Warden's Blade — Aldo's path", guendalina: "Vigil — Guendalina's path" },
           desc: { aldo: "The wound is the weapon: bleeding, brand and critical hits.", guendalina: "Control and endurance: weaken the enemy, defend yourself and save rage." },
+          descContundente: { aldo: "Breaking: crack the armour, bring it down and land critical hits.", guendalina: "Control and endurance: stun the enemy, defend yourself and save rage." },
           scelta: (n) => `You have chosen the path: ${n}.`, conferma: "Choose for good", abilita: "path ability" },
         investiga: { domanda: "How do you want to investigate?", cerca: "I search the room actively (Investigate)", sensi: "I use my senses: sight, hearing, smell (Perception)" },
         speciali: (n, max) => `Special techniques (${n}/${max})`, altrePiuTardi: (n) => `${n === 1 ? "1 free slot" : n + " free slots"}: more techniques unlock as you level up or take up a shield.`, postiVuoti: (n) => n === 1 ? "1 free slot" : `${n} free slots`,
@@ -5299,7 +5309,7 @@
     }
 
     /* Effetti a durata: medaglione con simbolo, nome e turni rimasti (rombi pieni = turni ancora attivi) */
-    const EFF_PG = ["scudo", "invuln", "pietra", "armaPiu", "potenza", "guardia", "furore"], EFF_NEM = ["bloccato", "cieco", "sanguina", "debole", "sbilanciato", "silenzio", "frastornato"];
+    const EFF_PG = ["scudo", "invuln", "pietra", "armaPiu", "potenza", "guardia", "furore"], EFF_NEM = ["bloccato", "cieco", "sanguina", "frattura", "debole", "sbilanciato", "silenzio", "frastornato", "intontito"];
     const SHIELD = "M12 2.8l7 2.7v5.3c0 4.6-3 8.1-7 10.4-4-2.3-7-5.8-7-10.4V5.5z";
     const ICONE_EFF = { /* tratti a 24×24, colore dal tema dell'effetto */
       scudo: { tono: "dif", d: `<path d="${SHIELD}"/><path d="M12 6.5v11M8.2 10.5h7.6" opacity=".7"/>` },
@@ -5313,6 +5323,9 @@
       sbilanciato: { tono: "mal", d: `<path d="M4 15l16-5"/><path d="M12 12.5v7M8.5 19.5h7"/><circle cx="7" cy="9.5" r="2"/>` },
       silenzio: { tono: "mal", d: `<circle cx="12" cy="12" r="8"/><path d="M6.4 6.4l11.2 11.2"/>` },
       frastornato: { tono: "mal", d: `<circle cx="12" cy="13" r="5"/><path d="M5 5.5l1.5 1.5M19 5.5l-1.5 1.5M12 3v2.2" opacity=".8"/>` },
+      intontito: { tono: "mal", d: `<circle cx="12" cy="13" r="5"/><path d="M9.5 13h5" opacity=".8"/><path d="M12 3v2.2" opacity=".6"/>` },
+      crepe: { tono: "mal", d: `<path d="M12 2.8l7 2.7v5.3c0 4.6-3 8.1-7 10.4-4-2.3-7-5.8-7-10.4V5.5z"/><path d="M12 5l-1.6 4.2 2.6 2.2-2 4.6" opacity=".8"/>` },
+      frattura: { tono: "mal", d: `<path d="M4 9.5h6l2 2.5 2-2.5h6M4 14.5h6l2-2.5 2 2.5h6" opacity=".9"/>` },
       guardia: { tono: "dif", d: `<path d="${SHIELD}"/><path d="M8.5 11.5l2.5 2.5 4.5-5" opacity=".8"/>` },
       furore: { tono: "off", d: `<path d="M12 3c1 3.5 4.5 5 4.5 9a4.5 4.5 0 0 1-9 0c0-2 1-3.2 2-4.2.3 1.6 1 2.4 2 2.7-.6-2.5-.2-5.2.5-7.5z"/>` },
       cieco: { tono: "mal", d: `<path d="M2.5 12s3.6-6 9.5-6 9.5 6 9.5 6-3.6 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.6"/><path d="M4.5 19.5l15-15"/>` },
@@ -5325,11 +5338,26 @@
       return m;
     }
     function righeEffetti(dl, sc, chiavi, sep) {
-      const attivi = chiavi.filter(k => sc.eff[k] > 0);
-      if (!attivi.length) return;
+      const attivi = chiavi.filter(k => sc.eff[k] > 0), crepe = chiavi === EFF_NEM ? CMB.crepe(sc) : 0;
+      if (!attivi.length && !crepe) return;
       sep("sep-spazio");
       const t = document.createElement("div"); t.className = "eff-tit"; t.textContent = CB.effettiTit; dl.append(t);
+      if (crepe) { /* Incrinatura: cariche invece di turni, dura tutto lo scontro */
+        const max = CMB.crepeMax({ boss: bossNem() });
+        const dt = document.createElement("dt"); dt.className = "eff-nome"; dt.append(medaglione("crepe"), document.createTextNode(CB.effNomi.crepe + (sc.sigillo && crepe >= max ? ` · ${CB.sigillato}` : "")));
+        const dd = document.createElement("dd"); dd.className = "eff-dur mal";
+        const pall = document.createElement("span"); pall.className = "rombi"; pall.setAttribute("aria-hidden", "true");
+        for (let i = 0; i < max; i++) { const r = document.createElement("i"); if (i < crepe) r.className = "su"; pall.append(r); }
+        dd.append(pall, document.createTextNode(CB.cariche(crepe, max)));
+        dd.title = dt.title = `${CB.effNomi.crepe}: ${CB.cariche(crepe, max)}`;
+        dl.append(dt, dd);
+      }
       attivi.forEach(k => {
+        if (CMB.perScontro(sc.eff[k])) { /* Frattura della Sentenza e del Martello: niente rombi */
+          const dt = document.createElement("dt"); dt.className = "eff-nome"; dt.append(medaglione(k), document.createTextNode(CB.effNomi[k]));
+          const dd = document.createElement("dd"); dd.className = "eff-dur " + ICONE_EFF[k].tono; dd.textContent = CB.tuttoScontro;
+          dd.title = dt.title = `${CB.effNomi[k]}: ${CB.tuttoScontro}`; dl.append(dt, dd); return;
+        }
         const n = sc.eff[k], max = Math.max(n, (sc.effMax && sc.effMax[k]) || n), tono = ICONE_EFF[k].tono;
         const dt = document.createElement("dt"); dt.className = "eff-nome";
         const nomeEff = k === "sanguina" && Number(sc.sangueDado) === 6 ? CB.emorragia : CB.effNomi[k];
@@ -5443,8 +5471,8 @@
       const fs = el("fieldset");
       ["aldo", "guendalina"].forEach(v => {
         const lab = el("label"), c = el("input"); c.type = "radio"; c.name = "via"; c.value = v;
-        const abil = TEC.filter(t => t.via === v).map(t => `${t.liv}: ${nomeTec(t)}`).join(" · ");
-        lab.append(c, el("span", "", V.nomi[v]), el("small", "", `${V.desc[v]} (${abil})`)); fs.append(lab);
+        const tipo = tipoArmaVia() === "Contundente" ? "Contundente" : "Tagliente", abil = TEC.filter(t => t.via === v && t.tipo === tipo).map(t => `${t.liv}: ${nomeTec(t)}`).join(" · ");
+        lab.append(c, el("span", "", V.nomi[v]), el("small", "", `${(tipo === "Contundente" ? V.descContundente : V.desc)[v]} (${abil})`)); fs.append(lab);
       });
       const conferma = el("button", "primario", V.conferma), annulla = el("button", "", RT.prep.annulla);
       conferma.disabled = true;
@@ -8117,7 +8145,7 @@
     };
     /* boss: Guendalina, Aldo, il sovrano, Adele, i guardiani dei fermagli e i due mastini speciali (campo boss in NEMICI) */
     const bossNem = () => { const n = scontro || ultimoNemico; return !!(n && NEMICI[n.id] && NEMICI[n.id].boss); };
-    const caNem = () => { const n = scontro || ultimoNemico; return NEMICI[n.id].ca + (Number(n.caMod) || 0) - (n.eff && n.eff.sbilanciato > 0 ? 2 : 0); }; /* il consiglio di Aldo abbassa la CA di Ettore */
+    const caNem = () => { const n = scontro || ultimoNemico; return NEMICI[n.id].ca + (Number(n.caMod) || 0) - (n.eff ? CMB.malusCA(n) : 0); }; /* il consiglio di Aldo abbassa la CA di Ettore; Sbilanciato e Incrinatura la abbassano */
     /* classe difficoltà degli incantesimi: 8 + modificatore (Mente per il Sapiente, Spirito per l'Accolito) + livello */
     const ATTR_INC = { Sapiente: "Mente", Accolito: "Spirito" };
     const cdIncantesimi = () => { const a = pg && ATTR_INC[pg.classe]; return a ? 8 + mod(statPg(a)) + (Number(pg.livello) || 1) : null; };
@@ -8139,8 +8167,8 @@
         cond: ["Ringhia furioso: sembra ancora del tutto integro.", "È ferito: dal pelo strappato cadono braci.", "Barcolla, il respiro rotto: le fiamme sulla groppa si affievoliscono.", "Giace a terra, ridotto in cenere."],
         effetti: "Effetti", effettiTit: "Effetti attivi", turniRim: (n) => n === 1 ? "1 turno" : `${n} turni`,
         turnoTit: (n) => `${n}° turno`, lblAttacco: "Attacco", lblTorcia: "Attacco con la torcia", lblPozione: "Pozione", lblBloccato: "Mastino bloccato",
-        emorragia: "Emorragia", marchiato: "marchiato",
-        effNomi: { sanguina: "Sanguinamento", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Senza attacchi speciali", frastornato: "Frastornato", guardia: "Guardia alzata", furore: "Furore inarrestabile", scudo: "Scudo", bloccato: "Nemico bloccato", invuln: "Invulnerabilità", armaPiu: "Arma migliorata", pietra: "Pelle di pietra", cieco: "Nemico accecato", potenza: "Aumento di potenza", impaurito: "Impaurito" },
+        emorragia: "Emorragia", marchiato: "marchiato", sigillato: "sigillo", cariche: (n, max) => `${n}/${max} cariche`, tuttoScontro: "tutto lo scontro",
+        effNomi: { sanguina: "Sanguinamento", crepe: "Incrinatura", frattura: "Frattura", intontito: "Intontito", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Senza attacchi speciali", frastornato: "Frastornato", guardia: "Guardia alzata", furore: "Furore inarrestabile", scudo: "Scudo", bloccato: "Nemico bloccato", invuln: "Invulnerabilità", armaPiu: "Arma migliorata", pietra: "Pelle di pietra", cieco: "Nemico accecato", potenza: "Aumento di potenza", impaurito: "Impaurito" },
         effFinito: (n) => `L'effetto «${n}» svanisce.`, resisteBreve: "resiste", effettoBreve: "a segno",
         iniziativa: (a, b) => `Iniziativa: la tua Agilità (${a}) contro quella del Mastino (${b}).`,
         pari: (x, y) => `Agilità pari: si tira un d20 a testa. Tu ${x}, il Mastino ${y}.`,
@@ -8253,8 +8281,8 @@
         cond: ["Snarling with fury: it looks completely unharmed.", "It is wounded: embers fall from its torn hide.", "It staggers, breath ragged: the flames on its back are dying down.", "It lies on the ground, reduced to ash."],
         effetti: "Effects", effettiTit: "Active effects", turniRim: (n) => n === 1 ? "1 round" : `${n} rounds`,
         turnoTit: (n) => `Round ${n}`, lblAttacco: "Attack", lblTorcia: "Torch attack", lblPozione: "Potion", lblBloccato: "Mastiff held",
-        emorragia: "Haemorrhage", marchiato: "branded",
-        effNomi: { sanguina: "Bleeding", debole: "Weakened", sbilanciato: "Off-balance", silenzio: "No special attacks", frastornato: "Dazed", guardia: "Guard up", furore: "Unstoppable Fury", scudo: "Shield", bloccato: "Enemy held", invuln: "Invulnerability", armaPiu: "Empowered weapon", pietra: "Stoneskin", cieco: "Enemy blinded", potenza: "Surge of power", impaurito: "Frightened" },
+        emorragia: "Haemorrhage", marchiato: "branded", sigillato: "seal", cariche: (n, max) => `${n}/${max} charges`, tuttoScontro: "whole fight",
+        effNomi: { sanguina: "Bleeding", crepe: "Cracked", frattura: "Fractured", intontito: "Dazzled", debole: "Weakened", sbilanciato: "Off-balance", silenzio: "No special attacks", frastornato: "Dazed", guardia: "Guard up", furore: "Unstoppable Fury", scudo: "Shield", bloccato: "Enemy held", invuln: "Invulnerability", armaPiu: "Empowered weapon", pietra: "Stoneskin", cieco: "Enemy blinded", potenza: "Surge of power", impaurito: "Frightened" },
         effFinito: (n) => `The “${n}” effect fades.`, resisteBreve: "resisted", effettoBreve: "takes hold",
         iniziativa: (a, b) => `Initiative: your Agility (${a}) against the Mastiff's (${b}).`,
         pari: (x, y) => `Agility tied: each side rolls a d20. You ${x}, the Mastiff ${y}.`,
@@ -8526,10 +8554,11 @@
       if (crit) guadagnaIra(2);
       if (ok) {
         const dado = dadoArmaPg(conTorcia), nd = (crit ? 2 : 1) * (1 + (pre.piuDadi || 0)), tiri = tiraDadi(nd, dado), base = Math.max(1, somma(tiri) + m);
-        const marc = CMB.marchiato(scontro) ? tira(4) : 0, danno = base + marc; /* Marchio del Guardiano: +1d4 agli attacchi normali */
+        const marc = CMB.marchiato(scontro) ? tira(4) : 0, sig = scontro.sigillo && CMB.crepePiene(scontro, { boss: bossNem() }) ? tira(4) : 0, danno = base + marc + sig; /* Marchio del Guardiano e Sigillo del Demolitore: +1d4 agli attacchi normali */
         scontro.pv -= danno;
         righe.push(pesca(crit ? CB.critPg : conTorcia ? CB.colpTorcia : CB.colpArma), crit ? CB.tiroAttCrit(mA, tot) : CB.tiroAtt(d, mA, tot, ca), CB.tiroDanno(nd, dado, tiri, m, base));
         if (marc) righe.push(RT.marchioDanno(marc));
+        if (sig) righe.push(RT.sigilloDanno(sig));
         scuotiNemico();
       } else righe.push(pesca(CB.manca), CB.tiroAtt(d, mA, tot, ca));
       aggiungi({ tipo: "narra", box: crit ? "ok" : "mia", esito: crit ? CB.critico : ok ? CB.colpito : CB.mancato, righe });
@@ -8605,7 +8634,8 @@
     const tipoOk = (t) => t.tipo === "Utilita" || (t.tipo === "Scudo" ? !!scudo : t.tipo === tipoArmaInMano());
     const maxTecniche = () => CMB.slotTecniche(livelloPg(), !!scudo); /* 2, 4, 5, 6, 7 (+1 con lo scudo) */
     const viaPg = () => (haTecniche() && livelloPg() >= 3 && (usate.via === "aldo" || usate.via === "guendalina")) ? usate.via : null;
-    const tecnicheVia = () => { const v = viaPg(); return v ? TEC.filter(t => t.via === v && t.liv <= livelloPg()) : []; };
+    const tipoArmaVia = () => tipoArmaInMano() || eqPg().armaTipoDanno; /* le abilità della via cambiano con il tipo d'arma */
+    const tecnicheVia = () => { const v = viaPg(), tipo = tipoArmaVia(); return v ? TEC.filter(t => t.via === v && t.tipo === tipo && t.liv <= livelloPg()) : []; };
     /* tecniche sbloccate dal livello e adatte a ciò che si impugna (le possibili scelte quando si prepara) */
     const opzioniTecniche = () => { const tipo = tipoArmaInMano() || eqPg().armaTipoDanno; return TEC.filter(t => t.tipo !== "Utilita" && !t.via && t.liv <= livelloPg() && (t.tipo === tipo || (t.tipo === "Scudo" && scudo))); };
     /* le tecniche speciali preparate: scelte in creazione (pg.tecniche) e cambiate riposando (usate.tecPreparate) */
@@ -8653,13 +8683,13 @@
         switch (e.k) {
           case "colpo":
             esiti.push(e.crit ? RT.critico : e.ok ? RT.colpito : RT.mancato); if (e.crit) crit++;
-            if (e.ok) { colpito = true; righe.push(e.crit ? CB.tiroAttCrit(e.mA, e.tot) : CB.tiroAtt(e.d, e.mA, e.tot, e.ca), CB.tiroDanno(e.nd, e.dado, e.tiri, e.mm, e.danno - (e.marchio || 0))); if (e.marchio) righe.push(RT.marchioDanno(e.marchio)); }
+            if (e.ok) { colpito = true; righe.push(e.crit ? CB.tiroAttCrit(e.mA, e.tot) : CB.tiroAtt(e.d, e.mA, e.tot, e.ca), CB.tiroDanno(e.nd, e.dado, e.tiri, e.mm, e.danno - (e.marchio || 0) - (e.sigillo || 0))); if (e.marchio) righe.push(RT.marchioDanno(e.marchio)); if (e.sigillo) righe.push(RT.sigilloDanno(e.sigillo)); }
             else righe.push(CB.tiroAtt(e.d, e.mA, e.tot, e.ca));
             break;
           case "stato":
             if (e.s === "sanguina") righe.push(e.dado === 6 ? RT.emorragia(e.dado, e.turni) : RT.sanguina(e.dado, e.turni));
             else if (e.s === "furore") righe.push(RT.furore);
-            else righe.push(((t && t.id === "schiacciaossa" && e.s === "debole") ? RT.effetti.frattura : (RT.effetti[e.s] || nomeEff(e.s))) + RT.durata(e.turni));
+            else righe.push((RT.effetti[e.s] || nomeEff(e.s)) + (CMB.perScontro(e.turni) ? RT.perScontro : RT.durata(e.turni)));
             if (e.ridotto) righe.push(RT.ridotto(nomeEff(e.s), e.turni));
             break;
           case "immune": righe.push(RT.immune(nomeEff(e.s))); break;
@@ -8671,6 +8701,9 @@
           case "guardia": righe.push(RT.guardiaTurni(e.val, e.turni)); break;
           case "esecuzione": righe.push(RT.esecuzione); break;
           case "marchio": righe.push(RT.marchio); break;
+          case "crepe": righe.push(RT.crepe(e.n, e.tot, e.max, e.perse)); break;
+          case "sigillo": righe.push(RT.sigillo); break;
+          case "crollo": righe.push(RT.crollo(e.n)); break;
           case "parata": righe.push(RT.parata); break;
           case "attaccoGratuito": righe.push(RT.gratuito); break;
           case "soffioPerso": righe.push(RT.effetti.carica); break;
@@ -8735,8 +8768,17 @@
         const r = tira(6); scontro.soffioPronto = r >= D.soffio.ricarica;
         aggiungi({ tipo: "narra", box: "nem", righe: [pesca(scontro.soffioPronto ? CB.ricaricaSi : CB.ricaricaNo)] }); /* il tiro di ricarica resta segreto */
       }
+      if (fratturaPrimaDiAttaccare()) return;
       if (D.soffio && scontro.soffioPronto && !eff("silenzio") && Math.random() < D.probSoffio) return soffioScontro();
       attaccoNemScontro();
+    }
+    /* Frattura: 1d4 al nemico prima di ogni suo attacco (anche Presa e Soffio). true se lo uccide */
+    function fratturaPrimaDiAttaccare() {
+      const f = CMB.frattura(scontro, { tira });
+      if (!f) return false;
+      aggiungi({ tipo: "narra", box: "mia", righe: [RT.fratturaTick(f.d)] }); scuotiNemico(); barraScontro();
+      if (scontro.pv <= 0) { setTimeout(vittoriaScontro, PAUSA_SCONTRO / 2); return true; }
+      return false;
     }
     /* fine del turno del nemico: gli effetti scalano di un turno */
     function fineTurnoNem() {
@@ -8769,6 +8811,7 @@
           sub.eventi.forEach(e => {
             if (e.k === "contrattacco") righe.push(RT.contrattacco + " " + CB.tiroDanno(1, e.dado, e.tiri, e.mm, e.danno));
             if (e.k === "stato") righe.push(RT.sanguina(e.dado, e.turni));
+            if (e.k === "crepe") righe.push(RT.crepe(e.n, e.tot, e.max, e.perse));
           });
           scuotiNemico();
         } else {
@@ -8789,6 +8832,7 @@
     function presaScontro() {
       if (!scontro) return;
       scontro.presaUsata = true;
+      if (fratturaPrimaDiAttaccare()) return;
       const m = modLottaPg() + (eff("furore") ? 4 : 0), n = modNem("Lotta");
       aggiungi({ tipo: "narra", box: "nem", righe: [CB.presaLog] });
       segnaTurno(CB.attPresa);

@@ -4,7 +4,7 @@
    una regola cambiata qui cambia ovunque, e i test provano lo stesso codice che gira in partita.
 
    Uso: Combattimento.usa(tecnica, s, ctx) → { eventi, costo } dove
-     s   = stato dello scontro: { pv, pvMax, eff: {}, effMax: {}, sangueDado, prossimo, marchio, sconto, parata, guardiaVal }
+     s   = stato dello scontro: { pv, pvMax, eff: {}, effMax: {}, sangueDado, prossimo, marchio, sconto, parata, parataCrepe, guardiaVal, crepe, sigillo }
      ctx = ambiente: { tira(d), liv, modAtt, modDanno, dado, ca(), boss, haArma, cd, modTs,
                        curaPg(n), iraPiu(n), usataPerRiposo(id), segnaPerRiposo(id) }
    Gli eventi sono dati ({ k: "colpo", … }): i testi li scrive chi li mostra.
@@ -16,6 +16,8 @@
   const IRA_PER_COLPO = R.IRA_PER_COLPO || [1, 1, 2, 2, 3];              /* ira per colpo subito, per livello */
   const CONTROLLI = ["frastornato", "bloccato", "silenzio"]; /* i boss non li subiscono mai */
   const TETTO_BOSS = { debole: 2, sbilanciato: 2 };    /* durata massima sui boss */
+  const CREPE_MAX = 3, CREPE_MAX_BOSS = 2;             /* Incrinatura: cariche massime (comuni / boss) */
+  const PER_SCONTRO = 99;                              /* durata «per tutto lo scontro» (Frattura della Sentenza e del Martello) */
 
   const crescitaIra = (modV, nuovoLiv) => Math.max(1, modV + nuovoLiv);       /* a ogni salita: mod Vigore + livello raggiunto */
   const iraMax = (modV, liv) => { let m = 10 + modV; for (let l = 2; l <= liv; l++) m += crescitaIra(modV, l); return m; };
@@ -56,6 +58,20 @@
     const e = metti(s, ctx, "sanguina", turni);
     e.dado = s.sangueDado; return e;
   }
+  /* Incrinatura: −1 CA per carica, dura tutto lo scontro. È l'unico effetto che si somma; oltre il massimo le cariche vanno perse */
+  const crepeMax = (ctx) => (ctx && ctx.boss ? CREPE_MAX_BOSS : CREPE_MAX);
+  const crepe = (s) => Math.max(0, Number(s && s.crepe) || 0);
+  const crepePiene = (s, ctx) => crepe(s) >= crepeMax(ctx);
+  function incrina(s, ctx, n) {
+    const prima = crepe(s), max = crepeMax(ctx), dopo = Math.min(max, prima + n);
+    s.crepe = dopo;
+    return { k: "crepe", n: dopo - prima, perse: n - (dopo - prima), tot: dopo, max };
+  }
+  /* malus alla CA del nemico: Sbilanciato (−2) più le cariche di Incrinatura (al massimo −5, −4 su un boss) */
+  const malusCA = (s) => (attivo(s, "sbilanciato") ? 2 : 0) + crepe(s);
+  /* Frattura: 1d4 al nemico ogni volta che attacca (anche Presa e Soffio), prima del tiro. Non scatta se è stordito, perché non attacca */
+  function frattura(s, ctx) { if (!attivo(s, "frattura")) return null; const d = ctx.tira(4); s.pv -= d; return { k: "frattura", d }; }
+  const perScontro = (n) => n >= PER_SCONTRO;
   function guardia(s, val, turni) { /* +val alla CA del personaggio */
     s.guardiaVal = attivo(s, "guardia") ? Math.max(Number(s.guardiaVal) || 0, val) : val;
     s.eff.guardia = Math.max(s.eff.guardia || 0, turni);
@@ -79,6 +95,7 @@
       let danno = Math.max(1, somma(tiri) + mm);
       Object.assign(ev, { nd, dado, tiri, mm });
       if (o.base && marchiato(s)) { const x = ctx.tira(4); danno += x; ev.marchio = x; }
+      if (o.base && s.sigillo && crepePiene(s, ctx)) { const x = ctx.tira(4); danno += x; ev.sigillo = x; } /* Sigillo del Demolitore */
       ev.danno = danno; s.pv -= danno;
     }
     return ev;
@@ -105,6 +122,12 @@
       const z = ts(ctx); E.push(z);
       if (z.ok) { E.push({ k: "resiste" }); if (alternativa) alternativa(); return false; }
       stati.forEach(k => fx(k, mappa[k])); return true;
+    };
+    const crp = (n) => E.push(incrina(s, ctx, n));
+    /* controllo con tiro salvezza che sui boss ha un ripiego proprio (non quando il comune resiste) */
+    const controlloORipiego = (mappa, ripiegoBoss) => {
+      if (ctx.boss) { Object.keys(mappa).forEach(k => E.push({ k: "immune", s: k })); ripiegoBoss(); return false; }
+      return conTSn(mappa);
     };
     const giaSanguina = attivo(s, "sanguina");
     let r;
@@ -167,13 +190,68 @@
         E.push(guardia(s, 2, 3)); s.eff.furore = Math.max(s.eff.furore || 0, 3); s.effMax.furore = Math.max(s.effMax.furore || 0, 3); E.push({ k: "furore", turni: 3 }); /* +4 ai tiri salvezza e alle prove contrapposte */
         break;
 
-      /* ---- contundenti (invariate) ---- */
-      case "spezzatendini": r = hit({ conMod: false }); if (r.ok && vivo(s)) conTSn({ silenzio: 2 }); break;
-      case "schiacciaossa": r = hit(); if (r.ok && vivo(s)) conTSn({ debole: 2 }); break;
-      case "clava": r = hit(); if (r.ok) fx("sbilanciato", 1); break;
-      case "frantumaelmo": r = hit(); if (r.ok && vivo(s)) conTSn({ frastornato: 1 }); break;
-      case "contusione": r = hit(); if (r.ok && vivo(s)) conTSn({ silenzio: 2 }); break;
-      case "rimbalzo": hit({ piuDadi: ctx.ca() >= 13 ? 2 : 1 }); break;
+      /* ---- contundenti: livello 1 ---- */
+      case "maglio": r = hit(); if (r.ok) crp(1); break;
+      case "mento": r = hit(); if (r.ok) { fx("debole", 1); fx("intontito", 1); } break;
+      case "sbilanciante": r = hit(); if (r.ok) { fx("sbilanciato", 1); fx("debole", 1); } break;
+      /* ---- contundenti: livello 2 ---- */
+      case "frantumascudo": r = hit(); if (r.ok) crp(2); break;
+      case "tremante": r = hit(); if (r.ok && vivo(s)) conTSn({ frastornato: 1 }, () => fx("sbilanciato", 1)); break;
+      case "costole": r = hit({ piuDadi: 1 }); if (r.ok) fx("frattura", 2); break;
+      /* ---- contundenti: livello 3 ---- */
+      case "sismica": r = hit(); if (r.ok) { crp(1); fx("sbilanciato", 2); } break;
+      case "demolitore": r = hit({ piuDadi: 1 }); if (r.ok) crp(2); break;
+      case "coma": r = hit(); if (r.ok && vivo(s)) conTSn({ bloccato: 1 }, () => fx("debole", 2)); break;
+      /* ---- contundenti: livello 4 ---- */
+      case "ginocchia": r = hit({ piuDadi: 1 }); if (r.ok) { fx("debole", 3); fx("sbilanciato", 3); } break;
+      case "demolizione": {
+        let aSegno = 0;
+        for (let i = 0; i < 2 && vivo(s); i++) { const z = hit({ conMod: false }); if (z.ok) aSegno++; }
+        if (aSegno === 2 && vivo(s)) { crp(2); controlloORipiego({ bloccato: 1 }, () => fx("sbilanciato", 2)); }
+        break;
+      }
+      case "controschiaccio": s.parata = true; s.parataCrepe = true; E.push({ k: "parata" }); break;
+      /* ---- contundenti: livello 5 ---- */
+      case "cateratta_roccia": {
+        let aSegno = 0;
+        for (let i = 0; i < 3 && vivo(s); i++) { const z = hit({ conMod: false }); if (z.ok) { aSegno++; if (vivo(s)) crp(1); } }
+        if (aSegno === 3 && vivo(s)) controlloORipiego({ bloccato: 1 }, () => fx("sbilanciato", 2));
+        break;
+      }
+      case "impatto_cataclisma": r = hit({ piuDadi: 1 }); if (r.ok) { crp(3); fx("sbilanciato", 3); } break;
+      case "sentenza_maglio":
+        if (ctx.segnaPerRiposo) ctx.segnaPerRiposo(t.id);
+        r = hit({ bonus: 5, piuDadi: 1 });
+        if (r.ok && vivo(s)) { fx("frattura", PER_SCONTRO); conTSn({ bloccato: 1 }); }
+        break;
+
+      /* ---- via di Aldo (contundenti): Spezzare ---- */
+      case "sigillo": r = hit(); if (r.ok) { crp(2); s.sigillo = true; E.push({ k: "sigillo" }); } break;
+      case "crollo": {
+        const n = crepe(s);
+        r = hit({ piuDadi: n });
+        if (r.ok) { if (n > 0) { s.crepe = 0; E.push({ k: "crollo", n }); } else if (vivo(s)) crp(2); }
+        break;
+      }
+      case "martello": {
+        const piene = crepePiene(s, ctx);
+        r = hit({ sempreCrit: piene });
+        if (r.ok && piene && vivo(s)) fx("frattura", PER_SCONTRO);
+        break;
+      }
+      /* ---- via di Guendalina (contundenti): Controllo ---- */
+      case "rintocco": r = hit(); if (r.ok && vivo(s)) controlloORipiego({ frastornato: 1 }, () => fx("debole", 2)); E.push(guardia(s, 2, 1)); break;
+      case "cadenza": r = hit({ piuDadi: 1 }); if (r.ok && vivo(s)) controlloORipiego({ bloccato: 1 }, () => { fx("debole", 2); fx("sbilanciato", 2); }); s.sconto = 2; E.push({ k: "sconto", n: 2 }); break;
+      case "silenzio_casa":
+        r = hit({ piuDadi: 1 });
+        if (r.ok) {
+          fx("debole", 3); fx("sbilanciato", 3);
+          if (ctx.boss) { E.push({ k: "immune", s: "silenzio" }); s.eff.furore = Math.max(s.eff.furore || 0, 3); s.effMax.furore = Math.max(s.effMax.furore || 0, 3); E.push({ k: "furore", turni: 3 }); }
+          else fx("silenzio", 2);
+        }
+        E.push(guardia(s, 2, 3));
+        break;
+
       /* ---- perforanti (invariate) ---- */
       case "cuore": hit({ bonus: 2, critDa: 19 }); break;
       case "plesso": r = hit(); if (r.ok && vivo(s)) conTSn({ silenzio: 1 }); break;
@@ -195,19 +273,19 @@
 
   /* ---------- Turno del nemico: modificatori, parata, ira ---------- */
   const modAttaccoNem = (s) => (attivo(s, "debole") ? -2 : 0) + (attivo(s, "frastornato") ? -4 : 0);
-  const critNemPossibile = (s) => !attivo(s, "frastornato");
-  /* un attacco del nemico che va a segno: la Parata lo annulla e contrattacca; altrimenti cresce l'ira */
+  const critNemPossibile = (s) => !attivo(s, "frastornato") && !attivo(s, "intontito"); /* Intontito: Percossa al Mento */
+  /* un attacco del nemico che va a segno: la Parata (o il Contro-Schiacciamento) lo annulla e contrattacca; altrimenti cresce l'ira */
   function colpoSubito(s, ctx, crit) {
     if (s.parata) {
-      s.parata = false;
+      const conCrepe = !!s.parataCrepe; s.parata = false; s.parataCrepe = false;
       const E = [{ k: "parataRiuscita" }], dado = ctx.dado, tiri = tiraDadi(ctx, 1, dado), danno = Math.max(1, somma(tiri) + ctx.modDanno);
       s.pv -= danno; E.push({ k: "contrattacco", dado, tiri, mm: ctx.modDanno, danno });
-      if (vivo(s)) E.push(sanguina(s, ctx, 4, 2));
+      if (vivo(s)) E.push(conCrepe ? incrina(s, ctx, 1) : sanguina(s, ctx, 4, 2));
       return { annullato: true, ira: 0, eventi: E };
     }
     return { annullato: false, ira: iraPerColpo(ctx.liv, crit), eventi: [] };
   }
-  const inizioTurnoPg = (s) => { s.parata = false; }; /* la Parata vale solo fino al tuo turno successivo */
+  const inizioTurnoPg = (s) => { s.parata = false; s.parataCrepe = false; }; /* la Parata vale solo fino al tuo turno successivo */
   /* fine del turno del nemico: gli effetti scalano di un turno; finito il sanguinamento finisce anche il marchio */
   function fineTurnoNemico(s) {
     const finiti = [];
@@ -218,9 +296,10 @@
   function tickSangue(s, ctx) { if (!attivo(s, "sanguina")) return null; const d = ctx.tira(Number(s.sangueDado) || 4); s.pv -= d; return { k: "sangue", d, dado: Number(s.sangueDado) || 4 }; }
 
   const API = {
-    SCELTE_PER_LIVELLO, CONTROLLI, TETTO_BOSS,
+    SCELTE_PER_LIVELLO, CONTROLLI, TETTO_BOSS, CREPE_MAX, CREPE_MAX_BOSS, PER_SCONTRO,
     crescitaIra, iraMax, iraPerColpo, slotTecniche, sceltaValida, sceltaPredefinita,
     attivo, marchiato, metti, sanguina, guardia, colpo, ts, costo, usa,
+    crepe, crepeMax, crepePiene, incrina, malusCA, frattura, perScontro,
     modAttaccoNem, critNemPossibile, colpoSubito, inizioTurnoPg, fineTurnoNemico, tickSangue
   };
   root.Combattimento = API;

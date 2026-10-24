@@ -22,7 +22,7 @@
     const c = { liv: 1, modAtt: 3, modDanno: 3, dado: 6, caBase: 12, boss: false, cd: 12, modTs: 0, cura: 0, ira: 0, usate: {} };
     Object.assign(c, o);
     c.tira = dadi(o.dadi || []);
-    c.ca = () => c.caBase - (c.s && c.s.eff && c.s.eff.sbilanciato > 0 ? 2 : 0);
+    c.ca = () => c.caBase - (c.s ? C.malusCA(c.s) : 0); /* Sbilanciato e Incrinatura, come in partita */
     c.curaPg = (n) => { c.cura += n; };
     c.iraPiu = (n) => { c.ira += n; };
     c.usataPerRiposo = (id) => !!c.usate[id];
@@ -148,9 +148,11 @@
     eq(C.sceltaValida(["polso", "morso_acciaio", "vipera", "tendini", "eco", "squarcia", "cateratta"].map(tec), 5, false).ok, true, "7 posti al livello 5");
     eq(C.sceltaPredefinita(T.filter(t => t.tipo === "Tagliente" && !t.via), 3, false).length, 5);
   });
-  caso("9c. Le abilità delle vie non sono tra le tecniche da preparare e sono 3 per via, ai livelli 3, 4, 5", () => {
-    ["aldo", "guendalina"].forEach(v => eq(T.filter(t => t.via === v).map(t => t.liv), [3, 4, 5], v));
-    eq(T.filter(t => t.tipo === "Tagliente" && !t.via).map(t => t.liv), [1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5]);
+  caso("9c. Le abilità delle vie non sono tra le tecniche da preparare e sono 3 per via e per tipo d'arma, ai livelli 3, 4, 5", () => {
+    ["Tagliente", "Contundente"].forEach(tipo => {
+      ["aldo", "guendalina"].forEach(v => eq(T.filter(t => t.via === v && t.tipo === tipo).map(t => t.liv), [3, 4, 5], v + " " + tipo));
+      eq(T.filter(t => t.tipo === tipo && !t.via).map(t => t.liv), [1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5], tipo);
+    });
   });
 
   /* ================= 10. Durate degli stati (scheda nemico) ================= */
@@ -246,21 +248,145 @@
     prova(s, ctx({ liv: 3, dadi: [2] }), "veglia_ferro"); eq(s.guardiaVal, 2);
   });
 
+  /* ================= Contundenti: Incrinatura ================= */
+  caso("C1. Incrinatura: −1 CA per carica, si somma fino a 3 e dura tutto lo scontro", () => {
+    const s = scontro(), c = ctx({ dadi: [15, 2, 15, 2, 15, 2, 15, 2] });
+    prova(s, c, "maglio"); eq(s.crepe, 1); eq(c.ca(), 11);
+    prova(s, c, "maglio"); prova(s, c, "maglio"); eq(s.crepe, 3); eq(c.ca(), 9);
+    const r = prova(s, c, "maglio"); eq(s.crepe, 3, "oltre il massimo si perde"); eq(ev(r, "crepe")[0].perse, 1);
+    for (let i = 0; i < 10; i++) C.fineTurnoNemico(s); eq(s.crepe, 3, "non scade con i turni");
+  });
+  caso("C2. Incrinatura su un boss: al massimo 2 cariche", () => {
+    const s = scontro(), c = ctx({ liv: 5, boss: true, dadi: [15, 2, 2] });
+    const r = prova(s, c, "impatto_cataclisma"); eq(s.crepe, 2); eq(ev(r, "crepe")[0], { k: "crepe", n: 2, perse: 1, tot: 2, max: 2 });
+  });
+  caso("C3. Incrinatura + Sbilanciato: CA −5 su un comune, −4 su un boss", () => {
+    const s = scontro(), c = ctx({ liv: 5, dadi: [15, 2, 2] }); prova(s, c, "impatto_cataclisma"); eq(C.malusCA(s), 5); eq(c.ca(), 7);
+    const b = scontro(), cb = ctx({ liv: 5, boss: true, dadi: [15, 2, 2] }); prova(b, cb, "impatto_cataclisma"); eq(C.malusCA(b), 4); eq(b.eff.sbilanciato, 2, "tetto dei boss");
+  });
+
+  /* ================= Contundenti: Frattura ================= */
+  caso("C4. Frattura: 1d4 a ogni attacco del nemico, poi scade", () => {
+    const s = scontro(), c = ctx({ liv: 2, dadi: [15, 2, 2, 3, 4] });
+    prova(s, c, "costole"); eq(s.eff.frattura, 2); eq(s.pv, 40 - 7);
+    eq(C.frattura(s, c).d, 3); eq(s.pv, 30);
+    eq(C.frattura(s, c).d, 4, "anche la Presa nello stesso turno"); C.fineTurnoNemico(s); C.fineTurnoNemico(s);
+    eq(C.frattura(s, c), null, "scaduta");
+  });
+  caso("C5. Frattura funziona anche sui boss; quella della Sentenza dura tutto lo scontro", () => {
+    const b = scontro(); prova(b, ctx({ liv: 2, boss: true, dadi: [15, 2, 2] }), "costole"); eq(b.eff.frattura, 2);
+    const s = scontro({ pv: 80, pvMax: 80 }), c = ctx({ liv: 5, dadi: [15, 2, 2, 18] });
+    const r = prova(s, c, "sentenza_maglio"); eq(ev(r, "colpo")[0].mA, 8, "+5 per colpire"); eq(ev(r, "colpo")[0].nd, 2, "dadi doppi");
+    vero(C.perScontro(s.eff.frattura)); for (let i = 0; i < 20; i++) C.fineTurnoNemico(s); vero(C.attivo(s, "frattura"), "ancora attiva");
+    eq(prova(s, ctx({ liv: 5, usate: c.usate }), "sentenza_maglio").rifiutata, true, "una volta per riposo");
+  });
+
+  /* ================= Contundenti: le 15 tecniche ================= */
+  caso("Percossa al Mento: Indebolito 1 e niente critici nel prossimo turno, anche su un boss", () => {
+    const s = scontro(), c = ctx({ liv: 1, boss: true, dadi: [15, 2] }); prova(s, c, "mento");
+    eq([s.eff.debole, s.eff.intontito], [1, 1]); eq(C.critNemPossibile(s), false); eq(C.modAttaccoNem(s), -2);
+    C.fineTurnoNemico(s); eq(C.critNemPossibile(s), true);
+  });
+  caso("Impatto Sbilanciante: Sbilanciato 1 e Indebolito 1", () => {
+    const s = scontro(); prova(s, ctx({ dadi: [15, 2] }), "sbilanciante"); eq([s.eff.sbilanciato, s.eff.debole], [1, 1]);
+  });
+  caso("Frantumazione dello Scudo: 2 cariche di Incrinatura", () => {
+    const s = scontro(); prova(s, ctx({ liv: 2, dadi: [15, 2] }), "frantumascudo"); eq(s.crepe, 2);
+  });
+  caso("Mazzata Tremante: non resiste → Frastornato; resiste → Sbilanciato; boss → Sbilanciato senza tiro", () => {
+    const a = scontro(); prova(a, ctx({ liv: 2, dadi: [15, 2, 3] }), "tremante"); eq([a.eff.frastornato, a.eff.sbilanciato || 0], [1, 0]);
+    const b = scontro(); prova(b, ctx({ liv: 2, dadi: [15, 2, 18] }), "tremante"); eq([b.eff.frastornato || 0, b.eff.sbilanciato], [0, 1]);
+    const c = scontro(), r = prova(c, ctx({ liv: 2, boss: true, dadi: [15, 2] }), "tremante"); eq(c.eff.sbilanciato, 1); eq(ev(r, "ts").length, 0);
+  });
+  caso("Martellata Sismica: 1 carica e Sbilanciato 2", () => {
+    const s = scontro(); prova(s, ctx({ liv: 3, dadi: [15, 2] }), "sismica"); eq([s.crepe, s.eff.sbilanciato], [1, 2]);
+  });
+  caso("Impatto Demolitore: +1 dado e 2 cariche", () => {
+    const s = scontro(), r = prova(s, ctx({ liv: 3, dadi: [15, 2, 2] }), "demolitore"); eq(ev(r, "colpo")[0].nd, 2); eq(s.crepe, 2);
+  });
+  caso("Colpo del Coma: Stordito; se resiste Indebolito 2; boss Indebolito 2 senza tiro; nessun dado extra", () => {
+    const a = scontro(), ra = prova(a, ctx({ liv: 3, dadi: [15, 2, 3] }), "coma"); eq(a.eff.bloccato, 1); eq(ev(ra, "colpo")[0].nd, 1);
+    const b = scontro(); prova(b, ctx({ liv: 3, dadi: [15, 2, 18] }), "coma"); eq([b.eff.bloccato || 0, b.eff.debole], [0, 2]);
+    const c = scontro(), r = prova(c, ctx({ liv: 3, boss: true, dadi: [15, 2] }), "coma"); eq([c.eff.bloccato || 0, c.eff.debole], [0, 2]); eq(ev(r, "ts").length, 0);
+  });
+  caso("Spezza-Ginocchia: +1 dado, Indebolito e Sbilanciato 3 (2 su un boss), costa 8", () => {
+    eq(tec("ginocchia").costo, 8);
+    const s = scontro(); prova(s, ctx({ liv: 4, dadi: [15, 2, 2] }), "ginocchia"); eq([s.eff.debole, s.eff.sbilanciato], [3, 3]);
+    const b = scontro(); prova(b, ctx({ liv: 4, boss: true, dadi: [15, 2, 2] }), "ginocchia"); eq([b.eff.debole, b.eff.sbilanciato], [2, 2]);
+  });
+  caso("Demolizione della Guardia: due attacchi col solo dado; due a segno → 2 cariche e Stordito (boss: Sbilanciato 2)", () => {
+    const s = scontro(), r = prova(s, ctx({ liv: 4, dadi: [15, 2, 15, 3, 4] }), "demolizione");
+    eq(ev(r, "colpo").map(e => e.danno), [2, 3], "senza modificatore"); eq(s.crepe, 2); eq(s.eff.bloccato, 1);
+    const b = scontro(), rb = prova(b, ctx({ liv: 4, boss: true, dadi: [15, 2, 15, 3] }), "demolizione"); eq([b.crepe, b.eff.bloccato || 0, b.eff.sbilanciato], [2, 0, 2]); eq(ev(rb, "ts").length, 0);
+    const m = scontro(); prova(m, ctx({ liv: 4, dadi: [15, 2, 1] }), "demolizione"); eq(m.crepe || 0, 0, "uno mancato: niente");
+    const z = scontro(); prova(z, ctx({ liv: 4, dadi: [15, 2, 15, 3, 18] }), "demolizione"); eq([z.crepe, z.eff.sbilanciato || 0], [2, 0], "il comune che resiste non ha ripiego");
+  });
+  caso("Contro-Schiacciamento: 0 danni, nessuna ira, contrattacco e 1 carica di Incrinatura", () => {
+    const s = scontro(), r = prova(s, ctx({ liv: 4 }), "controschiaccio"); eq(ev(r, "colpo").length, 0); eq(s.parata, true);
+    const c2 = ctx({ liv: 4, dadi: [5] }); c2.s = s;
+    const sub = C.colpoSubito(s, c2, false); eq(sub.annullato, true); eq(sub.ira, 0); eq(s.pv, 32); eq(s.crepe, 1); eq(s.eff.sanguina || 0, 0, "niente sanguinamento");
+    const p = scontro(); prova(p, ctx({ liv: 4 }), "controschiaccio"); C.inizioTurnoPg(p); eq([p.parata, p.parataCrepe], [false, false]);
+    const q = scontro(); prova(q, ctx({ liv: 4 }), "controschiaccio"); C.inizioTurnoPg(q); prova(q, ctx({ liv: 4 }), "parata");
+    C.colpoSubito(q, ctx({ liv: 4, dadi: [1, 1] }), false); eq([q.crepe || 0, q.eff.sanguina], [0, 2], "la Parata di dopo resta da taglio");
+  });
+  caso("Cateratta della Roccia: 3 attacchi col solo dado, 1 carica a colpo; 3 su 3 → Stordito (boss: Sbilanciato 2)", () => {
+    const s = scontro(), r = prova(s, ctx({ liv: 5, dadi: [15, 2, 15, 2, 15, 2, 3] }), "cateratta_roccia");
+    eq(ev(r, "colpo").map(e => e.danno), [2, 2, 2]); eq(s.crepe, 3); eq(s.eff.bloccato, 1);
+    const b = scontro(); prova(b, ctx({ liv: 5, boss: true, dadi: [15, 2, 15, 2, 15, 2] }), "cateratta_roccia"); eq([b.crepe, b.eff.sbilanciato], [2, 2]);
+    const m = scontro(), rm = prova(m, ctx({ liv: 5, dadi: [15, 2, 1, 15, 2] }), "cateratta_roccia"); eq(m.crepe, 2); eq(ev(rm, "ts").length, 0);
+  });
+  caso("Impatto del Cataclisma: niente tiro salvezza né Frastornato", () => {
+    const s = scontro(), r = prova(s, ctx({ liv: 5, dadi: [15, 2, 2] }), "impatto_cataclisma"); eq(ev(r, "ts").length, 0); eq(s.eff.frastornato || 0, 0);
+  });
+
+  /* ================= Contundenti: vie di prestigio ================= */
+  caso("Sigillo del Demolitore: +1d4 agli attacchi normali solo con le cariche massime", () => {
+    const s = scontro(), c = ctx({ liv: 3, dadi: [15, 2, 15, 2, 15, 2, 15, 2, 3] }); c.s = s;
+    prova(s, c, "sigillo"); eq([s.crepe, s.sigillo], [2, true]);
+    eq(C.colpo(s, c, { base: true }).sigillo, undefined, "2 cariche su un comune: non basta");
+    prova(s, c, "maglio"); eq(s.crepe, 3); const b = C.colpo(s, c, { base: true }); eq(b.sigillo, 3); eq(b.danno, 2 + 3 + 3);
+    const x = scontro(), cx = ctx({ liv: 3, boss: true, dadi: [15, 2, 15, 2, 4] }); cx.s = x; prova(x, cx, "sigillo"); eq(C.colpo(x, cx, { base: true }).sigillo, 4, "sul boss bastano 2");
+  });
+  caso("Crollo: +1 dado per carica, le cariche si consumano; senza cariche ne dà 2; se manca restano", () => {
+    const s = scontro({ crepe: 3 }), r = prova(s, ctx({ liv: 4, dadi: [15, 1, 1, 1, 1] }), "crollo"); eq(ev(r, "colpo")[0].nd, 4); eq(s.crepe, 0); eq(ev(r, "crollo")[0].n, 3);
+    const n = scontro(); prova(n, ctx({ liv: 4, dadi: [15, 2] }), "crollo"); eq(n.crepe, 2);
+    const m = scontro({ crepe: 2 }); prova(m, ctx({ liv: 4, dadi: [1] }), "crollo"); eq(m.crepe, 2);
+  });
+  caso("Martello del Mastro: critico sicuro e Frattura per lo scontro solo con le cariche massime", () => {
+    const s = scontro({ crepe: 3 }), r = prova(s, ctx({ liv: 5, dadi: [15, 2, 2] }), "martello"); eq(ev(r, "colpo")[0].crit, true); vero(C.perScontro(s.eff.frattura));
+    const n = scontro({ crepe: 2 }), rn = prova(n, ctx({ liv: 5, dadi: [15, 2] }), "martello"); eq(ev(rn, "colpo")[0].crit, false); eq(n.eff.frattura || 0, 0);
+    const b = scontro({ crepe: 2 }), rb = prova(b, ctx({ liv: 5, boss: true, dadi: [15, 2, 2] }), "martello"); eq(ev(rb, "colpo")[0].crit, true, "sul boss bastano 2");
+  });
+  caso("Rintocco: Frastornato (boss: Indebolito 2) e +2 CA per un turno, anche se manchi", () => {
+    const s = scontro(); prova(s, ctx({ liv: 3, dadi: [15, 2, 3] }), "rintocco"); eq([s.eff.frastornato, s.eff.guardia, s.guardiaVal], [1, 1, 2]);
+    const b = scontro(), rb = prova(b, ctx({ liv: 3, boss: true, dadi: [15, 2] }), "rintocco"); eq([b.eff.frastornato || 0, b.eff.debole], [0, 2]); eq(ev(rb, "ts").length, 0);
+    const z = scontro(); prova(z, ctx({ liv: 3, dadi: [15, 2, 18] }), "rintocco"); eq(z.eff.debole || 0, 0, "il comune che resiste non ha ripiego");
+    const m = scontro(); prova(m, ctx({ liv: 3, dadi: [2] }), "rintocco"); eq(m.eff.guardia, 1);
+  });
+  caso("Cadenza della Campana: Stordito (boss: Indebolito e Sbilanciato 2) e prossima tecnica −2", () => {
+    const s = scontro(); prova(s, ctx({ liv: 4, dadi: [15, 2, 2, 3] }), "cadenza"); eq([s.eff.bloccato, s.sconto], [1, 2]);
+    const b = scontro(); prova(b, ctx({ liv: 4, boss: true, dadi: [15, 2, 2] }), "cadenza"); eq([b.eff.bloccato || 0, b.eff.debole, b.eff.sbilanciato], [0, 2, 2]);
+  });
+  caso("Silenzio della Casa: niente attacchi speciali sui comuni, +4 ai tiri salvezza contro i boss, +2 CA per 3 turni", () => {
+    const s = scontro(); prova(s, ctx({ liv: 5, dadi: [15, 2, 2] }), "silenzio_casa"); eq([s.eff.debole, s.eff.sbilanciato, s.eff.silenzio, s.eff.guardia, s.eff.furore || 0], [3, 3, 2, 3, 0]);
+    const b = scontro(); prova(b, ctx({ liv: 5, boss: true, dadi: [15, 2, 2] }), "silenzio_casa"); eq([b.eff.silenzio || 0, b.eff.furore, b.eff.guardia], [0, 3, 3]);
+  });
+
   /* ================= Le tecniche già esistenti funzionano ancora ================= */
-  caso("Contundenti, perforanti e scudo: ognuna si risolve senza errori", () => {
-    T.filter(t => !["Tagliente", "Utilita"].includes(t.tipo)).forEach(t => {
+  caso("Perforanti e scudo: ognuna si risolve senza errori", () => {
+    T.filter(t => !["Tagliente", "Contundente", "Utilita"].includes(t.tipo)).forEach(t => {
       const s = scontro(), c = ctx({ liv: 2 }); c.tira = (d) => (d === 20 ? 15 : 1); c.s = s;
       const r = C.usa(t, s, c); vero(!ev(r, "sconosciuta").length, t.id + " non riconosciuta");
     });
   });
-  caso("Tutte le tecniche del taglio e delle vie sono riconosciute", () => {
-    T.filter(t => t.tipo === "Tagliente" || t.tipo === "Utilita").forEach(t => {
+  caso("Tutte le tecniche di taglio, contundenti e delle vie sono riconosciute, con l'inglese", () => {
+    T.filter(t => ["Tagliente", "Contundente", "Utilita"].includes(t.tipo)).forEach(t => {
       const s = scontro(), c = ctx({ liv: 5 }); c.tira = (d) => (d === 20 ? 15 : 1); c.s = s;
       const r = C.usa(t, s, c); vero(!ev(r, "sconosciuta").length, t.id); vero(t.nome.en && t.effetto.en, t.id + ": manca l'inglese");
     });
   });
   caso("Ogni tecnica ha un costo coerente con il suo livello", () => {
-    T.filter(t => t.tipo === "Tagliente").forEach(t => { const [lo, hi] = [[2, 3], [4, 5], [5, 6], [7, 8], [9, 10]][t.liv - 1]; vero(t.costo >= lo && t.costo <= hi, `${t.id}: ${t.costo} fuori da ${lo}-${hi}`); });
+    T.filter(t => t.tipo === "Tagliente" || t.tipo === "Contundente").forEach(t => { const [lo, hi] = [[2, 3], [4, 5], [5, 6], [7, 8], [9, 10]][t.liv - 1]; vero(t.costo >= lo && t.costo <= hi, `${t.id}: ${t.costo} fuori da ${lo}-${hi}`); });
   });
 
   /* ---------- esecuzione ---------- */

@@ -61,11 +61,11 @@ caso("Tutorial normale: parte come prima, senza la sala di prova e senza errori"
   vero(await page.$("#diario"), "manca il diario del tutorial"); eq(await page.$(".sala"), null, "la sala non deve comparire");
   await page.waitForTimeout(800); eq(errori, [], "errori"); await chiudi();
 });
-caso("Sala di prova: si apre con ?prova e i 40 test del modulo passano anche nel browser", async (b) => {
+caso("Sala di prova: si apre con ?prova e i 63 test del modulo passano anche nel browser", async (b) => {
   const { page, errori, chiudi } = await apri(b, "tutorial.html?prova");
   vero(await page.$(".sala"), "manca la sala"); await page.click("#svTestBtn");
   const esiti = await page.evaluate(() => window.esitiTestCombattimento);
-  const ko = esiti.filter(e => !e.ok); eq(ko, [], "test falliti"); vero(esiti.length >= 40, "pochi test: " + esiti.length);
+  const ko = esiti.filter(e => !e.ok); eq(ko, [], "test falliti"); vero(esiti.length >= 63, "pochi test: " + esiti.length);
   eq(errori, [], "errori"); await chiudi();
 });
 caso("Sala di prova: Squarcia-Articolazioni su un mastino comune blocca Presa e Soffio (scheda e turno del nemico)", async (b) => {
@@ -122,6 +122,41 @@ caso("Sala di prova: quote dei posti (2 di livello 1 al livello 1; la terza solo
   await box(0).check(); await box(1).check();
   vero(await box(2).isDisabled(), "la terza deve essere bloccata");
   await page.check("#pScudo"); vero(!(await box(2).isDisabled()), "con lo scudo si sblocca"); await chiudi();
+});
+
+/* ---------- Sala di prova: contundenti ---------- */
+caso("Sala di prova: col martello compaiono le 15 contundenti e la via di Aldo contundente", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "tutorial.html?prova");
+  await page.selectOption("#pLiv", "5"); await page.selectOption("#pArma", "3"); await page.selectOption("#pVia", "aldo");
+  const ids = await page.$$eval("#svTec [data-tec]", bs => bs.map(x => x.dataset.tec));
+  ["maglio", "mento", "sbilanciante", "frantumascudo", "tremante", "costole", "sismica", "demolitore", "coma", "ginocchia", "demolizione", "controschiaccio", "cateratta_roccia", "impatto_cataclisma", "sentenza_maglio", "sigillo", "crollo", "martello"].forEach(id => vero(ids.includes(id), "manca " + id));
+  vero(!ids.includes("polso") && !ids.includes("marchio"), "compaiono tecniche del taglio"); eq(errori, [], "errori"); await chiudi();
+});
+caso("Sala di prova: Incrinatura abbassa la CA nella scheda e si ferma a 2 cariche su un boss", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "tutorial.html?prova");
+  await page.selectOption("#pLiv", "5"); await page.selectOption("#pArma", "3"); await page.selectOption("#nTipo", "manichino"); await page.click("#svNuovo");
+  await page.evaluate(() => SalaProva.accoda(15, 2, 2)); await page.click('[data-tec="impatto_cataclisma"]');
+  eq(await page.evaluate(() => SalaProva.stato().s.crepe), 3); vero(/CA\s*7/.test(await page.innerText("#svNem")), "CA attesa 12 − 3 (Incrinatura) − 2 (Sbilanciato) = 7");
+  vero(/Incrinatura[\s\S]*3\/3 cariche/.test(await page.innerText("#svNem")), "manca l'Incrinatura nella scheda");
+  await page.check("#nBoss"); await page.click("#svNuovo"); await page.evaluate(() => SalaProva.accoda(15, 2, 2)); await page.click('[data-tec="impatto_cataclisma"]');
+  eq(await page.evaluate(() => SalaProva.stato().s.crepe), 2, "boss: 2 cariche"); eq(errori, [], "errori"); await chiudi();
+});
+caso("Sala di prova: Frattura colpisce il mastino prima del suo attacco", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "tutorial.html?prova");
+  await page.selectOption("#pLiv", "2"); await page.selectOption("#pArma", "3"); await page.check("#nMorso"); await page.evaluate(() => { Math.random = () => 0.99; });
+  await page.fill("#nPv", "60"); await page.dispatchEvent("#nPv", "change"); await page.click("#svNuovo");
+  await page.evaluate(() => SalaProva.accoda(15, 2, 2, /* frattura */ 3, /* morso mancato */ 1)); await page.click('[data-tec="costole"]');
+  vero(/Frattura: 3 danni prima di attaccare/.test(await page.innerText("#svLog")), "manca la frattura");
+  eq(await page.evaluate(() => SalaProva.stato().s.pv), 60 - 7 - 3); eq(errori, [], "errori"); await chiudi();
+});
+caso("Sala di prova: Contro-Schiacciamento annulla il morso, niente ira, contrattacco e 1 carica di Incrinatura", async (b) => {
+  const { page, chiudi } = await apri(b, "tutorial.html?prova");
+  await page.selectOption("#pLiv", "4"); await page.selectOption("#pArma", "3"); await page.check("#nMorso"); await page.evaluate(() => { Math.random = () => 0.99; }); await page.click("#svNuovo");
+  await page.evaluate(() => SalaProva.accoda(/* nemico: */ 19, /* contrattacco */ 5));
+  const prima = await page.evaluate(() => ({ pv: SalaProva.stato().pg.pv, ira: SalaProva.stato().pg.ira }));
+  await page.click('[data-tec="controschiaccio"]');
+  const dopo = await page.evaluate(() => ({ pv: SalaProva.stato().pg.pv, ira: SalaProva.stato().pg.ira, crepe: SalaProva.stato().s.crepe, sang: SalaProva.stato().s.eff.sanguina || 0 }));
+  eq(dopo.pv, prima.pv, "salute"); eq(dopo.ira, prima.ira - 7, "ira: solo il costo"); eq([dopo.crepe, dopo.sang], [1, 0]); await chiudi();
 });
 
 /* ======================= Partita vera (gioco.html) ======================= */
@@ -266,6 +301,75 @@ caso("Gioco: Veglia Inflessibile dà +2 CA e +4 ai tiri salvezza per 3 turni (va
   eq(errori, [], "errori"); await chiudi();
 });
 
+/* ---------- Partita vera: contundenti ---------- */
+const MARTELLO = { arma: "Martello da battaglia", armaDanno: "1d8", armaTipoDanno: "Contundente", armaMani: 1, armatura: "Armatura media", armaturaCA: 4, malusAgilita: 0, scudo: null, dotazione: [] };
+const PREPC = ["maglio", "mento", "tremante", "costole", "sismica", "ginocchia"];
+caso("Gioco: Guerriero col martello — Incrinatura nella scheda del nemico, CA ridotta, testo nel diario", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ tecniche: ["maglio", "mento"], equipaggiamento: MARTELLO }), PARTITA({ livello: 4, usate: { riposo: "sbloccato", tecPreparate: PREPC } }));
+  await page.evaluate(() => avviaScontro("mastino", { primo: "pg", soffioScarico: true })); await aspettaTurnoPg(page);
+  await page.evaluate(() => { scontro.pv = 80; scontro.pvMax = 80; });
+  const ca0 = await page.evaluate(() => caNem());
+  await accoda(page, [R(18, 20), R(2, 8)]);
+  await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "maglio")));
+  eq(await page.evaluate(() => scontro.crepe), 1); eq(await page.evaluate(() => caNem()), ca0 - 1, "CA −1");
+  vero(/Incrinatura/.test(await page.innerText("#schedaNem")), "scheda nemico senza Incrinatura");
+  vero(/armatura si incrina/.test(await diario(page)), "manca il testo nel diario"); eq(errori, [], "errori"); await chiudi();
+});
+caso("Gioco: Frattura ferisce il mastino prima del suo attacco e può ucciderlo", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ tecniche: ["maglio", "mento"], equipaggiamento: MARTELLO }), PARTITA({ livello: 4, usate: { riposo: "sbloccato", tecPreparate: PREPC } }));
+  await page.evaluate(() => avviaScontro("mastino", { primo: "pg", soffioScarico: true })); await aspettaTurnoPg(page);
+  await page.evaluate(() => { scontro.pv = 13; scontro.pvMax = 40; });
+  /* Spezza-Costole: 2d8 = 1 + 1 + 3 = 5 → 8; nemico: ricarica 1, frattura 4 → 4; poi morso mancato */
+  await accoda(page, [R(18, 20), R(1, 8), R(1, 8), R(1, 6), R(4, 4), R(1, 20)], [0.9]);
+  await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "costole"))); await aspettaTurnoPg(page);
+  eq(await page.evaluate(() => scontro.pv), 4); vero(/frattura cede mentre attacca: 4 danni/.test(await diario(page)), "manca il testo della frattura");
+  await page.evaluate(() => { scontro.pv = 2; });
+  await accoda(page, [R(1, 20), R(1, 6), R(4, 4)], [0.9]); /* manchi; ricarica; frattura 4 lo uccide */
+  await page.evaluate(() => attaccoPgScontro(false)); await aspettaFineScontro(page);
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Gioco: Percossa al Mento — il 20 del mastino non è critico nel turno successivo", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ tecniche: ["maglio", "mento"], equipaggiamento: MARTELLO }), PARTITA({ livello: 4, usate: { riposo: "sbloccato", tecPreparate: PREPC } }));
+  await page.evaluate(() => avviaScontro("mastino", { primo: "pg", soffioScarico: true })); await aspettaTurnoPg(page);
+  await page.evaluate(() => { scontro.pv = 80; scontro.pvMax = 80; });
+  await accoda(page, [R(18, 20), R(2, 8), /* nemico: ricarica 1, zampata 20, danno 1 */ R(1, 6), R(20, 20), R(1, 4)], [0.9]);
+  await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "mento"))); await aspettaTurnoPg(page);
+  const d = await diario(page);
+  vero(/Intontito/.test(d), "manca lo stato"); vero(/Zampata: Colpito/.test(d), "il 20 doveva colpire senza critico"); vero(!/Zampata: COLPO CRITICO/.test(d), "il colpo non deve essere critico");
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Gioco: via di Aldo col martello — Sigillo e Crollo al livello 4, il sigillo aggiunge 1d4 con le cariche piene", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ tecniche: ["maglio", "mento"], equipaggiamento: MARTELLO }), PARTITA({ livello: 4, usate: { riposo: "sbloccato", tecPreparate: PREPC, via: "aldo" } }));
+  eq(await page.evaluate(() => tecnicheDelPg().filter(x => x.via).map(x => x.t.id)), ["sigillo", "crollo"]);
+  await page.evaluate(() => avviaScontro("mastino", { primo: "pg", soffioScarico: true })); await aspettaTurnoPg(page);
+  await page.evaluate(() => { scontro.pv = 90; scontro.pvMax = 90; scontro.crepe = 1; });
+  await accoda(page, [R(18, 20), R(2, 8), /* nemico: ricarica 1, zampata mancata */ R(1, 6), R(1, 20)], [0.9]);
+  await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "sigillo"))); await aspettaTurnoPg(page);
+  eq(await page.evaluate(() => [scontro.crepe, scontro.sigillo]), [3, true]); vero(/sigillo/.test(await page.innerText("#schedaNem")), "la scheda non mostra il sigillo");
+  await accoda(page, [R(18, 20), R(2, 8), R(3, 4)]);
+  await page.evaluate(() => attaccoPgScontro(false));
+  vero(/Sigillo: \+3 danni/.test(await diario(page)), "manca il bonus del sigillo"); eq(errori, [], "errori"); await chiudi();
+});
+caso("Gioco: scelta della via col martello mostra le abilità contundenti", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ equipaggiamento: MARTELLO }), PARTITA({ livello: 3, usate: { riposo: "sbloccato", tecPreparate: [] } }));
+  await page.evaluate(() => apriSceltaVia());
+  const t = await page.textContent("#prepBox"); vero(/Sigillo del Demolitore/.test(t) && /Rintocco/.test(t), "mancano le abilità contundenti"); vero(!/Marchio del Guardiano/.test(t), "compare il taglio");
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Gioco: contro Ettore (boss) Colpo del Coma non stordisce ma indebolisce, senza tiro salvezza", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ equipaggiamento: MARTELLO }), PARTITA({ livello: 4, usate: { riposo: "sbloccato", tecPreparate: ["maglio", "mento", "tremante", "costole", "coma", "ginocchia"] } }));
+  await page.evaluate(() => avviaScontro("esploratore", { ctx: "ettore", testi: "esploratore", primo: "pg" })); await aspettaTurnoPg(page);
+  await page.evaluate(() => { scontro.pv = 90; scontro.pvMax = 90; });
+  await accoda(page, [R(19, 20), R(1, 8)]);
+  await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "coma")));
+  eq(await page.evaluate(() => [scontro.eff.bloccato || 0, scontro.eff.debole]), [0, 2]);
+  vero(/troppo potente/.test(await diario(page)), "manca il messaggio dei boss"); eq(errori, [], "errori"); await chiudi();
+});
+caso("Gioco: un salvataggio con le vecchie tecniche contundenti lascia i posti vuoti", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ tecniche: ["spezzatendini", "clava"], equipaggiamento: MARTELLO }), PARTITA({ livello: 2, usate: { riposo: "sbloccato", tecPreparate: ["spezzatendini", "clava", "frantumaelmo"] } }));
+  eq(await page.evaluate(() => tecnichePreparate().length), 0); eq(await page.evaluate(() => postiLiberi()), 4); eq(errori, [], "errori"); await chiudi();
+});
+
 /* ======================= Creazione e regolamento ======================= */
 caso("Creazione: il Guerriero con la spada vede le 3 nuove tecniche di livello 1 e ne sceglie 2", async (b) => {
   const { page, errori, chiudi } = await apri(b, "creazione.html");
@@ -274,13 +378,20 @@ caso("Creazione: il Guerriero con la spada vede le 3 nuove tecniche di livello 1
   const nomi = await page.$$eval('#lista-tecniche input[name="tecnica"]', cs => cs.map(c => c.value)); eq(nomi, ["polso", "morso_acciaio", "pomolo"]);
   eq(errori, [], "errori"); await chiudi();
 });
+caso("Creazione: il Guerriero col martello vede le 3 contundenti di livello 1", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "creazione.html");
+  await page.check('input[name="classe"][value="Soldato"]', { force: true });
+  await page.check('input[name="arma"][value="3"]', { force: true });
+  eq(await page.$$eval('#lista-tecniche input[name="tecnica"]', cs => cs.map(c => c.value)), ["maglio", "mento", "sbilanciante"]);
+  eq(errori, [], "errori"); await chiudi();
+});
 caso("Regolamento: posti, ira per livello, vie e boss in italiano e in inglese", async (b) => {
   const { page, errori, chiudi } = await apri(b, "regolamento.html");
   const t = await page.textContent("body");
-  ["2 (livello 1), 4 (livello 2), 5 (livello 3), 6 (livello 4), 7 (livello 5)", "+1 ai livelli 1-2, +2 ai livelli 3-4, +3 al livello 5", "via di prestigio", "al massimo 2 turni"].forEach(x => vero(t.includes(x), "manca: " + x));
+  ["2 (livello 1), 4 (livello 2), 5 (livello 3), 6 (livello 4), 7 (livello 5)", "+1 ai livelli 1-2, +2 ai livelli 3-4, +3 al livello 5", "via di prestigio", "al massimo 2 turni", "Incrinatura", "Frattura"].forEach(x => vero(t.includes(x), "manca: " + x));
   await page.evaluate(() => { localStorage.setItem("lingua", "en"); }); await page.reload();
   const e = await page.textContent("body");
-  ["2 (level 1), 4 (level 2)", "+1 at levels 1-2, +2 at levels 3-4, +3 at level 5", "prestige path"].forEach(x => vero(e.includes(x), "manca: " + x));
+  ["2 (level 1), 4 (level 2)", "+1 at levels 1-2, +2 at levels 3-4, +3 at level 5", "prestige path", "Cracked", "Fractured"].forEach(x => vero(e.includes(x), "manca: " + x));
   eq(errori, [], "errori"); await chiudi();
 });
 caso("Gioco in inglese: una tecnica nuova si usa senza errori e con i testi inglesi", async (b) => {

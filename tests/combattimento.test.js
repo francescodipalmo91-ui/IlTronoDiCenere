@@ -243,8 +243,8 @@
   caso("Veglia Inflessibile: Indebolito e Sbilanciato 3, +2 CA e +4 ai tiri salvezza (Furore) per 3 turni", () => {
     const s = scontro(); prova(s, ctx({ liv: 5, dadi: [15, 2, 2] }), "veglia_inflessibile"); eq([s.eff.debole, s.eff.sbilanciato, s.eff.guardia, s.eff.furore], [3, 3, 3, 3]); eq(s.eff.incrollabile, undefined);
   });
-  caso("Guardia: una guardia scaduta non lascia il vecchio valore (Scudo Frontale +3 poi Veglia di Ferro +2)", () => {
-    const s = scontro(); prova(s, ctx(), "frontale"); eq(s.guardiaVal, 3); C.fineTurnoNemico(s);
+  caso("Guardia: una guardia scaduta non lascia il vecchio valore (Postura Salda +3 poi Veglia di Ferro +2)", () => {
+    const s = scontro(); prova(s, ctx(), "postura_salda"); eq(s.guardiaVal, 3); C.fineTurnoNemico(s);
     prova(s, ctx({ liv: 3, dadi: [2] }), "veglia_ferro"); eq(s.guardiaVal, 2);
   });
 
@@ -459,10 +459,121 @@
   });
 
   /* ================= Le tecniche già esistenti funzionano ancora ================= */
-  caso("Scudo: ognuna si risolve senza errori", () => {
+  /* ================= Scudo: Carica Cinetica, assorbimento, difese ================= */
+  caso("S1. Carica Cinetica: massimo 3 anche sui boss, le cariche oltre il massimo vanno perse", () => {
+    const s = scontro(); eq(C.carica(s, 2).tot, 2); const e = C.carica(s, 2); eq([e.n, e.perse, e.tot, s.cariche], [1, 1, 3, 3]);
+    const b = scontro(), c = ctx({ boss: true, liv: 2 }); prova(b, c, "muro"); C.colpoSubito(b, c, false, 6); eq(b.cariche, 3, "boss: 3 come per tutti");
+  });
+  caso("S2. Assorbimento Minimale: colpo di scudo 1d4; il primo colpo subito fa metà danni (ira normale) e dà 1 Carica", () => {
+    const s = scontro(), c = ctx({ dadi: [15, 2] });
+    const r = prova(s, c, "assorbimento"); eq(ev(r, "colpo")[0].dado, 4); eq(s.pv, 35);
+    const sub = C.colpoSubito(s, c, false, 7); eq([sub.danno, sub.ira, sub.annullato, s.cariche, s.assorbiti], [3, 1, false, 1, 1]);
+    eq(C.colpoSubito(s, c, false, 7).danno, 7, "solo il primo colpo");
+  });
+  caso("S3. Postura Salda: consuma l'azione, +3 CA fino al tuo turno, niente Presa; se il nemico manca, 1 Carica", () => {
+    const s = scontro(), c = ctx(); const r = prova(s, c, "postura_salda");
+    eq(ev(r, "colpo").length, 0, "nessun attacco"); eq([s.guardiaVal, s.eff.guardia], [3, 1]); eq(C.presaBloccata(s), true);
+    C.colpoMancato(s, c); eq(s.cariche, 1); C.inizioTurnoPg(s, c); eq(C.presaBloccata(s), false);
+    eq(C.colpoMancato(s, c).length, 0, "scaduta: niente Carica");
+  });
+  caso("S4. Rimbalzo della Marea: metà danni a te, l'altra metà al nemico senza tiro, 1 Carica", () => {
+    const s = scontro(), c = ctx(); prova(s, c, "rimbalzo_marea");
+    const sub = C.colpoSubito(s, c, false, 7); eq([sub.danno, s.pv, s.cariche], [3, 36, 1]); eq(ev(sub, "rimbalzo")[0].danno, 4);
+  });
+  caso("S5. Batteria Cinetica: 0 danni ma l'ira resta; Muro di Assorbimento: 0 danni, niente ira, 3 Cariche", () => {
+    const s = scontro(), c = ctx({ liv: 2 }); prova(s, c, "batteria");
+    const a = C.colpoSubito(s, c, true, 9); eq([a.danno, a.annullato, a.ira, s.cariche], [0, true, 2, 1], "critico: ira doppia");
+    const m = scontro(); prova(m, c, "muro"); const b = C.colpoSubito(m, c, false, 9); eq([b.danno, b.ira, m.cariche], [0, 0, 3]);
+  });
+  caso("S6. Niente difesa dello scudo due turni di fila; un colpo di scudo o un attacco in mezzo la sblocca", () => {
+    const s = scontro(), c = ctx({ liv: 2, dadi: [2] }); prova(s, c, "muro"); C.inizioTurnoPg(s, c);
+    eq(C.disponibile(tec("postura_salda"), s).ok, false); const r = prova(s, c, "postura_salda"); eq([r.rifiutata, r.costo, ev(r, "difesaDiFila").length], [true, 0, 1]);
+    eq(C.disponibile(tec("assorbimento"), s).ok, true, "le tecniche che attaccano restano libere");
+    prova(s, c, "assorbimento"); C.inizioTurnoPg(s, c); eq(C.disponibile(tec("postura_salda"), s).ok, true, "un turno dopo si può");
+  });
+  caso("S7. Spinta della Risacca: 1d6; tiro salvezza fallito → perde il Soffio e niente attacchi speciali; resiste o boss → Sbilanciato", () => {
+    const s = scontro({ soffioPronto: true }); prova(s, ctx({ liv: 2, dadi: [15, 2, 5] }), "spinta"); eq([s.eff.silenzio, s.soffioPronto, s.pv], [1, false, 35]);
+    const r = scontro(); prova(r, ctx({ liv: 2, dadi: [15, 2, 18] }), "spinta"); eq([r.eff.silenzio || 0, r.eff.sbilanciato], [0, 1]);
+    const b = scontro(), cb = ctx({ liv: 2, boss: true, dadi: [15, 2] }); prova(b, cb, "spinta"); eq(b.eff.sbilanciato, 1); eq(cb.tira.resto(), 0, "boss: nessun tiro salvezza");
+  });
+  caso("S8. Inversione della Marea: +1 dado e +2 CA per 2 turni solo se il nemico ti ha colpito nel suo ultimo turno", () => {
+    const s = scontro(), c = ctx({ liv: 3, dadi: [15, 2] }); prova(s, c, "inversione"); eq([s.pv, s.eff.guardia || 0], [35, 0]);
+    C.colpoSubito(s, c, false, 4); C.inizioTurnoPg(s, c);
+    const c2 = ctx({ liv: 3, dadi: [15, 2, 3] }); prova(s, c2, "inversione"); eq([s.pv, s.eff.guardia, s.guardiaVal], [27, 2, 2]);
+    C.inizioTurnoPg(s, c2); eq(s.colpitoUltimo, false, "un turno senza colpi: niente vendetta");
+  });
+  caso("S9. Onda di Ritorno: serve almeno 1 Carica; 1d6 per Carica + Vigore, senza tiro per colpire", () => {
+    const s = scontro(); eq(C.disponibile(tec("onda_ritorno"), s).ok, false); eq(prova(s, ctx({ liv: 3 }), "onda_ritorno").rifiutata, true);
+    s.cariche = 2; const c = ctx({ liv: 3, dadi: [4, 5] }); const r = prova(s, c, "onda_ritorno");
+    eq([s.pv, s.cariche, ev(r, "colpo").length], [28, 0, 0]); eq(c.tira.resto(), 0);
+  });
+  caso("S10. Baluardo d'Acciaio: +2 CA per 2 turni; ogni colpo subito dà ira doppia e 1 Carica", () => {
+    const s = scontro(), c = ctx({ liv: 3 }); prova(s, c, "baluardo"); eq([s.eff.guardia, s.guardiaVal, s.eff.baluardo], [2, 2, 2]);
+    const a = C.colpoSubito(s, c, false, 6); eq([a.danno, a.ira, s.cariche], [6, 4, 1]); C.colpoSubito(s, c, false, 6); eq(s.cariche, 2);
+    C.fineTurnoNemico(s); C.fineTurnoNemico(s); eq(C.colpoSubito(s, c, false, 6).ira, 2, "finito: ira normale");
+  });
+  caso("S11. Risucchio della Voragine: 2d6 + Vigore; se colpisce 1 Carica e 1d4 ira", () => {
+    const s = scontro(), c = ctx({ liv: 4, dadi: [15, 3, 4, 2] }); prova(s, c, "risucchio"); eq([s.pv, s.cariche, c.ira], [30, 1, 2]);
+  });
+  caso("S12. Postura del Mare Profondo: ogni colpo fa 0 danni e dà 1 Carica; al tuo turno 1d6 + Vigore per colpo assorbito", () => {
+    const s = scontro(), c = ctx({ liv: 4 }); prova(s, c, "mare_profondo");
+    const a = C.colpoSubito(s, c, false, 6), b = C.colpoSubito(s, c, false, 5); eq([a.danno, a.ira, b.danno, s.cariche, s.assorbiti], [0, 0, 0, 2, 2]);
+    const r = C.inizioTurnoPg(s, ctx({ liv: 4, dadi: [5, 6] })); eq(s.pv, 23); eq(r.filter(e => e.k === "onda").length, 2); eq(s.assorbe, null);
+  });
+  caso("S13. Frantumazione della Riserva: 2d6; tiro salvezza → niente attacchi speciali + Indebolito 2; boss Indebolito + Sbilanciato 2 senza tiro", () => {
+    const s = scontro(); prova(s, ctx({ liv: 4, dadi: [15, 1, 1, 5] }), "frantumazione"); eq([s.eff.silenzio, s.eff.debole, s.pv], [2, 2, 35]);
+    const b = scontro(), cb = ctx({ liv: 4, boss: true, dadi: [15, 1, 1] }); const r = prova(b, cb, "frantumazione");
+    eq([b.eff.silenzio || 0, b.eff.debole, b.eff.sbilanciato], [0, 2, 2]); eq(ev(r, "ts").length, 0); eq(cb.tira.resto(), 0);
+  });
+  caso("S14. Tempesta di Risacca: 3 colpi col solo dado, 1 Carica per colpo; 3 su 3 → Stordito (boss: Sbilanciato 2)", () => {
+    const s = scontro(), c = ctx({ liv: 5, dadi: [15, 2, 15, 3, 15, 4, 5] }); prova(s, c, "tempesta_risacca"); eq([s.pv, s.cariche, s.eff.bloccato], [31, 3, 1]);
+    const b = scontro(), cb = ctx({ liv: 5, boss: true, dadi: [15, 2, 15, 3, 15, 4] }); prova(b, cb, "tempesta_risacca"); eq([b.eff.bloccato || 0, b.eff.sbilanciato], [0, 2]);
+    const m = scontro(); prova(m, ctx({ liv: 5, dadi: [15, 2, 2, 15, 4] }), "tempesta_risacca"); eq([m.cariche, m.eff.bloccato || 0], [2, 0], "2 su 3: niente controllo");
+  });
+  caso("S15. Ancoraggio del Cosmo: 0 danni al primo colpo, Cariche al massimo, niente attacchi speciali 3 (boss: Indebolito 2)", () => {
+    const s = scontro(), c = ctx({ liv: 5, dadi: [4] }); prova(s, c, "ancoraggio"); eq([s.cariche, s.eff.silenzio], [3, 3]); eq(C.colpoSubito(s, c, false, 8).danno, 0);
+    const b = scontro(), cb = ctx({ liv: 5, boss: true }); prova(b, cb, "ancoraggio"); eq([b.eff.silenzio || 0, b.eff.debole, b.cariche], [0, 2, 3]);
+  });
+  caso("S16. Egida del Vuoto: una volta per riposo; ogni colpo 0 danni e 1 Carica; al tuo turno 2d6 per Carica + Vigore, Cariche a zero", () => {
+    const s = scontro({ cariche: 1 }), c = ctx({ liv: 5 }); prova(s, c, "egida"); eq(c.usate.egida, true);
+    C.colpoSubito(s, c, false, 9); eq(s.cariche, 2);
+    C.inizioTurnoPg(s, ctx({ liv: 5, dadi: [1, 2, 3, 4] })); eq([s.pv, s.cariche], [27, 0]);
+    const r = prova(scontro(), c, "egida"); eq([r.rifiutata, ev(r, "giaUsataRiposo").length], [true, 1]);
+    const v = scontro(); prova(v, ctx({ liv: 5 }), "egida"); const w = C.inizioTurnoPg(v, ctx({ liv: 5 })); eq(w[0].k, "ondaVuota"); eq(v.pv, 40);
+  });
+  caso("S17. Fortezza Eterna (via di Guendalina): una volta per scontro il colpo mortale ti lascia a 1 e dà 3 Cariche", () => {
+    const s = scontro(), c = ctx({ liv: 5, dadi: [15, 1, 1] }); prova(s, c, "fortezza_eterna"); eq([s.eff.silenzio, s.eff.debole, s.eff.guardia, s.eff.fortezza], [3, 3, 3, 3]);
+    const f = C.fortezza(s, 10, 6); eq([f.danno, s.cariche, s.fortezzaUsata], [5, 3, true]); eq(C.fortezza(s, 10, 1).danno, 10, "una sola volta");
+    eq(C.fortezza(scontro(), 10, 6).danno, 10, "senza Fortezza nulla cambia");
+    const b = scontro(); prova(b, ctx({ liv: 5, boss: true, dadi: [15, 1, 1] }), "fortezza_eterna"); eq([b.eff.silenzio || 0, b.eff.debole, b.eff.sbilanciato], [0, 2, 2]);
+  });
+  caso("S18. Marea Elastica (via di Aldo): metà danni e 2 Cariche; con almeno 2 Cariche ogni colpo subito restituisce 1d4", () => {
+    const s = scontro(), c = ctx({ liv: 3, dadi: [15, 2] }); prova(s, c, "marea_elastica"); eq([s.pv, s.elastica], [35, true]);
+    const sub = C.colpoSubito(s, ctx({ liv: 3, dadi: [3] }), false, 8); eq([sub.danno, s.cariche, s.pv], [4, 2, 32]);
+    s.cariche = 1; const n = C.colpoSubito(s, ctx({ liv: 3 }), false, 8); eq([n.danno, s.pv], [8, 32], "sotto 2 Cariche: niente");
+  });
+  caso("S19. Onda di Rimbalzo (via di Aldo): +3 per colpire e +1 dado per Carica, che si consumano; senza Cariche metà danni e 2 Cariche", () => {
+    const s = scontro({ cariche: 2 }), c = ctx({ liv: 4, dadi: [8, 1, 2, 3] }); const r = prova(s, c, "onda_rimbalzo");
+    eq([ev(r, "colpo")[0].tot, s.pv, s.cariche], [14, 31, 0]);
+    const m = scontro({ cariche: 2 }); prova(m, ctx({ liv: 4, dadi: [2] }), "onda_rimbalzo"); eq(m.cariche, 2, "mancato: le Cariche restano");
+    const v = scontro(); prova(v, ctx({ liv: 4 }), "onda_rimbalzo"); eq(C.colpoSubito(v, ctx({ liv: 4 }), false, 6).danno, 3); eq(v.cariche, 2);
+  });
+  caso("S20. Ritorno dello Tsunami (via di Aldo): 1d6 per Carica + 1d4 per colpo assorbito (max 3) + Vigore, poi resta 1 Carica", () => {
+    const s = scontro({ cariche: 2, assorbiti: 5 }), c = ctx({ liv: 5, dadi: [6, 6, 4, 4, 4] }); prova(s, c, "tsunami"); eq([s.pv, s.cariche], [13, 1]);
+    eq(C.disponibile(tec("tsunami"), scontro()).ok, false, "senza Cariche non si usa");
+  });
+  caso("S21. Drenaggio d'Urto e Sigillo del Monolito (via di Guendalina)", () => {
+    const s = scontro(), c = ctx({ liv: 3, dadi: [15, 2, 5] }); prova(s, c, "drenaggio"); eq([s.eff.silenzio, s.eff.guardia], [1, 1]);
+    C.colpoMancato(s, c); eq([c.ira, s.cariche], [1, 1]);
+    const b = scontro(); prova(b, ctx({ liv: 3, boss: true, dadi: [15, 2] }), "drenaggio"); eq(b.eff.debole, 2);
+    const g = scontro(); prova(g, ctx({ liv: 4, dadi: [15, 1, 1, 5] }), "sigillo_monolito"); eq([g.eff.silenzio, g.eff.guardia, g.sconto], [2, 2, 2]);
+    const gb = scontro(); prova(gb, ctx({ liv: 4, boss: true, dadi: [15, 1, 1] }), "sigillo_monolito"); eq([gb.eff.debole, gb.eff.sbilanciato], [2, 2]);
+  });
+  caso("S22. Le vecchie tecniche di scudo sono tolte e tutte le nuove sono riconosciute", () => {
+    ["carica", "schiaffo", "frontale", "balzo", "scagliata", "guardia"].forEach(id => vero(!T.some(t => t.id === id), id + " ancora presente"));
     T.filter(t => t.tipo === "Scudo").forEach(t => {
-      const s = scontro(), c = ctx({ liv: 2 }); c.tira = (d) => (d === 20 ? 15 : 1); c.s = s;
-      const r = C.usa(t, s, c); vero(!ev(r, "sconosciuta").length, t.id + " non riconosciuta");
+      const s = scontro({ cariche: 1 }), c = ctx({ liv: 5 }); c.tira = (d) => (d === 20 ? 15 : 1); c.s = s;
+      const r = C.usa(t, s, c); vero(!ev(r, "sconosciuta").length, t.id + " non riconosciuta"); vero(t.nome.en && t.effetto.en, t.id + ": manca l'inglese");
     });
   });
   caso("Tutte le tecniche di taglio, contundenti, perforanti e delle vie sono riconosciute, con l'inglese", () => {
@@ -471,8 +582,8 @@
       const r = C.usa(t, s, c); vero(!ev(r, "sconosciuta").length, t.id); vero(t.nome.en && t.effetto.en, t.id + ": manca l'inglese");
     });
   });
-  caso("Ogni ramo d'arma ha 15 tecniche (3 per livello) e 6 abilità delle vie", () => {
-    ["Tagliente", "Contundente", "Perforante"].forEach(tipo => {
+  caso("Ogni ramo (armi e scudo) ha 15 tecniche (3 per livello) e 6 abilità delle vie", () => {
+    ["Tagliente", "Contundente", "Perforante", "Scudo"].forEach(tipo => {
       const base = T.filter(t => t.tipo === tipo && !t.via), vie = T.filter(t => t.tipo === tipo && t.via);
       eq(base.length, 15, tipo); [1, 2, 3, 4, 5].forEach(l => eq(base.filter(t => t.liv === l).length, 3, tipo + " livello " + l));
       eq(vie.map(t => t.via + t.liv).sort(), ["aldo3", "aldo4", "aldo5", "guendalina3", "guendalina4", "guendalina5"], tipo + " vie");
@@ -480,7 +591,7 @@
     eq(new Set(T.map(t => t.id)).size, T.length, "id unici");
   });
   caso("Ogni tecnica ha un costo coerente con il suo livello", () => {
-    T.filter(t => ["Tagliente", "Contundente", "Perforante"].includes(t.tipo)).forEach(t => { const [lo, hi] = [[2, 3], [4, 5], [5, 6], [7, 8], [9, 10]][t.liv - 1]; vero(t.costo >= lo && t.costo <= hi, `${t.id}: ${t.costo} fuori da ${lo}-${hi}`); });
+    T.filter(t => ["Tagliente", "Contundente", "Perforante", "Scudo"].includes(t.tipo)).forEach(t => { const [lo, hi] = [[2, 3], [4, 5], [5, 6], [7, 8], [9, 10]][t.liv - 1]; vero(t.costo >= lo && t.costo <= hi, `${t.id}: ${t.costo} fuori da ${lo}-${hi}`); });
   });
 
   /* ---------- esecuzione ---------- */

@@ -4279,6 +4279,26 @@
         gratuito: "E subito un altro colpo, senza fermarti:", furoreTurni: (n) => `+4 ai tiri salvezza e alle prove contrapposte per ${n} turni.`,
         guardiaTurni: (v, n) => n > 1 ? `+${v} alla Classe armatura per ${n} turni.` : `+${v} alla Classe armatura fino al tuo prossimo turno.`,
         giaUsataRiposo: "Questa tecnica si usa una volta per riposo: la ritroverai dopo aver dormito.", unaPerRiposo: "una volta per riposo",
+        scudo: {
+          difesaDiFila: "Hai appena usato una difesa dello scudo: non puoi chiuderti di nuovo in guardia due turni di fila.",
+          senzaCariche: "Lo scudo non ha Cariche Cinetiche da liberare: prima devi assorbire qualche colpo.",
+          pronto: { meta: "Lo scudo è pronto ad attutire il primo colpo: farà metà danni.", rimbalzo: "Lo scudo è pronto a rimandare indietro metà del primo colpo.", zero: "Lo scudo è pronto a inghiottire il primo colpo: non ti farà nulla.", zeroIra: "Lo scudo è pronto a inghiottire il primo colpo e a trattenerne la furia.", tutti: "Fino al tuo turno lo scudo inghiottirà ogni colpo." },
+          caricheGuadagno: (n) => n === 1 ? "1 Carica Cinetica" : `${n} Cariche Cinetiche`,
+          cariche: (n, tot, max, perse) => (n > 0 ? `Lo scudo trattiene la forza: +${n === 1 ? "1 Carica Cinetica" : n + " Cariche Cinetiche"} (${tot}/${max}).` : `Lo scudo è già carico al massimo (${tot}/${max}).`) + (n > 0 && perse > 0 ? ` Oltre il massimo non va: ${perse === 1 ? "1 carica persa" : perse + " cariche perse"}.` : ""),
+          spese: (n) => `Liberi ${n === 1 ? "1 Carica Cinetica" : n + " Cariche Cinetiche"}.`, resta: "Nello scudo resta 1 Carica Cinetica.",
+          onda: (n, dado, tiri, extra, mm, danno) => `Onda d'urto, senza tiro per colpire: ${n}d${dado} [${tiri.join(" + ")}]${extra ? ` + ${extra.n}d${extra.dado} [${extra.tiri.join(" + ")}]` : ""} ${mm < 0 ? "−" : "+"} ${Math.abs(mm)} = ${danno} danni.`,
+          postura: "Ti radichi al suolo: la Presa non può afferrarti fino al tuo turno.", posturaRegge: "La tua postura regge l'urto.",
+          vendetta: "Il colpo che hai appena subito torna indietro con più forza.",
+          baluardo: (n) => `Baluardo d'Acciaio per ${n} turni: ogni colpo che ti raggiunge ti dà il doppio dell'ira e 1 Carica Cinetica.`, baluardoColpo: "Il baluardo trasforma il colpo in forza: ira doppia.",
+          elastica: "Marea Elastica: finché hai almeno 2 Cariche, ogni colpo che ti raggiunge restituisce 1d4 al nemico.", elasticaColpo: (d) => `La marea elastica rimanda il colpo: ${d} danni al nemico.`,
+          drenaggio: "Se il nemico ti manca prima del tuo turno, guadagni 1 punto ira e 1 Carica Cinetica.",
+          fortezzaPronta: (n) => `Fortezza Eterna per ${n} turni: il primo colpo che ti porterebbe a 0 salute ti lascerà a 1.`, fortezzaUsata: "La Fortezza Eterna ti ha già salvato in questo scontro.",
+          fortezza: (x) => `La Fortezza Eterna regge: invece di cadere resti in piedi con 1 punto di salute (${x} danni evitati).`,
+          assorbito: (tipo, prima, dopo) => tipo === "meta" || tipo === "rimbalzo" ? `Lo scudo assorbe metà del colpo: ${prima} → ${dopo} danni.` : `Lo scudo inghiotte il colpo: ${prima} danni → 0.`,
+          rimbalzo: (d) => `L'altra metà torna indietro: ${d} danni al nemico.`,
+          ondaMare: "Il mare profondo restituisce il colpo assorbito:", ondaEgida: (n) => `L'Egida rilascia tutta l'energia: ${n === 1 ? "1 Carica" : n + " Cariche"}.`, ondaVuota: "L'Egida non ha trattenuto nulla: nessuna onda.",
+          assorbitoEsito: "assorbito"
+        },
         via: { titolo: "Via di prestigio", daScegliere: "Hai raggiunto il livello 3: puoi scegliere una via di prestigio.", scegli: "Scegli",
           sblocco: "Livello 3: ora puoi scegliere una via di prestigio (nella sezione Tecniche).", finestra: "Scegli la via",
           guida: "La via ti dà un'abilità al livello 3, una al 4 e una al 5. Le abilità della via sono sempre pronte e non occupano posti. La scelta è definitiva.",
@@ -4286,6 +4306,9 @@
           desc: { aldo: "La ferita è l'arma: sanguinamento, marchio e colpi critici.", guendalina: "Controllo e resistenza: indebolire il nemico, difendersi e risparmiare ira." },
           descContundente: { aldo: "Spezzare: incrinare l'armatura, farla crollare e colpi critici.", guendalina: "Controllo e resistenza: stordire il nemico, difendersi e risparmiare ira." },
           descPerforante: { aldo: "Penetrazione: lasciare il nemico Esposto, sfondare la difesa e colpi critici sicuri.", guendalina: "Precisione: critici più frequenti, difendersi e risparmiare ira." },
+          descScudo: { aldo: "con lo scudo, Risacca: accumulare Cariche e restituire i colpi", guendalina: "con lo scudo, Postura: togliere gli attacchi speciali e resistere a tutto" },
+          serieTit: "Abilità della via", serieGuida: "Scegli quale serie della tua via preparare fino al prossimo riposo. Quelle dello scudo si usano solo con lo scudo imbracciato.",
+          serie: { arma: (tipo) => `Dell'arma (${tipo})`, scudo: "Dello scudo" }, tipoArma: { Tagliente: "taglio", Contundente: "contundente", Perforante: "perforante" },
           scelta: (n) => `Hai scelto la via: ${n}.`, conferma: "Scegli per sempre", abilita: "abilità della via" },
         investiga: { domanda: "Come vuoi investigare?", cerca: "Cerco attivamente nella stanza (Indagare)", sensi: "Uso i sensi: vista, udito, olfatto (Percezione)" },
         speciali: (n, max) => `Tecniche speciali (${n}/${max})`, altrePiuTardi: (n) => `${n === 1 ? "1 posto libero" : n + " posti liberi"}: altre tecniche si sbloccano salendo di livello o imbracciando lo scudo.`, postiVuoti: (n) => n === 1 ? "1 posto libero" : `${n} posti liberi`,
@@ -4330,6 +4353,26 @@
         gratuito: "And at once another blow, without stopping:", furoreTurni: (n) => `+4 to saving throws and opposed checks for ${n} turns.`,
         guardiaTurni: (v, n) => n > 1 ? `+${v} Armor class for ${n} turns.` : `+${v} Armor class until your next turn.`,
         giaUsataRiposo: "This technique can be used once per rest: you will have it again after sleeping.", unaPerRiposo: "once per rest",
+        scudo: {
+          difesaDiFila: "You have just used a shield defence: you cannot lock into your guard two turns in a row.",
+          senzaCariche: "The shield holds no Kinetic Charges to release: first you must absorb some blows.",
+          pronto: { meta: "The shield is ready to cushion the first blow: it will deal half damage.", rimbalzo: "The shield is ready to send back half of the first blow.", zero: "The shield is ready to swallow the first blow: it will do you no harm.", zeroIra: "The shield is ready to swallow the first blow and hold on to its fury.", tutti: "Until your turn the shield will swallow every blow." },
+          caricheGuadagno: (n) => n === 1 ? "1 Kinetic Charge" : `${n} Kinetic Charges`,
+          cariche: (n, tot, max, perse) => (n > 0 ? `The shield holds the force: +${n === 1 ? "1 Kinetic Charge" : n + " Kinetic Charges"} (${tot}/${max}).` : `The shield is already fully charged (${tot}/${max}).`) + (n > 0 && perse > 0 ? ` It goes no further: ${perse === 1 ? "1 charge lost" : perse + " charges lost"}.` : ""),
+          spese: (n) => `You release ${n === 1 ? "1 Kinetic Charge" : n + " Kinetic Charges"}.`, resta: "1 Kinetic Charge stays in the shield.",
+          onda: (n, dado, tiri, extra, mm, danno) => `Shockwave, no attack roll: ${n}d${dado} [${tiri.join(" + ")}]${extra ? ` + ${extra.n}d${extra.dado} [${extra.tiri.join(" + ")}]` : ""} ${mm < 0 ? "−" : "+"} ${Math.abs(mm)} = ${danno} damage.`,
+          postura: "You root yourself to the ground: the Grab cannot seize you until your turn.", posturaRegge: "Your stance holds against the blow.",
+          vendetta: "The blow you just took comes back harder.",
+          baluardo: (n) => `Steel Bulwark for ${n} turns: every blow that reaches you gives you double rage and 1 Kinetic Charge.`, baluardoColpo: "The bulwark turns the blow into strength: double rage.",
+          elastica: "Elastic Tide: while you have at least 2 Charges, every blow that reaches you returns 1d4 to the enemy.", elasticaColpo: (d) => `The elastic tide sends the blow back: ${d} damage to the enemy.`,
+          drenaggio: "If the enemy misses you before your turn, you gain 1 rage point and 1 Kinetic Charge.",
+          fortezzaPronta: (n) => `Eternal Fortress for ${n} turns: the first blow that would drop you to 0 health will leave you at 1.`, fortezzaUsata: "The Eternal Fortress has already saved you this fight.",
+          fortezza: (x) => `The Eternal Fortress holds: instead of falling you stay on your feet with 1 health (${x} damage avoided).`,
+          assorbito: (tipo, prima, dopo) => tipo === "meta" || tipo === "rimbalzo" ? `The shield absorbs half the blow: ${prima} → ${dopo} damage.` : `The shield swallows the blow: ${prima} damage → 0.`,
+          rimbalzo: (d) => `The other half comes back: ${d} damage to the enemy.`,
+          ondaMare: "The deep sea returns the blow it absorbed:", ondaEgida: (n) => `The Aegis releases all its energy: ${n === 1 ? "1 Charge" : n + " Charges"}.`, ondaVuota: "The Aegis held nothing back: no wave.",
+          assorbitoEsito: "absorbed"
+        },
         via: { titolo: "Prestige path", daScegliere: "You have reached level 3: you can choose a prestige path.", scegli: "Choose",
           sblocco: "Level 3: you can now choose a prestige path (in the Techniques section).", finestra: "Choose your path",
           guida: "The path gives you one ability at level 3, one at 4 and one at 5. Path abilities are always ready and take no slots. The choice is final.",
@@ -4337,6 +4380,9 @@
           desc: { aldo: "The wound is the weapon: bleeding, brand and critical hits.", guendalina: "Control and endurance: weaken the enemy, defend yourself and save rage." },
           descContundente: { aldo: "Breaking: crack the armour, bring it down and land critical hits.", guendalina: "Control and endurance: stun the enemy, defend yourself and save rage." },
           descPerforante: { aldo: "Penetration: leave the enemy Exposed, break through its guard and land sure critical hits.", guendalina: "Precision: more frequent criticals, defend yourself and save rage." },
+          descScudo: { aldo: "with the shield, Undertow: store Charges and return the blows", guendalina: "with the shield, Stance: take away special attacks and withstand everything" },
+          serieTit: "Path abilities", serieGuida: "Choose which set of your path to prepare until your next rest. The shield's work only with the shield on your arm.",
+          serie: { arma: (tipo) => `Weapon (${tipo})`, scudo: "Shield" }, tipoArma: { Tagliente: "slashing", Contundente: "bludgeoning", Perforante: "piercing" },
           scelta: (n) => `You have chosen the path: ${n}.`, conferma: "Choose for good", abilita: "path ability" },
         investiga: { domanda: "How do you want to investigate?", cerca: "I search the room actively (Investigate)", sensi: "I use my senses: sight, hearing, smell (Perception)" },
         speciali: (n, max) => `Special techniques (${n}/${max})`, altrePiuTardi: (n) => `${n === 1 ? "1 free slot" : n + " free slots"}: more techniques unlock as you level up or take up a shield.`, postiVuoti: (n) => n === 1 ? "1 free slot" : `${n} free slots`,
@@ -5315,7 +5361,7 @@
     }
 
     /* Effetti a durata: medaglione con simbolo, nome e turni rimasti (rombi pieni = turni ancora attivi) */
-    const EFF_PG = ["scudo", "invuln", "pietra", "armaPiu", "potenza", "guardia", "furore", "precisione"], EFF_NEM = ["bloccato", "cieco", "sanguina", "frattura", "esposto", "debole", "sbilanciato", "silenzio", "frastornato", "intontito"];
+    const EFF_PG = ["scudo", "invuln", "pietra", "armaPiu", "potenza", "guardia", "baluardo", "fortezza", "furore", "precisione"], EFF_NEM = ["bloccato", "cieco", "sanguina", "frattura", "esposto", "debole", "sbilanciato", "silenzio", "frastornato", "intontito"];
     const SHIELD = "M12 2.8l7 2.7v5.3c0 4.6-3 8.1-7 10.4-4-2.3-7-5.8-7-10.4V5.5z";
     const ICONE_EFF = { /* tratti a 24×24, colore dal tema dell'effetto */
       scudo: { tono: "dif", d: `<path d="${SHIELD}"/><path d="M12 6.5v11M8.2 10.5h7.6" opacity=".7"/>` },
@@ -5335,6 +5381,9 @@
       esposto: { tono: "mal", d: `<circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="3.2" opacity=".8"/><path d="M12 2.5v4M12 17.5v4M2.5 12h4M17.5 12h4"/>` },
       precisione: { tono: "off", d: `<circle cx="12" cy="12" r="3.5"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1" opacity=".8"/>` },
       guardia: { tono: "dif", d: `<path d="${SHIELD}"/><path d="M8.5 11.5l2.5 2.5 4.5-5" opacity=".8"/>` },
+      baluardo: { tono: "dif", d: `<path d="${SHIELD}"/><path d="M8 9.5h8M8 12.5h8M8 15.5h8" opacity=".7"/>` },
+      fortezza: { tono: "dif", d: `<path d="M5 20.5V8l2.3 1.6L9.5 6l2.5 2.2L14.5 6l2.2 3.6L19 8v12.5z"/><path d="M10 20.5v-4a2 2 0 0 1 4 0v4" opacity=".8"/>` },
+      cariche: { tono: "dif", d: `<path d="${SHIELD}"/><path d="M13 6.5l-3 5.5h4l-3 5.5" opacity=".85"/>` },
       furore: { tono: "off", d: `<path d="M12 3c1 3.5 4.5 5 4.5 9a4.5 4.5 0 0 1-9 0c0-2 1-3.2 2-4.2.3 1.6 1 2.4 2 2.7-.6-2.5-.2-5.2.5-7.5z"/>` },
       cieco: { tono: "mal", d: `<path d="M2.5 12s3.6-6 9.5-6 9.5 6 9.5 6-3.6 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.6"/><path d="M4.5 19.5l15-15"/>` },
       impaurito: { tono: "mal", d: `<circle cx="12" cy="12" r="8.5"/><circle cx="9" cy="10" r="1"/><circle cx="15" cy="10" r="1"/><ellipse cx="12" cy="15.5" rx="2" ry="2.4"/>` }
@@ -5346,10 +5395,20 @@
       return m;
     }
     function righeEffetti(dl, sc, chiavi, sep) {
-      const attivi = chiavi.filter(k => sc.eff[k] > 0), crepe = chiavi === EFF_NEM ? CMB.crepe(sc) : 0;
-      if (!attivi.length && !crepe) return;
+      const attivi = chiavi.filter(k => sc.eff[k] > 0), crepe = chiavi === EFF_NEM ? CMB.crepe(sc) : 0, cariche = chiavi === EFF_PG ? CMB.cariche(sc) : 0;
+      if (!attivi.length && !crepe && !cariche) return;
       sep("sep-spazio");
       const t = document.createElement("div"); t.className = "eff-tit"; t.textContent = CB.effettiTit; dl.append(t);
+      if (cariche) { /* Carica Cinetica dello scudo: cariche, dura tutto lo scontro */
+        const max = CMB.CARICHE_MAX;
+        const dt = document.createElement("dt"); dt.className = "eff-nome"; dt.append(medaglione("cariche"), document.createTextNode(CB.effNomi.cariche + (sc.elastica && cariche >= 2 ? " · " + nomeTec(TEC.find(x => x.id === "marea_elastica")) : "")));
+        const dd = document.createElement("dd"); dd.className = "eff-dur dif";
+        const pall = document.createElement("span"); pall.className = "rombi"; pall.setAttribute("aria-hidden", "true");
+        for (let i = 0; i < max; i++) { const r = document.createElement("i"); if (i < cariche) r.className = "su"; pall.append(r); }
+        dd.append(pall, document.createTextNode(CB.cariche(cariche, max)));
+        dd.title = dt.title = `${CB.effNomi.cariche}: ${CB.cariche(cariche, max)}`;
+        dl.append(dt, dd);
+      }
       if (crepe) { /* Incrinatura: cariche invece di turni, dura tutto lo scontro */
         const max = CMB.crepeMax({ boss: bossNem() });
         const dt = document.createElement("dt"); dt.className = "eff-nome"; dt.append(medaglione("crepe"), document.createTextNode(CB.effNomi.crepe + (sc.sigillo && crepe >= max ? ` · ${CB.sigillato}` : "")));
@@ -5480,7 +5539,8 @@
       ["aldo", "guendalina"].forEach(v => {
         const lab = el("label"), c = el("input"); c.type = "radio"; c.name = "via"; c.value = v;
         const tipo = ["Contundente", "Perforante"].includes(tipoArmaVia()) ? tipoArmaVia() : "Tagliente", abil = TEC.filter(t => t.via === v && t.tipo === tipo).map(t => `${t.liv}: ${nomeTec(t)}`).join(" · ");
-        lab.append(c, el("span", "", V.nomi[v]), el("small", "", `${(tipo === "Contundente" ? V.descContundente : tipo === "Perforante" ? V.descPerforante : V.desc)[v]} (${abil})`)); fs.append(lab);
+        const abilScudo = TEC.filter(t => t.via === v && t.tipo === "Scudo").map(t => `${t.liv}: ${nomeTec(t)}`).join(" · ");
+        lab.append(c, el("span", "", V.nomi[v]), el("small", "", `${(tipo === "Contundente" ? V.descContundente : tipo === "Perforante" ? V.descPerforante : V.desc)[v]} (${abil}); ${V.descScudo[v]} (${abilScudo})`)); fs.append(lab);
       });
       const conferma = el("button", "primario", V.conferma), annulla = el("button", "", RT.prep.annulla);
       conferma.disabled = true;
@@ -5517,6 +5577,18 @@
         });
         box.append(fs);
         maxT = Math.min(maxT, maxTecniche());
+        if (viaPg() && !soloVuoti) { /* serie della via: dell'arma o dello scudo, fino al prossimo riposo */
+          const V = RT.via, ta = tipoArmaVia();
+          box.append(el("h2", "", V.serieTit), el("p", "guida", V.serieGuida));
+          const fsv = el("fieldset");
+          [["arma", ta], ["scudo", "Scudo"]].forEach(([k, tipo]) => {
+            const lab = el("label"), c = el("input"); c.type = "radio"; c.name = "serie"; c.value = k; c.checked = serieVia() === k;
+            const abil = TEC.filter(t => t.via === viaPg() && t.tipo === tipo && t.liv <= livelloPg()).map(t => nomeTec(t)).join(" · ");
+            lab.append(c, el("span", "", k === "scudo" ? V.serie.scudo + (scudo ? "" : " · " + RT.richiede.Scudo) : V.serie.arma(V.tipoArma[ta] || ta)), el("small", "", abil || "—"));
+            fsv.append(lab);
+          });
+          box.append(fsv);
+        }
       }
       let max = 0;
       if (prepIncantesimi() && !soloVuoti) {
@@ -5548,6 +5620,7 @@
       annulla.addEventListener("click", chiudi);
       conferma.addEventListener("click", () => {
         if (haTecniche()) usate.tecPreparate = [...box.querySelectorAll('input[name="tec"]:checked')].map(c => c.value);
+        { const sv = box.querySelector('input[name="serie"]:checked'); if (sv) usate.viaSerie = sv.value; }
         if (max) usate.incPreparati = [...box.querySelectorAll('input[name="inc"]:checked')].map(c => c.value);
         salvaUsate(); chiudi();
         disegnaTecniche(); disegnaIncantesimi();
@@ -8176,7 +8249,7 @@
         effetti: "Effetti", effettiTit: "Effetti attivi", turniRim: (n) => n === 1 ? "1 turno" : `${n} turni`,
         turnoTit: (n) => `${n}° turno`, lblAttacco: "Attacco", lblTorcia: "Attacco con la torcia", lblPozione: "Pozione", lblBloccato: "Mastino bloccato",
         emorragia: "Emorragia", marchiato: "marchiato", sigillato: "sigillo", segnato: "segnato", cariche: (n, max) => `${n}/${max} cariche`, tuttoScontro: "tutto lo scontro",
-        effNomi: { sanguina: "Sanguinamento", crepe: "Incrinatura", frattura: "Frattura", intontito: "Intontito", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Senza attacchi speciali", frastornato: "Frastornato", guardia: "Guardia alzata", furore: "Furore inarrestabile", esposto: "Esposto", precisione: "Mille Soli", scudo: "Scudo", bloccato: "Nemico bloccato", invuln: "Invulnerabilità", armaPiu: "Arma migliorata", pietra: "Pelle di pietra", cieco: "Nemico accecato", potenza: "Aumento di potenza", impaurito: "Impaurito" },
+        effNomi: { sanguina: "Sanguinamento", crepe: "Incrinatura", frattura: "Frattura", intontito: "Intontito", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Senza attacchi speciali", frastornato: "Frastornato", guardia: "Guardia alzata", furore: "Furore inarrestabile", esposto: "Esposto", precisione: "Mille Soli", baluardo: "Baluardo d'Acciaio", fortezza: "Fortezza Eterna", cariche: "Carica Cinetica", scudo: "Scudo", bloccato: "Nemico bloccato", invuln: "Invulnerabilità", armaPiu: "Arma migliorata", pietra: "Pelle di pietra", cieco: "Nemico accecato", potenza: "Aumento di potenza", impaurito: "Impaurito" },
         effFinito: (n) => `L'effetto «${n}» svanisce.`, resisteBreve: "resiste", effettoBreve: "a segno",
         iniziativa: (a, b) => `Iniziativa: la tua Agilità (${a}) contro quella del Mastino (${b}).`,
         pari: (x, y) => `Agilità pari: si tira un d20 a testa. Tu ${x}, il Mastino ${y}.`,
@@ -8290,7 +8363,7 @@
         effetti: "Effects", effettiTit: "Active effects", turniRim: (n) => n === 1 ? "1 round" : `${n} rounds`,
         turnoTit: (n) => `Round ${n}`, lblAttacco: "Attack", lblTorcia: "Torch attack", lblPozione: "Potion", lblBloccato: "Mastiff held",
         emorragia: "Haemorrhage", marchiato: "branded", sigillato: "seal", segnato: "marked", cariche: (n, max) => `${n}/${max} charges`, tuttoScontro: "whole fight",
-        effNomi: { sanguina: "Bleeding", crepe: "Cracked", frattura: "Fractured", intontito: "Dazzled", debole: "Weakened", sbilanciato: "Off-balance", silenzio: "No special attacks", frastornato: "Dazed", guardia: "Guard up", furore: "Unstoppable Fury", esposto: "Exposed", precisione: "Thousand Suns", scudo: "Shield", bloccato: "Enemy held", invuln: "Invulnerability", armaPiu: "Empowered weapon", pietra: "Stoneskin", cieco: "Enemy blinded", potenza: "Surge of power", impaurito: "Frightened" },
+        effNomi: { sanguina: "Bleeding", crepe: "Cracked", frattura: "Fractured", intontito: "Dazzled", debole: "Weakened", sbilanciato: "Off-balance", silenzio: "No special attacks", frastornato: "Dazed", guardia: "Guard up", furore: "Unstoppable Fury", esposto: "Exposed", precisione: "Thousand Suns", baluardo: "Steel Bulwark", fortezza: "Eternal Fortress", cariche: "Kinetic Charge", scudo: "Shield", bloccato: "Enemy held", invuln: "Invulnerability", armaPiu: "Empowered weapon", pietra: "Stoneskin", cieco: "Enemy blinded", potenza: "Surge of power", impaurito: "Frightened" },
         effFinito: (n) => `The “${n}” effect fades.`, resisteBreve: "resisted", effettoBreve: "takes hold",
         iniziativa: (a, b) => `Initiative: your Agility (${a}) against the Mastiff's (${b}).`,
         pari: (x, y) => `Agility tied: each side rolls a d20. You ${x}, the Mastiff ${y}.`,
@@ -8529,7 +8602,11 @@
       if (!scontro) return;
       if (scontro.primo === "pg") apriTurno();
       scontro.tuoTurno = true; scontro.cambio = false; scontro.frontaleUsato = false;
-      CMB.inizioTurnoPg(scontro); /* la Parata Mutilante scade */
+      const rilascio = CMB.inizioTurnoPg(scontro, ctxTecnica()); /* la Parata scade; Mare Profondo ed Egida rilasciano l'onda */
+      if (rilascio.length) {
+        aggiungi({ tipo: "narra", box: "mia", righe: rilascio.map(rigaScudo).filter(Boolean) }); scuotiNemico();
+        if (scontro.pv <= 0) { scontro.tuoTurno = false; barraScontro(); return setTimeout(vittoriaScontro, PAUSA_SCONTRO / 2); }
+      }
       barraScontro(); stato(false, CB.placeholder);
     }
     function fineAzionePgScontro() {
@@ -8550,6 +8627,7 @@
     function dannoAlPg(d, tipo, righe) {
       if (eff("invuln")) { righe.push(CB.invulnTxt); return; }
       if (eff("pietra") && (tipo === "Perforante" || tipo === "Tagliente")) { d = Math.max(1, Math.floor(d / 2)); righe.push(CB.pietraTxt); }
+      if (scontro) { const f = CMB.fortezza(scontro, d, pvPg()); d = f.danno; f.eventi.forEach(e => { const x = rigaScudo(e); if (x) righe.push(x); }); } /* Fortezza Eterna */
       righe.push(ferisciPg(d));
     }
 
@@ -8644,7 +8722,10 @@
     const maxTecniche = () => CMB.slotTecniche(livelloPg(), !!scudo); /* 2, 4, 5, 6, 7 (+1 con lo scudo) */
     const viaPg = () => (haTecniche() && livelloPg() >= 3 && (usate.via === "aldo" || usate.via === "guendalina")) ? usate.via : null;
     const tipoArmaVia = () => tipoArmaInMano() || eqPg().armaTipoDanno; /* le abilità della via cambiano con il tipo d'arma */
-    const tecnicheVia = () => { const v = viaPg(), tipo = tipoArmaVia(); return v ? TEC.filter(t => t.via === v && t.tipo === tipo && t.liv <= livelloPg()) : []; };
+    /* serie della via preparata al riposo: quella dell'arma o quella dello scudo (usate.viaSerie) */
+    const serieVia = () => (usate.viaSerie === "scudo" ? "scudo" : "arma");
+    const tipoVia = () => (serieVia() === "scudo" ? "Scudo" : tipoArmaVia());
+    const tecnicheVia = () => { const v = viaPg(), tipo = tipoVia(); return v ? TEC.filter(t => t.via === v && t.tipo === tipo && t.liv <= livelloPg()) : []; };
     /* tecniche sbloccate dal livello e adatte a ciò che si impugna (le possibili scelte quando si prepara) */
     const opzioniTecniche = () => { const tipo = tipoArmaInMano() || eqPg().armaTipoDanno; return TEC.filter(t => t.tipo !== "Utilita" && !t.via && t.liv <= livelloPg() && (t.tipo === tipo || (t.tipo === "Scudo" && scudo))); };
     /* le tecniche speciali preparate: scelte in creazione (pg.tecniche) e cambiate riposando (usate.tecPreparate) */
@@ -8723,9 +8804,40 @@
           case "scontoUsato": righe.push(RT.scontoUsato(e.n)); break;
           case "furore": righe.push(RT.furoreTurni(e.turni)); break;
           case "ira": { const r = risorsaPg(); if (r) righe.push(RT.ira(e.n, risorsaAttuale(), r.max)); break; }
+          default: { const x = rigaScudo(e); if (x) { righe.push(x); if (e.k === "onda") { colpito = true; esiti.push(RT.colpito); } } }
         }
       });
       return { righe, esiti, crit, ts, colpito };
+    }
+    /* eventi dello scudo (tecniche, turno del nemico, inizio del tuo turno) → una riga del diario */
+    function rigaScudo(e) {
+      const S = RT.scudo;
+      switch (e.k) {
+        case "assorbePronto": return S.pronto[e.tipo];
+        case "cariche": return S.cariche(e.n, e.tot, e.max, e.perse);
+        case "caricheSpese": return S.spese(e.n);
+        case "caricaResta": return S.resta;
+        case "onda": return S.onda(e.n, e.dado, e.tiri, e.nExtra ? { n: e.nExtra, dado: e.dadoExtra, tiri: e.tiriExtra } : null, e.mm, e.danno);
+        case "postura": return S.postura;
+        case "posturaRegge": return S.posturaRegge;
+        case "vendetta": return S.vendetta;
+        case "baluardo": return S.baluardo(e.turni);
+        case "baluardoColpo": return S.baluardoColpo;
+        case "elastica": return S.elastica;
+        case "elasticaColpo": return S.elasticaColpo(e.d);
+        case "drenaggio": return S.drenaggio;
+        case "fortezzaPronta": return S.fortezzaPronta(e.turni);
+        case "fortezzaUsata": return S.fortezzaUsata;
+        case "fortezza": return S.fortezza(e.evitato);
+        case "assorbito": return S.assorbito(e.tipo, e.prima, e.dopo);
+        case "rimbalzo": return S.rimbalzo(e.danno);
+        case "ondaMare": return S.ondaMare;
+        case "ondaEgida": return S.ondaEgida(e.cariche);
+        case "ondaVuota": return S.ondaVuota;
+        case "ira": { const r = risorsaPg(); return r ? RT.ira(e.n, risorsaAttuale(), r.max) : null; }
+        case "stato": return (RT.effetti[e.s] || CB.effNomi[e.s] || e.s) + RT.durata(e.turni) + (e.ridotto ? " " + RT.ridotto(CB.effNomi[e.s], e.turni) : "");
+        default: return null;
+      }
     }
     function statoTecnica(t) {
       if (!tecnicheDelPg().some(x => x.t === t)) return { ok: false, motivo: RT.nonPreparata };
@@ -8739,6 +8851,7 @@
       if (t.gratuita && scontro.frontaleUsato) return sist(RT.giaUsata);
       const ctx = ctxTecnica();
       if (t.unaPerRiposo && ctx.usataPerRiposo(t.id)) return sist(RT.giaUsataRiposo);
+      const disp = CMB.disponibile(t, scontro); if (!disp.ok) return sist(RT.scudo[disp.motivo]); /* difese dello scudo di fila, Cariche mancanti */
       const costo = CMB.costo(t, scontro);
       if ((risorsaAttuale() || 0) < costo) return sist(RT.pocaIra(costo, risorsaAttuale() || 0));
       pg.risorsaUsata = (pg.risorsaUsata || 0) + costo; /* l'ira si spende anche se la tecnica manca */
@@ -8815,9 +8928,12 @@
       const m = modNem("Lotta") + (Number(NEMICI[(scontro || ultimoNemico).id].attacco) || 0) + (Number((scontro || ultimoNemico).bonusAtt) || 0) + CMB.modAttaccoNem(scontro), d = tira(20), tot = d + m, ca = caScontro(), crit = d === 20 && CMB.critNemPossibile(scontro), ok = crit || tot > ca;
       const righe = [];
       let parato = false;
+      let assorbito = false;
       if (ok) {
-        const sub = CMB.colpoSubito(scontro, ctxTecnica(), crit); /* Parata Mutilante, altrimenti ira: 1/2/3 per livello, doppia sui critici */
-        if (sub.annullato) {
+        const parataPronta = !!scontro.parata;
+        const nd = crit ? 2 : 1, tiri = parataPronta ? [] : tiraDadi(nd, D.dannoDado), danno = parataPronta ? 0 : Math.max(1, somma(tiri) + m); /* con la Parata il danno non si tira */
+        const sub = CMB.colpoSubito(scontro, ctxTecnica(), crit, danno); /* Parata, assorbimento dello scudo, ira: 1/2/3 per livello, doppia sui critici */
+        if (sub.annullato && parataPronta) {
           parato = true;
           righe.push(RT.parataOk, CB.tiroAttNem(d, m, tot, ca));
           sub.eventi.forEach(e => {
@@ -8827,17 +8943,23 @@
           });
           scuotiNemico();
         } else {
-          const nd = crit ? 2 : 1, tiri = tiraDadi(nd, D.dannoDado), danno = Math.max(1, somma(tiri) + m);
-          righe.push(pesca(crit ? CB.critNem : morso ? CB.morsoOk : CB.zampaOk), CB.tiroAttNem(d, m, tot, ca), CB.tiroDanno(nd, D.dannoDado, tiri, m, danno));
-          dannoAlPg(danno, morso ? "Perforante" : "Tagliente", righe);
-          const ira = guadagnaIra(sub.ira); if (ira) righe.push(ira); /* l'ira cresce con i colpi subiti */
+          assorbito = sub.annullato;
+          righe.push(assorbito ? pesca(CB.parata) : pesca(crit ? CB.critNem : morso ? CB.morsoOk : CB.zampaOk), CB.tiroAttNem(d, m, tot, ca), CB.tiroDanno(nd, D.dannoDado, tiri, m, danno));
+          sub.eventi.forEach(e => { const x = rigaScudo(e); if (x) righe.push(x); });
+          if (sub.eventi.some(e => e.k === "rimbalzo" || e.k === "elasticaColpo")) scuotiNemico();
+          if (sub.danno > 0) dannoAlPg(sub.danno, morso ? "Perforante" : "Tagliente", righe);
+          const ira = guadagnaIra(sub.ira); if (ira) righe.push(ira); /* l'ira cresce con i colpi subiti (non con quelli inghiottiti dallo scudo, salvo Batteria e Baluardo) */
         }
-      } else righe.push(pesca(scudo ? CB.parata : (ca - tot >= SCARTO_AGILE ? CB.schivataAgile : CB.schivata)), CB.tiroAttNem(d, m, tot, ca));
-      const esitoN = parato ? CB.mancato : crit ? CB.critico : ok ? CB.colpito : CB.mancato;
-      aggiungi({ tipo: "narra", box: parato ? "mia" : crit ? "ko" : "nem", esito: `${nome}: ${esitoN}`, righe });
+      } else {
+        righe.push(pesca(scudo ? CB.parata : (ca - tot >= SCARTO_AGILE ? CB.schivataAgile : CB.schivata)), CB.tiroAttNem(d, m, tot, ca));
+        CMB.colpoMancato(scontro, ctxTecnica()).forEach(e => { const x = rigaScudo(e); if (x) righe.push(x); }); /* Postura Salda, Drenaggio d'Urto */
+      }
+      const esitoN = parato ? CB.mancato : assorbito ? RT.scudo.assorbitoEsito : crit ? CB.critico : ok ? CB.colpito : CB.mancato;
+      aggiungi({ tipo: "narra", box: parato || assorbito ? "mia" : crit ? "ko" : "nem", esito: `${nome}: ${esitoN}`, righe });
       segnaTurno(`${nome}: ${esitoBreve(esitoN)}`);
+      barraScontro(); disegnaVitali();
       if (pvPg() <= 0 || scontro.pv <= 0) return fineTurnoNem();
-      if (ok && !parato && morso && !scontro.presaUsata && !eff("silenzio") && Math.random() < D.probPresa) return setTimeout(presaScontro, PAUSA_SCONTRO * 0.7); /* la presa segue solo un morso a segno */
+      if (ok && !parato && !assorbito && morso && !scontro.presaUsata && !eff("silenzio") && !CMB.presaBloccata(scontro) && Math.random() < D.probPresa) return setTimeout(presaScontro, PAUSA_SCONTRO * 0.7); /* la presa segue solo un morso a segno; Postura Salda la blocca */
       fineTurnoNem();
     }
     /* Presa: una volta per scontro, dopo un colpo a segno. Prova contrapposta di Vigore; se vince il mastino, +1d4 danni */

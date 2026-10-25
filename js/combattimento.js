@@ -4,9 +4,13 @@
    una regola cambiata qui cambia ovunque, e i test provano lo stesso codice che gira in partita.
 
    Uso: Combattimento.usa(tecnica, s, ctx) → { eventi, costo } dove
-     s   = stato dello scontro: { pv, pvMax, eff: {}, effMax: {}, sangueDado, prossimo, marchio, sconto, parata, parataCrepe, parataPunta, guardiaVal, crepe, sigillo, segno }
+     s   = stato dello scontro: { pv, pvMax, eff: {}, effMax: {}, sangueDado, prossimo, marchio, sconto, parata, parataCrepe, parataPunta, guardiaVal, crepe, sigillo, segno,
+             scudo: cariche, assorbiti, assorbe, elastica, postura, drenaggio, fortezzaUsata, difesaUsata, difesaBloccata, colpitoOra, colpitoUltimo }
      ctx = ambiente: { tira(d), liv, modAtt, modDanno, dado, ca(), boss, haArma, cd, modTs,
                        curaPg(n), iraPiu(n), usataPerRiposo(id), segnaPerRiposo(id) }
+   Turno del nemico (chi gestisce lo scontro): colpoSubito(s, ctx, crit, danno) per ogni attacco a segno, colpoMancato(s, ctx) per
+   ogni attacco mancato, presaBloccata(s) prima della Presa, fortezza(s, danno, pvPg) prima di applicare qualsiasi danno al personaggio,
+   inizioTurnoPg(s, ctx) all'inizio del tuo turno (può rilasciare l'onda del Mare Profondo e dell'Egida).
    Gli eventi sono dati ({ k: "colpo", … }): i testi li scrive chi li mostra.
    ===================================================================== */
 (function (root) {
@@ -19,6 +23,8 @@
   const CREPE_MAX = 3, CREPE_MAX_BOSS = 2;             /* Incrinatura: cariche massime (comuni / boss) */
   const PER_SCONTRO = 99;                              /* durata «per tutto lo scontro» (Frattura della Sentenza e del Martello) */
   const CRIT_MIN = 18;                                 /* tetto dell'intervallo di critico: mai sotto 18-20 */
+  const CARICHE_MAX = 3;                               /* Carica Cinetica dello scudo: massimo 3, anche contro i boss */
+  const ASSORBITI_TSUNAMI = 3;                         /* Ritorno dello Tsunami: colpi assorbiti contati al massimo */
 
   const crescitaIra = (modV, nuovoLiv) => Math.max(1, modV + nuovoLiv);       /* a ogni salita: mod Vigore + livello raggiunto */
   const iraMax = (modV, liv) => { let m = 10 + modV; for (let l = 2; l <= liv; l++) m += crescitaIra(modV, l); return m; };
@@ -83,6 +89,36 @@
     return { k: "guardia", val: s.guardiaVal, turni: s.eff.guardia };
   }
 
+  /* ---------- Scudo: Carica Cinetica, assorbimento, difesa ---------- */
+  const cariche = (s) => Math.max(0, Number(s && s.cariche) || 0);
+  function carica(s, n) { /* aggiunge cariche fino al massimo; quelle oltre vanno perse */
+    const prima = cariche(s), dopo = Math.min(CARICHE_MAX, prima + n);
+    s.cariche = dopo;
+    return { k: "cariche", n: dopo - prima, perse: n - (dopo - prima), tot: dopo, max: CARICHE_MAX };
+  }
+  /* tecniche di scudo che consumano l'azione: mai due turni di fila */
+  const difesaDiFila = (t, s) => !!(t && t.difesa && s && s.difesaBloccata);
+  /* una tecnica si può usare adesso? (prima di spendere l'ira) */
+  function disponibile(t, s) {
+    if (difesaDiFila(t, s)) return { ok: false, motivo: "difesaDiFila" };
+    if (t && t.servonoCariche && cariche(s) < 1) return { ok: false, motivo: "senzaCariche" };
+    return { ok: true };
+  }
+  const presaBloccata = (s) => !!(s && s.postura); /* Postura Salda: la Presa non ti afferra */
+  /* Fortezza Eterna: una volta per scontro, il colpo che ti porterebbe a 0 ti lascia a 1 e ti dà le Cariche al massimo */
+  function fortezza(s, danno, pv) {
+    if (!s || !attivo(s, "fortezza") || s.fortezzaUsata || !(pv > 0) || danno < pv) return { danno, eventi: [] };
+    s.fortezzaUsata = true; s.eff.fortezza = 0;
+    return { danno: pv - 1, eventi: [{ k: "fortezza", evitato: danno - (pv - 1) }, carica(s, CARICHE_MAX)] };
+  }
+  /* onda senza tiro per colpire: n dadi + mod Vigore (una volta) */
+  function onda(s, ctx, n, dado, extra) {
+    const tiri = tiraDadi(ctx, n, dado), tiriExtra = extra ? tiraDadi(ctx, extra.n, extra.dado) : [];
+    const danno = Math.max(1, somma(tiri) + somma(tiriExtra) + ctx.modDanno);
+    s.pv -= danno;
+    return { k: "onda", n, dado, tiri, ...(extra ? { nExtra: extra.n, dadoExtra: extra.dado, tiriExtra } : {}), mm: ctx.modDanno, danno };
+  }
+
   /* ---------- Attacchi ---------- */
   const tiraDadi = (ctx, n, d) => Array.from({ length: n }, () => ctx.tira(d));
   const somma = (a) => a.reduce((x, y) => x + y, 0);
@@ -118,6 +154,8 @@
     s.eff = s.eff || {}; s.effMax = s.effMax || {};
     const E = [], c = costo(t, s);
     if (t.unaPerRiposo && ctx.usataPerRiposo && ctx.usataPerRiposo(t.id)) return { eventi: [{ k: "giaUsataRiposo" }], costo: 0, rifiutata: true };
+    const disp = disponibile(t, s); if (!disp.ok) return { eventi: [{ k: disp.motivo }], costo: 0, rifiutata: true };
+    if (t.difesa) s.difesaUsata = true; /* il prossimo turno non potrai usare un'altra difesa dello scudo */
     if (s.sconto) { E.push({ k: "scontoUsato", n: t.costo - c }); s.sconto = 0; }
     const hit = (o) => { const r = colpo(s, ctx, o); E.push(r); return r; };
     const fx = (k, n) => E.push(metti(s, ctx, k, n));
@@ -131,6 +169,8 @@
       stati.forEach(k => fx(k, mappa[k])); return true;
     };
     const crp = (n) => E.push(incrina(s, ctx, n));
+    /* lo scudo si prepara ad assorbire: il primo colpo a segno prima del tuo turno (o tutti, con «tutti») */
+    const assorbi = (a) => { s.assorbe = { ...a, n: 0 }; E.push({ k: "assorbePronto", tipo: a.tipo, cariche: a.cariche || 0, onda: a.onda || null }); };
     /* controllo con tiro salvezza che sui boss ha un ripiego proprio (non quando il comune resiste) */
     const controlloORipiego = (mappa, ripiegoBoss) => {
       if (ctx.boss) { Object.keys(mappa).forEach(k => E.push({ k: "immune", s: k })); ripiegoBoss(); return false; }
@@ -313,13 +353,80 @@
         r = hit({ piuDadi: 1 }); if (r.ok && vivo(s)) { fx("esposto", 3); fx("debole", 3); }
         E.push(guardia(s, 2, 3)); s.eff.precisione = Math.max(s.eff.precisione || 0, 3); s.effMax.precisione = Math.max(s.effMax.precisione || 0, 3); E.push({ k: "precisione", turni: 3 });
         break;
-      /* ---- scudo (invariate) ---- */
-      case "carica": r = hit({ dado: 4 }); if (r.ok && vivo(s) && conTSn({ silenzio: 1 })) { s.soffioPronto = false; E.push({ k: "soffioPerso" }); } break;
-      case "schiaffo": r = hit({ dado: 4 }); if (r.ok && vivo(s)) conTSn({ bloccato: 1 }); break;
-      case "frontale": E.push(guardia(s, 3, 1)); break;
-      case "balzo": r = hit({ dado: 6 }); if (r.ok && vivo(s)) conTSn({ sbilanciato: 1, debole: 1 }); break;
-      case "scagliata": hit({ bonus: 2, dado: 8 }); break;
-      case "guardia": hit({ dado: 4 }); E.push(guardia(s, 2, 1)); break;
+      /* ---- scudo: colpo di scudo 1d4 (o il dado indicato) + Vigore ---- */
+      /* livello 1 */
+      case "assorbimento": hit({ dado: 4 }); assorbi({ tipo: "meta", cariche: 1 }); break;
+      case "postura_salda": E.push(guardia(s, 3, 1)); s.postura = true; E.push({ k: "postura" }); break;
+      case "rimbalzo_marea": assorbi({ tipo: "rimbalzo", cariche: 1 }); break;
+      /* livello 2 */
+      case "batteria": assorbi({ tipo: "zeroIra", cariche: 1 }); break;
+      case "spinta":
+        r = hit({ dado: 6 });
+        if (r.ok && vivo(s) && conTSn({ silenzio: 1 }, () => fx("sbilanciato", 1))) { s.soffioPronto = false; E.push({ k: "soffioPerso" }); }
+        break;
+      case "muro": assorbi({ tipo: "zero", cariche: 3 }); break;
+      /* livello 3 */
+      case "inversione": {
+        const vendetta = !!s.colpitoUltimo;
+        r = hit({ dado: 4, piuDadi: vendetta ? 1 : 0 });
+        if (vendetta) { E.push({ k: "vendetta" }); E.push(guardia(s, 2, 2)); }
+        break;
+      }
+      case "onda_ritorno": { const n = cariche(s); s.cariche = 0; E.push({ k: "caricheSpese", n }); E.push(onda(s, ctx, n, 6)); break; }
+      case "baluardo": E.push(guardia(s, 2, 2)); s.eff.baluardo = Math.max(s.eff.baluardo || 0, 2); s.effMax.baluardo = Math.max(s.effMax.baluardo || 0, 2); E.push({ k: "baluardo", turni: 2 }); break;
+      /* livello 4 */
+      case "risucchio": r = hit({ dado: 6, piuDadi: 1 }); if (r.ok) { E.push(carica(s, 1)); const n = ctx.tira(4); if (ctx.iraPiu) ctx.iraPiu(n); E.push({ k: "ira", n }); } break;
+      case "mare_profondo": assorbi({ tipo: "tutti", onda: "mare" }); break;
+      case "frantumazione":
+        r = hit({ dado: 6, piuDadi: 1 });
+        if (r.ok && vivo(s)) { if (ctx.boss) { E.push({ k: "immune", s: "silenzio" }); fx("debole", 2); fx("sbilanciato", 2); } else conTSn({ silenzio: 2, debole: 2 }); }
+        break;
+      /* livello 5 */
+      case "tempesta_risacca": {
+        let aSegno = 0;
+        for (let i = 0; i < 3 && vivo(s); i++) { const z = hit({ dado: 4, conMod: false }); if (z.ok) { aSegno++; E.push(carica(s, 1)); } }
+        if (aSegno === 3 && vivo(s)) controlloORipiego({ bloccato: 1 }, () => fx("sbilanciato", 2));
+        break;
+      }
+      case "ancoraggio":
+        assorbi({ tipo: "zero", cariche: 0 }); E.push(carica(s, CARICHE_MAX));
+        controlloORipiego({ silenzio: 3 }, () => fx("debole", 2));
+        break;
+      case "egida":
+        if (ctx.segnaPerRiposo) ctx.segnaPerRiposo(t.id);
+        assorbi({ tipo: "tutti", onda: "egida" });
+        break;
+
+      /* ---- via di Aldo (scudo): Risacca ---- */
+      case "marea_elastica": hit({ dado: 4 }); assorbi({ tipo: "meta", cariche: 2 }); s.elastica = true; E.push({ k: "elastica" }); break;
+      case "onda_rimbalzo": {
+        const n = cariche(s);
+        if (n > 0) { r = hit({ dado: 6, bonus: 3, piuDadi: n }); if (r.ok) { s.cariche = 0; E.push({ k: "caricheSpese", n }); } }
+        else assorbi({ tipo: "meta", cariche: 2 });
+        break;
+      }
+      case "tsunami": {
+        const n = cariche(s), a = Math.min(ASSORBITI_TSUNAMI, Number(s.assorbiti) || 0);
+        E.push({ k: "caricheSpese", n }); E.push(onda(s, ctx, n, 6, a ? { n: a, dado: 4 } : null));
+        s.cariche = 1; E.push({ k: "caricaResta" });
+        break;
+      }
+      /* ---- via di Guendalina (scudo): Postura ---- */
+      case "drenaggio":
+        r = hit({ dado: 4 }); if (r.ok && vivo(s)) controlloORipiego({ silenzio: 1 }, () => fx("debole", 2));
+        E.push(guardia(s, 2, 1)); s.drenaggio = true; E.push({ k: "drenaggio" });
+        break;
+      case "sigillo_monolito":
+        r = hit({ dado: 6, piuDadi: 1 }); if (r.ok && vivo(s)) controlloORipiego({ silenzio: 2 }, () => { fx("debole", 2); fx("sbilanciato", 2); });
+        E.push(guardia(s, 2, 2)); s.sconto = 2; E.push({ k: "sconto", n: 2 });
+        break;
+      case "fortezza_eterna":
+        r = hit({ dado: 6, piuDadi: 1 });
+        if (r.ok && vivo(s)) { if (ctx.boss) { E.push({ k: "immune", s: "silenzio" }); fx("debole", 2); fx("sbilanciato", 2); } else { fx("silenzio", 3); fx("debole", 3); } }
+        E.push(guardia(s, 2, 3));
+        if (!s.fortezzaUsata) { s.eff.fortezza = Math.max(s.eff.fortezza || 0, 3); s.effMax.fortezza = Math.max(s.effMax.fortezza || 0, 3); E.push({ k: "fortezzaPronta", turni: 3 }); }
+        else E.push({ k: "fortezzaUsata" });
+        break;
       default: E.push({ k: "sconosciuta" });
     }
     return { eventi: E, costo: c };
@@ -328,8 +435,15 @@
   /* ---------- Turno del nemico: modificatori, parata, ira ---------- */
   const modAttaccoNem = (s) => (attivo(s, "debole") ? -2 : 0) + (attivo(s, "frastornato") ? -4 : 0);
   const critNemPossibile = (s) => !attivo(s, "frastornato") && !attivo(s, "intontito"); /* Intontito: Percossa al Mento */
-  /* un attacco del nemico che va a segno: la Parata (o il Contro-Schiacciamento) lo annulla e contrattacca; altrimenti cresce l'ira */
-  function colpoSubito(s, ctx, crit) {
+  /* un attacco del nemico che va a segno.
+     - Parata (Mutilante, Contro-Schiacciamento, Guardia di Punta): lo annulla e contrattacca, niente ira.
+     - Scudo: metà danni (ira normale), Rimbalzo (metà torna al nemico), 0 danni (niente ira; Batteria sì), tutti i colpi (Mare Profondo, Egida).
+     - Baluardo: ira doppia e 1 Carica. Marea Elastica: con almeno 2 Cariche, 1d4 torna al nemico.
+     danno = danno pieno già tirato (se manca, si lavora solo su Parata e ira, come prima).
+     → { annullato, danno, ira, eventi }: annullato = il colpo non ti fa nulla */
+  function colpoSubito(s, ctx, crit, danno) {
+    s.eff = s.eff || {};
+    s.colpitoOra = true; /* Inversione della Marea: il nemico ti ha colpito in questo suo turno */
     if (s.parata) {
       const conCrepe = !!s.parataCrepe, conPunta = !!s.parataPunta; s.parata = false; s.parataCrepe = false; s.parataPunta = false;
       const E = [{ k: "parataRiuscita" }], dado = ctx.dado;
@@ -339,11 +453,55 @@
       const tiri = tiraDadi(ctx, crit ? 2 : 1, dado), danno = Math.max(1, somma(tiri) + ctx.modDanno);
       s.pv -= danno; E.push({ k: "contrattacco", dado, tiri, mm: ctx.modDanno, danno, ...(conPunta ? { dCrit, crit } : {}) });
       if (vivo(s)) E.push(conPunta ? metti(s, ctx, "esposto", 2) : conCrepe ? incrina(s, ctx, 1) : sanguina(s, ctx, 4, 2));
-      return { annullato: true, ira: 0, eventi: E };
+      return { annullato: true, danno: 0, ira: 0, eventi: E };
     }
-    return { annullato: false, ira: iraPerColpo(ctx.liv, crit), eventi: [] };
+    const E = [], pieno = Number(danno) || 0;
+    let ira = iraPerColpo(ctx.liv, crit), finale = pieno;
+    const a = s.assorbe;
+    if (a) {
+      if (a.tipo !== "tutti") s.assorbe = null; /* vale per il primo colpo; «tutti» dura fino al tuo turno */
+      s.assorbiti = (Number(s.assorbiti) || 0) + 1;
+      if (a.tipo === "meta") { finale = Math.floor(pieno / 2); E.push({ k: "assorbito", tipo: a.tipo, prima: pieno, dopo: finale }); }
+      else if (a.tipo === "rimbalzo") {
+        finale = Math.floor(pieno / 2); const torna = pieno - finale;
+        E.push({ k: "assorbito", tipo: a.tipo, prima: pieno, dopo: finale });
+        if (torna > 0) { s.pv -= torna; E.push({ k: "rimbalzo", danno: torna }); }
+      } else if (a.tipo === "zero") { finale = 0; ira = 0; E.push({ k: "assorbito", tipo: a.tipo, prima: pieno, dopo: 0 }); }
+      else if (a.tipo === "zeroIra") { finale = 0; E.push({ k: "assorbito", tipo: a.tipo, prima: pieno, dopo: 0 }); }
+      else if (a.tipo === "tutti") { finale = 0; ira = 0; a.n = (a.n || 0) + 1; E.push({ k: "assorbito", tipo: a.tipo, prima: pieno, dopo: 0 }); }
+      const nc = a.tipo === "tutti" ? 1 : (a.cariche || 0);
+      if (nc) E.push(carica(s, nc));
+    }
+    if (attivo(s, "baluardo")) { ira *= 2; E.push({ k: "baluardoColpo" }); E.push(carica(s, 1)); }
+    if (s.elastica && cariche(s) >= 2 && vivo(s)) { const d = ctx.tira(4); s.pv -= d; E.push({ k: "elasticaColpo", d }); }
+    return { annullato: !!a && finale === 0 && pieno > 0, danno: finale, ira, eventi: E };
   }
-  const inizioTurnoPg = (s) => { s.parata = false; s.parataCrepe = false; s.parataPunta = false; }; /* la Parata vale solo fino al tuo turno successivo */
+  /* un attacco del nemico che manca: Postura Salda dà 1 Carica, Drenaggio d'Urto +1 ira e 1 Carica */
+  function colpoMancato(s, ctx) {
+    const E = [];
+    if (s.postura) E.push({ k: "posturaRegge" }, carica(s, 1));
+    if (s.drenaggio) { if (ctx && ctx.iraPiu) ctx.iraPiu(1); E.push({ k: "ira", n: 1 }, carica(s, 1)); }
+    return E;
+  }
+  /* inizio del tuo turno: Parata e difese dello scudo scadono; il Mare Profondo e l'Egida rilasciano l'onda */
+  function inizioTurnoPg(s, ctx) {
+    const E = [];
+    s.parata = false; s.parataCrepe = false; s.parataPunta = false; /* la Parata vale solo fino al tuo turno successivo */
+    const a = s.assorbe;
+    if (a && a.onda && ctx && vivo(s)) {
+      if (a.onda === "mare" && a.n > 0) {
+        for (let i = 0; i < a.n && vivo(s); i++) E.push({ k: "ondaMare" }, onda(s, ctx, 1, 6));
+      } else if (a.onda === "egida") {
+        const n = cariche(s);
+        if (n > 0) { E.push({ k: "ondaEgida", cariche: n }); E.push(onda(s, ctx, 2 * n, 6)); s.cariche = 0; }
+        else E.push({ k: "ondaVuota" });
+      }
+    }
+    s.assorbe = null; s.postura = false; s.drenaggio = false;
+    s.difesaBloccata = !!s.difesaUsata; s.difesaUsata = false; /* niente difesa dello scudo due turni di fila */
+    s.colpitoUltimo = !!s.colpitoOra; s.colpitoOra = false;
+    return E;
+  }
   /* fine del turno del nemico: gli effetti scalano di un turno; finito il sanguinamento finisce anche il marchio */
   function fineTurnoNemico(s) {
     const finiti = [];
@@ -355,11 +513,12 @@
   function tickSangue(s, ctx) { if (!attivo(s, "sanguina")) return null; const d = ctx.tira(Number(s.sangueDado) || 4); s.pv -= d; return { k: "sangue", d, dado: Number(s.sangueDado) || 4 }; }
 
   const API = {
-    SCELTE_PER_LIVELLO, CONTROLLI, TETTO_BOSS, CREPE_MAX, CREPE_MAX_BOSS, PER_SCONTRO, CRIT_MIN,
+    SCELTE_PER_LIVELLO, CONTROLLI, TETTO_BOSS, CREPE_MAX, CREPE_MAX_BOSS, PER_SCONTRO, CRIT_MIN, CARICHE_MAX, ASSORBITI_TSUNAMI,
     crescitaIra, iraMax, iraPerColpo, slotTecniche, sceltaValida, sceltaPredefinita,
     attivo, marchiato, segnato, sogliaCrit, metti, sanguina, guardia, colpo, ts, costo, usa,
     crepe, crepeMax, crepePiene, incrina, malusCA, frattura, perScontro,
-    modAttaccoNem, critNemPossibile, colpoSubito, inizioTurnoPg, fineTurnoNemico, tickSangue
+    cariche, carica, disponibile, difesaDiFila, presaBloccata, fortezza, onda,
+    modAttaccoNem, critNemPossibile, colpoSubito, colpoMancato, inizioTurnoPg, fineTurnoNemico, tickSangue
   };
   root.Combattimento = API;
   if (typeof module !== "undefined" && module.exports) module.exports = API;

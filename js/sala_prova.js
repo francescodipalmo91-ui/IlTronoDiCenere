@@ -2,7 +2,7 @@
    SALA DI PROVA DEL COMBATTIMENTO — tutorial.html?prova
    Strumento di sviluppo (solo italiano): prova tecniche, stati, ira, posti, vie e boss
    con le stesse regole della partita (js/combattimento.js), senza entrare in gioco.
-   - Personaggio: livello, Vigore, Agilità, CA, arma, scudo, via.
+   - Personaggio: livello, Vigore, Agilità, CA, arma, scudo, via e serie della via (arma o scudo).
    - Nemico: mastino comune, Ettore (boss) o manichino; boss forzabile; PV e CA modificabili.
    - Dadi truccati: una coda di valori usati dai prossimi tiri (qualsiasi dado), per risultati certi.
    - «Esegui i test»: gli stessi test di tests/combattimento.test.js, nel browser.
@@ -32,9 +32,9 @@
     ettore: { nome: "Ettore (boss)", ca: 13, dadoVita: 8, dannoDado: 6, attacco: 1, boss: true, probPresa: 0, probSoffio: 0, soffio: null, arma: true, resa: true },
     manichino: { nome: "Manichino (non attacca)", ca: 12, pv: 60, boss: false, passivo: true, arma: false }
   };
-  const NOMI_EFF = { sanguina: "Sanguinamento", frattura: "Frattura", intontito: "Intontito", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Senza attacchi speciali", frastornato: "Frastornato", bloccato: "Stordito", guardia: "Guardia alzata", furore: "Furore inarrestabile", esposto: "Esposto", precisione: "Mille Soli" };
+  const NOMI_EFF = { sanguina: "Sanguinamento", frattura: "Frattura", intontito: "Intontito", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Senza attacchi speciali", frastornato: "Frastornato", bloccato: "Stordito", guardia: "Guardia alzata", furore: "Furore inarrestabile", esposto: "Esposto", precisione: "Mille Soli", baluardo: "Baluardo d'Acciaio", fortezza: "Fortezza Eterna" };
   const DESC_EFF = { frattura: "1d4 danni a ogni suo attacco", intontito: "niente critici", debole: "−2 per colpire", sbilanciato: "−2 alla Classe armatura", silenzio: "niente Presa né Soffio", frastornato: "−4 per colpire, niente critici", bloccato: "salta il prossimo turno", furore: "+4 ai tiri salvezza e alle prove contrapposte", esposto: "i tuoi attacchi fanno critico con un numero in meno, mai sotto 18", precisione: "i tuoi attacchi fanno critico da 18 a 20" };
-  const EFF_PG = ["guardia", "furore", "precisione"];
+  const EFF_PG = ["guardia", "baluardo", "fortezza", "furore", "precisione"];
 
   /* ---------- dadi: coda truccata, poi caso ---------- */
   const coda = [];
@@ -48,14 +48,15 @@
     const liv = Number($("pLiv").value), vig = Number($("pVig").value), agi = Number($("pAgi").value), arma = ARMI[Number($("pArma").value)];
     const modV = mod(vig);
     const pvMax = Number($("pPv").value) || (20 + modV + (liv - 1) * Math.max(1, 6 + modV));
-    return { liv, vig, modV, modAgi: mod(agi), ca: Number($("pCa").value) || 14, arma, scudo: $("pScudo").checked, via: liv >= 3 ? $("pVia").value || null : null, pvMax, iraMax: C.iraMax(modV, liv) };
+    return { liv, vig, modV, modAgi: mod(agi), ca: Number($("pCa").value) || 14, arma, scudo: $("pScudo").checked, via: liv >= 3 ? $("pVia").value || null : null, serie: $("pSerie").value === "scudo" ? "scudo" : "arma", pvMax, iraMax: C.iraMax(modV, liv) };
   }
   const caPg = () => pg.ca + (s && C.attivo(s, "guardia") ? Number(s.guardiaVal) || 0 : 0);
   const caNem = () => nem.ca - (s ? C.malusCA(s) : 0); /* Sbilanciato e Incrinatura */
   const tipoOk = (t) => t.tipo === "Utilita" || (t.tipo === "Scudo" ? pg.scudo : t.tipo === pg.arma.tipo);
   const opzioni = () => TEC.filter(t => t.tipo !== "Utilita" && !t.via && t.liv <= pg.liv && (t.tipo === pg.arma.tipo || (t.tipo === "Scudo" && pg.scudo)));
   const utilita = () => TEC.filter(t => t.tipo === "Utilita" && t.liv <= pg.liv);
-  const dellaVia = () => pg.via ? TEC.filter(t => t.via === pg.via && t.tipo === pg.arma.tipo && t.liv <= pg.liv) : []; /* le abilità della via dipendono dal tipo d'arma */
+  const tipoVia = () => (pg.serie === "scudo" ? "Scudo" : pg.arma.tipo); /* serie della via preparata al riposo: arma o scudo */
+  const dellaVia = () => pg.via ? TEC.filter(t => t.via === pg.via && t.tipo === tipoVia() && t.liv <= pg.liv) : [];
   const ignoraPosti = () => $("pIgnora").checked;
   const prepT = () => [...preparate].map(id => TEC.find(t => t.id === id)).filter(Boolean);
 
@@ -108,6 +109,30 @@
         case "furore": r.push(`+4 ai tiri salvezza e alle prove contrapposte per ${durata(e.turni)}.`); break;
         case "ira": r.push(`+${e.n} ira.`); break;
         case "giaUsataRiposo": r.push("Già usata in questo riposo."); break;
+        /* scudo */
+        case "assorbePronto": r.push({ meta: "Scudo pronto: il primo colpo fa metà danni", rimbalzo: "Scudo pronto: metà del primo colpo torna al nemico", zero: "Scudo pronto: il primo colpo fa 0 danni", zeroIra: "Scudo pronto: il primo colpo fa 0 danni ma dà l'ira", tutti: "Scudo pronto: ogni colpo fino al tuo turno fa 0 danni" }[e.tipo] + (e.cariche ? ` (+${e.cariche} Cariche)` : "") + (e.onda ? `, poi onda (${e.onda === "mare" ? "1d6 + Vigore per colpo" : "2d6 per Carica + Vigore"})` : "") + "."); break;
+        case "cariche": r.push(e.n > 0 ? `Carica Cinetica +${e.n} (${e.tot}/${e.max})${e.perse ? `, ${e.perse} oltre il massimo perse` : ""}.` : `Cariche già al massimo (${e.tot}/${e.max}).`); break;
+        case "caricheSpese": r.push(`Cariche spese: ${e.n}.`); break;
+        case "caricaResta": r.push("Resta 1 Carica."); break;
+        case "onda": r.push(`Onda senza tiro: ${e.n}d${e.dado} [${e.tiri.join("+")}]${e.nExtra ? ` + ${e.nExtra}d${e.dadoExtra} [${e.tiriExtra.join("+")}]` : ""} ${fmt(e.mm)} = ${e.danno}.`); break;
+        case "postura": r.push("Postura: la Presa non ti afferra; se ti manca, 1 Carica."); break;
+        case "posturaRegge": r.push("La postura regge."); break;
+        case "vendetta": r.push("Vendetta: il nemico ti ha colpito nel suo ultimo turno."); break;
+        case "baluardo": r.push(`Baluardo per ${durata(e.turni)}: ira doppia e 1 Carica per colpo subito.`); break;
+        case "baluardoColpo": r.push("Baluardo: ira doppia."); break;
+        case "elastica": r.push("Marea Elastica attiva: con almeno 2 Cariche, ogni colpo subito restituisce 1d4."); break;
+        case "elasticaColpo": r.push(`Marea Elastica: ${e.d} danni al nemico.`); break;
+        case "drenaggio": r.push("Drenaggio: se ti manca, +1 ira e 1 Carica."); break;
+        case "fortezzaPronta": r.push(`Fortezza pronta per ${durata(e.turni)} (una volta per scontro).`); break;
+        case "fortezzaUsata": r.push("Fortezza già usata in questo scontro."); break;
+        case "fortezza": r.push(`Fortezza Eterna: resti a 1 salute (${e.evitato} danni evitati).`); break;
+        case "assorbito": r.push(`Scudo: ${e.prima} → ${e.dopo} danni.`); break;
+        case "rimbalzo": r.push(`Rimbalzo: ${e.danno} danni al nemico.`); break;
+        case "ondaMare": r.push("Onda del Mare Profondo:"); break;
+        case "ondaEgida": r.push(`Onda dell'Egida (${e.cariche} Cariche):`); break;
+        case "ondaVuota": r.push("Egida: nessuna Carica, nessuna onda."); break;
+        case "difesaDiFila": r.push("Non puoi usare una difesa dello scudo due turni di fila."); break;
+        case "senzaCariche": r.push("Servono Cariche Cinetiche."); break;
         default: r.push(JSON.stringify(e));
       }
     });
@@ -128,7 +153,14 @@
     log("Agisci per primo (nella sala di prova l'iniziativa è sempre tua).", "sis");
     inizioTurno();
   }
-  function inizioTurno() { nTurno++; turnoPg = true; C.inizioTurnoPg(s); disegna(); }
+  function inizioTurno() {
+    nTurno++; turnoPg = true;
+    const ril = C.inizioTurnoPg(s, ctx()); /* Mare Profondo ed Egida rilasciano l'onda */
+    if (ril.length) { blocco("Inizio del tuo turno", testoEventi(ril), "mia"); if (controllaFine()) { turnoPg = false; return disegna(); } }
+    disegna();
+  }
+  /* danni al personaggio: la Fortezza Eterna può lasciarti a 1 */
+  function ferisci(dn, righe) { const f = C.fortezza(s, dn, pg.pv); pg.pv -= f.danno; righe.push(...testoEventi(f.eventi)); return f.danno; }
   function dopoAzione() {
     turnoPg = false;
     if (controllaFine()) return disegna();
@@ -155,6 +187,7 @@
     if (!turnoPg || finito) return;
     const c = ctx();
     if (t.unaPerRiposo && c.usataPerRiposo(t.id)) return log(`${t.nome.it}: già usata in questo riposo.`, "ko");
+    const disp = C.disponibile(t, s); if (!disp.ok) return log(`${t.nome.it}: ${testoEventi([{ k: disp.motivo }])[0]}`, "ko");
     const costo = C.costo(t, s);
     if (pg.ira < costo) return log(`${t.nome.it}: servono ${costo} ira, ne hai ${pg.ira}.`, "ko");
     pg.ira -= costo;
@@ -182,14 +215,30 @@
         if (tot >= nem.soffio.cd) righe.push(`Soffio Infuocato: tiro salvezza d20 ${d} ${fmt(m)} = ${tot} contro CD ${nem.soffio.cd} → schivato.`);
         else {
           const tiri = Array.from({ length: nem.soffio.dadi }, () => tira(nem.soffio.dado)), dn = tiri.reduce((a, b) => a + b, 0);
-          pg.pv -= dn; const g = C.iraPerColpo(pg.liv, false); pg.ira = Math.min(pg.iraMax, pg.ira + g);
+          const g = C.iraPerColpo(pg.liv, false); pg.ira = Math.min(pg.iraMax, pg.ira + g);
           righe.push(`Soffio Infuocato: tiro salvezza d20 ${d} ${fmt(m)} = ${tot} contro CD ${nem.soffio.cd} → preso, ${dn} danni [${tiri.join("+")}]. +${g} ira.`);
+          ferisci(dn, righe);
         }
       }
       if (!fatto) {
         const morso = nem.arma ? false : Math.random() < 0.5 || $("nMorso").checked, nome = nem.arma ? "Spada" : morso ? "Morso" : "Zampata";
         const m = mod(nem.vigore) + (nem.attacco || 0) + C.modAttaccoNem(s), d = tira(20), tot = d + m, ca = caPg(), crit = d === 20 && C.critNemPossibile(s), ok = crit || tot > ca;
-        if (!ok) righe.push(`${nome}: mancato (d20 ${d} ${fmt(m)} = ${tot} contro la tua CA ${ca}). Nessuna ira.`);
+        if (!ok) { righe.push(`${nome}: mancato (d20 ${d} ${fmt(m)} = ${tot} contro la tua CA ${ca}). Nessuna ira.`); righe.push(...testoEventi(C.colpoMancato(s, c))); }
+        else if (!s.parata) { /* scudo, Baluardo, Marea Elastica: il danno si tira prima */
+          const nd = crit ? 2 : 1, tiri = Array.from({ length: nd }, () => tira(nem.dannoDado)), pieno = Math.max(1, tiri.reduce((a, b) => a + b, 0) + m);
+          const sub = C.colpoSubito(s, c, crit, pieno);
+          righe.push(`${nome}: ${crit ? "CRITICO" : "colpito"} (d20 ${d} ${fmt(m)} = ${tot} contro CA ${ca}), ${pieno} danni [${tiri.join("+")}].`, ...testoEventi(sub.eventi));
+          const fatto = sub.danno > 0 ? ferisci(sub.danno, righe) : 0;
+          pg.ira = Math.min(pg.iraMax, pg.ira + sub.ira);
+          righe.push(`Subisci ${fatto} danni. +${sub.ira} ira.`);
+          if (morso && !sub.annullato && !s.presaUsata && !C.attivo(s, "silenzio") && !C.presaBloccata(s) && (Math.random() < nem.probPresa || $("nPresa").checked)) {
+            s.presaUsata = true;
+            if (frattura()) { blocco("Turno del nemico", righe, "nem"); return; }
+            const a = tira(20) + pg.modV + (C.attivo(s, "furore") ? 4 : 0), b = tira(20) + mod(nem.vigore);
+            if (b > a) { const x = tira(4); ferisci(x, righe); righe.push(`Presa: ${b} contro il tuo ${a} → ti stringe, ${x} danni in più.`); }
+            else righe.push(`Presa: ${b} contro il tuo ${a} → ti liberi.`);
+          } else if (morso && C.presaBloccata(s)) righe.push("Postura Salda: la Presa non ti afferra.");
+        }
         else {
           const sub = C.colpoSubito(s, c, crit);
           if (sub.annullato) righe.push(`${nome}: colpirebbe (d20 ${d} ${fmt(m)} = ${tot} contro CA ${ca}), ma la Parata lo annulla: 0 danni, nessuna ira.`, ...testoEventi(sub.eventi.filter(e => e.k === "stato" || e.k === "crepe")), ...sub.eventi.filter(e => e.k === "contrattacco").map(e => `Contrattacco${e.dCrit ? ` (critico 18-20: d20 ${e.dCrit} → ${e.crit ? "CRITICO" : "no"})` : ""}: ${e.tiri.length}d${e.dado} [${e.tiri.join("+")}] ${fmt(e.mm)} = ${e.danno} danni.`));
@@ -228,7 +277,7 @@
   function disegna() {
     if (!pg) pg = leggiPg();
     const st = pg.pv != null ? pg : { ...pg, pv: pg.pvMax, ira: pg.iraMax };
-    scheda($("svPg"), [["Salute", `${st.pv} / ${pg.pvMax}`], ["Ira", `${st.ira} / ${pg.iraMax}`], ["CA", String(s ? caPg() : pg.ca)], ["CD dei tuoi effetti", String(8 + pg.modV + pg.liv)], ["Ira per colpo subito", `${C.iraPerColpo(pg.liv, false)} (critico ${C.iraPerColpo(pg.liv, true)})`], ...effetti(EFF_PG), ...(s && s.parata ? [["Parata", "pronta"]] : []), ...(s && s.sconto ? [["Sconto", `−${s.sconto} ira`]] : [])]);
+    scheda($("svPg"), [["Salute", `${st.pv} / ${pg.pvMax}`], ["Ira", `${st.ira} / ${pg.iraMax}`], ["CA", String(s ? caPg() : pg.ca)], ["CD dei tuoi effetti", String(8 + pg.modV + pg.liv)], ["Ira per colpo subito", `${C.iraPerColpo(pg.liv, false)} (critico ${C.iraPerColpo(pg.liv, true)})`], ...effetti(EFF_PG), ...(s && s.parata ? [["Parata", "pronta"]] : []), ...(s && C.cariche(s) ? [["Carica Cinetica", `${C.cariche(s)}/${C.CARICHE_MAX}${s.elastica && C.cariche(s) >= 2 ? " · elastica" : ""}`]] : []), ...(s && s.assorbe ? [["Scudo", `pronto (${s.assorbe.tipo})`]] : []), ...(s && s.difesaBloccata ? [["Difesa dello scudo", "non questo turno"]] : []), ...(s && s.sconto ? [["Sconto", `−${s.sconto} ira`]] : [])]);
     if (nem) scheda($("svNem"), [["Nemico", nem.nome + (nem.boss ? " — BOSS" : "")], ["Salute", `${Math.max(0, s.pv)} / ${s.pvMax}`], ["CA", String(caNem())], ...(nem.soffio ? [["Soffio", s.soffioPronto ? "carico" : "scarico"]] : []), ...crepeNem(), ...effetti(["sanguina", "frattura", "esposto", "debole", "sbilanciato", "silenzio", "frastornato", "intontito", "bloccato"])]);
     else scheda($("svNem"), [["Nemico", "—"]]);
     /* posti e tecniche */
@@ -237,7 +286,7 @@
     const lista = $("svTec"); lista.replaceChildren();
     const riga = (t, gruppo) => {
       const inPosto = gruppo !== "base" || preparate.has(t.id);
-      const usabile = !finito && turnoPg && tipoOk(t) && (inPosto || ignoraPosti()) && !(t.unaPerRiposo && perRiposo[t.id]) && pg.ira >= C.costo(t, s);
+      const usabile = !finito && turnoPg && tipoOk(t) && (inPosto || ignoraPosti()) && !(t.unaPerRiposo && perRiposo[t.id]) && pg.ira >= C.costo(t, s) && C.disponibile(t, s).ok;
       const chk = gruppo === "base" ? el("input", { type: "checkbox", title: "Prepara", onchange: (e) => { if (e.target.checked) preparate.add(t.id); else preparate.delete(t.id); disegna(); } }) : null;
       if (chk) { chk.checked = preparate.has(t.id); chk.disabled = !chk.checked && (prep.length >= max || !C.sceltaValida([...prep, t], pg.liv, pg.scudo).ok); }
       const b = el("button", { type: "button", class: "mini", "data-tec": t.id, onclick: () => usaTecnica(t) }, "Usa");
@@ -249,9 +298,9 @@
     if (utilita().length) { lista.append(el("h4", { text: "Della classe (non occupano posti)" })); utilita().forEach(t => riga(t, "util")); }
     lista.append(el("h4", { text: `Tecniche sbloccate (${pg.arma.tipo.toLowerCase()}${pg.scudo ? " + scudo" : ""})` }));
     opzioni().forEach(t => riga(t, "base"));
-    if (pg.liv >= 3) { lista.append(el("h4", { text: pg.via ? `Via di ${pg.via === "aldo" ? "Aldo — Lama del Guardiano" : "Guendalina — Veglia"} (non occupa posti${dellaVia().length ? "" : "; nessuna abilità per quest'arma"})` : "Via di prestigio: nessuna scelta" })); dellaVia().forEach(t => riga(t, "via")); }
+    if (pg.liv >= 3) { lista.append(el("h4", { text: pg.via ? `Via di ${pg.via === "aldo" ? "Aldo — Lama del Guardiano" : "Guendalina — Veglia"}, serie ${pg.serie === "scudo" ? "dello scudo" : "dell'arma"} (non occupa posti${dellaVia().length ? "" : "; nessuna abilità per quest'arma"})` : "Via di prestigio: nessuna scelta" })); dellaVia().forEach(t => riga(t, "via")); }
     $("svAttacca").disabled = finito || !turnoPg;
-    $("pVia").disabled = Number($("pLiv").value) < 3;
+    $("pVia").disabled = Number($("pLiv").value) < 3; $("pSerie").disabled = Number($("pLiv").value) < 3;
   }
   function mostraCoda() { const c = $("svCodaVis"); if (c) c.textContent = coda.length ? `In coda: ${coda.join(", ")}` : "Coda vuota: i dadi tirano a caso."; }
   function eseguiTest() {
@@ -275,6 +324,7 @@
         campo("Classe armatura", num("pCa", 14, 8, 25)), campo("Salute (vuoto = calcolata)", num("pPv", "", 1, 200)),
         campo("Arma", sel("pArma", ARMI.map((a, i) => [i, `${a.nome} · 1d${a.dado} ${a.tipo.toLowerCase()}`]), 0)), chk("pScudo", "Scudo imbracciato"),
         campo("Via di prestigio (dal livello 3)", sel("pVia", [["", "nessuna"], ["aldo", "Aldo — Lama del Guardiano"], ["guendalina", "Guendalina — Veglia"]], "")),
+        campo("Serie della via (si sceglie al riposo)", sel("pSerie", [["arma", "dell'arma"], ["scudo", "dello scudo"]], "arma")),
         chk("pIgnora", "Ignora i posti (usa qualsiasi tecnica sbloccata)", true),
         el("h2", { text: "Nemico" }),
         campo("Tipo", sel("nTipo", Object.entries(NEMICI).map(([k, d]) => [k, d.nome]), "mastino")), chk("nBoss", "Trattalo come boss"),
@@ -292,7 +342,7 @@
       el("section", { class: "pannello" }, el("h2", { text: "Tu" }), el("dl", { id: "svPg" }), el("h2", { text: "Nemico" }), el("dl", { id: "svNem" }),
         el("h2", { text: "Tecniche" }), el("p", { class: "nota", id: "svPosti" }), el("div", { id: "svTec" })));
     document.body.replaceChildren(app);
-    ["pLiv", "pVig", "pAgi", "pCa", "pPv", "pArma", "pScudo", "pVia", "pIgnora"].forEach(id => $(id).addEventListener("change", () => {
+    ["pLiv", "pVig", "pAgi", "pCa", "pPv", "pArma", "pScudo", "pVia", "pSerie", "pIgnora"].forEach(id => $(id).addEventListener("change", () => {
       const vecchio = pg; pg = leggiPg();
       if (vecchio && s && !finito) { pg.pv = Math.min(vecchio.pv, pg.pvMax); pg.ira = Math.min(vecchio.ira, pg.iraMax); log("Personaggio cambiato a scontro in corso: valido dal prossimo tiro.", "sis"); }
       [...preparate].forEach(id => { const t = TEC.find(x => x.id === id); if (!t || t.liv > pg.liv) preparate.delete(id); });

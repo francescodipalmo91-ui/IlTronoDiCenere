@@ -61,11 +61,11 @@ caso("Tutorial normale: parte come prima, senza la sala di prova e senza errori"
   vero(await page.$("#diario"), "manca il diario del tutorial"); eq(await page.$(".sala"), null, "la sala non deve comparire");
   await page.waitForTimeout(800); eq(errori, [], "errori"); await chiudi();
 });
-caso("Sala di prova: si apre con ?prova e gli 82 test del modulo passano anche nel browser", async (b) => {
+caso("Sala di prova: si apre con ?prova e i 103 test del modulo passano anche nel browser", async (b) => {
   const { page, errori, chiudi } = await apri(b, "tutorial.html?prova");
   vero(await page.$(".sala"), "manca la sala"); await page.click("#svTestBtn");
   const esiti = await page.evaluate(() => window.esitiTestCombattimento);
-  const ko = esiti.filter(e => !e.ok); eq(ko, [], "test falliti"); vero(esiti.length >= 82, "pochi test: " + esiti.length);
+  const ko = esiti.filter(e => !e.ok); eq(ko, [], "test falliti"); vero(esiti.length >= 103, "pochi test: " + esiti.length);
   eq(errori, [], "errori"); await chiudi();
 });
 caso("Sala di prova: Squarcia-Articolazioni su un mastino comune blocca Presa e Soffio (scheda e turno del nemico)", async (b) => {
@@ -122,6 +122,41 @@ caso("Sala di prova: quote dei posti (2 di livello 1 al livello 1; la terza solo
   await box(0).check(); await box(1).check();
   vero(await box(2).isDisabled(), "la terza deve essere bloccata");
   await page.check("#pScudo"); vero(!(await box(2).isDisabled()), "con lo scudo si sblocca"); await chiudi();
+});
+
+/* ---------- Sala di prova: scudo ---------- */
+caso("Sala di prova: con lo scudo compaiono le 15 tecniche di scudo e, con la serie dello scudo, le abilità della via dello scudo", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "tutorial.html?prova");
+  await page.selectOption("#pLiv", "5"); await page.check("#pScudo"); await page.selectOption("#pVia", "aldo");
+  const ids = await page.$$eval("#svTec [data-tec]", bs => bs.map(x => x.dataset.tec));
+  ["assorbimento", "postura_salda", "muro", "onda_ritorno", "mare_profondo", "egida"].forEach(id => vero(ids.includes(id), "manca " + id));
+  vero(ids.includes("marchio") && !ids.includes("marea_elastica"), "serie dell'arma: abilità del taglio");
+  await page.selectOption("#pSerie", "scudo");
+  const via = await page.$$eval("#svTec [data-tec]", bs => bs.map(x => x.dataset.tec));
+  vero(via.includes("marea_elastica") && via.includes("onda_rimbalzo") && via.includes("tsunami") && !via.includes("marchio"), "serie dello scudo");
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Sala di prova: Muro di Assorbimento inghiotte il morso (0 danni, niente ira), 3 Cariche; il turno dopo niente Postura Salda", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "tutorial.html?prova");
+  await page.selectOption("#pLiv", "2"); await page.check("#pScudo"); await page.check("#nMorso"); await page.evaluate(() => { Math.random = () => 0.99; }); await page.click("#svNuovo");
+  const prima = await page.evaluate(() => ({ pv: SalaProva.stato().pg.pv, ira: SalaProva.stato().pg.ira }));
+  await page.evaluate(() => SalaProva.accoda(/* nemico: */ 19, 4)); await page.click('[data-tec="muro"]');
+  const dopo = await page.evaluate(() => ({ pv: SalaProva.stato().pg.pv, ira: SalaProva.stato().pg.ira, c: SalaProva.stato().s.cariche }));
+  eq(dopo.pv, prima.pv, "salute"); eq(dopo.ira, prima.ira - 5, "ira: solo il costo"); eq(dopo.c, 3, "cariche");
+  vero(/Carica Cinetica/.test(await page.innerText("#svPg")), "scheda senza Cariche");
+  vero(await page.$eval('[data-tec="postura_salda"]', x => x.disabled), "difesa due turni di fila");
+  vero(!(await page.$eval('[data-tec="assorbimento"]', x => x.disabled)), "un colpo di scudo resta libero");
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Sala di prova: Egida del Vuoto assorbe il colpo e all'inizio del tuo turno rilascia l'onda", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "tutorial.html?prova");
+  await page.selectOption("#pLiv", "5"); await page.check("#pScudo"); await page.check("#nMorso"); await page.evaluate(() => { Math.random = () => 0.99; });
+  await page.fill("#nPv", "100"); await page.dispatchEvent("#nPv", "change"); await page.click("#svNuovo");
+  await page.evaluate(() => SalaProva.accoda(/* nemico */ 19, 4, /* onda: 2d6 per 1 Carica */ 6, 6));
+  await page.click('[data-tec="egida"]');
+  const st = await page.evaluate(() => ({ pv: SalaProva.stato().s.pv, c: SalaProva.stato().s.cariche, pg: SalaProva.stato().pg }));
+  eq(st.c, 0, "cariche spese"); eq(st.pv, 100 - (12 + st.pg.modV), "onda 2d6 + Vigore"); eq(st.pg.pv, st.pg.pvMax, "nessun danno subito");
+  vero(/Onda dell'Egida/.test(await page.innerText("#svLog")), "manca l'onda nel diario"); eq(errori, [], "errori"); await chiudi();
 });
 
 /* ---------- Sala di prova: contundenti ---------- */
@@ -464,6 +499,77 @@ caso("Gioco: un salvataggio con le perforanti tolte lascia i posti vuoti e tiene
   eq(await page.evaluate(() => tecnichePreparate().map(t => t.id)), ["cuore"]); eq(await page.evaluate(() => postiLiberi()), 3); eq(errori, [], "errori"); await chiudi();
 });
 
+/* ---------- Gioco: scudo ---------- */
+const SPADA_SCUDO = { arma: "Spada corta", armaDanno: "1d6", armaTipoDanno: "Tagliente", armaMani: 1, armatura: "Armatura media", armaturaCA: 4, malusAgilita: 0, scudo: { nome: "Scudo", ca: 1, malus: 1 }, dotazione: [] };
+const danniMorso = (page, v) => page.evaluate((v) => Math.max(1, v + modNem("Lotta") + (Number(NEMICI[scontro.id].attacco) || 0) + (Number(scontro.bonusAtt) || 0)), v);
+caso("Gioco: Assorbimento Minimale — il morso fa metà danni, 1 Carica nella scheda e testo nel diario", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ equipaggiamento: SPADA_SCUDO }), PARTITA({ livello: 1, usate: { riposo: "sbloccato", tecPreparate: ["polso", "morso_acciaio", "assorbimento"] } }));
+  await page.evaluate(() => avviaScontro("mastino", { primo: "pg", soffioScarico: true })); await aspettaTurnoPg(page);
+  await page.evaluate(() => { scontro.pv = 100; scontro.pvMax = 100; });
+  const pieno = await danniMorso(page, 4);
+  /* colpo di scudo mancato; nemico: ricarica 1, morso, d20 19, danno 4; presa: no */
+  await accoda(page, [R(1, 20), R(1, 6), R(19, 20), R(4, 4)], [0.1, 0.99]);
+  await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "assorbimento"))); await aspettaTurnoPg(page);
+  eq(await page.evaluate(() => pg.dannoFisico || 0), Math.floor(pieno / 2), "metà danni");
+  eq(await page.evaluate(() => scontro.cariche), 1);
+  vero(/Carica Cinetica/.test(await page.innerText("#vitali")), "scheda senza la Carica"); vero(/assorbe metà del colpo/.test(await diario(page)), "manca il testo");
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Gioco: dopo il Muro di Assorbimento la Postura Salda è rifiutata senza spendere ira", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ equipaggiamento: SPADA_SCUDO }), PARTITA({ livello: 2, usate: { riposo: "sbloccato", tecPreparate: ["polso", "postura_salda", "vipera", "muro", "batteria"] } }));
+  await page.evaluate(() => avviaScontro("mastino", { primo: "pg", soffioScarico: true })); await aspettaTurnoPg(page);
+  await accoda(page, [R(1, 6), R(19, 20), R(4, 4)], [0.1, 0.99]);
+  await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "muro"))); await aspettaTurnoPg(page);
+  eq(await page.evaluate(() => [pg.dannoFisico || 0, scontro.cariche]), [0, 3], "0 danni e 3 Cariche");
+  const ira = await page.evaluate(() => pg.risorsaUsata);
+  await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "postura_salda")));
+  eq(await page.evaluate(() => pg.risorsaUsata), ira, "nessuna ira spesa"); eq(await page.evaluate(() => scontro.tuoTurno), true, "il turno resta tuo");
+  vero(/due turni di fila/.test(await diario(page)), "manca l'avviso"); eq(errori, [], "errori"); await chiudi();
+});
+caso("Gioco: Postura Salda — il mastino manca, 1 Carica; se morde la Presa non scatta", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ equipaggiamento: SPADA_SCUDO }), PARTITA({ livello: 1, usate: { riposo: "sbloccato", tecPreparate: ["polso", "morso_acciaio", "postura_salda"] } }));
+  await page.evaluate(() => avviaScontro("mastino", { primo: "pg", soffioScarico: true })); await aspettaTurnoPg(page);
+  await accoda(page, [R(1, 6), R(1, 20)], [0.1]);
+  await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "postura_salda"))); await aspettaTurnoPg(page);
+  eq(await page.evaluate(() => scontro.cariche), 1, "Carica dal mancato");
+  await page.evaluate(() => { scontro.difesaBloccata = false; }); /* solo per il test: un'altra Postura subito */
+  await accoda(page, [R(1, 6), R(20, 20), R(1, 4), R(1, 4)], [0.1, 0.0]); /* morso critico, Presa forzata dal caso */
+  await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "postura_salda"))); await aspettaTurnoPg(page);
+  eq(await page.evaluate(() => scontro.presaUsata || false), false, "la Presa non deve partire"); eq(errori, [], "errori"); await chiudi();
+});
+caso("Gioco: Fortezza Eterna — il colpo mortale ti lascia a 1 di salute e dà 3 Cariche", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ equipaggiamento: SPADA_SCUDO }), PARTITA({ livello: 5, usate: { riposo: "sbloccato", tecPreparate: ["polso", "morso_acciaio"], via: "guendalina", viaSerie: "scudo" } }));
+  eq(await page.evaluate(() => tecnicheDelPg().filter(x => x.via).map(x => x.t.id)), ["drenaggio", "sigillo_monolito", "fortezza_eterna"]);
+  await page.evaluate(() => avviaScontro("mastino", { primo: "pg", soffioScarico: true })); await aspettaTurnoPg(page);
+  await page.evaluate(() => { scontro.pv = 100; scontro.pvMax = 100; pg.dannoFisico = saluteMaxPg() - 2; disegnaVitali(); }); /* 2 di salute */
+  await accoda(page, [R(19, 20), R(1, 6), R(1, 6), R(1, 6), R(19, 20), R(4, 4)], [0.1, 0.99]);
+  await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "fortezza_eterna"))); await aspettaTurnoPg(page);
+  eq(await page.evaluate(() => pvPg()), 1, "resta a 1"); eq(await page.evaluate(() => [scontro.cariche, scontro.fortezzaUsata]), [3, true]);
+  vero(/Fortezza Eterna regge/.test(await diario(page)), "manca il testo"); eq(errori, [], "errori"); await chiudi();
+});
+caso("Gioco: al riposo si sceglie la serie della via (arma o scudo); senza scudo quelle dello scudo restano spente", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ equipaggiamento: SPADA_SCUDO }), PARTITA({ livello: 3, usate: { riposo: "sbloccato", tecPreparate: ["polso", "morso_acciaio", "vipera", "tendini", "eco"], via: "aldo" } }));
+  eq(await page.evaluate(() => tecnicheDelPg().filter(x => x.via).map(x => x.t.id)), ["marchio"], "di partenza: serie dell'arma");
+  await page.evaluate(() => apriPreparazione(false));
+  vero(/Abilità della via/.test(await page.textContent("#prepBox")), "manca la scelta della serie");
+  await page.check('#prepBox input[name="serie"][value="scudo"]'); await page.check('#prepBox input[name="tec"][value="assorbimento"]').catch(() => {});
+  await page.click("#prepBox button.primario");
+  eq(await page.evaluate(() => usate.viaSerie), "scudo"); eq(await page.evaluate(() => tecnicheDelPg().filter(x => x.via).map(x => [x.t.id, x.attiva])), [["marea_elastica", true]]);
+  await page.evaluate(() => riponiScudo());
+  eq(await page.evaluate(() => tecnicheDelPg().filter(x => x.via).map(x => [x.t.id, x.attiva])), [["marea_elastica", false]], "senza scudo: spenta");
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Gioco: scelta della via mostra anche le abilità dello scudo", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ livello: 3, usate: { riposo: "sbloccato", tecPreparate: [] } }));
+  await page.evaluate(() => apriSceltaVia());
+  const t = await page.textContent("#prepBox"); vero(/Marea Elastica/.test(t) && /Drenaggio d'Urto/.test(t), "mancano le abilità dello scudo"); vero(/Marchio del Guardiano/.test(t), "manca il taglio");
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Gioco: un salvataggio con le vecchie tecniche di scudo lascia i posti vuoti", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ equipaggiamento: SPADA_SCUDO }), PARTITA({ livello: 2, usate: { riposo: "sbloccato", tecPreparate: ["polso", "morso_acciaio", "frontale", "vipera", "scagliata"] } }));
+  eq(await page.evaluate(() => tecnichePreparate().map(t => t.id)), ["polso", "morso_acciaio", "vipera"]); eq(await page.evaluate(() => postiLiberi()), 2); eq(errori, [], "errori"); await chiudi();
+});
+
 /* ======================= Creazione e regolamento ======================= */
 caso("Creazione: il Guerriero con la spada vede le 3 nuove tecniche di livello 1 e ne sceglie 2", async (b) => {
   const { page, errori, chiudi } = await apri(b, "creazione.html");
@@ -486,13 +592,20 @@ caso("Creazione: il Guerriero con la mazza chiodata vede le 3 perforanti di live
   eq(await page.$$eval('#lista-tecniche input[name="tecnica"]', cs => cs.map(c => c.value)), ["cuore", "spillo", "varco"]);
   eq(errori, [], "errori"); await chiudi();
 });
+caso("Creazione: il Guerriero con spada e scudo vede anche le 3 tecniche di scudo di livello 1", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "creazione.html");
+  await page.check('input[name="classe"][value="Soldato"]', { force: true });
+  await page.check('input[name="arma"][value="0"]', { force: true }); await page.check('input[name="scudo"]', { force: true });
+  eq(await page.$$eval('#lista-tecniche input[name="tecnica"]', cs => cs.map(c => c.value)), ["polso", "morso_acciaio", "pomolo", "assorbimento", "postura_salda", "rimbalzo_marea"]);
+  eq(errori, [], "errori"); await chiudi();
+});
 caso("Regolamento: posti, ira per livello, vie e boss in italiano e in inglese", async (b) => {
   const { page, errori, chiudi } = await apri(b, "regolamento.html");
   const t = await page.textContent("body");
-  ["2 (livello 1), 4 (livello 2), 5 (livello 3), 6 (livello 4), 7 (livello 5)", "+1 ai livelli 1-2, +2 ai livelli 3-4, +3 al livello 5", "via di prestigio", "al massimo 2 turni", "Incrinatura", "Frattura", "Esposto", "18-20"].forEach(x => vero(t.includes(x), "manca: " + x));
+  ["2 (livello 1), 4 (livello 2), 5 (livello 3), 6 (livello 4), 7 (livello 5)", "+1 ai livelli 1-2, +2 ai livelli 3-4, +3 al livello 5", "via di prestigio", "al massimo 2 turni", "Incrinatura", "Frattura", "Esposto", "18-20", "Carica Cinetica", "due turni di fila", "quale serie preparare"].forEach(x => vero(t.includes(x), "manca: " + x));
   await page.evaluate(() => { localStorage.setItem("lingua", "en"); }); await page.reload();
   const e = await page.textContent("body");
-  ["2 (level 1), 4 (level 2)", "+1 at levels 1-2, +2 at levels 3-4, +3 at level 5", "prestige path", "Cracked", "Fractured", "Exposed", "18-20"].forEach(x => vero(e.includes(x), "manca: " + x));
+  ["2 (level 1), 4 (level 2)", "+1 at levels 1-2, +2 at levels 3-4, +3 at level 5", "prestige path", "Cracked", "Fractured", "Exposed", "18-20", "Kinetic Charge", "two turns in a row", "which set to prepare"].forEach(x => vero(e.includes(x), "manca: " + x));
   eq(errori, [], "errori"); await chiudi();
 });
 caso("Gioco in inglese: una tecnica nuova si usa senza errori e con i testi inglesi", async (b) => {
@@ -505,14 +618,24 @@ caso("Gioco in inglese: una tecnica nuova si usa senza errori e con i testi ingl
   vero(/too powerful/.test(await diario(page)), "manca il testo inglese dei boss"); eq(errori, [], "errori"); await chiudi();
 });
 
+caso("Gioco in inglese: Muro di Assorbimento con i testi inglesi dello scudo", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ equipaggiamento: SPADA_SCUDO }), PARTITA({ livello: 2, usate: { riposo: "sbloccato", tecPreparate: ["polso", "morso_acciaio", "vipera", "muro"] } }));
+  await page.evaluate(() => localStorage.setItem("lingua", "en")); await page.reload(); await page.waitForTimeout(500);
+  await page.evaluate(() => avviaScontro("mastino", { primo: "pg", soffioScarico: true })); await aspettaTurnoPg(page);
+  await accoda(page, [R(1, 6), R(19, 20), R(4, 4)], [0.1, 0.99]);
+  await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "muro"))); await aspettaTurnoPg(page);
+  const d = await diario(page); vero(/swallows the blow/.test(d) && /Kinetic Charges/.test(d), "mancano i testi inglesi"); eq(errori, [], "errori"); await chiudi();
+});
+
 (async () => {
   const browser = await chromium.launch();
   let ko = 0;
-  for (const { nome, fn } of casi) {
+  const scelti = process.env.SOLO ? casi.filter(c => c.nome.includes(process.env.SOLO)) : casi; /* SOLO="Scudo" per lanciarne solo alcuni */
+  for (const { nome, fn } of scelti) {
     try { await fn(browser); console.log("OK     " + nome); }
     catch (e) { ko++; console.log("ERRORE " + nome + "\n       → " + e.message.split("\n")[0]); }
   }
   await browser.close();
-  console.log(`\n${casi.length - ko} / ${casi.length} superati`);
+  console.log(`\n${scelti.length - ko} / ${scelti.length} superati`);
   process.exit(ko ? 1 : 0);
 })();

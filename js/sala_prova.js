@@ -10,7 +10,7 @@
    ===================================================================== */
 (function () {
   if (!window.MODALITA_PROVA) return;
-  const C = window.Combattimento, TEC = window.TECNICHE || [], R = window.Regole;
+  const C = window.Combattimento, M = window.MagiaCombattimento, MG = window.MAGIA, TEC = window.TECNICHE || [], R = window.Regole;
   const $ = (id) => document.getElementById(id);
   const mod = (v) => Math.floor((Number(v) - 10) / 2);
   const fmt = (n) => (n < 0 ? "−" : "+") + Math.abs(n);
@@ -32,9 +32,12 @@
     ettore: { nome: "Ettore (boss)", ca: 13, dadoVita: 8, dannoDado: 6, attacco: 1, boss: true, probPresa: 0, probSoffio: 0, soffio: null, arma: true, resa: true },
     manichino: { nome: "Manichino (non attacca)", ca: 12, pv: 60, boss: false, passivo: true, arma: false }
   };
-  const NOMI_EFF = { sanguina: "Sanguinamento", frattura: "Frattura", intontito: "Intontito", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Senza attacchi speciali", frastornato: "Frastornato", bloccato: "Stordito", guardia: "Guardia alzata", furore: "Furore inarrestabile", esposto: "Esposto", precisione: "Mille Soli", baluardo: "Baluardo d'Acciaio", fortezza: "Fortezza Eterna" };
+  const NOMI_EFF = { sanguina: "Sanguinamento", frattura: "Frattura", intontito: "Intontito", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Senza attacchi speciali", frastornato: "Frastornato", bloccato: "Stordito", guardia: "Guardia alzata", furore: "Furore inarrestabile", esposto: "Esposto", precisione: "Mille Soli", baluardo: "Baluardo d'Acciaio", fortezza: "Fortezza Eterna", runa: "Runa sull'arma", occhio: "Occhio del Tomo", tomo: "Tomo Proibito", quiete: "Quiete Assoluta", muro: "Muro di forza", scudo: "Scudo", invuln: "Invulnerabilità", pressione: "Pressione", parola: "Parola Vera", santuario: "Santuario", voto: "Voto di Luce", gemella: "Ombra Gemella", cerchio: "Cerchio del Focolare", fiamma: "Fiamma Calda", notte: "Notte Senza Fine", furia: "Furia Cinerea", manto: "Manto d'Ombra", seconda: "Seconda Vita", accecato: "Accecato", avvizzito: "Avvizzito", paura: "Terrore", corona: "Corona di Raggi" };
   const DESC_EFF = { frattura: "1d4 danni a ogni suo attacco", intontito: "niente critici", debole: "−2 per colpire", sbilanciato: "−2 alla Classe armatura", silenzio: "niente Presa né Soffio", frastornato: "−4 per colpire, niente critici", bloccato: "salta il prossimo turno", furore: "+4 ai tiri salvezza e alle prove contrapposte", esposto: "i tuoi attacchi fanno critico con un numero in meno, mai sotto 18", precisione: "i tuoi attacchi fanno critico da 18 a 20" };
-  const EFF_PG = ["guardia", "baluardo", "fortezza", "furore", "precisione"];
+  const EFF_PG = ["guardia", "baluardo", "fortezza", "furore", "precisione", "scudo", "muro", "invuln", "runa", "occhio", "tomo", "quiete", "santuario", "voto", "gemella", "cerchio", "fiamma", "notte", "furia", "manto", "seconda"];
+  const arcanista = () => !!pg && (pg.classe === "arcanista" || pg.classe === "monaco"); /* incantatori: mana o punti fede */
+  const monaco = () => !!pg && pg.classe === "monaco";
+  const SCUOLE = () => (monaco() ? ["luce", "ombra"] : ["arcano", "forza"]);
 
   /* ---------- dadi: coda truccata, poi caso ---------- */
   const coda = [];
@@ -45,12 +48,18 @@
   const preparate = new Set(); let perRiposo = {};
 
   function leggiPg() {
+    const p = leggiPgBase();
+    p.classe = $("pClasse") ? $("pClasse").value : "guerriero";
+    if (p.classe === "arcanista" || p.classe === "monaco") { p.mente = Number($("pMen").value); p.modM = mod(p.mente); p.iraMax = C.iraMax(p.modM, p.liv); } /* il mana cresce come l'ira: 10 + Mente, poi Mente + livello a ogni salita */
+    return p;
+  }
+  function leggiPgBase() {
     const liv = Number($("pLiv").value), vig = Number($("pVig").value), agi = Number($("pAgi").value), arma = ARMI[Number($("pArma").value)];
     const modV = mod(vig);
     const pvMax = Number($("pPv").value) || (20 + modV + (liv - 1) * Math.max(1, 6 + modV));
     return { liv, vig, modV, modAgi: mod(agi), ca: Number($("pCa").value) || 14, arma, scudo: $("pScudo").checked, via: liv >= 3 ? $("pVia").value || null : null, serie: $("pSerie").value === "scudo" ? "scudo" : "arma", pvMax, iraMax: C.iraMax(modV, liv) };
   }
-  const caPg = () => pg.ca + (s && C.attivo(s, "guardia") ? Number(s.guardiaVal) || 0 : 0);
+  const caPg = () => pg.ca + (s && C.attivo(s, "guardia") ? Number(s.guardiaVal) || 0 : 0) + (s && C.attivo(s, "scudo") ? 2 : 0) + (s && C.attivo(s, "muro") ? 3 : 0) + (s && C.attivo(s, "cerchio") ? 2 : 0);
   const caNem = () => nem.ca - (s ? C.malusCA(s) : 0); /* Sbilanciato e Incrinatura */
   const tipoOk = (t) => t.tipo === "Utilita" || (t.tipo === "Scudo" ? pg.scudo : t.tipo === pg.arma.tipo);
   const opzioni = () => TEC.filter(t => t.tipo !== "Utilita" && !t.via && t.liv <= pg.liv && (t.tipo === pg.arma.tipo || (t.tipo === "Scudo" && pg.scudo)));
@@ -60,7 +69,17 @@
   const ignoraPosti = () => $("pIgnora").checked;
   const prepT = () => [...preparate].map(id => TEC.find(t => t.id === id)).filter(Boolean);
 
+  const passoDado = (d) => (d >= 12 ? 12 : d + 2); /* Runa sull'Arma: 1d6 → 1d8 → 1d10 → 1d12 */
   function ctx() {
+    const c = ctxBase();
+    if (arcanista()) Object.assign(c, {
+      modAtt: pg.modM, modDanno: pg.modM, cd: 8 + pg.modM + pg.liv, dado: s && C.attivo(s, "runa") ? passoDado(pg.arma.dado) : pg.arma.dado,
+      manaPiu: (n) => { const r = Math.min(n, pg.iraMax - pg.ira); pg.ira += r; return r; }, dannoMente: (n) => n,
+      cura: (n) => { const f = Math.min(n, pg.pvMax - pg.pv); pg.pv += f; return f; }, pvMancanti: () => pg.pvMax - pg.pv, dannoCorpo: (n) => { const f = Math.min(n, pg.pv - 1); pg.pv -= f; return f; }
+    });
+    return c;
+  }
+  function ctxBase() {
     return {
       tira, liv: pg.liv, modAtt: pg.modV, modDanno: pg.modV, dado: pg.arma.dado, ca: caNem, boss: nem.boss,
       cd: 8 + pg.modV + pg.liv, modTs: mod(nem.vigore),
@@ -133,7 +152,7 @@
         case "ondaVuota": r.push("Egida: nessuna Carica, nessuna onda."); break;
         case "difesaDiFila": r.push("Non puoi usare una difesa dello scudo due turni di fila."); break;
         case "senzaCariche": r.push("Servono Cariche Cinetiche."); break;
-        default: r.push(JSON.stringify(e));
+        default: r.push((M && M.testo(e)) || JSON.stringify(e));
       }
     });
     return r;
@@ -160,7 +179,13 @@
     disegna();
   }
   /* danni al personaggio: la Fortezza Eterna può lasciarti a 1 */
-  function ferisci(dn, righe) { const f = C.fortezza(s, dn, pg.pv); pg.pv -= f.danno; righe.push(...testoEventi(f.eventi)); return f.danno; }
+  function ferisci(dn, righe) {
+    if (C.attivo(s, "invuln")) { righe.push("Invulnerabilità: nessun danno."); return 0; }
+    const f = C.fortezza(s, dn, pg.pv), sv = M ? M.secondaVita(s, f.danno, pg.pv, ctx()) : { danno: f.danno, eventi: [] };
+    pg.pv -= sv.danno; righe.push(...testoEventi(f.eventi), ...testoEventi(sv.eventi));
+    if (sv.cura) pg.pv = Math.min(pg.pvMax, pg.pv + sv.cura);
+    return sv.danno;
+  }
   function dopoAzione() {
     turnoPg = false;
     if (controllaFine()) return disegna();
@@ -179,8 +204,10 @@
     if (!turnoPg || finito) return;
     const pre = s.prossimo || {}; s.prossimo = null;
     const c = ctx(), e = C.colpo(s, c, { base: true, bonus: pre.bonus || 0, piuDadi: pre.piuDadi || 0 });
-    if (e.crit) c.iraPiu(2);
-    blocco("Attacco normale", [...testoEventi([e]), e.crit ? "Tuo critico: +2 ira." : ""], e.ok ? "mia" : "");
+    if (e.crit && !arcanista()) c.iraPiu(2);
+    const runa = e.ok && arcanista() && C.attivo(s, "runa") ? testoEventi([C.incidi(s, c, 1)]) : [];
+    if (e.ok && arcanista() && C.attivo(s, "voto")) { const x = tira(4); s.pv -= x; pg.pv = Math.min(pg.pvMax, pg.pv + 1); runa.push(M.testo({ k: "votoColpo", d: x, cura: 1 })); }
+    blocco("Attacco normale", [...testoEventi([e]), ...runa, e.crit && !arcanista() ? "Tuo critico: +2 ira." : ""], e.ok ? "mia" : "");
     dopoAzione();
   }
   function usaTecnica(t) {
@@ -197,9 +224,21 @@
     blocco(`${t.nome.it} (−${costo} ira)`, [...testoEventi(r.eventi), crit ? `Tuo critico: +${2 * crit} ira.` : "", `Ira: ${pg.ira}/${pg.iraMax}.`], "mia");
     dopoAzione();
   }
+  function usaIncantesimo(inc) {
+    if (!turnoPg || finito || !arcanista()) return;
+    const c = ctx();
+    const disp = M.disponibile(inc, s, c); if (!disp.ok) return log(`${inc.nome.it}: ${M.testo({ k: disp.motivo })}`, "ko");
+    const costo = M.costo(inc, s);
+    if (pg.ira < costo) return log(`${inc.nome.it}: servono ${costo} mana, ne hai ${pg.ira}.`, "ko");
+    pg.ira -= costo;
+    const r = M.lancia(inc, s, c);
+    blocco(`${inc.nome.it} (−${costo} ${monaco() ? "fede" : "mana"})`, [...testoEventi(r.eventi), `${monaco() ? "Fede" : "Mana"}: ${pg.ira}/${pg.iraMax}.`], "mia");
+    dopoAzione();
+  }
   function turnoNemico() {
     const c = ctx(), righe = [];
     const t = C.tickSangue(s, c); if (t) righe.push(`Sanguinamento: ${t.d} danni (d${t.dado}).`);
+    if (M && M.haTick(s)) M.inizioTurnoNemico(s, c).forEach(e => righe.push(M.testo(e)));
     if (s.pv <= 0) { blocco("Turno del nemico", righe, "nem"); return; }
     /* Frattura: 1d4 prima di ogni attacco del nemico (anche Presa e Soffio) */
     const frattura = () => { const f = C.frattura(s, c); if (f) righe.push(`Frattura: ${f.d} danni prima di attaccare.`); return s.pv <= 0; };
@@ -211,27 +250,28 @@
       if (nem.soffio && !s.soffioPronto) { const x = tira(6); s.soffioPronto = x >= nem.soffio.ricarica; righe.push(`Ricarica del soffio: d6 ${x} → ${s.soffioPronto ? "carico" : "scarico"}.`); }
       if (nem.soffio && s.soffioPronto && !C.attivo(s, "silenzio") && (Math.random() < nem.probSoffio || $("nSoffio").checked)) {
         fatto = true; s.soffioPronto = false;
-        const m = pg.modAgi + (C.attivo(s, "furore") ? 4 : 0), d = tira(20), tot = d + m;
+        const m = pg.modAgi + (C.attivo(s, "furore") ? 4 : 0) + (M ? M.bonusTsPg(s) : 0), d = tira(20), tot = d + m;
         if (tot >= nem.soffio.cd) righe.push(`Soffio Infuocato: tiro salvezza d20 ${d} ${fmt(m)} = ${tot} contro CD ${nem.soffio.cd} → schivato.`);
         else {
-          const tiri = Array.from({ length: nem.soffio.dadi }, () => tira(nem.soffio.dado)), dn = tiri.reduce((a, b) => a + b, 0);
-          const g = C.iraPerColpo(pg.liv, false); pg.ira = Math.min(pg.iraMax, pg.ira + g);
+          const tiri = Array.from({ length: nem.soffio.dadi }, () => tira(nem.soffio.dado)), dn0 = tiri.reduce((a, b) => a + b, 0), dn = C.attivo(s, "cerchio") ? Math.floor(dn0 / 2) : dn0;
+          const g = arcanista() ? 0 : C.iraPerColpo(pg.liv, false); pg.ira = Math.min(pg.iraMax, pg.ira + g);
           righe.push(`Soffio Infuocato: tiro salvezza d20 ${d} ${fmt(m)} = ${tot} contro CD ${nem.soffio.cd} → preso, ${dn} danni [${tiri.join("+")}]. +${g} ira.`);
           ferisci(dn, righe);
         }
       }
       if (!fatto) {
         const morso = nem.arma ? false : Math.random() < 0.5 || $("nMorso").checked, nome = nem.arma ? "Spada" : morso ? "Morso" : "Zampata";
-        const m = mod(nem.vigore) + (nem.attacco || 0) + C.modAttaccoNem(s), d = tira(20), tot = d + m, ca = caPg(), crit = d === 20 && C.critNemPossibile(s), ok = crit || tot > ca;
+        const m = mod(nem.vigore) + (nem.attacco || 0) + C.modAttaccoNem(s), at = C.tiroAttaccoNem(s, c), d = at.d, tot = d + m, ca = caPg(), crit = d === 20 && C.critNemPossibile(s), ok = crit || tot > ca;
+        if (at.tiri) righe.push(`Due d20, tiene il peggiore: ${at.tiri[0]} e ${at.tiri[1]}.`);
         if (!ok) { righe.push(`${nome}: mancato (d20 ${d} ${fmt(m)} = ${tot} contro la tua CA ${ca}). Nessuna ira.`); righe.push(...testoEventi(C.colpoMancato(s, c))); }
         else if (!s.parata) { /* scudo, Baluardo, Marea Elastica: il danno si tira prima */
           const nd = crit ? 2 : 1, tiri = Array.from({ length: nd }, () => tira(nem.dannoDado)), pieno = Math.max(1, tiri.reduce((a, b) => a + b, 0) + m);
           const sub = C.colpoSubito(s, c, crit, pieno);
           righe.push(`${nome}: ${crit ? "CRITICO" : "colpito"} (d20 ${d} ${fmt(m)} = ${tot} contro CA ${ca}), ${pieno} danni [${tiri.join("+")}].`, ...testoEventi(sub.eventi));
           const fatto = sub.danno > 0 ? ferisci(sub.danno, righe) : 0;
-          pg.ira = Math.min(pg.iraMax, pg.ira + sub.ira);
-          righe.push(`Subisci ${fatto} danni. +${sub.ira} ira.`);
-          if (morso && !sub.annullato && !s.presaUsata && !C.attivo(s, "silenzio") && !C.presaBloccata(s) && (Math.random() < nem.probPresa || $("nPresa").checked)) {
+          if (!arcanista()) pg.ira = Math.min(pg.iraMax, pg.ira + sub.ira);
+          righe.push(`Subisci ${fatto} danni.${arcanista() ? "" : ` +${sub.ira} ira.`}`);
+          if (morso && !sub.annullato && !s.presaUsata && !C.attivo(s, "silenzio") && !C.presaBloccata(s) && !C.attivo(s, "muro") && (Math.random() < nem.probPresa || $("nPresa").checked)) {
             s.presaUsata = true;
             if (frattura()) { blocco("Turno del nemico", righe, "nem"); return; }
             const a = tira(20) + pg.modV + (C.attivo(s, "furore") ? 4 : 0), b = tira(20) + mod(nem.vigore);
@@ -244,9 +284,9 @@
           if (sub.annullato) righe.push(`${nome}: colpirebbe (d20 ${d} ${fmt(m)} = ${tot} contro CA ${ca}), ma la Parata lo annulla: 0 danni, nessuna ira.`, ...testoEventi(sub.eventi.filter(e => e.k === "stato" || e.k === "crepe")), ...sub.eventi.filter(e => e.k === "contrattacco").map(e => `Contrattacco${e.dCrit ? ` (critico 18-20: d20 ${e.dCrit} → ${e.crit ? "CRITICO" : "no"})` : ""}: ${e.tiri.length}d${e.dado} [${e.tiri.join("+")}] ${fmt(e.mm)} = ${e.danno} danni.`));
           else {
             const nd = crit ? 2 : 1, tiri = Array.from({ length: nd }, () => tira(nem.dannoDado)), dn = Math.max(1, tiri.reduce((a, b) => a + b, 0) + m);
-            pg.pv -= dn; pg.ira = Math.min(pg.iraMax, pg.ira + sub.ira);
+            pg.pv -= dn; if (!arcanista()) pg.ira = Math.min(pg.iraMax, pg.ira + sub.ira);
             righe.push(`${nome}: ${crit ? "CRITICO" : "colpito"} (d20 ${d} ${fmt(m)} = ${tot} contro CA ${ca}), ${dn} danni [${tiri.join("+")}]. +${sub.ira} ira.`);
-            if (morso && !s.presaUsata && !C.attivo(s, "silenzio") && (Math.random() < nem.probPresa || $("nPresa").checked)) {
+            if (morso && !s.presaUsata && !C.attivo(s, "silenzio") && !C.attivo(s, "muro") && (Math.random() < nem.probPresa || $("nPresa").checked)) {
               s.presaUsata = true;
               if (frattura()) { blocco("Turno del nemico", righe, "nem"); return; }
               const a = tira(20) + pg.modV + (C.attivo(s, "furore") ? 4 : 0), b = tira(20) + mod(nem.vigore);
@@ -258,13 +298,14 @@
       }
     }
     const scaduti = C.fineTurnoNemico(s);
+    if (M) M.scaduti(s, scaduti, c).forEach(e => righe.push(M.testo(e)));
     if (scaduti.length) righe.push("Svaniscono: " + scaduti.map(k => NOMI_EFF[k] || k).join(", ") + ".");
     blocco("Turno del nemico", righe, "nem");
   }
   function riposa() {
     if (!pg) pg = leggiPg();
     perRiposo = {}; pg.ira = pg.iraMax; pg.pv = pg.pvMax;
-    log("Riposo: ira e salute piene, le tecniche «una volta per riposo» tornano disponibili.", "sis"); disegna();
+    log("Riposo: " + (arcanista() ? "mana" : "ira") + " e salute piene, le tecniche «una volta per riposo» tornano disponibili.", "sis"); disegna();
   }
 
   /* ---------- interfaccia ---------- */
@@ -273,12 +314,14 @@
     const att = chiavi.filter(k => s && s.eff[k] > 0);
     return att.map(k => [k === "sanguina" ? (Number(s.sangueDado) === 6 ? "Emorragia 1d6" : "Sanguinamento 1d4") + (s.marchio ? " · marchiato" : "") : NOMI_EFF[k] + (k === "esposto" && s.segno ? " · segnato" : ""), C.perScontro(s.eff[k]) ? "tutto lo scontro" : durata(s.eff[k])]);
   }
+  const bilanciaTesto = () => { const v = (s && s.bilancia) || 0; return v === 0 ? "equilibrio" : v > 0 ? `Luce ${v}${v === 3 ? " · Zenit" : v === 2 ? " · Aureola" : ""}` : `Ombra ${-v}${v === -3 ? " · Nadir" : v === -2 ? " · Velo" : ""}`; };
+  const sigilliNem = () => (s && C.sigilli(s) ? [["Sigilli", `${C.sigilli(s)}/${C.sigilliMax({ boss: nem.boss })}`]] : []);
   const crepeNem = () => { if (!s || !C.crepe(s)) return []; const max = C.crepeMax({ boss: nem.boss }); return [["Incrinatura" + (s.sigillo && C.crepe(s) >= max ? " · sigillo" : ""), `${C.crepe(s)}/${max} cariche (−${C.crepe(s)} CA)`]]; };
   function disegna() {
     if (!pg) pg = leggiPg();
     const st = pg.pv != null ? pg : { ...pg, pv: pg.pvMax, ira: pg.iraMax };
-    scheda($("svPg"), [["Salute", `${st.pv} / ${pg.pvMax}`], ["Ira", `${st.ira} / ${pg.iraMax}`], ["CA", String(s ? caPg() : pg.ca)], ["CD dei tuoi effetti", String(8 + pg.modV + pg.liv)], ["Ira per colpo subito", `${C.iraPerColpo(pg.liv, false)} (critico ${C.iraPerColpo(pg.liv, true)})`], ...effetti(EFF_PG), ...(s && s.parata ? [["Parata", "pronta"]] : []), ...(s && C.cariche(s) ? [["Carica Cinetica", `${C.cariche(s)}/${C.CARICHE_MAX}${s.elastica && C.cariche(s) >= 2 ? " · elastica" : ""}`]] : []), ...(s && s.assorbe ? [["Scudo", `pronto (${s.assorbe.tipo})`]] : []), ...(s && s.difesaBloccata ? [["Difesa dello scudo", "non questo turno"]] : []), ...(s && s.sconto ? [["Sconto", `−${s.sconto} ira`]] : [])]);
-    if (nem) scheda($("svNem"), [["Nemico", nem.nome + (nem.boss ? " — BOSS" : "")], ["Salute", `${Math.max(0, s.pv)} / ${s.pvMax}`], ["CA", String(caNem())], ...(nem.soffio ? [["Soffio", s.soffioPronto ? "carico" : "scarico"]] : []), ...crepeNem(), ...effetti(["sanguina", "frattura", "esposto", "debole", "sbilanciato", "silenzio", "frastornato", "intontito", "bloccato"])]);
+    scheda($("svPg"), [["Salute", `${st.pv} / ${pg.pvMax}`], [arcanista() ? (monaco() ? "Punti fede" : "Mana") : "Ira", `${st.ira} / ${pg.iraMax}`], ["CA", String(s ? caPg() : pg.ca)], ["CD dei tuoi effetti", String(8 + (arcanista() ? pg.modM : pg.modV) + pg.liv)], ...(arcanista() ? (monaco() ? [["Fede per Crepuscolo", `${M.recupero(pg.liv)} (doppio da Nadir)`], ["Bilancia", bilanciaTesto()]] : [["Mana per Detonazione", `${M.recupero(pg.liv)} (doppio con i Sigilli al massimo)`]]) : [["Ira per colpo subito", `${C.iraPerColpo(pg.liv, false)} (critico ${C.iraPerColpo(pg.liv, true)})`]]), ...effetti(EFF_PG), ...(s && s.parata ? [["Parata", "pronta"]] : []), ...(s && C.cariche(s) ? [["Carica Cinetica", `${C.cariche(s)}/${C.CARICHE_MAX}${s.elastica && C.cariche(s) >= 2 ? " · elastica" : ""}`]] : []), ...(s && s.assorbe ? [["Scudo", `pronto (${s.assorbe.tipo})`]] : []), ...(s && s.difesaBloccata ? [["Difesa dello scudo", "non questo turno"]] : []), ...(s && s.sconto ? [["Sconto", `−${s.sconto} ira`]] : [])]);
+    if (nem) scheda($("svNem"), [["Nemico", nem.nome + (nem.boss ? " — BOSS" : "")], ["Salute", `${Math.max(0, s.pv)} / ${s.pvMax}`], ["CA", String(caNem())], ...(nem.soffio ? [["Soffio", s.soffioPronto ? "carico" : "scarico"]] : []), ...crepeNem(), ...sigilliNem(), ...(s && s.caMeno ? [["Spezzato", `CA −${s.caMeno} per tutto lo scontro`]] : []), ...(s && s.filo ? [["Filo di Rune", C.sigilli(s) >= 2 ? "attivo: −2 a colpirti" : "in attesa di 2 Sigilli"]] : []), ...(s && s.demolitore ? [["Demolitore", "ogni Detonazione fa Sbilanciato 1"]] : []), ...effetti(["sanguina", "frattura", "esposto", "debole", "sbilanciato", "silenzio", "frastornato", "intontito", "bloccato", "pressione", "parola", "accecato", "avvizzito", "paura", "corona"])]);
     else scheda($("svNem"), [["Nemico", "—"]]);
     /* posti e tecniche */
     const prep = prepT(), max = C.slotTecniche(pg.liv, pg.scudo);
@@ -299,12 +342,30 @@
     lista.append(el("h4", { text: `Tecniche sbloccate (${pg.arma.tipo.toLowerCase()}${pg.scudo ? " + scudo" : ""})` }));
     opzioni().forEach(t => riga(t, "base"));
     if (pg.liv >= 3) { lista.append(el("h4", { text: pg.via ? `Via di ${pg.via === "aldo" ? "Aldo — Lama del Guardiano" : "Guendalina — Veglia"}, serie ${pg.serie === "scudo" ? "dello scudo" : "dell'arma"} (non occupa posti${dellaVia().length ? "" : "; nessuna abilità per quest'arma"})` : "Via di prestigio: nessuna scelta" })); dellaVia().forEach(t => riga(t, "via")); }
+    if (arcanista()) { /* niente preparazione: tutti gli incantesimi sbloccati sono usabili */
+      $("svPosti").textContent = "Tutti gli incantesimi sbloccati sono usabili (la preparazione ai posti non si prova qui). Il costo si paga in " + (monaco() ? "punti fede" : "mana") + ".";
+      lista.replaceChildren();
+      const sc2 = SCUOLE(), sblocc = MG.INCANTESIMI.filter(i => sc2.includes(i.scuola) && i.liv <= pg.liv), NS = { arcano: "Arcano", forza: "Forza", luce: "Luce", ombra: "Ombra" };
+      const rigaInc = (inc, etichetta) => {
+        const costoR = s ? M.costo(inc, s) : inc.costo;
+        const usata = M.UNA_PER_RIPOSO.includes(inc.id) && perRiposo[inc.id];
+        const ok = !finito && turnoPg && s && pg.ira >= costoR && !usata && M.disponibile(inc, s, ctx()).ok;
+        const b = el("button", { type: "button", class: "mini", "data-inc": inc.id, onclick: () => usaIncantesimo(inc) }, "Lancia");
+        b.disabled = !ok;
+        lista.append(el("div", { class: "tec" }, el("span", { class: "sx" }, el("b", { text: inc.nome.it }), el("small", { text: ` liv. ${inc.liv} · ${costoR} ${monaco() ? "fede" : "mana"}${M.UNA_PER_RIPOSO.includes(inc.id) ? " · una per riposo" : ""}${etichetta ? " · " + etichetta : ""}` })), b, el("p", { class: "eff", text: inc.effetto.it })));
+      };
+      sc2.forEach(sc => { lista.append(el("h4", { text: NS[sc] })); sblocc.filter(i => i.scuola === sc).forEach(i => rigaInc(i)); });
+      if (pg.liv >= 3) {
+        lista.append(el("h4", { text: pg.via ? `Via ${monaco() ? (pg.via === "aldo" ? "Cenere (Ombra)" : "Brace (Luce)") : (pg.via === "aldo" ? "Frattura (Forza)" : "Sutura (Arcano)")}` : "Via di prestigio: sceglila nel pannello a sinistra" }));
+        if (pg.via) MG.VIE.filter(v => v.via === pg.via && sc2.includes(v.scuola) && v.liv <= pg.liv).forEach(i => rigaInc(i, "via"));
+      }
+    }
     $("svAttacca").disabled = finito || !turnoPg;
     $("pVia").disabled = Number($("pLiv").value) < 3; $("pSerie").disabled = Number($("pLiv").value) < 3;
   }
   function mostraCoda() { const c = $("svCodaVis"); if (c) c.textContent = coda.length ? `In coda: ${coda.join(", ")}` : "Coda vuota: i dadi tirano a caso."; }
   function eseguiTest() {
-    const esiti = window.TestCombattimento.esegui(), ko = esiti.filter(e => !e.ok);
+    const esiti = window.TestCombattimento.esegui().concat(window.TestMagiaCombattimento ? window.TestMagiaCombattimento.esegui() : []), ko = esiti.filter(e => !e.ok);
     const box = $("svTest"); box.replaceChildren(el("p", { class: ko.length ? "ko" : "ok", text: `${esiti.length - ko.length} / ${esiti.length} test superati` }));
     const ul = el("ul"); esiti.forEach(e => ul.append(el("li", { class: e.ok ? "ok" : "ko", text: `${e.ok ? "OK" : "ERRORE"} — ${e.nome}${e.ok ? "" : " → " + e.errore}` }))); box.append(ul);
     window.esitiTestCombattimento = esiti;
@@ -319,11 +380,12 @@
     const chk = (id, et, on) => { const c = el("input", { id, type: "checkbox" }); c.checked = !!on; return el("label", { class: "campo chk" }, c, el("span", { text: et })); };
     const app = el("div", { class: "sala" },
       el("header", {}, el("h1", { text: "Sala di prova — combattimento" }), el("a", { href: "tutorial.html", text: "Torna al tutorial" })),
-      el("section", { class: "pannello" }, el("h2", { text: "Personaggio (Guerriero)" }),
+      el("section", { class: "pannello" }, el("h2", { text: "Personaggio" }),
+        campo("Classe", sel("pClasse", [["guerriero", "Guerriero (tecniche e ira)"], ["arcanista", "Arcanista (incantesimi, Sigilli e mana)"], ["monaco", "Monaco (Luce e Ombra, Bilancia e punti fede)"]], "guerriero")), campo("Mente (Arcanista) o Spirito (Monaco)", num("pMen", 16, 8, 20)),
         campo("Livello", sel("pLiv", [1, 2, 3, 4, 5].map(n => [n, n]), 1)), campo("Vigore", num("pVig", 16, 8, 20)), campo("Agilità", num("pAgi", 12, 8, 20)),
         campo("Classe armatura", num("pCa", 14, 8, 25)), campo("Salute (vuoto = calcolata)", num("pPv", "", 1, 200)),
         campo("Arma", sel("pArma", ARMI.map((a, i) => [i, `${a.nome} · 1d${a.dado} ${a.tipo.toLowerCase()}`]), 0)), chk("pScudo", "Scudo imbracciato"),
-        campo("Via di prestigio (dal livello 3)", sel("pVia", [["", "nessuna"], ["aldo", "Aldo — Lama del Guardiano"], ["guendalina", "Guendalina — Veglia"]], "")),
+        campo("Via di prestigio (dal livello 3)", sel("pVia", [["", "nessuna"], ["aldo", "Aldo — Lama del Guardiano (Arcanista: Frattura · Monaco: Cenere)"], ["guendalina", "Guendalina — Veglia (Arcanista: Sutura · Monaco: Brace)"]], "")),
         campo("Serie della via (si sceglie al riposo)", sel("pSerie", [["arma", "dell'arma"], ["scudo", "dello scudo"]], "arma")),
         chk("pIgnora", "Ignora i posti (usa qualsiasi tecnica sbloccata)", true),
         el("h2", { text: "Nemico" }),
@@ -342,7 +404,7 @@
       el("section", { class: "pannello" }, el("h2", { text: "Tu" }), el("dl", { id: "svPg" }), el("h2", { text: "Nemico" }), el("dl", { id: "svNem" }),
         el("h2", { text: "Tecniche" }), el("p", { class: "nota", id: "svPosti" }), el("div", { id: "svTec" })));
     document.body.replaceChildren(app);
-    ["pLiv", "pVig", "pAgi", "pCa", "pPv", "pArma", "pScudo", "pVia", "pSerie", "pIgnora"].forEach(id => $(id).addEventListener("change", () => {
+    ["pClasse", "pMen", "pLiv", "pVig", "pAgi", "pCa", "pPv", "pArma", "pScudo", "pVia", "pSerie", "pIgnora"].forEach(id => $(id).addEventListener("change", () => {
       const vecchio = pg; pg = leggiPg();
       if (vecchio && s && !finito) { pg.pv = Math.min(vecchio.pv, pg.pvMax); pg.ira = Math.min(vecchio.ira, pg.iraMax); log("Personaggio cambiato a scontro in corso: valido dal prossimo tiro.", "sis"); }
       [...preparate].forEach(id => { const t = TEC.find(x => x.id === id); if (!t || t.liv > pg.liv) preparate.delete(id); });
@@ -351,6 +413,6 @@
     mostraCoda(); pg = leggiPg(); disegna();
   }
   /* comandi per i test automatici del browser (Playwright): window.SalaProva */
-  window.SalaProva = { accoda: (...v) => { coda.push(...v); mostraCoda(); }, stato: () => ({ pg, nem, s, turnoPg, finito, preparate: [...preparate], perRiposo }), nuovoScontro, attaccoNormale, usa: (id) => usaTecnica(TEC.find(t => t.id === id)), riposa, eseguiTest };
+  window.SalaProva = { accoda: (...v) => { coda.push(...v); mostraCoda(); }, stato: () => ({ pg, nem, s, turnoPg, finito, preparate: [...preparate], perRiposo }), nuovoScontro, attaccoNormale, usa: (id) => usaTecnica(TEC.find(t => t.id === id)), incanta: (id) => usaIncantesimo(MG.INCANTESIMI.concat(MG.VIE).find(i => i.id === id)), riposa, eseguiTest };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", costruisci); else costruisci();
 })();

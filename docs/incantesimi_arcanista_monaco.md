@@ -371,8 +371,64 @@ Da cambiare anche i nomi delle abilità che citano personaggi: «Filo della Gove
 
 ## 14. Stato (25/10/2026, pomeriggio)
 
-- **Dati:** tutti gli incantesimi, le vie e le capacità di classe sono in `js/magia.js` (italiano e inglese), con le correzioni della sezione 10. Per ora li legge solo il regolamento; creazione e gioco usano ancora `js/incantesimi.js`.
+- **Dati:** tutti gli incantesimi, le vie e le capacità di classe sono in `js/magia.js` (italiano e inglese), con le correzioni della sezione 10. Li leggono regolamento, creazione e scheda di gioco (fase 1, sotto); `js/incantesimi.js` non è più usato da nessuna pagina.
 - **Regolamento:** sezioni per classe (Guerriero, Sciamano, Arcanista, Monaco) con tutte le tecniche e gli incantesimi, stati, avversari temibili, debolezze, enigmi ed esempi di combattimento. Le sezioni degli incantatori hanno l'avviso «in arrivo», quella dello Sciamano «in preparazione». Nessun PNG nominato nelle vie.
 - **Abilità delle vie rinominate** (prima citavano personaggi): Pugno della Casa → Colpo Demolitore, Filo della Governante → Filo di Rune, Concentrazione di Adele → Quiete Assoluta, Rabbia del Sovrano → Furia Cinerea.
 - **Attacco magico:** d20 + mod attributo, senza livello, come l'attacco con l'arma.
 - **Crescita delle risorse nel codice:** tutte (ira, natura, mana, fede) + mod attributo + nuovo livello, senza dado (`saliDiLivello` in gioco.html).
+
+---
+
+## 15. Fase 1: creazione e scheda (25/10/2026, sera)
+
+Fatto:
+- **Creazione:** scelta della scuola principale (due per classe), poi 3 incantesimi di livello 1: 2 della scuola principale e 1 dell'altra. La capacità di classe (Luce / Lume Arcano) è sempre disponibile e non occupa posti. Nel personaggio si salvano `scuola` e `incantesimi` (solo gli id di `magia.js`).
+- **Scheda:** capacità di classe, incantesimi preparati (n/posti), posti liberi con pulsante «Scegli», via di prestigio dal livello 3 (stessa finestra «Scegli per sempre» delle tecniche, provvisoria in attesa dei dialoghi con Aldo e Guendalina).
+- **Posti:** come le tecniche, 2 / 4 / 5 / 6 / 7 della scuola principale, più 1 dell'altra scuola di qualsiasi livello sbloccato. Si cambiano riposando; un posto nuovo si riempie subito.
+- **Luce nel buio:** funziona come prima (il dungeon si illumina con la capacità di classe).
+- **Vecchi incantatori:** Arcanisti e Monaci creati prima delle scuole non si possono più giocare; la pagina iniziale li segnala e si eliminano con il pulsante di sempre.
+
+Non ancora fatto:
+- **Usi fuori dallo scontro** (Scopri Carte +2 Sapienza, Manto d'Ombra +2 Furtività, ecc.).
+- **Vulnerabilità** dei nemici (Luce sui mastini, ecc.) e resistenza del sovrano all'Ombra: nessuna è ancora applicata in combattimento.
+
+## 16. Fase 2: Arcanista in combattimento (25/10/2026, sera)
+
+Fatto, in `js/magia_combattimento.js` (regole) con test in `tests/magia_combattimento.test.js` (49 casi, dadi programmati) e prove nel browser:
+- **Tutti i 30 incantesimi di Arcano e Forza e le 6 abilità delle vie Frattura e Sutura.**
+- **Sigilli:** massimo 3 (2 sui boss), per tutto lo scontro; compaiono nella scheda del nemico come rombi.
+- **Detonazione:** consuma tutti i Sigilli, +1d6 per Sigillo; recupero mana 1/1/2/2/3 per livello, doppio con il massimo dei Sigilli. Implosione e Crollo contano come indicato nei testi; Singolarità sempre doppia; Cataclisma Cinetico è una sola Detonazione.
+- **Attacco magico** d20 + Mente contro la CA, **dadi senza modificatore** (tranne Singolarità: + Mente), critico = dadi doppi (Esposto lo allarga, Occhio del Tomo e Maglio Invisibile 19-20). **Tiro salvezza** del nemico: d20 + Vigore contro 8 + Mente + livello. I boss ignorano Bloccato, Silenzio e Frastornato e usano il ripiego scritto nell'incantesimo.
+- **Difese** (Specchio di Rune, Barriera Cinetica, Respingere) consumano l'azione e non si usano due turni di fila; Scudo +2 CA, Muro di Forza +3 CA e la Presa non ti tiene; Invulnerabilità annulla ogni danno fino al tuo turno, Soffio compreso.
+- **Una volta per riposo:** Parola Vera, Singolarità, Invulnerabilità.
+- **Sala di prova** (`tutorial.html?prova`): selettore Arcanista con tutti gli incantesimi sbloccati.
+
+Scelte dove il testo non bastava (da confermare):
+1. **Senza Sigilli la Detonazione non fa nulla** (né danno né mana). L'Arcanista di sola Forza parte quindi con la sola ricarica del critico (1 Sigillo).
+2. **Spezzare il Vincolo:** Indebolito *e* CA −2 solo se il nemico fallisce il tiro salvezza.
+3. **Colpo Demolitore:** il bonus «ogni Detonazione fa Sbilanciato 1» parte solo se l'attacco colpisce.
+4. **Crollo Arcano** non è una Detonazione (nessun recupero oltre al rimborso se il nemico cade); richiede almeno 1 Sigillo, come Implosione e Singolarità.
+5. **Disfare:** la Presa del mastino si risolve subito, quindi «ti libera dalla Presa» diventa «il nemico non può più afferrarti in questo scontro».
+6. **Durate:** contano turni del nemico, come per il Guerriero (un incantesimo da «3 turni» lanciato adesso copre i suoi prossimi tre turni).
+7. **Pressione:** 1d6 forza all'inizio di ciascuno dei suoi 2 turni, insieme a Indebolito 2.
+8. **Quiete Assoluta:** senza Sigilli si paga il costo normale (con gli sconti del Tomo).
+
+## 17. Fase 3: Monaco in combattimento (25/10/2026, sera)
+
+Fatto, nello stesso motore (`js/magia_combattimento.js`), con 30 incantesimi di Luce e Ombra e le 6 abilità delle vie Cenere e Brace, 30 test nuovi e prove nel browser (gioco e sala di prova con selettore Monaco):
+- **Bilancia** da −3 (Ombra 3) a +3 (Luce 3), parte da 0 a ogni scontro, ogni incantesimo di Luce/Ombra la sposta di 1 (il valore conta *prima* del lancio). Si vede nella scheda.
+- **Aureola** (Luce 2-3): cure +2 e +1 al tiro salvezza contro il Soffio. **Velo** (Ombra 2-3): +1 dado di danno. **Zenit** (Luce 3) e **Nadir** (Ombra 3): l'incantesimo della scuola opposta è un **Crepuscolo**.
+- **Crepuscolo:** +1 dado (danno o cura), recupero di fede 1/1/2/2/3 per livello (doppio se parte da Nadir), poi la Bilancia torna a 0. **Nadir:** ogni incantesimo d'Ombra costa 1 punto di salute mentale (non letale).
+- **Stati nuovi:** Accecato (il nemico tira 2d20 e tiene il peggiore, anche per il Manto d'Ombra), Avvizzito (1d4, o 1d6 dove indicato, a inizio turno; sui boss al massimo 3 turni), Terrore (−2 ai tiri salvezza del nemico).
+- **Effetti con durata:** Santuario, Voto di Luce, Corona di Raggi, Fiamma Calda, Cerchio del Focolare, Ombra Gemella, Notte Senza Fine, Furia Cinerea, Seconda Vita (una volta per scontro).
+
+Scelte dove il testo non bastava (da confermare):
+1. **Furia Cinerea** blocca la Bilancia a Ombra 3: finché dura, gli incantesimi di Luce *non* sono Crepuscolo (altrimenti sarebbero un recupero doppio gratuito).
+2. **Eclisse** costa 1 punto mentale in ogni caso, ma non 2 se lanciata a Nadir.
+3. **Giudizio** conta i punti di Luce *prima* del lancio e poi azzera; **Abbraccio del Vuoto** porta la Bilancia a Ombra 3 anche se manca.
+4. **Ombra Gemella** si applica a ogni incantesimo del Monaco che va a segno (attacco colpito, danno senza tiro, tiro salvezza fallito), anche di Luce.
+5. **Rancore** conta i colpi che il nemico ti mette a segno in questo scontro (massimo 3), anche se poi vengono dimezzati o annullati.
+6. **Fuoco che Cura:** l'eccesso è la cura tirata meno la salute che ti mancava.
+7. **Seconda Vita** si lancia in qualunque momento del tuo turno, una volta per scontro; la cura arriva dopo il danno.
+8. **Divorare** tira un dado per ogni turno di Avvizzito rimasto; **Purificazione** non toglie bruciature perché nel gioco non esistono ancora.
+9. **Sovrano che resiste all'Ombra** e vulnerabilità: da applicare quando ci sarà lo scontro finale.

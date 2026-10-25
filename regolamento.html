@@ -32,10 +32,26 @@
     .corpo h3 { font-size: 1rem; margin: 1.1rem 0 0.35rem; font-weight: 600; }
     .corpo p, .corpo li { margin: 0.35rem 0; }
     .corpo ul, .corpo ol { padding-left: 1.2rem; margin: 0.35rem 0; }
-    /* tendine annidate (rami delle tecniche, scuole di magia) */
-    .corpo details { margin: 0.6rem 0; background: transparent; }
-    .corpo details summary { font-size: 0.98rem; padding: 0.6rem 0.9rem; }
-    .corpo details .corpo { padding: 0 0.9rem 0.8rem; }
+    /* indice a tendine, come l'indice di un libro: Parte › Capitolo › voci (rami, scuole, vie), con i puntini di guida */
+    summary { align-items: baseline; }
+    .punti { flex: 1; min-width: 1rem; margin: 0 0.1rem 0.3em; border-bottom: 1px dotted var(--muted); opacity: 0.8; }
+    summary:hover .tt { color: var(--accent); }
+    details.parte { border: 0; border-radius: 0; background: none; margin: 0 0 1.5rem; }
+    details.parte > summary { padding: 0.5rem 0.2rem; border-bottom: 1px solid var(--line); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.14em; }
+    details.parte > .corpo { padding: 0.35rem 0 0; }
+    .corpo details.cap, .corpo details.sub { border: 0; border-radius: 0; background: none; margin: 0; }
+    .corpo details.cap > summary { font-size: 1rem; padding: 0.55rem 0.2rem; }
+    .corpo details.sub > summary { font-size: 0.93rem; padding: 0.4rem 0.2rem; font-weight: 500; }
+    .corpo details.cap > .corpo, .corpo details.sub > .corpo { margin-left: 0.45rem; padding: 0.15rem 0 0.7rem 0.85rem; border-left: 1px solid var(--line); }
+    @media (max-width: 560px) {
+      body { padding-inline: 10px; }
+      .corpo details.cap > .corpo, .corpo details.sub > .corpo { margin-left: 0.15rem; padding-left: 0.5rem; }
+      th, td { padding: 0.35rem 0.3rem; }
+      .scroll td:last-child { min-width: 11rem; }
+    }
+    .azioni { display: flex; justify-content: center; gap: 0.6rem; margin: 0 0 1.4rem; }
+    .azioni button { font: inherit; font-size: 0.88rem; color: var(--muted); background: none; border: 1px solid var(--line); border-radius: 0.4rem; padding: 0.3rem 0.9rem; cursor: pointer; }
+    .azioni button:hover { color: var(--accent); border-color: var(--accent); }
     .formula { display: block; margin: 0.5rem 0; padding: 0.45rem 0.8rem; border-left: 3px solid var(--tip-line); background: var(--tip-bg); border-radius: 0 0.4rem 0.4rem 0; font-variant-numeric: tabular-nums; }
     .esempio { color: var(--muted); font-style: italic; font-size: 0.93rem; }
     .avviso { margin: 0.5rem 0; padding: 0.5rem 0.8rem; border: 1px dashed var(--line); border-radius: 0.4rem; color: var(--muted); font-size: 0.93rem; }
@@ -59,6 +75,7 @@
     <a class="torna" id="torna" href="index.html"></a>
     <h1 id="titolo"></h1>
     <p class="sotto" id="sotto"></p>
+    <div class="azioni"><button type="button" id="apriTutto"></button><button type="button" id="chiudiTutto"></button></div>
     <div id="sezioni"></div>
   </main>
 
@@ -87,7 +104,8 @@
     const H = EN ? ["Lv", "Name", "Cost", "Effect"] : ["Liv", "Nome", "Costo", "Effetto"];
     const tabella = (voci) => `<div class="scroll"><table><tr>${H.map(h => `<th>${h}</th>`).join("")}</tr>${voci.slice().sort((a, b) => a.liv - b.liv).map(v =>
       `<tr><td class="n">${v.liv}</td><td>${v.nome[L]}</td><td class="n">${v.costo}</td><td>${(v.effetto && v.effetto[L]) || ""}</td></tr>`).join("")}</table></div>`;
-    const tendina = (titolo, html) => `<details><summary>${titolo}</summary><div class="corpo">${html}</div></details>`;
+    const sommario = (titolo) => `<summary><span class="tt">${titolo}</span><span class="punti"></span></summary>`;
+    const tendina = (titolo, html) => `<details class="sub">${sommario(titolo)}<div class="corpo">${html}</div></details>`;
 
     /* Guerriero: un ramo per tipo d'arma e lo scudo, con le due vie (nomi opposti, senza i PNG che le insegnano) */
     const RAMI = [
@@ -100,19 +118,21 @@
     const ramiGuerriero = RAMI.map(([tipo, nome, vie]) => {
       const base = TEC.filter(t => t.tipo === tipo && !t.via);
       const via = (k) => TEC.filter(t => t.tipo === tipo && t.via === k);
-      return tendina(nome[L], tabella(base) + ["aldo", "guendalina"].filter(k => via(k).length).map(k => `<h3>${viaTit(vie[k])}</h3>${tabella(via(k))}`).join(""));
+      return tendina(nome[L], tabella(base) + ["aldo", "guendalina"].filter(k => via(k).length).map(k => tendina(viaTit(vie[k]), tabella(via(k)))).join(""));
     }).join("");
     const utilitaGuerriero = TEC.filter(t => t.tipo === "Utilita");
 
     /* incantatori: una tendina per scuola e per via */
     const scuola = (s) => MG ? MG.INCANTESIMI.filter(i => i.scuola === s) : [];
-    const vieClasse = (c) => MG ? ["aldo", "guendalina"].map(k => `<h3>${viaTit(MG.NOMI_VIE[c][k])}</h3>${tabella(MG.VIE.filter(v => v.via === k && MG.CLASSI[c].includes(v.scuola)))}`).join("") : "";
+    const vieClasse = (c) => MG ? ["aldo", "guendalina"].map(k => tendina(viaTit(MG.NOMI_VIE[c][k]), tabella(MG.VIE.filter(v => v.via === k && MG.CLASSI[c].includes(v.scuola))))).join("") : "";
     const tendineScuole = (c) => MG ? MG.CLASSI[c].map(s => tendina(MG.NOMI_SCUOLE[s][L], tabella(scuola(s)))).join("") + tendina(EN ? "Prestige paths" : "Vie di prestigio", vieClasse(c)) : "";
     const capacita = (c) => MG ? `<b>${MG.CAPACITA[c].nome[L]}</b> (${MG.CAPACITA[c].costo})` : "";
 
     const T = {
       it: {
         torna: "← Pagina iniziale", titolo: "Regolamento", sotto: "Le regole del gioco, da consultare quando vuoi.",
+        parte: "Parte", capitolo: "Capitolo", apri: "Apri tutto", chiudi: "Comprimi",
+        parti: [["Il personaggio", [0, 10]], ["Le classi", [4, 5, 6, 7]], ["Giocare", [2, 1, 9, 11, 12]], ["Combattimento", [3, 8]]],
         sezioni: [
           ["Il personaggio", `
             <h3>Attributi</h3>
@@ -147,11 +167,11 @@
             <p><b>Ogni prova fallita costa ${R.COSTO_PROVA_FALLITA} punto di salute mentale.</b> Scegli con cura quando tentare. Alcune prove, segnalate dal gioco, non fanno perdere salute mentale.</p>
             <p><b>Mente incrollabile</b> (Guerriero e Sciamano): dopo una prova fallita puoi spendere 1 punto ira o natura per un tiro salvezza (d20 + modificatore di Vigore per il Guerriero o di Spirito per lo Sciamano + livello, CD ${R.CD_INCROLLABILE}). Se lo superi, non perdi salute mentale.</p>
             <p><b>Una prova fallita non si può ripetere finché non riposi.</b> Quella prova resta bloccata: il gioco te lo ricorda ogni volta che provi a ripeterla, e ti avvisa prima del tiro. Dopo un riposo la prova torna disponibile. Le prove superate restano superate. Fanno eccezione le prove che il gioco indica come ripetibili.</p>
-            <h3>Enigmi</h3>
-            <p>Alcuni luoghi nascondono un enigma. Di solito una prova ti dà un indizio, poi la soluzione la scegli tu. Una scelta sbagliata costa ${R.COSTO_PROVA_FALLITA} punto di salute mentale, come una prova fallita. Se non ottieni l'indizio, qualcuno nella casa potrebbe dartelo.</p>
             <p>Il colore della tendina della tua azione ti dice cosa è successo:</p>
             <div class="tendine"><span class="t-azz">azzurra: nessuna prova</span><span class="t-ok">verde: prova superata</span><span class="t-ko">rossa: prova fallita</span></div>
-            <p>Nei dialoghi conta anche l'approccio che scegli, gentile o duro: ogni interlocutore reagisce a modo suo.</p>`],
+            <p>Nei dialoghi conta anche l'approccio che scegli, gentile o duro: ogni interlocutore reagisce a modo suo.</p>
+            <h3>Enigmi</h3>
+            <p>Alcuni luoghi nascondono un enigma. Di solito una prova ti dà un indizio, poi la soluzione la scegli tu. Una scelta sbagliata costa ${R.COSTO_PROVA_FALLITA} punto di salute mentale, come una prova fallita. Se non ottieni l'indizio, qualcuno nella casa potrebbe dartelo.</p>`],
           ["Muoversi ed esplorare", `
             <p>Il gioco si controlla scrivendo ciò che fa il tuo personaggio, con parole tue. Non servono formule precise: il gioco riconosce i verbi più comuni.</p>
             <ul>
@@ -215,20 +235,19 @@
               <li><b>Scudo</b>. <b>Carica Cinetica</b>: si guadagna quando lo scudo assorbe un colpo, al massimo 3, e dura tutto lo scontro; alcune tecniche la spendono per colpire senza tiro. Assorbire significa subire metà danni (dà l'ira normale) oppure 0 danni (non dà ira). Le tecniche di scudo che consumano l'azione non si possono usare due turni di fila.</li>
             </ul>
             <h3>Tecniche</h3>
-            ${tabella(utilitaGuerriero)}
+            ${tendina("Capacità di classe", tabella(utilitaGuerriero))}
             ${ramiGuerriero}`],
           ["Sciamano", `
             <p>Combatte con l'arma e la forza della natura. Usa i <b>punti natura</b> (${R.RISORSA_BASE} + mod. Spirito) e ha la capacità Mente incrollabile.</p>
             <p class="avviso">Le tecniche dello Sciamano sono in preparazione: arriveranno con un prossimo aggiornamento.</p>`],
           ["Arcanista", `
-            <p class="avviso">Le scuole di magia descritte qui arriveranno nel gioco con un prossimo aggiornamento. Fino ad allora l'Arcanista usa gli incantesimi che sceglie in creazione.</p>
             <p>Plasma la magia di due scuole: l'<b>Arcano</b> incide Sigilli sul nemico, la <b>Forza</b> li fa esplodere. Gli incantesimi costano mana.</p>
             <h3>Regole della classe</h3>
             <ul>
               <li><b>Mana</b>: parte da ${R.RISORSA_BASE} + mod. Mente e a ogni livello aumenta di mod. Mente + il nuovo livello.</li>
               <li><b>Scuola principale</b>: si sceglie in creazione, come il Guerriero sceglie l'arma. I posti sono ${posti()}, tra gli incantesimi sbloccati della scuola principale, più ${MG ? MG.POSTI_ALTRA_SCUOLA : 1} posto dell'altra scuola, di qualsiasi livello. Se cambi scuola principale, vale dal livello successivo. Gli incantesimi si cambiano riposando.</li>
               <li><b>Sigilli</b>: gli incantesimi d'Arcano incidono Sigilli sul nemico, al massimo ${MG ? MG.SIGILLI_MAX : 3} (${MG ? MG.SIGILLI_MAX_BOSS : 2} sugli avversari temibili). Durano tutto lo scontro. Il critico di un incantesimo di Forza incide anche 1 Sigillo.</li>
-              <li><b>Detonazione</b>: gli incantesimi di Forza che la indicano consumano tutti i Sigilli e fanno +1d6 di danno per Sigillo.</li>
+              <li><b>Detonazione</b>: gli incantesimi di Forza che la indicano consumano tutti i Sigilli e fanno +1d6 di danno per Sigillo. Senza Sigilli non c'è niente da far esplodere: niente danno in più e niente mana.</li>
               <li><b>Recupero</b>: ogni Detonazione ti restituisce ${recupero()} mana, il doppio se fa esplodere il massimo dei Sigilli.</li>
               <li>${capacita("Sapiente")}: capacità di classe, non occupa posti. Illumina il buio al posto della torcia.</li>
               <li><b>Via di prestigio</b> (dal livello 3): la Frattura o la Sutura, tre abilità sempre pronte (livelli 3, 4 e 5). La scelta è definitiva.</li>
@@ -237,7 +256,6 @@
             <h3>Incantesimi</h3>
             ${tendineScuole("Sapiente")}`],
           ["Monaco", `
-            <p class="avviso">Le scuole di magia descritte qui arriveranno nel gioco con un prossimo aggiornamento. Fino ad allora il Monaco usa gli incantesimi che sceglie in creazione.</p>
             <p>Prega due forze opposte: la <b>Luce</b> protegge e cura, l'<b>Ombra</b> ferisce di più ma chiede un prezzo alla mente. Gli incantesimi costano punti fede.</p>
             <h3>Regole della classe</h3>
             <ul>
@@ -314,6 +332,8 @@
       },
       en: {
         torna: "← Home page", titolo: "Rules", sotto: "The rules of the game, to look up whenever you like.",
+        parte: "Part", capitolo: "Chapter", apri: "Expand all", chiudi: "Collapse",
+        parti: [["The character", [0, 10]], ["The classes", [4, 5, 6, 7]], ["Playing", [2, 1, 9, 11, 12]], ["Combat", [3, 8]]],
         sezioni: [
           ["Your character", `
             <h3>Attributes</h3>
@@ -348,11 +368,11 @@
             <p><b>Every failed check costs ${R.COSTO_PROVA_FALLITA} point of mental health.</b> Choose carefully when to try. Some checks, flagged by the game, cost no mental health.</p>
             <p><b>Unshakeable Mind</b> (Warrior and Shaman): after a failed check you may spend 1 rage or nature point on a saving throw (d20 + Vigour modifier for the Warrior or Spirit for the Shaman + level, DC ${R.CD_INCROLLABILE}). On a success you lose no mental health.</p>
             <p><b>A failed check cannot be repeated until you rest.</b> That check stays locked: the game reminds you each time you try again, and warns you before the roll. After a rest it is available again. Passed checks stay passed. The exceptions are checks the game marks as repeatable.</p>
-            <h3>Riddles</h3>
-            <p>Some places hide a riddle. Usually a check gives you a clue, then you choose the solution yourself. A wrong choice costs ${R.COSTO_PROVA_FALLITA} point of mental health, like a failed check. If you miss the clue, someone in the house might give it to you.</p>
             <p>The colour of your action's drop-down tells you what happened:</p>
             <div class="tendine"><span class="t-azz">blue: no check</span><span class="t-ok">green: check passed</span><span class="t-ko">red: check failed</span></div>
-            <p>In conversations the approach you choose, kind or harsh, matters too: everyone reacts in their own way.</p>`],
+            <p>In conversations the approach you choose, kind or harsh, matters too: everyone reacts in their own way.</p>
+            <h3>Riddles</h3>
+            <p>Some places hide a riddle. Usually a check gives you a clue, then you choose the solution yourself. A wrong choice costs ${R.COSTO_PROVA_FALLITA} point of mental health, like a failed check. If you miss the clue, someone in the house might give it to you.</p>`],
           ["Moving and exploring", `
             <p>You control the game by writing what your character does, in your own words. No exact formulas are needed: the game recognises the most common verbs.</p>
             <ul>
@@ -416,20 +436,19 @@
               <li><b>Shield</b>. <b>Kinetic Charge</b>: gained when the shield absorbs a blow, up to 3, lasting the whole fight; some techniques spend it to strike with no roll. Absorbing means taking half damage (normal rage) or 0 damage (no rage). Shield techniques that use your action cannot be used two turns in a row.</li>
             </ul>
             <h3>Techniques</h3>
-            ${tabella(utilitaGuerriero)}
+            ${tendina("Class abilities", tabella(utilitaGuerriero))}
             ${ramiGuerriero}`],
           ["Shaman", `
             <p>Fights with the weapon and the strength of nature. Uses <b>nature points</b> (${R.RISORSA_BASE} + Spirit mod.) and has the Unshakeable Mind ability.</p>
             <p class="avviso">The Shaman's techniques are in preparation: they will arrive with a coming update.</p>`],
           ["Arcanist", `
-            <p class="avviso">The schools of magic described here will reach the game with a coming update. Until then the Arcanist uses the spells chosen at creation.</p>
             <p>Shapes the magic of two schools: <b>Arcane</b> carves Seals on the enemy, <b>Force</b> makes them explode. Spells cost mana.</p>
             <h3>Class rules</h3>
             <ul>
               <li><b>Mana</b>: starts at ${R.RISORSA_BASE} + Mind mod. and grows at every level by Mind mod. + the new level.</li>
               <li><b>Main school</b>: chosen at creation, as the Warrior chooses a weapon. Slots are ${posti()}, among the unlocked spells of the main school, plus ${MG ? MG.POSTI_ALTRA_SCUOLA : 1} slot from the other school, of any level. If you change main school, it applies from the next level. Spells are changed by resting.</li>
               <li><b>Seals</b>: Arcane spells carve Seals on the enemy, up to ${MG ? MG.SIGILLI_MAX : 3} (${MG ? MG.SIGILLI_MAX_BOSS : 2} on fearsome foes). They last the whole fight. A Force spell's critical also carves 1 Seal.</li>
-              <li><b>Detonation</b>: Force spells that show it spend all Seals and deal +1d6 damage per Seal.</li>
+              <li><b>Detonation</b>: Force spells that show it spend all Seals and deal +1d6 damage per Seal. With no Seals there is nothing to burst: no extra damage and no mana.</li>
               <li><b>Recovery</b>: each Detonation gives you back ${recupero()} mana, double if it detonates the maximum number of Seals.</li>
               <li>${capacita("Sapiente")}: class ability, takes no slot. Lights the dark instead of a torch.</li>
               <li><b>Prestige path</b> (from level 3): Fracture or Suture, three abilities always ready (levels 3, 4 and 5). The choice is final.</li>
@@ -438,7 +457,6 @@
             <h3>Spells</h3>
             ${tendineScuole("Sapiente")}`],
           ["Monk", `
-            <p class="avviso">The schools of magic described here will reach the game with a coming update. Until then the Monk uses the spells chosen at creation.</p>
             <p>Prays to two opposing forces: <b>Light</b> protects and heals, <b>Shadow</b> hurts more but asks a price of the mind. Spells cost faith points.</p>
             <h3>Class rules</h3>
             <ul>
@@ -519,7 +537,28 @@
     document.getElementById("torna").textContent = T.torna;
     document.getElementById("titolo").textContent = T.titolo;
     document.getElementById("sotto").textContent = T.sotto;
-    Sicuro.html(document.getElementById("sezioni"), T.sezioni.map(([t, c], i) => `<details${i === 0 ? " open" : ""}><summary>${t}</summary><div class="corpo">${c}</div></details>`).join(""));
+    /* dentro ogni capitolo, ogni titoletto (h3) di primo livello diventa una tendina; il testo prima del primo resta in vista */
+    const dividi = (html) => {
+      const tp = document.createElement("template"); tp.innerHTML = html;
+      let out = "", voce = null, buf = "";
+      const chiudi = () => { out += voce === null ? buf : `<details class="sub">${sommario(voce)}<div class="corpo">${buf}</div></details>`; buf = ""; };
+      for (const n of tp.content.childNodes) {
+        if (n.nodeName === "H3") { chiudi(); voce = n.textContent; }
+        else if (n.nodeType === 1) buf += n.outerHTML;
+      }
+      chiudi(); return out;
+    };
+    let numCap = 0;
+    Sicuro.html(document.getElementById("sezioni"), T.parti.map(([titolo, idx], p) =>
+      `<details class="parte" open><summary><span class="tt">${T.parte} ${p + 1} · ${titolo}</span></summary><div class="corpo">${idx.map(i => {
+        const [t, c] = T.sezioni[i]; numCap++;
+        return `<details class="cap"><summary><span class="tt">${T.capitolo} ${numCap}: ${t}</span><span class="punti"></span></summary><div class="corpo">${dividi(c)}</div></details>`;
+      }).join("")}</div></details>`).join(""));
+    const tutte = (aperte) => document.querySelectorAll("#sezioni details").forEach(d => { d.open = aperte || d.classList.contains("parte"); });
+    document.getElementById("apriTutto").textContent = T.apri;
+    document.getElementById("chiudiTutto").textContent = T.chiudi;
+    document.getElementById("apriTutto").onclick = () => tutte(true);
+    document.getElementById("chiudiTutto").onclick = () => tutte(false);
   </script>
 </body>
 </html>

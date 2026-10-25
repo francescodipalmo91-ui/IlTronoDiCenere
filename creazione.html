@@ -7,7 +7,7 @@
   <script src="lib/purify.min.js"></script>
   <script src="js/sicuro.js"></script>
   <script src="js/regole.js"></script>
-  <script src="js/incantesimi.js"></script>
+  <script src="js/magia.js"></script>
   <script src="js/tecniche.js"></script>
   <script src="js/lingua.js"></script>
   <link rel="stylesheet" href="tema.css">
@@ -31,6 +31,9 @@
     #incantesimi[hidden], #tecniche[hidden] { display: none; }
     #tecniche { padding-left: 2.5rem; border-left: 1px solid transparent; border-image: linear-gradient(to bottom, transparent, var(--line) 8%, var(--line) 92%, transparent) 1; }
     #lista-tecniche label { position: relative; }
+    #lista-tecniche .gruppo-tec { margin: 0.9rem 0 0.2rem; font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+    #lista-tecniche .gruppo-tec.scudo { margin-top: 1.4rem; padding-top: 0.6rem; border-top: 1px solid var(--line); }
+    #lista-tecniche label.chiusa { opacity: 0.45; cursor: not-allowed; }
     #lista-tecniche label:hover .tip, #lista-tecniche label:has(input:focus-visible) .tip { display: block; }
     #incantesimi { padding-left: 2.5rem; border-left: 1px solid transparent; border-image: linear-gradient(to bottom, transparent, var(--line) 8%, var(--line) 92%, transparent) 1; }
     .pagina.magia #equip { padding-right: 2.5rem; }
@@ -95,7 +98,7 @@
     .tip.a-sinistra { left: auto; right: calc(100% + 0.6rem); }
     .tip.in-alto { top: auto; bottom: 0; }
     .tip.sotto { left: 0; right: 0; top: 100%; width: auto; min-width: 0; max-width: none; margin-top: 0.25rem; }
-    #abilita label, #dotazione label, #armi label, #armature label, #scudi label, #lista-incantesimi label { position: relative; }
+    #abilita label, #dotazione label, #armi label, #armature label, #scudi label, #lista-incantesimi label, #lista-incantesimi2 label, #scelta-scuola label { position: relative; }
     .tip-riga.sola { border: 0; margin: 0; padding: 0; }
     .tip .tit { display: block; font-weight: 600; margin: 0.1rem 0; }
     .tip .nota-mani { display: block; margin-top: 0.3rem; font-style: italic; color: var(--muted); }
@@ -112,7 +115,10 @@
     #scudi label:hover .tip, #scudi label:has(input:focus-visible) .tip,
     #abilita label:hover .tip, #abilita label:has(input:focus-visible) .tip,
     #dotazione label:hover .tip, #dotazione label:has(input:focus-visible) .tip,
-    #lista-incantesimi label:hover .tip, #lista-incantesimi label:has(input:focus-visible) .tip { display: block; }
+    #lista-incantesimi label.chiusa, #lista-incantesimi2 label.chiusa { opacity: 0.55; cursor: not-allowed; }
+    #lista-incantesimi label:hover .tip, #lista-incantesimi label:has(input:focus-visible) .tip,
+    #lista-incantesimi2 label:hover .tip, #lista-incantesimi2 label:has(input:focus-visible) .tip,
+    #scelta-scuola label:hover .tip, #scelta-scuola label:has(input:focus-visible) .tip { display: block; }
     .tip .effetto { display: block; margin-top: 0.3rem; font-weight: 600; }
     .punti { color: var(--muted); margin: 0 0 0.75rem; }
     .punti strong { color: var(--text); font-size: 1.25rem; }
@@ -229,8 +235,14 @@
 
           <section id="incantesimi" aria-labelledby="t-incantesimi" hidden>
             <h3 id="t-incantesimi" style="margin-top:0" data-t="incantesimi">Incantesimi</h3>
-            <p class="guida" style="margin:0 0 0.75rem" data-t="guidaIncantesimi">Scegline quattro.</p>
-            <div class="opzioni" id="lista-incantesimi" role="group" aria-labelledby="t-incantesimi"></div>
+            <p class="guida" style="margin:0 0 0.75rem" id="guida-incantesimi"></p>
+            <h4 id="t-scuola" style="margin-top:0" data-t="scuolaPrincipale">Scuola principale</h4>
+            <div class="opzioni" id="scelta-scuola" role="radiogroup" aria-labelledby="t-scuola"></div>
+            <h4 id="t-inc1"></h4>
+            <div class="opzioni" id="lista-incantesimi" role="group" aria-labelledby="t-inc1"></div>
+            <h4 id="t-inc2"></h4>
+            <div class="opzioni" id="lista-incantesimi2" role="group" aria-labelledby="t-inc2"></div>
+            <p class="guida" id="cap-classe-inc" style="margin-top:0.9rem"></p>
             <p class="nota-riposo" data-t="notaRiposo"></p>
           </section>
 
@@ -287,12 +299,12 @@
         ancora: "Ancora da fare: ", pronto: (n) => `${n} è pronto a entrare nel dungeon.`,
         errore: "Salvataggio non riuscito: prova con un'immagine più piccola.", nessunaImmagine: (r, c) => `Nessuna immagine per ${r} ${c}.`,
         scegliRitratto: "Scegli il tuo ritratto.", ritrattoN: (n) => `Ritratto ${n}`,
-        incantesimi: "Incantesimi lv 1", guidaIncantesimi: "Scegline quattro.", mana: "Punti arcano", fede: "Punti fede", ira: "Punti ira", natura: "Punti natura", modAttr: (a) => `mod. ${a}`,
-        notaRiposo: "Gli incantesimi scelti si potranno cambiare quando ti riposi.",
+        incantesimi: "Incantesimi lv 1", scuolaPrincipale: "Scuola principale", scuolaAltra: "Altra scuola", guidaScuola: "Scegli prima la scuola principale.", guidaInc: (p, a) => `Scegline ${p + a}: ${p} della scuola principale e ${a} dell'altra scuola, tutti di livello 1.`, capClasse: (n, c) => `Capacità di classe, senza occupare posti: ${n} (${c}).`, costoMagia: (n) => `${n}`, mana: "Punti arcano", fede: "Punti fede", ira: "Punti ira", natura: "Punti natura", modAttr: (a) => `mod. ${a}`,
+        notaRiposo: "Gli incantesimi scelti si potranno cambiare quando ti riposi; salendo di livello se ne sbloccano di nuovi.",
         tecnicheTit: "Tecniche speciali lv 1", notaRiposoTec: "Le tecniche scelte si potranno cambiare quando ti riposi; salendo di livello se ne sbloccano di nuove.",
-        guidaTec: (n, tot) => tot ? `Scegline ${n}, tra quelle del tipo della tua arma${tot > 3 ? " e dello scudo" : ""}.` : "Scegli prima l'arma.", costoIra: (n) => `${n} ira`,
+        guidaTec: (n, tot) => tot ? `Scegline ${n}, tra quelle del tipo della tua arma${tot > 3 ? " e dello scudo" : ""}. Le altre restano visibili, ma non si possono prendere.` : "Scegli prima l'arma: qui sotto vedi tutte le tecniche, ma si sbloccano solo quelle del tipo della tua arma (e dello scudo, se lo prendi).", gruppoArma: (tp) => ({ Tagliente: "Armi da taglio", Contundente: "Armi contundenti", Perforante: "Armi perforanti" })[tp] || tp, gruppoScudo: "Scudo", richiedeArma: (tp) => ({ Tagliente: "Richiede un'arma da taglio.", Contundente: "Richiede un'arma contundente.", Perforante: "Richiede un'arma perforante." })[tp], richiedeScudo: "Richiede lo scudo.", costoIra: (n) => `${n} ira`,
         mancaTec: (n) => `${n} ${n === 1 ? "tecnica" : "tecniche"}`,
-        costo: "Costo", costoMana: (n) => `${n} ${classe === "Accolito" ? "Fede" : "Arcano"}`, mancaInc: (n) => `${n} ${n === 1 ? "incantesimo" : "incantesimi"}`
+        costo: "Costo", costoMana: (n) => `${n} ${classe === "Accolito" ? "Fede" : "Arcano"}`, mancaInc: (n) => `${n} ${n === 1 ? "incantesimo" : "incantesimi"}`, mancaScuola: "la scuola principale"
       },
       en: {
         titoloPagina: "Character creation", titolo: "Character creation", nome: "Name", immagine: "Character portrait",
@@ -318,12 +330,12 @@
         ancora: "Still to do: ", pronto: (n) => `${n} is ready to enter the dungeon.`,
         errore: "Saving failed: try a smaller image.", nessunaImmagine: (r, c) => `No image for ${r} ${c}.`,
         scegliRitratto: "Choose your portrait.", ritrattoN: (n) => `Portrait ${n}`,
-        incantesimi: "Spells lv 1", guidaIncantesimi: "Choose four.", mana: "Arcane points", fede: "Faith points", ira: "Rage points", natura: "Nature points", modAttr: (a) => `${a} mod.`,
-        notaRiposo: "You will be able to change your chosen spells when you rest.",
+        incantesimi: "Spells lv 1", scuolaPrincipale: "Main school", scuolaAltra: "Other school", guidaScuola: "Choose your main school first.", guidaInc: (p, a) => `Choose ${p + a}: ${p} from your main school and ${a} from the other school, all level 1.`, capClasse: (n, c) => `Class ability, takes no slots: ${n} (${c}).`, costoMagia: (n) => `${n}`, mana: "Arcane points", fede: "Faith points", ira: "Rage points", natura: "Nature points", modAttr: (a) => `${a} mod.`,
+        notaRiposo: "You will be able to change your chosen spells when you rest; new ones unlock as you level up.",
         tecnicheTit: "Special techniques lv 1", notaRiposoTec: "You will be able to change your chosen techniques when you rest; new ones unlock as you level up.",
-        guidaTec: (n, tot) => tot ? `Choose ${n}, among those for your weapon type${tot > 3 ? " and the shield" : ""}.` : "Choose your weapon first.", costoIra: (n) => `${n} rage`,
+        guidaTec: (n, tot) => tot ? `Choose ${n}, among those for your weapon type${tot > 3 ? " and the shield" : ""}. The others stay visible but cannot be taken.` : "Choose your weapon first: below you can see every technique, but only those of your weapon type (and the shield, if you take it) unlock.", gruppoArma: (tp) => ({ Tagliente: "Slashing weapons", Contundente: "Blunt weapons", Perforante: "Piercing weapons" })[tp] || tp, gruppoScudo: "Shield", richiedeArma: (tp) => ({ Tagliente: "Requires a slashing weapon.", Contundente: "Requires a blunt weapon.", Perforante: "Requires a piercing weapon." })[tp], richiedeScudo: "Requires the shield.", costoIra: (n) => `${n} rage`,
         mancaTec: (n) => `${n} ${n === 1 ? "technique" : "techniques"}`,
-        costo: "Cost", costoMana: (n) => `${n} ${classe === "Accolito" ? "Faith" : "Arcane"}`, mancaInc: (n) => `${n} ${n === 1 ? "spell" : "spells"}`
+        costo: "Cost", costoMana: (n) => `${n} ${classe === "Accolito" ? "Faith" : "Arcane"}`, mancaInc: (n) => `${n} ${n === 1 ? "spell" : "spells"}`, mancaScuola: "the main school"
       }
     };
     const t = T[LINGUA];
@@ -428,35 +440,66 @@
       { nome: "Piede di porco" }
     ];
 
-    /* ---------- Incantesimi (Sapiente e Accolito) ----------
-       Punti arcano = 10 + modificatore di Mente (punti fede per il Monaco). Se ne scelgono 4; si cambiano riposando. */
-    const MANA_BASE = R_.RISORSA_BASE, MAX_INCANTESIMI = R_.MAX_INCANTESIMI;
-    const INCANTESIMI = window.INCANTESIMI; /* in incantesimi.js, condivisi con il gioco */
-    /* attributo da cui dipende il mana: Mente per il Sapiente, Spirito per l'Accolito */
-    const ATTR_MANA = R_.ATTR_MAGIA;
-    const usaMagia = () => !!(classe && INCANTESIMI[classe]);
+    /* ---------- Incantesimi (Arcanista e Monaco): le scuole di js/magia.js ----------
+       Si sceglie la scuola principale (come il Guerriero sceglie l'arma); al livello 1 si preparano 2 incantesimi di livello 1
+       della scuola principale e 1 dell'altra scuola. Si cambiano riposando. */
+    const MANA_BASE = R_.RISORSA_BASE, MG = window.MAGIA;
+    const POSTI_PRINC = R_.TECNICHE_PER_LIVELLO[0], POSTI_ALTRA = MG ? MG.POSTI_ALTRA_SCUOLA : 1;
+    const ATTR_MANA = R_.ATTR_MAGIA; /* attributo del mana: Mente per l'Arcanista, Spirito per il Monaco */
+    const usaMagia = () => !!(MG && classe && MG.CLASSI[classe]);
     /* risorsa di Guerriero e Sciamano, calcolata come il mana: 10 + modificatore (si ricarica solo riposando) */
     const RISORSA_CLASSE = R_.RISORSA_MARZIALE;
-    const incantesimiScelti = () => usaMagia() ? [...document.querySelectorAll('input[name="incantesimo"]:checked')].map(c => INCANTESIMI[classe][c.value]) : [];
+    let scuola = null; /* scuola principale */
+    const altraScuola = () => usaMagia() ? MG.CLASSI[classe].find(s => s !== scuola) : null;
+    const incantesimiScelti = () => usaMagia() ? [...document.querySelectorAll('input[name="incantesimo"]:checked')].map(c => MG.INCANTESIMI.find(i => i.id === c.value)).filter(Boolean) : [];
+    const quanti = (sc) => incantesimiScelti().filter(i => i.scuola === sc).length;
+    const incNecessari = () => POSTI_PRINC + POSTI_ALTRA;
+    const incScuolaOk = () => !!scuola && quanti(scuola) === POSTI_PRINC && quanti(altraScuola()) === POSTI_ALTRA;
 
-    let classeIncantesimi = null; /* classe per cui è stata costruita la lista: cambiando classe si riparte da zero */
+    let chiaveInc = null; /* classe per cui è stata costruita la scelta della scuola: cambiando classe si riparte da zero */
+    let chiaveListe = undefined; /* scuola principale per cui sono costruite le due liste */
+    const etichettaInc = (inc, chiusa) => {
+      const l = document.createElement("label");
+      Sicuro.html(l, `<input type="checkbox" name="incantesimo" value="${inc.id}" aria-describedby="tip-inc-${inc.id}"${chiusa ? " disabled" : ""}><span><b>${L(inc.nome)}</b><small>${t.costoMagia(inc.costo)}</small></span>` +
+        `<small class="tip" id="tip-inc-${inc.id}" role="tooltip"><em class="tip-riga"><i><b>${t.costo}</b><b>${t.costoMana(inc.costo)}</b></i></em>${L(inc.effetto)}</small>`);
+      if (chiusa) { l.className = "chiusa"; l.querySelector("input").disabled = true; }
+      l.querySelector("input").addEventListener("change", aggiorna);
+      return l;
+    };
     function disegnaIncantesimi() {
       const sez = $("incantesimi"), magia = usaMagia();
       sez.hidden = !magia;
       document.querySelector(".pagina").classList.toggle("magia", magia);
-      if (classeIncantesimi === classe) return;
-      classeIncantesimi = classe;
-      const box = $("lista-incantesimi");
-      box.replaceChildren();
-      if (!magia) return;
-      INCANTESIMI[classe].forEach((inc, i) => {
-        const l = document.createElement("label");
-        Sicuro.html(l, `<input type="checkbox" name="incantesimo" value="${i}" aria-describedby="tip-inc-${i}"><span><b>${L(inc.nome)}</b></span>` +
-          `<small class="tip" id="tip-inc-${i}" role="tooltip"><em class="tip-riga"><i><b>${t.costo}</b><b>${t.costoMana(inc.costo)}</b></i></em>${L(inc.desc)}` +
-          (inc.effetto ? `<em class="effetto">[${L(inc.effetto)}]</em>` : "") + `</small>`);
-        l.querySelector("input").addEventListener("change", aggiorna);
-        box.appendChild(l);
-      });
+      if (!magia) { chiaveInc = null; chiaveListe = undefined; return; }
+      if (chiaveInc !== classe) { /* nuova classe: due scuole tra cui scegliere */
+        chiaveInc = classe; chiaveListe = undefined; scuola = null;
+        const sc = $("scelta-scuola"); sc.replaceChildren();
+        MG.CLASSI[classe].forEach(k => {
+          const l = document.createElement("label");
+          Sicuro.html(l, `<input type="radio" name="scuola" value="${k}"><span><b>${L(MG.NOMI_SCUOLE[k])}</b></span>`);
+          l.querySelector("input").addEventListener("change", () => { scuola = k; aggiorna(); });
+          sc.appendChild(l);
+        });
+        $("guida-incantesimi").textContent = t.guidaInc(POSTI_PRINC, POSTI_ALTRA);
+        const cap = MG.CAPACITA[classe];
+        $("cap-classe-inc").textContent = t.capClasse(L(cap.nome), t.costoMana(cap.costo));
+      }
+      if (chiaveListe === scuola) return;
+      chiaveListe = scuola;
+      const l1 = $("lista-incantesimi"), l2 = $("lista-incantesimi2");
+      l1.replaceChildren(); l2.replaceChildren();
+      if (!scuola) { /* prima della scelta si vedono comunque tutti gli incantesimi di livello 1 delle due scuole (non selezionabili) */
+        const [s1, s2] = MG.CLASSI[classe];
+        $("t-inc1").textContent = `${L(MG.NOMI_SCUOLE[s1])} — ${t.guidaScuola}`; $("t-inc2").textContent = L(MG.NOMI_SCUOLE[s2]);
+        MG.INCANTESIMI.filter(i => i.scuola === s1 && i.liv === 1).forEach(i => l1.appendChild(etichettaInc(i, true)));
+        MG.INCANTESIMI.filter(i => i.scuola === s2 && i.liv === 1).forEach(i => l2.appendChild(etichettaInc(i, true)));
+        return;
+      }
+      const altra = altraScuola();
+      $("t-inc1").textContent = `${t.scuolaPrincipale}: ${L(MG.NOMI_SCUOLE[scuola])}`;
+      $("t-inc2").textContent = `${t.scuolaAltra}: ${L(MG.NOMI_SCUOLE[altra])}`;
+      MG.INCANTESIMI.filter(i => i.scuola === scuola && i.liv === 1).forEach(i => l1.appendChild(etichettaInc(i)));
+      MG.INCANTESIMI.filter(i => i.scuola === altra && i.liv === 1).forEach(i => l2.appendChild(etichettaInc(i)));
     }
 
     /* ---------- Tecniche speciali (Guerriero): 4 tra quelle di livello 1 del tipo dell'arma e, con lo scudo, dello scudo ---------- */
@@ -472,20 +515,31 @@
       sez.hidden = !si;
       if (si) document.querySelector(".pagina").classList.add("magia");
       const opz = si ? opzioniTec() : [];
-      const chiave = si ? opz.map(x => x.id).join(",") : "";
+      const chiave = si ? "T:" + opz.map(x => x.id).join(",") : "";
       if (chiave === chiaveTecniche) { [...$("lista-tecniche").querySelectorAll('input[name="tecnica"]:checked')].slice(maxTecniche()).forEach(c => { c.checked = false; }); return; }
       const prima = new Set(tecnicheScelte());
       chiaveTecniche = chiave;
       const box = $("lista-tecniche");
       box.replaceChildren();
       $("guida-tecniche").textContent = t.guidaTec(tecNecessarie(), opz.length);
-      opz.forEach((x, i) => {
-        const l = document.createElement("label");
-        Sicuro.html(l, `<input type="checkbox" name="tecnica" value="${x.id}" aria-describedby="tip-tec-${i}"><span><b>${L(x.nome)}</b></span>` +
-          `<small class="tip" id="tip-tec-${i}" role="tooltip"><em class="tip-riga"><i><b>${t.costo}</b><b>${t.costoIra(x.costo)}</b></i></em>${L(x.desc)}<em class="effetto">[${L(x.effetto)}]</em></small>`);
-        const c = l.querySelector("input"); c.checked = prima.has(x.id);
-        c.addEventListener("change", aggiorna);
-        box.appendChild(l);
+      /* tutte le tecniche di livello 1 della classe, in gruppi: le armi (per tipo) separate dallo scudo; si prendono solo quelle sbloccate dalla scelta */
+      const libere = new Set(opz.map(x => x.id));
+      const gruppi = [["Tagliente", t.gruppoArma("Tagliente")], ["Contundente", t.gruppoArma("Contundente")], ["Perforante", t.gruppoArma("Perforante")], ["Scudo", t.gruppoScudo]];
+      let n = 0;
+      gruppi.forEach(([tp, titolo]) => {
+        const lista = TECNICHE.filter(x => x.liv === 1 && x.tipo === tp);
+        if (!lista.length) return;
+        const h = document.createElement("p"); h.className = "gruppo-tec" + (tp === "Scudo" ? " scudo" : ""); h.textContent = titolo; box.appendChild(h);
+        lista.forEach(x => {
+          const i = n++, aperta = libere.has(x.id);
+          const l = document.createElement("label"); if (!aperta) l.className = "chiusa";
+          const motivo = aperta ? "" : `<em class="effetto">${tp === "Scudo" ? t.richiedeScudo : t.richiedeArma(tp)}</em>`;
+          Sicuro.html(l, `<input type="checkbox" name="tecnica" value="${x.id}" aria-describedby="tip-tec-${i}"${aperta ? "" : " disabled"}><span><b>${L(x.nome)}</b></span>` +
+            `<small class="tip" id="tip-tec-${i}" role="tooltip"><em class="tip-riga"><i><b>${t.costo}</b><b>${t.costoIra(x.costo)}</b></i></em>${L(x.desc)}<em class="effetto">[${L(x.effetto)}]</em>${motivo}</small>`);
+          const c = l.querySelector("input"); c.disabled = !aperta; c.checked = aperta && prima.has(x.id);
+          c.addEventListener("change", aggiorna);
+          box.appendChild(l);
+        });
       });
       [...box.querySelectorAll('input[name="tecnica"]:checked')].slice(maxTecniche()).forEach(c => { c.checked = false; }); /* tolto lo scudo: si torna a 2 */
     }
@@ -697,10 +751,10 @@
       $("mana-v").textContent = MANA_BASE + modMe;
       $("mana-f").textContent = `${MANA_BASE} ${segno(modMe)} (${t.modAttr(N("attributi", attrMana))})`;
       const nInc = incantesimiScelti().length;
-      document.querySelectorAll('input[name="incantesimo"]').forEach(c => { c.disabled = !c.checked && nInc >= MAX_INCANTESIMI; });
+      document.querySelectorAll('input[name="incantesimo"]').forEach(c => { const sc = MG.INCANTESIMI.find(i => i.id === c.value).scuola; c.disabled = !!c.closest("label.chiusa") || (!c.checked && quanti(sc) >= (sc === scuola ? POSTI_PRINC : POSTI_ALTRA)); });
       disegnaTecniche();
       const nTec = tecnicheScelte().length;
-      document.querySelectorAll('input[name="tecnica"]').forEach(c => { c.disabled = !c.checked && nTec >= maxTecniche(); });
+      document.querySelectorAll('input[name="tecnica"]').forEach(c => { c.disabled = !!c.closest("label.chiusa") || (!c.checked && nTec >= maxTecniche()); });
 
       aggiornaImmagine();
 
@@ -713,7 +767,8 @@
       if (!arma) manca.push(m.arma);
       if (!arm) manca.push(m.armatura);
       if (dot.length < MAX_DOTAZIONE) manca.push(m.dot(MAX_DOTAZIONE - dot.length));
-      if (magia && nInc < MAX_INCANTESIMI) manca.push(t.mancaInc(MAX_INCANTESIMI - nInc));
+      if (magia && !scuola) manca.push(t.mancaScuola);
+      else if (magia && nInc < incNecessari()) manca.push(t.mancaInc(incNecessari() - nInc));
       if (usaTecniche() && arma && nTec < tecNecessarie()) manca.push(t.mancaTec(tecNecessarie() - nTec));
       if (ritrattiN > 0 && !immagine) manca.push(m.ritratto);
       $("crea").disabled = manca.length > 0;
@@ -792,7 +847,7 @@
       const arma = armaScelta(), arm = armaturaScelta(), dot = dotazioneScelta(), sc = scudoScelto();
       if (!razza || !classe || tiro === null || puntiTotali() - spesi(-1) !== 0 ||
           abilitaScelte().length !== MAX_ABILITA || !arma || !arm || dot.length !== MAX_DOTAZIONE || (ritrattiN > 0 && !immagine) ||
-          (usaMagia() && incantesimiScelti().length !== MAX_INCANTESIMI) || (usaTecniche() && tecnicheScelte().length < tecNecessarie())) return;
+          (usaMagia() && !incScuolaOk()) || (usaTecniche() && tecnicheScelte().length < tecNecessarie())) return;
 
       const base = Object.fromEntries(NOMI.map((n, i) => [n, totale(i)]));
       const stat = { ...base }; /* l'arma non modifica il Vigore: dà il dado di danno */
@@ -808,7 +863,8 @@
         classeArmatura: CA_BASE + arm.ca + (sc ? SCUDO.ca : 0), /* comprende lo scudo, se scelto; il bonus di Agilità si calcola in gioco */
         mana: usaMagia() ? MANA_BASE + mod(stat[ATTR_MANA[classe]]) : null, /* solo Sapiente (Mente) e Accolito (Spirito) */
         risorsa: RISORSA_CLASSE[classe] ? { id: RISORSA_CLASSE[classe].id, max: MANA_BASE + mod(stat[RISORSA_CLASSE[classe].attr]) } : null, /* punti ira (Guerriero) o punti natura (Sciamano) */
-        incantesimi: incantesimiScelti().map(inc => ({ id: inc.id, nome: inc.nome, costo: inc.costo, desc: inc.desc, effetto: inc.effetto || null })),
+        scuola: usaMagia() ? scuola : null, /* scuola principale dell'Arcanista e del Monaco */
+        incantesimi: incantesimiScelti().map(inc => inc.id), /* id di js/magia.js: nomi, costi ed effetti si leggono da lì */
         tecniche: tecnicheScelte(), /* tecniche speciali del Guerriero */
         abilita: abilitaScelte().map(([n, a]) => ({ nome: n, attributo: a, valore: valoreAbilita(a) + LIVELLO })),
         equipaggiamento: {

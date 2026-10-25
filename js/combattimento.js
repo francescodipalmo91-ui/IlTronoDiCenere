@@ -19,7 +19,7 @@
   const SCELTE_PER_LIVELLO = R.TECNICHE_PER_LIVELLO || [2, 2, 1, 1, 1]; /* tecniche da scegliere a ogni livello (1..5) */
   const IRA_PER_COLPO = R.IRA_PER_COLPO || [1, 1, 2, 2, 3];              /* ira per colpo subito, per livello */
   const CONTROLLI = ["frastornato", "bloccato", "silenzio"]; /* i boss non li subiscono mai */
-  const TETTO_BOSS = { debole: 2, sbilanciato: 2, esposto: 2 }; /* durata massima sui boss */
+  const TETTO_BOSS = { debole: 2, sbilanciato: 2, esposto: 2, accecato: 2, avvizzito: 3 }; /* durata massima sui boss */
   const CREPE_MAX = 3, CREPE_MAX_BOSS = 2;             /* Incrinatura: cariche massime (comuni / boss) */
   const PER_SCONTRO = 99;                              /* durata «per tutto lo scontro» (Frattura della Sentenza e del Martello) */
   const CRIT_MIN = 18;                                 /* tetto dell'intervallo di critico: mai sotto 18-20 */
@@ -77,8 +77,17 @@
     s.crepe = dopo;
     return { k: "crepe", n: dopo - prima, perse: n - (dopo - prima), tot: dopo, max };
   }
-  /* malus alla CA del nemico: Sbilanciato (−2) più le cariche di Incrinatura (al massimo −5, −4 su un boss) */
-  const malusCA = (s) => (attivo(s, "sbilanciato") ? 2 : 0) + crepe(s);
+  /* Sigilli dell'Arcanista: incisi dall'Arcano, fatti esplodere dalla Forza. Durano tutto lo scontro; massimo 3 (2 sui boss) */
+  const SIGILLI_MAX = 3, SIGILLI_MAX_BOSS = 2;
+  const sigilliMax = (ctx) => (ctx && ctx.boss ? SIGILLI_MAX_BOSS : SIGILLI_MAX);
+  const sigilli = (s) => Math.max(0, Number(s && s.sigilli) || 0);
+  function incidi(s, ctx, n) {
+    const prima = sigilli(s), max = sigilliMax(ctx), dopo = Math.min(max, prima + n);
+    s.sigilli = dopo;
+    return { k: "sigilli", n: dopo - prima, perse: n - (dopo - prima), tot: dopo, max };
+  }
+  /* malus alla CA del nemico: Sbilanciato (−2), cariche di Incrinatura (al massimo −5, −4 su un boss), Spezzare il Vincolo (−2 per tutto lo scontro) */
+  const malusCA = (s) => (attivo(s, "sbilanciato") ? 2 : 0) + crepe(s) + (s && s.caMeno ? Number(s.caMeno) || 0 : 0);
   /* Frattura: 1d4 al nemico ogni volta che attacca (anche Presa e Soffio), prima del tiro. Non scatta se è stordito, perché non attacca */
   function frattura(s, ctx) { if (!attivo(s, "frattura")) return null; const d = ctx.tira(4); s.pv -= d; return { k: "frattura", d }; }
   const perScontro = (n) => n >= PER_SCONTRO;
@@ -433,7 +442,7 @@
   }
 
   /* ---------- Turno del nemico: modificatori, parata, ira ---------- */
-  const modAttaccoNem = (s) => (attivo(s, "debole") ? -2 : 0) + (attivo(s, "frastornato") ? -4 : 0);
+  const modAttaccoNem = (s) => (attivo(s, "debole") ? -2 : 0) + (attivo(s, "frastornato") ? -4 : 0) + (s.filo && sigilli(s) >= 2 ? -2 : 0); /* Filo di Rune: con 2+ Sigilli sul nemico, −2 a colpirti */
   const critNemPossibile = (s) => !attivo(s, "frastornato") && !attivo(s, "intontito"); /* Intontito: Percossa al Mento */
   /* un attacco del nemico che va a segno.
      - Parata (Mutilante, Contro-Schiacciamento, Guardia di Punta): lo annulla e contrattacca, niente ira.
@@ -444,6 +453,10 @@
   function colpoSubito(s, ctx, crit, danno) {
     s.eff = s.eff || {};
     s.colpitoOra = true; /* Inversione della Marea: il nemico ti ha colpito in questo suo turno */
+    s.colpiSubiti = (Number(s.colpiSubiti) || 0) + 1; /* Rancore: colpi subiti in questo scontro */
+    const EM = []; /* effetti degli incantesimi che scattano quando il nemico ti colpisce */
+    if (attivo(s, "fiamma")) { const d = ctx.tira(4); s.pv -= d; EM.push({ k: "fiammaColpo", d }); }          /* Fiamma Calda */
+    if (attivo(s, "corona") && vivo(s)) EM.push(metti(s, ctx, "accecato", 1));                               /* Corona di Raggi */
     if (s.parata) {
       const conCrepe = !!s.parataCrepe, conPunta = !!s.parataPunta; s.parata = false; s.parataCrepe = false; s.parataPunta = false;
       const E = [{ k: "parataRiuscita" }], dado = ctx.dado;
@@ -455,11 +468,11 @@
       if (vivo(s)) E.push(conPunta ? metti(s, ctx, "esposto", 2) : conCrepe ? incrina(s, ctx, 1) : sanguina(s, ctx, 4, 2));
       return { annullato: true, danno: 0, ira: 0, eventi: E };
     }
-    const E = [], pieno = Number(danno) || 0;
+    const E = [...EM], pieno = Number(danno) || 0;
     let ira = iraPerColpo(ctx.liv, crit), finale = pieno;
     const a = s.assorbe;
     if (a) {
-      if (a.tipo !== "tutti") s.assorbe = null; /* vale per il primo colpo; «tutti» dura fino al tuo turno */
+      if (a.tipo !== "tutti" && a.tipo !== "respingere") s.assorbe = null; /* vale per il primo colpo; «tutti» e Respingere durano fino al tuo turno */
       s.assorbiti = (Number(s.assorbiti) || 0) + 1;
       if (a.tipo === "meta") { finale = Math.floor(pieno / 2); E.push({ k: "assorbito", tipo: a.tipo, prima: pieno, dopo: finale }); }
       else if (a.tipo === "rimbalzo") {
@@ -469,14 +482,29 @@
       } else if (a.tipo === "zero") { finale = 0; ira = 0; E.push({ k: "assorbito", tipo: a.tipo, prima: pieno, dopo: 0 }); }
       else if (a.tipo === "zeroIra") { finale = 0; E.push({ k: "assorbito", tipo: a.tipo, prima: pieno, dopo: 0 }); }
       else if (a.tipo === "tutti") { finale = 0; ira = 0; a.n = (a.n || 0) + 1; E.push({ k: "assorbito", tipo: a.tipo, prima: pieno, dopo: 0 }); }
+      /* difese degli incantesimi: Specchio di Rune (metà e 1 Sigillo), Barriera Cinetica (0 e 1d6 forza), Respingere (tutti i colpi: 0 e 1d6 forza) */
+      else if (a.tipo === "specchio") { finale = Math.floor(pieno / 2); ira = 0; E.push({ k: "assorbito", tipo: "meta", prima: pieno, dopo: finale }, incidi(s, ctx, 1)); }
+      else if (a.tipo === "barriera" || a.tipo === "respingere") {
+        finale = 0; ira = 0; E.push({ k: "assorbito", tipo: "zero", prima: pieno, dopo: 0 });
+        const d = ctx.tira(6); s.pv -= d; E.push({ k: "riflesso", d });
+      }
       const nc = a.tipo === "tutti" ? 1 : (a.cariche || 0);
       if (nc) E.push(carica(s, nc));
     }
+    if (attivo(s, "santuario") && !s.santColpo && finale > 0) { s.santColpo = true; const prima = finale; finale = Math.floor(finale / 2); E.push({ k: "assorbito", tipo: "meta", prima, dopo: finale }); } /* Santuario: il primo colpo di ogni turno fa metà */
     if (attivo(s, "baluardo")) { ira *= 2; E.push({ k: "baluardoColpo" }); E.push(carica(s, 1)); }
     if (s.elastica && cariche(s) >= 2 && vivo(s)) { const d = ctx.tira(4); s.pv -= d; E.push({ k: "elasticaColpo", d }); }
     return { annullato: !!a && finale === 0 && pieno > 0, danno: finale, ira, eventi: E };
   }
   /* un attacco del nemico che manca: Postura Salda dà 1 Carica, Drenaggio d'Urto +1 ira e 1 Carica */
+  /* d20 d'attacco del nemico: Accecato e Manto d'Ombra fanno tirare 2d20 e tenere il peggiore (il manto vale per un solo attacco) */
+  function tiroAttaccoNem(s, ctx) {
+    s.eff = s.eff || {};
+    const manto = attivo(s, "manto"); if (manto) s.eff.manto = 0;
+    if (!manto && !attivo(s, "accecato")) return { d: ctx.tira(20) };
+    const a = ctx.tira(20), b = ctx.tira(20);
+    return { d: Math.min(a, b), tiri: [a, b] };
+  }
   function colpoMancato(s, ctx) {
     const E = [];
     if (s.postura) E.push({ k: "posturaRegge" }, carica(s, 1));
@@ -504,7 +532,7 @@
   }
   /* fine del turno del nemico: gli effetti scalano di un turno; finito il sanguinamento finisce anche il marchio */
   function fineTurnoNemico(s) {
-    const finiti = [];
+    const finiti = []; s.santColpo = false;
     Object.keys(s.eff).forEach(k => { if (s.eff[k] > 0 && --s.eff[k] === 0) finiti.push(k); });
     if (!attivo(s, "sanguina")) s.marchio = false;
     if (!attivo(s, "esposto")) s.segno = false;
@@ -517,8 +545,9 @@
     crescitaIra, iraMax, iraPerColpo, slotTecniche, sceltaValida, sceltaPredefinita,
     attivo, marchiato, segnato, sogliaCrit, metti, sanguina, guardia, colpo, ts, costo, usa,
     crepe, crepeMax, crepePiene, incrina, malusCA, frattura, perScontro,
+    SIGILLI_MAX, SIGILLI_MAX_BOSS, sigilliMax, sigilli, incidi,
     cariche, carica, disponibile, difesaDiFila, presaBloccata, fortezza, onda,
-    modAttaccoNem, critNemPossibile, colpoSubito, colpoMancato, inizioTurnoPg, fineTurnoNemico, tickSangue
+    modAttaccoNem, critNemPossibile, tiroAttaccoNem, colpoSubito, colpoMancato, inizioTurnoPg, fineTurnoNemico, tickSangue
   };
   root.Combattimento = API;
   if (typeof module !== "undefined" && module.exports) module.exports = API;

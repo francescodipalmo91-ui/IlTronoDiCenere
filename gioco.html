@@ -8,9 +8,10 @@
   <script src="lib/purify.min.js"></script>
   <script src="js/sicuro.js"></script>
   <script src="js/regole.js"></script>
-  <script src="js/incantesimi.js"></script>
+  <script src="js/magia.js"></script>
   <script src="js/tecniche.js"></script>
   <script src="js/combattimento.js"></script>
+  <script src="js/magia_combattimento.js"></script>
   <script src="js/lingua.js"></script>
   <script src="js/volume.js"></script>
   <script src="lib/howler.core.min.js"></script>
@@ -364,6 +365,12 @@
     .voce.lab .lab-ing li.ok { color: var(--ok); }
     #zaino .testo { white-space: pre-line; }
     .voce.arm .p-cat { margin: 1rem 0 0.1rem; font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mis); }
+    .voce.arm details.gruppo { border-top: 1px solid var(--line); padding: 0.3rem 0; }
+    .voce.arm details.gruppo > summary.gruppo-tit { cursor: pointer; font-weight: 600; padding: 0.25rem 0; }
+    .voce.arm details.gruppo.sotto { margin-left: 0.6rem; }
+    .voce.arm .gruppo-corpo { padding-top: 0.2rem; }
+    .bach .bach-nota { color: var(--muted); font-size: 0.88rem; margin: 0.2rem 0 0.4rem; }
+    .bach .bach-riga button { justify-self: start; margin-top: 0.3rem; }
     .voce.arm .p-scelte { font-weight: 600; margin: 0.3rem 0 0; }
     .voce.arm .p-motivo { color: var(--muted); font-size: 0.92rem; font-style: italic; }
     .voce.mis .p-btn button:hover { filter: brightness(1.08); }
@@ -969,7 +976,12 @@
             "Dopo qualche secondo, raccogli il coraggio e provi a toccare di nuovo l'armatura. Questa volta, però, non succede nulla. Nessun lamento. Nessuna scossa. Solo il freddo metallo sotto le tue dita."
           ],
           banner: "SUCCESSO, hai ferito il sovrano del trono di cenere !!",
-          no: ["Questa scena non è ancora stata scritta."],
+          no: ["Distogli lo sguardo e ritrai i passi, una mano stretta contro il fianco. Il richiamo non svanisce: aspetta, paziente, come ha sempre fatto."],
+          ritenta: ["Il richiamo non è cessato. L'armatura è lì, immobile, e la spada vibra appena tra le dita di ferro, come se ti chiamasse per nome."],
+          bloccata: "Il richiamo ti attraversa di nuovo, ma la mente è ancora scossa dall'ultimo assalto: non reggeresti la presa. Prima devi riposare.",
+          prova: "Il richiamo preme sulla tua mente. Resistergli richiede una prova di Spirito.",
+          placato: ["Sali verso l'armatura, preparandoti all'urto. Ma stavolta la pressione non viene. Il richiamo, respinto tre volte, sembra essersi stancato di testarti: scivola via da te come un'onda che si ritira, e ti lascia passare."],
+          respintoDi: ["La pressione ti schiaccia le tempie e ti ricaccia indietro. Ricordi la visione e il suo sapore amaro, ma stavolta non ti travolge: ti limiti a barcollare, con le orecchie che fischiano.", "Non riuscirai a tenere quella presa finché non avrai riposato."],
           respinge: (d) => `L'armatura non si lascia toccare: subisci danni mentali pari a 1d${d}.`,
           respinto: [
             "Una fitta lancinante ti attraversa la testa. Istintivamente porti le mani alle orecchie mentre le gambe cedono e crolli a terra, sostenendoti su un ginocchio.",
@@ -1399,7 +1411,12 @@
             "After a few seconds, you gather your courage and touch the armor again. This time, however, nothing happens. No wail. No tremor. Only the cold metal beneath your fingers."
           ],
           banner: "SUCCESS, you have wounded the sovereign of the throne of ashes!!",
-          no: ["This scene has not been written yet."],
+          no: ["You look away and step back, one hand pressed against your side. The call does not fade: it waits, patient, as it always has."],
+          ritenta: ["The call has not ceased. The armor stands there, motionless, and the sword quivers faintly between the iron fingers, as if calling you by name."],
+          bloccata: "The call runs through you again, but your mind is still shaken from the last assault: you could not bear its grip. You must rest first.",
+          prova: "The call presses on your mind. Resisting it takes a Spirit check.",
+          placato: ["You climb towards the armor, bracing for the blow. But this time the pressure does not come. The call, rebuffed three times, seems tired of testing you: it slips away from you like a retreating wave, and lets you through."],
+          respintoDi: ["The pressure crushes your temples and drives you back. You remember the vision and its bitter taste, but this time it does not overwhelm you: you merely stagger, ears ringing.", "You will not be able to bear that grip until you have rested."],
           respinge: (d) => `The armor will not let itself be touched: you take 1d${d} mental damage.`,
           respinto: [
             "A piercing pain shoots through your head. Instinctively you clap your hands to your ears as your legs give way and you collapse, holding yourself up on one knee.",
@@ -1574,6 +1591,7 @@
                 { testo: "In quale regione del mondo ci troviamo, in quale tempo?", vai: "regione", una: true, richiede: "dove" },
                 { testo: "Quale disgrazia si è abbattuta su questa dimora?", vai: "incendio", una: true },
                 { testo: "Esistono stanze in cui poter trovare rifugio?", vai: "sicure", una: true },
+                { testo: "In giardino ho trovato una fontana. Che cosa sapete dirmi?", vai: "fontana", una: true, se: "giardino_visto=si" },
                 { testo: "Ora devo proseguire il mio cammino.", vai: "avvertimento" }
               ]
             },
@@ -1706,6 +1724,25 @@
               },
               poi: "domande", alla_fine: "rifugio" /* approccio gentile: sblocca il riposo */
             },
+            /* la fontana: il giocatore lo scopre da Guendalina dopo aver visto il giardino */
+            fontana: {
+              testo: {
+                gentile: [
+                  "Per la prima volta da quando siete entrati, il volto di Guendalina si distende in qualcosa che somiglia a un sorriso.",
+                  "«La fontana. L'avete trovata, dunque.»",
+                  "Si asciuga le mani sul grembiule, lentamente, come per guadagnare tempo.",
+                  "«Il maggiordomo in giardino non ci va mai. Non lo ammetterebbe nemmeno sotto tortura, ma quell'acqua lo intimorisce: non gli appartiene, e lui lo sa. Voi non dovete averne timore. Anzi.»",
+                  "«Bevete, quando le ferite pesano. Quell'acqua risana il corpo fino all'ultimo graffio. Ma ve ne darà una volta sola: si sazia in fretta, e si riempie di nuovo soltanto quando il maggiordomo vi manda a una nuova caccia. La mente, invece, non la tocca. Per quella servono un fuoco e un sonno tranquillo.»"
+                ],
+                brusco: [
+                  "Guendalina non smette di strofinare il piano del tavolo.",
+                  "«La fontana. Sì, ce n'è una.»",
+                  "«Il maggiordomo in giardino non ci mette piede: quell'acqua lo intimorisce, anche se la lingua gli si seccherebbe prima di ammetterlo. A voi non dovrebbe far paura. Anzi.»",
+                  "«Bevete quando siete conciati male. Vi rimette in piedi il corpo, ma una volta sola: poi dovrete aspettare che il vecchio vi spedisca a un'altra caccia. La testa, quella, curatevela da soli.»"
+                ]
+              },
+              poi: "domande"
+            },
             /* congedo: le stesse informazioni con entrambi gli approcci, con calore diverso */
             avvertimento: {
               testo: {
@@ -1815,6 +1852,7 @@
                 { testo: "In which region of the world are we, and in what time?", vai: "regione", una: true, richiede: "dove" },
                 { testo: "What misfortune has befallen this manor?", vai: "incendio", una: true },
                 { testo: "Are there rooms where one can find refuge?", vai: "sicure", una: true },
+                { testo: "I found a fountain in the garden. What can you tell me?", vai: "fontana", una: true, se: "giardino_visto=si" },
                 { testo: "Now I must continue on my way.", vai: "avvertimento" }
               ]
             },
@@ -1945,6 +1983,25 @@
                 ]
               },
               poi: "domande", alla_fine: "rifugio"
+            },
+            /* the fountain: the player learns it from Guendalina after seeing the garden */
+            fontana: {
+              testo: {
+                gentile: [
+                  "For the first time since you came in, Guendalina's face relaxes into something like a smile.",
+                  "«The fountain. So you have found it.»",
+                  "She wipes her hands on her apron, slowly, as if to buy time.",
+                  "«The butler never goes into the garden. He would not admit it even under torture, but that water frightens him: it does not belong to him, and he knows it. You need not fear it. Quite the contrary.»",
+                  "«Drink when your wounds weigh on you. That water heals the body down to the last scratch. But it will give itself only once: it tires quickly, and fills again only when the butler sends you on a new hunt. The mind it does not touch. For that you need a fire and a quiet sleep.»"
+                ],
+                brusco: [
+                  "Guendalina does not stop scrubbing the tabletop.",
+                  "«The fountain. Yes, there is one.»",
+                  "«The butler never sets foot in the garden: that water frightens him, though his tongue would dry up before he admitted it. It should not scare you. Quite the contrary.»",
+                  "«Drink when you are in a bad way. It puts your body back on its feet, but only once: then you wait for the old man to send you on another hunt. Your head you mend yourself.»"
+                ]
+              },
+              poi: "domande"
             },
             avvertimento: {
               testo: {
@@ -2505,7 +2562,7 @@
               "Scendi i gradini di pietra con cautela. La scala piega su sé stessa due volte, poi si apre in una cripta bassa dal soffitto a volta, sorretto da tozze colonne. Lungo le pareti, nicchie scavate nella roccia accolgono sarcofagi di pietra, ognuno con il nome di un Vespera inciso sul coperchio.",
               "In fondo, tra due sarcofagi, qualcuno ha improvvisato un rifugio: un giaciglio di stracci, una lanterna spenta, ossa di topo spolpate e un piccolo braciere in cui brucia ancora un fuoco debole, arancione. Un fuoco vero."
             ],
-            nota: "Per tornare su scrivi, ad esempio, «torno nella cappella».",
+            nota: "In questa cripta ci sono tre cose da esaminare: le due nicchie vuote accanto all'ingresso (Indagare), il sarcofago più antico con il coperchio incrinato (Atletica) e il drappo tra due nicchie, che nasconde qualcosa di piccolo. Scrivi, ad esempio, «ispeziono le nicchie», «sposto il coperchio» o «sollevo il drappo». Per tornare su scrivi «torno nella cappella».",
             fallbackLibera: ["Ci provi, ma la cripta non ti offre nulla di utile in questo senso. I sarcofagi, il giaciglio e il braciere sono ciò che hai intorno; la scala riporta alla cappella."],
             ritorno: ["Scendi di nuovo nella cripta. I sarcofagi riposano nelle loro nicchie, e il braciere in fondo getta ancora la sua luce arancione sulle volte."]
           },
@@ -2595,7 +2652,7 @@
         oggetti: {
           chiave_portone: { nome: "Chiave del portone", testo: "Una grossa chiave di ferro annerito, consegnata da Aldo. Apre il portone d'ingresso di Casa Vespera." },
           sigillo: { nome: "Sigillo del cacciatore", testo: "Una spilla di bronzo annerito a forma di testa di mastino, appartenuta a Ettore. Aldo la vuole come prova della caccia." },
-          diario_figlio: { nome: "Diario del figlio maggiore", testo: "Un quaderno dalla copertina di pelle, consumato dalle mani di un ragazzo. Le pagine sono fitte di una calligrafia infantile: disegni della casa, nomi di stanze, una mappa incompleta dell'Ala Est e, ripetuta in ogni pagina, una sola parola: «Mamma»." },
+          diario_figlio: { nome: "Diario del figlio maggiore", testo: "Una rilegatura a filo grosso, tesa e annerita dall'uso, corre lungo il dorso. La copertina è di pelle scura, morbida e consumata ai bordi dalle mani di chi l'ha portata." },
           taccuino: { nome: "Taccuino del cacciatore", testo: "Un taccuino unto, legato con un laccio di cuoio. Contiene una lista di nomi, ognuno con un numero romano accanto, dal I al XII. Accanto a ogni nome, con calligrafie sempre diverse, la stessa annotazione: «preda del cacciatore successivo». L'ultimo nome è quello di Ettore." },
           lama_cervo: { nome: "Lama del Cervo Bianco", testo: "Una spada corta dalla lama pallida come osso, incisa con un cervo dai palchi intrecciati. Al tatto è fredda come la neve. 1d8 tagliente, 1 mano." },
           cotta_leone: { nome: "Cotta del Leone", testo: "Una cotta di maglia dagli anelli dorati, con un leone rampante sbalzato sul pettorale. Sembra non pesare nulla. Classe Armatura +4, nessun malus Agilità." },
@@ -2681,12 +2738,22 @@
             nome: "Aldo", stanza: "sala_ballo",
             nodi: {
               inizio: {
-                testo: [
-                  "Al centro della sala, dove un istante fa non c'era nessuno, un uomo sistema le sedie lungo la parete, una dopo l'altra, allineandole con la punta delle scarpe. È alto, asciutto, i capelli grigi pettinati all'indietro e un paio di baffi curati. Indossa un frac nero impeccabile e guanti bianchi immacolati. Non si volta.",
-                  "«Gli ospiti entrano dal portone principale, annunciati. I fornitori dalla porta di servizio. I ladri...»",
-                  "Raddrizza l'ultima sedia, poi si gira lentamente verso di te. Ha gli occhi scuri, cerchiati di rosso, e un viso che sembra non aver mai conosciuto un sorriso.",
-                  "«...i ladri salgono dalla scala della servitù, convinti che nessuno li veda. Il mio nome è Aldo. Servo il Signore di questa casa da prima che vostro nonno imparasse a camminare. E voi, per quanto mi riguarda, siete un topo.»"
-                ],
+                testo: {
+                  servizio: [
+                    "Al centro della sala, dove un istante fa non c'era nessuno, un uomo sistema le sedie lungo la parete, una dopo l'altra, allineandole con la punta delle scarpe. È alto, asciutto, i capelli grigi pettinati all'indietro e un paio di baffi curati. Indossa un frac nero impeccabile e guanti bianchi immacolati. Non si volta.",
+                    "«Gli ospiti entrano dalla porta principale, annunciati. La servitù dalla porta di servizio, a testa bassa. Voi non siete né l'uno né l'altro...»",
+                    "Raddrizza l'ultima sedia, poi si gira lentamente verso di te. Ha gli occhi scuri, cerchiati di rosso, e un viso che sembra non aver mai conosciuto un sorriso.",
+                    "«...eppure eccovi qui, a lasciare impronte sul mio parquet. Il mio nome è Aldo. Servo il Signore di questa casa da prima che vostro nonno imparasse a camminare. E voi, per quanto mi riguarda, siete un topo.»"
+                  ],
+                  ospiti: [
+                    "Al centro della sala, dove un istante fa non c'era nessuno, un uomo sistema le sedie lungo la parete, una dopo l'altra, allineandole con la punta delle scarpe. È alto, asciutto, i capelli grigi pettinati all'indietro e un paio di baffi curati. Indossa un frac nero impeccabile e guanti bianchi immacolati. Non si volta.",
+                    "«Oh. Un ospite.» Pronuncia la parola come si assaggia un vino andato a male. «E dal portone principale, per giunta. Che onore inatteso.»",
+                    "Raddrizza l'ultima sedia, poi si gira e si inchina: un inchino perfetto, millimetrico, troppo profondo per essere sincero. Ha gli occhi scuri, cerchiati di rosso, e sulle labbra un sorriso gentile che non arriva da nessuna parte.",
+                    "«Perdonate il disordine: non aspettavamo nessuno. Non aspettiamo mai nessuno. Il mio nome è Aldo, e sono il vostro umile servitore per il tempo, brevissimo temo, che vorrete trattenervi. Ditemi, caro ospite: vi hanno annunciato? No? Che sbadataggine. Gli ospiti, in questa casa, sono sempre annunciati.»",
+                    "Il sorriso non si muove di un millimetro, ma la voce si fa piatta, come una lama sotto un velo.",
+                    "«Voi, per quanto mi riguarda, siete un topo che ha trovato la porta buona.»"
+                  ]
+                },
                 risposte: [
                   { abilita: "Persuasione", testo: "Vi chiedo perdono, signore. Mi sono perso in questa casa e cerco soltanto un'uscita.", tono: "gentile", vai: "gentile" },
                   { abilita: "Intimidire", testo: "Non sono un topo. Se dubiti di quello che valgo, mettimi alla prova.", tono: "brusco", vai: "sfida" },
@@ -2700,15 +2767,16 @@
                   "Assapora la parola con disgusto, poi si sfila lentamente un guanto, dito dopo dito.",
                   "«La cortesia è la moneta dei mendicanti e dei servi, e io di servi ne conosco abbastanza. Chi si inchina in questa casa, ci resta inchinato per sempre. Lo chiedono tutti, un'uscita. Nessuno la trova piegando la schiena.»",
                   "Ti fissa a lungo, e sotto quello sguardo ti senti piccolo, sporco, fuori posto come una macchia sul parquet. Una vergogna sorda ti sale dallo stomaco fino alla gola.",
-                  "«Se avete qualcosa da offrire al Signore, mostratelo. Altrimenti tornate dalla governante a farvi rimboccare le coperte.»"
+                  "«Ma il Signore ama chi lo diverte, e voi mi avete divertito. Vediamo se sapete ballare come sapete scusarvi.»",
+                  "Si rinfila il guanto con un gesto secco e schiocca le dita. Il suono rimbomba nella sala come un colpo di frusta, e l'aria davanti a te si addensa in due nubi di cenere grigia che turbinano sul parquet. Quando si diradano, due mastini enormi ti fissano con occhi rossi come braci, le groppe avvolte da fiamme azzurre e fredde.",
+                  "«Uno alla volta. Non sono un macellaio: sono un maggiordomo. E se vi vedrò cadere troppo in basso, fermerò io la danza.»"
                 ],
-                alla_fine: "aldo_umiliazione", poi: "ritorno"
+                alla_fine: "aldo_umiliazione_scontro"
               },
               ritorno: {
                 risposte: [
                   { abilita: "Intimidire", testo: "Non sono un topo. Se dubiti di quello che valgo, mettimi alla prova.", tono: "brusco", vai: "sfida" },
-                  { abilita: "Intimidire", testo: "Togliti di mezzo, vecchio, o ti apro in due.", vai: "minaccia" },
-                  { testo: "Me ne vado.", vai: "congedo" }
+                  { abilita: "Intimidire", testo: "Togliti di mezzo, vecchio, o ti apro in due.", vai: "minaccia" }
                 ]
               },
               congedo: {
@@ -2721,9 +2789,11 @@
                   "Aldo non corre, non si scompone: è semplicemente davanti a te, così vicino che senti l'odore di cera e di cenere del suo frac. Una mano guantata si posa sul tuo petto, leggera come una carezza.",
                   "Poi il mondo si capovolge.",
                   "Voli all'indietro attraverso la sala, il parquet che ti scorre sotto la schiena come ghiaccio, finché una colonna ti ferma con uno schianto che ti svuota i polmoni. Il dolore esplode lungo la spina dorsale. Mentre la vista si annebbia, senti la sua voce, calma, quasi annoiata.",
-                  "«Le minacce sono l'ultima risorsa di chi non ha nient'altro. Riportate il topo da dove è venuto.»"
+                  "«Le minacce sono l'ultima risorsa di chi non ha nient'altro.»",
+                  "Prima che tu riesca a rialzarti, uno schiocco di dita. Due nubi di cenere grigia turbinano sul parquet e, quando si diradano, due mastini enormi ti fissano con occhi rossi come braci, le groppe avvolte da fiamme azzurre e fredde.",
+                  "«Siete venuto a cercare una danza, e una danza avrete. Uno alla volta. Se vi vedrò cadere troppo in basso, fermerò io la danza.»"
                 ],
-                alla_fine: "aldo_schiaffo"
+                alla_fine: "aldo_schiaffo_scontro"
               },
               sfida: {
                 testo: [
@@ -2773,7 +2843,7 @@
                   "È un uomo, o lo è stato. Magro fino all'osso, la barba lunga e sporca di cenere, porta i resti di un'armatura di cuoio e ferro d'una foggia antica, rattoppata con spago e stracci. Sul petto, appuntata al farsetto, brilla una spilla di bronzo a forma di testa di mastino.",
                   "«Ti manda il vecchio, vero?»",
                   "La sua voce è roca, rotta dal disuso. Ti guarda il petto, dove la spilla non c'è, poi le mani, poi gli occhi.",
-                  "«Certo che ti manda lui. Manda sempre qualcuno, prima o poi. Io sono Ettore. Ero come te... ero esattamente come te.»"
+                  "«Certo che ti manda lui. Manda sempre qualcuno, prima o poi. Io sono Ettore. Undici volte sono sceso in questa casa a cacciare per lui. Ero come te: mandato dal vecchio, con la sua chiave in tasca. Alla dodicesima, la preda sono io.»"
                 ],
                 risposte: [
                   { testo: "Sono qui per ucciderti.", vai: "attacco" },
@@ -2788,26 +2858,26 @@
                 testo: {
                   signora: [
                     "Ettore abbassa appena la spada, senza lasciarla.",
-                    "«Sono entrato da quella grotta tanti anni fa che ho smesso di contarli. Ho conosciuto il vecchio, come te. Mi ha messo alla prova, come te. Mi ha dato le sue cacce, e io le ho fatte... tutte. Undici prede, undici fermagli.»",
+                    "«Sono entrato da quella grotta tanti anni fa che ho smesso di contarli. Il vecchio mi ha messo alla prova, come ha fatto con te, e mi ha dato le sue cacce. Undici, e le ho fatte tutte. Undici prede, undici fermagli.»",
                     "Si tocca la spilla sul petto con due dita, come se scottasse.",
-                    "«Poi Guendalina mi ha parlato della Signora. Di Adele, chiusa da qualche parte in questa casa. Dei suoi figli, che la cercano ancora. Ho smesso di cacciare per il Signore e ho cominciato a cercare lei. Ho trovato il diario del figlio maggiore, nell'Ala Est... e il vecchio ha capito.»",
-                    "Estrae da sotto il giaciglio un quaderno dalla copertina di pelle, consumato dalle mani di un ragazzo.",
-                    "«Qui dentro c'è la strada verso di lei, o almeno un pezzo. Il Signore lo sa. Per questo vuole il mio fermaglio sulla sua mensola. Se mi uccidi, porti al vecchio la sua prova... e la Signora resta dov'è, per sempre.»"
+                    "«Poi Guendalina mi ha parlato della Signora, chiusa da qualche parte in questa casa, e dei suoi figli che la cercano ancora. Il maggiore mi ha affidato il suo quaderno, sigillato, perché cercassi per lui ciò che la casa tiene nascosto. Io non sono riuscito ad aprirlo, e nemmeno a trovare quello che cercavo: quaggiù la mia mente ha cominciato a sfilacciarsi, e il vecchio ha capito che avevo smesso di essere suo.»",
+                    "Estrae da sotto il giaciglio un quaderno dalla copertina di pelle, chiuso da un sigillo che brilla appena.",
+                    "«Non sono il migliore, né il primo, né l'unico: sono solo quello che ha smesso di obbedire. Se mi uccidi, porti al vecchio la sua prova... e il ragazzo resta senza il suo quaderno, e la Signora senza di noi.»"
                   ],
                   signore: [
                     "Ettore ride, una risata secca che diventa tosse.",
-                    "«Il vecchio non ti ha detto niente, vero? Non lo dice mai. Sono entrato da quella grotta come te. Mi ha messo alla prova come te. E io ho servito il Signore meglio di chiunque: undici cacce, undici prede. Mai una domanda. Mai un'esitazione.»",
+                    "«Il vecchio non ti ha detto niente, vero? Non lo dice mai. Sono entrato da quella grotta come te. Mi ha messo alla prova come te. Ho servito il Signore per undici cacce: undici prede, mai una domanda, mai un'esitazione.»",
                     "Si batte il pugno sul petto, sulla spilla di bronzo.",
-                    "«Sai chi erano le mie prede? Uomini con il fermaglio. Cacciatori. Quelli venuti prima di me. Il Signore ha bisogno di un solo cacciatore alla volta... e quando ne arriva uno nuovo, il vecchio diventa la preda. È così che funziona. È così che è sempre funzionato.»",
+                    "«Sai chi erano le mie prede? Uomini con il fermaglio, cacciatori come me, venuti prima di me. Al Signore serve un cacciatore alla volta: quando ne arriva uno nuovo, il vecchio diventa la preda. Non credere che io sia il migliore. Sono soltanto il primo gradino, il bronzo. Sopra di me ce ne sono altri, e in cima a quella scala c'è chi mi ha superato da molto tempo.»",
                     "Ti guarda negli occhi, e in quello sguardo non c'è odio. Solo una stanchezza infinita.",
-                    "«Io sono fedele al Signore quanto te. Più di te. E tu sei qui per uccidermi in suo nome. Quando avrai finito, porta pure il mio fermaglio al vecchio. Un giorno qualcuno scenderà quelle scale per prendere il tuo.»"
+                    "«Ho obbedito fino a consumarmi, e tu sei qui per uccidermi in suo nome. Quando avrai finito, porta pure il mio fermaglio al vecchio. Un giorno qualcuno scenderà quelle scale per prendere il tuo.»"
                   ],
                   neutro: [
                     "Ettore inclina la testa, come se faticasse a capire la domanda. Poi si mette a ridere, piano, e non riesce più a smettere.",
-                    "«Cosa vuole? Cosa vuole...» Si gratta la barba con le dita annerite. «Vuole il fermaglio. Il fermaglio, il fermaglio. Sulla mensola. Con gli altri. Io ero il cacciatore, sai? Il cacciatore buono. Poi è arrivato un altro... no. Sei arrivato tu.»",
-                    "Le sue parole si sfilacciano come stoffa vecchia. Parla di mastini, di una scacchiera, di una mensola vuota con il suo nome sopra. Parla di fame, del fuoco che va tenuto acceso, delle voci che sente la notte dietro i sarcofagi.",
+                    "«Cosa vuole? Il fermaglio. Sempre il fermaglio, sulla mensola, con gli altri. Io ero il cacciatore, sai? Ne ho fatte undici, di cacce. Ogni volta un nome nuovo, ogni volta una spilla. Poi è arrivata la dodicesima, e la dodicesima mensola è la mia.»",
+                    "Le sue parole si sfilacciano come stoffa vecchia. Parla di mastini, di una scala con tanti gradini e di lui, fermo al primo. Parla di fame, del fuoco che va tenuto acceso, delle voci che sente la notte dietro i sarcofagi.",
                     "Poi, d'improvviso, torna lucido. Ti fissa con occhi chiarissimi.",
-                    "«Non lo so cosa vuole davvero. So solo che, se mi uccidi, la prossima mensola è la tua.»"
+                    "«Non sono il migliore, lo so. Sono il gradino più basso, e lo sanno tutti tranne il vecchio. Non so cosa vuole davvero. So solo che, se mi uccidi, la prossima mensola è la tua.»"
                   ]
                 },
                 poi: "scelta"
@@ -2877,7 +2947,7 @@
               verita: {
                 testo: [
                   "Aldo prende la spilla tra due dita guantate e la solleva alla luce. La osserva a lungo, poi la ripone in una tasca interna del frac.",
-                  "«Ettore di Valdombra. Undici cacce. Era il migliore che avessi avuto... fino a oggi.»",
+                  "«Ettore di Valdombra. Undici cacce. Era il più ostinato che avessi avuto... fino a oggi.»",
                   "Per un istante, nella sua voce, ti sembra di cogliere qualcosa. Rimpianto, forse. Poi sparisce.",
                   "«Il Signore è soddisfatto. E il Signore ricompensa chi lo serve.»"
                 ],
@@ -2890,7 +2960,7 @@
               menzogna_ok: {
                 testo: [
                   "Alla fine, Aldo ripone la spilla in una tasca interna del frac.",
-                  "«Ettore di Valdombra. Undici cacce. Era il migliore che avessi avuto... fino a oggi.»",
+                  "«Ettore di Valdombra. Undici cacce. Era il più ostinato che avessi avuto... fino a oggi.»",
                   "«Il Signore è soddisfatto. E il Signore ricompensa chi lo serve.»"
                 ],
                 alla_fine: "aldo_premio"
@@ -2967,7 +3037,7 @@
             guarda: "Ettore non stacca gli occhi da te. Respira a fatica, ma la spada non trema.",
             nonOra: "Non è il momento: Ettore ti è addosso e non ti lascia respiro.",
             nonCapisco: "Durante lo scontro puoi scrivere: «attacco Ettore», «colpisco con la torcia», «impugno lo scudo», «bevo la pozione» oppure «lancio» e il nome di un incantesimo.",
-            luceInutile: "La luce non ti serve a nulla contro Ettore: lasci svanire l'energia senza consumarla.",
+            incInArrivo: "Questo incantesimo arriverà presto in combattimento: per ora non lo lanci e non consumi punti.", luceInutile: "La luce non ti serve a nulla contro Ettore: lasci svanire l'energia senza consumarla.",
             inc: {
               dardo_ghiaccio: "Una spina di ghiaccio nero sfreccia dal tuo indice e si pianta nella spalla di Ettore.",
               dardo_luce: "Un raggio di luce sacra sfreccia dal tuo corpo e trafigge Ettore, lasciando una scia di cenere nell'aria.",
@@ -3029,7 +3099,7 @@
               "You go down the stone steps with care. The stair turns on itself twice, then opens into a low crypt with a vaulted ceiling held up by squat columns. Along the walls, niches cut into the rock hold stone sarcophagi, each with the name of a Vespera carved on its lid.",
               "At the far end, between two sarcophagi, someone has made a shelter: a bed of rags, a dead lantern, picked-clean rat bones and a small brazier in which a weak, orange fire still burns. A real fire."
             ],
-            nota: "To go back up write, for example, “I return to the chapel”.",
+            nota: "There are three things to examine in this crypt: the two empty niches beside the entrance (Investigate), the oldest sarcophagus with the cracked lid (Athletics) and the drape between two niches, which hides something small. Write, for example, “I inspect the niches”, “I move the lid” or “I lift the drape”. To go back up write “I return to the chapel”.",
             fallbackLibera: ["You try, but the crypt offers you nothing useful in that respect. The sarcophagi, the bed of rags and the brazier are what lie around you; the stair leads back to the chapel."],
             ritorno: ["You go down into the crypt again. The sarcophagi rest in their niches, and the brazier at the far end still casts its orange light on the vaults."]
           }
@@ -3112,7 +3182,7 @@
         oggetti: {
           chiave_portone: { nome: "Key to the great door", testo: "A large key of blackened iron, handed over by Aldo. It opens the entrance door of Casa Vespera." },
           sigillo: { nome: "Hunter's clasp", testo: "A brooch of blackened bronze shaped like a mastiff's head, once worn by Ettore. Aldo wants it as proof of the hunt." },
-          diario_figlio: { nome: "The elder son's diary", testo: "A notebook with a leather cover, worn by a boy's hands. Its pages are crowded with a child's handwriting: drawings of the house, names of rooms, an unfinished map of the East Wing and, repeated on every page, a single word: “Mother”." },
+          diario_figlio: { nome: "The elder son's diary", testo: "A binding of thick thread, taut and darkened with use, runs along the spine. The cover is dark leather, soft and worn at the edges by the hands that carried it." },
           taccuino: { nome: "Hunter's notebook", testo: "A greasy notebook tied with a leather lace. It holds a list of names, each with a Roman numeral beside it, from I to XII. Next to every name, in ever-changing hands, the same note: “prey of the next hunter”. The last name is Ettore's." },
           lama_cervo: { nome: "Blade of the White Stag", testo: "A shortsword with a blade pale as bone, engraved with a stag with intertwined antlers. It is cold as snow to the touch. 1d8 slashing, one hand." },
           cotta_leone: { nome: "Lion's Mail", testo: "A mail shirt of golden rings, with a rampant lion embossed on the breastplate. It seems to weigh nothing. Armor Class +4, no Agility penalty." },
@@ -3196,12 +3266,22 @@
             nome: "Aldo", stanza: "sala_ballo",
             nodi: {
               inizio: {
-                testo: [
-                  "In the middle of the hall, where a moment ago there was no one, a man is setting chairs along the wall, one after another, aligning them with the tip of his shoe. He is tall and lean, his grey hair combed back, a neat moustache on his lip. He wears an impeccable black tailcoat and spotless white gloves. He does not turn.",
-                  "«Guests come in through the main door, announced. Tradesmen through the service door. Thieves...»",
-                  "He straightens the last chair, then slowly turns to face you. His eyes are dark, rimmed with red, in a face that seems never to have known a smile.",
-                  "«...thieves come up the servants' stair, convinced that no one sees them. My name is Aldo. I have served the Master of this house since before your grandfather learned to walk. And you, as far as I am concerned, are a rat.»"
-                ],
+                testo: {
+                  servizio: [
+                    "In the middle of the hall, where a moment ago there was no one, a man is setting chairs along the wall, one after another, aligning them with the tip of his shoe. He is tall and lean, his grey hair combed back and a pair of neat moustaches. He wears an impeccable black tailcoat and spotless white gloves. He does not turn round.",
+                    "«Guests come in through the main door, announced. The servants through the service door, heads bowed. You are neither...»",
+                    "He straightens the last chair, then slowly turns to face you. His eyes are dark, rimmed with red, in a face that seems never to have known a smile.",
+                    "«...and yet here you are, leaving footprints on my parquet. My name is Aldo. I have served the Master of this house since before your grandfather learned to walk. And you, as far as I am concerned, are a rat.»"
+                  ],
+                  ospiti: [
+                    "In the middle of the hall, where a moment ago there was no one, a man is setting chairs along the wall, one after another, aligning them with the tip of his shoe. He is tall and lean, his grey hair combed back and a pair of neat moustaches. He wears an impeccable black tailcoat and spotless white gloves. He does not turn round.",
+                    "«Oh. A guest.» He pronounces the word as one tastes a wine gone off. «And through the main door, no less. What an unexpected honour.»",
+                    "He straightens the last chair, then turns and bows: a perfect, millimetric bow, too deep to be sincere. His eyes are dark, rimmed with red, and on his lips is a gentle smile that reaches nowhere.",
+                    "«Forgive the disorder: we were expecting no one. We never expect anyone. My name is Aldo, and I am your humble servant for the time, very brief I fear, that you care to stay. Tell me, dear guest: were you announced? No? How careless. Guests in this house are always announced.»",
+                    "The smile does not move by a millimetre, but the voice goes flat, like a blade under a veil.",
+                    "«You, as far as I am concerned, are a rat that has found the right door.»"
+                  ]
+                },
                 risposte: [
                   { abilita: "Persuasione", testo: "I beg your pardon, sir. I have lost my way in this house and I am only looking for a way out.", tono: "gentile", vai: "gentile" },
                   { abilita: "Intimidire", testo: "I am no rat. If you doubt what I am worth, put me to the test.", tono: "brusco", vai: "sfida" },
@@ -3215,15 +3295,16 @@
                   "He savours the word with distaste, then slowly draws off a glove, finger by finger.",
                   "«Courtesy is the coin of beggars and servants, and I know enough of servants. Whoever bows in this house stays bowed for ever. They all ask for a way out. No one finds it by bending their back.»",
                   "He stares at you for a long time, and under that gaze you feel small, dirty, out of place like a stain on the parquet. A dull shame rises from your stomach to your throat.",
-                  "«If you have something to offer the Master, show it. Otherwise go back to the housekeeper and have her tuck you in.»"
+                  "«But the Master loves those who amuse him, and you have amused me. Let us see whether you dance as well as you apologise.»",
+                  "He draws his glove back on with a sharp gesture and snaps his fingers. The sound echoes through the hall like the crack of a whip, and the air before you thickens into two clouds of grey ash swirling over the parquet. When they clear, two huge mastiffs stare at you with eyes red as embers, their haunches wrapped in cold blue flames.",
+                  "«One at a time. I am no butcher: I am a butler. And should I see you fall too low, I shall stop the dance myself.»"
                 ],
-                alla_fine: "aldo_umiliazione", poi: "ritorno"
+                alla_fine: "aldo_umiliazione_scontro"
               },
               ritorno: {
                 risposte: [
                   { abilita: "Intimidire", testo: "I am no rat. If you doubt what I am worth, put me to the test.", tono: "brusco", vai: "sfida" },
-                  { abilita: "Intimidire", testo: "Out of my way, old man, or I'll cut you in two.", vai: "minaccia" },
-                  { testo: "I am leaving.", vai: "congedo" }
+                  { abilita: "Intimidire", testo: "Out of my way, old man, or I'll cut you in two.", vai: "minaccia" }
                 ]
               },
               congedo: {
@@ -3236,9 +3317,11 @@
                   "Aldo does not run, does not lose his composure: he is simply in front of you, so close you can smell the wax and ash of his tailcoat. A gloved hand rests on your chest, light as a caress.",
                   "Then the world turns upside down.",
                   "You fly backwards across the hall, the parquet sliding under your back like ice, until a column stops you with a crash that empties your lungs. Pain explodes along your spine. As your sight blurs, you hear his voice, calm, almost bored.",
-                  "«Threats are the last resort of those who have nothing else. Take the rat back where it came from.»"
+                  "«Threats are the last resort of those who have nothing else.»",
+                  "Before you can get up, a snap of fingers. Two clouds of grey ash swirl over the parquet and, when they clear, two huge mastiffs stare at you with eyes red as embers, their haunches wrapped in cold blue flames.",
+                  "«You came looking for a dance, and a dance you shall have. One at a time. Should I see you fall too low, I shall stop the dance myself.»"
                 ],
-                alla_fine: "aldo_schiaffo"
+                alla_fine: "aldo_schiaffo_scontro"
               },
               sfida: {
                 testo: [
@@ -3288,7 +3371,7 @@
                   "He is a man, or was one. Thin to the bone, his long beard filthy with ash, he wears the remains of a leather-and-iron armor of an ancient make, patched with twine and rags. On his chest, pinned to his doublet, gleams a bronze brooch shaped like a mastiff's head.",
                   "«The old man sent you, didn't he?»",
                   "His voice is hoarse, cracked from disuse. He looks at your chest, where no brooch is pinned, then at your hands, then at your eyes.",
-                  "«Of course he sent you. He always sends someone, sooner or later. I am Ettore. I was like you... I was exactly like you.»"
+                  "«Of course he sent you. He always sends someone, sooner or later. I am Ettore. Eleven times I went down into this house to hunt for him. I was like you: sent by the old man, his key in my pocket. On the twelfth, I am the prey.»"
                 ],
                 risposte: [
                   { testo: "I am here to kill you.", vai: "attacco" },
@@ -3303,26 +3386,26 @@
                 testo: {
                   signora: [
                     "Ettore lowers his sword slightly, without letting it go.",
-                    "«I came in through that cave so many years ago that I have stopped counting them. I met the old man, like you. He put me to the test, like you. He gave me his hunts, and I carried them out... all of them. Eleven prey, eleven clasps.»",
+                    "«I came in through that cave so many years ago that I have stopped counting them. The old man put me to the test, as he did you, and gave me his hunts. Eleven, and I carried out every one. Eleven prey, eleven clasps.»",
                     "He touches the brooch on his chest with two fingers, as if it burned.",
-                    "«Then Guendalina told me about the Lady. About Adele, locked away somewhere in this house. About her children, who still look for her. I stopped hunting for the Master and began searching for her. I found the elder son's diary, in the East Wing... and the old man understood.»",
-                    "From under the bed he draws a notebook with a leather cover, worn by a boy's hands.",
-                    "«In here is the road to her, or at least a piece of it. The Master knows. That is why he wants my clasp on his shelf. If you kill me, you bring the old man his proof... and the Lady stays where she is, for ever.»"
+                    "«Then Guendalina told me about the Lady, locked away somewhere in this house, and about her children, who still look for her. The elder boy entrusted me with his notebook, sealed, so that I would search for him what this house keeps hidden. I could not open it, nor find what I was looking for: down here my mind began to fray, and the old man understood that I had stopped being his.»",
+                    "From under the bed he draws a notebook with a leather cover, closed by a seal that glows faintly.",
+                    "«I am not the best, nor the first, nor the only one: I am just the one who stopped obeying. If you kill me, you bring the old man his proof... and the boy is left without his notebook, and the Lady without us.»"
                   ],
                   signore: [
                     "Ettore laughs, a dry laugh that turns into a cough.",
-                    "«The old man told you nothing, did he? He never does. I came in through that cave like you. He put me to the test like you. And I served the Master better than anyone: eleven hunts, eleven prey. Never a question. Never a hesitation.»",
+                    "«The old man told you nothing, did he? He never does. I came in through that cave like you. He put me to the test like you. I served the Master for eleven hunts: eleven prey, never a question, never a hesitation.»",
                     "He strikes his fist against his chest, against the bronze brooch.",
-                    "«Do you know who my prey were? Men with the clasp. Hunters. The ones who came before me. The Master needs only one hunter at a time... and when a new one arrives, the old one becomes the prey. That is how it works. That is how it has always worked.»",
+                    "«Do you know who my prey were? Men with the clasp, hunters like me, who came before me. The Master needs one hunter at a time: when a new one arrives, the old one becomes the prey. Do not think I am the best. I am only the first rung, the bronze. There are others above me, and at the top of that ladder there is one who passed me long ago.»",
                     "He looks you in the eyes, and in that gaze there is no hatred. Only an endless weariness.",
-                    "«I am as loyal to the Master as you are. More than you. And you are here to kill me in his name. When you are done, take my clasp to the old man. One day someone will come down those stairs to take yours.»"
+                    "«I obeyed until I was worn away, and you are here to kill me in his name. When you are done, take my clasp to the old man. One day someone will come down those stairs to take yours.»"
                   ],
                   neutro: [
                     "Ettore tilts his head, as if struggling to understand the question. Then he begins to laugh, softly, and cannot stop.",
-                    "«What does he want? What does he want...» He scratches his beard with blackened fingers. «He wants the clasp. The clasp, the clasp. On the shelf. With the others. I was the hunter, you know? The good hunter. Then another came... no. You came.»",
-                    "His words fray like old cloth. He talks of mastiffs, of a chessboard, of an empty shelf with his name above it. He talks of hunger, of the fire that must be kept alight, of the voices he hears at night behind the sarcophagi.",
-                    "Then, suddenly, he is lucid again. He stares at you with very clear eyes.",
-                    "«I do not know what he truly wants. I only know that if you kill me, the next shelf is yours.»"
+                    "«What does he want? The clasp. Always the clasp, on the shelf, with the others. I was the hunter, you know? I did eleven hunts. Each time a new name, each time a brooch. Then the twelfth came, and the twelfth shelf is mine.»",
+                    "His words fray like old cloth. He speaks of mastiffs, of a stair with many steps and of himself, stuck on the first. He speaks of hunger, of the fire that must be kept alight, of the voices he hears at night behind the sarcophagi.",
+                    "Then, suddenly, he is lucid again. He fixes you with very clear eyes.",
+                    "«I am not the best, I know. I am the lowest rung, and everyone knows it except the old man. I do not know what he really wants. I only know that if you kill me, the next shelf is yours.»"
                   ]
                 },
                 poi: "scelta"
@@ -3391,7 +3474,7 @@
               verita: {
                 testo: [
                   "Aldo takes the brooch between two gloved fingers and lifts it to the light. He studies it for a long time, then tucks it into an inner pocket of his tailcoat.",
-                  "«Ettore of Valdombra. Eleven hunts. He was the best I ever had... until today.»",
+                  "«Ettore of Valdombra. Eleven hunts. He was the most stubborn I ever had... until today.»",
                   "For an instant you think you catch something in his voice. Regret, perhaps. Then it is gone.",
                   "«The Master is satisfied. And the Master rewards those who serve him.»"
                 ],
@@ -3404,7 +3487,7 @@
               menzogna_ok: {
                 testo: [
                   "At last Aldo tucks the brooch into an inner pocket of his tailcoat.",
-                  "«Ettore of Valdombra. Eleven hunts. He was the best I ever had... until today.»",
+                  "«Ettore of Valdombra. Eleven hunts. He was the most stubborn I ever had... until today.»",
                   "«The Master is satisfied. And the Master rewards those who serve him.»"
                 ],
                 alla_fine: "aldo_premio"
@@ -3480,7 +3563,7 @@
             guarda: "Ettore never takes his eyes off you. He breathes with difficulty, but the sword does not tremble.",
             nonOra: "This is not the moment: Ettore is upon you and gives you no respite.",
             nonCapisco: "During the fight you can write: “I attack Ettore”, “I strike with the torch”, “I take the shield”, “I drink the potion” or “I cast” and the name of a spell.",
-            luceInutile: "Light is of no use against Ettore: you let the energy fade without spending it.",
+            incInArrivo: "This spell will soon work in combat: for now you cannot cast it and spend no points.", luceInutile: "Light is of no use against Ettore: you let the energy fade without spending it.",
             inc: {
               dardo_ghiaccio: "A spike of black ice streaks from your finger and lodges in Ettore's shoulder.",
               dardo_luce: "A ray of sacred light streaks from your body and pierces Ettore, leaving a trail of ash in the air.",
@@ -3627,7 +3710,7 @@
             lascia: "Ritrai le mani dalla pietra."
           },
           cripta_sarcofago: {
-            fisso: ["Il sarcofago più antico, in fondo alla cripta, ha il coperchio scolpito con un cavaliere disteso e la scritta «Primo dei Vespera». Una crepa corre lungo il bordo: forse, con abbastanza forza, si potrebbe spostare."],
+            fisso: ["Il sarcofago più antico, in fondo alla cripta, ha il coperchio scolpito con un cavaliere disteso e la scritta «Primo dei Vespera». Sotto il nome, un albero dalle radici intrecciate. Una crepa corre lungo il bordo: con abbastanza forza (una prova di Atletica, difficoltà 14) si potrebbe spostare il coperchio. Se la prova fallisce ti schiacci le dita (1d4 danni non letali), ma puoi riprovare."],
             ancora: ["Torni a puntare le mani sul bordo del coperchio."],
             azione: "Punti i piedi sulla pietra, infili le dita sotto il bordo del coperchio e spingi con tutta la tua forza.",
             successo: ["Con uno stridio di pietra contro pietra, il coperchio scivola di un palmo. Dentro, tra le ossa avvolte in un mantello consumato, brilla un anello d'oro rosso, inciso con un albero dalle radici intrecciate e una scritta: «Dal fuoco nasciamo, nel fuoco torniamo»."],
@@ -3780,7 +3863,7 @@
             lascia: "You take your hands off the stone."
           },
           cripta_sarcofago: {
-            fisso: ["The oldest sarcophagus, at the back of the crypt, has a lid carved with a reclining knight and the words “First of the Vespera”. A crack runs along the edge: perhaps, with enough strength, it could be moved."],
+            fisso: ["The oldest sarcophagus, at the back of the crypt, has a lid carved with a reclining knight and the words “First of the Vespera”. Beneath the name, a tree with intertwined roots. A crack runs along the edge: with enough strength (an Athletics check, difficulty 14) the lid could be moved. If the check fails you crush your fingers (1d4 non-lethal damage), but you can try again."],
             ancora: ["You brace your hands against the edge of the lid again."],
             azione: "You plant your feet on the stone, slide your fingers under the edge of the lid and push with all your strength.",
             successo: ["With a screech of stone on stone, the lid slides a hand's breadth. Inside, among bones wrapped in a worn cloak, gleams a ring of red gold, engraved with a tree with intertwined roots and the words: “From fire we are born, to fire we return”."],
@@ -4082,7 +4165,7 @@
         { tag: "gentile", testo: aG.testo, tono: "gentile", vai: "gentile", prova: { abilita: "Persuasione", cd: 18, ko: "gentile", ok: "gentile_ok" } },
         sfida, minaccia
       ];
-      N_.ritorno.risposte = [sfida, minaccia, N_.ritorno.risposte.find(r => r.vai === "congedo")];
+      N_.ritorno.risposte = [sfida, minaccia]; /* niente più congedo: ogni strada porta allo scontro */
       N_.osserva_ok = { testo: P.aldo.osserva_ok, poi: "inizio" };
       N_.osserva_ko = { testo: P.aldo.osserva_ko, poi: "inizio" };
       N_.gentile_ok = { testo: P.aldo.gentile_ok, alla_fine: "aldo_scontro_uno" };
@@ -4310,6 +4393,11 @@
           serieTit: "Abilità della via", serieGuida: "Scegli quale serie della tua via preparare fino al prossimo riposo. Quelle dello scudo si usano solo con lo scudo imbracciato.",
           serie: { arma: (tipo) => `Dell'arma (${tipo})`, scudo: "Dello scudo" }, tipoArma: { Tagliente: "taglio", Contundente: "contundente", Perforante: "perforante" },
           scelta: (n) => `Hai scelto la via: ${n}.`, conferma: "Scegli per sempre", abilita: "abilità della via" },
+        inc: { capacita: "Capacità di classe", preparati: (n, m) => `Incantesimi preparati (${n}/${m})`, principale: "scuola principale", altra: "altra scuola",
+          postiVuoti: (n) => n === 1 ? "1 posto libero" : `${n} posti liberi`, scegli: "Scegli", nessuna: "Nessun incantesimo sbloccato disponibile per questi posti.",
+          nuovoPosto: (l) => `Livello ${l}: nuovi incantesimi sbloccati e un nuovo posto da riempire (nella sezione Incantesimi).`, viaSblocco: "Livello 3: ora puoi scegliere una via di prestigio (nella sezione Incantesimi).",
+          viaGuida: "La via ti dà un'abilità al livello 3, una al 4 e una al 5, sempre pronte e senza occupare posti. La scelta è definitiva.",
+          guidaPrep: (tot, p, a) => `Scegli ${tot} incantesimi tra quelli sbloccati: al massimo ${p} della scuola principale e ${a} dell'altra scuola.`, max: (n) => `al massimo ${n}` },
         investiga: { domanda: "Come vuoi investigare?", cerca: "Cerco attivamente nella stanza (Indagare)", sensi: "Uso i sensi: vista, udito, olfatto (Percezione)" },
         speciali: (n, max) => `Tecniche speciali (${n}/${max})`, altrePiuTardi: (n) => `${n === 1 ? "1 posto libero" : n + " posti liberi"}: altre tecniche si sbloccano salendo di livello o imbracciando lo scudo.`, postiVuoti: (n) => n === 1 ? "1 posto libero" : `${n} posti liberi`,
         prep: { btnTec: "Prepara tecniche", btnInc: "Prepara incantesimi", nonOra: "Non ora", titoloTec: "Prepara le tecniche", titoloInc: "Prepara gli incantesimi",
@@ -4384,6 +4472,11 @@
           serieTit: "Path abilities", serieGuida: "Choose which set of your path to prepare until your next rest. The shield's work only with the shield on your arm.",
           serie: { arma: (tipo) => `Weapon (${tipo})`, scudo: "Shield" }, tipoArma: { Tagliente: "slashing", Contundente: "bludgeoning", Perforante: "piercing" },
           scelta: (n) => `You have chosen the path: ${n}.`, conferma: "Choose for good", abilita: "path ability" },
+        inc: { capacita: "Class ability", preparati: (n, m) => `Prepared spells (${n}/${m})`, principale: "main school", altra: "other school",
+          postiVuoti: (n) => n === 1 ? "1 free slot" : `${n} free slots`, scegli: "Choose", nessuna: "No unlocked spell is available for these slots.",
+          nuovoPosto: (l) => `Level ${l}: new spells unlocked and a new slot to fill (in the Spells section).`, viaSblocco: "Level 3: you can now choose a prestige path (in the Spells section).",
+          viaGuida: "The path gives you one ability at level 3, one at 4 and one at 5, always ready and taking no slots. The choice is permanent.",
+          guidaPrep: (tot, p, a) => `Choose ${tot} spells among those unlocked: at most ${p} from your main school and ${a} from the other school.`, max: (n) => `at most ${n}` },
         investiga: { domanda: "How do you want to investigate?", cerca: "I search the room actively (Investigate)", sensi: "I use my senses: sight, hearing, smell (Perception)" },
         speciali: (n, max) => `Special techniques (${n}/${max})`, altrePiuTardi: (n) => `${n === 1 ? "1 free slot" : n + " free slots"}: more techniques unlock as you level up or take up a shield.`, postiVuoti: (n) => n === 1 ? "1 free slot" : `${n} free slots`,
         prep: { btnTec: "Prepare techniques", btnInc: "Prepare spells", nonOra: "Not now", titoloTec: "Prepare your techniques", titoloInc: "Prepare your spells",
@@ -4656,7 +4749,7 @@
         anticamera_trono: {
           vista: { titolo: "Anticamera del trono", alt: "Un'anticamera buia davanti a un portone; un enorme mastino a due teste veglia avvolto da fiamme azzurre." },
           stanza: {
-            intro: ["La rampa di sinistra ti porta al primo piano, in un'anticamera spoglia e bollente. In fondo, un portone di ferro battuto e legno annerito: dietro, lo senti, c'è la sala del trono.", "Davanti al portone è sdraiato il mastino a due teste: pelo nero, piastre di metallo scuro incise di rune azzurre, un collare irto di punte, fiamme fredde che gli scorrono sul dorso. Le due teste si sollevano insieme. Un ringhio basso fa vibrare il pavimento sotto i tuoi piedi."],
+            intro: ["La rampa di sinistra sbocca al primo piano in un'anticamera spoglia, dove l'aria è così densa da bruciare i polmoni. In fondo, sbarrato e cupo, si erge il portone di ferro battuto e legno annerito: oltre quella soglia giace la sala del trono.", "A guardia del varco, steso a terra come un incubo di metallo e cenere, giace il mastino a due teste; il suo pelo nerissimo si fonde con le piastre scure incise da rune azzurre. Le due teste si erigono contemporaneamente, fissando i loro sguardi su di te, mentre un ringhio basso e cavernoso scuote la pietra sotto i tuoi stivali e ti risale lungo le ossa."],
             nota: "Per tornare nell'atrio scrivi, ad esempio, «torno indietro».",
             fallbackLibera: ["Il mastino non ti stacca gli occhi di dosso. Qui non c'è nient'altro da fare che tornare indietro."],
             ritorno: ["Torni nell'anticamera. Il mastino a due teste è già in piedi, tra te e il portone. Il ringhio comincia prima ancora che tu metta piede sull'ultimo gradino."]
@@ -4666,12 +4759,12 @@
         corridoio_primo: {
           vista: { titolo: "Corridoio finestrato", alt: "Un lungo corridoio con alte finestre sulla sinistra e un'unica porta a metà della parete destra." },
           stanza: {
-            intro: ["La rampa di destra sbocca in un lungo corridoio. Sulla sinistra una fila di alte finestre lascia entrare la luce fredda delle lune; sulla destra, a metà, un'unica porta a doppio battente, intagliata con motivi di danza: l'ingresso degli ospiti alla sala da ballo.", "Appena finite le scale, un corridoio più stretto piega a destra verso un'altra rampa, che sale al secondo piano."],
+            intro: ["La rampa di destra sbocca in un lungo corridoio dove il tempo sembra essersi pietrificato. A sinistra, alte vetrate lasciano penetrare il raggio tagliente delle lune: una luce fredda che non illumina, ma svela soltanto la cenere sospesa in un'aria immobile.", "Sulla destra, incastrata a metà parete, si erge un'unica porta a doppio battente, finemente intagliata con motivi di danza i cui ballerini sembrano essersi congelati nel legno.", "Superata la soglia delle scale, l'architettura si comprime: un passaggio secondario piega bruscamente a destra, strozzandosi in un corridoio angusto. Da qui si snoda la rampa per il secondo piano, proseguimento naturale e cupo dello scalone monumentale, che si arrampica nell'ombra verso i livelli superiori."],
             nota: "Puoi entrare nella sala da ballo, guardare fuori dalle finestre o tornare nell'atrio.",
             fallbackLibera: ["Il corridoio è silenzioso e vuoto. Le finestre, la porta della sala da ballo e le scale per il secondo piano: nient'altro."],
             ritorno: ["Torni nel corridoio finestrato. La luce delle lune disegna lunghi rettangoli pallidi sul pavimento."]
           },
-          fatti: "Corridoio finestrato, primo piano, in cima alla rampa di destra dello scalone: lungo, alte finestre sulla sinistra che danno sul retro della casa (un giardino semplice, alberi da frutta, foreste in lontananza; giardino con fontana, cappella e pini si vedono invece dalle vetrate della sala da ballo, a est), sulla destra a metà un'unica porta a doppio battente intagliata che dà sulla sala da ballo (ingresso degli ospiti); appena finite le scale, un corridoio più stretto a destra porta alle scale per il secondo piano, chiuse a chiave."
+          fatti: "Corridoio finestrato, primo piano, in cima alla rampa di destra dello scalone: lungo, alte finestre sulla sinistra che danno sul retro della casa (un giardino semplice, alberi da frutta, foreste in lontananza; giardino con fontana, cappella e pini si vedono invece dalle vetrate della sala da ballo, a est), sulla destra a metà un'unica porta a doppio battente intagliata che dà sulla sala da ballo (ingresso degli ospiti); appena finite le scale, un corridoio più stretto a destra porta alla rampa per il secondo piano, sbarrata da un muro di forza invisibile (per ora non si passa)."
         },
         rampaDomanda: "Dal pianerottolo dell'armatura lo scalone si divide in due rampe: una sale a sinistra, l'altra a destra. Quale prendi?",
         rampaSx: "Rampa di sinistra", rampaDx: "Rampa di destra",
@@ -4681,7 +4774,7 @@
         paura: ["Il terrore ti svuota. Le ginocchia cedono, l'arma ti scivola dalle dita e il pavimento ti viene incontro. Poi, il buio."],
         risveglio: ["Ti risvegli sul pavimento della cucina, una coperta sulle spalle e il calore del focolare sul viso. Guendalina è china su di te. «Ti ho trovato svenuto sulla scalinata» dice piano, porgendoti una tazza fumante. «Il cane del Signore. Nessuno passa, senza Aldo. Nessuno.»", "Bevi. Il tremito passa, il respiro torna regolare: sei di nuovo in forze, come se l'anticamera fosse stata solo un brutto sogno."],
         risveglioAtrio: ["Ti risvegli ai piedi dello scalone, disteso sul marmo, una coperta di lana grezza sulle spalle. Qualcuno ti ha portato giù. Nell'aria resta un profumo di lavanda e di pane, e da qualche parte, oltre la sala da pranzo, una porta si richiude piano.", "Il tremito passa, il respiro torna regolare: sei di nuovo in forze."],
-        secondoPiano: ["Raggiungi la rampa che sale al secondo piano. In cima, una porta massiccia con una serratura di ferro lucido sbarra la strada: è chiusa a chiave. Qualcuno, in questa casa, deve averne la chiave."],
+        secondoPiano: ["Raggiungi la rampa che sale al secondo piano. Al primo gradino l'aria si addensa e ti spinge indietro: un muro di forza, invisibile e gelido, ti sbarra la strada. Non puoi passare, per ora."],
         luoghi: {
           anti_mastino: ["Il mastino ti fissa con quattro occhi bianchi. Una testa ringhia piano, l'altra resta in silenzio, ed è quella che ti fa più paura. Le rune sulle piastre pulsano a ogni respiro, come un secondo cuore."],
           anti_portone: ["Il portone è alto il doppio di un uomo, di ferro battuto e legno annerito dal fuoco. Da sotto la soglia filtra un calore secco e una luce azzurra che non illumina niente."],
@@ -4693,7 +4786,7 @@
         anticamera_trono: {
           vista: { titolo: "Throne antechamber", alt: "A dark antechamber before a great door; a huge two-headed mastiff keeps watch wrapped in blue flames." },
           stanza: {
-            intro: ["The left flight takes you to the first floor, into a bare, sweltering antechamber. At the far end, a door of wrought iron and blackened wood: behind it, you can feel it, lies the throne room.", "Before the door lies the two-headed mastiff: black fur, plates of dark metal engraved with blue runes, a spiked collar, cold flames running along its back. Both heads rise together. A low growl makes the floor tremble beneath your feet."],
+            intro: ["The left flight opens onto the first floor in a bare antechamber where the air is so dense it burns the lungs. At the far end, barred and sombre, rises the door of wrought iron and blackened wood: beyond that threshold lies the throne room.", "Guarding the passage, stretched out like a nightmare of metal and ash, lies the two-headed mastiff; its jet-black fur blends into dark plates engraved with blue runes. Both heads rise at once, fixing their gaze on you, while a low, cavernous growl shakes the stone beneath your boots and climbs through your bones."],
             nota: "To go back to the hall write, for example, “I go back”.",
             fallbackLibera: ["The mastiff never takes its eyes off you. There is nothing to do here but go back."],
             ritorno: ["You return to the antechamber. The two-headed mastiff is already on its feet, between you and the door. The growl begins before you even reach the last step."]
@@ -4703,12 +4796,12 @@
         corridoio_primo: {
           vista: { titolo: "Windowed corridor", alt: "A long corridor with tall windows on the left and a single door halfway along the right wall." },
           stanza: {
-            intro: ["The right flight opens onto a long corridor. On the left a row of tall windows lets in the cold light of the moons; on the right, halfway along, a single double door carved with dancing figures: the guests' entrance to the ballroom.", "Right after the stairs, a narrower corridor turns right towards another flight, rising to the second floor."],
+            intro: ["The right flight opens onto a long corridor where time seems to have turned to stone. On the left, tall windows let in the sharp shaft of the moons: a cold light that does not illuminate but only reveals the ash hanging in the motionless air.", "On the right, set halfway into the wall, stands a single double door, finely carved with dancing figures who seem frozen in the wood.", "Past the head of the stairs the architecture tightens: a side passage bends sharply to the right, choking into a narrow corridor. From there winds the flight to the second floor, the dark continuation of the monumental staircase, climbing into the shadows towards the upper levels."],
             nota: "You can enter the ballroom, look out of the windows or go back to the hall.",
             fallbackLibera: ["The corridor is silent and empty. The windows, the ballroom door and the stairs to the second floor: nothing else."],
             ritorno: ["You return to the windowed corridor. The moonlight draws long pale rectangles on the floor."]
           },
-          fatti: "Windowed corridor, first floor, at the top of the right flight of the great staircase: long, tall windows on the left overlooking the back of the house (a plain garden, fruit trees, forests in the distance; the garden with the fountain, the chapel and the pines are seen instead from the ballroom windows, to the east), on the right halfway along a single carved double door opening onto the ballroom (guests' entrance); right after the stairs, a narrower corridor on the right leads to the stairs to the second floor, locked."
+          fatti: "Windowed corridor, first floor, at the top of the right flight of the great staircase: long, tall windows on the left overlooking the back of the house (a plain garden, fruit trees, forests in the distance; the garden with the fountain, the chapel and the pines are seen instead from the ballroom windows, to the east), on the right halfway along a single carved double door opening onto the ballroom (guests' entrance); right after the stairs, a narrower corridor on the right leads to the flight to the second floor, barred by an invisible wall of force (no way through for now)."
         },
         rampaDomanda: "From the landing with the armour the great staircase splits into two flights: one rises to the left, the other to the right. Which do you take?",
         rampaSx: "Left flight", rampaDx: "Right flight",
@@ -4718,7 +4811,7 @@
         paura: ["Terror empties you. Your knees give way, your weapon slips from your fingers and the floor rushes up to meet you. Then, darkness."],
         risveglio: ["You wake on the kitchen floor, a blanket over your shoulders and the warmth of the hearth on your face. Guendalina is bent over you. “I found you fainted on the great staircase,” she says softly, handing you a steaming cup. “The Master's hound. No one passes without Aldo. No one.”", "You drink. The trembling passes, your breath steadies: you are back in strength, as if the antechamber had been only a bad dream."],
         risveglioAtrio: ["You wake at the foot of the great staircase, lying on the marble, a coarse wool blanket over your shoulders. Someone carried you down. A scent of lavender and bread lingers in the air, and somewhere beyond the dining hall a door softly closes.", "The trembling passes, your breath steadies: you are back in strength."],
-        secondoPiano: ["You reach the flight rising to the second floor. At the top, a massive door with a lock of polished iron bars the way: it is locked. Someone in this house must have the key."],
+        secondoPiano: ["You reach the flight rising to the second floor. At the first step the air thickens and pushes you back: a wall of force, invisible and icy, bars your way. You cannot pass, for now."],
         luoghi: {
           anti_mastino: ["The mastiff stares at you with four white eyes. One head growls softly, the other stays silent, and that is the one that frightens you most. The runes on its plates pulse with every breath, like a second heart."],
           anti_portone: ["The door is twice the height of a man, of wrought iron and wood blackened by fire. From under the threshold seeps a dry heat and a blue light that illuminates nothing."],
@@ -4801,6 +4894,8 @@
       if (/secondo piano|second floor/.test(t)) return "rampa_dx";
       if (/\bballo\b|ballroom/.test(t)) return "rampa_dx";
       if ("scale" in usate && (sali || muovi || rampa) && (scale || rampa || sopra) && lato) return sx ? "rampa_sx" : "rampa_dx";
+      /* sul pianerottolo: «vado a destra» / «vado a sinistra» da soli scelgono la rampa (le porte hanno sempre la parola «porta») */
+      if ("scale" in usate && muovi && lato && !porta && !guarda && !armatura && !statua && !spada && !/arazz|tapestr|drapp|conversazion|caccia|drawing|hunt/.test(t)) return sx ? "rampa_sx" : "rampa_dx";
       if ("scale" in usate && (sali || rampa) && !armatura && !statua && !spada) return "rampa?";
       /* salire: verbo di salita, oppure muoversi verso scale/pianerottolo/armatura, oppure toccare l'armatura o la spada */
       if (sali || (muovi && (scale || sopra || armatura || statua || spada)) || (tocca && (armatura || statua || spada))) return "scale";
@@ -4981,6 +5076,7 @@
 
     /* Foresta, fuori dal dungeon */
     const RE_TORCIA = /\btorc\w*|\btorch\w*|\bfiaccol\w*/;
+    const RE_NOME_LUCE = /\bluce\b|\blight\b|\blume\b|\bglow\b/; /* Luce (Accolito) e Lume Arcano / Arcane Glow (Sapiente) */
     const RE_ACCENDI = /\baccend\w*|\bappicc\w*|\bincendi\w*|\blight\w*|\bkindl\w*|\bignit\w*|\buso\b|\busa\b|\busare\b|utilizz\w*|\buse\b|\buses\b|\busing\b/;
     const RE_GROTTA = /dungeon|grott|cavern|\bcaves?\b|soglia|ingress|entrata|abisso|\bdentro\b|oscurita|\binside\b|threshold|entrance|\bmouth\b|\bgo in\b|\bwalk in\b|\bstep in\b/;
     function interpretaForesta(t) {
@@ -4991,7 +5087,7 @@
       if (RE_TORCIA.test(t) && (prendi || crea)) return "prendi_torcia";
       if ((prendi || crea) && /\brami?\b|\bramo\b|\blegn[oa]\b|bastone di legno|ciocc|tizzon|\bbranch\w*|\bstick\w*|firewood|\blog\b/.test(t)) return "prendi_torcia";
       if (RE_TORCIA.test(t)) return "torcia_fuori";
-      if (/incantesim|\bspell\b|\bcast\w*|\bmagi\w*/.test(t) && /\bluce\b|\blight\b/.test(t)) return "luce_fuori";
+      if (/incantesim|\bspell\b|\bcast\w*|\bmagi\w*|\blanci\w*|\bevoc\w*/.test(t) && RE_NOME_LUCE.test(t)) return "luce_fuori";
       /* entrare: "entro nel dungeon", "avanzo nella grotta", "varco la soglia", anche solo "entro" o "avanzo" */
       if (muovi && !guarda && (RE_GROTTA.test(t) || parole(t) <= 2)) return "entra_dungeon";
       if (/fal[oò]|\bfuoco\b|fiamm|brac[ei]|legna|\brami?\b|\bfires?\b|campfire|flames?|embers?|firewood|branch\w*/.test(t)) return "foresta_falo";
@@ -5007,8 +5103,8 @@
     function interpretaBuio(t) {
       const esci = /\b(esc\w*|torn\w*|ritorn\w*|indietro|fuori|back|return\w*|leave|exit\w*|out|outside)\b|accampament|\bcamp\b/.test(t);
       if (RE_TORCIA.test(t) && RE_ACCENDI.test(t)) return "accendi_torcia";
-      if (/incantesim|\bspell\b|\bcast\w*|\bmagi\w*|\blanci\w*|\bevoc\w*/.test(t) && /\bluce\b|\blight\b/.test(t)) return "lancia_luce";
-      if (/^\s*(luce|light)\s*$/.test(t)) return "lancia_luce";
+      if (/incantesim|\bspell\b|\bcast\w*|\bmagi\w*|\blanci\w*|\bevoc\w*/.test(t) && RE_NOME_LUCE.test(t)) return "lancia_luce";
+      if (/^\s*(luce|light|lume( arcano)?|arcane glow|glow)\s*$/.test(t)) return "lancia_luce";
       if (esci) return "esci"; /* anche «esco a prendere una torcia» */
       if (RE_TORCIA.test(t)) return "accendi_torcia";
       return null;
@@ -5021,6 +5117,7 @@
     try { pg = JSON.parse(localStorage.getItem("personaggio")); } catch (e) {}
     if (!pg || !pg.classe) { pg = null; window.location.replace("index.html"); }
     else if (!pg.equipaggiamento) { pg = null; window.location.replace("index.html"); }
+    else if (window.MAGIA && window.MAGIA.CLASSI[pg.classe] && !pg.scuola) { pg = null; window.location.replace("index.html"); } /* creato con il vecchio sistema di incantesimi: la pagina iniziale lo segnala */
 
     /* =====================================================================
        REVISIONE ATTRIBUTI E ABILITÀ
@@ -5093,12 +5190,23 @@
     const maxMentali = () => (pg.saluteMentale != null ? Number(pg.saluteMentale) : 10 + mod(spirito())) + crescitaPg().mente;
     /* mana (Sapiente e Accolito): il massimo viene dalla creazione (più la crescita di livello), quello speso fa parte della partita */
     const manaMax = () => (pg.mana != null ? Number(pg.mana) + crescitaPg().risorsa : null);
-    /* incantesimi salvati in creazione: { id, nome: { it, en }, costo, desc: { it, en }, effetto } */
-    const listaIncantesimi = () => {
-      const tutti = (window.INCANTESIMI || {})[pg.classe];
-      if (tutti && typeof usate !== "undefined" && Array.isArray(usate.incPreparati)) return usate.incPreparati.map(id => tutti.find(x => x.id === id)).filter(Boolean); /* cambiati riposando */
-      return [].concat(pg.incantesimi || []).filter(Boolean).map(x => typeof x === "string" ? { id: x, nome: x } : x);
-    };
+    /* ---------- Incantesimi (Arcanista e Monaco): le scuole di js/magia.js ----------
+       pg.scuola = scuola principale, pg.incantesimi = id scelti in creazione, usate.incPreparati = id cambiati riposando.
+       Posti: come le tecniche (2, 4, 5, 6, 7 della scuola principale) più 1 dell'altra scuola, di qualsiasi livello sbloccato.
+       La capacità di classe (Luce / Lume Arcano) non occupa posti. */
+    const MG = window.MAGIA;
+    const incantatore = () => !!(MG && pg && MG.CLASSI[pg.classe]);
+    let capLuceCache = null;
+    const capLuce = () => capLuceCache || (capLuceCache = { id: "luce", costo: MG.CAPACITA[pg.classe].costo, nome: MG.CAPACITA[pg.classe].nome, effetto: MG.CAPACITA[pg.classe].effetto, capacita: true });
+    const postiPrinc = () => Regole.TECNICHE_PER_LIVELLO.slice(0, Math.max(1, Math.min(5, livelloPg()))).reduce((a, b) => a + b, 0);
+    const quotaInc = (sc) => sc === pg.scuola ? postiPrinc() : MG.POSTI_ALTRA_SCUOLA;
+    const incTotale = () => postiPrinc() + MG.POSTI_ALTRA_SCUOLA;
+    const idIncPreparati = () => (typeof usate !== "undefined" && Array.isArray(usate.incPreparati) ? usate.incPreparati : [].concat(pg.incantesimi || [])).map(x => typeof x === "string" ? x : x && x.id).filter(Boolean);
+    const incPreparati = () => idIncPreparati().map(id => MG.INCANTESIMI.find(i => i.id === id)).filter(i => i && MG.CLASSI[pg.classe].includes(i.scuola));
+    const incSbloccati = () => MG.INCANTESIMI.filter(i => MG.CLASSI[pg.classe].includes(i.scuola) && i.liv <= livelloPg());
+    const incLiberi = () => Math.max(0, incTotale() - incPreparati().length);
+    const incVia = () => { const v = incantatore() && livelloPg() >= 3 ? viaPg() : null; return v ? MG.VIE.filter(x => x.via === v && MG.CLASSI[pg.classe].includes(x.scuola) && x.liv <= livelloPg()).sort((a, b) => a.liv - b.liv) : []; };
+    const listaIncantesimi = () => (incantatore() && pg.scuola) ? [capLuce(), ...incPreparati(), ...incVia()] : [];
     const nomeInc = (inc) => Lingua.t(inc.nome) || inc.id || "";
     const nomiInc = (inc) => (inc.nome && typeof inc.nome === "object" ? Object.values(inc.nome) : [inc.nome, inc.id]).filter(Boolean).map(String);
     const manaAttuale = () => Math.max(0, manaMax() - (pg.manaUsato || 0));
@@ -5164,6 +5272,7 @@
       if (pg.livello >= LIVELLO_MAX) righe.push(RG.livello.massimo);
       if (haTecniche() && TEC.some(t => t.liv === pg.livello && t.tipo !== "Utilita" && !t.via)) righe.push(RT.nuovoPosto(pg.livello));
       if (haTecniche() && pg.livello === 3 && !viaPg()) righe.push(RT.via.sblocco);
+      if (incantatore() && pg.scuola) { righe.push(RT.inc.nuovoPosto(pg.livello)); if (pg.livello === 3 && !viaPg()) righe.push(RT.inc.viaSblocco); }
       aggiungi({ tipo: "narra", box: "cap", fuori: true, esito: RG.livello.titolo(pg.livello), esitoRighe: righe, righe: [] });
       disegnaScheda(); modificato();
     }
@@ -5351,6 +5460,7 @@
       if (manaMax() != null) riga(vit, U.mana, `${manaAttuale()} / ${manaMax()}`, "mana");
       if (risorsaPg()) riga(vit, nomeRisorsa(), `${risorsaAttuale()} / ${risorsaPg().max}`, "risorsa"); /* punti ira o punti natura */
       if (cdIncantesimi() != null) riga(vit, CB.cdInc, String(cdIncantesimi()), "cdinc");
+      if (scontro && pg.classe === "Accolito") riga(vit, Lingua.t({ it: "Bilancia", en: "Balance" }), nomeBilancia(Number(scontro.bilancia) || 0), "cdinc");
       const sc = (() => { try { return scontro; } catch (e) { return null; } })();
       if (sc) righeEffetti(vit, sc, EFF_PG, sep);
       statoMente();
@@ -5358,7 +5468,7 @@
     }
 
     /* Effetti a durata: medaglione con simbolo, nome e turni rimasti (rombi pieni = turni ancora attivi) */
-    const EFF_PG = ["scudo", "invuln", "pietra", "armaPiu", "potenza", "guardia", "baluardo", "fortezza", "furore", "precisione"], EFF_NEM = ["bloccato", "cieco", "sanguina", "frattura", "esposto", "debole", "sbilanciato", "silenzio", "frastornato", "intontito"];
+    const EFF_PG = ["scudo", "invuln", "pietra", "armaPiu", "potenza", "guardia", "baluardo", "fortezza", "furore", "precisione", "runa", "occhio", "tomo", "quiete", "muro", "santuario", "voto", "gemella", "cerchio", "fiamma", "notte", "furia", "manto", "seconda"], EFF_NEM = ["bloccato", "cieco", "sanguina", "frattura", "esposto", "debole", "sbilanciato", "silenzio", "frastornato", "intontito", "pressione", "parola", "accecato", "avvizzito", "paura", "corona"];
     const SHIELD = "M12 2.8l7 2.7v5.3c0 4.6-3 8.1-7 10.4-4-2.3-7-5.8-7-10.4V5.5z";
     const ICONE_EFF = { /* tratti a 24×24, colore dal tema dell'effetto */
       scudo: { tono: "dif", d: `<path d="${SHIELD}"/><path d="M12 6.5v11M8.2 10.5h7.6" opacity=".7"/>` },
@@ -5383,6 +5493,27 @@
       cariche: { tono: "dif", d: `<path d="${SHIELD}"/><path d="M13 6.5l-3 5.5h4l-3 5.5" opacity=".85"/>` },
       furore: { tono: "off", d: `<path d="M12 3c1 3.5 4.5 5 4.5 9a4.5 4.5 0 0 1-9 0c0-2 1-3.2 2-4.2.3 1.6 1 2.4 2 2.7-.6-2.5-.2-5.2.5-7.5z"/>` },
       cieco: { tono: "mal", d: `<path d="M2.5 12s3.6-6 9.5-6 9.5 6 9.5 6-3.6 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.6"/><path d="M4.5 19.5l15-15"/>` },
+      runa: { tono: "off", d: `<path d="M12 3v18M7 8l5 4-5 4M17 8l-5 4 5 4" opacity=".9"/>` },
+      occhio: { tono: "off", d: `<path d="M2.5 12s3.6-6 9.5-6 9.5 6 9.5 6-3.6 6-9.5 6-9.5-6-9.5-6z"/><path d="M12 9l2.2 3-2.2 3-2.2-3z" opacity=".85"/>` },
+      tomo: { tono: "off", d: `<path d="M5 4.5h11a3 3 0 0 1 3 3v12H8a3 3 0 0 1-3-3z"/><path d="M8 4.5v15M11 9h5" opacity=".7"/>` },
+      quiete: { tono: "dif", d: `<circle cx="12" cy="12" r="8.5"/><path d="M8 12h8" opacity=".8"/>` },
+      muro: { tono: "dif", d: `<path d="M4 6h16v12H4z"/><path d="M4 12h16M10 6v6M14 12v6" opacity=".7"/>` },
+      pressione: { tono: "mal", d: `<path d="M12 3v13M7 11l5 5 5-5"/><path d="M5 20h14" opacity=".8"/>` },
+      parola: { tono: "mal", d: `<circle cx="12" cy="12" r="8"/><path d="M8 9l8 6M16 9l-8 6" opacity=".8"/>` },
+      santuario: { tono: "dif", d: `<path d="M4 20V10l8-6 8 6v10z"/><path d="M9 20v-5h6v5" opacity=".8"/>` },
+      voto: { tono: "off", d: `<path d="M12 3v18M7 8h10" opacity=".9"/><circle cx="12" cy="12" r="8" opacity=".6"/>` },
+      gemella: { tono: "off", d: `<circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6" opacity=".7"/>` },
+      cerchio: { tono: "dif", d: `<circle cx="12" cy="12" r="8.5"/><path d="M12 7c1 2.2 3 3 3 5.2a3 3 0 0 1-6 0C9 10 11 9.4 12 7z" opacity=".85"/>` },
+      fiamma: { tono: "dif", d: `<path d="M12 3c1 3.5 4.5 5 4.5 9a4.5 4.5 0 0 1-9 0c0-2 1-3.2 2-4.2.3 1.6 1 2.4 2 2.7-.6-2.5-.2-5.2.5-7.5z"/>` },
+      notte: { tono: "off", d: `<path d="M18 14.5A7 7 0 0 1 9.5 6a7 7 0 1 0 8.5 8.5z"/>` },
+      furia: { tono: "off", d: `<path d="M12 3l2.5 6 6 .5-4.6 4 1.5 6L12 16.5 6.6 19.5l1.5-6L3.5 9.5l6-.5z"/>` },
+      manto: { tono: "dif", d: `<path d="M5 20c0-8 3-14 7-16 4 2 7 8 7 16z"/><path d="M12 8v12" opacity=".6"/>` },
+      seconda: { tono: "dif", d: `<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.600-7 10-7 10z"/>` },
+      accecato: { tono: "mal", d: `<path d="M2.5 12s3.6-6 9.5-6 9.5 6 9.5 6-3.6 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.6"/><path d="M4.5 19.5l15-15"/>` },
+      avvizzito: { tono: "mal", d: `<path d="M12 21V9M12 13c-4 0-6-2-6-5 4 0 6 2 6 5zM12 11c3 0 5-2 5-4-3 0-5 2-5 4z" opacity=".9"/>` },
+      paura: { tono: "mal", d: `<circle cx="12" cy="12" r="8.5"/><circle cx="9" cy="10" r="1"/><circle cx="15" cy="10" r="1"/><ellipse cx="12" cy="15.5" rx="2" ry="2.4"/>` },
+      corona: { tono: "mal", d: `<path d="M4 18l1.5-9 4 4L12 6l2.500 7 4-4L20 18z"/>` },
+      sigilli: { tono: "mal", d: `<circle cx="12" cy="12" r="8"/><path d="M12 6l3.5 6-3.5 6-3.5-6z" opacity=".85"/>` },
       impaurito: { tono: "mal", d: `<circle cx="12" cy="12" r="8.5"/><circle cx="9" cy="10" r="1"/><circle cx="15" cy="10" r="1"/><ellipse cx="12" cy="15.5" rx="2" ry="2.4"/>` }
     };
     function medaglione(k) {
@@ -5392,8 +5523,8 @@
       return m;
     }
     function righeEffetti(dl, sc, chiavi, sep) {
-      const attivi = chiavi.filter(k => sc.eff[k] > 0), crepe = chiavi === EFF_NEM ? CMB.crepe(sc) : 0, cariche = chiavi === EFF_PG ? CMB.cariche(sc) : 0;
-      if (!attivi.length && !crepe && !cariche) return;
+      const attivi = chiavi.filter(k => sc.eff[k] > 0), crepe = chiavi === EFF_NEM ? CMB.crepe(sc) : 0, cariche = chiavi === EFF_PG ? CMB.cariche(sc) : 0, sigilli = chiavi === EFF_NEM ? CMB.sigilli(sc) : 0;
+      if (!attivi.length && !crepe && !cariche && !sigilli) return;
       sep("sep-spazio");
       const t = document.createElement("div"); t.className = "eff-tit"; t.textContent = CB.effettiTit; dl.append(t);
       if (cariche) { /* Carica Cinetica dello scudo: cariche, dura tutto lo scontro */
@@ -5404,6 +5535,16 @@
         for (let i = 0; i < max; i++) { const r = document.createElement("i"); if (i < cariche) r.className = "su"; pall.append(r); }
         dd.append(pall, document.createTextNode(CB.cariche(cariche, max)));
         dd.title = dt.title = `${CB.effNomi.cariche}: ${CB.cariche(cariche, max)}`;
+        dl.append(dt, dd);
+      }
+      if (sigilli) { /* Sigilli dell'Arcanista: incisi sul nemico, durano tutto lo scontro */
+        const max = CMB.sigilliMax({ boss: bossNem() });
+        const dt = document.createElement("dt"); dt.className = "eff-nome"; dt.append(medaglione("sigilli"), document.createTextNode(CB.effNomi.sigilli));
+        const dd = document.createElement("dd"); dd.className = "eff-dur mal";
+        const pall = document.createElement("span"); pall.className = "rombi"; pall.setAttribute("aria-hidden", "true");
+        for (let i = 0; i < max; i++) { const r = document.createElement("i"); if (i < sigilli) r.className = "su"; pall.append(r); }
+        dd.append(pall, document.createTextNode(`${sigilli}/${max}`));
+        dd.title = dt.title = `${CB.effNomi.sigilli}: ${sigilli}/${max}`;
         dl.append(dt, dd);
       }
       if (crepe) { /* Incrinatura: cariche invece di turni, dura tutto lo scontro */
@@ -5435,28 +5576,55 @@
       });
     }
 
-    /* Tendina degli incantesimi: nome (si apre la descrizione) e costo in mana */
+    /* Tendina degli incantesimi: capacità di classe, incantesimi preparati, posti liberi e via di prestigio */
     function disegnaIncantesimi() {
       const lista = listaIncantesimi();
       document.getElementById("incantesimiBox").hidden = !lista.length;
       const box = document.getElementById("incantesimi");
       box.replaceChildren();
-      lista.forEach((inc, i) => {
-        const costo = inc.costo;
+      if (!lista.length) return;
+      const titolo = (txt) => { const p = document.createElement("p"); p.className = "livello"; p.textContent = txt; box.append(p); };
+      const voce = (inc, i) => {
         const og = document.createElement("div"); og.className = "oggetto";
         const testa = document.createElement("div"); testa.className = "testa";
         const k = "inc-" + (inc.id || i), aperto = aperti.has(k);
         const testo = document.createElement("p"); testo.className = "testo"; testo.id = k.replace(/\W+/g, "_");
-        testo.textContent = [Lingua.t(inc.desc), inc.effetto ? `[${Lingua.t(inc.effetto)}]` : ""].filter(Boolean).join(" "); testo.hidden = !aperto;
+        testo.textContent = inc.effetto ? Lingua.t(inc.effetto) : ""; testo.hidden = !aperto;
         const b = document.createElement("button"); b.type = "button"; b.className = "nome-btn"; b.textContent = nomeInc(inc);
         b.setAttribute("aria-expanded", String(aperto)); b.setAttribute("aria-controls", testo.id);
         b.addEventListener("click", () => { const apri = testo.hidden; testo.hidden = !apri; if (apri) aperti.add(k); else aperti.delete(k); b.setAttribute("aria-expanded", String(apri)); });
-        const c = document.createElement("span"); c.className = "costo"; c.textContent = costo != null ? `${costo} ${U.mana.toLowerCase()}` : "";
+        const c = document.createElement("span"); c.className = "costo";
+        c.textContent = inc.costo != null ? `${inc.costo} ${U.mana.toLowerCase()}` : "";
         const lancia = document.createElement("button"); lancia.type = "button"; lancia.className = "mini"; lancia.textContent = U.lanciaInc;
         lancia.addEventListener("click", clic(() => lanciaIncantesimo(inc)));
         const dx = document.createElement("span"); dx.className = "azioni-inc"; dx.append(c, lancia);
         testa.append(b, dx); og.append(testa, testo); box.append(og);
-      });
+      };
+      titolo(RT.inc.capacita);
+      voce(capLuce(), "luce");
+      const prep = incPreparati();
+      titolo(RT.inc.preparati(prep.length, incTotale()));
+      prep.forEach(voce);
+      if (incLiberi() > 0) { /* posti ancora vuoti (nuovo livello): si riempiono subito */
+        const og = document.createElement("div"); og.className = "oggetto";
+        const testa = document.createElement("div"); testa.className = "testa";
+        const p = document.createElement("span"); p.className = "vuoto"; p.textContent = RT.inc.postiVuoti(incLiberi());
+        const sc = document.createElement("button"); sc.type = "button"; sc.className = "mini"; sc.textContent = RT.inc.scegli; sc.addEventListener("click", () => apriPreparazione(true));
+        testa.append(p, sc); og.append(testa); box.append(og);
+      }
+      /* via di prestigio: dal livello 3; le sue abilità non occupano posti */
+      if (livelloPg() >= 3) {
+        const v = viaPg();
+        titolo(v ? `${RT.via.titolo}: ${nomeViaPg(v)}` : RT.via.titolo);
+        if (v) MG.VIE.filter(x => x.via === v && MG.CLASSI[pg.classe].includes(x.scuola) && x.liv <= livelloPg()).sort((x, y) => x.liv - y.liv).forEach(voce);
+        else {
+          const og = document.createElement("div"); og.className = "oggetto";
+          const testa = document.createElement("div"); testa.className = "testa";
+          const p = document.createElement("span"); p.className = "vuoto"; p.textContent = RT.via.daScegliere;
+          const sc = document.createElement("button"); sc.type = "button"; sc.className = "mini"; sc.textContent = RT.via.scegli; sc.addEventListener("click", apriSceltaVia);
+          testa.append(p, sc); og.append(testa); box.append(og);
+        }
+      }
     }
 
     /* Tendina delle tecniche (Guerriero): disponibili, posti dei livelli e Mente incrollabile */
@@ -5522,19 +5690,24 @@
     }
     /* Scelta della via (PROVVISORIA: da spostare nei dialoghi con Aldo e Guendalina). Si sceglie una volta sola. */
     function sceglieVia(v) {
-      if (viaPg() || !["aldo", "guendalina"].includes(v) || livelloPg() < 3 || !haTecniche()) return false;
-      usate.via = v; salvaUsate(); disegnaTecniche();
-      fuoriDallaTendina(() => aggiungi({ tipo: "sistema", box: "cap", righe: [RT.via.scelta(RT.via.nomi[v])] }));
+      if (viaPg() || !["aldo", "guendalina"].includes(v) || livelloPg() < 3 || !(haTecniche() || incantatore())) return false;
+      usate.via = v; salvaUsate(); disegnaTecniche(); disegnaIncantesimi();
+      fuoriDallaTendina(() => aggiungi({ tipo: "sistema", box: "cap", righe: [RT.via.scelta(nomeViaPg(v))] }));
       return true;
     }
     function apriSceltaVia() {
       if (scontro || viaPg()) return;
       const f = document.getElementById("finestraPrep"), box = document.getElementById("prepBox"), V = RT.via;
       const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
-      box.replaceChildren(); box.append(el("h2", "", V.finestra), el("p", "guida", V.guida));
+      box.replaceChildren(); box.append(el("h2", "", V.finestra), el("p", "guida", incantatore() ? RT.inc.viaGuida : V.guida));
       const fs = el("fieldset");
       ["aldo", "guendalina"].forEach(v => {
         const lab = el("label"), c = el("input"); c.type = "radio"; c.name = "via"; c.value = v;
+        if (incantatore()) { /* le tre abilità della via, della scuola a cui appartiene */
+          const abil = MG.VIE.filter(x => x.via === v && MG.CLASSI[pg.classe].includes(x.scuola)).sort((x, y) => x.liv - y.liv).map(x => `${x.liv}: ${Lingua.t(x.nome)}`).join(" · ");
+          const sc = (MG.VIE.find(x => x.via === v && MG.CLASSI[pg.classe].includes(x.scuola)) || {}).scuola;
+          lab.append(c, el("span", "", `${V.titolo} ${nomeViaPg(v)}`), el("small", "", `${sc ? Lingua.t(MG.NOMI_SCUOLE[sc]) + " — " : ""}${abil}`)); fs.append(lab); return;
+        }
         const tipo = ["Contundente", "Perforante"].includes(tipoArmaVia()) ? tipoArmaVia() : "Tagliente", abil = TEC.filter(t => t.via === v && t.tipo === tipo).map(t => `${t.liv}: ${nomeTec(t)}`).join(" · ");
         const abilScudo = TEC.filter(t => t.via === v && t.tipo === "Scudo").map(t => `${t.liv}: ${nomeTec(t)}`).join(" · ");
         lab.append(c, el("span", "", V.nomi[v]), el("small", "", `${(tipo === "Contundente" ? V.descContundente : tipo === "Perforante" ? V.descPerforante : V.desc)[v]} (${abil}); ${V.descScudo[v]} (${abilScudo})`)); fs.append(lab);
@@ -5550,7 +5723,7 @@
 
     /* ---------- Preparazione: tecniche (Guerriero) e incantesimi (Arcanista, Monaco) ----------
        Si cambia riposando; un posto ancora vuoto (nuovo livello) si può riempire subito. */
-    const prepIncantesimi = () => !!((window.INCANTESIMI || {})[pg.classe]);
+    const prepIncantesimi = () => incantatore() && !!pg.scuola;
     const haPreparazione = () => haTecniche() || prepIncantesimi();
     function apriPreparazione(soloVuoti) {
       if (scontro) return sist(RT.soloScontro.replace(/.*/, RT.prep.soloRiposo));
@@ -5588,21 +5761,25 @@
         }
       }
       let max = 0;
-      if (prepIncantesimi() && !soloVuoti) {
-        const tutti = window.INCANTESIMI[pg.classe], att = listaIncantesimi().map(x => x.id);
-        max = Regole.MAX_INCANTESIMI;
-        box.append(el("h2", "", P.titoloInc), el("p", "guida", P.guidaInc(max)));
+      if (prepIncantesimi()) {
+        const att = incPreparati().map(x => x.id);
+        max = incTotale();
+        box.append(el("h2", "", P.titoloInc), el("p", "guida", RT.inc.guidaPrep(max, postiPrinc(), MG.POSTI_ALTRA_SCUOLA)));
         const fs = el("fieldset");
-        tutti.forEach(inc => {
-          const lab = el("label"), c = el("input"); c.type = "checkbox"; c.name = "inc"; c.value = inc.id; c.checked = att.includes(inc.id);
-          lab.append(c, el("span", "", `${nomeInc(inc)} — ${inc.costo} ${U.mana.toLowerCase()}`), el("small", "", inc.effetto ? Lingua.t(inc.effetto) : Lingua.t(inc.desc)));
-          fs.append(lab);
+        [pg.scuola, MG.CLASSI[pg.classe].find(sk => sk !== pg.scuola)].forEach((sk, n) => {
+          fs.append(el("p", "guida", `${Lingua.t(MG.NOMI_SCUOLE[sk])} — ${n === 0 ? RT.inc.principale : RT.inc.altra} (${RT.inc.max(quotaInc(sk))})`));
+          incSbloccati().filter(i => i.scuola === sk).sort((x, y) => x.liv - y.liv).forEach(inc => {
+            const lab = el("label"), c = el("input"); c.type = "checkbox"; c.name = "inc"; c.value = inc.id; c.dataset.scuola = sk; c.checked = att.includes(inc.id);
+            if (soloVuoti && c.checked) { c.disabled = true; c.dataset.fissa = "1"; } /* fuori dal riposo si riempiono solo i posti vuoti */
+            lab.append(c, el("span", "", `${nomeInc(inc)} — ${inc.costo} ${U.mana.toLowerCase()} · ${RT.posto(inc.liv)}`), el("small", "", Lingua.t(inc.effetto)));
+            fs.append(lab);
+          });
         });
         box.append(fs);
       }
       const controlla = () => {
         const inc = [...box.querySelectorAll('input[name="inc"]')], sc = inc.filter(c => c.checked).length;
-        inc.forEach(c => { c.disabled = !c.checked && sc >= max; });
+        inc.forEach(c => { if (c.dataset.fissa) return; const sk = c.dataset.scuola; c.disabled = !c.checked && (sc >= max || inc.filter(x => x.checked && x.dataset.scuola === sk).length >= quotaInc(sk)); });
         const tec = [...box.querySelectorAll('input[name="tec"]')], st = tec.filter(c => c.checked).length;
         const scelteT = tec.filter(c => c.checked).map(c => TEC.find(x => x.id === c.value)).filter(Boolean);
         tec.forEach(c => { if (!c.dataset.fissa) c.disabled = !c.checked && (st >= maxT || !aggiungibile(scelteT, TEC.find(x => x.id === c.value))); }); /* quote: 2 di livello 1, 2 di livello 2, 1 per gli altri */
@@ -5895,7 +6072,7 @@
     const chiaveDlg = (id, k) => "dialogo_" + id + (k ? "_" + k : "");
     function testoDlg(x, id) { /* sceglie la variante per l'atteggiamento e mette il nome del personaggio */
       if (!x) return null;
-      const lista = Array.isArray(x) ? x : (x[usate[chiaveDlg(id, "tono")]] || x.gentile || []);
+      const lista = Array.isArray(x) ? x : (x[usate[chiaveDlg(id, "tono")]] || x[usate[chiaveDlg(id, "ingresso")]] || x.gentile || []);
       return lista.map(t => t.replace(/\{nome\}/g, pg.nome));
     }
     function avviaDialogo(id) { nodoDialogo(id, "inizio"); }
@@ -5983,7 +6160,7 @@
         fuoriDallaTendina(() => aggiungi({ tipo: "narra", box: "ok", righe: F.foglietto }));
         return poi();
       }
-      const l = { prova: { abilita: "Intuizione", dado: 20, cd: CD_FIDUCIA }, azione: F.azione, successo: F.successo, fallimento: F.fallimento, senzaLascia: true,
+      const l = { prova: { abilita: "Intuizione", dado: 20, cd: CD_FIDUCIA }, azione: F.azione, successo: F.successo, fallimento: F.fallimento, senzaLascia: true, fuori: true,
         poi: (ok) => { usate.guendalina_fiducia = ok ? "intuito" : "dubbio"; if (!ok) usate.mastino_potenziato = true; salvaUsate(); poi(); } };
       setTimeout(() => fuoriDallaTendina(() => { aggiungi({ tipo: "narra", righe: F.intro }); proponiProva("fiducia_guendalina", l); }), 600);
     }
@@ -6102,7 +6279,7 @@
     function menuGuendalina() {
       if (luogo !== "cucina" || !guendalinaInCucina()) return;
       const P = Q.parla, nodi = DLG().guendalina.nodi, fatte = usate[chiaveDlg("guendalina", "fatte")] || [];
-      const domande = nodi.domande.risposte.filter(r => r.una && !fatte.includes(r.vai) && !(r.richiede && !fatte.includes(r.richiede)));
+      const domande = nodi.domande.risposte.filter(r => r.una && !fatte.includes(r.vai) && !(r.richiede && !fatte.includes(r.richiede)) && !(r.se && !condDlg(r.se)));
       const voce = (testo, fn) => ({ testo, fn: () => { chiudiScelte(); vistaFissa = false; aggiungi({ tipo: "giocatore", dlg: true, righe: ["«" + testo + "»"] }); fn(); } });
       const lista = domande.map(r => voce(r.testo.replace(/\{nome\}/g, pg.nome), () => {
         usate[chiaveDlg("guendalina", "fatte")] = [...fatte, r.vai]; salvaUsate();
@@ -6277,7 +6454,7 @@
       offriPreparazione();
     }
     function offriPreparazione() { /* chiamata solo dopo un riposo riuscito */
-      usate.perRiposo = {}; salvaUsate(); /* Cataclisma del Filo Rovinato torna disponibile */
+      usate.perRiposo = {}; if (usate.scale === "ko") usate.scale = "no"; salvaUsate(); /* la spada può richiamarti di nuovo */ /* Cataclisma del Filo Rovinato torna disponibile */
       if (!haPreparazione() || finePartita) return;
       scelte([
         { testo: haTecniche() ? RT.prep.btnTec : RT.prep.btnInc, fn: () => { chiudiScelte(); apriPreparazione(false); } },
@@ -6404,6 +6581,8 @@
         occupato = false; stato(false);
         fuoriDallaTendina(() => aggiungi({ tipo: "narra", righe: A.aldo.arrivo }));
       } else fuoriDallaTendina(() => aggiungi({ tipo: "narra", imgFissa: true, dim: DIM_ALDO, img: { src: IMG_ALDO, alt: A.aldo.alt }, righe: A.aldo.arrivo }));
+      usate.dialogo_aldo_ingresso = usate.ballo_da === "corridoio" ? "servizio" : "ospiti"; /* dalla scala della servitù o dalla porta degli ospiti */
+      salvaUsate();
       avviaDialogo("aldo");
     }
     /* Aldo se ne va: l'ombra che lo ha portato se lo riprende, e la sala torna vuota */
@@ -6442,6 +6621,7 @@
       }
       if (luogo === "sala_caccia" && usate.q4 === "prova") { tendinaDialogo(); return consegnaAldo(); }
       if (luogo === "sala_caccia" && usate.q4 === "completata") { /* dopo il bronzo Aldo si lascia interrogare (prima l'udienza) */
+        if (usate.cc_stato === "trofeo") return consegnaCaccia();
         if (!udienzaFatta("bronzo")) return proponiUdienza();
         usate.aldo_rispetto = usate.aldo_esito === "vinto" ? "si" : "no"; /* ha battuto i suoi mastini: risponde un po' meno sprezzante */
         usate.fermaglio_oro = gradoFermaglio() >= 2 ? "si" : "no";
@@ -6622,6 +6802,7 @@
     /* riquadro della bacheca: stelle rosse a sei punte per le cacce dei guardiani (una per grado), d'oro (1-3) per le cacce comuni */
     function riempiBacheca(el) {
       const B = AL.bacheca, e = (tag, cls, txt) => { const x = document.createElement(tag); if (cls) x.className = cls; if (txt != null) x.textContent = txt; return x; };
+      el.replaceChildren();
       el.append(e("p", "bach-tit", B.intro), e("p", "bach-sez", B.guardiani));
       GRADI.forEach((g, i) => {
         const st = statoCaccia(i), G = B.g[g], noto = st !== "bloccata";
@@ -6633,9 +6814,89 @@
         riga.append(stelle, testo, stato); el.append(riga);
       });
       el.append(e("p", "bach-sez", B.comuniTit));
-      const c = e("div", "bach-riga bloccata"), st = e("span", "stelle oro");
-      for (let k = 0; k < 3; k++) st.append(e("span", "stella", "✶"));
-      c.append(st, e("div", "bach-testo", B.comuni)); el.append(c);
+      const C = CCT(), aperta = usate.q4 === "completata" && udienzaFatta("bronzo");
+      if (!aperta) { const c = e("div", "bach-riga bloccata"), st = e("span", "stelle oro"); for (let k = 0; k < 3; k++) st.append(e("span", "stella spenta", "✶")); c.append(st, e("div", "bach-testo", C.chiusa)); el.append(c); return; }
+      el.append(e("p", "bach-nota", C.intro));
+      [1, 2, 3].forEach(g => {
+        const attiva = usate.cc_stato && Number(usate.cc_grado) === g, rimaste = preseRimaste(g);
+        const riga = e("div", "bach-riga " + (attiva ? "pronta" : ""));
+        const stelle = e("span", "stelle oro"); for (let k = 0; k < g; k++) stelle.append(e("span", "stella", "✶"));
+        const testo = e("div", "bach-testo");
+        const titolo = attiva ? PREDE[usate.cc_preda][LINGUA].nome : C.titolo[g];
+        testo.append(e("b", "", titolo), e("small", "", C.sotto[g]));
+        const stato = e("span", "bach-stato", attiva ? (usate.cc_stato === "trofeo" ? C.trofeo : C.incorso) : !rimaste.length ? C.finite : usate.cc_stato ? C.unaAlla : "");
+        riga.append(stelle, testo, stato);
+        if (!attiva && rimaste.length && !usate.cc_stato) {
+          const b = e("button", "si", C.accetta); b.type = "button"; b.style.gridColumn = "2";
+          b.addEventListener("click", clic(() => accettaCaccia(g)));
+          riga.append(b);
+        }
+        el.append(riga);
+      });
+    }
+    /* ---------- Le cacce comuni ----------
+       Sei prede nel giardino, due per grado (1-3 stelle d'oro), ciascuna una volta sola: la prima volta che si rientra in giardino
+       la preda si fa avanti. Il trofeo si consegna ad Aldo: una scelta alle rastrelliere e, a 2, 4 e 6 cacce, un oggetto speciale. */
+    const CCT = () => Lingua.t({
+      it: { chiusa: "Aldo non le ha ancora affisse: prima il fermaglio e l'udienza.", intro: "Una sola caccia comune alla volta. Aldo non dice che cosa ti aspetta: dice soltanto dove, e quanta fatica ti costerà.",
+        titolo: { 1: "Caccia comune · una creatura", 2: "Caccia comune · una creatura più forte", 3: "Caccia comune · un gruppo" },
+        sotto: { 1: "Facile · giardino", 2: "Impegnativa · giardino", 3: "Un gruppo, che combatte come un'unica creatura · giardino" },
+        accetta: "Accetta", incorso: "In corso: cerca la preda in giardino", trofeo: "Trofeo preso: portalo ad Aldo", finite: "Tutte le prede di questo grado sono state abbattute", unaAlla: "Hai già una caccia in corso",
+        aldoAccetta: (n) => [`Aldo stacca l'avviso dalla bacheca e lo ripiega con due dita.`, `«In giardino si è presentato ${n}. Abbattetelo e portatemi un trofeo. Non ho altro da dire.»`],
+        trofeoNome: (n) => `Trofeo di caccia: ${n}`, trofeoTesto: (n) => `Ciò che resta di ${n}: un grumo di cenere compatta, ancora tiepida, che non si disfa. Va portato ad Aldo, nella sala della caccia.`,
+        preso: "Raccogli ciò che resta della preda: un trofeo di cenere compatta. Ora va portato ad Aldo.",
+        consegna: ["Aldo prende il trofeo con due dita guantate e lo osserva senza espressione.", "«Passabile. Prendete qualcosa dalle rastrelliere.»"],
+        scelta: "Hai una nuova scelta alle rastrelliere.", nuovo: (n) => `Aldo ti guarda un istante più del solito: ora le rastrelliere dietro la grata si aprono anche per ${n}.` },
+      en: { chiusa: "Aldo has not posted any yet: first the clasp and the audience.", intro: "Only one common hunt at a time. Aldo does not say what awaits you: he says only where, and how hard it will be.",
+        titolo: { 1: "Common hunt · a creature", 2: "Common hunt · a stronger creature", 3: "Common hunt · a group" },
+        sotto: { 1: "Easy · garden", 2: "Demanding · garden", 3: "A group that fights as a single creature · garden" },
+        accetta: "Accept", incorso: "In progress: look for the prey in the garden", trofeo: "Trophy taken: bring it to Aldo", finite: "All the prey of this rank have been brought down", unaAlla: "You already have a hunt in progress",
+        aldoAccetta: (n) => [`Aldo unpins the notice from the board and folds it with two fingers.`, `“${n} has shown itself in the garden. Bring it down and bring me a trophy. I have nothing else to say.”`],
+        trofeoNome: (n) => `Hunting trophy: ${n}`, trofeoTesto: (n) => `What is left of ${n}: a lump of compact ash, still warm, that will not crumble. It must be brought to Aldo, in the hunting hall.`,
+        preso: "You gather what is left of the prey: a trophy of compact ash. Now it must be brought to Aldo.",
+        consegna: ["Aldo takes the trophy with two gloved fingers and studies it without expression.", "“Passable. Take something from the racks.”"],
+        scelta: "You have a new choice at the racks.", nuovo: (n) => `Aldo looks at you a moment longer than usual: the racks behind the grate now open for ${n}.` }
+    });
+    const SBLOCCHI_ARM = [2, 4, 6];
+    const preseRimaste = (g) => Object.keys(PREDE).filter(k => PREDE[k].grado === g && !(usate.cc_fatte_lista || []).includes(k));
+    function accettaCaccia(g) {
+      if (usate.q4 !== "completata" || usate.cc_stato || luogo !== "sala_caccia") return;
+      const r = preseRimaste(g); if (!r.length) return;
+      const id = pesca(r), nome = PREDE[id][LINGUA].nome;
+      usate.cc_stato = "attiva"; usate.cc_grado = g; usate.cc_preda = id;
+      usate.caccia_n = (Number(usate.caccia_n) || 0) + 1; /* ogni caccia ricarica la fontana */
+      salvaUsate();
+      aggiungi({ tipo: "dialogo", fuori: true, tuttoBox: true, chi: "Aldo", macchina: true, righe: CCT().aldoAccetta(nome) });
+      document.querySelectorAll(".voce.bach").forEach(riempiBacheca);
+    }
+    /* la preda si fa avanti quando si è in giardino */
+    function imboscataGiardino() {
+      if (luogo !== "giardino" || scontro || usate.cc_stato !== "attiva" || !PREDE[usate.cc_preda]) return;
+      const id = usate.cc_preda;
+      ultimaImmagineNemico = null;
+      aggiungi({ tipo: "narra", box: "nem", righe: PREDE[id][LINGUA].intro });
+      avviaScontro(id, { ctx: "caccia", testi: id });
+    }
+    function trofeoCaccia(id) {
+      const n = PREDE[id][LINGUA].nome, C = CCT();
+      aggiungiZaino({ id: "trofeo_caccia", nome: C.trofeoNome(n), tipo: "missione", testo: C.trofeoTesto(n), alias: ["trofeo", "trophy"] });
+    }
+    function consegnaCaccia() {
+      if (usate.cc_stato !== "trofeo" || luogo !== "sala_caccia" || !aldoNellaSalaCaccia()) return;
+      const C = CCT(), prima = ccFatte();
+      zaino = zaino.filter(x => x.id !== "trofeo_caccia"); aggiornaZaino();
+      usate.cc_fatte_lista = [...(usate.cc_fatte_lista || []), usate.cc_preda];
+      usate.cc_stato = ""; usate.cc_preda = ""; usate.cc_grado = 0;
+      usate.armeria_scelte = (Number(usate.armeria_scelte) || 0) + 1;
+      salvaUsate();
+      aggiungi({ tipo: "dialogo", fuori: true, tuttoBox: true, chi: "Aldo", macchina: true, righe: C.consegna });
+      scrittura.then(() => {
+        sist(C.scelta);
+        const nuovi = ARMERIA.filter(o => o.sblocco && o.sblocco > prima && o.sblocco <= ccFatte()).map(o => nomeArmeria(o));
+        if (nuovi.length) sist(C.nuovo(nuovi.join(", ")));
+        aggiungi({ tipo: "armeria", fuori: true });
+        document.querySelectorAll(".voce.bach").forEach(riempiBacheca);
+      });
     }
     Object.assign(FINE_DIALOGO, {
       aldo_bacheca() { bachecaCacce(); }
@@ -6692,6 +6953,13 @@
     Object.assign(FINE_DIALOGO, {
       aldo_umiliazione() { const d = tira(4), [da, a] = dannoMenteSubito(d); aggiungi({ tipo: "sistema", box: "ko", righe: [A.aldo.umiliazione(d, da, a)] }); },
       aldo_congedo() { usate.dialogo_aldo = "ritorno"; salvaUsate(); },
+      /* qualunque risposta porta allo scontro: la cortesia costa un'umiliazione, la minaccia uno schianto contro la colonna */
+      aldo_umiliazione_scontro() { FINE_DIALOGO.aldo_umiliazione(); FINE_DIALOGO.aldo_scontro(); },
+      aldo_schiaffo_scontro() {
+        const tiri = tiraDadi(2, 6), d = somma(tiri), [da, a] = dannoCorpoNonLetale(d);
+        aggiungi({ tipo: "sistema", box: "ko", righe: [A.aldo.schiaffo(d, da, a)] });
+        FINE_DIALOGO.aldo_scontro();
+      },
       aldo_schiaffo() {
         const tiri = tiraDadi(2, 6), d = somma(tiri), [da, a] = dannoCorpoNonLetale(d);
         aggiungi({ tipo: "sistema", box: "ko", righe: [A.aldo.schiaffo(d, da, a)] });
@@ -6730,61 +6998,82 @@
       { cat: "armature", nome: "Armatura leggera", tipo: "armatura", ca: 2, malus: 0 },
       { cat: "armature", nome: "Armatura media", tipo: "armatura", ca: 3, malus: 1 },
       { cat: "armature", nome: "Armatura pesante", tipo: "armatura", ca: 4, malus: 2 },
-      { cat: "armature", nome: "Scudo", tipo: "scudo", ca: 1, malus: 1 },
+      { cat: "scudi", nome: "Scudo", tipo: "scudo", ca: 1, malus: 1 },
       { cat: "dotazione", nome: "Pozione di cura", tipo: "dotazione", usi: 1 },
       { cat: "dotazione", nome: "Pozione di essenza", tipo: "dotazione", usi: 1 },
       { cat: "dotazione", nome: "Torcia", tipo: "dotazione", usi: 5, impugnabile: true },
       { cat: "dotazione", nome: "Ampolla di fuoco", tipo: "dotazione", usi: 1 },
       { cat: "dotazione", nome: "Corda e rampino", tipo: "dotazione" },
       { cat: "dotazione", nome: "Piede di porco", tipo: "dotazione" },
-      { cat: "incantati", id: "lama_cervo", sigillato: true },
-      { cat: "incantati", id: "cotta_leone", sigillato: true },
-      { cat: "incantati", id: "anello_brace", sigillato: true }
+      /* oggetti speciali: Aldo li sblocca dopo un certo numero di cacce comuni portate a termine */
+      { cat: "armi_sp", id: "lama_cervo", sp: "arma", sblocco: 2, danno: "1d8", tipoDanno: "Tagliente", mani: 1 },
+      { cat: "armature_sp", id: "cotta_leone", sp: "armatura", sblocco: 4, ca: 4, malus: 0 },
+      { cat: "dotazione", id: "anello_brace", sp: "reperto", sblocco: 6 }
     ];
+    const SOTTO_ARM = ["armi", "armature", "scudi", "dotazione", "armi_sp", "armature_sp", "scudi_sp"];
+    const RK = () => Lingua.t({
+      it: { tit: "Rastrelliere della sala della caccia", cat: { armi: "Armi", armature: "Armature", scudi: "Scudi", dotazione: "Dotazione", armi_sp: "Armi speciali", armature_sp: "Armature speciali", scudi_sp: "Scudi speciali" },
+        blocco: (n) => `Si sblocca dopo ${n} cacce comuni`, bloccoCorto: "Bloccato", nessuno: "Nessuno scudo speciale, per ora: la rastrelliera è vuota.", fatte: (n) => `Cacce comuni portate a termine: ${n}` },
+      en: { tit: "Racks of the hunting hall", cat: { armi: "Weapons", armature: "Armor", scudi: "Shields", dotazione: "Gear", armi_sp: "Special weapons", armature_sp: "Special armor", scudi_sp: "Special shields" },
+        blocco: (n) => `Unlocks after ${n} common hunts`, bloccoCorto: "Locked", nessuno: "No special shield, for now: the rack is empty.", fatte: (n) => `Common hunts completed: ${n}` }
+    });
+    const ccFatte = () => (Array.isArray(usate.cc_fatte_lista) ? usate.cc_fatte_lista.length : 0);
     const ARMATURE_CLASSI = { Forestiero: ["Armatura leggera", "Armatura media"], Sapiente: ["Armatura leggera"], Accolito: ["Armatura leggera", "Armatura media"] }; /* come nella creazione */
     const armaPermessa = (nome) => pg.classe === "Soldato" || !/da battaglia/i.test(nome);
     const armaturaPermessa = (nome) => !ARMATURE_CLASSI[pg.classe] || ARMATURE_CLASSI[pg.classe].includes(nome);
     const permessoArmeria = (o) => o.tipo === "arma" ? armaPermessa(o.nome) : o.tipo === "armatura" ? armaturaPermessa(o.nome) : true;
     const nomeArmeria = (o) => o.id && Q.oggetti[o.id] ? Q.oggetti[o.id].nome : N("oggetti", o.nome);
     const infoArmatura = (o) => [U.caBonus(Number(o.ca) || 0), Number(o.malus) ? U.malusAg(Number(o.malus)) : U.noMalus].join(" · ");
-    const dettaglioArmeria = (o) => o.sigillato ? Q.oggetti[o.id].testo
+    const dettaglioArmeria = (o) => o.id ? Q.oggetti[o.id].testo
       : o.tipo === "arma" ? [o.danno + " + " + U.modLotta, N("danni", o.tipoDanno), U.mani(o.mani)].join(" · ")
       : (o.tipo === "armatura" || o.tipo === "scudo") ? infoArmatura(o)
       : (Lingua.desc(o.nome) || "") + (o.usi ? ` (×${o.usi})` : "");
     function mostraArmeria() { aggiungi({ tipo: "armeria", fuori: true }); }
     function riempiArmeria(el) {
-      const R = A.armeria, n = Number(usate.armeria_scelte) || 0;
+      const R = A.armeria, K = RK(), n = Number(usate.armeria_scelte) || 0, fatte = ccFatte();
+      const mk = (tag, cls, txt) => { const x = document.createElement(tag); if (cls) x.className = cls; if (txt != null) x.textContent = txt; return x; };
       el.replaceChildren();
-      const t = document.createElement("p"); t.textContent = R.titolo; el.append(t);
-      const i = document.createElement("p"); i.className = "p-nota"; i.textContent = R.intro; el.append(i);
-      const r = document.createElement("p"); r.className = "p-scelte"; r.textContent = R.rimaste(n); el.append(r);
-      ["armi", "armature", "dotazione", "incantati"].forEach(cat => {
-        const h = document.createElement("p"); h.className = "p-cat"; h.textContent = R.cat[cat]; el.append(h);
+      const fuori = mk("details", "gruppo"); fuori.open = aperti.has("arm-tutto");
+      fuori.addEventListener("toggle", () => { if (fuori.open) aperti.add("arm-tutto"); else aperti.delete("arm-tutto"); });
+      fuori.append(mk("summary", "gruppo-tit", K.tit));
+      const cor = mk("div", "gruppo-corpo");
+      cor.append(mk("p", "p-nota", R.intro), mk("p", "p-scelte", R.rimaste(n)), mk("p", "p-nota", K.fatte(fatte)));
+      SOTTO_ARM.forEach(cat => {
+        const sub = mk("details", "gruppo sotto"); sub.open = aperti.has("arm-cat-" + cat);
+        sub.addEventListener("toggle", () => { if (sub.open) aperti.add("arm-cat-" + cat); else aperti.delete("arm-cat-" + cat); });
+        sub.append(mk("summary", "gruppo-tit", K.cat[cat]));
+        const cc = mk("div", "gruppo-corpo"), voci = ARMERIA.filter(o => o.cat === cat);
+        if (!voci.length) cc.append(mk("p", "p-nota", K.nessuno));
         ARMERIA.forEach((o, k) => {
           if (o.cat !== cat) return;
-          const key = "arm-" + k, perm = permessoArmeria(o), libero = !o.sigillato && perm && n > 0;
+          const key = "arm-" + k, perm = permessoArmeria(o), chiuso = !!o.sblocco && fatte < o.sblocco, libero = !chiuso && perm && n > 0;
           const det = document.createElement("details"); det.className = "proposta"; det.open = aperti.has(key);
           det.addEventListener("toggle", () => { if (det.open) aperti.add(key); else aperti.delete(key); });
           const sm = document.createElement("summary");
-          const nm = document.createElement("span"); nm.className = "p-nome"; nm.textContent = nomeArmeria(o); sm.append(nm);
+          const nm = document.createElement("span"); nm.className = "p-nome"; nm.textContent = chiuso ? nomeArmeria(o) + " 🔒" : nomeArmeria(o); sm.append(nm);
           const badge = document.createElement("span"); badge.className = "p-badge" + (libero ? "" : " deciso");
-          badge.textContent = o.sigillato ? R.sigillato : !perm ? R.classe : n > 0 ? R.disponibile : R.esaurito; sm.append(badge);
+          badge.textContent = chiuso ? K.bloccoCorto : !perm ? R.classe : n > 0 ? R.disponibile : R.esaurito; sm.append(badge);
           const corpo = document.createElement("div"); corpo.className = "p-corpo";
           const d = document.createElement("p"); d.textContent = dettaglioArmeria(o); corpo.append(d);
-          if (o.sigillato || !perm) { const mt = document.createElement("p"); mt.className = "p-motivo"; mt.textContent = o.sigillato ? R.motivoSigillo : R.motivoClasse(N("classi", pg.classe)); corpo.append(mt); }
+          if (chiuso || !perm) { const mt = document.createElement("p"); mt.className = "p-motivo"; mt.textContent = chiuso ? K.blocco(o.sblocco) : R.motivoClasse(N("classi", pg.classe)); corpo.append(mt); }
           const bb = document.createElement("div"); bb.className = "p-btn";
           const b = document.createElement("button"); b.type = "button"; b.className = "si"; b.textContent = R.prendi; b.disabled = !libero;
           b.addEventListener("click", clic(() => { prendiDallaRastrelliera(o); document.querySelectorAll(".voce.arm").forEach(riempiArmeria); }));
           bb.append(b); corpo.append(bb);
-          det.append(sm, corpo); el.append(det);
+          det.append(sm, corpo); cc.append(det);
         });
+        sub.append(cc); cor.append(sub);
       });
+      fuori.append(cor); el.append(fuori);
     }
     function prendiDallaRastrelliera(o) {
-      if (!(Number(usate.armeria_scelte) > 0) || o.sigillato || !permessoArmeria(o)) return;
+      if (!(Number(usate.armeria_scelte) > 0) || (o.sblocco && ccFatte() < o.sblocco) || !permessoArmeria(o)) return;
       usate.armeria_scelte = Number(usate.armeria_scelte) - 1; salvaUsate();
       let it;
-      if (o.tipo === "arma") it = { id: nuovoId(), nome: o.nome, tipo: "arma", danno: o.danno, tipoDanno: o.tipoDanno, mani: o.mani, alias: [] };
+      if (o.sp === "arma") it = { id: nuovoId(), nome: Q.oggetti[o.id].nome, tipo: "arma", danno: o.danno, tipoDanno: o.tipoDanno, mani: o.mani, alias: [], testo: Q.oggetti[o.id].testo };
+      else if (o.sp === "armatura") it = { id: nuovoId(), nome: Q.oggetti[o.id].nome, tipo: "armatura", ca: o.ca, malus: o.malus, testo: Q.oggetti[o.id].testo };
+      else if (o.sp === "reperto") it = { id: o.id, nome: Q.oggetti[o.id].nome, tipo: "reperto", testo: Q.oggetti[o.id].testo, alias: [] };
+      else if (o.tipo === "arma") it = { id: nuovoId(), nome: o.nome, tipo: "arma", danno: o.danno, tipoDanno: o.tipoDanno, mani: o.mani, alias: [] };
       else if (o.tipo === "armatura") it = { id: nuovoId(), nome: o.nome, tipo: "armatura", ca: o.ca, malus: o.malus };
       else if (o.tipo === "scudo") it = { id: nuovoId(), nome: "Scudo", tipo: "scudo", ca: o.ca, malus: o.malus };
       else it = { id: nuovoId(), nome: o.nome, tipo: "dotazione", usi: o.usi != null ? o.usi : null, testo: Lingua.desc(o.nome), impugnabile: !!o.impugnabile };
@@ -7153,7 +7442,7 @@
       if (p.naturale) aggiungi({ tipo: "prova", titolo: U.prova(nome), azione: l.azione || "", dati: [U.serveNaturale(p.naturale), `d${p.dado}`], righe: [U.istrNaturale(p.dado, p.naturale)] });
       else aggiungi({ tipo: "prova", titolo: U.prova(nome), azione: l.azione || "", dati: [U.difficolta(p.cd), `d${p.dado}`, U.modificatore(fmtN(m))], righe: [U.istruzioni(p.dado, p.cd) + nota + (provaRipetibileDopoRiposo(id, l) ? U.avvisoRiposo : "")] });
       scelte([
-        { testo: U.lancia(p.dado), fn: () => {
+        { testo: U.lancia(p.dado), fn: () => { const corpo = () => {
           const tiro = tira(p.dado), tot = tiro + m, ok = p.naturale ? tiro === p.naturale : tot >= p.cd; /* naturale: conta solo il numero uscito sul dado */
           const dopoFallimento = usate[id] === "ko";
           usate[id] = ok ? "ok" : "ko"; salvaUsate();
@@ -7180,7 +7469,7 @@
           if (ok && l.dopo === "giocattoli") offriGiocattoli();
           if (l.poi) l.poi(ok);
           if (fittaSubita) offriIncrollabile();
-        } },
+        }; return l.fuori ? fuoriDallaTendina(corpo) : corpo(); } }, /* l.fuori: l'esito sta nel riquadro di prova, non dentro la tendina del dialogo */
         ...(l.senzaLascia ? [] : [{ testo: U.lasciaPerdere, fn: () => { chiudiScelte(); aggiungi({ tipo: "narra", righe: [l.lascia] }); } }])
       ]);
     }
@@ -7529,6 +7818,7 @@
       if (it.id === "diario_adele") return aggiungi({ tipo: "narra", box: "mis", righe: [U.rileggi(nomeOg(it)), ...righeDiarioAdele()] });
       if (it.id === "acqua_benedetta") return scontro ? lanciaAcqua() : sist(A2.acqua.fuoriScontro);
       if (it.id === "anello_vespera") return indossaAnello();
+      if (it.id === "diario_figlio" && !usate.diario_aperto) return aggiungi({ tipo: "narra", righe: [testoOggetto(it)] }); /* sigillato: lo aprirà il figlio maggiore */
       if (it.tipo === "nota" || it.tipo === "reperto") return aggiungi({ tipo: "narra", righe: [U.rileggi(nomeOg(it)), testoOggetto(it)] });
       return aggiungi({ tipo: "narra", righe: [U.nienteDaFare(nomeOg(it))] });
     }
@@ -7615,26 +7905,50 @@
     function spada() {
       if (usate.spada === "presa") return aggiungi({ tipo: "narra", righe: [SPADA.giaPresa] });
       if (usate.scale === "ok") return offriSpada();
+      if (usate.scale === "ko") return aggiungi({ tipo: "narra", righe: [SCALE.bloccata] });
+      if (luogo === "atrio" && "scale" in usate) return scale(); /* sul pianerottolo: «prendo la spada» riapre il richiamo */
       aggiungi({ tipo: "narra", righe: [SPADA.lontana] });
     }
 
-    function scale() {
-      if ("scale" in usate) { aggiungi({ tipo: "narra", righe: [SCALE.gia + (usate.scale === "ok" && usate.spada !== "presa" ? " " + SPADA.ancoraLi : "")] }); return; }
-      if (spirito() >= SCALE.soglia) {
-        aggiungi({ tipo: "narra", righe: [...SCALE.testo, SCALE.domanda] });
-        scelte([
-          { testo: SCALE.si_btn, fn: () => { usate.scale = "ok"; salvaUsate(); chiudiScelte(); aggiungi({ tipo: "narra", box: "ok", righe: SCALE.si, banner: SCALE.banner }); offriSpada(); } },
-          { testo: SCALE.no_btn, fn: () => { usate.scale = ""; salvaUsate(); chiudiScelte(); aggiungi({ tipo: "narra", righe: SCALE.no }); } }
-        ]);
-      } else {
-        aggiungi({ tipo: "narra", righe: [...SCALE.testo, SCALE.respinge(SCALE.dannoDado)] });
+    /* Il richiamo dell'armatura e della spada: prova di Spirito (CD 12).
+       - superata: si tocca l'armatura e si può prendere la spada (usate.scale = "ok");
+       - fallita: la spada respinge (usate.scale = "ko") finché non ci si riposa; la prima volta con la visione (1d4 mentale, non letale);
+       - dopo tre fallimenti il richiamo si placa da solo: la quarta volta passa. Non è mai una porta chiusa per sempre. */
+    const CD_RICHIAMO = 12, CHANCE_RICHIAMO = 3;
+    function richiamoSuperato(placato) {
+      usate.scale = "ok"; salvaUsate();
+      aggiungi({ tipo: "narra", box: "ok", righe: placato ? [...SCALE.placato, ...SCALE.si] : SCALE.si, banner: SCALE.banner });
+      offriSpada();
+    }
+    function provaRichiamo() {
+      if ((Number(usate.spada_falliti) || 0) >= CHANCE_RICHIAMO) return richiamoSuperato(true);
+      const m = mod(spirito()), nomeSp = LINGUA === "en" ? "Spirit" : "Spirito";
+      aggiungi({ tipo: "prova", titolo: U.prova(nomeSp), dati: [U.difficolta(CD_RICHIAMO), "d20", U.modificatore(fmtN(m))], righe: [SCALE.prova + " " + U.istruzioni(20, CD_RICHIAMO)] });
+      scelte([{ testo: U.lancia(20), fn: () => {
+        chiudiScelte();
+        const tiro = tira(20), tot = tiro + m, ok = tot >= CD_RICHIAMO;
+        aggiungi({ tipo: "narra", prova: true, box: ok ? "ok" : "ko", esito: U.esito(tiro, m, tot, CD_RICHIAMO, ok), righe: [] });
+        if (ok) return richiamoSuperato(false);
+        usate.scale = "ko"; usate.spada_falliti = (Number(usate.spada_falliti) || 0) + 1; salvaUsate();
+        if (usate.scale_visione) return aggiungi({ tipo: "narra", box: "ko", righe: SCALE.respintoDi });
+        usate.scale_visione = true; salvaUsate();
+        aggiungi({ tipo: "narra", righe: [SCALE.respinge(SCALE.dannoDado)] });
         scelte([{ testo: U.lancia(SCALE.dannoDado), fn: () => {
           const d = dannoMenteNonLetale(tira(SCALE.dannoDado)); salvaPg(); /* flashback: 1d4, non letale */
-          usate.scale = "ko"; salvaUsate();
           chiudiScelte();
           aggiungi({ tipo: "narra", box: "ko", esito: U.dannoSubito(d), righe: SCALE.respinto });
         } }]);
-      }
+      } }]);
+    }
+    function scale() {
+      const st = usate.scale;
+      if (st === "ok") { aggiungi({ tipo: "narra", righe: [SCALE.gia + (usate.spada !== "presa" ? " " + SPADA.ancoraLi : "")] }); return; }
+      if (st === "ko") { aggiungi({ tipo: "narra", righe: [SCALE.bloccata] }); return; }
+      aggiungi({ tipo: "narra", righe: [...(st === "no" ? SCALE.ritenta : SCALE.testo), SCALE.domanda] });
+      scelte([
+        { testo: SCALE.si_btn, fn: () => { chiudiScelte(); provaRichiamo(); } },
+        { testo: SCALE.no_btn, fn: () => { usate.scale = "no"; salvaUsate(); chiudiScelte(); aggiungi({ tipo: "narra", righe: SCALE.no }); } }
+      ]);
     }
 
     /* =====================================================================
@@ -7904,6 +8218,7 @@
     function vai(id, opz) {
       ultimoNemico = null; disegnaNemico(); /* la scheda del nemico si chiude cambiando stanza */
       chiudiScelte(); /* eventuali scelte rimaste in sospeso nella stanza che si lascia */
+      if (id === "giardino" && usate.giardino_visto !== "si") { usate.giardino_visto = "si"; salvaUsate(); } /* sblocca la domanda sulla fontana con Guendalina */
       if (id === "sala_ballo" && (luogo === "corridoio" || luogo === "corridoio_primo")) usate.ballo_da = luogo; /* «torno indietro»: da dove si è entrati */
       luogo = id;
       const s = STANZE[id];
@@ -7942,6 +8257,8 @@
         vistaFissa = true;
       }
       if (id === "cripta") entraCripta();
+      if (id === "giardino" && usate.cc_stato === "attiva") setTimeout(imboscataGiardino, 900);
+      if (id === "sala_caccia" && usate.cc_stato === "trofeo") setTimeout(() => fuoriDallaTendina(consegnaCaccia), 900);
       if (id === "sala_caccia" && usate.q4 === "completata" && udienzaFatta("bronzo")) aggiungi({ tipo: "narra", righe: [AL.presente] }); /* Aldo resta nella sala della caccia */
       if (id === "sala_caccia" && usate.q4 === "prova" && (!usate.dialogo_aldo_caccia || usate.dialogo_aldo_caccia === "fine")) setTimeout(() => { if (luogo === "sala_caccia" && usate.q4 === "prova") fuoriDallaTendina(consegnaAldo); }, 900);
       if (id === "atrio" && usate.q4 === "prova" && !usate.avviso_porta_sx) { usate.avviso_porta_sx = true; salvaUsate(); sist(A.ui.avvisoPortaSx); }
@@ -8226,6 +8543,13 @@
     const caNem = () => { const n = scontro || ultimoNemico; return NEMICI[n.id].ca + (Number(n.caMod) || 0) - (n.eff ? CMB.malusCA(n) : 0); }; /* il consiglio di Aldo abbassa la CA di Ettore; Sbilanciato e Incrinatura la abbassano */
     /* classe difficoltà degli incantesimi: 8 + modificatore (Mente per il Sapiente, Spirito per l'Accolito) + livello */
     const ATTR_INC = { Sapiente: "Mente", Accolito: "Spirito" };
+    const nomeBilancia = (v) => { /* Luce 3 = Zenit, Ombra 3 = Nadir; da 2 Aureola (Luce) e Velo (Ombra) */
+      const L = (it, en) => Lingua.t({ it, en });
+      if (v === 0) return L("equilibrio", "even");
+      if (v > 0) return L(`Luce ${v}`, `Light ${v}`) + (v === 3 ? " · Zenit" : v === 2 ? " · Aureola" : "");
+      return L(`Ombra ${-v}`, `Shadow ${-v}`) + (v === -3 ? " · Nadir" : v === -2 ? " · Velo" : "");
+    };
+    const nomeRisorsaInc = () => (pg && pg.classe === "Accolito" ? (Lingua.t({ it: "punti fede", en: "faith" })) : "mana");
     const cdIncantesimi = () => { const a = pg && ATTR_INC[pg.classe]; return a ? 8 + mod(statPg(a)) + (Number(pg.livello) || 1) : null; };
     const SCARTO_AGILE = 4, PAUSA_SCONTRO = 900;
     const MUSICHE_SCONTRO = ["audio/combat1.mp3", "audio/combat2.mp3", "audio/sala_addestramento.mp3"]; /* una a caso a ogni scontro */
@@ -8246,7 +8570,7 @@
         effetti: "Effetti", effettiTit: "Effetti attivi", turniRim: (n) => n === 1 ? "1 turno" : `${n} turni`,
         turnoTit: (n) => `${n}° turno`, lblAttacco: "Attacco", lblTorcia: "Attacco con la torcia", lblPozione: "Pozione", lblBloccato: "Mastino bloccato",
         emorragia: "Emorragia", marchiato: "marchiato", sigillato: "sigillo", segnato: "segnato", cariche: (n, max) => `${n}/${max} cariche`, tuttoScontro: "tutto lo scontro",
-        effNomi: { sanguina: "Sanguinamento", crepe: "Incrinatura", frattura: "Frattura", intontito: "Intontito", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Senza attacchi speciali", frastornato: "Frastornato", guardia: "Guardia alzata", furore: "Furore inarrestabile", esposto: "Esposto", precisione: "Mille Soli", baluardo: "Baluardo d'Acciaio", fortezza: "Fortezza Eterna", cariche: "Carica Cinetica", scudo: "Scudo", bloccato: "Nemico bloccato", invuln: "Invulnerabilità", armaPiu: "Arma migliorata", pietra: "Pelle di pietra", cieco: "Nemico accecato", potenza: "Aumento di potenza", impaurito: "Impaurito" },
+        effNomi: { sanguina: "Sanguinamento", crepe: "Incrinatura", frattura: "Frattura", intontito: "Intontito", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Senza attacchi speciali", frastornato: "Frastornato", guardia: "Guardia alzata", furore: "Furore inarrestabile", esposto: "Esposto", precisione: "Mille Soli", baluardo: "Baluardo d'Acciaio", fortezza: "Fortezza Eterna", cariche: "Carica Cinetica", scudo: "Scudo", bloccato: "Nemico bloccato", invuln: "Invulnerabilità", armaPiu: "Arma migliorata", pietra: "Pelle di pietra", cieco: "Nemico accecato", potenza: "Aumento di potenza", impaurito: "Impaurito", runa: "Runa sull'arma", occhio: "Occhio del Tomo", tomo: "Tomo Proibito", quiete: "Quiete Assoluta", muro: "Muro di forza", pressione: "Pressione", parola: "Parola Vera", sigilli: "Sigilli", santuario: "Santuario", voto: "Voto di Luce", gemella: "Ombra Gemella", cerchio: "Cerchio del Focolare", fiamma: "Fiamma Calda", notte: "Notte Senza Fine", furia: "Furia Cinerea", manto: "Manto d'Ombra", seconda: "Seconda Vita", accecato: "Accecato", avvizzito: "Avvizzito", paura: "Terrore", corona: "Corona di Raggi" },
         effFinito: (n) => `L'effetto «${n}» svanisce.`, resisteBreve: "resiste", effettoBreve: "a segno",
         iniziativa: (a, b) => `Iniziativa: la tua Agilità (${a}) contro quella del Mastino (${b}).`,
         pari: (x, y) => `Agilità pari: si tira un d20 a testa. Tu ${x}, il Mastino ${y}.`,
@@ -8313,9 +8637,9 @@
         guarda: "Il Mastino non stacca gli occhi da te. Ringhia, e a ogni respiro le fiamme sulla groppa si gonfiano come un mantice.",
         nonCapisco: "Durante lo scontro puoi scrivere: «attacca il mastino», «colpisci con la torcia», «impugna lo scudo», «bevi la pozione» oppure «lancio» e il nome di un incantesimo.",
         nonTuoTurno: "Aspetta il tuo turno.",
-        pocoMana: (c, r) => `Non hai abbastanza ${U.mana.toLowerCase()}: l'incantesimo costa ${c} e te ne restano ${r}.`,
-        costo: (c, r) => `−${c} mana (rimasti ${r})`,
-        luceInutile: "La luce non ti serve a nulla contro il Mastino: lasci svanire l'energia senza consumarla.",
+        pocoMana: (c, r) => `Non hai abbastanza ${nomeRisorsaInc()}: l'incantesimo costa ${c} e te ne restano ${r}.`,
+        costo: (c, r) => `−${c} ${nomeRisorsaInc()} (rimasti ${r})`,
+        incInArrivo: "Questo incantesimo arriverà presto in combattimento: per ora non lo lanci e non consumi punti.", luceInutile: "La luce non ti serve a nulla contro il Mastino: lasci svanire l'energia senza consumarla.",
         inc: {
           dardo_ghiaccio: "Una spina di ghiaccio nero sfreccia dal tuo indice e si pianta nella carne della belva.",
           dardo_luce: "Un raggio di luce sacra sfreccia dal tuo corpo e trafigge la belva, lasciando una scia di cenere nell'aria.",
@@ -8360,7 +8684,7 @@
         effetti: "Effects", effettiTit: "Active effects", turniRim: (n) => n === 1 ? "1 round" : `${n} rounds`,
         turnoTit: (n) => `Round ${n}`, lblAttacco: "Attack", lblTorcia: "Torch attack", lblPozione: "Potion", lblBloccato: "Mastiff held",
         emorragia: "Haemorrhage", marchiato: "branded", sigillato: "seal", segnato: "marked", cariche: (n, max) => `${n}/${max} charges`, tuttoScontro: "whole fight",
-        effNomi: { sanguina: "Bleeding", crepe: "Cracked", frattura: "Fractured", intontito: "Dazzled", debole: "Weakened", sbilanciato: "Off-balance", silenzio: "No special attacks", frastornato: "Dazed", guardia: "Guard up", furore: "Unstoppable Fury", esposto: "Exposed", precisione: "Thousand Suns", baluardo: "Steel Bulwark", fortezza: "Eternal Fortress", cariche: "Kinetic Charge", scudo: "Shield", bloccato: "Enemy held", invuln: "Invulnerability", armaPiu: "Empowered weapon", pietra: "Stoneskin", cieco: "Enemy blinded", potenza: "Surge of power", impaurito: "Frightened" },
+        effNomi: { sanguina: "Bleeding", crepe: "Cracked", frattura: "Fractured", intontito: "Dazzled", debole: "Weakened", sbilanciato: "Off-balance", silenzio: "No special attacks", frastornato: "Dazed", guardia: "Guard up", furore: "Unstoppable Fury", esposto: "Exposed", precisione: "Thousand Suns", baluardo: "Steel Bulwark", fortezza: "Eternal Fortress", cariche: "Kinetic Charge", scudo: "Shield", bloccato: "Enemy held", invuln: "Invulnerability", armaPiu: "Empowered weapon", pietra: "Stoneskin", cieco: "Enemy blinded", potenza: "Surge of power", impaurito: "Frightened", runa: "Weapon rune", occhio: "Eye of the Tome", tomo: "Forbidden Tome", quiete: "Absolute Stillness", muro: "Wall of force", pressione: "Pressure", parola: "True Word", sigilli: "Seals", santuario: "Sanctuary", voto: "Vow of Light", gemella: "Twin Shadow", cerchio: "Hearth Circle", fiamma: "Warm Flame", notte: "Endless Night", furia: "Ashen Fury", manto: "Shadow Cloak", seconda: "Second Life", accecato: "Blinded", avvizzito: "Withered", paura: "Terror", corona: "Crown of Rays" },
         effFinito: (n) => `The “${n}” effect fades.`, resisteBreve: "resisted", effettoBreve: "takes hold",
         iniziativa: (a, b) => `Initiative: your Agility (${a}) against the Mastiff's (${b}).`,
         pari: (x, y) => `Agility tied: each side rolls a d20. You ${x}, the Mastiff ${y}.`,
@@ -8427,9 +8751,9 @@
         guarda: "The Mastiff never takes its eyes off you. It growls, and with every breath the flames on its back swell like a bellows.",
         nonCapisco: "During the fight you can write: “attack the mastiff”, “strike with the torch”, “take the shield”, “drink the potion” or “I cast” and the name of a spell.",
         nonTuoTurno: "Wait for your turn.",
-        pocoMana: (c, r) => `Not enough ${U.mana.toLowerCase()}: the spell costs ${c} and you have ${r} left.`,
-        costo: (c, r) => `−${c} mana (${r} left)`,
-        luceInutile: "Light is of no use against the Mastiff: you let the energy fade without spending it.",
+        pocoMana: (c, r) => `Not enough ${nomeRisorsaInc()}: the spell costs ${c} and you have ${r} left.`,
+        costo: (c, r) => `−${c} ${nomeRisorsaInc()} (${r} left)`,
+        incInArrivo: "This spell will soon work in combat: for now you cannot cast it and spend no points.", luceInutile: "Light is of no use against the Mastiff: you let the energy fade without spending it.",
         inc: {
           dardo_ghiaccio: "A spike of black ice streaks from your finger and lodges in the beast's flesh.",
           dardo_luce: "A ray of sacred light streaks from your body and pierces the beast, leaving a trail of ash in the air.",
@@ -8462,6 +8786,170 @@
     })[LINGUA === "en" ? "en" : "it"];
     /* testi dello scontro: quelli del mastino, con le varianti del nemico (Ettore) o del luogo (la sala da ballo) */
     let CB = CB_BASE;
+    /* =====================================================================
+       CACCE COMUNI: LE PREDE
+       Grado 1: una creatura. Grado 2: una creatura più forte. Grado 3: un gruppo, trattato come un'unica creatura
+       (salute condivisa, più attacchi per turno, danni bassi), facile da abbattere.
+       Ogni preda ha i suoi dati di gioco e i testi propri; gli altri testi derivano da quelli del mastino, con il nome della preda.
+       ===================================================================== */
+    const PREDE = {
+      ratto: { grado: 1, ca: 10, dadoVita: 4, pvBase: 6, dannoDado: 4, attacco: 0, attacchi: 1, xp: 100,
+        it: { nome: "Ratto di cenere", il: "il ratto", Il: "Il ratto", al: "al ratto", del: "del ratto", att1: "Morso", att2: "Graffio", sotto: "Creatura di cenere · giardino",
+          cond: ["Squittisce furioso: sembra ancora del tutto integro.", "È ferito: dal pelo strappato cade cenere calda.", "Barcolla, il respiro rotto: la brace negli occhi si affievolisce.", "Giace a terra, ridotto in cenere."],
+          ok1: ["I denti aguzzi del ratto affondano nella tua gamba: senti la carne sfrigolare e un odore di cenere.", "Il ratto ti salta al braccio e morde, strappando via cuoio e pelle."],
+          ok2: ["Gli artigli del ratto ti graffiano la mano, lasciando una scia di braci.", "Un graffio rapido ti segna il polso con tre righe brucianti."],
+          crit: "Il ratto ti salta alla gola con uno scatto impossibile: i denti trovano la carne scoperta e non mollano.",
+          intro: ["Qualcosa si muove tra le siepi, rasente il sentiero: un ratto grosso come un gatto, il pelo impastato di cenere, gli occhi due braci. Ti ha sentito arrivare."],
+          vittoria: "Il ratto squittisce un'ultima volta e si disfa in un mucchietto di cenere grigia, che il vento del giardino disperde tra le siepi." },
+        en: { nome: "Ash Rat", the: "the rat", The: "The rat", att1: "Bite", att2: "Scratch", sotto: "Ash creature · garden",
+          cond: ["It squeals furiously: it still looks wholly unhurt.", "It is wounded: hot ash falls from its torn fur.", "It staggers, breath ragged: the embers in its eyes dim.", "It lies on the ground, reduced to ash."],
+          ok1: ["The rat's needle teeth sink into your leg: you feel the flesh sizzle and smell ash.", "The rat leaps at your arm and bites, tearing away leather and skin."],
+          ok2: ["The rat's claws rake your hand, leaving a trail of embers.", "A quick scratch marks your wrist with three burning lines."],
+          crit: "The rat leaps at your throat with an impossible dash: its teeth find bare flesh and will not let go.",
+          intro: ["Something moves among the hedges, hugging the path: a rat as big as a cat, its fur matted with ash, its eyes two embers. It heard you coming."],
+          vittoria: "The rat squeals one last time and falls apart into a little heap of grey ash, which the garden wind scatters among the hedges." } },
+      corvo: { grado: 1, ca: 11, dadoVita: 4, pvBase: 6, dannoDado: 4, attacco: 1, attacchi: 1, xp: 100,
+        it: { nome: "Corvo di brace", il: "il corvo", Il: "Il corvo", al: "al corvo", del: "del corvo", att1: "Beccata", att2: "Artigliata", sotto: "Creatura di brace · giardino",
+          cond: ["Gracchia furioso: sembra ancora del tutto integro.", "È ferito: dalle penne strappate cadono scintille.", "Svolazza a fatica, le ali consumate: la brace si affievolisce.", "Giace a terra, ridotto in cenere."],
+          ok1: ["Il becco del corvo ti colpisce come un chiodo rovente, strappandoti un lembo di pelle.", "Il corvo ti becca la mano, due, tre volte, prima che tu riesca a scacciarlo."],
+          ok2: ["Gli artigli del corvo ti graffiano il viso mentre sbatte le ali di brace.", "Una raffica d'ali e d'artigli ti squarcia la spalla attraverso il cuoio."],
+          crit: "Il corvo scende a candela dal cielo nero e ti si pianta sul volto: becco e artigli trovano la carne tra le giunture dell'armatura, tra urla gracchianti.",
+          intro: ["Un gracchio spezza il silenzio. Su un ramo spoglio, poco sopra il sentiero, un corvo grande quanto un'oca ti fissa con occhi di brace. Spalanca le ali e scende su di te."],
+          vittoria: "Il corvo gracchia un'ultima volta e cade in un lampo di brace spenta, sciogliendosi in una nube di cenere che il vento porta via." },
+        en: { nome: "Ember Crow", the: "the crow", The: "The crow", att1: "Peck", att2: "Talons", sotto: "Ember creature · garden",
+          cond: ["It caws furiously: it still looks wholly unhurt.", "It is wounded: sparks fall from its torn feathers.", "It flutters weakly, wings worn: the embers dim.", "It lies on the ground, reduced to ash."],
+          ok1: ["The crow's beak hits you like a red-hot nail, tearing away a flap of skin.", "The crow pecks your hand, two, three times, before you can drive it off."],
+          ok2: ["The crow's talons rake your face as it beats its ember wings.", "A flurry of wings and claws tears your shoulder through the leather."],
+          crit: "The crow drops from the black sky and fastens on your face: beak and talons find flesh between the joints of your armor, amid croaking shrieks.",
+          intro: ["A croak breaks the silence. On a bare branch just above the path, a crow as big as a goose stares at you with eyes of ember. It spreads its wings and swoops."],
+          vittoria: "The crow croaks one last time and falls in a flash of spent embers, melting into a cloud of ash that the wind carries away." } },
+      cinghiale: { grado: 2, ca: 11, dadoVita: 8, pvBase: 10, dannoDado: 6, attacco: 1, attacchi: 1, xp: 200,
+        it: { nome: "Cinghiale di brace", il: "il cinghiale", Il: "Il cinghiale", al: "al cinghiale", del: "del cinghiale", att1: "Zannata", att2: "Carica", sotto: "Creatura di brace · giardino",
+          cond: ["Grugnisce furioso: sembra ancora del tutto integro.", "È ferito: dal dorso spuntano braci agitate.", "Barcolla, il respiro rotto: le braci sul dorso si spengono.", "Giace a terra, ridotto in cenere."],
+          ok1: ["Le zanne del cinghiale ti squarciano la coscia: il fiato rovente della bestia ti brucia la pelle.", "Il cinghiale ti colpisce di lato con una zannata che ti fa girare su te stesso."],
+          ok2: ["Il cinghiale ti travolge con una carica: gli zoccoli roventi ti pestano il fianco.", "Una spallata di muscoli e braci ti scaraventa contro la siepe."],
+          crit: "Il cinghiale abbassa la testa e carica con tutto il peso: le zanne ti sollevano da terra e ti sbattono sulla ghiaia, mentre il fuoco ti morde le costole.",
+          intro: ["Un grugnito sordo scuote le siepi. Dal fogliame esce un cinghiale grosso come un cavallino, il dorso cosparso di braci che si accendono e si spengono a ogni respiro. Raspa la ghiaia e abbassa le zanne."],
+          vittoria: "Il cinghiale stramazza con un grugnito spezzato; la brace nel suo petto si spegne e il corpo crolla in un cumulo di cenere calda che fuma sul sentiero." },
+        en: { nome: "Ember Boar", the: "the boar", The: "The boar", att1: "Tusk", att2: "Charge", sotto: "Ember creature · garden",
+          cond: ["It grunts furiously: it still looks wholly unhurt.", "It is wounded: restless embers sprout from its back.", "It staggers, breath ragged: the embers on its back die.", "It lies on the ground, reduced to ash."],
+          ok1: ["The boar's tusks rip your thigh: the beast's scalding breath burns your skin.", "The boar catches you sideways with a tusk blow that spins you round."],
+          ok2: ["The boar bowls you over in a charge: its red-hot hooves trample your flank.", "A shoulder-barge of muscle and embers hurls you against the hedge."],
+          crit: "The boar lowers its head and charges with all its weight: the tusks lift you off the ground and slam you onto the gravel while fire bites your ribs.",
+          intro: ["A dull grunt shakes the hedges. From the foliage steps a boar as big as a pony, its back strewn with embers that flare and fade with every breath. It scrapes the gravel and lowers its tusks."],
+          vittoria: "The boar collapses with a broken grunt; the ember in its chest goes out and its body falls into a heap of warm ash that smokes on the path." } },
+      lupo: { grado: 2, ca: 12, dadoVita: 6, pvBase: 10, dannoDado: 6, attacco: 1, attacchi: 1, xp: 200,
+        it: { nome: "Lupo di cenere", il: "il lupo", Il: "Il lupo", al: "al lupo", del: "del lupo", att1: "Morso", att2: "Zampata", sotto: "Creatura di cenere · giardino",
+          cond: ["Ringhia furioso: sembra ancora del tutto integro.", "È ferito: dal pelo strappato cade cenere calda.", "Barcolla, il respiro rotto: la brace negli occhi si affievolisce.", "Giace a terra, ridotto in cenere."],
+          ok1: ["Le fauci del lupo si chiudono sul tuo avambraccio: ghiaccio e brace insieme.", "Il lupo ti azzanna il polpaccio e strattona fino a farti perdere l'equilibrio."],
+          ok2: ["Gli artigli del lupo ti rigano il fianco, lasciando una scia di cenere.", "Una zampata furiosa ti graffia il petto attraverso il cuoio."],
+          crit: "Il lupo scatta senza un suono, ti balza addosso e ti inchioda a terra: le zanne cercano la gola e trovano la spalla, dove si piantano.",
+          intro: ["Un ululato basso e lungo corre sul giardino. Un lupo magro e alto, il pelo grigio di cenere e gli occhi due braci, esce dall'ombra della cappella e ti gira attorno, senza fretta."],
+          vittoria: "Il lupo ulula un'ultima volta, un suono lungo che si spezza a metà, e si sgretola in un turbine di cenere grigia che la brezza porta oltre le siepi." },
+        en: { nome: "Ash Wolf", the: "the wolf", The: "The wolf", att1: "Bite", att2: "Claw", sotto: "Ash creature · garden",
+          cond: ["It growls furiously: it still looks wholly unhurt.", "It is wounded: hot ash falls from its torn fur.", "It staggers, breath ragged: the embers in its eyes dim.", "It lies on the ground, reduced to ash."],
+          ok1: ["The wolf's jaws close on your forearm: ice and ember together.", "The wolf bites your calf and wrenches until you lose your balance."],
+          ok2: ["The wolf's claws score your flank, leaving a trail of ash.", "A furious swipe rakes your chest through the leather."],
+          crit: "The wolf springs without a sound, leaps on you and pins you down: its fangs seek your throat and find your shoulder, where they sink in.",
+          intro: ["A low, long howl runs across the garden. A tall, gaunt wolf, its fur ash-grey and its eyes two embers, steps out of the chapel's shadow and circles you, unhurried."],
+          vittoria: "The wolf howls one last time, a long sound that breaks in half, and crumbles into a swirl of grey ash that the breeze carries beyond the hedges." } },
+      branco: { grado: 3, ca: 9, dadoVita: 6, pvBase: 8, dannoDado: 4, attacco: 0, attacchi: 2, xp: 150,
+        it: { nome: "Branco di segugi di cenere", il: "il branco", Il: "Il branco", al: "al branco", del: "del branco", att1: "Morsi", att2: "Assalto", sotto: "Gruppo di creature di cenere · giardino",
+          cond: ["Il branco ringhia compatto: sembra ancora del tutto integro.", "Il branco è ferito: qualche segugio zoppica, perdendo cenere.", "Il branco arretra, i corpi consumati: pochi segugi reggono ancora in piedi.", "Il branco è sparso a terra, ridotto in cenere."],
+          ok1: ["Un segugio ti addenta il polpaccio mentre un altro ti taglia la strada: le zanne cercano dove il cuoio cede.", "Le mascelle del branco si chiudono più volte sul tuo mantello, e una fa presa."],
+          ok2: ["Un balzo, poi un altro: gli artigli dei segugi ti graffiano il fianco in rapida successione.", "Ti travolge un'ondata di pelo e braci: i colpi arrivano da tutte le parti, e uno trova il segno."],
+          crit: "Il branco ti chiude in cerchio e si getta su di te come un'unica bestia: per un istante ti sembra di avere mille zanne addosso.",
+          intro: ["Le siepi sussultano: da ogni lato escono sagome basse e fumanti. Cani magri, il pelo grigio di cenere, gli occhi due punte di brace. Sono cinque, forse sei. Ti accerchiano in silenzio, poi uno ringhia, e tutti insieme cominciano a stringere."],
+          vittoria: "L'ultimo segugio crolla con un guaito. Uno dopo l'altro, i corpi si sfaldano in cenere e il branco intero si disperde nel vento del giardino." },
+        en: { nome: "Pack of Ash Hounds", the: "the pack", The: "The pack", att1: "Bites", att2: "Rush", sotto: "Group of ash creatures · garden",
+          cond: ["The pack growls as one: it still looks wholly unhurt.", "The pack is wounded: a few hounds limp, shedding ash.", "The pack falls back, bodies worn: few hounds still stand.", "The pack lies scattered on the ground, reduced to ash."],
+          ok1: ["One hound seizes your calf while another cuts off your path: the fangs seek where the leather gives.", "The pack's jaws snap again and again on your cloak, and one takes hold."],
+          ok2: ["One leap, then another: the hounds' claws rake your flank in quick succession.", "A wave of fur and embers sweeps over you: the blows come from every side, and one finds its mark."],
+          crit: "The pack closes a circle around you and hurls itself at you as a single beast: for an instant you feel a thousand fangs upon you.",
+          intro: ["The hedges shudder: from every side low, smoking shapes step out. Lean hounds, fur ash-grey, eyes two points of ember. Five of them, perhaps six. They ring you in silence, then one growls, and all together they begin to close in."],
+          vittoria: "The last hound collapses with a yelp. One after another the bodies flake into ash and the whole pack scatters on the garden wind." } },
+      sciame: { grado: 3, ca: 9, dadoVita: 4, pvBase: 6, dannoDado: 4, attacco: -1, attacchi: 3, xp: 150,
+        it: { nome: "Sciame di corvi di brace", il: "lo sciame", Il: "Lo sciame", al: "allo sciame", del: "dello sciame", att1: "Beccate", att2: "Artigli", sotto: "Gruppo di creature di brace · giardino",
+          cond: ["Lo sciame turbina compatto: sembra ancora del tutto integro.", "Lo sciame è ferito: qualche corvo cade a terra, spento.", "Lo sciame si sfilaccia: pochi corvi reggono ancora il volo.", "Lo sciame è caduto, ridotto in cenere."],
+          ok1: ["Una dozzina di becchi ti picchia la schiena insieme, come grandine rovente.", "Le beccate dello sciame ti piovono addosso: una trova la pelle scoperta."],
+          ok2: ["Gli artigli dello sciame ti graffiano le braccia mentre agiti l'arma a vuoto.", "Un turbine di ali ti sferza il viso e un artiglio ti riga la guancia."],
+          crit: "Lo sciame si richiude su di te in una nuvola nera e urlante: per un istante non vedi più niente, e becchi e artigli ti trovano ovunque.",
+          intro: ["Il cielo sopra il giardino si oscura: una nube di ali nere si stacca dai pini e piomba verso di te. Corvi, decine, con gli occhi di brace, che gracchiano all'unisono."],
+          vittoria: "Con uno stridio comune, lo sciame si sfalda: i corvi cadono come fiocchi di brace spenta, dissolvendosi in cenere prima di toccare il suolo." },
+        en: { nome: "Swarm of Ember Crows", the: "the swarm", The: "The swarm", att1: "Pecks", att2: "Talons", sotto: "Group of ember creatures · garden",
+          cond: ["The swarm whirls as one: it still looks wholly unhurt.", "The swarm is wounded: a few crows drop, spent.", "The swarm frays: few crows still hold the air.", "The swarm has fallen, reduced to ash."],
+          ok1: ["A dozen beaks hammer your back at once, like red-hot hail.", "The swarm's pecks rain upon you: one finds bare skin."],
+          ok2: ["The swarm's talons rake your arms as you swing your weapon at nothing.", "A whirlwind of wings lashes your face and a claw scores your cheek."],
+          crit: "The swarm closes over you in a black, shrieking cloud: for an instant you see nothing, and beaks and claws find you everywhere.",
+          intro: ["The sky over the garden darkens: a cloud of black wings tears loose from the pines and plunges towards you. Crows, dozens of them, eyes of ember, cawing in unison."],
+          vittoria: "With a common shriek the swarm comes apart: the crows fall like flakes of spent ember, dissolving into ash before touching the ground." } }
+    };
+    for (const [id, p] of Object.entries(PREDE)) NEMICI[id] = { ca: p.ca, dadoVita: p.dadoVita, pvBase: p.pvBase, dannoDado: p.dannoDado, xp: p.xp, boss: false, attacco: p.attacco, attacchi: p.attacchi, probPresa: 0, probSoffio: 0, soffio: null, ritratto: null, comune: true };
+    /* testi dello scontro di una preda: derivano da quelli del mastino, con il nome della preda al posto di «la belva» */
+    function testiPreda(L, id) {
+      const p = PREDE[id], t = p[L], B = CB_BASE, n = p.attacchi; /* CB_BASE è già nella lingua corrente */
+      const rim = L === "it"
+        ? (s) => String(s).replace(/della belva/g, t.del).replace(/alla belva/g, t.al).replace(/La belva/g, t.Il).replace(/la belva/g, t.il)
+        : (s) => String(s).replace(/the beast's/g, t.the + "'s").replace(/The beast/g, t.The).replace(/the beast/g, t.the);
+      const rimO = (o) => Object.fromEntries(Object.entries(o).map(([k, v]) => [k, rim(v)]));
+      const it = L === "it";
+      return {
+        nome: t.nome, nomeLungo: t.nome, sotto: t.sotto, sottoVelato: it ? "Creatura · ???" : "Creature · ???",
+        velato: it ? "Non sai ancora nulla di questa creatura: la sua scheda resterà coperta finché non l'avrai abbattuta." : "You know nothing about this creature yet: its sheet will stay hidden until you bring it down.",
+        attMorso: t.att1, attZampata: t.att2, morso: t.att1, zampata: t.att2,
+        descMorso: (m) => (n > 1 ? (it ? `${n} attacchi per turno · ` : `${n} attacks per turn · `) : "") + `1d${p.dannoDado} ${fmtN(m)} · ` + (it ? "perforante" : "piercing"),
+        descZampata: (m) => (n > 1 ? (it ? `${n} attacchi per turno · ` : `${n} attacks per turn · `) : "") + `1d${p.dannoDado} ${fmtN(m)} · ` + (it ? "tagliente" : "slashing"),
+        nessunoSpeciale: n > 1 ? (it ? `Attacca ${n} volte per turno.` : `Attacks ${n} times per turn.`) : (it ? "Nessuno." : "None."),
+        suo: it ? `tocca ${t.al}` : `${t.the}'s turn`,
+        placeholder: it ? `Cosa fai? Per esempio: attacco ${t.il}` : `What do you do? For example: I attack ${t.the}`,
+        attesa: it ? `${t.Il} sta agendo…` : `${t.The} is acting…`,
+        cond: t.cond, lblBloccato: it ? `${t.Il} bloccato` : `${t.The} held`,
+        iniziativa: it ? (a, b) => `Iniziativa: la tua Agilità (${a}) contro quella ${t.del} (${b}).` : (a, b) => `Initiative: your Agility (${a}) against ${t.the}'s (${b}).`,
+        pari: it ? (x, y) => `Agilità pari: si tira un d20 a testa. Tu ${x}, ${t.il} ${y}.` : (x, y) => `Agility tied: each side rolls a d20. You ${x}, ${t.the} ${y}.`,
+        iniziaNem: it ? `${t.Il} è più rapido: agisce per primo.` : `${t.The} is quicker: it acts first.`,
+        manuale: it ? (m, dado, inc) => [
+          `Per colpire tiri un d20 e aggiungi il modificatore di Vigore (${fmtN(m)}): se il totale supera la Classe armatura ${t.del}, lo colpisci e infliggi ${dado} ${fmtN(m)} danni.`,
+          "Se sul d20 esce 20 è un colpo critico: colpisci sempre e tiri il doppio dei dadi di danno. Vale anche per il nemico.",
+          `A ogni turno puoi compiere un'azione: «attacco ${t.il}», «colpisco con la torcia» oppure «bevo la pozione». Prendere in mano la torcia o lo scudo non consuma l'azione (una volta per turno).` + (inc ? " Puoi anche lanciare un incantesimo, per esempio «lancio " + inc + "», oppure con il pulsante «Lancia» nella scheda." : ""),
+          n > 1 ? `${t.Il} attacca ${n} volte per turno, ma ogni colpo è debole.` : `${t.Il} attacca a ogni turno.`
+        ] : (m, dado, inc) => [
+          `To hit, roll a d20 and add your Might modifier (${fmtN(m)}): if the total beats ${t.the}'s Armor Class, you hit it and deal ${dado} ${fmtN(m)} damage.`,
+          "If the d20 shows a 20 it is a critical hit: it always hits and you roll twice the damage dice. The same goes for the enemy.",
+          `Each turn you can take one action: “attack ${t.the}”, “strike with the torch” or “drink the potion”. Taking the torch or the shield in hand does not use up your action (once per turn).` + (inc ? " You can also cast a spell, for example “I cast " + inc + "”, or use the “Cast” button on the sheet." : ""),
+          n > 1 ? `${t.The} attacks ${n} times per turn, but each blow is weak.` : `${t.The} attacks every turn.`
+        ],
+        tiroAttNem: it ? (d, m, tot, ca) => `Attacco ${t.del}: d20 ${d} ${m < 0 ? "−" : "+"} ${Math.abs(m)} = ${tot} contro la tua CA ${ca}` : (d, m, tot, ca) => `${t.The}'s attack: d20 ${d} ${m < 0 ? "−" : "+"} ${Math.abs(m)} = ${tot} vs your AC ${ca}`,
+        colpArma: it ? [`Il tuo colpo raggiunge ${t.il}: una nuvola di cenere calda si leva dalla ferita.`, `Apri un varco nella sua guardia e lo colpisci: ${t.il} arretra, sbuffando fumo.`, `Pari uno scatto e rispondi di taglio: ${t.Il} perde pezzi di sé in una pioggia di braci.`]
+          : [`Your blow reaches ${t.the}: a cloud of hot ash rises from the wound.`, `You open a gap in its guard and strike: ${t.the} falls back, puffing smoke.`, `You parry a lunge and answer with a cut: ${t.the} loses pieces of itself in a rain of embers.`],
+        colpTorcia: it ? [`Abbatti la torcia su ${t.il}: il colpo lo fa guaire più del fuoco.`, `Il legno ardente della torcia si schianta su ${t.il}, tra scintille e cenere.`]
+          : [`You bring the torch down on ${t.the}: the blow hurts it more than the fire.`, `The burning wood of the torch crashes into ${t.the}, in sparks and ash.`],
+        critPg: it ? [`Vedi l'apertura un istante prima che si chiuda e ci affondi con tutto il peso: il colpo spezza ossa e brace insieme, e ${t.il} crolla di lato con un lamento.`, `Ti abbassi sotto il suo assalto e colpisci dal basso, proprio dove la cenere è più sottile: ${t.Il} viene scaraventato contro la siepe.`]
+          : [`You see the gap an instant before it closes and drive into it with your whole weight: the blow shatters bone and ember alike, and ${t.the} topples sideways with a wail.`, `You duck under its assault and strike from below, exactly where the ash is thinnest: ${t.The} is hurled against the hedge.`],
+        manca: it ? [`${t.Il} scarta di lato e il tuo colpo trova solo aria.`, `Il tuo colpo sfiora ${t.il} senza ferirlo.`, `${t.Il} arretra con un balzo: il tuo colpo cade a vuoto.`]
+          : [`${t.The} dodges aside and your blow finds only air.`, `Your blow grazes ${t.the} without wounding it.`, `${t.The} springs back: your strike falls short.`],
+        morsoOk: t.ok1, zampaOk: t.ok2, critNem: [t.crit],
+        parata: it ? [`Alzi lo scudo all'ultimo istante: l'assalto ${t.del} si schianta sul legno cerchiato di ferro.`, `Pari con il bordo dello scudo e respingi ${t.il} indietro.`]
+          : [`You raise your shield at the last instant: ${t.the}'s assault crashes against the iron-banded wood.`, `You parry with the rim of your shield and drive ${t.the} back.`],
+        schivata: it ? [`Ti sposti di lato appena in tempo: l'attacco ${t.del} ti sfiora il fianco.`, `Arretri di un passo e l'assalto si chiude a un palmo dal tuo volto.`]
+          : [`You step aside just in time: ${t.the}'s attack grazes your flank.`, `You back away a step and the assault closes a hand's breadth from your face.`],
+        schivataAgile: it ? [`Con un balzo agile ruoti su te stesso e ${t.il} affonda solo nell'aria.`, `Ti abbassi e scivoli sotto l'attacco, rialzandoti già in guardia al suo fianco.`]
+          : [`With a nimble leap you wheel round and ${t.the} strikes only air.`, `You duck and slip under the attack, rising already on guard at its side.`],
+        ciecoManca: it ? `Accecato, ${t.il} colpisce il vuoto a un passo da te.` : `Blinded, ${t.the} strikes empty air a step away from you.`,
+        bloccatoTxt: it ? `${t.Il} è immobile, prigioniero dell'incantesimo: non può agire.` : `${t.The} stands motionless, trapped by the spell: it cannot act.`,
+        guarda: it ? `${t.Il} non ti stacca gli occhi di dosso, pronto a scattare.` : `${t.The} never takes its eyes off you, ready to spring.`,
+        nonOra: it ? `Non è il momento: ${t.il} ti è addosso e non ti lascia respiro.` : `This is not the moment: ${t.the} is upon you and gives you no respite.`,
+        nonCapisco: it ? `Durante lo scontro puoi scrivere: «attacco ${t.il}», «colpisco con la torcia», «impugno lo scudo», «bevo la pozione» oppure «lancio» e il nome di un incantesimo.` : `During the fight you can write: “attack ${t.the}”, “strike with the torch”, “take the shield”, “drink the potion” or “I cast” and the name of a spell.`,
+        luceInutile: it ? `La luce non ti serve a nulla contro ${t.il}: lasci svanire l'energia senza consumarla.` : `Light is of no use against ${t.the}: you let the energy fade without spending it.`,
+        inc: rimO(B.inc),
+        tsTitolo: it ? `Tiro salvezza ${t.del}` : `${t.The}'s saving throw`,
+        tsRegola: (cd) => rim(B.tsRegola(cd)), tsTiro: (...a) => rim(B.tsTiro(...a)), tsEffetto: rimO(B.tsEffetto), resistito: rim(B.resistito),
+        vittoria: [t.vittoria],
+        sconfitta: it ? [`Le gambe ti cedono e crolli sul sentiero. L'ultima cosa che vedi è ${t.il} sopra di te, poi il buio.`] : [`Your legs give way and you collapse on the path. The last thing you see is ${t.the} above you, then darkness.`],
+        sistRisveglio: it ? `${t.Il} ti aspetta ancora in giardino, di nuovo in piene forze.` : `${t.The} is still waiting for you in the garden, back at full strength.`
+      };
+    }
+    { const L = LINGUA === "en" ? "en" : "it"; for (const id of Object.keys(PREDE)) CACCIA[L].nemici[id] = testiPreda(L, id); }
+
     const testiScontro = (k) => (k && A.nemici[k]) ? { ...CB_BASE, ...A.nemici[k], inc: { ...CB_BASE.inc, ...(A.nemici[k].inc || {}) } } : CB_BASE;
 
     let ultimaImmagineNemico = null;
@@ -8473,13 +8961,13 @@
     const statPg = (a) => (Number(pg.statistiche && pg.statistiche[a]) || 10) + (eff("potenza") ? 2 : 0);
     const modLottaPg = () => mod(statPg("Lotta"));
     const modAgiPg = () => mod(statPg("Agilità"));
-    const caScontro = () => (Number(caAttuale()) || 10) + (eff("scudo") ? 2 : 0) + (eff("guardia") ? (Number(scontro.guardiaVal) || 2) : 0);
+    const caScontro = () => (Number(caAttuale()) || 10) + (eff("scudo") ? 2 : 0) + (eff("muro") ? 3 : 0) + (eff("cerchio") ? 2 : 0) + (eff("guardia") ? (Number(scontro.guardiaVal) || 2) : 0);
     const passoDado = (d) => (d >= 12 ? 12 : d + 2); /* Arma Migliorata: 1d6→1d8, 1d8→1d10, 1d10→1d12 */
     const dadoArmaPg = (conTorcia) => {
       let d = 2;
       if (conTorcia) d = 4;
       else { const m = /d(\d+)/.exec((arma && arma.nome !== "—" && arma.danno) || ""); if (m) d = Number(m[1]); }
-      return eff("armaPiu") ? passoDado(d) : d;
+      return (eff("armaPiu") || eff("runa")) ? passoDado(d) : d; /* Arma Migliorata e Runa sull'Arma */
     };
     const torciaInMano = () => !!(mano && mano.nome === "Torcia" && Number(mano.usi) > 0);
     const pozioneCura = () => zaino.find(it => effettoDi(it) === "pozCura" && Number(it.usi) > 0);
@@ -8565,7 +9053,7 @@
       const D = NEMICI[id];
       const stat = conAttrVecchi(Object.fromEntries(ATTR_NEM.map(a => [a, 10 + (["Vigore", "Agilità"].includes(a) ? tira(6) : 0)]))); /* ogni nemico del seminterrato è diverso */
       const potenziato = id === "mastino" && !opz.ctx && usate.mastino_potenziato; /* Intuizione fallita con Guendalina: +5% */
-      const pv = Math.ceil((10 + tira(D.dadoVita) + mod(stat.Corpo)) * (potenziato ? 1.05 : 1));
+      const pv = Math.max(1, Math.ceil(((D.pvBase != null ? D.pvBase : 10) + tira(D.dadoVita) + mod(stat.Corpo)) * (potenziato ? 1.05 : 1)));
       scontro = { id, img: ultimaImmagineNemico || D.ritratto, stat, pv, pvMax: pv, presaUsata: false, soffioPronto: true, round: 0, primo: null, tuoTurno: false, cambio: false, turno: null, svelata: false, eff: {}, effMax: {}, ctx: opz.ctx || null, bonusAtt: potenziato ? 1 : 0, caMod: Number(opz.caMod) || 0, resa: false, sid: "s" + Date.now().toString(36) };
       if (opz.soffioScarico) scontro.soffioPronto = false;
       ultimoNemico = null;
@@ -8624,8 +9112,11 @@
     function dannoAlPg(d, tipo, righe) {
       if (eff("invuln")) { righe.push(CB.invulnTxt); return; }
       if (eff("pietra") && (tipo === "Perforante" || tipo === "Tagliente")) { d = Math.max(1, Math.floor(d / 2)); righe.push(CB.pietraTxt); }
+      let svCura = 0;
       if (scontro) { const f = CMB.fortezza(scontro, d, pvPg()); d = f.danno; f.eventi.forEach(e => { const x = rigaScudo(e); if (x) righe.push(x); }); } /* Fortezza Eterna */
+      if (scontro && window.MagiaCombattimento) { const sv = window.MagiaCombattimento.secondaVita(scontro, d, pvPg(), { tira }); d = sv.danno; svCura = sv.cura || 0; sv.eventi.forEach(e => { const x = rigaScudo(e); if (x) righe.push(x); }); } /* Seconda Vita */
       righe.push(ferisciPg(d));
+      if (svCura) curaPgN(svCura);
     }
 
     function attaccoPgScontro(conTorcia) {
@@ -8643,6 +9134,8 @@
         if (marc) righe.push(RT.marchioDanno(marc));
         if (sig) righe.push(RT.sigilloDanno(sig));
         if (seg) righe.push(RT.segnoDanno(seg));
+        if (eff("voto") && !conTorcia) { const x = tira(4); scontro.pv -= x; const c1 = curaPgN(1); righe.push(window.MagiaCombattimento.testo({ k: "votoColpo", d: x, cura: c1 })); } /* Voto di Luce */
+        if (eff("runa") && !conTorcia) righe.push(window.MagiaCombattimento.testo(CMB.incidi(scontro, { boss: bossNem() }, 1))); /* Runa sull'Arma: ogni colpo a segno incide 1 Sigillo */
         scuotiNemico();
       } else righe.push(pesca(CB.manca), CB.tiroAtt(d, mA, tot, ca));
       aggiungi({ tipo: "narra", box: crit ? "ok" : "mia", esito: crit ? CB.critico : ok ? CB.colpito : CB.mancato, righe });
@@ -8664,10 +9157,49 @@
       segnaTurno(nomeOg(it));
       fineAzionePgScontro();
     }
+    /* l'ambiente degli incantesimi dell'Arcanista: attacco e CD con la Mente, tiro salvezza del nemico con il Vigore */
+    function curaPgN(n) { /* cura il personaggio e dice di quanto */
+      const prima = pvPg();
+      pg.dannoFisico = Math.max(0, (pg.dannoFisico || 0) - n);
+      disegnaVitali(); modificato();
+      return pvPg() - prima;
+    }
+    function ctxIncantesimo() {
+      const m = mod(statPg(ATTR_INC[pg.classe] || "Mente"));
+      return {
+        ...ctxTecnica(), modAtt: m, modDanno: m, dado: 6, cd: cdIncantesimi(), modTs: modNem("Vigore"),
+        cura: (n) => curaPgN(n), pvMancanti: () => Math.max(0, pvMaxPg() - pvPg()), dannoCorpo: (n) => { const [a, b] = dannoCorpoNonLetale(n); return a - b; },
+        manaPiu: (n) => { const r = Math.min(n, pg.manaUsato || 0); pg.manaUsato = (pg.manaUsato || 0) - r; return r; },
+        dannoMente: (n) => dannoMenteNonLetale(n)
+      };
+    }
+    function lanciaMagia(inc) {
+      const MC = window.MagiaCombattimento, ctx = ctxIncantesimo();
+      const disp = MC.disponibile(inc, scontro, ctx); if (!disp.ok) return sist(MC.testo({ k: disp.motivo }));
+      const costo = MC.costo(inc, scontro);
+      if (manaAttuale() < costo) return sist(CB.pocoMana(costo, manaAttuale()));
+      pg.manaUsato = (pg.manaUsato || 0) + costo; /* si paga prima: il mana recuperato con la Detonazione arriva dopo */
+      const pvPrima = scontro.pv;
+      const r = MC.lancia(inc, scontro, ctx);
+      const { righe, esiti, ts } = righeEventi(r.eventi, inc);
+      righe.unshift(Lingua.t(inc.effetto));
+      righe.push(CB.costo(costo, manaAttuale()));
+      if (scontro.pv < pvPrima) scuotiNemico();
+      const esito = nomeInc(inc) + (esiti.length ? ": " + esiti.join(", ") : "");
+      aggiungi({ tipo: "narra", box: "mia", esito, righe });
+      if (ts) {
+        aggiungi({ tipo: "prova", titolo: RT.tsTitolo(CB.nome), dati: [U.difficolta(ts.cd), "d20", `${N("attributi", "Vigore")} ${fmtN(ts.m)}`], righe: [RT.tsRegola(CB.nome, ts.cd)] });
+        aggiungi({ tipo: "narra", box: ts.ok ? "ko" : "ok", esito: ts.ok ? RT.tsOk : RT.tsKo, righe: [RT.tsTiro(ts.d, ts.m, ts.tot, ts.cd)] });
+      }
+      segnaTurno(esito);
+      disegnaVitali(); modificato();
+      fineAzionePgScontro();
+    }
     /* incantesimi in combattimento (Sapiente e Accolito) */
     function lanciaInScontro(inc) {
       if (!scontro.tuoTurno) return sist(CB.nonTuoTurno);
       if (inc.id === "luce") return sist(CB.luceInutile);
+      if (inc.scuola) return lanciaMagia(inc); /* Sigilli, Detonazione, Bilancia: js/magia_combattimento.js */
       const costo = Number(inc.costo) || 1;
       if (manaMax() != null && manaAttuale() < costo) return sist(CB.pocoMana(costo, manaAttuale()));
       if (manaMax() != null) { pg.manaUsato = (pg.manaUsato || 0) + costo; disegnaVitali(); modificato(); }
@@ -8717,7 +9249,8 @@
     const tipoArmaInMano = () => (arma && arma.nome !== "—" && arma.tipoDanno) || null;
     const tipoOk = (t) => t.tipo === "Utilita" || (t.tipo === "Scudo" ? !!scudo : t.tipo === tipoArmaInMano());
     const maxTecniche = () => CMB.slotTecniche(livelloPg(), !!scudo); /* 2, 4, 5, 6, 7 (+1 con lo scudo) */
-    const viaPg = () => (haTecniche() && livelloPg() >= 3 && (usate.via === "aldo" || usate.via === "guendalina")) ? usate.via : null;
+    const viaPg = () => ((haTecniche() || incantatore()) && livelloPg() >= 3 && (usate.via === "aldo" || usate.via === "guendalina")) ? usate.via : null;
+    const nomeViaPg = (v) => incantatore() ? Lingua.t(MG.NOMI_VIE[pg.classe][v]) : RT.via.nomi[v];
     const tipoArmaVia = () => tipoArmaInMano() || eqPg().armaTipoDanno; /* le abilità della via cambiano con il tipo d'arma */
     /* serie della via preparata al riposo: quella dell'arma o quella dello scudo (usate.viaSerie) */
     const serieVia = () => (usate.viaSerie === "scudo" ? "scudo" : "arma");
@@ -8833,7 +9366,7 @@
         case "ondaVuota": return S.ondaVuota;
         case "ira": { const r = risorsaPg(); return r ? RT.ira(e.n, risorsaAttuale(), r.max) : null; }
         case "stato": return (RT.effetti[e.s] || CB.effNomi[e.s] || e.s) + RT.durata(e.turni) + (e.ridotto ? " " + RT.ridotto(CB.effNomi[e.s], e.turni) : "");
-        default: return null;
+        default: return window.MagiaCombattimento ? window.MagiaCombattimento.testo(e) : null; /* Sigilli, Detonazione, difese degli incantesimi */
       }
     }
     function statoTecnica(t) {
@@ -8884,6 +9417,11 @@
         aggiungi({ tipo: "narra", box: "mia", righe: [RT.sangueTick(d)] }); scuotiNemico(); barraScontro();
         if (scontro.pv <= 0) return setTimeout(vittoriaScontro, PAUSA_SCONTRO / 2);
       }
+      if (window.MagiaCombattimento.haTick(scontro)) { /* Pressione, Corona di Raggi, Avvizzito: danni all'inizio del turno del nemico */
+        const ev = window.MagiaCombattimento.inizioTurnoNemico(scontro, { tira });
+        aggiungi({ tipo: "narra", box: "mia", righe: ev.map(e => window.MagiaCombattimento.testo(e)) }); scuotiNemico(); barraScontro();
+        if (scontro.pv <= 0) return setTimeout(vittoriaScontro, PAUSA_SCONTRO / 2);
+      }
       if (eff("bloccato")) { aggiungi({ tipo: "narra", box: "mia", righe: [CB.bloccatoTxt] }); segnaTurno(CB.lblBloccato); return fineTurnoNem(); }
       const D = NEMICI[scontro.id];
       if (D.soffio && !scontro.soffioPronto) { /* ricarica del soffio: 5-6 su 1d6 */
@@ -8892,6 +9430,7 @@
       }
       if (fratturaPrimaDiAttaccare()) return;
       if (D.soffio && scontro.soffioPronto && !eff("silenzio") && Math.random() < D.probSoffio) return soffioScontro();
+      scontro.attRest = Math.max(0, (Number(D.attacchi) || 1) - 1);
       attaccoNemScontro();
     }
     /* Frattura: 1d4 al nemico prima di ogni suo attacco (anche Presa e Soffio). true se lo uccide */
@@ -8905,9 +9444,15 @@
     /* fine del turno del nemico: gli effetti scalano di un turno */
     function fineTurnoNem() {
       if (!scontro) return;
+      const finiti = [];
       Object.keys(scontro.eff).forEach(k => {
-        if (scontro.eff[k] > 0 && --scontro.eff[k] === 0) { sist(CB.effFinito(CB.effNomi[k])); if (k === "potenza") disegnaVitali(); }
+        if (scontro.eff[k] > 0 && --scontro.eff[k] === 0) { finiti.push(k); sist(CB.effFinito(CB.effNomi[k])); if (k === "potenza") disegnaVitali(); }
       });
+      scontro.santColpo = false;
+      if (finiti.length && window.MagiaCombattimento) { /* il Santuario cura alla fine */
+        const ev = window.MagiaCombattimento.scaduti(scontro, finiti, { tira, cura: (n) => curaPgN(n) });
+        if (ev.length) aggiungi({ tipo: "narra", box: "mia", righe: ev.map(e => window.MagiaCombattimento.testo(e)) });
+      }
       if (!(scontro.eff.sanguina > 0)) scontro.marchio = false; /* il marchio dura finché il nemico sanguina */
       if (scontro.pv <= 0) return setTimeout(vittoriaScontro, PAUSA_SCONTRO / 2); /* ucciso dal contrattacco della Parata */
       barraScontro();
@@ -8915,15 +9460,21 @@
       if (pvPg() <= 0) return setTimeout(sconfittaScontro, PAUSA_SCONTRO / 2);
       setTimeout(turnoPgScontro, PAUSA_SCONTRO * 0.7);
     }
+    /* più attacchi per turno (gruppi): finché ce ne sono e nessuno è a terra, il nemico attacca ancora */
+    function fineAttaccoNem() {
+      if (scontro && scontro.attRest > 0 && scontro.pv > 0 && pvPg() > 0) { scontro.attRest--; return setTimeout(attaccoNemScontro, PAUSA_SCONTRO * 0.8); }
+      fineTurnoNem();
+    }
     function attaccoNemScontro() {
       const D = NEMICI[scontro.id], morso = Math.random() < 0.5, nome = morso ? CB.morso : CB.zampata;
       if (eff("cieco") && Math.random() < 0.5) {
         aggiungi({ tipo: "narra", box: "nem", esito: `${nome}: ${CB.mancato}`, righe: [CB.ciecoManca] });
         segnaTurno(`${nome}: ${esitoBreve(CB.mancato)}`);
-        return fineTurnoNem();
+        return fineAttaccoNem();
       }
-      const m = modNem("Lotta") + (Number(NEMICI[(scontro || ultimoNemico).id].attacco) || 0) + (Number((scontro || ultimoNemico).bonusAtt) || 0) + CMB.modAttaccoNem(scontro), d = tira(20), tot = d + m, ca = caScontro(), crit = d === 20 && CMB.critNemPossibile(scontro), ok = crit || tot > ca;
+      const m = modNem("Lotta") + (Number(NEMICI[(scontro || ultimoNemico).id].attacco) || 0) + (Number((scontro || ultimoNemico).bonusAtt) || 0) + CMB.modAttaccoNem(scontro), at = CMB.tiroAttaccoNem(scontro, { tira }), d = at.d, tot = d + m, ca = caScontro(), crit = d === 20 && CMB.critNemPossibile(scontro), ok = crit || tot > ca;
       const righe = [];
+      if (at.tiri) righe.push(Lingua.t({ it: `Il nemico tira due d20 e tiene il peggiore: ${at.tiri[0]} e ${at.tiri[1]}.`, en: `The enemy rolls two d20 and keeps the worse: ${at.tiri[0]} and ${at.tiri[1]}.` }));
       let parato = false;
       let assorbito = false;
       if (ok) {
@@ -8955,9 +9506,9 @@
       aggiungi({ tipo: "narra", box: parato || assorbito ? "mia" : crit ? "ko" : "nem", esito: `${nome}: ${esitoN}`, righe });
       segnaTurno(`${nome}: ${esitoBreve(esitoN)}`);
       barraScontro(); disegnaVitali();
-      if (pvPg() <= 0 || scontro.pv <= 0) return fineTurnoNem();
-      if (ok && !parato && !assorbito && morso && !scontro.presaUsata && !eff("silenzio") && !CMB.presaBloccata(scontro) && Math.random() < D.probPresa) return setTimeout(presaScontro, PAUSA_SCONTRO * 0.7); /* la presa segue solo un morso a segno; Postura Salda la blocca */
-      fineTurnoNem();
+      if (pvPg() <= 0 || scontro.pv <= 0) return fineAttaccoNem();
+      if (ok && !parato && !assorbito && morso && !scontro.presaUsata && !eff("silenzio") && !CMB.presaBloccata(scontro) && !eff("muro") && Math.random() < D.probPresa) return setTimeout(presaScontro, PAUSA_SCONTRO * 0.7); /* la presa segue solo un morso a segno; Postura Salda la blocca */
+      fineAttaccoNem();
     }
     /* Presa: una volta per scontro, dopo un colpo a segno. Prova contrapposta di Vigore; se vince il mastino, +1d4 danni */
     function presaScontro() {
@@ -8984,7 +9535,7 @@
     }
     /* Soffio Infuocato: tiro salvezza su Agilità CD 12 o 2d6 danni; poi va ricaricato (5-6 su 1d6) */
     function soffioScontro() {
-      const S = NEMICI[scontro.id].soffio, m = modAgiPg() + (eff("furore") ? 4 : 0);
+      const S = NEMICI[scontro.id].soffio, m = modAgiPg() + (eff("furore") ? 4 : 0) + (window.MagiaCombattimento ? window.MagiaCombattimento.bonusTsPg(scontro) : 0); /* Aureola +1, Cerchio del Focolare +2 */
       scontro.soffioPronto = false;
       aggiungi({ tipo: "narra", box: "nem", righe: [CB.soffioLog] });
       segnaTurno(CB.attSoffio);
@@ -8995,7 +9546,7 @@
         const d = tira(20), tot = d + m, ok = tot >= S.cd;
         if (ok) aggiungi({ tipo: "narra", box: "mia", esito: CB.soffioSalvo, righe: [CB.soffioSalvoTxt, CB.soffioTiro(d, m, tot)] });
         else {
-          const tiri = tiraDadi(S.dadi, S.dado), danno = somma(tiri), righe = [CB.soffioPresoTxt, CB.soffioTiro(d, m, tot), CB.tiroDanno(S.dadi, S.dado, tiri, 0, danno)];
+          const tiri = tiraDadi(S.dadi, S.dado), pieno = somma(tiri), danno = eff("cerchio") ? Math.floor(pieno / 2) : pieno, righe = [CB.soffioPresoTxt, CB.soffioTiro(d, m, tot), CB.tiroDanno(S.dadi, S.dado, tiri, 0, danno)];
           dannoAlPg(danno, "Fuoco", righe);
           const ira = guadagnaIra(CMB.iraPerColpo(livelloPg(), false)); if (ira) righe.push(ira); /* il soffio a segno conta come un colpo subito */
           aggiungi({ tipo: "narra", box: "nem", esito: CB.soffioPreso, righe });
@@ -9023,6 +9574,7 @@
       guadagnaPE(D.xp);
       aggiungi({ tipo: "narra", box: "ok", fuori: true, righe: [CB.bannerVinto, CB.xp(D.xp, pg.esperienza)] });
       controllaLivello();
+      if (ctx === "caccia") { usate.cc_stato = "trofeo"; salvaUsate(); trofeoCaccia(idNem); sist(CCT().preso); }
       if (ctx === "ettore" && !usate.q2_diario) { /* Ettore morto: il diario del figlio maggiore è tra le sue cose */
         consegnaDiarioFiglio();
         aggiungi({ tipo: "narra", fuori: true, righe: A.ettore.diarioMorto });
@@ -9074,6 +9626,17 @@
         return setTimeout(() => {
           const pena = penaMorte();
           usate.ettore = "tregua"; usate.dialogo_ettore = "tregua"; salvaUsate();
+          fuoriDallaTendina(() => { vai("sala_caccia", { righe: RG.morte.caccia }); aggiungi({ tipo: "narra", box: "ko", righe: [pena] }); sist(CB.sistRisveglio); });
+          stato(false);
+        }, 2200);
+      }
+      if (scontro && scontro.ctx === "caccia") { /* la preda ti stende: ti risvegli nella sala della caccia, e lei ti aspetta ancora in giardino */
+        chiudiScontro("perso");
+        scontro = null; MusicaScontro.ferma(); barraScontro();
+        aggiungi({ tipo: "narra", box: "ko", righe: CB.sconfitta });
+        stato(true, CB.attesa);
+        return setTimeout(() => {
+          const pena = penaMorte();
           fuoriDallaTendina(() => { vai("sala_caccia", { righe: RG.morte.caccia }); aggiungi({ tipo: "narra", box: "ko", righe: [pena] }); sist(CB.sistRisveglio); });
           stato(false);
         }, 2200);
@@ -9152,6 +9715,8 @@
       if (luogo === "cantina" && usate.cantina_cane === "apparso") avviaScontro("mastino"); /* partita salvata durante lo scontro: si ricomincia */
       if (luogo === "sala_ballo" && usate.aldo_scontro === "in_corso") setTimeout(mastinoAldo, 600); /* scontro con i mastini di Aldo */
       if (luogo === "cripta") entraCripta();
+      if (luogo === "giardino" && usate.cc_stato === "attiva") setTimeout(imboscataGiardino, 900); /* partita salvata durante la caccia: la preda torna */
+      if (luogo === "sala_caccia" && usate.cc_stato === "trofeo") setTimeout(() => fuoriDallaTendina(consegnaCaccia), 900);
       if (luogo === "sala_caccia" && usate.q4 === "prova") setTimeout(() => fuoriDallaTendina(consegnaAldo), 900);
       document.getElementById("salva").addEventListener("click", salvaPartita);
       pulsanteAudio();

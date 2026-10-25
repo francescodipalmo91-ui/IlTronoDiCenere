@@ -4113,7 +4113,7 @@
           salute: (dv, t, da, a) => `Salute fisica: 1d${dv} = ${t.d} ${fmtN(t.m)} (mod. Vigore) → +${t.v} · massimo ${da} → ${a}`,
           mente: (dv, t, da, a) => `Salute mentale: 1d${dv} = ${t.d} ${fmtN(t.m)} (mod. Spirito) → +${t.v} · massimo ${da} → ${a}`,
           risorsa: (nome, dv, t, da, a) => `${nome}: 1d${dv} = ${t.d} ${fmtN(t.m)} → +${t.v} · massimo ${da} → ${a}`,
-          risorsaIra: (nome, m, l, v, da, a) => `${nome}: mod. Vigore ${fmtN(m)} + livello ${l} → +${v} · massimo ${da} → ${a}`,
+          risorsaIra: (nome, m, l, v, da, a, att) => `${nome}: mod. ${att || "Vigore"} ${fmtN(m)} + livello ${l} → +${v} · massimo ${da} → ${a}`,
           abilita: (n) => `Le abilità addestrate ora aggiungono +${n}.`,
           massimo: "Hai raggiunto il livello massimo."
         },
@@ -4179,7 +4179,7 @@
           salute: (dv, t, da, a) => `Physical health: 1d${dv} = ${t.d} ${fmtN(t.m)} (Vigour mod.) → +${t.v} · maximum ${da} → ${a}`,
           mente: (dv, t, da, a) => `Mental health: 1d${dv} = ${t.d} ${fmtN(t.m)} (Spirit mod.) → +${t.v} · maximum ${da} → ${a}`,
           risorsa: (nome, dv, t, da, a) => `${nome}: 1d${dv} = ${t.d} ${fmtN(t.m)} → +${t.v} · maximum ${da} → ${a}`,
-          risorsaIra: (nome, m, l, v, da, a) => `${nome}: Vigour mod. ${fmtN(m)} + level ${l} → +${v} · maximum ${da} → ${a}`,
+          risorsaIra: (nome, m, l, v, da, a, att) => `${nome}: ${att || "Vigour"} mod. ${fmtN(m)} + level ${l} → +${v} · maximum ${da} → ${a}`,
           abilita: (n) => `Trained skills now add +${n}.`,
           massimo: "You have reached the maximum level."
         },
@@ -5109,7 +5109,7 @@
        - Ricompense: 150 PE mastini generici, 350 mastini specifici, 500 nemici che custodiscono ricompense o segreti
          (la stessa se il nemico viene risparmiato).
        - A ogni livello: salute fisica + (dado vita + mod Vigore), salute mentale + (dado vita + mod Spirito),
-         mana / punti ira / punti natura + (dado vita + mod dell'attributo della risorsa). Minimo +1 ciascuno.
+         mana / fede / ira / natura + (mod dell'attributo della risorsa + nuovo livello), senza dado. Minimo +1 ciascuno.
        - Guerriero: punti ira (10 + mod Lotta); Sciamano: punti natura (10 + mod Spirito). Tutte le risorse si ricaricano solo riposando.
        - Livello e crescita fanno parte della partita (salvataggio), il personaggio di partenza resta quello della creazione.
        ===================================================================== */
@@ -5154,13 +5154,10 @@
       crescita.salute += ts.v; crescita.mente += tm.v;
       const righe = [RG.livello.salute(dv, ts, prima.s, saluteMaxPg()), RG.livello.mente(dv, tm, prima.m, maxMentali())];
       const attrR = (RISORSA_CLASSE[pg.classe] || {}).attr || ATTR_RISORSA_MAGIA[pg.classe];
-      if (prima.r != null && attrR && risorsaPg() && risorsaPg().id === "ira") { /* ira: + mod Vigore + nuovo livello, senza dado */
-        const mV = st("Vigore"), nl = livelloPg() + 1, v = Combattimento.crescitaIra(mV, nl); crescita.risorsa += v;
-        righe.push(RG.livello.risorsaIra(nomeRisorsa(), mV, nl, v, prima.r, risorsaPg().max));
-      } else if (prima.r != null && attrR) {
-        const tr = t(st(attrR)); crescita.risorsa += tr.v;
+      if (prima.r != null && attrR) { /* tutte le risorse (ira, natura, mana, fede): + mod dell'attributo + nuovo livello, senza dado */
+        const mA = st(attrR), nl = livelloPg() + 1, v = Combattimento.crescitaIra(mA, nl); crescita.risorsa += v;
         const ora = manaMax() != null ? manaMax() : risorsaPg().max;
-        righe.push(RG.livello.risorsa(nomeRisorsa(), dv, tr, prima.r, ora));
+        righe.push(RG.livello.risorsaIra(nomeRisorsa(), mA, nl, v, prima.r, ora, Lingua.nome("attributi", attrR)));
       }
       pg.livello = livelloPg() + 1;
       righe.push(RG.livello.abilita(pg.livello));

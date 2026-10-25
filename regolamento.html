@@ -8,6 +8,8 @@
   <script src="js/sicuro.js"></script>
   <script src="js/regole.js"></script>
   <script src="js/lingua.js"></script>
+  <script src="js/tecniche.js"></script>
+  <script src="js/magia.js"></script>
   <link rel="stylesheet" href="tema.css">
   <style>
     * { box-sizing: border-box; }
@@ -24,18 +26,26 @@
     summary::-webkit-details-marker { display: none; }
     summary, .corpo h3 { font-family: var(--f-titoli); letter-spacing: 0.05em; }
     summary::after { content: "▸"; color: var(--muted); transition: transform 0.2s; }
-    details[open] summary::after { transform: rotate(90deg); }
+    details[open] > summary::after { transform: rotate(90deg); }
     summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 0.6rem; }
     .corpo { padding: 0 1.1rem 1rem; }
     .corpo h3 { font-size: 1rem; margin: 1.1rem 0 0.35rem; font-weight: 600; }
     .corpo p, .corpo li { margin: 0.35rem 0; }
-    .corpo ul { padding-left: 1.2rem; margin: 0.35rem 0; }
+    .corpo ul, .corpo ol { padding-left: 1.2rem; margin: 0.35rem 0; }
+    /* tendine annidate (rami delle tecniche, scuole di magia) */
+    .corpo details { margin: 0.6rem 0; background: transparent; }
+    .corpo details summary { font-size: 0.98rem; padding: 0.6rem 0.9rem; }
+    .corpo details .corpo { padding: 0 0.9rem 0.8rem; }
     .formula { display: block; margin: 0.5rem 0; padding: 0.45rem 0.8rem; border-left: 3px solid var(--tip-line); background: var(--tip-bg); border-radius: 0 0.4rem 0.4rem 0; font-variant-numeric: tabular-nums; }
     .esempio { color: var(--muted); font-style: italic; font-size: 0.93rem; }
+    .avviso { margin: 0.5rem 0; padding: 0.5rem 0.8rem; border: 1px dashed var(--line); border-radius: 0.4rem; color: var(--muted); font-size: 0.93rem; }
+    .turno { margin: 0.5rem 0; padding: 0.4rem 0.8rem; border-left: 3px solid var(--line); font-size: 0.95rem; }
+    .turno b { font-family: var(--f-titoli); letter-spacing: 0.04em; }
     .scroll { overflow-x: auto; }
     table { border-collapse: collapse; width: 100%; font-size: 0.93rem; margin: 0.4rem 0; }
     th, td { text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--line); vertical-align: top; }
     th { color: var(--muted); font-weight: 400; }
+    td.n { white-space: nowrap; font-variant-numeric: tabular-nums; }
     .tendine { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0; }
     .tendine span { padding: 0.25rem 0.7rem; border-radius: 0.4rem; border: 1px solid var(--line); font-size: 0.9rem; }
     .tendine span { background: var(--tip-bg); border-left-width: 3px !important; }
@@ -53,24 +63,52 @@
   </main>
 
   <script>
-    /* Regolamento del giocatore: solo meccaniche, niente dinamiche di trama.
-       I numeri vengono da regole.js, gli stessi usati dal gioco. */
+    /* Regolamento del giocatore: solo meccaniche, niente dinamiche di trama (niente nemici, luoghi o oggetti specifici).
+       I numeri vengono da regole.js, le tecniche da tecniche.js e gli incantesimi da magia.js: gli stessi file del gioco. */
     if (new URLSearchParams(location.search).has("dentro")) document.body.classList.add("dentro");
-    const R = window.Regole, EN = Lingua.get() === "en";
+    const R = window.Regole, EN = Lingua.get() === "en", L = EN ? "en" : "it";
     const N = (cat, k) => Lingua.nome(cat, k);
-    const mod = (v) => Math.floor((v - 10) / 2);
     const segno = (n) => (n < 0 ? "−" : "+") + Math.abs(n);
     const per = (o) => Object.entries(o).map(([k, v]) => `${segno(v)} ${N("attributi", k)}`).join(", ");
-    /* posti delle tecniche per livello (2, 4, 5, 6, 7) e ira per colpo subito, ricavati da regole.js */
-    const posti = (en) => R.TECNICHE_PER_LIVELLO.map((_, i) => R.TECNICHE_PER_LIVELLO.slice(0, i + 1).reduce((a, b) => a + b, 0)).map((n, i) => `${n} (${en ? "level" : "livello"} ${i + 1})`).join(", ");
-    const iraColpi = (en) => [[1, 2], [3, 4], [5]].map(ls => `+${R.IRA_PER_COLPO[ls[0] - 1]} ${en ? (ls.length > 1 ? "at levels" : "at level") : (ls.length > 1 ? "ai livelli" : "al livello")} ${ls.join("-")}`).join(", ");
+    const TEC = window.TECNICHE || [], MG = window.MAGIA;
+    /* posti delle tecniche e degli incantesimi per livello (2, 4, 5, 6, 7), ricavati da regole.js */
+    const posti = () => R.TECNICHE_PER_LIVELLO.map((_, i) => R.TECNICHE_PER_LIVELLO.slice(0, i + 1).reduce((a, b) => a + b, 0)).map((n, i) => `${n} (${EN ? "level" : "livello"} ${i + 1})`).join(", ");
+    /* recupero in combattimento per livello (1/1/2/2/3), uguale per tutte le classi */
+    const recupero = () => [[1, 2], [3, 4], [5]].map(ls => `+${R.IRA_PER_COLPO[ls[0] - 1]} ${EN ? (ls.length > 1 ? "at levels" : "at level") : (ls.length > 1 ? "ai livelli" : "al livello")} ${ls.join("-")}`).join(", ");
     const tetti = Object.entries(R.TETTO_AGILITA).map(([a, t]) => `${N("oggetti", a)} ${t ? "+" + t : (EN ? "none" : "nessuno")}`).join(" · ");
     const soglie = R.SOGLIE_PE.slice(1).map((s, i) => `<tr><td>${i + 2}</td><td>${s - R.SOGLIE_PE[i]}</td><td>${s}</td></tr>`).join("");
-    const risorse = { it: { mana: "Punti arcano", fede: "Punti fede", ira: "Punti ira", natura: "Punti natura" }, en: { mana: "Arcane points", fede: "Faith points", ira: "Rage points", natura: "Nature points" } }[EN ? "en" : "it"];
+    const risorse = { it: { mana: "Mana", fede: "Punti fede", ira: "Punti ira", natura: "Punti natura" }, en: { mana: "Mana", fede: "Faith points", ira: "Rage points", natura: "Nature points" } }[L];
     const armatureClasse = (c) => (R.ARMATURE_CLASSI[c] || ["Armatura leggera", "Armatura media", "Armatura pesante"]).map(a => N("oggetti", a)).join(", ");
     const righeClassi = Object.entries(R.CLASSI).map(([c, d]) => `<tr><td>${N("classi", c)}</td><td>d${d.dado}</td><td>${risorse[d.risorsa]} (${N("attributi", d.attrRisorsa)})</td><td>${armatureClasse(c)}</td></tr>`).join("");
     const righeRazze = Object.entries(R.RAZZE).map(([r, d]) => `<tr><td>${N("razze", r)}</td><td>${d.punti ? (EN ? `+${d.punti} free points` : `+${d.punti} punti liberi`) : per(d.bonus)}</td></tr>`).join("");
     const righeAbilita = R.ABILITA.map(([a, at]) => `<tr><td>${N("abilita", a)}</td><td>${N("attributi", at)}</td></tr>`).join("");
+
+    /* ---------- tabelle di tecniche e incantesimi ---------- */
+    const H = EN ? ["Lv", "Name", "Cost", "Effect"] : ["Liv", "Nome", "Costo", "Effetto"];
+    const tabella = (voci) => `<div class="scroll"><table><tr>${H.map(h => `<th>${h}</th>`).join("")}</tr>${voci.slice().sort((a, b) => a.liv - b.liv).map(v =>
+      `<tr><td class="n">${v.liv}</td><td>${v.nome[L]}</td><td class="n">${v.costo}</td><td>${(v.effetto && v.effetto[L]) || ""}</td></tr>`).join("")}</table></div>`;
+    const tendina = (titolo, html) => `<details><summary>${titolo}</summary><div class="corpo">${html}</div></details>`;
+
+    /* Guerriero: un ramo per tipo d'arma e lo scudo, con le due vie (nomi opposti, senza i PNG che le insegnano) */
+    const RAMI = [
+      ["Tagliente", { it: "Armi da taglio", en: "Slashing weapons" }, { aldo: { it: "Lama", en: "Blade" }, guendalina: { it: "Guardia", en: "Guard" } }],
+      ["Contundente", { it: "Armi contundenti", en: "Bludgeoning weapons" }, { aldo: { it: "Martello", en: "Hammer" }, guendalina: { it: "Incudine", en: "Anvil" } }],
+      ["Perforante", { it: "Armi perforanti", en: "Piercing weapons" }, { aldo: { it: "Punta", en: "Point" }, guendalina: { it: "Mira", en: "Aim" } }],
+      ["Scudo", { it: "Scudo", en: "Shield" }, { aldo: { it: "Marea", en: "Tide" }, guendalina: { it: "Scoglio", en: "Reef" } }]
+    ];
+    const viaTit = (n) => (EN ? "Path of the " : "Via ") + (EN ? n.en : ({ Lama: "della Lama", Guardia: "della Guardia", Martello: "del Martello", Incudine: "dell'Incudine", Punta: "della Punta", Mira: "della Mira", Marea: "della Marea", Scoglio: "dello Scoglio", Frattura: "della Frattura", Sutura: "della Sutura", Cenere: "della Cenere", Brace: "della Brace" }[n.it] || n.it));
+    const ramiGuerriero = RAMI.map(([tipo, nome, vie]) => {
+      const base = TEC.filter(t => t.tipo === tipo && !t.via);
+      const via = (k) => TEC.filter(t => t.tipo === tipo && t.via === k);
+      return tendina(nome[L], tabella(base) + ["aldo", "guendalina"].filter(k => via(k).length).map(k => `<h3>${viaTit(vie[k])}</h3>${tabella(via(k))}`).join(""));
+    }).join("");
+    const utilitaGuerriero = TEC.filter(t => t.tipo === "Utilita");
+
+    /* incantatori: una tendina per scuola e per via */
+    const scuola = (s) => MG ? MG.INCANTESIMI.filter(i => i.scuola === s) : [];
+    const vieClasse = (c) => MG ? ["aldo", "guendalina"].map(k => `<h3>${viaTit(MG.NOMI_VIE[c][k])}</h3>${tabella(MG.VIE.filter(v => v.via === k && MG.CLASSI[c].includes(v.scuola)))}`).join("") : "";
+    const tendineScuole = (c) => MG ? MG.CLASSI[c].map(s => tendina(MG.NOMI_SCUOLE[s][L], tabella(scuola(s)))).join("") + tendina(EN ? "Prestige paths" : "Vie di prestigio", vieClasse(c)) : "";
+    const capacita = (c) => MG ? `<b>${MG.CAPACITA[c].nome[L]}</b> (${MG.CAPACITA[c].costo})` : "";
 
     const T = {
       it: {
@@ -82,19 +120,18 @@
             <span class="formula">Modificatore = (valore − 10) ÷ 2, arrotondato per difetto</span>
             <p class="esempio">Esempio: 12 → +1, 14 → +2, 17 → +3.</p>
             <ul>
-              <li><b>Vigore</b>: forza in combattimento, salute fisica, Atletica e Sopravvivenza.</li>
+              <li><b>Vigore</b>: forza in combattimento, salute fisica, Atletica e Sopravvivenza, risorsa del Guerriero.</li>
               <li><b>Agilità</b>: iniziativa, difesa (Classe armatura), Furtività e Acrobazia.</li>
-              <li><b>Mente</b>: sensi e logica, Investigazione e Sapienza, incantesimi dell'Arcanista.</li>
-              <li><b>Spirito</b>: salute mentale e volontà, Socialità e Intuizione, incantesimi del Monaco.</li>
+              <li><b>Mente</b>: sensi e logica, Investigazione e Sapienza, magia dell'Arcanista.</li>
+              <li><b>Spirito</b>: salute mentale e volontà, Socialità e Intuizione, magia del Monaco e risorsa dello Sciamano.</li>
             </ul>
             <h3>Razze</h3><div class="scroll"><table><tr><th>Razza</th><th>Bonus</th></tr>${righeRazze}</table></div>
             <h3>Classi</h3><div class="scroll"><table><tr><th>Classe</th><th>Dado vita</th><th>Risorsa</th><th>Armature</th></tr>${righeClassi}</table></div>
-            <p>Le armi «da battaglia» sono riservate al Guerriero. Arcanista e Monaco scelgono ${R.MAX_INCANTESIMI} incantesimi.</p>
-            <p><b>Mente incrollabile</b> (Guerriero e Sciamano): dopo una prova fallita puoi spendere 1 punto ira o natura per un tiro salvezza (d20 + modificatore di Vigore per il Guerriero o di Spirito per lo Sciamano + livello, CD ${R.CD_INCROLLABILE}). Se lo superi, non perdi salute mentale.</p>
+            <p>Le armi «da battaglia» sono riservate al Guerriero. Ogni classe ha la sua sezione in questo regolamento, con tutte le tecniche o gli incantesimi.</p>
             <h3>Salute e risorse</h3>
             <span class="formula">Salute fisica = ${R.SALUTE_BASE} + dado vita + mod. Vigore</span>
             <span class="formula">Salute mentale = ${R.SALUTE_BASE} + dado vita + mod. Spirito</span>
-            <span class="formula">Punti arcano, fede, ira, natura = ${R.RISORSA_BASE} + modificatore dell'attributo della classe</span>
+            <span class="formula">Mana, punti fede, ira, natura = ${R.RISORSA_BASE} + modificatore dell'attributo della classe</span>
             <h3>Abilità</h3>
             <p>Ne scegli ${R.MAX_ABILITA}. Il valore di un'abilità è il modificatore del suo attributo; quelle scelte aggiungono anche il tuo livello.</p>
             <div class="scroll"><table><tr><th>Abilità</th><th>Attributo</th></tr>${righeAbilita}</table></div>
@@ -108,7 +145,10 @@
             <p>Alcune prove richiedono un <b>20 naturale</b>: conta solo il numero uscito sul dado, il modificatore non si somma. Alcuni oggetti danno <b>vantaggio</b>: tiri due dadi e tieni il risultato migliore.</p>
             <p><b>Investigazione</b> comprende due modi di esplorare: <b>cercare attivamente</b> (frugare, spostare, toccare) e <b>usare i sensi</b> (vista, udito, olfatto). Se scrivi «faccio una prova di investigazione» il gioco ti chiede quale; se nomini un oggetto («investigo l'arazzo») la prova riguarda quell'oggetto.</p>
             <p><b>Ogni prova fallita costa ${R.COSTO_PROVA_FALLITA} punto di salute mentale.</b> Scegli con cura quando tentare. Alcune prove, segnalate dal gioco, non fanno perdere salute mentale.</p>
-            <p><b>Una prova fallita non si può ripetere finché non riposi.</b> Se in un luogo fallisci una prova (per esempio indagare nella sala da conversazione), quella prova resta bloccata: il gioco te lo ricorda ogni volta che provi a ripeterla, e ti avvisa prima del tiro. Dopo un riposo la prova torna disponibile. Le prove superate restano superate e non servono più. Fanno eccezione le prove che il gioco indica come ripetibili: quelle si possono riprovare subito.</p>
+            <p><b>Mente incrollabile</b> (Guerriero e Sciamano): dopo una prova fallita puoi spendere 1 punto ira o natura per un tiro salvezza (d20 + modificatore di Vigore per il Guerriero o di Spirito per lo Sciamano + livello, CD ${R.CD_INCROLLABILE}). Se lo superi, non perdi salute mentale.</p>
+            <p><b>Una prova fallita non si può ripetere finché non riposi.</b> Quella prova resta bloccata: il gioco te lo ricorda ogni volta che provi a ripeterla, e ti avvisa prima del tiro. Dopo un riposo la prova torna disponibile. Le prove superate restano superate. Fanno eccezione le prove che il gioco indica come ripetibili.</p>
+            <h3>Enigmi</h3>
+            <p>Alcuni luoghi nascondono un enigma. Di solito una prova ti dà un indizio, poi la soluzione la scegli tu. Una scelta sbagliata costa ${R.COSTO_PROVA_FALLITA} punto di salute mentale, come una prova fallita. Se non ottieni l'indizio, qualcuno nella casa potrebbe dartelo.</p>
             <p>Il colore della tendina della tua azione ti dice cosa è successo:</p>
             <div class="tendine"><span class="t-azz">azzurra: nessuna prova</span><span class="t-ok">verde: prova superata</span><span class="t-ko">rossa: prova fallita</span></div>
             <p>Nei dialoghi conta anche l'approccio che scegli, gentile o duro: ogni interlocutore reagisce a modo suo.</p>`],
@@ -121,61 +161,151 @@
               <li><b>Oggetti</b>: «bevo la pozione di cura», «impugno la torcia», «indosso l'armatura». Lo zaino e la scheda mostrano ciò che porti e come usarlo.</li>
             </ul>
             <p class="esempio">Esempio: in una stanza nuova scrivi «guardo il tavolo». Se c'è qualcosa da scoprire, il gioco ti propone una prova.</p>
-            <p>Quando il gioco ti offre dei pulsanti (una scelta, un tiro, «lascia perdere») usali al posto del testo. Le missioni accettate compaiono nella scheda, con obiettivi e consigli.</p>
-            <p>Nei dialoghi scegli la risposta con i pulsanti: l'approccio, gentile o duro, cambia come reagisce chi hai davanti.</p>`],
+            <p>Quando il gioco ti offre dei pulsanti (una scelta, un tiro, «lascia perdere») usali al posto del testo. Le missioni accettate compaiono nella scheda, con obiettivi e consigli.</p>`],
           ["Combattimento", `
             <p><b>Iniziativa</b>: agisce per primo chi ha più Agilità (a parità, un d20 a testa).</p>
-            <p>A ogni turno hai un'azione: attaccare, lanciare un incantesimo o usare un oggetto. Prendere in mano la torcia o imbracciare lo scudo non consuma l'azione.</p>
-            <span class="formula">Attacco: d20 + mod. Vigore, colpisce se supera la Classe armatura del bersaglio</span>
-            <span class="formula">Danno: dado dell'arma + mod. Vigore (torcia 1d4, a mani nude 1d2)</span>
-            <p><b>Colpo critico</b>: un 20 sul dado colpisce sempre e tira il doppio dei dadi di danno. Vale anche per i nemici. Alcune tecniche allargano il critico a 19-20 o 18-20 (mai oltre): anche quei numeri colpiscono sempre.</p>
-            <p class="esempio">Esempio: attacchi con una spada corta (1d6) e Vigore +2. Tiri 14 sul d20: 14 + 2 = 16. Se la Classe armatura del nemico è 13, colpisci e fai 1d6 + 2 danni.</p>
-            <p>In combattimento scrivi l'azione («attacco», «lancio un incantesimo», «bevo la pozione di cura») oppure usa i pulsanti che compaiono.</p>
+            <p>A ogni turno hai un'azione: attaccare, usare una tecnica, lanciare un incantesimo o usare un oggetto. Prendere in mano la torcia o imbracciare lo scudo non consuma l'azione. L'attacco con l'arma è sempre gratuito.</p>
+            <span class="formula">Attacco con l'arma: d20 + mod. Vigore, colpisce se supera la Classe armatura del bersaglio</span>
+            <span class="formula">Attacco magico: d20 + mod. Mente (Arcanista) o Spirito (Monaco), colpisce se supera la Classe armatura</span>
+            <span class="formula">Danno dell'arma: dado dell'arma + mod. Vigore (torcia 1d4, a mani nude 1d2)</span>
+            <p><b>Colpo critico</b>: un 20 sul dado colpisce sempre e tira il doppio dei dadi di danno. Vale anche per i nemici. Alcuni effetti allargano il critico a 19-20 o 18-20 (mai oltre).</p>
+            <p><b>Tiro salvezza del nemico</b>: quando un effetto gli concede di resistere, il nemico tira d20 + il suo modificatore contro la tua difficoltà.</p>
+            <span class="formula">CD = 8 + modificatore dell'attributo della tua classe + livello</span>
+            <p>In combattimento scrivi l'azione («attacco», «lancio un incantesimo», «bevo la pozione di cura») oppure usa i pulsanti che compaiono. Gli esempi completi sono nella sezione «Esempi di combattimento».</p>
             <h3>Classe armatura</h3>
             <span class="formula">CA = ${R.CA_BASE} + armatura + mod. Agilità (fino al tetto dell'armatura) + scudo</span>
             <p>Tetto del bonus di Agilità: ${tetti}.</p>
             <p>Le armi a due mani non lasciano libera la mano per torcia o scudo: devi prima riporre l'arma.</p>
-            <h3>Incantesimi</h3>
-            <p>Ogni incantesimo costa punti arcano (Arcanista) o punti fede (Monaco). Quando un nemico può resistere, tira contro la tua difficoltà:</p>
-            <span class="formula">CD degli incantesimi = 8 + modificatore dell'attributo della classe + livello</span>
-            <p>Arcanista e Monaco conoscono tutti e 7 gli incantesimi della loro classe e ne preparano ${R.MAX_INCANTESIMI}: si cambiano riposando.</p>
-            <h3>Tecniche del Guerriero</h3>
+            <h3>Risorse in combattimento</h3>
+            <p>Ogni classe ha una risorsa (ira, natura, mana, fede) che si ricarica riposando. Durante lo scontro ne recuperi un po', ognuno a modo suo, con la stessa tabella: ${recupero()}, il doppio nel caso migliore. Il dettaglio è nella sezione di ogni classe.</p>
+            <h3>Stati</h3>
+            <div class="scroll"><table><tr><th>Stato</th><th>Effetto</th></tr>
+              <tr><td>Indebolito</td><td>−2 per colpire</td></tr>
+              <tr><td>Sbilanciato</td><td>−2 alla Classe armatura</td></tr>
+              <tr><td>Frastornato</td><td>−4 per colpire, niente critici</td></tr>
+              <tr><td>Stordito</td><td>salta il prossimo turno</td></tr>
+              <tr><td>Senza attacchi speciali</td><td>non può usare i suoi attacchi speciali</td></tr>
+              <tr><td>Sanguinamento</td><td>1d4 danni a ogni suo turno (Emorragia: 1d6)</td></tr>
+              <tr><td>Esposto</td><td>i tuoi attacchi fanno critico con un numero in meno, mai sotto 18</td></tr>
+              <tr><td>Accecato</td><td>tira 2d20 per colpire e tiene il peggiore</td></tr>
+              <tr><td>Avvizzito</td><td>1d4 danni necrotici a ogni suo turno (1d6 dove indicato); si somma al Sanguinamento</td></tr>
+            </table></div>
+            <p>Gli effetti non si sommano: uno nuovo dello stesso tipo rinnova la durata. Le eccezioni (Incrinatura, Sigilli) sono spiegate nelle classi.</p>
+            <h3>Avversari temibili</h3>
+            <p>Gli avversari più temibili non subiscono gli effetti che tolgono azioni o attacchi (Frastornato, Stordito, Senza attacchi speciali); al loro posto molte tecniche e incantesimi hanno un effetto di ripiego, indicato tra parentesi. Su di loro gli altri effetti durano al massimo 2 turni (Avvizzito 3), e cariche e Sigilli arrivano al massimo a 2.</p>
+            <h3>Debolezze e resistenze</h3>
+            <p>Alcuni nemici sono vulnerabili a un tipo di danno: taglio, contundente, perforante, arcano, forza, luce (radiante) oppure ombra (necrotico). Contro di loro quel danno ha un dado in più, oppure un effetto dura un turno in più. Altri resistono a un tipo di danno e ne subiscono metà. Esplorando e parlando puoi scoprire le debolezze degli avversari.</p>`],
+          ["Guerriero", `
+            <p>Combatte con l'arma e prepara <b>tecniche speciali</b>, che costano punti ira.</p>
+            <h3>Regole della classe</h3>
             <ul>
-              <li>Come gli incantatori con i loro incantesimi, il Guerriero prepara delle tecniche speciali: le sceglie in creazione e le cambia riposando.</li>
-              <li>Per ogni livello ci sono tre tecniche: se ne scelgono ${R.TECNICHE_PER_LIVELLO[0]} ai livelli 1 e 2 e ${R.TECNICHE_PER_LIVELLO[2]} dal livello 3 in poi. I posti sono quindi ${posti(false)}; con lo scudo imbracciato hai un posto in più, di qualsiasi livello.</li>
-              <li>Si sceglie tra le tecniche sbloccate (il tuo livello o inferiore) del tipo d'arma che impugni (taglio, contundente, perforante) e, con lo scudo imbracciato, dello scudo. Salendo di livello se ne sbloccano di nuove.</li>
-              <li>Mente incrollabile e Furore inarrestabile appartengono alla classe e non occupano posti.</li>
-              <li>Le tecniche costano punti ira, che partono da ${R.RISORSA_BASE} + mod. Vigore e a ogni livello aumentano di mod. Vigore + il nuovo livello. Una tecnica che manca il bersaglio costa comunque.</li>
-              <li>L'ira cresce durante lo scontro: a ogni colpo subito guadagni ${iraColpi()}, il doppio se è un colpo critico. Un attacco che ti manca o che pari non dà ira. Anche un tuo colpo critico ti dà 2 punti ira.</li>
-              <li>Dal livello 3 il Guerriero sceglie una <b>via di prestigio</b>: tre abilità, una ai livelli 3, 4 e 5, sempre pronte e senza occupare posti. Le abilità cambiano con il tipo d'arma (taglio, contundente o perforante); anche lo scudo ha le sue, e quando riposi scegli quale serie preparare, quella dell'arma o quella dello scudo (le abilità dello scudo si usano solo con lo scudo imbracciato). La scelta della via è definitiva.</li>
-              <li>Le armi contundenti hanno due effetti propri. <b>Incrinatura</b>: −1 alla Classe armatura del nemico per ogni carica, fino a 3, per tutto lo scontro; è l'unico effetto che si somma invece di rinnovarsi. <b>Frattura</b>: il nemico subisce 1d4 danni ogni volta che attacca.</li>
-              <li>Le armi perforanti hanno un effetto proprio. <b>Esposto</b>: i tuoi attacchi contro il nemico fanno critico con un numero in meno (19-20, oppure 18-20 se la tecnica arriva già a 19); il critico non scende mai sotto 18.</li>
-              <li>Lo scudo ha un effetto proprio. <b>Carica Cinetica</b>: si guadagna quando lo scudo assorbe un colpo, al massimo 3, e dura tutto lo scontro; alcune tecniche la spendono per colpire senza tiro per colpire. Assorbire un colpo significa subire metà danni (dà l'ira normale) oppure 0 danni (non dà ira). Le tecniche di scudo che consumano l'azione non si possono usare due turni di fila.</li>
+              <li><b>Punti ira</b>: partono da ${R.RISORSA_BASE} + mod. Vigore e a ogni livello aumentano di mod. Vigore + il nuovo livello. Una tecnica che manca il bersaglio costa comunque.</li>
+              <li><b>Recupero</b>: a ogni colpo subito guadagni ${recupero()}, il doppio se è un colpo critico. Un attacco che ti manca o che pari non dà ira. Anche un tuo colpo critico ti dà 2 punti ira.</li>
+              <li><b>Posti</b>: ${posti()}. Il tipo d'arma che impugni (taglio, contundente, perforante) decide tra quali tecniche scegli; con lo scudo imbracciato hai un posto in più, di qualsiasi livello, tra le tecniche dello scudo. Si scelgono in creazione e si cambiano riposando.</li>
+              <li>Una tecnica di un tipo d'arma diverso da quella che impugni resta preparata, ma non si può usare. Se cambi arma, le tecniche del nuovo tipo arrivano dal livello successivo.</li>
+              <li>${utilitaGuerriero.map(t => `<b>${t.nome.it}</b>`).join(", ")} e Mente incrollabile appartengono alla classe e non occupano posti.</li>
+              <li>Dal livello 3 scegli una <b>via di prestigio</b>: tre abilità, una ai livelli 3, 4 e 5, sempre pronte e senza occupare posti. Cambiano con il tipo d'arma; anche lo scudo ha le sue, e quando riposi scegli quale serie preparare. La scelta della via è definitiva.</li>
               <li>Alcune tecniche si usano una sola volta tra un riposo e l'altro.</li>
-              <li>Gli avversari più temibili non subiscono gli effetti che tolgono azioni o attacchi (Frastornato, Stordito, niente attacchi speciali); su di loro gli altri effetti durano al massimo 2 turni e l'Incrinatura arriva al massimo a 2 cariche.</li>
-              <li>Una tecnica di un tipo d'arma diverso da quella che impugni resta preparata, ma non si può usare.</li>
-              <li>Quando un effetto concede al nemico un tiro salvezza: d20 + suo Vigore contro 8 + il tuo modificatore di Vigore + livello.</li>
-            </ul>`],
+            </ul>
+            <h3>Effetti dei rami</h3>
+            <ul>
+              <li><b>Taglio</b>: Sanguinamento ed Emorragia.</li>
+              <li><b>Contundente</b>. <b>Incrinatura</b>: −1 alla Classe armatura del nemico per carica, fino a 3, per tutto lo scontro; è l'unico effetto che si somma. <b>Frattura</b>: il nemico subisce 1d4 danni ogni volta che attacca.</li>
+              <li><b>Perforante</b>. <b>Esposto</b>: vedi Stati.</li>
+              <li><b>Scudo</b>. <b>Carica Cinetica</b>: si guadagna quando lo scudo assorbe un colpo, al massimo 3, e dura tutto lo scontro; alcune tecniche la spendono per colpire senza tiro. Assorbire significa subire metà danni (dà l'ira normale) oppure 0 danni (non dà ira). Le tecniche di scudo che consumano l'azione non si possono usare due turni di fila.</li>
+            </ul>
+            <h3>Tecniche</h3>
+            ${tabella(utilitaGuerriero)}
+            ${ramiGuerriero}`],
+          ["Sciamano", `
+            <p>Combatte con l'arma e la forza della natura. Usa i <b>punti natura</b> (${R.RISORSA_BASE} + mod. Spirito) e ha la capacità Mente incrollabile.</p>
+            <p class="avviso">Le tecniche dello Sciamano sono in preparazione: arriveranno con un prossimo aggiornamento.</p>`],
+          ["Arcanista", `
+            <p class="avviso">Le scuole di magia descritte qui arriveranno nel gioco con un prossimo aggiornamento. Fino ad allora l'Arcanista usa gli incantesimi che sceglie in creazione.</p>
+            <p>Plasma la magia di due scuole: l'<b>Arcano</b> incide Sigilli sul nemico, la <b>Forza</b> li fa esplodere. Gli incantesimi costano mana.</p>
+            <h3>Regole della classe</h3>
+            <ul>
+              <li><b>Mana</b>: parte da ${R.RISORSA_BASE} + mod. Mente e a ogni livello aumenta di mod. Mente + il nuovo livello.</li>
+              <li><b>Scuola principale</b>: si sceglie in creazione, come il Guerriero sceglie l'arma. I posti sono ${posti()}, tra gli incantesimi sbloccati della scuola principale, più ${MG ? MG.POSTI_ALTRA_SCUOLA : 1} posto dell'altra scuola, di qualsiasi livello. Se cambi scuola principale, vale dal livello successivo. Gli incantesimi si cambiano riposando.</li>
+              <li><b>Sigilli</b>: gli incantesimi d'Arcano incidono Sigilli sul nemico, al massimo ${MG ? MG.SIGILLI_MAX : 3} (${MG ? MG.SIGILLI_MAX_BOSS : 2} sugli avversari temibili). Durano tutto lo scontro. Il critico di un incantesimo di Forza incide anche 1 Sigillo.</li>
+              <li><b>Detonazione</b>: gli incantesimi di Forza che la indicano consumano tutti i Sigilli e fanno +1d6 di danno per Sigillo.</li>
+              <li><b>Recupero</b>: ogni Detonazione ti restituisce ${recupero()} mana, il doppio se fa esplodere il massimo dei Sigilli.</li>
+              <li>${capacita("Sapiente")}: capacità di classe, non occupa posti. Illumina il buio al posto della torcia.</li>
+              <li><b>Via di prestigio</b> (dal livello 3): la Frattura o la Sutura, tre abilità sempre pronte (livelli 3, 4 e 5). La scelta è definitiva.</li>
+              <li>Alcuni incantesimi si usano una sola volta tra un riposo e l'altro; quelli che «consumano l'azione» non si possono usare due turni di fila.</li>
+            </ul>
+            <h3>Incantesimi</h3>
+            ${tendineScuole("Sapiente")}`],
+          ["Monaco", `
+            <p class="avviso">Le scuole di magia descritte qui arriveranno nel gioco con un prossimo aggiornamento. Fino ad allora il Monaco usa gli incantesimi che sceglie in creazione.</p>
+            <p>Prega due forze opposte: la <b>Luce</b> protegge e cura, l'<b>Ombra</b> ferisce di più ma chiede un prezzo alla mente. Gli incantesimi costano punti fede.</p>
+            <h3>Regole della classe</h3>
+            <ul>
+              <li><b>Punti fede</b>: partono da ${R.RISORSA_BASE} + mod. Spirito e a ogni livello aumentano di mod. Spirito + il nuovo livello.</li>
+              <li><b>Scuola principale</b>: come per l'Arcanista. Posti ${posti()} della scuola principale, più ${MG ? MG.POSTI_ALTRA_SCUOLA : 1} posto dell'altra.</li>
+              <li><b>Bilancia</b>: va da Ombra ${MG ? MG.BILANCIA_MAX : 3} a Luce ${MG ? MG.BILANCIA_MAX : 3} e parte da 0 a ogni scontro. Ogni incantesimo di Luce la sposta di 1 verso la Luce, ogni incantesimo d'Ombra di 1 verso l'Ombra.</li>
+            </ul>
+            <div class="scroll"><table><tr><th>Posizione</th><th>Effetto</th></tr>
+              <tr><td>Luce 2-3 · Aureola</td><td>Le tue cure +2, +1 ai tuoi tiri salvezza</td></tr>
+              <tr><td>Luce 3 · Zenit</td><td>Il prossimo incantesimo d'Ombra è un Crepuscolo</td></tr>
+              <tr><td>Ombra 2-3 · Velo</td><td>Gli incantesimi d'Ombra hanno +1 dado di danno</td></tr>
+              <tr><td>Ombra 3 · Nadir</td><td>Ogni incantesimo d'Ombra costa anche 1 punto di salute mentale (non letale); il prossimo incantesimo di Luce è un Crepuscolo</td></tr>
+              <tr><td>Crepuscolo</td><td>L'incantesimo ha +1 dado (danno o cura) e ti restituisce ${recupero()} punti fede, il doppio se parti da Nadir; poi la Bilancia torna a 0</td></tr>
+            </table></div>
+            <ul>
+              <li>${capacita("Accolito")}: capacità di classe, non occupa posti. Illumina il buio al posto della torcia.</li>
+              <li><b>Via di prestigio</b> (dal livello 3): la Cenere o la Brace, tre abilità sempre pronte (livelli 3, 4 e 5). La scelta è definitiva.</li>
+            </ul>
+            <h3>Incantesimi</h3>
+            ${tendineScuole("Accolito")}`],
+          ["Esempi di combattimento", `
+            <h3>Guerriero con la spada corta</h3>
+            <p class="esempio">Livello 1, Vigore 16 (+3), 13 punti ira. Contro un nemico con Classe armatura 12.</p>
+            <div class="turno"><b>Turno 1.</b> Usi Morso dell'Acciaio (3 ira, ne restano 10). Tiri 12: 12 + 3 = 15, più di 12, colpisci. Danno 1d6 + 3: esce 4, fai 7. Il nemico sanguina: 1d4 per 2 turni.</div>
+            <div class="turno"><b>Turno del nemico.</b> Sanguina e perde 2. Ti attacca e ti colpisce: perdi 5 salute, ma guadagni 1 ira (11).</div>
+            <div class="turno"><b>Turno 2.</b> Per risparmiare ira attacchi con l'arma, gratis. Tiri 20: critico! Colpisci di sicuro e tiri 2d6 + 3: fai 10. Il critico ti dà anche 2 ira (13).</div>
+            <p class="esempio">L'ira sale quando ti colpiscono: il Guerriero non teme di prendere colpi, teme di restare a secco.</p>
+            <h3>Arcanista d'Arcano, con un posto di Forza</h3>
+            <p class="esempio">Livello 1, Mente 16 (+3), 13 mana. Contro lo stesso nemico.</p>
+            <div class="turno"><b>Turno 1.</b> Dardo Arcano (2 mana, restano 11). Tiri 11: 11 + 3 = 14, colpisci. 1d8: fai 5, e incidi 1 Sigillo.</div>
+            <div class="turno"><b>Turno 2.</b> Scopri Carte (1 mana, restano 10). Vedi la scheda del nemico e incidi il secondo Sigillo, senza tiro.</div>
+            <div class="turno"><b>Turno 3.</b> Pugno di Forza (2 mana, restano 8). Tiri 14: 17, colpisci. 1d10 fa 6, e la Detonazione consuma i 2 Sigilli: +2d6, esce 7. Totale 13 danni. La Detonazione ti restituisce 1 mana (9). Con 3 Sigilli sarebbero stati 2.</div>
+            <p class="esempio">L'Arcanista prepara e poi colpisce: più aspetti, più fa male, ma il nemico intanto attacca.</p>
+            <h3>Monaco d'Ombra, con un posto di Luce</h3>
+            <p class="esempio">Livello 2, Spirito 16 (+3), 18 punti fede. La Bilancia parte da 0.</p>
+            <div class="turno"><b>Turno 1.</b> Avvizzire (3 fede, restano 15). Il nemico fallisce il tiro salvezza: è Avvizzito per 3 turni. Bilancia: Ombra 1.</div>
+            <div class="turno"><b>Turno 2.</b> Sete di Tenebra (4 fede, restano 11). Colpisci; la Bilancia passa a Ombra 2 e scatta il Velo: 3d6 invece di 2d6. Recuperi 1 fede (12).</div>
+            <div class="turno"><b>Turno 3.</b> Tocco Avvizzente (2 fede, restano 10): Bilancia a Ombra 3, sei a Nadir. Il prossimo incantesimo d'Ombra ti costerebbe 1 punto di salute mentale.</div>
+            <div class="turno"><b>Turno 4.</b> Ti curi con Tocco Lenitivo (2 fede, restano 8). È un Crepuscolo: cura con 2d8 + 3 invece di 1d8 + 3, e partendo da Nadir recuperi il doppio, 2 fede (10). La Bilancia torna a 0.</div>
+            <p class="esempio">Il Monaco d'Ombra spinge fino al limite, poi usa la Luce per tornare in equilibrio prima che la mente ceda.</p>`],
           ["Riposo e razioni", `
             <p>Si riposa solo accanto a un fuoco caldo, dalle fiamme arancioni, in un luogo di cui ti fidi. Alcuni fuochi si consumano dopo un riposo.</p>
             <p><b>Riposare ti porta al giorno successivo.</b> Il gioco tiene il conto dei giorni passati nella casa: lo trovi in cima alla scheda del personaggio. Quando riposi:</p>
             <ul>
               <li>consumi fino a 1d4 razioni;</li>
-              <li>recuperi 1d4 + livello su salute fisica, salute mentale e sulla tua risorsa (punti arcano, fede, ira o natura);</li>
-              <li>ogni giorno ricevi ${R.RAZIONI_AL_GIORNO} razioni nuove (scorta massima ${R.RAZIONI_MAX}).</li>
+              <li>recuperi 1d4 + livello su salute fisica, salute mentale e sulla tua risorsa (mana, fede, ira o natura);</li>
+              <li>ogni giorno ricevi ${R.RAZIONI_AL_GIORNO} razioni nuove (scorta massima ${R.RAZIONI_MAX});</li>
+              <li>puoi cambiare tecniche e incantesimi preparati.</li>
             </ul>
             <p>Senza razioni la fame non ti fa dormire, tranne in un luogo particolarmente accogliente, dove recuperi comunque 1 punto.</p>
             <p class="esempio">Esempio: sei al livello 2 e hai perso 6 punti di salute fisica. Riposando tiri 1d4 e ottieni 3: recuperi 3 + 2 = 5 punti su salute fisica, salute mentale e risorsa di classe.</p>
-            <p><b>Riposare sblocca anche le prove fallite.</b> Le prove in cui hai fallito (e che il gioco segnala come non ripetibili subito) tornano disponibili al risveglio.</p>
+            <p><b>Riposare sblocca anche le prove fallite.</b></p>
             <p>Se sei già in piena forma, non c'è bisogno di dormire: il gioco non consuma il fuoco né le razioni.</p>
-            <p><b>I punti arcano, fede, ira e natura si ricaricano solo riposando.</b> La pozione di cura recupera 1d6 + livello di salute fisica; la pozione di essenza recupera 1d6 + livello nella risorsa della tua classe (punti arcano, fede, ira o natura).</p>`],
+            <p>La pozione di cura recupera 1d6 + livello di salute fisica; la pozione di essenza recupera 1d6 + livello nella risorsa della tua classe.</p>`],
           ["Livelli ed esperienza", `
             <p>Guadagni punti esperienza sconfiggendo i nemici e completando missioni. Il livello massimo è ${R.LIVELLO_MAX}.</p>
             <div class="scroll"><table><tr><th>Livello</th><th>PE necessari</th><th>PE totali</th></tr>${soglie}</table></div>
-            <p>A ogni livello tiri il dado vita: salute fisica + (dado vita + mod. Vigore), salute mentale + (dado vita + mod. Spirito), risorsa + (dado vita + modificatore del suo attributo). Le abilità scelte crescono con il livello.</p>`],
+            <p>A ogni livello:</p>
+            <ul>
+              <li>salute fisica + (dado vita + mod. Vigore);</li>
+              <li>salute mentale + (dado vita + mod. Spirito);</li>
+              <li>risorsa della classe + (modificatore del suo attributo + nuovo livello), senza dado;</li>
+              <li>le abilità scelte crescono di 1 e si sbloccano nuove tecniche o incantesimi.</li>
+            </ul>
+            <p>Ogni aumento vale almeno 1.</p>`],
           ["Morte e salute mentale", `
             <p>Se la salute fisica arriva a 0 non muori davvero: ti risvegli in un luogo sicuro con la salute piena, ma perdi 1d4 punti di salute mentale. Il nemico che ti ha sconfitto si riprende del tutto.</p>
-            <p><b>Se la salute mentale arriva a 0, la partita finisce.</b> Tienila d'occhio: prove fallite, sconfitte e certi luoghi la consumano.</p>
+            <p><b>Se la salute mentale arriva a 0, la partita finisce.</b> Tienila d'occhio: prove fallite, enigmi sbagliati, sconfitte, certi incantesimi e certi luoghi la consumano.</p>
             <p>Anche certe scoperte sulla casa feriscono la mente (da 1 a 4 punti, solo la prima volta), ma da sole non la portano mai a 0: lasciano sempre almeno 1 punto.</p>`],
           ["Salvataggi", `
             <p>Puoi tenere fino a tre personaggi. Salva con il pulsante in alto nella pagina di gioco.</p>
@@ -191,19 +321,18 @@
             <span class="formula">Modifier = (score − 10) ÷ 2, rounded down</span>
             <p class="esempio">Example: 12 → +1, 14 → +2, 17 → +3.</p>
             <ul>
-              <li><b>Vigour</b>: fighting strength, physical health, Athletics and Survival.</li>
+              <li><b>Vigour</b>: fighting strength, physical health, Athletics and Survival, the Warrior's resource.</li>
               <li><b>Agility</b>: initiative, defence (Armor class), Stealth and Acrobatics.</li>
-              <li><b>Mind</b>: senses and logic, Investigation and Lore, the Arcanist's spells.</li>
-              <li><b>Spirit</b>: mental health and willpower, Influence and Insight, the Monk's spells.</li>
+              <li><b>Mind</b>: senses and logic, Investigation and Lore, the Arcanist's magic.</li>
+              <li><b>Spirit</b>: mental health and willpower, Influence and Insight, the Monk's magic and the Shaman's resource.</li>
             </ul>
             <h3>Races</h3><div class="scroll"><table><tr><th>Race</th><th>Bonus</th></tr>${righeRazze}</table></div>
             <h3>Classes</h3><div class="scroll"><table><tr><th>Class</th><th>Hit die</th><th>Resource</th><th>Armor</th></tr>${righeClassi}</table></div>
-            <p>“Battle” weapons are reserved for the Warrior. Arcanist and Monk choose ${R.MAX_INCANTESIMI} spells.</p>
-            <p><b>Unshakeable Mind</b> (Warrior and Shaman): after a failed check you may spend 1 rage or nature point on a saving throw (d20 + Vigour modifier for the Warrior or Spirit for the Shaman + level, DC ${R.CD_INCROLLABILE}). On a success you lose no mental health.</p>
+            <p>“Battle” weapons are reserved for the Warrior. Each class has its own section in these rules, with all its techniques or spells.</p>
             <h3>Health and resources</h3>
             <span class="formula">Physical health = ${R.SALUTE_BASE} + hit die + Vigour mod.</span>
             <span class="formula">Mental health = ${R.SALUTE_BASE} + hit die + Spirit mod.</span>
-            <span class="formula">Arcane, faith, rage, nature points = ${R.RISORSA_BASE} + modifier of the class attribute</span>
+            <span class="formula">Mana, faith, rage, nature points = ${R.RISORSA_BASE} + modifier of the class attribute</span>
             <h3>Skills</h3>
             <p>You choose ${R.MAX_ABILITA}. A skill's value is its attribute modifier; the ones you choose also add your level.</p>
             <div class="scroll"><table><tr><th>Skill</th><th>Attribute</th></tr>${righeAbilita}</table></div>
@@ -217,7 +346,10 @@
             <p>Some checks require a <b>natural 20</b>: only the number on the die counts, the modifier is not added. Some items give <b>advantage</b>: you roll two dice and keep the better result.</p>
             <p><b>Investigation</b> covers two ways of exploring: <b>searching actively</b> (rummaging, moving, touching) and <b>using your senses</b> (sight, hearing, smell). If you write “I make an investigation check” the game asks which; if you name an object (“I investigate the tapestry”) the check is about that object.</p>
             <p><b>Every failed check costs ${R.COSTO_PROVA_FALLITA} point of mental health.</b> Choose carefully when to try. Some checks, flagged by the game, cost no mental health.</p>
-            <p><b>A failed check cannot be repeated until you rest.</b> If you fail a check in a place (for example investigating in the drawing room), that check stays locked: the game reminds you each time you try again, and warns you before the roll. After a rest the check is available again. Passed checks stay passed and are no longer needed. The exceptions are checks the game marks as repeatable: those can be retried at once.</p>
+            <p><b>Unshakeable Mind</b> (Warrior and Shaman): after a failed check you may spend 1 rage or nature point on a saving throw (d20 + Vigour modifier for the Warrior or Spirit for the Shaman + level, DC ${R.CD_INCROLLABILE}). On a success you lose no mental health.</p>
+            <p><b>A failed check cannot be repeated until you rest.</b> That check stays locked: the game reminds you each time you try again, and warns you before the roll. After a rest it is available again. Passed checks stay passed. The exceptions are checks the game marks as repeatable.</p>
+            <h3>Riddles</h3>
+            <p>Some places hide a riddle. Usually a check gives you a clue, then you choose the solution yourself. A wrong choice costs ${R.COSTO_PROVA_FALLITA} point of mental health, like a failed check. If you miss the clue, someone in the house might give it to you.</p>
             <p>The colour of your action's drop-down tells you what happened:</p>
             <div class="tendine"><span class="t-azz">blue: no check</span><span class="t-ok">green: check passed</span><span class="t-ko">red: check failed</span></div>
             <p>In conversations the approach you choose, kind or harsh, matters too: everyone reacts in their own way.</p>`],
@@ -230,68 +362,158 @@
               <li><b>Items</b>: “I drink the healing potion”, “I wield the torch”, “I wear the armor”. The backpack and the sheet show what you carry and how to use it.</li>
             </ul>
             <p class="esempio">Example: in a new room you write “I look at the table”. If there is something to discover, the game offers you a check.</p>
-            <p>When the game offers you buttons (a choice, a roll, “let it go”) use them instead of typing. Accepted quests appear on the sheet, with objectives and hints.</p>
-            <p>In conversations choose your reply with the buttons: the approach, kind or harsh, changes how the other person reacts.</p>`],
+            <p>When the game offers you buttons (a choice, a roll, “let it go”) use them instead of typing. Accepted quests appear on the sheet, with objectives and hints.</p>`],
           ["Combat", `
             <p><b>Initiative</b>: whoever has more Agility acts first (on a tie, a d20 each).</p>
-            <p>Each turn you have one action: attack, cast a spell or use an item. Taking up the torch or the shield does not use your action.</p>
-            <span class="formula">Attack: d20 + Vigour mod., hits if it beats the target's Armor class</span>
-            <span class="formula">Damage: weapon die + Vigour mod. (torch 1d4, bare hands 1d2)</span>
-            <p><b>Critical hit</b>: a 20 on the die always hits and rolls double the damage dice. Enemies too. Some techniques widen the critical to 19-20 or 18-20 (never further): those numbers always hit too.</p>
-            <p class="esempio">Example: you attack with a shortsword (1d6) and Vigour +2. You roll 14 on the d20: 14 + 2 = 16. If the enemy's Armor class is 13, you hit and deal 1d6 + 2 damage.</p>
-            <p>In combat write your action (“I attack”, “I cast a spell”, “I drink the healing potion”) or use the buttons that appear.</p>
+            <p>Each turn you have one action: attack, use a technique, cast a spell or use an item. Taking up the torch or the shield does not use your action. A weapon attack is always free.</p>
+            <span class="formula">Weapon attack: d20 + Vigour mod., hits if it beats the target's Armor class</span>
+            <span class="formula">Spell attack: d20 + Mind (Arcanist) or Spirit (Monk) mod., hits if it beats the Armor class</span>
+            <span class="formula">Weapon damage: weapon die + Vigour mod. (torch 1d4, bare hands 1d2)</span>
+            <p><b>Critical hit</b>: a 20 on the die always hits and rolls double the damage dice. Enemies too. Some effects widen the critical to 19-20 or 18-20 (never further).</p>
+            <p><b>Enemy saving throw</b>: when an effect lets the enemy resist, it rolls d20 + its modifier against your difficulty.</p>
+            <span class="formula">DC = 8 + your class attribute modifier + level</span>
+            <p>In combat write your action (“I attack”, “I cast a spell”, “I drink the healing potion”) or use the buttons that appear. Full examples are in the “Combat examples” section.</p>
             <h3>Armor class</h3>
             <span class="formula">AC = ${R.CA_BASE} + armor + Agility mod. (up to the armor's cap) + shield</span>
             <p>Agility bonus cap: ${tetti}.</p>
             <p>Two-handed weapons leave no hand free for torch or shield: put the weapon away first.</p>
-            <h3>Spells</h3>
-            <p>Every spell costs arcane points (Arcanist) or faith points (Monk). When an enemy can resist, it rolls against your difficulty:</p>
-            <span class="formula">Spell DC = 8 + class attribute modifier + level</span>
-            <p>Arcanist and Monk know all 7 spells of their class and prepare ${R.MAX_INCANTESIMI}: they are changed by resting.</p>
-            <h3>Warrior techniques</h3>
+            <h3>Resources in combat</h3>
+            <p>Every class has a resource (rage, nature, mana, faith) that recharges by resting. During a fight you recover some, each class in its own way, with the same table: ${recupero()}, double in the best case. Details are in each class section.</p>
+            <h3>Conditions</h3>
+            <div class="scroll"><table><tr><th>Condition</th><th>Effect</th></tr>
+              <tr><td>Weakened</td><td>−2 to hit</td></tr>
+              <tr><td>Off-balance</td><td>−2 Armor class</td></tr>
+              <tr><td>Dazed</td><td>−4 to hit, no criticals</td></tr>
+              <tr><td>Stunned</td><td>skips its next turn</td></tr>
+              <tr><td>No special attacks</td><td>cannot use its special attacks</td></tr>
+              <tr><td>Bleeding</td><td>1d4 damage each of its turns (Haemorrhage: 1d6)</td></tr>
+              <tr><td>Exposed</td><td>your attacks crit on one number lower, never below 18</td></tr>
+              <tr><td>Blinded</td><td>rolls 2d20 to hit and keeps the worse</td></tr>
+              <tr><td>Withered</td><td>1d4 necrotic damage each of its turns (1d6 where stated); stacks with Bleeding</td></tr>
+            </table></div>
+            <p>Effects do not stack: a new one of the same kind renews the duration. The exceptions (Cracked, Seals) are explained in the classes.</p>
+            <h3>Fearsome foes</h3>
+            <p>The most fearsome foes are immune to effects that take away actions or attacks (Dazed, Stunned, No special attacks); against them many techniques and spells have a fallback effect, shown in brackets. On them other effects last at most 2 turns (Withered 3), and charges and Seals reach at most 2.</p>
+            <h3>Weaknesses and resistances</h3>
+            <p>Some enemies are vulnerable to a damage type: slashing, bludgeoning, piercing, arcane, force, light (radiant) or shadow (necrotic). Against them that damage gets one extra die, or an effect lasts one turn longer. Others resist a damage type and take half. Exploring and talking you can discover your foes' weaknesses.</p>`],
+          ["Warrior", `
+            <p>Fights with the weapon and prepares <b>special techniques</b>, which cost rage points.</p>
+            <h3>Class rules</h3>
             <ul>
-              <li>Like casters with their spells, the Warrior prepares special techniques: chosen at creation and changed by resting.</li>
-              <li>Each level has three techniques: you choose ${R.TECNICHE_PER_LIVELLO[0]} at levels 1 and 2 and ${R.TECNICHE_PER_LIVELLO[2]} from level 3 on. Your slots are therefore ${posti(true)}; with the shield on your arm you get one extra slot, of any level.</li>
-              <li>You choose among the unlocked techniques (your level or lower) for the weapon type you hold (slashing, bludgeoning, piercing) and, with the shield on your arm, the shield. New ones unlock as you level up.</li>
-              <li>Unshakeable Mind and Unstoppable Fury belong to the class and do not take up slots.</li>
-              <li>Techniques cost rage points, which start at ${R.RISORSA_BASE} + Vigour mod. and grow at every level by Vigour mod. + the new level. A technique that misses still costs.</li>
-              <li>Rage builds during the fight: for every hit you take you gain ${iraColpi(true)}, double on a critical hit. An attack that misses you or that you parry gives no rage. Your own critical hits also give you 2 rage points.</li>
-              <li>From level 3 the Warrior chooses a <b>prestige path</b>: three abilities, one at levels 3, 4 and 5, always ready and taking no slots. The abilities change with the weapon type (slashing, bludgeoning or piercing); the shield has its own too, and when you rest you choose which set to prepare, the weapon's or the shield's (shield abilities work only with the shield on your arm). The choice of path is final.</li>
-              <li>Bludgeoning weapons have two effects of their own. <b>Cracked</b>: −1 to the enemy's Armor class per charge, up to 3, for the whole fight; it is the only effect that stacks instead of renewing. <b>Fractured</b>: the enemy takes 1d4 damage every time it attacks.</li>
-              <li>Piercing weapons have an effect of their own. <b>Exposed</b>: your attacks against the enemy crit on one number lower (19-20, or 18-20 if the technique already crits on 19); a critical never goes below 18.</li>
-              <li>The shield has an effect of its own. <b>Kinetic Charge</b>: you gain it when the shield absorbs a blow, up to 3, and it lasts the whole fight; some techniques spend it to strike with no attack roll. Absorbing a blow means taking half damage (normal rage) or 0 damage (no rage). Shield techniques that use your action cannot be used two turns in a row.</li>
+              <li><b>Rage points</b>: start at ${R.RISORSA_BASE} + Vigour mod. and grow at every level by Vigour mod. + the new level. A technique that misses still costs.</li>
+              <li><b>Recovery</b>: for every hit you take you gain ${recupero()}, double on a critical hit. An attack that misses you or that you parry gives no rage. Your own critical hits also give you 2 rage points.</li>
+              <li><b>Slots</b>: ${posti()}. The weapon type you hold (slashing, bludgeoning, piercing) decides which techniques you choose from; with the shield on your arm you get one extra slot, of any level, among the shield techniques. Chosen at creation and changed by resting.</li>
+              <li>A technique for a different weapon type than the one you hold stays prepared but cannot be used. If you change weapon, the new type's techniques arrive from the next level.</li>
+              <li>${utilitaGuerriero.map(t => `<b>${t.nome.en}</b>`).join(", ")} and Unshakeable Mind belong to the class and take no slots.</li>
+              <li>From level 3 you choose a <b>prestige path</b>: three abilities, one at levels 3, 4 and 5, always ready and taking no slots. They change with the weapon type; the shield has its own too, and when you rest you choose which set to prepare. The choice of path is final.</li>
               <li>Some techniques can be used only once between one rest and the next.</li>
-              <li>The most fearsome opponents are immune to effects that take away actions or attacks (Dazed, Stunned, no special attacks); on them other effects last at most 2 turns and Cracked reaches at most 2 charges.</li>
-              <li>A technique for a different weapon type than the one you hold stays prepared but cannot be used.</li>
-              <li>When an effect allows the enemy a saving throw: d20 + its Vigour against 8 + your Vigour modifier + level.</li>
-            </ul>`],
+            </ul>
+            <h3>Branch effects</h3>
+            <ul>
+              <li><b>Slashing</b>: Bleeding and Haemorrhage.</li>
+              <li><b>Bludgeoning</b>. <b>Cracked</b>: −1 to the enemy's Armor class per charge, up to 3, for the whole fight; it is the only effect that stacks. <b>Fractured</b>: the enemy takes 1d4 damage every time it attacks.</li>
+              <li><b>Piercing</b>. <b>Exposed</b>: see Conditions.</li>
+              <li><b>Shield</b>. <b>Kinetic Charge</b>: gained when the shield absorbs a blow, up to 3, lasting the whole fight; some techniques spend it to strike with no roll. Absorbing means taking half damage (normal rage) or 0 damage (no rage). Shield techniques that use your action cannot be used two turns in a row.</li>
+            </ul>
+            <h3>Techniques</h3>
+            ${tabella(utilitaGuerriero)}
+            ${ramiGuerriero}`],
+          ["Shaman", `
+            <p>Fights with the weapon and the strength of nature. Uses <b>nature points</b> (${R.RISORSA_BASE} + Spirit mod.) and has the Unshakeable Mind ability.</p>
+            <p class="avviso">The Shaman's techniques are in preparation: they will arrive with a coming update.</p>`],
+          ["Arcanist", `
+            <p class="avviso">The schools of magic described here will reach the game with a coming update. Until then the Arcanist uses the spells chosen at creation.</p>
+            <p>Shapes the magic of two schools: <b>Arcane</b> carves Seals on the enemy, <b>Force</b> makes them explode. Spells cost mana.</p>
+            <h3>Class rules</h3>
+            <ul>
+              <li><b>Mana</b>: starts at ${R.RISORSA_BASE} + Mind mod. and grows at every level by Mind mod. + the new level.</li>
+              <li><b>Main school</b>: chosen at creation, as the Warrior chooses a weapon. Slots are ${posti()}, among the unlocked spells of the main school, plus ${MG ? MG.POSTI_ALTRA_SCUOLA : 1} slot from the other school, of any level. If you change main school, it applies from the next level. Spells are changed by resting.</li>
+              <li><b>Seals</b>: Arcane spells carve Seals on the enemy, up to ${MG ? MG.SIGILLI_MAX : 3} (${MG ? MG.SIGILLI_MAX_BOSS : 2} on fearsome foes). They last the whole fight. A Force spell's critical also carves 1 Seal.</li>
+              <li><b>Detonation</b>: Force spells that show it spend all Seals and deal +1d6 damage per Seal.</li>
+              <li><b>Recovery</b>: each Detonation gives you back ${recupero()} mana, double if it detonates the maximum number of Seals.</li>
+              <li>${capacita("Sapiente")}: class ability, takes no slot. Lights the dark instead of a torch.</li>
+              <li><b>Prestige path</b> (from level 3): Fracture or Suture, three abilities always ready (levels 3, 4 and 5). The choice is final.</li>
+              <li>Some spells can be used only once between rests; those that “use your action” cannot be used two turns in a row.</li>
+            </ul>
+            <h3>Spells</h3>
+            ${tendineScuole("Sapiente")}`],
+          ["Monk", `
+            <p class="avviso">The schools of magic described here will reach the game with a coming update. Until then the Monk uses the spells chosen at creation.</p>
+            <p>Prays to two opposing forces: <b>Light</b> protects and heals, <b>Shadow</b> hurts more but asks a price of the mind. Spells cost faith points.</p>
+            <h3>Class rules</h3>
+            <ul>
+              <li><b>Faith points</b>: start at ${R.RISORSA_BASE} + Spirit mod. and grow at every level by Spirit mod. + the new level.</li>
+              <li><b>Main school</b>: as for the Arcanist. Slots ${posti()} from the main school, plus ${MG ? MG.POSTI_ALTRA_SCUOLA : 1} slot from the other.</li>
+              <li><b>Balance</b>: runs from Shadow ${MG ? MG.BILANCIA_MAX : 3} to Light ${MG ? MG.BILANCIA_MAX : 3} and starts at 0 every fight. Each Light spell moves it 1 towards Light, each Shadow spell 1 towards Shadow.</li>
+            </ul>
+            <div class="scroll"><table><tr><th>Position</th><th>Effect</th></tr>
+              <tr><td>Light 2-3 · Halo</td><td>Your healing +2, +1 to your saving throws</td></tr>
+              <tr><td>Light 3 · Zenith</td><td>Your next Shadow spell is a Twilight</td></tr>
+              <tr><td>Shadow 2-3 · Veil</td><td>Shadow spells have +1 damage die</td></tr>
+              <tr><td>Shadow 3 · Nadir</td><td>Every Shadow spell also costs 1 point of mental health (never lethal); your next Light spell is a Twilight</td></tr>
+              <tr><td>Twilight</td><td>The spell has +1 die (damage or healing) and gives you back ${recupero()} faith points, double if you start from Nadir; then the Balance returns to 0</td></tr>
+            </table></div>
+            <ul>
+              <li>${capacita("Accolito")}: class ability, takes no slot. Lights the dark instead of a torch.</li>
+              <li><b>Prestige path</b> (from level 3): Ash or Ember, three abilities always ready (levels 3, 4 and 5). The choice is final.</li>
+            </ul>
+            <h3>Spells</h3>
+            ${tendineScuole("Accolito")}`],
+          ["Combat examples", `
+            <h3>Warrior with a shortsword</h3>
+            <p class="esempio">Level 1, Vigour 16 (+3), 13 rage points. Against an enemy with Armor class 12.</p>
+            <div class="turno"><b>Turn 1.</b> You use Steel Bite (3 rage, 10 left). You roll 12: 12 + 3 = 15, more than 12, you hit. Damage 1d6 + 3: you roll 4, dealing 7. The enemy bleeds: 1d4 for 2 turns.</div>
+            <div class="turno"><b>Enemy turn.</b> It bleeds and loses 2. It attacks and hits you: you lose 5 health, but gain 1 rage (11).</div>
+            <div class="turno"><b>Turn 2.</b> To save rage you attack with your weapon, for free. You roll 20: critical! You hit for sure and roll 2d6 + 3: you deal 10. The critical also gives you 2 rage (13).</div>
+            <p class="esempio">Rage rises when you are hit: the Warrior does not fear taking blows, he fears running dry.</p>
+            <h3>Arcane Arcanist, with one Force slot</h3>
+            <p class="esempio">Level 1, Mind 16 (+3), 13 mana. Against the same enemy.</p>
+            <div class="turno"><b>Turn 1.</b> Arcane Bolt (2 mana, 11 left). You roll 11: 11 + 3 = 14, you hit. 1d8: you deal 5, and carve 1 Seal.</div>
+            <div class="turno"><b>Turn 2.</b> Reveal Cards (1 mana, 10 left). You see the enemy's sheet and carve the second Seal, with no roll.</div>
+            <div class="turno"><b>Turn 3.</b> Force Fist (2 mana, 8 left). You roll 14: 17, you hit. 1d10 gives 6, and the Detonation spends the 2 Seals: +2d6, you roll 7. Total 13 damage. The Detonation gives you back 1 mana (9). With 3 Seals it would have been 2.</div>
+            <p class="esempio">The Arcanist prepares, then strikes: the longer you wait, the more it hurts, but meanwhile the enemy attacks.</p>
+            <h3>Shadow Monk, with one Light slot</h3>
+            <p class="esempio">Level 2, Spirit 16 (+3), 18 faith points. The Balance starts at 0.</p>
+            <div class="turno"><b>Turn 1.</b> Wither (3 faith, 15 left). The enemy fails its saving throw: it is Withered for 3 turns. Balance: Shadow 1.</div>
+            <div class="turno"><b>Turn 2.</b> Thirst of Darkness (4 faith, 11 left). You hit; the Balance moves to Shadow 2 and the Veil kicks in: 3d6 instead of 2d6. You recover 1 faith (12).</div>
+            <div class="turno"><b>Turn 3.</b> Withering Touch (2 faith, 10 left): Balance at Shadow 3, you are at Nadir. Your next Shadow spell would cost you 1 point of mental health.</div>
+            <div class="turno"><b>Turn 4.</b> You heal with Soothing Touch (2 faith, 8 left). It is a Twilight: it heals 2d8 + 3 instead of 1d8 + 3, and starting from Nadir you recover double, 2 faith (10). The Balance returns to 0.</div>
+            <p class="esempio">The Shadow Monk pushes to the limit, then uses Light to find balance again before the mind gives way.</p>`],
           ["Rest and rations", `
             <p>You can only rest by a warm fire, one with orange flames, in a place you trust. Some fires are spent after one rest.</p>
             <p><b>Resting takes you to the next day.</b> The game keeps count of the days spent in the house: you will find it at the top of your character sheet. When you rest:</p>
             <ul>
               <li>you eat up to 1d4 rations;</li>
-              <li>you recover 1d4 + level on physical health, mental health and your resource (arcane, faith, rage or nature points);</li>
-              <li>each day you receive ${R.RAZIONI_AL_GIORNO} new rations (up to ${R.RAZIONI_MAX} in store).</li>
+              <li>you recover 1d4 + level on physical health, mental health and your resource (mana, faith, rage or nature);</li>
+              <li>each day you receive ${R.RAZIONI_AL_GIORNO} new rations (up to ${R.RAZIONI_MAX} in store);</li>
+              <li>you can change your prepared techniques and spells.</li>
             </ul>
             <p>Without rations hunger keeps you awake, except in a particularly welcoming place, where you still recover 1 point.</p>
             <p class="esempio">Example: you are level 2 and have lost 6 points of physical health. Resting you roll 1d4 and get 3: you recover 3 + 2 = 5 points on physical health, mental health and class resource.</p>
-            <p><b>Resting also unlocks failed checks.</b> Checks you failed (and that the game marks as not immediately repeatable) become available again when you wake.</p>
+            <p><b>Resting also unlocks failed checks.</b></p>
             <p>If you are already in top shape there is no need to sleep: the game consumes neither the fire nor the rations.</p>
-            <p><b>Arcane, faith, rage and nature points recharge only by resting.</b> The healing potion restores 1d6 + level physical health; the essence potion restores 1d6 + level of your class resource (arcane, faith, rage or nature points).</p>`],
+            <p>The healing potion restores 1d6 + level physical health; the essence potion restores 1d6 + level of your class resource.</p>`],
           ["Levels and experience", `
             <p>You earn experience points by defeating enemies and completing quests. The maximum level is ${R.LIVELLO_MAX}.</p>
             <div class="scroll"><table><tr><th>Level</th><th>XP needed</th><th>Total XP</th></tr>${soglie}</table></div>
-            <p>At each level you roll your hit die: physical health + (hit die + Vigour mod.), mental health + (hit die + Spirit mod.), resource + (hit die + its attribute modifier). Your chosen skills grow with your level.</p>`],
+            <p>At each level:</p>
+            <ul>
+              <li>physical health + (hit die + Vigour mod.);</li>
+              <li>mental health + (hit die + Spirit mod.);</li>
+              <li>class resource + (its attribute modifier + the new level), no die;</li>
+              <li>your chosen skills grow by 1 and new techniques or spells unlock.</li>
+            </ul>
+            <p>Each increase is at least 1.</p>`],
           ["Death and mental health", `
             <p>If your physical health reaches 0 you do not truly die: you wake up in a safe place at full health, but lose 1d4 points of mental health. The enemy that beat you recovers fully.</p>
-            <p><b>If your mental health reaches 0, the game is over.</b> Keep an eye on it: failed checks, defeats and certain places wear it down.</p>
+            <p><b>If your mental health reaches 0, the game is over.</b> Keep an eye on it: failed checks, wrong riddle answers, defeats, certain spells and certain places wear it down.</p>
             <p>Some discoveries about the house also wound the mind (1 to 4 points, only the first time), but on their own they never bring it to 0: they always leave at least 1 point.</p>`],
           ["Saving", `
             <p>You can keep up to three characters. Save with the button at the top of the game page.</p>
             <p>If you sign in with Google on the home page, your saves are shared between computer and phone.</p>`]
         ]
       }
-    }[EN ? "en" : "it"];
+    }[L];
 
     document.title = T.titolo;
     document.getElementById("torna").textContent = T.torna;

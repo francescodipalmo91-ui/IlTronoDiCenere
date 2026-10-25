@@ -301,6 +301,16 @@ caso("Gioco: salita al livello 3 — ira + mod Vigore + livello e avviso della v
   eq(await page.evaluate(() => risorsaPg().max), 39, "13, 18, 24, 31, 39");
   const d = await diario(page); vero(/mod\. Vigore \+3 \+ livello 3 → \+6/.test(d), "manca la riga dell'ira"); vero(/scegliere una via di prestigio/.test(d), "manca l'avviso della via"); await chiudi();
 });
+caso("Gioco: anche il mana dell'Arcanista cresce di mod Mente + livello, senza dado", async (b) => {
+  const arc = PG({ classe: "Sapiente", statistiche: { Vigore: 10, "Agilità": 12, Mente: 16, Spirito: 12 }, statisticheBase: { Vigore: 10, "Agilità": 12, Mente: 16, Spirito: 12 },
+    modificatori: { Vigore: 0, "Agilità": 1, Mente: 3, Spirito: 1 }, tiroDado: { dado: 6, valore: 4 }, mana: 13, risorsa: null, tecniche: [], incantesimi: ["luce", "dardo_ghiaccio", "scudo", "stop"],
+    equipaggiamento: { arma: "Bastone", armaDanno: "1d6", armaTipoDanno: "Contundente", armaMani: 2, armatura: "Armatura leggera", armaturaCA: 2, malusAgilita: 0, scudo: null, dotazione: [] } });
+  const { page, errori, chiudi } = await apri(b, "gioco.html", arc, PARTITA());
+  await page.evaluate(() => { guadagnaPE(5000); controllaLivello(); });
+  eq(await page.evaluate(() => livelloPg()), 5, "fino al livello 5");
+  eq(await page.evaluate(() => manaMax()), 39, "13, 18, 24, 31, 39 come l'ira");
+  vero(/mod\. Mente \+3 \+ livello 3 → \+6/.test(await diario(page)), "manca la riga del mana"); eq(errori, [], "errori"); await chiudi();
+});
 caso("Gioco: scelta della via una volta sola e quote nella preparazione delle tecniche", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ livello: 3, usate: { riposo: "sbloccato", tecPreparate: [] } }));
   await page.evaluate(() => apriSceltaVia()); await page.check('#prepBox input[value="guendalina"]'); await page.click("#prepBox button.primario");
@@ -606,6 +616,21 @@ caso("Regolamento: posti, ira per livello, vie e boss in italiano e in inglese",
   await page.evaluate(() => { localStorage.setItem("lingua", "en"); }); await page.reload();
   const e = await page.textContent("body");
   ["2 (level 1), 4 (level 2)", "+1 at levels 1-2, +2 at levels 3-4, +3 at level 5", "prestige path", "Cracked", "Fractured", "Exposed", "18-20", "Kinetic Charge", "two turns in a row", "which set to prepare"].forEach(x => vero(e.includes(x), "manca: " + x));
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Regolamento: classi, scuole di magia, stati ed esempi in italiano e in inglese", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "regolamento.html");
+  const titoli = await page.$$eval("#sezioni > details > summary", s => s.map(x => x.textContent));
+  ["Guerriero", "Sciamano", "Arcanista", "Monaco", "Esempi di combattimento"].forEach(x => vero(titoli.includes(x), "manca la sezione: " + x));
+  const t = await page.textContent("body");
+  ["Sigilli", "Detonazione", "Bilancia", "Nadir", "Crepuscolo", "Accecato", "Avvizzito", "Lume Arcano", "Via della Frattura", "Via della Brace", "Via della Lama", "Via dello Scoglio", "Dardo Arcano", "Abbraccio del Vuoto", "Turno 3.", "in arrivo", "in preparazione"].forEach(x => vero(t.includes(x) || (x === "in arrivo" && t.includes("prossimo aggiornamento")), "manca: " + x));
+  /* 60 incantesimi e 12 abilità delle vie, tutte le tecniche del Guerriero in tabella */
+  const righe = await page.$$eval("table tr", r => r.length);
+  vero(righe > 60 + 12 + 85, "tabelle incomplete: " + righe);
+  vero(!/Aldo|Guendalina/.test((await page.textContent("#sezioni")).replace(/«parlo con Guendalina»/g, "")), "il regolamento nomina i PNG delle vie");
+  await page.evaluate(() => { localStorage.setItem("lingua", "en"); }); await page.reload();
+  const e = await page.textContent("body");
+  ["Seals", "Detonation", "Balance", "Twilight", "Blinded", "Withered", "Arcane Glow", "Path of the Fracture", "Path of the Ember", "Combat examples", "Shadow Monk"].forEach(x => vero(e.includes(x), "missing: " + x));
   eq(errori, [], "errori"); await chiudi();
 });
 caso("Gioco in inglese: una tecnica nuova si usa senza errori e con i testi inglesi", async (b) => {

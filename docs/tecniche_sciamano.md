@@ -1,4 +1,4 @@
-# Sciamano — Tecniche e vie di prestigio (v1, proposta)
+# Sciamano — Tecniche e vie di prestigio (v2, proposta con decisioni del 26/10/2026)
 
 Adattamento della lista originale (13 poteri in tempo reale) alle regole del gioco. Stessa struttura del Guerriero: d20 contro CA, durate in turni del nemico, 3 tecniche per livello (se ne scelgono 2 ai livelli 1-2, 1 ai livelli 3-5; posti 2, 4, 5, 6, 7), vie di prestigio dal livello 3, immunità e tetti dei boss.
 
@@ -22,9 +22,12 @@ Adattamento della lista originale (13 poteri in tempo reale) alle regole del gio
 ## 2. Regole della classe
 
 - **Punti natura:** 10 + mod Spirito; a ogni livello + mod Spirito + nuovo livello. Riposo: 1d4 + livello.
-- **Recupero in combattimento:** come il Guerriero, per ogni colpo subito a segno: +1 ai livelli 1-2, +2 ai livelli 3-4, +3 al livello 5, doppio sul critico.
+- **Recupero in combattimento (DECISO): sui danni inflitti.** Per ogni tuo colpo a segno: +1 ai livelli 1-2, +2 ai livelli 3-4, +3 al livello 5, doppio sul critico. Stessa tabella del Guerriero, ma su ciò che dai invece che su ciò che subisci.
+  - Contano gli attacchi della tecnica e quelli normali, compresi gli attacchi in più di Linfa Furiosa.
+  - **Non contano** i danni a ogni turno (veleno, Tossina, bulbo della Fioritura) né l'acido della Pelle di Corteccia: altrimenti la natura si ricarica da sola.
+  - Un attacco mancato non dà nulla.
 - **Attacco:** d20 + mod Vigore contro CA, danno dell'arma + mod Vigore. Una tecnica che manca costa comunque.
-- **Tiro salvezza del nemico:** d20 + suo mod Vigore contro CD = 8 + **mod Spirito** + livello.
+- **Tiro salvezza del nemico (DECISO): sempre sul corpo.** I veleni agiscono sul corpo: d20 + mod Vigore del nemico (il vecchio Corpo è confluito in Vigore) contro CD = 8 + mod Vigore + livello, come il Guerriero.
 - **Armi:** tutte tranne quelle «da battaglia». Le tecniche non dipendono dal tipo d'arma (niente rami): il veleno funziona su lama, mazza o bastone.
 - **Capacità di classe:** Mente incrollabile (esistente).
 
@@ -42,6 +45,17 @@ Adattamento della lista originale (13 poteri in tempo reale) alle regole del gio
 
 Gli altri effetti usano stati che esistono già: Indebolito, Sbilanciato, Accecato, Frastornato, Stordito, Senza attacchi speciali.
 
+### Immuni al veleno (DECISO)
+
+| Nemico | Motivo |
+|---|---|
+| **Dafne** | Abituata a vivere nei boschi: conosce ogni erba e ogni tossina |
+| **Il sovrano** | È praticamente un non morto: il veleno non trova sangue vivo |
+
+Contro di loro Avvelenato e Tossina non si applicano e i danni da veleno sono 0. Il resto delle tecniche funziona: i rivestimenti danno ancora gli altri effetti (Sbilanciato, Indebolito, Stordito), trappole e radici non sono veleno. Nella scheda del nemico compare «immune al veleno» quando il giocatore lo scopre (come le altre debolezze e resistenze).
+
+Nel codice basta un campo `immune: ["veleno"]` in `NEMICI`, controllato quando si applica Avvelenato.
+
 ## 4. Le 15 tecniche
 
 | Liv | Tecnica | Tipo | Costo | Effetto |
@@ -51,7 +65,7 @@ Gli altri effetti usano stati che esistono già: Indebolito, Sbilanciato, Acceca
 | 1 | Infuso di Linfa Vitale | Cura | 3 | Consuma l'azione; recuperi 1d4 salute subito e all'inizio dei tuoi 2 turni successivi; rimuove da te Sanguinamento e Avvelenato. Fuori dal combattimento: 1d4 + livello |
 | 2 | Muffa Necrotica | Rivestimento | 4 | Attacco normale; per 3 turni ogni colpo a segno dà Sbilanciato 2 |
 | 2 | Baccello Esplosivo | Trappola | 4 | Il baccello scoppia al prossimo attacco del nemico: Accecato 2 |
-| 2 | Pelle di Corteccia e Resina | Difesa | 5 | Attacco normale; fino al tuo prossimo turno il primo colpo che subisci fa metà danni (dà natura normalmente) e l'aggressore subisce 1d4 danni da acido |
+| 2 | Pelle di Corteccia e Resina | Difesa | 5 | Attacco normale; fino al tuo prossimo turno il primo colpo che subisci fa metà danni e l'aggressore subisce 1d4 danni da acido |
 | 3 | Spore Paralizzanti | Rivestimento | 6 | Attacco normale; per 3 turni ogni colpo a segno dà Indebolito 1; al primo colpo a segno il nemico fa un tiro salvezza → Stordito 1 (boss: Indebolito 2) |
 | 3 | Radici Strangolatrici | Radice | 5 | Tiro salvezza → Sbilanciato 2 + Senza attacchi speciali 2; se resiste, Sbilanciato 1 (boss: Sbilanciato 2) |
 | 3 | Fumo della Palude | Spora | 6 | Consuma l'azione; il nemico è Accecato 2 e tu hai +2 CA per 2 turni |
@@ -80,9 +94,31 @@ Stesso schema del Guerriero: **Aldo = Putrefazione** (il veleno come condanna), 
 | Guendalina | 4 | Linfa Lenta | 8 | +1 dado; Indebolito 3 (tiro salvezza → Frastornato 1); prossima tecnica −2 natura |
 | Guendalina | 5 | Santuario di Muschio | 10 | +1 dado; Indebolito + Sbilanciato 3; per 3 turni +2 CA e recuperi 1d4 salute all'inizio di ogni tuo turno |
 
-## 6. Decisioni aperte
+## 6. Borsa dei veleni (DECISO: oggetto, niente raccolta)
 
-1. **CD dei tiri salvezza su Spirito** (proposta) o su Vigore come il Guerriero?
-2. **Recupero di natura:** resta come il Guerriero (colpi subiti) o, più a tema, si guadagna quando il veleno fa danno (+1 per turno di Avvelenato)?
-3. **Raccolta:** capacità di classe fuori combattimento (erbe del giardino, +1d4 natura una volta per riposo), come nella lista originale?
-4. **Nemici immuni al veleno** (non morti, armature animate): da decidere quali, per non far crollare lo Sciamano contro di loro.
+Al posto della raccolta di erbe (niente farming), un oggetto di dotazione.
+
+| Oggetto | Dove | Effetto |
+|---|---|---|
+| **Borsa dei veleni** | Dotazione in creazione, **solo Sciamano** (occupa uno dei 3 posti) | 3 dosi. Una dose: recuperi 1d4 + livello punti natura. Una a turno, come le razioni. **Le dosi tornano piene a ogni riposo** |
+
+- Si usa da zaino («Usa») o scrivendo «uso la borsa dei veleni», come gli altri oggetti.
+- Non sostituisce la pozione di essenza: quella resta per tutte le classi e non si ricarica.
+- Possibile ricompensa futura nella sala da caccia: una **Borsa dei veleni grande** (4 dosi) dopo una caccia difficile.
+
+## 7. Dafne: spunti per i suoi poteri
+
+L'immunità diventa il suo tema: Dafne usa le tossine del bosco contro chi la sfida, e lo Sciamano si trova davanti qualcuno che conosce il suo mestiere meglio di lui.
+
+| Potere | Effetto |
+|---|---|
+| **Sangue di Bosco** (passivo) | Immune al veleno. Quando un rivestimento la colpisce, se lo «ruba»: il suo prossimo attacco applica a te lo stesso veleno |
+| **Freccia di Cicuta** | Attacco; se colpisce, sei Avvelenato 2 (tiro salvezza sul corpo per resistere) |
+| **Velo di Muschio** | Una volta per scontro: si cura 2d4 e toglie da sé tutti gli stati per 1 turno |
+
+Servono due cose nel codice: lo stato **Avvelenato anche sul personaggio** (l'Infuso di Linfa Vitale lo rimuove già, così diventa la contromossa naturale) e il campo `immune` sui nemici.
+
+## 8. Decisioni aperte
+
+1. **Recupero sui colpi a segno:** con Linfa Furiosa (2 attacchi a turno) lo Sciamano può ricaricarsi in fretta. Se in prova risulta troppo, gli attacchi in più danno solo +1.
+2. **Dafne:** confermi i tre spunti, o vuoi che il suo tema sia diverso dal veleno (per esempio arco e trappole)?

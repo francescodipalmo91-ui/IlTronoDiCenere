@@ -959,14 +959,30 @@ caso("Atrio: «vado a destra» sul pianerottolo prende la rampa; «lancia lume a
   eq(await page.evaluate(() => interpretaBuio(norm("lancio luce"))), "lancia_luce");
   eq(errori, [], "errori"); await chiudi();
 });
-caso("Spada del Retaggio: dopo un fallimento resta chiusa; dopo tre la chiamata si placa", async (b) => {
+caso("Spada del Retaggio: primo tocco con la visione, una chiamata per lacrima (Intuizione), poi il gesto", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "atrio" }));
+  await page.evaluate(() => { usate.scale = "no"; usate.scale_visione = true; }); /* armatura già toccata */
+  eq(await page.evaluate(() => { scale(); return document.getElementById("diario").textContent.includes(SCALE.attesa[0]); }), true, "senza lacrime la spada tace");
   await accoda(page, [R(1, 20)]);
-  await page.evaluate(() => provaRichiamo()); await page.click("#azioni button, #scelte button"); await page.waitForTimeout(300);
-  eq(await page.evaluate(() => [usate.scale, usate.spada_falliti]), ["ko", 1]);
-  eq(await page.evaluate(() => { scale(); return document.getElementById("diario").textContent.includes(SCALE.bloccata); }), true, "bloccata fino al riposo");
-  await page.evaluate(() => { usate.scale = "no"; usate.spada_falliti = 3; provaRichiamo(); });
-  eq(await page.evaluate(() => usate.scale), "ok", "dopo 3 fallimenti la quarta è automatica");
+  await page.evaluate(() => { usate.q3 = "completata"; provaRichiamo(); }); await page.click("#azioni button, #scelte button"); await page.waitForTimeout(300);
+  eq(await page.evaluate(() => [usate.scale, usate.spada_chiamate, chiamateLibere()]), ["attesa", 1, 0], "prova fallita: chiamata consumata");
+  await accoda(page, [R(20, 20)]);
+  await page.evaluate(() => { usate.lacrima2 = true; provaRichiamo(); }); await page.click("#azioni button, #scelte button"); await page.waitForTimeout(300);
+  eq(await page.evaluate(() => usate.scale), "gesto", "prova superata: si sceglie il gesto");
+  await page.evaluate(() => { const b = [...document.querySelectorAll("#azioni button, #scelte button")].find(x => x.textContent === SCALE.gestoBtn.inginocchia); b.click(); });
+  await page.waitForTimeout(300);
+  eq(await page.evaluate(() => usate.scale), "ok", "inginocchiarsi apre la spada");
+  await page.evaluate(() => { usate.scale = "attesa"; usate.spada_chiamate = 3; usate.lacrima3 = true; });
+  eq(await page.evaluate(() => { scale(); return document.getElementById("diario").textContent.includes(SCALE.esaurita[0]); }), true, "tre chiamate fallite: la spada tace");
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Anello del Primo Vespera: CD 12 e visione del funerale una sola volta", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "cripta" }));
+  eq(await page.evaluate(() => LUOGHI.cripta_sarcofago.prova.cd), 12);
+  await accoda(page, [R(2, 4)]);
+  await page.evaluate(() => sarcofago(true)); await page.click("#azioni button, #scelte button"); await page.waitForTimeout(300);
+  eq(await page.evaluate(() => [usate.flash_anello, document.getElementById("diario").textContent.includes(A2.anello.visione[3])]), [true, true]);
+  eq(await page.evaluate(() => pg.dannoMentale || 0), 2, "1d4 mentale");
   eq(errori, [], "errori"); await chiudi();
 });
 

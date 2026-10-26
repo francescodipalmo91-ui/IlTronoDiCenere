@@ -1,4 +1,4 @@
-# Sciamano — Tecniche e vie di prestigio (v5, decisa il 26/10/2026)
+# Sciamano — Tecniche e vie di prestigio (v6, implementata il 26/10/2026)
 
 Adattamento della lista originale (13 poteri in tempo reale) alle regole del gioco. Stessa struttura del Guerriero: d20 contro CA, durate in turni del nemico, 3 tecniche per livello (se ne scelgono 2 ai livelli 1-2, 1 ai livelli 3-5; posti 2, 4, 5, 6, 7), vie di prestigio dal livello 3, immunità e tetti dei boss.
 
@@ -27,7 +27,8 @@ Adattamento della lista originale (13 poteri in tempo reale) alle regole del gio
     - danni da veleno (Avvelenato) e da Tossina;
     - danni da acido (Pelle di Corteccia);
     - danni del bulbo della Fioritura, compresa l'esplosione;
-    - radici e trappole: un tiro salvezza fallito dal nemico contro una tua tecnica, oppure una trappola che scatta (Baccello Esplosivo).
+    - radici e trappole: un tiro salvezza fallito dal nemico contro una tua tecnica, oppure una trappola che scatta (Baccello Esplosivo);
+    - **Scudo di Corteccia** (DECISO, revisione): quando lo crei (Balsamo) o quando assorbe un colpo. Dà alla via del Custode, che avvelena poco, una fonte di recupero propria.
   - **Al massimo un recupero per turno del nemico**, anche se nello stesso turno ci sono più eventi (veleno + acido, per esempio): così la natura non si ricarica da sola.
   - **Doppio se nel turno c'è Tossina**: il premio per chi investe nel veleno.
   - **Non contano** i danni dell'arma, nemmeno sul critico, né gli attacchi in più di Linfa Furiosa.
@@ -40,7 +41,7 @@ Adattamento della lista originale (13 poteri in tempo reale) alle regole del gio
 ### Tre famiglie di tecniche
 
 - **Rivestimento:** la tecnica è un attacco normale che riveste l'arma. Per i turni indicati, i tuoi attacchi a segno applicano l'effetto. **Un solo rivestimento attivo:** uno nuovo sostituisce il vecchio.
-- **Trappola:** consuma l'azione. Scatta al prossimo attacco del nemico, **prima** del suo tiro (l'effetto vale già su quell'attacco). Una sola trappola alla volta; come le tecniche che consumano l'azione, non si usa due turni di fila.
+- **Trappola** (DECISO, revisione): **attacco normale** e, nello stesso turno, piazzi la trappola. Scatta al prossimo attacco del nemico (anche Soffio o Presa), **prima** del suo tiro: l'effetto vale già su quell'attacco. Se il nemico non attacca (Stordito) la trappola aspetta. Una sola trappola alla volta: una nuova sostituisce la vecchia. Prima consumava l'azione: lo Sciamano passava troppi turni senza fare danno.
 - **Spora / radice:** effetto diretto, spesso con tiro salvezza.
 
 ## 3. Stato nuovo
@@ -73,13 +74,13 @@ Nel codice: `resiste: ["veleno"]` per Dafne e il sovrano (danno dimezzato), in `
 | 1 | Tappeto di Micelio | Spora | 2 | Attacco normale; se colpisce, Indebolito 2 (le muffe appiccicose impacciano i movimenti) |
 | 1 | Infuso di Linfa Vitale | Cura | 3 | Consuma l'azione; recuperi 1d4 salute subito e all'inizio dei tuoi 2 turni successivi; rimuove da te Sanguinamento e Avvelenato. Fuori dal combattimento: 1d4 + livello |
 | 2 | Muffa Necrotica | Rivestimento | 4 | Attacco normale; per 3 turni ogni colpo a segno dà Sbilanciato 2 |
-| 2 | Baccello Esplosivo | Trappola | 4 | Il baccello scoppia al prossimo attacco del nemico: Accecato 2 |
+| 2 | Baccello Esplosivo | Trappola | 4 | Attacco normale; il baccello scoppia al prossimo attacco del nemico: Accecato 2 |
 | 2 | Pelle di Corteccia e Resina | Difesa | 5 | Attacco normale; fino al tuo prossimo turno il primo colpo che subisci fa metà danni e l'aggressore subisce 1d4 danni da acido |
 | 3 | Spore Paralizzanti | Rivestimento | 6 | Attacco normale; per 3 turni ogni colpo a segno dà Indebolito 1; al primo colpo a segno il nemico fa un tiro salvezza → Stordito 1 (boss: Indebolito 2) |
 | 3 | Radici Strangolatrici | Radice | 5 | Tiro salvezza → Sbilanciato 2 + Senza attacchi speciali 2; se resiste, Sbilanciato 1 (boss: Sbilanciato 2) |
 | 3 | Fumo della Palude | Spora | 6 | Consuma l'azione; il nemico è Accecato 2 e tu hai +2 CA per 2 turni |
 | 4 | Miasma Corrosivo | Rivestimento | 8 | Attacco con +1 dado; per 3 turni ogni colpo a segno dà Avvelenato 2 e Sbilanciato 2 |
-| 4 | Botola di Spore | Trappola | 7 | Al prossimo attacco del nemico: tiro salvezza → Frastornato 2; se resiste (o è un boss), Accecato 2 |
+| 4 | Botola di Spore | Trappola | 7 | Attacco normale; al prossimo attacco del nemico: tiro salvezza → Frastornato 2; se resiste (o è un boss), Accecato 2 |
 | 4 | Linfa Furiosa | Potenziamento | 8 | Attacco normale; per 3 turni fai un attacco in più a ogni turno (solo il dado dell'arma). Alla fine subisci 1d6 danni |
 | 5 | Fioritura del Parassita Colossale | Spora | 10 | Una volta per riposo. Consuma l'azione. Il bulbo vive 3 turni: all'inizio di ogni turno del nemico gli fa 1d6 veleno e rinnova Avvelenato e Sbilanciato; tu recuperi 1d4 salute a ogni tuo turno. Al terzo turno esplode: 2d6 + mod Spirito, tiro salvezza → Stordito 1 (boss: Indebolito 2) |
 | 5 | Cuore di Tossina *(nuova)* | Spora | 9 | Attacco con +1 dado; se il nemico è Avvelenato, il veleno diventa Tossina per 3 turni + Indebolito 3; altrimenti Avvelenato 2 |
@@ -109,22 +110,22 @@ Dalla tua lista delle classi di prestigio. **Aldo = Signore delle Spore Putride*
 
 ### Nuovo: Scudo di Corteccia
 
-Salute temporanea: assorbe i danni prima della salute fisica. **Massimo 5 + livello**, non si somma oltre; sparisce a fine scontro. I danni assorbiti dallo scudo non danno natura e non contano come colpo a segno per i tuoi effetti.
+Salute temporanea: assorbe i danni prima della salute fisica. **Massimo 5 + livello**, non si somma oltre; sparisce a fine scontro. Quando lo scudo assorbe un colpo (o quando lo crei) è un evento di recupero di natura, con il solito limite di uno per turno del nemico.
 
 ### Signore delle Spore Putride (Aldo)
 
 | Liv | Abilità | Costo | Effetto |
 |---|---|---|---|
 | Passiva | Fame del Parassita | — | Se il nemico muore mentre è Avvelenato o colpito da una tua trappola, recuperi 3 punti natura (restano per lo scontro successivo) |
-| 3 | Spore del Morbo | 6 | Rivestimento per 3 turni: ogni colpo a segno dà 1 carica di Morbo. Alla terza carica il nemico è Frastornato 1 e le cariche si azzerano (boss: Indebolito 2). Nessun tiro salvezza: servono 3 colpi |
-| 4 | Cisti Parassita | 8 | Trappola: al prossimo attacco del nemico, Sbilanciato 2 + **Tossina 3** (vale doppio per il recupero di natura) |
+| 3 | Spore del Morbo | 6 | Rivestimento per 3 turni: ogni colpo a segno dà 1 carica di Morbo. Le cariche **restano per tutto lo scontro** (DECISO, revisione), anche quando il rivestimento finisce. Alla terza carica il nemico è Frastornato 1 e le cariche si azzerano (boss: Indebolito 2). Nessun tiro salvezza |
+| 4 | Cisti Parassita | 8 | Trappola: attacco normale; al prossimo attacco del nemico, Sbilanciato 2 + **Tossina 3** (vale doppio per il recupero di natura) |
 | 5 | Marea di Putrefazione | 10 | Consuma l'azione. Per 3 turni 1d6 danni da acido all'inizio del turno del nemico; **Sbilanciato per tutto lo scontro** (boss: 2 turni). L'acido non è veleno: pieno anche su Dafne e sul sovrano |
 
 ### Custode dei Boschi Sacri (Guendalina)
 
 | Liv | Abilità | Costo | Effetto |
 |---|---|---|---|
-| Passiva | Linfa Rigeneratrice | — | Le tue cure e lo Scudo di Corteccia durano 1 turno in più (Infuso di Linfa Vitale, Fioritura, Aura, Rinascita) |
+| Passiva | Linfa Rigeneratrice | — | Le tue cure nel tempo durano 1 turno in più (Infuso di Linfa Vitale, Aura, Rinascita). Lo Scudo di Corteccia dura già tutto lo scontro |
 | 3 | Balsamo della Linfa Primordiale | 6 | Rivestimento per 3 turni: i tuoi colpi a segno fanno metà danni al nemico; l'altra metà diventa Scudo di Corteccia |
 | 4 | Aura di Purificazione | 8 | Consuma l'azione. Per 3 turni recuperi 1d4 salute all'inizio di ogni tuo turno e sei immune a Avvelenato, Sanguinamento, Indebolito, Sbilanciato e Accecato; gli stati che hai già spariscono |
 | 5 | Rinascita del Sottobosco | 10 | Una volta per riposo. Non consuma l'azione: puoi anche attaccare. Rimuove tutti i tuoi stati, recuperi 2d6 + livello salute e per 2 turni recuperi 1d4 salute e 1 punto natura all'inizio di ogni tuo turno |

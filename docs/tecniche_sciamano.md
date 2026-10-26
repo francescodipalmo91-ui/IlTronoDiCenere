@@ -89,7 +89,7 @@ Note:
 
 ## 5. Vie di prestigio (dal livello 3)
 
-Dalla tua lista delle classi di prestigio. **Aldo = Signore delle Spore Putride** (offesa, veleno che logora), **Guendalina = Custode dei Boschi Sacri** (difesa, cura, purificazione). Come nel Guerriero: una abilità ai livelli 3, 4 e 5, sempre pronte, senza posti; scelta definitiva. **Novità rispetto al Guerriero:** ogni via ha anche una **passiva**, attiva dal momento della scelta.
+Dalla tua lista delle classi di prestigio. **Aldo = Signore delle Spore Putride** (offesa, veleno che logora), **Guendalina = Custode dei Boschi Sacri** (difesa, cura, purificazione). Come nel Guerriero: una abilità ai livelli 3, 4 e 5, sempre pronte, senza posti; scelta definitiva. **Novità:** ogni via ha anche una **passiva**, attiva dal momento della scelta. **DECISO (26/10/2026): le passive arriveranno anche nelle vie delle altre classi** (Guerriero, Arcanista, Monaco), da disegnare.
 
 ### Problemi corretti nella lista originale
 
@@ -158,5 +158,4 @@ Servono due cose nel codice: lo stato **Avvelenato anche sul personaggio** (l'In
 ## 8. Decisioni aperte
 
 1. **Dafne:** confermi i tre spunti, o vuoi che il suo tema sia diverso dal veleno (per esempio arco e trappole)?
-2. **Passive delle vie:** il Guerriero non le ha. Le teniamo solo per lo Sciamano o le aggiungiamo poi anche alle altre classi?
 3. **Scudo di Corteccia:** è salute temporanea, una meccanica nuova nel codice. Massimo 5 + livello ti sembra giusto?

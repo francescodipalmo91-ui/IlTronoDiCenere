@@ -185,3 +185,5 @@ Nessuna decisione aperta: il documento è pronto per il codice (`js/tecniche.js`
 
 - `node tests/sciamano.test.js`: 45 test delle regole con dadi programmati (girano anche nella sala di prova, «Esegui i test»).
 - `node tests/sciamano.browser.js`: 16 test nel browser (partita in italiano e in inglese, creazione, regolamento, sala di prova).
+- Test esistenti del Guerriero e degli incantatori: tutti superati (103 + 79 regole, 93 nel browser). Aggiornato il test del regolamento che si aspettava l'avviso «in preparazione» dello Sciamano.
+- I test nel browser si possono dividere: `PARTE="2/5" node tests/combattimento.browser.js` (la suite intera in una volta può far cadere il browser sui computer con poca memoria).

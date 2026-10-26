@@ -237,6 +237,7 @@ caso("Sala di prova: «Esegui i test» comprende anche i test dello Sciamano, tu
   const browser = await chromium.launch();
   let ko = 0;
   const scelti = process.env.SOLO ? casi.filter(c => c.nome.includes(process.env.SOLO)) : casi; /* SOLO="Scudo" per lanciarne solo alcuni */
+  if (process.env.PARTE) { const [i, n] = process.env.PARTE.split("/").map(Number); scelti.splice(0, scelti.length, ...scelti.filter((_, k) => k % n === i - 1)); } /* PARTE="2/4": un quarto dei casi, per i computer con poca memoria */
   for (const { nome, fn } of scelti) {
     try { await fn(browser); console.log("OK     " + nome); }
     catch (e) { ko++; console.log("ERRORE " + nome + "\n       → " + e.message.split("\n")[0]); }

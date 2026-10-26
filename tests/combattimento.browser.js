@@ -686,7 +686,7 @@ caso("Regolamento: classi, scuole di magia, stati ed esempi in italiano e in ing
   await page.click("#apriTutto"); eq(await page.$$eval("#sezioni details:not([open])", l => l.length), 0, "Apri tutto"); await page.click("#chiudiTutto");
   eq(await page.$$eval("#sezioni details[open]", l => l.length), 4, "Comprimi lascia aperte solo le parti");
   const t = await page.textContent("body");
-  ["Sigilli", "Detonazione", "Bilancia", "Nadir", "Crepuscolo", "Accecato", "Avvizzito", "Lume Arcano", "Via della Frattura", "Via della Brace", "Via della Lama", "Via dello Scoglio", "Dardo Arcano", "Abbraccio del Vuoto", "Turno 3.", "in arrivo", "in preparazione"].forEach(x => vero(t.includes(x) || (x === "in arrivo" && t.includes("prossimo aggiornamento")), "manca: " + x));
+  ["Sigilli", "Detonazione", "Bilancia", "Nadir", "Crepuscolo", "Accecato", "Avvizzito", "Lume Arcano", "Via della Frattura", "Via della Brace", "Via della Lama", "Via dello Scoglio", "Dardo Arcano", "Abbraccio del Vuoto", "Turno 3.", "Punta di Mandragora", "Avvelenato"].forEach(x => vero(t.includes(x), "manca: " + x)); /* lo Sciamano non è più «in preparazione» */
   /* 60 incantesimi e 12 abilità delle vie, tutte le tecniche del Guerriero in tabella */
   const righe = await page.$$eval("table tr", r => r.length);
   vero(righe > 60 + 12 + 85, "tabelle incomplete: " + righe);
@@ -974,6 +974,7 @@ caso("Spada del Retaggio: dopo un fallimento resta chiusa; dopo tre la chiamata 
   const browser = await chromium.launch();
   let ko = 0;
   const scelti = process.env.SOLO ? casi.filter(c => c.nome.includes(process.env.SOLO)) : casi; /* SOLO="Scudo" per lanciarne solo alcuni */
+  if (process.env.PARTE) { const [i, n] = process.env.PARTE.split("/").map(Number); scelti.splice(0, scelti.length, ...scelti.filter((_, k) => k % n === i - 1)); } /* PARTE="2/4": un quarto dei casi, per i computer con poca memoria */
   for (const { nome, fn } of scelti) {
     try { await fn(browser); console.log("OK     " + nome); }
     catch (e) { ko++; console.log("ERRORE " + nome + "\n       → " + e.message.split("\n")[0]); }

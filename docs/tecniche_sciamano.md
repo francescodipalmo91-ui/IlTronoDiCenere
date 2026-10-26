@@ -158,4 +158,4 @@ Servono due cose nel codice: lo stato **Avvelenato anche sul personaggio** (l'In
 ## 8. Decisioni aperte
 
 1. **Dafne:** confermi i tre spunti, o vuoi che il suo tema sia diverso dal veleno (per esempio arco e trappole)?
-3. **Scudo di Corteccia:** è salute temporanea, una meccanica nuova nel codice. Massimo 5 + livello ti sembra giusto?
+2. **Scudo di Corteccia:** è salute temporanea, una meccanica nuova nel codice. Massimo 5 + livello ti sembra giusto?

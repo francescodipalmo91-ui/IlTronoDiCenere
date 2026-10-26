@@ -31,7 +31,7 @@ Adattamento della lista originale (13 poteri in tempo reale) alle regole del gio
   - **Al massimo un recupero per turno del nemico**, anche se nello stesso turno ci sono più eventi (veleno + acido, per esempio): così la natura non si ricarica da sola.
   - **Doppio se nel turno c'è Tossina**: il premio per chi investe nel veleno.
   - **Non contano** i danni dell'arma, nemmeno sul critico, né gli attacchi in più di Linfa Furiosa.
-  - **Contro Dafne** (resistente) il veleno dimezzato fa comunque danno, quindi dà natura normalmente.
+  - **Contro Dafne e il sovrano** (resistenti) il veleno dimezzato fa comunque danno, quindi dà natura normalmente.
 - **Attacco:** d20 + mod Vigore contro CA, danno dell'arma + mod Vigore. Una tecnica che manca costa comunque.
 - **Tiro salvezza del nemico (DECISO): sempre sul corpo.** I veleni agiscono sul corpo: d20 + mod Vigore del nemico (il vecchio Corpo è confluito in Vigore) contro CD = 8 + mod Vigore + livello, come il Guerriero.
 - **Armi:** tutte tranne quelle «da battaglia». Le tecniche non dipendono dal tipo d'arma (niente rami): il veleno funziona su lama, mazza o bastone.
@@ -56,13 +56,14 @@ Gli altri effetti usano stati che esistono già: Indebolito, Sbilanciato, Acceca
 | Nemico | Contro il veleno | Motivo |
 |---|---|---|
 | **Dafne** | **Resistente:** subisce metà dei danni da veleno (arrotondati per difetto) | Abituata a vivere nei boschi: conosce ogni erba e ogni tossina |
+| **Il sovrano** | **Resistente:** subisce metà dei danni da veleno (arrotondati per difetto) | È praticamente un non morto: il veleno trova poco sangue vivo |
 
-- **Resistenza** è la regola che il gioco ha già per gli altri tipi di danno («ne subiscono metà»). Su Dafne Avvelenato e Tossina si applicano e durano normalmente: si dimezza solo il danno.
+- **Resistenza** è la regola che il gioco ha già per gli altri tipi di danno («ne subiscono metà»). Su di loro Avvelenato e Tossina si applicano e durano normalmente: si dimezza solo il danno.
 - Nella scheda del nemico compare «resistente al veleno» quando il giocatore lo scopre, come le altre debolezze e resistenze.
 
-Nessun nemico è immune al veleno: il sovrano lo subisce normalmente.
+Nessun nemico è immune al veleno.
 
-Nel codice: `resiste: ["veleno"]` per Dafne (danno dimezzato), in `NEMICI`.
+Nel codice: `resiste: ["veleno"]` per Dafne e il sovrano (danno dimezzato), in `NEMICI`.
 
 ## 4. Le 15 tecniche
 
@@ -117,7 +118,7 @@ Salute temporanea: assorbe i danni prima della salute fisica. **Massimo 5 + live
 | Passiva | Fame del Parassita | — | Se il nemico muore mentre è Avvelenato o colpito da una tua trappola, recuperi 3 punti natura (restano per lo scontro successivo) |
 | 3 | Spore del Morbo | 6 | Rivestimento per 3 turni: ogni colpo a segno dà 1 carica di Morbo. Alla terza carica il nemico è Frastornato 1 e le cariche si azzerano (boss: Indebolito 2). Nessun tiro salvezza: servono 3 colpi |
 | 4 | Cisti Parassita | 8 | Trappola: al prossimo attacco del nemico, Sbilanciato 2 + **Tossina 3** (vale doppio per il recupero di natura) |
-| 5 | Marea di Putrefazione | 10 | Consuma l'azione. Per 3 turni 1d6 danni da acido all'inizio del turno del nemico; **Sbilanciato per tutto lo scontro** (boss: 2 turni). L'acido non è veleno: pieno anche su Dafne |
+| 5 | Marea di Putrefazione | 10 | Consuma l'azione. Per 3 turni 1d6 danni da acido all'inizio del turno del nemico; **Sbilanciato per tutto lo scontro** (boss: 2 turni). L'acido non è veleno: pieno anche su Dafne e sul sovrano |
 
 ### Custode dei Boschi Sacri (Guendalina)
 
@@ -159,7 +160,7 @@ Servono due cose nel codice: lo stato **Avvelenato anche sul personaggio** (l'In
 
 ## 8. Decisioni (26/10/2026)
 
-1. **Dafne:** spunti confermati; resistente al veleno (metà danni) invece che immune. **Nessuna immunità:** il sovrano subisce il veleno normalmente.
+1. **Dafne:** spunti confermati; resistente al veleno (metà danni) invece che immune. **Nessuna immunità:** anche il sovrano è resistente (metà danni).
 2. **Scudo di Corteccia:** confermato, massimo 5 + livello.
 3. **Passive delle vie:** anche per Guerriero, Arcanista e Monaco, da disegnare.
 

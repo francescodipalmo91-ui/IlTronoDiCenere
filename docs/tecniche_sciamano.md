@@ -1,4 +1,4 @@
-# Sciamano — Tecniche e vie di prestigio (v3, proposta con decisioni del 26/10/2026)
+# Sciamano — Tecniche e vie di prestigio (v4, proposta con decisioni del 26/10/2026)
 
 Adattamento della lista originale (13 poteri in tempo reale) alle regole del gioco. Stessa struttura del Guerriero: d20 contro CA, durate in turni del nemico, 3 tecniche per livello (se ne scelgono 2 ai livelli 1-2, 1 ai livelli 3-5; posti 2, 4, 5, 6, 7), vie di prestigio dal livello 3, immunità e tetti dei boss.
 
@@ -89,16 +89,47 @@ Note:
 
 ## 5. Vie di prestigio (dal livello 3)
 
-Stesso schema del Guerriero: **Aldo = Putrefazione** (il veleno come condanna), **Guendalina = Germoglio** (resistere, curarsi, logorare).
+Dalla tua lista delle classi di prestigio. **Aldo = Signore delle Spore Putride** (offesa, veleno che logora), **Guendalina = Custode dei Boschi Sacri** (difesa, cura, purificazione). Come nel Guerriero: una abilità ai livelli 3, 4 e 5, sempre pronte, senza posti; scelta definitiva. **Novità rispetto al Guerriero:** ogni via ha anche una **passiva**, attiva dal momento della scelta.
 
-| Via | Liv | Abilità | Costo | Effetto |
-|---|---|---|---|---|
-| Aldo | 3 | Marchio della Spora | 6 | Avvelenato 3; finché è Avvelenato, +1d4 agli attacchi normali |
-| Aldo | 4 | Fioritura Interna | 8 | Se Avvelenato: il veleno fa subito tutti i danni rimasti e finisce; altrimenti Avvelenato 2 |
-| Aldo | 5 | Necrosi | 10 | Se Avvelenato e colpisci: sempre critico + Tossina per tutto lo scontro (boss: 2 turni) |
-| Guendalina | 3 | Germoglio di Guardia | 5 | Attacco normale; +2 CA fino al tuo turno e recuperi 1d4 salute |
-| Guendalina | 4 | Linfa Lenta | 8 | +1 dado; Indebolito 3 (tiro salvezza → Frastornato 1); prossima tecnica −2 natura |
-| Guendalina | 5 | Santuario di Muschio | 10 | +1 dado; Indebolito + Sbilanciato 3; per 3 turni +2 CA e recuperi 1d4 salute all'inizio di ogni tuo turno |
+### Problemi corretti nella lista originale
+
+| # | Problema | Dove | Soluzione |
+|---|---|---|---|
+| 1 | Alleati, party, compagni, totem ad area, onda «globale» | Custode, Marea | Il gioco è uno contro uno, senza compagni: effetti solo su di te o sul nemico |
+| 2 | Percentuali (50% del danno, 40% della salute, −30% armatura) | Balsamo, Resurrezione, Marea | Dadi, metà dei danni, Sbilanciato |
+| 3 | Confusione («colpisce un bersaglio casuale»), Immobilizzato («salta il movimento») | Morbo, Cisti | Non c'è movimento né altri bersagli: Frastornato e Sbilanciato |
+| 4 | Costi 3-9, sotto le tecniche normali dello stesso livello | Tutte | Fasce delle vie: 5-6, 8, 10 |
+| 5 | Attacchi che non fanno danno (Balsamo) | Custode 1 | In uno scontro uno contro uno blocca la partita: metà al nemico, metà allo scudo |
+| 6 | «+1 natura per turno di veleno» (Cisti) | Spore Putride 2 | Doppione della regola di recupero: diventa Tossina, che lo raddoppia già |
+| 7 | Azione minore, raccogliere spore | Introduzione | Non esistono: un'azione per turno, niente raccolta (c'è la Borsa dei veleni) |
+| 8 | «Resurrezione» senza resuscitare nessuno | Custode 3 | Rinominata Rinascita del Sottobosco |
+
+### Nuovo: Scudo di Corteccia
+
+Salute temporanea: assorbe i danni prima della salute fisica. **Massimo 5 + livello**, non si somma oltre; sparisce a fine scontro. I danni assorbiti dallo scudo non danno natura e non contano come colpo a segno per i tuoi effetti.
+
+### Signore delle Spore Putride (Aldo)
+
+| Liv | Abilità | Costo | Effetto |
+|---|---|---|---|
+| Passiva | Fame del Parassita | — | Se il nemico muore mentre è Avvelenato o colpito da una tua trappola, recuperi 3 punti natura (restano per lo scontro successivo) |
+| 3 | Spore del Morbo | 6 | Rivestimento per 3 turni: ogni colpo a segno dà 1 carica di Morbo. Alla terza carica il nemico è Frastornato 1 e le cariche si azzerano (boss: Indebolito 2). Nessun tiro salvezza: servono 3 colpi |
+| 4 | Cisti Parassita | 8 | Trappola: al prossimo attacco del nemico, Sbilanciato 2 + **Tossina 3** (vale doppio per il recupero di natura) |
+| 5 | Marea di Putrefazione | 10 | Consuma l'azione. Per 3 turni 1d6 danni da acido all'inizio del turno del nemico; **Sbilanciato per tutto lo scontro** (boss: 2 turni). L'acido funziona anche su Dafne e il sovrano |
+
+### Custode dei Boschi Sacri (Guendalina)
+
+| Liv | Abilità | Costo | Effetto |
+|---|---|---|---|
+| Passiva | Linfa Rigeneratrice | — | Le tue cure e lo Scudo di Corteccia durano 1 turno in più (Infuso di Linfa Vitale, Fioritura, Aura, Rinascita) |
+| 3 | Balsamo della Linfa Primordiale | 6 | Rivestimento per 3 turni: i tuoi colpi a segno fanno metà danni al nemico; l'altra metà diventa Scudo di Corteccia |
+| 4 | Aura di Purificazione | 8 | Consuma l'azione. Per 3 turni recuperi 1d4 salute all'inizio di ogni tuo turno e sei immune a Avvelenato, Sanguinamento, Indebolito, Sbilanciato e Accecato; gli stati che hai già spariscono |
+| 5 | Rinascita del Sottobosco | 10 | Una volta per riposo. Non consuma l'azione: puoi anche attaccare. Rimuove tutti i tuoi stati, recuperi 2d6 + livello salute e per 2 turni recuperi 1d4 salute e 1 punto natura all'inizio di ogni tuo turno |
+
+Note:
+- Con la passiva, l'Aura dura 4 turni e la Rinascita 3: è voluto, la via premia chi resta in piedi a lungo.
+- La Rinascita è l'unica abilità che non consuma l'azione: è l'«azione immediata» della tua lista, tenuta solo qui perché è una volta per riposo.
+- I natura della Rinascita (1 a turno) sono a parte dal recupero normale: non contano nel «massimo uno per turno».
 
 ## 6. Borsa dei veleni (DECISO: oggetto, niente raccolta)
 
@@ -127,3 +158,5 @@ Servono due cose nel codice: lo stato **Avvelenato anche sul personaggio** (l'In
 ## 8. Decisioni aperte
 
 1. **Dafne:** confermi i tre spunti, o vuoi che il suo tema sia diverso dal veleno (per esempio arco e trappole)?
+2. **Passive delle vie:** il Guerriero non le ha. Le teniamo solo per lo Sciamano o le aggiungiamo poi anche alle altre classi?
+3. **Scudo di Corteccia:** è salute temporanea, una meccanica nuova nel codice. Massimo 5 + livello ti sembra giusto?

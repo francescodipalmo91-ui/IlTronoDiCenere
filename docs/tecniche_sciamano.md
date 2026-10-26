@@ -1,4 +1,4 @@
-# Sciamano — Tecniche e vie di prestigio (v4, proposta con decisioni del 26/10/2026)
+# Sciamano — Tecniche e vie di prestigio (v5, decisa il 26/10/2026)
 
 Adattamento della lista originale (13 poteri in tempo reale) alle regole del gioco. Stessa struttura del Guerriero: d20 contro CA, durate in turni del nemico, 3 tecniche per livello (se ne scelgono 2 ai livelli 1-2, 1 ai livelli 3-5; posti 2, 4, 5, 6, 7), vie di prestigio dal livello 3, immunità e tetti dei boss.
 
@@ -31,7 +31,8 @@ Adattamento della lista originale (13 poteri in tempo reale) alle regole del gio
   - **Al massimo un recupero per turno del nemico**, anche se nello stesso turno ci sono più eventi (veleno + acido, per esempio): così la natura non si ricarica da sola.
   - **Doppio se nel turno c'è Tossina**: il premio per chi investe nel veleno.
   - **Non contano** i danni dell'arma, nemmeno sul critico, né gli attacchi in più di Linfa Furiosa.
-  - **Contro gli immuni** (Dafne, il sovrano) il veleno non dà nulla, ma acido, bulbo, radici e trappole sì: lo Sciamano passa al controllo e si ricarica più lentamente. La Borsa dei veleni copre il resto.
+  - **Contro Dafne** (resistente) il veleno dimezzato fa comunque danno, quindi dà natura normalmente.
+  - **Contro il sovrano** (immune) il veleno non dà nulla, ma acido, bulbo, radici e trappole sì: lo Sciamano passa al controllo e si ricarica più lentamente. La Borsa dei veleni copre il resto.
 - **Attacco:** d20 + mod Vigore contro CA, danno dell'arma + mod Vigore. Una tecnica che manca costa comunque.
 - **Tiro salvezza del nemico (DECISO): sempre sul corpo.** I veleni agiscono sul corpo: d20 + mod Vigore del nemico (il vecchio Corpo è confluito in Vigore) contro CD = 8 + mod Vigore + livello, come il Guerriero.
 - **Armi:** tutte tranne quelle «da battaglia». Le tecniche non dipendono dal tipo d'arma (niente rami): il veleno funziona su lama, mazza o bastone.
@@ -51,16 +52,18 @@ Adattamento della lista originale (13 poteri in tempo reale) alle regole del gio
 
 Gli altri effetti usano stati che esistono già: Indebolito, Sbilanciato, Accecato, Frastornato, Stordito, Senza attacchi speciali.
 
-### Immuni al veleno (DECISO)
+### Veleno: resistenza e immunità (DECISO)
 
-| Nemico | Motivo |
-|---|---|
-| **Dafne** | Abituata a vivere nei boschi: conosce ogni erba e ogni tossina |
-| **Il sovrano** | È praticamente un non morto: il veleno non trova sangue vivo |
+| Nemico | Contro il veleno | Motivo |
+|---|---|---|
+| **Dafne** | **Resistente:** subisce metà dei danni da veleno (arrotondati per difetto) | Abituata a vivere nei boschi: conosce ogni erba e ogni tossina |
+| **Il sovrano** | **Immune:** Avvelenato e Tossina non si applicano, danni da veleno 0 | È praticamente un non morto: il veleno non trova sangue vivo |
 
-Contro di loro Avvelenato e Tossina non si applicano e i danni da veleno sono 0. Il resto delle tecniche funziona: i rivestimenti danno ancora gli altri effetti (Sbilanciato, Indebolito, Stordito), trappole e radici non sono veleno. Nella scheda del nemico compare «immune al veleno» quando il giocatore lo scopre (come le altre debolezze e resistenze).
+- **Resistenza** è la regola che il gioco ha già per gli altri tipi di danno («ne subiscono metà»). Su Dafne Avvelenato e Tossina si applicano e durano normalmente: si dimezza solo il danno.
+- **Immunità:** il resto delle tecniche funziona. I rivestimenti danno ancora gli altri effetti (Sbilanciato, Indebolito, Stordito); trappole e radici non sono veleno.
+- Nella scheda del nemico compare «resistente al veleno» o «immune al veleno» quando il giocatore lo scopre, come le altre debolezze e resistenze.
 
-Nel codice basta un campo `immune: ["veleno"]` in `NEMICI`, controllato quando si applica Avvelenato.
+Nel codice: `resiste: ["veleno"]` per Dafne (danno dimezzato) e `immune: ["veleno"]` per il sovrano (stato non applicato), in `NEMICI`.
 
 ## 4. Le 15 tecniche
 
@@ -115,7 +118,7 @@ Salute temporanea: assorbe i danni prima della salute fisica. **Massimo 5 + live
 | Passiva | Fame del Parassita | — | Se il nemico muore mentre è Avvelenato o colpito da una tua trappola, recuperi 3 punti natura (restano per lo scontro successivo) |
 | 3 | Spore del Morbo | 6 | Rivestimento per 3 turni: ogni colpo a segno dà 1 carica di Morbo. Alla terza carica il nemico è Frastornato 1 e le cariche si azzerano (boss: Indebolito 2). Nessun tiro salvezza: servono 3 colpi |
 | 4 | Cisti Parassita | 8 | Trappola: al prossimo attacco del nemico, Sbilanciato 2 + **Tossina 3** (vale doppio per il recupero di natura) |
-| 5 | Marea di Putrefazione | 10 | Consuma l'azione. Per 3 turni 1d6 danni da acido all'inizio del turno del nemico; **Sbilanciato per tutto lo scontro** (boss: 2 turni). L'acido funziona anche su Dafne e il sovrano |
+| 5 | Marea di Putrefazione | 10 | Consuma l'azione. Per 3 turni 1d6 danni da acido all'inizio del turno del nemico; **Sbilanciato per tutto lo scontro** (boss: 2 turni). L'acido non è veleno: pieno anche su Dafne e sul sovrano |
 
 ### Custode dei Boschi Sacri (Guendalina)
 
@@ -145,17 +148,20 @@ Al posto della raccolta di erbe (niente farming), un oggetto di dotazione.
 
 ## 7. Dafne: spunti per i suoi poteri
 
-L'immunità diventa il suo tema: Dafne usa le tossine del bosco contro chi la sfida, e lo Sciamano si trova davanti qualcuno che conosce il suo mestiere meglio di lui.
+La resistenza diventa il suo tema (DECISO: spunti confermati): Dafne usa le tossine del bosco contro chi la sfida, e lo Sciamano si trova davanti qualcuno che conosce il suo mestiere meglio di lui.
 
 | Potere | Effetto |
 |---|---|
-| **Sangue di Bosco** (passivo) | Immune al veleno. Quando un rivestimento la colpisce, se lo «ruba»: il suo prossimo attacco applica a te lo stesso veleno |
+| **Sangue di Bosco** (passivo) | Resistente al veleno (metà danni). Quando un rivestimento la colpisce, se lo «ruba»: il suo prossimo attacco applica a te lo stesso veleno |
 | **Freccia di Cicuta** | Attacco; se colpisce, sei Avvelenato 2 (tiro salvezza sul corpo per resistere) |
 | **Velo di Muschio** | Una volta per scontro: si cura 2d4 e toglie da sé tutti gli stati per 1 turno |
 
-Servono due cose nel codice: lo stato **Avvelenato anche sul personaggio** (l'Infuso di Linfa Vitale lo rimuove già, così diventa la contromossa naturale) e il campo `immune` sui nemici.
+Servono due cose nel codice: lo stato **Avvelenato anche sul personaggio** (l'Infuso di Linfa Vitale lo rimuove già, così diventa la contromossa naturale) e i campi `resiste` e `immune` sui nemici.
 
-## 8. Decisioni aperte
+## 8. Decisioni (26/10/2026)
 
-1. **Dafne:** confermi i tre spunti, o vuoi che il suo tema sia diverso dal veleno (per esempio arco e trappole)?
-2. **Scudo di Corteccia:** è salute temporanea, una meccanica nuova nel codice. Massimo 5 + livello ti sembra giusto?
+1. **Dafne:** spunti confermati; resistente al veleno (metà danni) invece che immune. Il sovrano resta immune.
+2. **Scudo di Corteccia:** confermato, massimo 5 + livello.
+3. **Passive delle vie:** anche per Guerriero, Arcanista e Monaco, da disegnare.
+
+Nessuna decisione aperta: il documento è pronto per il codice (`js/tecniche.js`, `js/combattimento.js`, regolamento e test).

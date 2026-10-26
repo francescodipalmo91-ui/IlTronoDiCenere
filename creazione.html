@@ -28,7 +28,7 @@
     /* Sapiente e Accolito: terza colonna con gli incantesimi, a destra dell'equipaggiamento */
     body:has(.pagina.magia) main { max-width: 92rem; }
     .pagina.magia { grid-template-columns: 1.3fr 1fr 1fr; }
-    #incantesimi[hidden], #tecniche[hidden] { display: none; }
+    #incantesimi[hidden], #tecniche[hidden], #dotazione label[hidden] { display: none; }
     #tecniche { padding-left: 2.5rem; border-left: 1px solid transparent; border-image: linear-gradient(to bottom, transparent, var(--line) 8%, var(--line) 92%, transparent) 1; }
     #lista-tecniche label { position: relative; }
     #lista-tecniche .gruppo-tec { margin: 0.9rem 0 0.2rem; font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
@@ -302,7 +302,7 @@
         incantesimi: "Incantesimi lv 1", scuolaPrincipale: "Scuola principale", scuolaAltra: "Altra scuola", guidaScuola: "Scegli prima la scuola principale.", guidaInc: (p, a) => `Scegline ${p + a}: ${p} della scuola principale e ${a} dell'altra scuola, tutti di livello 1.`, capClasse: (n, c) => `Capacità di classe, senza occupare posti: ${n} (${c}).`, costoMagia: (n) => `${n}`, mana: "Punti arcano", fede: "Punti fede", ira: "Punti ira", natura: "Punti natura", modAttr: (a) => `mod. ${a}`,
         notaRiposo: "Gli incantesimi scelti si potranno cambiare quando ti riposi; salendo di livello se ne sbloccano di nuovi.",
         tecnicheTit: "Tecniche speciali lv 1", notaRiposoTec: "Le tecniche scelte si potranno cambiare quando ti riposi; salendo di livello se ne sbloccano di nuove.",
-        guidaTec: (n, tot) => tot ? `Scegline ${n}, tra quelle del tipo della tua arma${tot > 3 ? " e dello scudo" : ""}. Le altre restano visibili, ma non si possono prendere.` : "Scegli prima l'arma: qui sotto vedi tutte le tecniche, ma si sbloccano solo quelle del tipo della tua arma (e dello scudo, se lo prendi).", gruppoArma: (tp) => ({ Tagliente: "Armi da taglio", Contundente: "Armi contundenti", Perforante: "Armi perforanti" })[tp] || tp, gruppoScudo: "Scudo", richiedeArma: (tp) => ({ Tagliente: "Richiede un'arma da taglio.", Contundente: "Richiede un'arma contundente.", Perforante: "Richiede un'arma perforante." })[tp], richiedeScudo: "Richiede lo scudo.", costoIra: (n) => `${n} ira`,
+        guidaTec: (n, tot) => tot ? `Scegline ${n}, tra quelle del tipo della tua arma${tot > 3 ? " e dello scudo" : ""}. Le altre restano visibili, ma non si possono prendere.` : "Scegli prima l'arma: qui sotto vedi tutte le tecniche, ma si sbloccano solo quelle del tipo della tua arma (e dello scudo, se lo prendi).", gruppoArma: (tp) => ({ Tagliente: "Armi da taglio", Contundente: "Armi contundenti", Perforante: "Armi perforanti" })[tp] || tp, gruppoScudo: "Scudo", richiedeArma: (tp) => ({ Tagliente: "Richiede un'arma da taglio.", Contundente: "Richiede un'arma contundente.", Perforante: "Richiede un'arma perforante." })[tp], richiedeScudo: "Richiede lo scudo.", costoIra: (n) => `${n} ira`, costoNatura: (n) => `${n} natura`, gruppoNatura: "Tecniche della natura", guidaTecNatura: (n) => `Scegline ${n}: le tecniche della natura funzionano con qualsiasi arma.`,
         mancaTec: (n) => `${n} ${n === 1 ? "tecnica" : "tecniche"}`,
         costo: "Costo", costoMana: (n) => `${n} ${classe === "Accolito" ? "Fede" : "Arcano"}`, mancaInc: (n) => `${n} ${n === 1 ? "incantesimo" : "incantesimi"}`, mancaScuola: "la scuola principale"
       },
@@ -333,7 +333,7 @@
         incantesimi: "Spells lv 1", scuolaPrincipale: "Main school", scuolaAltra: "Other school", guidaScuola: "Choose your main school first.", guidaInc: (p, a) => `Choose ${p + a}: ${p} from your main school and ${a} from the other school, all level 1.`, capClasse: (n, c) => `Class ability, takes no slots: ${n} (${c}).`, costoMagia: (n) => `${n}`, mana: "Arcane points", fede: "Faith points", ira: "Rage points", natura: "Nature points", modAttr: (a) => `${a} mod.`,
         notaRiposo: "You will be able to change your chosen spells when you rest; new ones unlock as you level up.",
         tecnicheTit: "Special techniques lv 1", notaRiposoTec: "You will be able to change your chosen techniques when you rest; new ones unlock as you level up.",
-        guidaTec: (n, tot) => tot ? `Choose ${n}, among those for your weapon type${tot > 3 ? " and the shield" : ""}. The others stay visible but cannot be taken.` : "Choose your weapon first: below you can see every technique, but only those of your weapon type (and the shield, if you take it) unlock.", gruppoArma: (tp) => ({ Tagliente: "Slashing weapons", Contundente: "Blunt weapons", Perforante: "Piercing weapons" })[tp] || tp, gruppoScudo: "Shield", richiedeArma: (tp) => ({ Tagliente: "Requires a slashing weapon.", Contundente: "Requires a blunt weapon.", Perforante: "Requires a piercing weapon." })[tp], richiedeScudo: "Requires the shield.", costoIra: (n) => `${n} rage`,
+        guidaTec: (n, tot) => tot ? `Choose ${n}, among those for your weapon type${tot > 3 ? " and the shield" : ""}. The others stay visible but cannot be taken.` : "Choose your weapon first: below you can see every technique, but only those of your weapon type (and the shield, if you take it) unlock.", gruppoArma: (tp) => ({ Tagliente: "Slashing weapons", Contundente: "Blunt weapons", Perforante: "Piercing weapons" })[tp] || tp, gruppoScudo: "Shield", richiedeArma: (tp) => ({ Tagliente: "Requires a slashing weapon.", Contundente: "Requires a blunt weapon.", Perforante: "Requires a piercing weapon." })[tp], richiedeScudo: "Requires the shield.", costoIra: (n) => `${n} rage`, costoNatura: (n) => `${n} nature`, gruppoNatura: "Nature techniques", guidaTecNatura: (n) => `Choose ${n}: nature techniques work with any weapon.`,
         mancaTec: (n) => `${n} ${n === 1 ? "technique" : "techniques"}`,
         costo: "Cost", costoMana: (n) => `${n} ${classe === "Accolito" ? "Faith" : "Arcane"}`, mancaInc: (n) => `${n} ${n === 1 ? "spell" : "spells"}`, mancaScuola: "the main school"
       }
@@ -437,7 +437,8 @@
       { nome: "Pozione di cura", usi: 1 },
       { nome: "Pozione di essenza", usi: 1 }, /* recupera la risorsa della classe: punti arcano, fede, ira o natura */
       { nome: "Torcia", usi: 5, impugnabile: true },
-      { nome: "Piede di porco" }
+      { nome: "Piede di porco" },
+      { nome: "Borsa dei veleni", usi: 3, solo: "Forestiero" } /* solo lo Sciamano: 3 dosi di punti natura, tornano piene a ogni riposo */
     ];
 
     /* ---------- Incantesimi (Arcanista e Monaco): le scuole di js/magia.js ----------
@@ -504,10 +505,14 @@
 
     /* ---------- Tecniche speciali (Guerriero): 4 tra quelle di livello 1 del tipo dell'arma e, con lo scudo, dello scudo ---------- */
     const TECNICHE = window.TECNICHE || [], TEC_BASE = R_.MAX_TECNICHE, TEC_SCUDO = R_.TECNICHE_SCUDO;
-    const maxTecniche = () => TEC_BASE + (scudoScelto() ? TEC_SCUDO : 0); /* 2, oppure 3 con lo scudo */
-    const usaTecniche = () => classe === "Soldato" && TECNICHE.length > 0;
+    const maxTecniche = () => TEC_BASE + (scudoScelto() && classe === "Soldato" ? TEC_SCUDO : 0); /* 2, oppure 3 con lo scudo (solo il Guerriero) */
+    const sciamano = () => classe === "Forestiero";
+    const usaTecniche = () => (classe === "Soldato" || sciamano()) && TECNICHE.length > 0;
     let chiaveTecniche = null;
-    const opzioniTec = () => { const a = armaScelta(); return a ? TECNICHE.filter(x => x.liv === 1 && (x.tipo === a.tipo || (x.tipo === "Scudo" && scudoScelto()))) : []; };
+    const opzioniTec = () => {
+      if (sciamano()) return TECNICHE.filter(x => x.liv === 1 && x.classe === "Forestiero" && !x.via); /* le tecniche della natura non dipendono dall'arma */
+      const a = armaScelta(); return a ? TECNICHE.filter(x => x.liv === 1 && !x.classe && (x.tipo === a.tipo || (x.tipo === "Scudo" && scudoScelto()))) : [];
+    };
     const tecnicheScelte = () => usaTecniche() ? [...document.querySelectorAll('input[name="tecnica"]:checked')].map(c => c.value) : [];
     const tecNecessarie = () => Math.min(maxTecniche(), opzioniTec().length);
     function disegnaTecniche() {
@@ -515,19 +520,19 @@
       sez.hidden = !si;
       if (si) document.querySelector(".pagina").classList.add("magia");
       const opz = si ? opzioniTec() : [];
-      const chiave = si ? "T:" + opz.map(x => x.id).join(",") : "";
+      const chiave = si ? "T:" + classe + ":" + opz.map(x => x.id).join(",") : "";
       if (chiave === chiaveTecniche) { [...$("lista-tecniche").querySelectorAll('input[name="tecnica"]:checked')].slice(maxTecniche()).forEach(c => { c.checked = false; }); return; }
       const prima = new Set(tecnicheScelte());
       chiaveTecniche = chiave;
       const box = $("lista-tecniche");
       box.replaceChildren();
-      $("guida-tecniche").textContent = t.guidaTec(tecNecessarie(), opz.length);
+      $("guida-tecniche").textContent = sciamano() ? t.guidaTecNatura(tecNecessarie()) : t.guidaTec(tecNecessarie(), opz.length);
       /* tutte le tecniche di livello 1 della classe, in gruppi: le armi (per tipo) separate dallo scudo; si prendono solo quelle sbloccate dalla scelta */
       const libere = new Set(opz.map(x => x.id));
-      const gruppi = [["Tagliente", t.gruppoArma("Tagliente")], ["Contundente", t.gruppoArma("Contundente")], ["Perforante", t.gruppoArma("Perforante")], ["Scudo", t.gruppoScudo]];
+      const gruppi = sciamano() ? [["Natura", t.gruppoNatura]] : [["Tagliente", t.gruppoArma("Tagliente")], ["Contundente", t.gruppoArma("Contundente")], ["Perforante", t.gruppoArma("Perforante")], ["Scudo", t.gruppoScudo]];
       let n = 0;
       gruppi.forEach(([tp, titolo]) => {
-        const lista = TECNICHE.filter(x => x.liv === 1 && x.tipo === tp);
+        const lista = TECNICHE.filter(x => x.liv === 1 && x.tipo === tp && !x.via);
         if (!lista.length) return;
         const h = document.createElement("p"); h.className = "gruppo-tec" + (tp === "Scudo" ? " scudo" : ""); h.textContent = titolo; box.appendChild(h);
         lista.forEach(x => {
@@ -535,7 +540,7 @@
           const l = document.createElement("label"); if (!aperta) l.className = "chiusa";
           const motivo = aperta ? "" : `<em class="effetto">${tp === "Scudo" ? t.richiedeScudo : t.richiedeArma(tp)}</em>`;
           Sicuro.html(l, `<input type="checkbox" name="tecnica" value="${x.id}" aria-describedby="tip-tec-${i}"${aperta ? "" : " disabled"}><span><b>${L(x.nome)}</b></span>` +
-            `<small class="tip" id="tip-tec-${i}" role="tooltip"><em class="tip-riga"><i><b>${t.costo}</b><b>${t.costoIra(x.costo)}</b></i></em>${L(x.desc)}<em class="effetto">[${L(x.effetto)}]</em>${motivo}</small>`);
+            `<small class="tip" id="tip-tec-${i}" role="tooltip"><em class="tip-riga"><i><b>${t.costo}</b><b>${sciamano() ? t.costoNatura(x.costo) : t.costoIra(x.costo)}</b></i></em>${L(x.desc)}<em class="effetto">[${L(x.effetto)}]</em>${motivo}</small>`);
           const c = l.querySelector("input"); c.disabled = !aperta; c.checked = aperta && prima.has(x.id);
           c.addEventListener("change", aggiorna);
           box.appendChild(l);
@@ -730,6 +735,11 @@
       const nAb = abilitaScelte().length;
       document.querySelectorAll('input[name="abilita"]').forEach(c => { c.disabled = !c.checked && nAb >= MAX_ABILITA; });
 
+      document.querySelectorAll('input[name="dotazione"]').forEach(c => { /* la borsa dei veleni è solo dello Sciamano */
+        const solo = DOTAZIONE[c.value].solo, nascosta = !!solo && solo !== classe;
+        c.closest("label").hidden = nascosta;
+        if (nascosta && c.checked) c.checked = false;
+      });
       const arma = armaScelta(), arm = armaturaScelta(), dot = dotazioneScelta(), sc = scudoScelto();
       document.querySelectorAll('input[name="dotazione"]').forEach(c => { c.disabled = !c.checked && dot.length >= MAX_DOTAZIONE; });
 

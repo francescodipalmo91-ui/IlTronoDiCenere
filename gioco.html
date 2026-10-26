@@ -12,6 +12,7 @@
   <script src="js/tecniche.js"></script>
   <script src="js/combattimento.js"></script>
   <script src="js/magia_combattimento.js"></script>
+  <script src="js/sciamano.js"></script>
   <script src="js/lingua.js"></script>
   <script src="js/volume.js"></script>
   <script src="lib/howler.core.min.js"></script>
@@ -2291,8 +2292,9 @@
           bevi: { pozCura: (t, d, da, liv, a) => `Bevi ${t}: un calore buono ti scorre nelle vene. Salute fisica +${d} (${liv ? "1d6 + " + liv : "1d6"}) · ${da} → ${a}`,
                   pozMana: (t, d, da, liv, a) => `Bevi ${t}: un formicolio ti risale le dita e la mente si fa limpida. ${nomeRisorsa()} +${d} (${liv ? "1d6 + " + liv : "1d6"}) · ${da} → ${a}`,
                   serenita: (t, d, da, a) => `Bevi ${t}: brucia la gola, poi un calore improvviso ti scioglie i pensieri. Salute mentale +${d} (1d4) · ${da} → ${a}`,
-                  razione: (t, d, da, liv, a) => `Mangi una razione: è secca, salata e sa di cuoio, ma ti rimette in piedi. Salute fisica +${d} (1 + livello ${liv}) · ${da} → ${a}` },
-          inutile: { pozCura: "Sei già in piena salute: meglio conservarla.", pozMana: "Hai già tutti i tuoi punti al massimo: meglio conservarla.", serenita: "La tua mente è già serena: meglio conservarlo.", razione: "Non hai bisogno di mangiare adesso: sei in piena salute.", noMana: "La tua classe non ha punti da recuperare: questa pozione non ti servirebbe a nulla." },
+                  razione: (t, d, da, liv, a) => `Mangi una razione: è secca, salata e sa di cuoio, ma ti rimette in piedi. Salute fisica +${d} (1 + livello ${liv}) · ${da} → ${a}`,
+                  borsa: (d, da, liv, a, dosi) => `Sciogli una dose della borsa dei veleni sulla lingua: amara, viva, ti riaccende la natura dentro. Punti natura +${d} (1d4 + ${liv}) · ${da} → ${a}. Dosi rimaste: ${dosi}/3.` },
+          inutile: { pozCura: "Sei già in piena salute: meglio conservarla.", pozMana: "Hai già tutti i tuoi punti al massimo: meglio conservarla.", serenita: "La tua mente è già serena: meglio conservarlo.", razione: "Non hai bisogno di mangiare adesso: sei in piena salute.", borsa: "I tuoi punti natura sono già al massimo: meglio conservare le dosi.", borsaVuota: "La borsa dei veleni è vuota: si riempirà al prossimo riposo.", borsaClasse: "Solo uno Sciamano sa usare i veleni di questa borsa.", noMana: "La tua classe non ha punti da recuperare: questa pozione non ti servirebbe a nulla." },
           bottino: (pelo, larve, ghi) => `Bottino: frughi tra i resti fumanti del mastino. Ciuffi di pelo di mastino ×${pelo} · dal suo collare di cuoio, Larve di falena ×${larve} · Ghiandole del fuoco ×${ghi}.`
         }
       },
@@ -2510,8 +2512,9 @@
           bevi: { pozCura: (t, d, da, liv, a) => `You drink ${t}: a kindly warmth runs through your veins. Physical health +${d} (${liv ? "1d6 + " + liv : "1d6"}) · ${da} → ${a}`,
                   pozMana: (t, d, da, liv, a) => `You drink ${t}: a tingling climbs your fingers and your mind clears. ${nomeRisorsa()} +${d} (${liv ? "1d6 + " + liv : "1d6"}) · ${da} → ${a}`,
                   serenita: (t, d, da, a) => `You drink ${t}: it burns your throat, then a sudden warmth loosens your thoughts. Mental health +${d} (1d4) · ${da} → ${a}`,
-                  razione: (t, d, da, liv, a) => `You eat a ration: dry, salty and tasting of leather, but it puts you back on your feet. Physical health +${d} (1 + level ${liv}) · ${da} → ${a}` },
-          inutile: { pozCura: "You are already at full health: better keep it.", pozMana: "Your points are already full: better keep it.", serenita: "Your mind is already at peace: better keep it.", razione: "You do not need to eat right now: you are in full health.", noMana: "Your class has no points to restore: this potion would be of no use to you." },
+                  razione: (t, d, da, liv, a) => `You eat a ration: dry, salty and tasting of leather, but it puts you back on your feet. Physical health +${d} (1 + level ${liv}) · ${da} → ${a}`,
+                  borsa: (d, da, liv, a, dosi) => `You melt a dose from the poison pouch on your tongue: bitter and alive, it rekindles the nature within you. Nature points +${d} (1d4 + ${liv}) · ${da} → ${a}. Doses left: ${dosi}/3.` },
+          inutile: { pozCura: "You are already at full health: better keep it.", pozMana: "Your points are already full: better keep it.", serenita: "Your mind is already at peace: better keep it.", razione: "You do not need to eat right now: you are in full health.", borsa: "Your nature points are already full: better save the doses.", borsaVuota: "The poison pouch is empty: it will refill at your next rest.", borsaClasse: "Only a Shaman knows how to use the poisons in this pouch.", noMana: "Your class has no points to restore: this potion would be of no use to you." },
           bottino: (pelo, larve, ghi) => `Loot: you search the smoking remains of the mastiff. Tufts of mastiff fur ×${pelo} · from its leather collar, Moth larvae ×${larve} · Fire glands ×${ghi}.`
         }
       }
@@ -4334,11 +4337,15 @@
         richiede: { Tagliente: "un'arma da taglio", Contundente: "un'arma contundente", Perforante: "un'arma perforante", Scudo: "lo scudo imbracciato" },
         nonPreparata: "Questa tecnica non è preparata: puoi cambiarla riposando.",
         posto: (l) => `liv. ${l}`, scegli: "Scegli",
+        costoNatura: (n) => `${n} natura`, pocaNatura: (c, a) => `Non hai abbastanza punti natura: servono ${c}, te ne restano ${a}.`,
+        costoRigaNatura: (a, max) => `Punti natura: ${a} / ${max}`, passivaNonUsa: "È una capacità passiva: è sempre attiva, non si usa.",
+        menteDescNatura: "Dopo una prova fallita puoi spendere 1 punto natura per un tiro salvezza: se lo superi non perdi salute mentale.",
+        guidaTecNatura: (n) => `Scegli ${n} tecniche della natura tra quelle sbloccate: due di livello 1, due di livello 2 e una per ciascun livello successivo. Funzionano con qualsiasi arma.`,
         menteIncrollabile: "Mente incrollabile", menteDesc: "Dopo una prova fallita puoi spendere 1 punto ira per un tiro salvezza: se lo superi non perdi salute mentale.",
         costoRiga: (a, max) => `Punti ira: ${a} / ${max}`, ira: (n, a, max) => `Furia: +${n} punti ira (${a} / ${max}).`,
         sanguina: (d, t) => `Il nemico sanguina: 1d${d} danni per ${t} turni.`, sangueTick: (d) => `Il sangue scorre: ${d} danni.`,
         sangueTutto: (n, tiri, tot) => `La ferita si apre del tutto: ${n} × dado = ${tiri.join(" + ")} = ${tot} danni.`,
-        effetti: { debole: "Indebolito: −2 per colpire.", frattura: "Frattura: 1d4 danni ogni volta che attacca.", intontito: "Intontito: niente colpi critici.", sbilanciato: "Sbilanciato: −2 alla Classe armatura.", silenzio: "Niente attacchi speciali.", frastornato: "Frastornato: −4 per colpire e niente critici.", bloccato: "Stordito: salta il prossimo turno.", carica: "L'attacco speciale pronto va perso.", esposto: "Esposto: i tuoi attacchi fanno critico con un numero in meno." },
+        effetti: { accecato: "Accecato: tira 2d20 per colpire e tiene il peggiore.", debole: "Indebolito: −2 per colpire.", frattura: "Frattura: 1d4 danni ogni volta che attacca.", intontito: "Intontito: niente colpi critici.", sbilanciato: "Sbilanciato: −2 alla Classe armatura.", silenzio: "Niente attacchi speciali.", frastornato: "Frastornato: −4 per colpire e niente critici.", bloccato: "Stordito: salta il prossimo turno.", carica: "L'attacco speciale pronto va perso.", esposto: "Esposto: i tuoi attacchi fanno critico con un numero in meno." },
         prossimoBonus: "Il tuo prossimo attacco avrà +2 per colpire.", prossimoDado: "Il tuo prossimo attacco infligge un dado di danno in più.",
         guardia: (n) => `+${n} alla Classe armatura fino al tuo prossimo turno.`, furore: "+4 ai tiri salvezza e alle prove contrapposte per 2 turni.",
         tsTitolo: (nome) => `Tiro salvezza: ${nome}`, tsRegola: (nome, cd) => `${nome} prova a resistere: d20 + modificatore di Vigore contro ${cd} (8 + il tuo Vigore + livello).`,
@@ -4386,6 +4393,8 @@
           sblocco: "Livello 3: ora puoi scegliere una via di prestigio (nella sezione Tecniche).", finestra: "Scegli la via",
           guida: "La via ti dà un'abilità al livello 3, una al 4 e una al 5. Le abilità della via sono sempre pronte e non occupano posti. La scelta è definitiva.",
           nomi: { aldo: "Lama del Guardiano — via di Aldo", guendalina: "Veglia — via di Guendalina" },
+          nomiNatura: { aldo: "Signore delle Spore Putride — via di Aldo", guendalina: "Custode dei Boschi Sacri — via di Guendalina" },
+          descNatura: { aldo: "Offesa: veleno che logora, trappole e acido. Passiva: Fame del Parassita.", guendalina: "Difesa: cure, Scudo di Corteccia e purificazione. Passiva: Linfa Rigeneratrice." },
           desc: { aldo: "La ferita è l'arma: sanguinamento, marchio e colpi critici.", guendalina: "Controllo e resistenza: indebolire il nemico, difendersi e risparmiare ira." },
           descContundente: { aldo: "Spezzare: incrinare l'armatura, farla crollare e colpi critici.", guendalina: "Controllo e resistenza: stordire il nemico, difendersi e risparmiare ira." },
           descPerforante: { aldo: "Penetrazione: lasciare il nemico Esposto, sfondare la difesa e colpi critici sicuri.", guendalina: "Precisione: critici più frequenti, difendersi e risparmiare ira." },
@@ -4413,11 +4422,15 @@
         richiede: { Tagliente: "a slashing weapon", Contundente: "a bludgeoning weapon", Perforante: "a piercing weapon", Scudo: "the shield on your arm" },
         nonPreparata: "This technique is not prepared: you can change it when you rest.",
         posto: (l) => `lv. ${l}`, scegli: "Choose",
+        costoNatura: (n) => `${n} nature`, pocaNatura: (c, a) => `Not enough nature points: you need ${c}, you have ${a}.`,
+        costoRigaNatura: (a, max) => `Nature points: ${a} / ${max}`, passivaNonUsa: "It is a passive ability: always active, it is not used.",
+        menteDescNatura: "After a failed check you may spend 1 nature point on a saving throw: on a success you lose no mental health.",
+        guidaTecNatura: (n) => `Choose ${n} nature techniques among the unlocked ones: two of level 1, two of level 2 and one for each level after that. They work with any weapon.`,
         menteIncrollabile: "Unshakeable Mind", menteDesc: "After a failed check you may spend 1 rage point on a saving throw: on a success you lose no mental health.",
         costoRiga: (a, max) => `Rage points: ${a} / ${max}`, ira: (n, a, max) => `Fury: +${n} rage points (${a} / ${max}).`,
         sanguina: (d, t) => `The enemy bleeds: 1d${d} damage for ${t} turns.`, sangueTick: (d) => `Blood flows: ${d} damage.`,
         sangueTutto: (n, tiri, tot) => `The wound tears wide open: ${n} × die = ${tiri.join(" + ")} = ${tot} damage.`,
-        effetti: { debole: "Weakened: −2 to hit.", frattura: "Fractured: 1d4 damage every time it attacks.", intontito: "Dazzled: no critical hits.", sbilanciato: "Off-balance: −2 Armor class.", silenzio: "No special attacks.", frastornato: "Dazed: −4 to hit and no criticals.", bloccato: "Stunned: skips its next turn.", carica: "Its readied special attack is lost.", esposto: "Exposed: your attacks crit on one number lower." },
+        effetti: { accecato: "Blinded: rolls 2d20 to hit and keeps the worse.", debole: "Weakened: −2 to hit.", frattura: "Fractured: 1d4 damage every time it attacks.", intontito: "Dazzled: no critical hits.", sbilanciato: "Off-balance: −2 Armor class.", silenzio: "No special attacks.", frastornato: "Dazed: −4 to hit and no criticals.", bloccato: "Stunned: skips its next turn.", carica: "Its readied special attack is lost.", esposto: "Exposed: your attacks crit on one number lower." },
         prossimoBonus: "Your next attack gets +2 to hit.", prossimoDado: "Your next attack deals one extra damage die.",
         guardia: (n) => `+${n} Armor class until your next turn.`, furore: "+4 to saving throws and opposed checks for 2 turns.",
         tsTitolo: (nome) => `Saving throw: ${nome}`, tsRegola: (nome, cd) => `${nome} tries to resist: d20 + Vigour modifier against ${cd} (8 + your Vigour + level).`,
@@ -4465,6 +4478,8 @@
           sblocco: "Level 3: you can now choose a prestige path (in the Techniques section).", finestra: "Choose your path",
           guida: "The path gives you one ability at level 3, one at 4 and one at 5. Path abilities are always ready and take no slots. The choice is final.",
           nomi: { aldo: "Warden's Blade — Aldo's path", guendalina: "Vigil — Guendalina's path" },
+          nomiNatura: { aldo: "Lord of the Rotting Spores — Aldo's path", guendalina: "Keeper of the Sacred Woods — Guendalina's path" },
+          descNatura: { aldo: "Offence: wearing poison, traps and acid. Passive: Parasite's Hunger.", guendalina: "Defence: healing, Bark Shield and purification. Passive: Regenerating Sap." },
           desc: { aldo: "The wound is the weapon: bleeding, brand and critical hits.", guendalina: "Control and endurance: weaken the enemy, defend yourself and save rage." },
           descContundente: { aldo: "Breaking: crack the armour, bring it down and land critical hits.", guendalina: "Control and endurance: stun the enemy, defend yourself and save rage." },
           descPerforante: { aldo: "Penetration: leave the enemy Exposed, break through its guard and land sure critical hits.", guendalina: "Precision: more frequent criticals, defend yourself and save rage." },
@@ -5270,7 +5285,7 @@
       pg.livello = livelloPg() + 1;
       righe.push(RG.livello.abilita(pg.livello));
       if (pg.livello >= LIVELLO_MAX) righe.push(RG.livello.massimo);
-      if (haTecniche() && TEC.some(t => t.liv === pg.livello && t.tipo !== "Utilita" && !t.via)) righe.push(RT.nuovoPosto(pg.livello));
+      if (haTecniche() && TEC.some(t => t.liv === pg.livello && t.tipo !== "Utilita" && !t.via && tecDellaClasse(t))) righe.push(RT.nuovoPosto(pg.livello));
       if (haTecniche() && pg.livello === 3 && !viaPg()) righe.push(RT.via.sblocco);
       if (incantatore() && pg.scuola) { righe.push(RT.inc.nuovoPosto(pg.livello)); if (pg.livello === 3 && !viaPg()) righe.push(RT.inc.viaSblocco); }
       aggiungi({ tipo: "narra", box: "cap", fuori: true, esito: RG.livello.titolo(pg.livello), esitoRighe: righe, righe: [] });
@@ -5468,7 +5483,7 @@
     }
 
     /* Effetti a durata: medaglione con simbolo, nome e turni rimasti (rombi pieni = turni ancora attivi) */
-    const EFF_PG = ["scudo", "invuln", "pietra", "armaPiu", "potenza", "guardia", "baluardo", "fortezza", "furore", "precisione", "runa", "occhio", "tomo", "quiete", "muro", "santuario", "voto", "gemella", "cerchio", "fiamma", "notte", "furia", "manto", "seconda"], EFF_NEM = ["bloccato", "cieco", "sanguina", "frattura", "esposto", "debole", "sbilanciato", "silenzio", "frastornato", "intontito", "pressione", "parola", "accecato", "avvizzito", "paura", "corona"];
+    const EFF_PG = ["scudo", "invuln", "pietra", "armaPiu", "potenza", "guardia", "baluardo", "fortezza", "furore", "precisione", "runa", "occhio", "tomo", "quiete", "muro", "santuario", "voto", "gemella", "cerchio", "fiamma", "notte", "furia", "manto", "seconda", "rivest", "linfaFuria", "pelle", "infuso", "aura", "rinascita", "bulbo"], EFF_NEM = ["bloccato", "cieco", "sanguina", "frattura", "esposto", "debole", "sbilanciato", "silenzio", "frastornato", "intontito", "pressione", "parola", "accecato", "avvizzito", "paura", "corona", "avvelenato", "marea"];
     const SHIELD = "M12 2.8l7 2.7v5.3c0 4.6-3 8.1-7 10.4-4-2.3-7-5.8-7-10.4V5.5z";
     const ICONE_EFF = { /* tratti a 24×24, colore dal tema dell'effetto */
       scudo: { tono: "dif", d: `<path d="${SHIELD}"/><path d="M12 6.5v11M8.2 10.5h7.6" opacity=".7"/>` },
@@ -5514,6 +5529,15 @@
       paura: { tono: "mal", d: `<circle cx="12" cy="12" r="8.5"/><circle cx="9" cy="10" r="1"/><circle cx="15" cy="10" r="1"/><ellipse cx="12" cy="15.5" rx="2" ry="2.4"/>` },
       corona: { tono: "mal", d: `<path d="M4 18l1.5-9 4 4L12 6l2.500 7 4-4L20 18z"/>` },
       sigilli: { tono: "mal", d: `<circle cx="12" cy="12" r="8"/><path d="M12 6l3.5 6-3.5 6-3.5-6z" opacity=".85"/>` },
+      avvelenato: { tono: "mal", d: `<path d="M9 3h6M10 3v4.5L5.5 17a2.5 2.5 0 0 0 2.3 3.5h8.4a2.5 2.5 0 0 0 2.3-3.5L14 7.5V3"/><path d="M8 14h8" opacity=".7"/>` },
+      marea: { tono: "mal", d: `<path d="M3 9c3-2 6 2 9 0s6 2 9 0M3 14c3-2 6 2 9 0s6 2 9 0M3 19c3-2 6 2 9 0s6 2 9 0" opacity=".9"/>` },
+      rivest: { tono: "off", d: `<path d="M19.5 4.5l-9.8 9.8M17 4.2l2.8.3.3 2.8"/><path d="M6.6 11.2l6.2 6.2M8.6 15.4l-4.1 4.1"/><path d="M14 9c1.5.5 2.5 2 2 3.5" opacity=".7"/>` },
+      linfaFuria: { tono: "off", d: `<path d="M12 21V10M12 14c-4 0-6-2-6-5 4 0 6 2 6 5zM12 12c3 0 5-2 5-4-3 0-5 2-5 4z"/><path d="M15 3l-2 3h3l-2 3" opacity=".8"/>` },
+      pelle: { tono: "dif", d: `<path d="${SHIELD}"/><path d="M9 9.5c2 1 4 1 6 0M9 13c2 1 4 1 6 0" opacity=".7"/>` },
+      infuso: { tono: "dif", d: `<path d="M9 3h6M10 3v5l-4 9a2.5 2.5 0 0 0 2.3 3.5h7.4A2.5 2.5 0 0 0 18 17l-4-9V3"/><path d="M12 13v4M10 15h4" opacity=".8"/>` },
+      aura: { tono: "dif", d: `<circle cx="12" cy="12" r="8.5"/><path d="M12 7v10M7 12h10" opacity=".6"/>` },
+      rinascita: { tono: "dif", d: `<path d="M12 21v-8M12 13c-3.5 0-5.5-2-5.5-5 3.5 0 5.5 2 5.5 5zM12 13c3.5 0 5.5-2 5.5-5-3.5 0-5.5 2-5.5 5z"/><path d="M8 21h8" opacity=".7"/>` },
+      bulbo: { tono: "off", d: `<path d="M12 4c4 3 6 6 6 9a6 6 0 0 1-12 0c0-3 2-6 6-9z"/><path d="M12 19v2M9 21h6" opacity=".7"/>` },
       impaurito: { tono: "mal", d: `<circle cx="12" cy="12" r="8.5"/><circle cx="9" cy="10" r="1"/><circle cx="15" cy="10" r="1"/><ellipse cx="12" cy="15.5" rx="2" ry="2.4"/>` }
     };
     function medaglione(k) {
@@ -5524,7 +5548,9 @@
     }
     function righeEffetti(dl, sc, chiavi, sep) {
       const attivi = chiavi.filter(k => sc.eff[k] > 0), crepe = chiavi === EFF_NEM ? CMB.crepe(sc) : 0, cariche = chiavi === EFF_PG ? CMB.cariche(sc) : 0, sigilli = chiavi === EFF_NEM ? CMB.sigilli(sc) : 0;
-      if (!attivi.length && !crepe && !cariche && !sigilli) return;
+      /* Sciamano: cariche di Morbo sul nemico; Scudo di Corteccia e trappola pronta sul personaggio */
+      const morbo = chiavi === EFF_NEM ? Number(sc.morbo) || 0 : 0, corteccia = chiavi === EFF_PG ? Number(sc.corteccia) || 0 : 0, trappola = chiavi === EFF_PG ? sc.trappola : null;
+      if (!attivi.length && !crepe && !cariche && !sigilli && !morbo && !corteccia && !trappola) return;
       sep("sep-spazio");
       const t = document.createElement("div"); t.className = "eff-tit"; t.textContent = CB.effettiTit; dl.append(t);
       if (cariche) { /* Carica Cinetica dello scudo: cariche, dura tutto lo scontro */
@@ -5537,6 +5563,14 @@
         dd.title = dt.title = `${CB.effNomi.cariche}: ${CB.cariche(cariche, max)}`;
         dl.append(dt, dd);
       }
+      const rigaNatura = (icona, nome, valore, tono) => { /* righe dello Sciamano senza durata in turni */
+        const dt = document.createElement("dt"); dt.className = "eff-nome"; dt.append(medaglione(icona), document.createTextNode(nome));
+        const dd = document.createElement("dd"); dd.className = "eff-dur " + tono; dd.textContent = valore;
+        dd.title = dt.title = `${nome}: ${valore}`; dl.append(dt, dd);
+      };
+      if (morbo) rigaNatura("avvelenato", CB.effNomi.morbo, `${morbo}/${SCI.MORBO_MAX}`, "mal");
+      if (corteccia) rigaNatura("pelle", CB.effNomi.corteccia, `${corteccia}/${SCI.scudoMax({ liv: livelloPg() })}`, "dif");
+      if (trappola) rigaNatura("bulbo", CB.effNomi.trappola, nomeTec(TEC.find(x => x.id === trappola) || { nome: { it: trappola, en: trappola } }), "off");
       if (sigilli) { /* Sigilli dell'Arcanista: incisi sul nemico, durano tutto lo scontro */
         const max = CMB.sigilliMax({ boss: bossNem() });
         const dt = document.createElement("dt"); dt.className = "eff-nome"; dt.append(medaglione("sigilli"), document.createTextNode(CB.effNomi.sigilli));
@@ -5565,7 +5599,8 @@
         }
         const n = sc.eff[k], max = Math.max(n, (sc.effMax && sc.effMax[k]) || n), tono = ICONE_EFF[k].tono;
         const dt = document.createElement("dt"); dt.className = "eff-nome";
-        const nomeEff = k === "sanguina" && Number(sc.sangueDado) === 6 ? CB.emorragia : CB.effNomi[k];
+        const nomeEff = k === "sanguina" && Number(sc.sangueDado) === 6 ? CB.emorragia : k === "avvelenato" && Number(sc.velenoDado) === 6 ? CB.effNomi.tossina
+          : k === "rivest" && sc.rivest && TEC.find(x => x.id === sc.rivest) ? `${CB.effNomi.rivest} · ${nomeTec(TEC.find(x => x.id === sc.rivest))}` : CB.effNomi[k];
         dt.append(medaglione(k), document.createTextNode(nomeEff + (k === "sanguina" && sc.marchio ? ` · ${CB.marchiato}` : "") + (k === "esposto" && sc.segno ? ` · ${CB.segnato}` : "")));
         const dd = document.createElement("dd"); dd.className = "eff-dur " + tono + (n === 1 ? " ultimo" : "");
         const pall = document.createElement("span"); pall.className = "rombi"; pall.setAttribute("aria-hidden", "true");
@@ -5644,11 +5679,14 @@
         const b = document.createElement("button"); b.type = "button"; b.className = "nome-btn"; b.textContent = nomeTec(t);
         b.setAttribute("aria-expanded", String(aperto)); b.setAttribute("aria-controls", k);
         b.addEventListener("click", () => { const apri = testo.hidden; testo.hidden = !apri; if (apri) aperti.add(k); else aperti.delete(k); b.setAttribute("aria-expanded", String(apri)); });
-        const c = document.createElement("span"); c.className = "costo"; c.textContent = RT.costo(t.costo) + (t.gratuita ? " · " + RT.gratuita : "");
-        const usa = document.createElement("button"); usa.type = "button"; usa.className = "mini"; usa.textContent = RT.usa; usa.disabled = !attiva;
-        if (motivo) usa.title = motivo;
-        usa.addEventListener("click", clic(() => usaTecnica(t)));
-        const dx = document.createElement("span"); dx.className = "azioni-inc"; dx.append(c, usa);
+        const c = document.createElement("span"); c.className = "costo"; c.textContent = t.passiva ? RT.passiva : costoTec(t.costo) + (t.gratuita ? " · " + RT.gratuita : "");
+        const dx = document.createElement("span"); dx.className = "azioni-inc"; dx.append(c);
+        if (!t.passiva) { /* le passive delle vie non hanno il pulsante */
+          const usa = document.createElement("button"); usa.type = "button"; usa.className = "mini"; usa.textContent = RT.usa; usa.disabled = !attiva;
+          if (motivo) usa.title = motivo;
+          usa.addEventListener("click", clic(() => usaTecnica(t)));
+          dx.append(usa);
+        }
         testa.append(b, dx); og.append(testa, testo); box.append(og);
       };
       const titolo = (txt) => { const p = document.createElement("p"); p.className = "livello"; p.textContent = txt; box.append(p); };
@@ -5656,12 +5694,12 @@
       { const og = document.createElement("div"); og.className = "oggetto";
         const k = "tec-mente", aperto = aperti.has(k);
         const testa = document.createElement("div"); testa.className = "testa";
-        const testo = document.createElement("p"); testo.className = "testo"; testo.id = k; testo.hidden = !aperto; testo.textContent = RT.menteDesc;
+        const testo = document.createElement("p"); testo.className = "testo"; testo.id = k; testo.hidden = !aperto; testo.textContent = sciamano() ? RT.menteDescNatura : RT.menteDesc;
         const b = document.createElement("button"); b.type = "button"; b.className = "nome-btn"; b.textContent = RT.menteIncrollabile;
         b.addEventListener("click", () => { const apri = testo.hidden; testo.hidden = !apri; if (apri) aperti.add(k); else aperti.delete(k); });
-        const c = document.createElement("span"); c.className = "costo"; c.textContent = RT.passiva + " · " + RT.costo(1);
+        const c = document.createElement("span"); c.className = "costo"; c.textContent = RT.passiva + " · " + costoTec(1);
         testa.append(b, c); og.append(testa, testo); box.append(og); }
-      TEC.filter(t => t.tipo === "Utilita" && livelloPg() >= t.liv).forEach(t => voce(t, true));
+      TEC.filter(t => t.tipo === "Utilita" && tecDellaClasse(t) && livelloPg() >= t.liv).forEach(t => voce(t, true));
       const prep = tecnichePreparate();
       titolo(RT.speciali(prep.length, maxTecniche()));
       prep.forEach(t => voce(t, tipoOk(t), tipoOk(t) ? null : RT.tipoSbagliato(nomeTec(t), RT.richiede[t.tipo])));
@@ -5677,7 +5715,7 @@
       /* via di prestigio: dal livello 3; le sue abilità non occupano posti */
       if (livelloPg() >= 3) {
         const v = viaPg();
-        titolo(v ? `${RT.via.titolo}: ${RT.via.nomi[v]}` : RT.via.titolo);
+        titolo(v ? `${RT.via.titolo}: ${nomeViaPg(v)}` : RT.via.titolo);
         if (v) tecnicheVia().forEach(t => voce(t, tipoOk(t), tipoOk(t) ? null : RT.tipoSbagliato(nomeTec(t), RT.richiede[t.tipo])));
         else {
           const og = document.createElement("div"); og.className = "oggetto";
@@ -5708,6 +5746,10 @@
           const sc = (MG.VIE.find(x => x.via === v && MG.CLASSI[pg.classe].includes(x.scuola)) || {}).scuola;
           lab.append(c, el("span", "", `${V.titolo} ${nomeViaPg(v)}`), el("small", "", `${sc ? Lingua.t(MG.NOMI_SCUOLE[sc]) + " — " : ""}${abil}`)); fs.append(lab); return;
         }
+        if (sciamano()) { /* Sciamano: la passiva e le tre abilità della via */
+          const abil = TEC.filter(t => t.via === v && t.classe === "Forestiero").sort((x, y) => x.liv - y.liv).map(t => t.passiva ? `${RT.passiva}: ${nomeTec(t)}` : `${t.liv}: ${nomeTec(t)}`).join(" · ");
+          lab.append(c, el("span", "", V.nomiNatura[v]), el("small", "", `${V.descNatura[v]} (${abil})`)); fs.append(lab); return;
+        }
         const tipo = ["Contundente", "Perforante"].includes(tipoArmaVia()) ? tipoArmaVia() : "Tagliente", abil = TEC.filter(t => t.via === v && t.tipo === tipo).map(t => `${t.liv}: ${nomeTec(t)}`).join(" · ");
         const abilScudo = TEC.filter(t => t.via === v && t.tipo === "Scudo").map(t => `${t.liv}: ${nomeTec(t)}`).join(" · ");
         lab.append(c, el("span", "", V.nomi[v]), el("small", "", `${(tipo === "Contundente" ? V.descContundente : tipo === "Perforante" ? V.descPerforante : V.desc)[v]} (${abil}); ${V.descScudo[v]} (${abilScudo})`)); fs.append(lab);
@@ -5735,19 +5777,19 @@
       if (haTecniche()) {
         maxT = maxTecniche();
         const prep = tecnichePreparate(), opz = [...prep, ...opzioniTecniche().filter(t => !prep.includes(t))];
-        maxT = CMB.sceltaPredefinita(opz, livelloPg(), !!scudo).length; /* quante se ne possono davvero preparare, quote comprese */
-        box.append(el("h2", "", P.titoloTec), el("p", "guida", P.guidaTec(maxT)));
+        maxT = CMB.sceltaPredefinita(opz, livelloPg(), scudoPosti()).length; /* quante se ne possono davvero preparare, quote comprese */
+        box.append(el("h2", "", P.titoloTec), el("p", "guida", sciamano() ? RT.guidaTecNatura(maxT) : P.guidaTec(maxT)));
         const fs = el("fieldset");
         if (!opz.length) fs.append(el("p", "guida", P.nessuna));
         opz.forEach(t => {
           const lab = el("label"), c = el("input"); c.type = "checkbox"; c.name = "tec"; c.value = t.id; c.checked = prep.includes(t);
           if (soloVuoti && prep.includes(t)) { c.disabled = true; c.dataset.fissa = "1"; } /* fuori dal riposo si riempiono solo i posti vuoti */
-          lab.append(c, el("span", "", `${nomeTec(t)} — ${RT.costo(t.costo)} · ${RT.posto(t.liv)}${tipoOk(t) ? "" : " · " + RT.richiede[t.tipo]}`), el("small", "", Lingua.t(t.effetto)));
+          lab.append(c, el("span", "", `${nomeTec(t)} — ${costoTec(t.costo)} · ${RT.posto(t.liv)}${tipoOk(t) ? "" : " · " + RT.richiede[t.tipo]}`), el("small", "", Lingua.t(t.effetto)));
           fs.append(lab);
         });
         box.append(fs);
         maxT = Math.min(maxT, maxTecniche());
-        if (viaPg() && !soloVuoti) { /* serie della via: dell'arma o dello scudo, fino al prossimo riposo */
+        if (viaPg() && !soloVuoti && !sciamano()) { /* serie della via: dell'arma o dello scudo, fino al prossimo riposo (non per lo Sciamano) */
           const V = RT.via, ta = tipoArmaVia();
           box.append(el("h2", "", V.serieTit), el("p", "guida", V.serieGuida));
           const fsv = el("fieldset");
@@ -6454,7 +6496,8 @@
       offriPreparazione();
     }
     function offriPreparazione() { /* chiamata solo dopo un riposo riuscito */
-      usate.perRiposo = {}; if (usate.scale === "ko") usate.scale = "no"; salvaUsate(); /* la spada può richiamarti di nuovo */ /* Cataclisma del Filo Rovinato torna disponibile */
+      usate.perRiposo = {}; if (usate.scale === "ko") usate.scale = "no"; salvaUsate();
+      riempiBorse(); aggiornaEquip(); modificato(); /* la borsa dei veleni torna piena */ /* la spada può richiamarti di nuovo */ /* Cataclisma del Filo Rovinato torna disponibile */
       if (!haPreparazione() || finePartita) return;
       scelte([
         { testo: haTecniche() ? RT.prep.btnTec : RT.prep.btnInc, fn: () => { chiudiScelte(); apriPreparazione(false); } },
@@ -7725,8 +7768,12 @@
     }
 
     /* effetti dei consumabili: dalla dotazione (per nome) o dal laboratorio (per effetto) */
-    const effettoDi = (it) => it && (it.effetto || { "Pozione di cura": "pozCura", "Pozione di essenza": "pozMana", "Pozione di mana": "pozMana", "Razioni da viaggio": "razione" }[it.nome]);
-    const EFFETTI_BEVANDA = ["pozCura", "pozMana", "serenita", "razione"]; /* consumabili con un effetto immediato (in combattimento sono l'azione del turno) */
+    const effettoDi = (it) => it && (it.effetto || { "Pozione di cura": "pozCura", "Pozione di essenza": "pozMana", "Pozione di mana": "pozMana", "Razioni da viaggio": "razione", "Borsa dei veleni": "borsa" }[it.nome]);
+    const EFFETTI_BEVANDA = ["pozCura", "pozMana", "serenita", "razione", "borsa"]; /* consumabili con un effetto immediato (in combattimento sono l'azione del turno) */
+    /* Borsa dei veleni (Sciamano): 3 dosi che tornano piene a ogni riposo; vuota resta nello zaino */
+    const DOSI_BORSA = 3;
+    const ricaricabile = (it) => effettoDi(it) === "borsa";
+    function riempiBorse() { [...zaino, mano].filter(it => it && ricaricabile(it)).forEach(it => { it.usi = DOSI_BORSA; }); }
     /* applica l'effetto di una bevanda; restituisce il testo, oppure null se è inutile (in quel caso non si consuma) */
     function effettoBevanda(it) {
       const ef = effettoDi(it), B = Q.oggetti.bevi, nome = nomeOg(it);
@@ -7751,6 +7798,15 @@
         const d = tira(6) + liv; pg.risorsaUsata = Math.max(0, (pg.risorsaUsata || 0) - d);
         return { ok: B.pozMana(nome, d, prima, liv, risorsaAttuale()) };
       }
+      if (ef === "borsa") { /* Borsa dei veleni: 1d4 + livello punti natura, solo per lo Sciamano */
+        const ris = risorsaPg();
+        if (!ris || ris.id !== "natura") return { no: Q.oggetti.inutile.borsaClasse };
+        if (!(Number(it.usi) > 0)) return { no: Q.oggetti.inutile.borsaVuota };
+        const prima = risorsaAttuale();
+        if (prima >= ris.max) return { no: Q.oggetti.inutile.borsa };
+        const lv = Number(pg.livello) || 1, d = tira(4) + lv; pg.risorsaUsata = Math.max(0, (pg.risorsaUsata || 0) - d);
+        return { ok: B.borsa(d, prima, lv, risorsaAttuale(), Number(it.usi) - 1) };
+      }
       if (ef === "razione") { /* razioni da viaggio: 1 + livello di salute fisica */
         const max = Number(pg.puntiVita ?? pg.saluteFisica) || 0, prima = Math.max(0, max - (pg.dannoFisico || 0));
         if (prima >= max) return { no: Q.oggetti.inutile.razione };
@@ -7773,7 +7829,7 @@
           if (typeof scontro !== "undefined" && scontro) return scontro.tuoTurno ? beviScontro(b) : sist(CB.nonTuoTurno);
           const r = effettoBevanda(b);
           if (r.no) return sist(r.no);
-          b.usi -= 1; if (b.usi <= 0) zaino = zaino.filter(x => x !== b);
+          b.usi -= 1; if (b.usi <= 0 && !ricaricabile(b)) zaino = zaino.filter(x => x !== b); /* la borsa dei veleni vuota resta */
           disegnaVitali(); aggiornaEquip(); modificato();
           return aggiungi({ tipo: "narra", box: "ok", righe: [r.ok] });
         }
@@ -8539,6 +8595,7 @@
       esploratore: { ca: 13, dadoVita: 8, dannoDado: 6, xp: 500, attacco: 1, boss: true, /* boss: niente effetti di controllo, durate brevi, niente esecuzione */ /* custode del fermaglio: 500 PE, gli stessi se risparmiato */ probPresa: 0, probSoffio: 0, soffio: null, ritratto: "immagini/nemici/Ettore.webp" } /* immagine da aggiungere */
     };
     /* boss: Guendalina, Aldo, il sovrano, Adele, i guardiani dei fermagli e i due mastini speciali (campo boss in NEMICI) */
+    /* resistenze: resiste: ["veleno"] dimezza i danni da veleno dello Sciamano (da mettere a Dafne e al sovrano quando avranno la loro voce qui) */
     const bossNem = () => { const n = scontro || ultimoNemico; return !!(n && NEMICI[n.id] && NEMICI[n.id].boss); };
     const caNem = () => { const n = scontro || ultimoNemico; return NEMICI[n.id].ca + (Number(n.caMod) || 0) - (n.eff ? CMB.malusCA(n) : 0); }; /* il consiglio di Aldo abbassa la CA di Ettore; Sbilanciato e Incrinatura la abbassano */
     /* classe difficoltà degli incantesimi: 8 + modificatore (Mente per il Sapiente, Spirito per l'Accolito) + livello */
@@ -8570,7 +8627,7 @@
         effetti: "Effetti", effettiTit: "Effetti attivi", turniRim: (n) => n === 1 ? "1 turno" : `${n} turni`,
         turnoTit: (n) => `${n}° turno`, lblAttacco: "Attacco", lblTorcia: "Attacco con la torcia", lblPozione: "Pozione", lblBloccato: "Mastino bloccato",
         emorragia: "Emorragia", marchiato: "marchiato", sigillato: "sigillo", segnato: "segnato", cariche: (n, max) => `${n}/${max} cariche`, tuttoScontro: "tutto lo scontro",
-        effNomi: { sanguina: "Sanguinamento", crepe: "Incrinatura", frattura: "Frattura", intontito: "Intontito", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Senza attacchi speciali", frastornato: "Frastornato", guardia: "Guardia alzata", furore: "Furore inarrestabile", esposto: "Esposto", precisione: "Mille Soli", baluardo: "Baluardo d'Acciaio", fortezza: "Fortezza Eterna", cariche: "Carica Cinetica", scudo: "Scudo", bloccato: "Nemico bloccato", invuln: "Invulnerabilità", armaPiu: "Arma migliorata", pietra: "Pelle di pietra", cieco: "Nemico accecato", potenza: "Aumento di potenza", impaurito: "Impaurito", runa: "Runa sull'arma", occhio: "Occhio del Tomo", tomo: "Tomo Proibito", quiete: "Quiete Assoluta", muro: "Muro di forza", pressione: "Pressione", parola: "Parola Vera", sigilli: "Sigilli", santuario: "Santuario", voto: "Voto di Luce", gemella: "Ombra Gemella", cerchio: "Cerchio del Focolare", fiamma: "Fiamma Calda", notte: "Notte Senza Fine", furia: "Furia Cinerea", manto: "Manto d'Ombra", seconda: "Seconda Vita", accecato: "Accecato", avvizzito: "Avvizzito", paura: "Terrore", corona: "Corona di Raggi" },
+        effNomi: { sanguina: "Sanguinamento", crepe: "Incrinatura", frattura: "Frattura", intontito: "Intontito", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Senza attacchi speciali", frastornato: "Frastornato", guardia: "Guardia alzata", furore: "Furore inarrestabile", esposto: "Esposto", precisione: "Mille Soli", baluardo: "Baluardo d'Acciaio", fortezza: "Fortezza Eterna", cariche: "Carica Cinetica", scudo: "Scudo", bloccato: "Nemico bloccato", invuln: "Invulnerabilità", armaPiu: "Arma migliorata", pietra: "Pelle di pietra", cieco: "Nemico accecato", potenza: "Aumento di potenza", impaurito: "Impaurito", runa: "Runa sull'arma", occhio: "Occhio del Tomo", tomo: "Tomo Proibito", quiete: "Quiete Assoluta", muro: "Muro di forza", pressione: "Pressione", parola: "Parola Vera", sigilli: "Sigilli", santuario: "Santuario", voto: "Voto di Luce", gemella: "Ombra Gemella", cerchio: "Cerchio del Focolare", fiamma: "Fiamma Calda", notte: "Notte Senza Fine", furia: "Furia Cinerea", manto: "Manto d'Ombra", seconda: "Seconda Vita", accecato: "Accecato", avvizzito: "Avvizzito", paura: "Terrore", corona: "Corona di Raggi", avvelenato: "Avvelenato", tossina: "Tossina", marea: "Marea di Putrefazione", rivest: "Arma rivestita", linfaFuria: "Linfa Furiosa", pelle: "Pelle di Corteccia", infuso: "Infuso di Linfa Vitale", aura: "Aura di Purificazione", rinascita: "Rinascita del Sottobosco", bulbo: "Bulbo primordiale", morbo: "Morbo", corteccia: "Scudo di Corteccia", trappola: "Trappola pronta" },
         effFinito: (n) => `L'effetto «${n}» svanisce.`, resisteBreve: "resiste", effettoBreve: "a segno",
         iniziativa: (a, b) => `Iniziativa: la tua Agilità (${a}) contro quella del Mastino (${b}).`,
         pari: (x, y) => `Agilità pari: si tira un d20 a testa. Tu ${x}, il Mastino ${y}.`,
@@ -8684,7 +8741,7 @@
         effetti: "Effects", effettiTit: "Active effects", turniRim: (n) => n === 1 ? "1 round" : `${n} rounds`,
         turnoTit: (n) => `Round ${n}`, lblAttacco: "Attack", lblTorcia: "Torch attack", lblPozione: "Potion", lblBloccato: "Mastiff held",
         emorragia: "Haemorrhage", marchiato: "branded", sigillato: "seal", segnato: "marked", cariche: (n, max) => `${n}/${max} charges`, tuttoScontro: "whole fight",
-        effNomi: { sanguina: "Bleeding", crepe: "Cracked", frattura: "Fractured", intontito: "Dazzled", debole: "Weakened", sbilanciato: "Off-balance", silenzio: "No special attacks", frastornato: "Dazed", guardia: "Guard up", furore: "Unstoppable Fury", esposto: "Exposed", precisione: "Thousand Suns", baluardo: "Steel Bulwark", fortezza: "Eternal Fortress", cariche: "Kinetic Charge", scudo: "Shield", bloccato: "Enemy held", invuln: "Invulnerability", armaPiu: "Empowered weapon", pietra: "Stoneskin", cieco: "Enemy blinded", potenza: "Surge of power", impaurito: "Frightened", runa: "Weapon rune", occhio: "Eye of the Tome", tomo: "Forbidden Tome", quiete: "Absolute Stillness", muro: "Wall of force", pressione: "Pressure", parola: "True Word", sigilli: "Seals", santuario: "Sanctuary", voto: "Vow of Light", gemella: "Twin Shadow", cerchio: "Hearth Circle", fiamma: "Warm Flame", notte: "Endless Night", furia: "Ashen Fury", manto: "Shadow Cloak", seconda: "Second Life", accecato: "Blinded", avvizzito: "Withered", paura: "Terror", corona: "Crown of Rays" },
+        effNomi: { sanguina: "Bleeding", crepe: "Cracked", frattura: "Fractured", intontito: "Dazzled", debole: "Weakened", sbilanciato: "Off-balance", silenzio: "No special attacks", frastornato: "Dazed", guardia: "Guard up", furore: "Unstoppable Fury", esposto: "Exposed", precisione: "Thousand Suns", baluardo: "Steel Bulwark", fortezza: "Eternal Fortress", cariche: "Kinetic Charge", scudo: "Shield", bloccato: "Enemy held", invuln: "Invulnerability", armaPiu: "Empowered weapon", pietra: "Stoneskin", cieco: "Enemy blinded", potenza: "Surge of power", impaurito: "Frightened", runa: "Weapon rune", occhio: "Eye of the Tome", tomo: "Forbidden Tome", quiete: "Absolute Stillness", muro: "Wall of force", pressione: "Pressure", parola: "True Word", sigilli: "Seals", santuario: "Sanctuary", voto: "Vow of Light", gemella: "Twin Shadow", cerchio: "Hearth Circle", fiamma: "Warm Flame", notte: "Endless Night", furia: "Ashen Fury", manto: "Shadow Cloak", seconda: "Second Life", accecato: "Blinded", avvizzito: "Withered", paura: "Terror", corona: "Crown of Rays", avvelenato: "Poisoned", tossina: "Toxin", marea: "Tide of Rot", rivest: "Coated weapon", linfaFuria: "Furious Sap", pelle: "Bark Skin", infuso: "Lifesap Infusion", aura: "Purifying Aura", rinascita: "Rebirth of the Undergrowth", bulbo: "Primordial bulb", morbo: "Blight", corteccia: "Bark Shield", trappola: "Trap set" },
         effFinito: (n) => `The “${n}” effect fades.`, resisteBreve: "resisted", effettoBreve: "takes hold",
         iniziativa: (a, b) => `Initiative: your Agility (${a}) against the Mastiff's (${b}).`,
         pari: (x, y) => `Agility tied: each side rolls a d20. You ${x}, the Mastiff ${y}.`,
@@ -9136,8 +9193,10 @@
         if (seg) righe.push(RT.segnoDanno(seg));
         if (eff("voto") && !conTorcia) { const x = tira(4); scontro.pv -= x; const c1 = curaPgN(1); righe.push(window.MagiaCombattimento.testo({ k: "votoColpo", d: x, cura: c1 })); } /* Voto di Luce */
         if (eff("runa") && !conTorcia) righe.push(window.MagiaCombattimento.testo(CMB.incidi(scontro, { boss: bossNem() }, 1))); /* Runa sull'Arma: ogni colpo a segno incide 1 Sigillo */
+        if (sciamano() && !conTorcia) righe.push(...righeEventi(SCI.suColpo(scontro, ctxTecnica(), { ok: true, danno })).righe); /* il rivestimento dell'arma */
         scuotiNemico();
       } else righe.push(pesca(CB.manca), CB.tiroAtt(d, mA, tot, ca));
+      if (sciamano() && !conTorcia) { const f = SCI.attaccoFuria(scontro, ctxTecnica()); if (f.length) righe.push(...righeEventi(f).righe); } /* Linfa Furiosa */
       aggiungi({ tipo: "narra", box: crit ? "ok" : "mia", esito: crit ? CB.critico : ok ? CB.colpito : CB.mancato, righe });
       segnaTurno(`${conTorcia ? CB.lblTorcia : CB.lblAttacco}: ${esitoBreve(crit ? CB.critico : ok ? CB.colpito : CB.mancato)}`);
       if (conTorcia && mano) { /* colpire con la torcia ne consuma un utilizzo */
@@ -9151,7 +9210,7 @@
       it = it || pozioneCura();
       const r = effettoBevanda(it);
       if (!r || r.no) return sist(r ? r.no : CB.nessunaPozione);
-      it.usi -= 1; if (it.usi <= 0) zaino = zaino.filter(x => x !== it);
+      it.usi -= 1; if (it.usi <= 0 && !ricaricabile(it)) zaino = zaino.filter(x => x !== it);
       aggiornaEquip(); modificato();
       aggiungi({ tipo: "narra", box: "mia", righe: [r.ok] });
       segnaTurno(nomeOg(it));
@@ -9243,37 +9302,44 @@
        Ira: 10 + mod Vigore, poi + mod Vigore + livello a ogni salita; cresce con i colpi subiti (1/2/3 punti per livello, doppia sui critici).
        Tiro salvezza del nemico: d20 + mod Vigore del nemico contro 8 + mod Vigore + livello. I boss non subiscono effetti di controllo.
        ===================================================================== */
-    const TEC = window.TECNICHE || [], CMB = window.Combattimento;
-    const haTecniche = () => !!(pg && pg.classe === "Soldato" && TEC.length);
+    const TEC = window.TECNICHE || [], CMB = window.Combattimento, SCI = window.Sciamano;
+    const sciamano = () => !!(pg && pg.classe === "Forestiero" && SCI); /* Sciamano: tecniche della natura (js/sciamano.js), punti natura */
+    const haTecniche = () => !!(pg && (pg.classe === "Soldato" || sciamano()) && TEC.length);
+    const tecDellaClasse = (t) => (sciamano() ? t.classe === "Forestiero" : !t.classe); /* il Guerriero non vede quelle dello Sciamano e viceversa */
+    const costoTec = (n) => (sciamano() ? RT.costoNatura(n) : RT.costo(n));
     const nomeTec = (t) => Lingua.t(t.nome);
     const tipoArmaInMano = () => (arma && arma.nome !== "—" && arma.tipoDanno) || null;
-    const tipoOk = (t) => t.tipo === "Utilita" || (t.tipo === "Scudo" ? !!scudo : t.tipo === tipoArmaInMano());
-    const maxTecniche = () => CMB.slotTecniche(livelloPg(), !!scudo); /* 2, 4, 5, 6, 7 (+1 con lo scudo) */
+    const tipoOk = (t) => t.tipo === "Utilita" || t.tipo === "Natura" || (t.tipo === "Scudo" ? !!scudo : t.tipo === tipoArmaInMano()); /* lo Sciamano usa le sue con qualsiasi arma */
+    const scudoPosti = () => !sciamano() && !!scudo; /* il posto in più dello scudo è del Guerriero */
+    const maxTecniche = () => CMB.slotTecniche(livelloPg(), scudoPosti()); /* 2, 4, 5, 6, 7 (+1 con lo scudo) */
     const viaPg = () => ((haTecniche() || incantatore()) && livelloPg() >= 3 && (usate.via === "aldo" || usate.via === "guendalina")) ? usate.via : null;
-    const nomeViaPg = (v) => incantatore() ? Lingua.t(MG.NOMI_VIE[pg.classe][v]) : RT.via.nomi[v];
+    const nomeViaPg = (v) => incantatore() ? Lingua.t(MG.NOMI_VIE[pg.classe][v]) : sciamano() ? RT.via.nomiNatura[v] : RT.via.nomi[v];
     const tipoArmaVia = () => tipoArmaInMano() || eqPg().armaTipoDanno; /* le abilità della via cambiano con il tipo d'arma */
     /* serie della via preparata al riposo: quella dell'arma o quella dello scudo (usate.viaSerie) */
     const serieVia = () => (usate.viaSerie === "scudo" ? "scudo" : "arma");
     const tipoVia = () => (serieVia() === "scudo" ? "Scudo" : tipoArmaVia());
-    const tecnicheVia = () => { const v = viaPg(), tipo = tipoVia(); return v ? TEC.filter(t => t.via === v && t.tipo === tipo && t.liv <= livelloPg()) : []; };
+    const tecnicheVia = () => { const v = viaPg(), tipo = sciamano() ? "Natura" : tipoVia(); return v ? TEC.filter(t => t.via === v && t.tipo === tipo && tecDellaClasse(t) && t.liv <= livelloPg()) : []; };
     /* tecniche sbloccate dal livello e adatte a ciò che si impugna (le possibili scelte quando si prepara) */
-    const opzioniTecniche = () => { const tipo = tipoArmaInMano() || eqPg().armaTipoDanno; return TEC.filter(t => t.tipo !== "Utilita" && !t.via && t.liv <= livelloPg() && (t.tipo === tipo || (t.tipo === "Scudo" && scudo))); };
+    const opzioniTecniche = () => {
+      if (sciamano()) return TEC.filter(t => t.classe === "Forestiero" && !t.via && t.liv <= livelloPg());
+      const tipo = tipoArmaInMano() || eqPg().armaTipoDanno; return TEC.filter(t => !t.classe && t.tipo !== "Utilita" && !t.via && t.liv <= livelloPg() && (t.tipo === tipo || (t.tipo === "Scudo" && scudo)));
+    };
     /* le tecniche speciali preparate: scelte in creazione (pg.tecniche) e cambiate riposando (usate.tecPreparate) */
     function tecnichePreparate() {
       if (!Array.isArray(usate.tecPreparate)) {
-        const dalla = Array.isArray(pg.tecniche) && pg.tecniche.length ? pg.tecniche.map(id => TEC.find(t => t.id === id)).filter(Boolean) : CMB.sceltaPredefinita(opzioniTecniche(), livelloPg(), !!scudo); /* personaggi creati prima: le prime disponibili */
+        const dalla = Array.isArray(pg.tecniche) && pg.tecniche.length ? pg.tecniche.map(id => TEC.find(t => t.id === id)).filter(t => t && tecDellaClasse(t)) : CMB.sceltaPredefinita(opzioniTecniche(), livelloPg(), scudoPosti()); /* personaggi creati prima: le prime disponibili */
         usate.tecPreparate = dalla.slice(0, maxTecniche()).map(t => t.id);
       }
-      return usate.tecPreparate.map(id => TEC.find(t => t.id === id)).filter(t => t && !t.via); /* id di tecniche tolte: posto vuoto */
+      return usate.tecPreparate.map(id => TEC.find(t => t.id === id)).filter(t => t && !t.via && tecDellaClasse(t)); /* id di tecniche tolte: posto vuoto */
     }
     const postiLiberi = () => Math.max(0, maxTecniche() - tecnichePreparate().length);
     /* una tecnica si può aggiungere alla scelta se rispetta le quote dei livelli (e i posti) */
-    const aggiungibile = (scelte, t) => CMB.sceltaValida([...scelte, t], livelloPg(), !!scudo).ok;
+    const aggiungibile = (scelte, t) => CMB.sceltaValida([...scelte, t], livelloPg(), scudoPosti()).ok;
     /* le tecniche da mostrare nella scheda: { t, attiva, motivo, via } */
     function tecnicheDelPg() {
       if (!haTecniche()) return [];
       const out = [], motivo = (t) => tipoOk(t) ? null : RT.tipoSbagliato(nomeTec(t), RT.richiede[t.tipo]);
-      TEC.filter(t => t.tipo === "Utilita" && livelloPg() >= t.liv).forEach(t => out.push({ t, attiva: true }));
+      TEC.filter(t => t.tipo === "Utilita" && tecDellaClasse(t) && livelloPg() >= t.liv).forEach(t => out.push({ t, attiva: true }));
       tecnichePreparate().forEach(t => out.push({ t, attiva: tipoOk(t), motivo: motivo(t) }));
       tecnicheVia().forEach(t => out.push({ t, attiva: tipoOk(t), motivo: motivo(t), via: true }));
       return out;
@@ -9283,12 +9349,25 @@
       pg.risorsaUsata = Math.max(0, pg.risorsaUsata - n); disegnaVitali(); modificato();
       return RT.ira(n, risorsaAttuale(), r.max);
     }
-    const cdTecniche = () => 8 + mod(statPg("Vigore")) + livelloPg();
+    const cdTecniche = () => 8 + mod(statPg("Vigore")) + livelloPg(); /* anche lo Sciamano: i veleni agiscono sul corpo */
+    /* punti natura dello Sciamano: recupera fino al massimo, restituisce quanti ne ha ripresi */
+    function guadagnaNatura(n) {
+      const r = risorsaPg(); if (!r || r.id !== "natura" || !(n > 0)) return 0;
+      const preso = Math.min(n, Math.max(0, pg.risorsaUsata || 0));
+      if (preso > 0) { pg.risorsaUsata -= preso; disegnaVitali(); modificato(); }
+      return preso;
+    }
     /* l'ambiente in cui il modulo risolve le tecniche: dadi, modificatori, nemico, cure e usi per riposo */
     function ctxTecnica() {
+      const nem = scontro || ultimoNemico;
       return {
         tira, liv: livelloPg(), modAtt: modLottaPg(), modDanno: modLottaPg(), dado: dadoArmaPg(false), ca: caNem, boss: bossNem(),
         cd: cdTecniche(), modTs: modNem("Vigore"),
+        modSpirito: mod(statPg("Spirito")),
+        resisteVeleno: !!(nem && NEMICI[nem.id] && (NEMICI[nem.id].resiste || []).includes("veleno")), /* Dafne e il sovrano */
+        linfaRigeneratrice: sciamano() && viaPg() === "guendalina",
+        naturaPiu: (n) => guadagnaNatura(n),
+        dannoPg: (n) => { pg.dannoFisico = Math.min(pvMaxPg(), (pg.dannoFisico || 0) + n); disegnaVitali(); scuotiScheda(); modificato(); },
         curaPg: (n) => { pg.dannoFisico = Math.max(0, (pg.dannoFisico || 0) - n); disegnaVitali(); modificato(); },
         iraPiu: (n) => guadagnaIra(n),
         usataPerRiposo: (id) => !!(usate.perRiposo && usate.perRiposo[id]),
@@ -9366,10 +9445,11 @@
         case "ondaVuota": return S.ondaVuota;
         case "ira": { const r = risorsaPg(); return r ? RT.ira(e.n, risorsaAttuale(), r.max) : null; }
         case "stato": return (RT.effetti[e.s] || CB.effNomi[e.s] || e.s) + RT.durata(e.turni) + (e.ridotto ? " " + RT.ridotto(CB.effNomi[e.s], e.turni) : "");
-        default: return window.MagiaCombattimento ? window.MagiaCombattimento.testo(e) : null; /* Sigilli, Detonazione, difese degli incantesimi */
+        default: return (SCI && SCI.testo(e)) || (window.MagiaCombattimento ? window.MagiaCombattimento.testo(e) : null); /* Sciamano; Sigilli, Detonazione, difese degli incantesimi */
       }
     }
     function statoTecnica(t) {
+      if (t.passiva) return { ok: false, motivo: RT.passivaNonUsa };
       if (!tecnicheDelPg().some(x => x.t === t)) return { ok: false, motivo: RT.nonPreparata };
       if (!tipoOk(t)) return { ok: false, motivo: RT.tipoSbagliato(nomeTec(t), RT.richiede[t.tipo]) };
       return { ok: true };
@@ -9382,15 +9462,15 @@
       const ctx = ctxTecnica();
       if (t.unaPerRiposo && ctx.usataPerRiposo(t.id)) return sist(RT.giaUsataRiposo);
       const disp = CMB.disponibile(t, scontro); if (!disp.ok) return sist(RT.scudo[disp.motivo]); /* difese dello scudo di fila, Cariche mancanti */
-      const costo = CMB.costo(t, scontro);
-      if ((risorsaAttuale() || 0) < costo) return sist(RT.pocaIra(costo, risorsaAttuale() || 0));
-      pg.risorsaUsata = (pg.risorsaUsata || 0) + costo; /* l'ira si spende anche se la tecnica manca */
-      const r = CMB.usa(t, scontro, ctx);
+      const costo = sciamano() ? t.costo : CMB.costo(t, scontro);
+      if ((risorsaAttuale() || 0) < costo) return sist(sciamano() ? RT.pocaNatura(costo, risorsaAttuale() || 0) : RT.pocaIra(costo, risorsaAttuale() || 0));
+      pg.risorsaUsata = (pg.risorsaUsata || 0) + costo; /* l'ira (o la natura) si spende anche se la tecnica manca */
+      const r = sciamano() ? SCI.usa(t, scontro, ctx) : CMB.usa(t, scontro, ctx);
       const { righe, esiti, crit, ts, colpito } = righeEventi(r.eventi, t);
       righe.unshift(Lingua.t(t.desc));
       for (let i = 0; i < crit; i++) { const ira = guadagnaIra(2); if (ira) righe.push(ira); } /* un tuo colpo critico: +2 ira, come per gli attacchi normali */
       if (colpito) scuotiNemico();
-      righe.push(RT.costoRiga(risorsaAttuale(), risorsaPg().max));
+      righe.push(sciamano() ? RT.costoRigaNatura(risorsaAttuale(), risorsaPg().max) : RT.costoRiga(risorsaAttuale(), risorsaPg().max));
       aggiungi({ tipo: "narra", box: crit ? "ok" : "mia", esito: nomeTec(t) + (esiti.length ? ": " + esiti.join(", ") : ""), righe });
       if (ts) {
         aggiungi({ tipo: "prova", titolo: RT.tsTitolo(CB.nome), dati: [U.difficolta(ts.cd), "d20", `${N("attributi", "Vigore")} ${fmtN(ts.m)}`], righe: [RT.tsRegola(CB.nome, ts.cd)] });
@@ -9408,6 +9488,25 @@
       return f ? f[1] : null;
     }
 
+    /* eventi dello Sciamano fuori dalle tecniche (turno del nemico, trappole, cure): righe del diario e riquadro del tiro salvezza */
+    function mostraNatura(eventi, box) {
+      if (!eventi || !eventi.length) return;
+      const { righe, ts } = righeEventi(eventi);
+      if (righe.length) aggiungi({ tipo: "narra", box: box || "mia", righe });
+      if (ts) {
+        aggiungi({ tipo: "prova", titolo: RT.tsTitolo(CB.nome), dati: [U.difficolta(ts.cd), "d20", `${N("attributi", "Vigore")} ${fmtN(ts.m)}`], righe: [RT.tsRegola(CB.nome, ts.cd)] });
+        aggiungi({ tipo: "narra", box: ts.ok ? "ko" : "ok", esito: ts.ok ? RT.tsOk : RT.tsKo, righe: [RT.tsTiro(ts.d, ts.m, ts.tot, ts.cd)] });
+      }
+    }
+    /* danno al personaggio passato prima dalle difese dello Sciamano (Pelle e Scudo di Corteccia) */
+    function difesaNatura(d, righe) {
+      if (!sciamano() || !scontro || !(d > 0)) return d;
+      const r = SCI.difesa(scontro, ctxTecnica(), d);
+      r.eventi.forEach(e => { const x = SCI.testo(e); if (x) righe.push(x); });
+      if (r.eventi.some(e => e.k === "pelleColpo")) scuotiNemico();
+      return r.danno;
+    }
+
     function turnoNemScontro() {
       if (!scontro) return;
       if (scontro.primo === "nem") apriTurno();
@@ -9422,11 +9521,19 @@
         aggiungi({ tipo: "narra", box: "mia", righe: ev.map(e => window.MagiaCombattimento.testo(e)) }); scuotiNemico(); barraScontro();
         if (scontro.pv <= 0) return setTimeout(vittoriaScontro, PAUSA_SCONTRO / 2);
       }
+      if (sciamano()) { /* Sciamano: veleno, bulbo della Fioritura, Marea di Putrefazione; da qui riparte il recupero di natura del turno */
+        const ev = SCI.tickNemico(scontro, ctxTecnica());
+        if (ev.length) { mostraNatura(ev); scuotiNemico(); barraScontro(); disegnaVitali(); }
+        if (scontro.pv <= 0) return setTimeout(vittoriaScontro, PAUSA_SCONTRO / 2);
+      }
       if (eff("bloccato")) { aggiungi({ tipo: "narra", box: "mia", righe: [CB.bloccatoTxt] }); segnaTurno(CB.lblBloccato); return fineTurnoNem(); }
       const D = NEMICI[scontro.id];
       if (D.soffio && !scontro.soffioPronto) { /* ricarica del soffio: 5-6 su 1d6 */
         const r = tira(6); scontro.soffioPronto = r >= D.soffio.ricarica;
         aggiungi({ tipo: "narra", box: "nem", righe: [pesca(scontro.soffioPronto ? CB.ricaricaSi : CB.ricaricaNo)] }); /* il tiro di ricarica resta segreto */
+      }
+      if (sciamano() && scontro.trappola) { /* la trappola dello Sciamano scatta prima dell'attacco */
+        mostraNatura(SCI.scattaTrappola(scontro, ctxTecnica())); barraScontro(); disegnaVitali();
       }
       if (fratturaPrimaDiAttaccare()) return;
       if (D.soffio && scontro.soffioPronto && !eff("silenzio") && Math.random() < D.probSoffio) return soffioScontro();
@@ -9444,6 +9551,7 @@
     /* fine del turno del nemico: gli effetti scalano di un turno */
     function fineTurnoNem() {
       if (!scontro) return;
+      if (sciamano() && pvPg() > 0) mostraNatura(SCI.cureFineTurno(scontro, ctxTecnica())); /* cure «all'inizio del tuo turno»: Infuso, Aura, bulbo, Rinascita */
       const finiti = [];
       Object.keys(scontro.eff).forEach(k => {
         if (scontro.eff[k] > 0 && --scontro.eff[k] === 0) { finiti.push(k); sist(CB.effFinito(CB.effNomi[k])); if (k === "potenza") disegnaVitali(); }
@@ -9454,6 +9562,7 @@
         if (ev.length) aggiungi({ tipo: "narra", box: "mia", righe: ev.map(e => window.MagiaCombattimento.testo(e)) });
       }
       if (!(scontro.eff.sanguina > 0)) scontro.marchio = false; /* il marchio dura finché il nemico sanguina */
+      if (sciamano() && finiti.length) { mostraNatura(SCI.scaduti(scontro, finiti, ctxTecnica()), "nem"); disegnaVitali(); } /* Linfa Furiosa presenta il conto */
       if (scontro.pv <= 0) return setTimeout(vittoriaScontro, PAUSA_SCONTRO / 2); /* ucciso dal contrattacco della Parata */
       barraScontro();
       if (scontro.ctx === "aldo" && pvPg() <= (usate.aldo_soglia != null ? Number(usate.aldo_soglia) : Math.floor(pvMaxPg() / 2))) return setTimeout(interrompiAldo, PAUSA_SCONTRO / 2); /* Aldo ferma la danza */
@@ -9495,7 +9604,8 @@
           righe.push(assorbito ? pesca(CB.parata) : pesca(crit ? CB.critNem : morso ? CB.morsoOk : CB.zampaOk), CB.tiroAttNem(d, m, tot, ca), CB.tiroDanno(nd, D.dannoDado, tiri, m, danno));
           sub.eventi.forEach(e => { const x = rigaScudo(e); if (x) righe.push(x); });
           if (sub.eventi.some(e => e.k === "rimbalzo" || e.k === "elasticaColpo")) scuotiNemico();
-          if (sub.danno > 0) dannoAlPg(sub.danno, morso ? "Perforante" : "Tagliente", righe);
+          const dannoFin = difesaNatura(sub.danno, righe); /* Pelle e Scudo di Corteccia */
+          if (dannoFin > 0) dannoAlPg(dannoFin, morso ? "Perforante" : "Tagliente", righe);
           const ira = guadagnaIra(sub.ira); if (ira) righe.push(ira); /* l'ira cresce con i colpi subiti (non con quelli inghiottiti dallo scudo, salvo Batteria e Baluardo) */
         }
       } else {
@@ -9526,7 +9636,7 @@
         const a = tira(20), ta = a + m, b = tira(20), tb = b + n;
         if (tb > ta) {
           const d = tira(4), righe = [CB.presaVinceDett(d), CB.presaTiri(a, ta, b, tb)];
-          dannoAlPg(d, "Perforante", righe);
+          const dp = difesaNatura(d, righe); if (dp > 0) dannoAlPg(dp, "Perforante", righe);
           aggiungi({ tipo: "narra", box: "nem", esito: CB.presaVinta, righe });
         } else aggiungi({ tipo: "narra", box: "mia", esito: CB.presaPersa, righe: [scudo ? CB.liberoScudo : CB.liberoMani, CB.presaTiri(a, ta, b, tb)] });
         stato(true, CB.attesa);
@@ -9547,7 +9657,7 @@
         if (ok) aggiungi({ tipo: "narra", box: "mia", esito: CB.soffioSalvo, righe: [CB.soffioSalvoTxt, CB.soffioTiro(d, m, tot)] });
         else {
           const tiri = tiraDadi(S.dadi, S.dado), pieno = somma(tiri), danno = eff("cerchio") ? Math.floor(pieno / 2) : pieno, righe = [CB.soffioPresoTxt, CB.soffioTiro(d, m, tot), CB.tiroDanno(S.dadi, S.dado, tiri, 0, danno)];
-          dannoAlPg(danno, "Fuoco", righe);
+          const ds = difesaNatura(danno, righe); if (ds > 0) dannoAlPg(ds, "Fuoco", righe);
           const ira = guadagnaIra(CMB.iraPerColpo(livelloPg(), false)); if (ira) righe.push(ira); /* il soffio a segno conta come un colpo subito */
           aggiungi({ tipo: "narra", box: "nem", esito: CB.soffioPreso, righe });
         }
@@ -9558,6 +9668,10 @@
 
     function vittoriaScontro() {
       const D = NEMICI[scontro.id], ctx = scontro.ctx, idNem = scontro.id;
+      if (sciamano() && viaPg() === "aldo" && SCI.fame(scontro)) { /* Fame del Parassita */
+        const preso = guadagnaNatura(SCI.FAME);
+        aggiungi({ tipo: "narra", box: "ok", righe: [SCI.testo({ k: "fame", preso })] });
+      }
       if (!ctx) usate.cantina_cane = "sconfitto"; /* il mastino della cantina */
       if (ctx === "ettore") { usate.ettore = "morto"; usate.q4_esito = "uccisa"; if (usate.q4 === "accettata") usate.q4 = "prova"; }
       salvaUsate();

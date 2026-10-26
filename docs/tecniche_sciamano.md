@@ -166,3 +166,22 @@ Servono due cose nel codice: lo stato **Avvelenato anche sul personaggio** (l'In
 3. **Passive delle vie:** anche per Guerriero, Arcanista e Monaco, da disegnare.
 
 Nessuna decisione aperta: il documento è pronto per il codice (`js/tecniche.js`, `js/combattimento.js`, regolamento e test).
+
+---
+
+## Nel codice (26/10/2026)
+
+- **Dati:** le 23 voci dello Sciamano (15 tecniche, 6 abilità delle vie, 2 passive) sono in fondo a `js/tecniche.js`, con `tipo: "Natura"` e `classe: "Forestiero"`; il Guerriero non le vede e lo Sciamano non vede le sue.
+- **Regole:** `js/sciamano.js` (`window.Sciamano`), sullo stesso modello di `js/magia_combattimento.js`: `usa`, `tickNemico` (veleno, bulbo, marea e azzeramento del recupero del turno), `scattaTrappola`, `difesa` (Pelle e Scudo di Corteccia), `cureFineTurno`, `scaduti`, `suColpo` (rivestimento sugli attacchi normali), `attaccoFuria`, `fame`, `testo` (italiano e inglese).
+- **Avvelenato sui boss:** `TETTO_BOSS.avvelenato = 2` in `js/combattimento.js`.
+- **Partita (`gioco.html`):** scheda delle tecniche, preparazione al riposo, scelta della via con i nomi dello Sciamano, punti natura, turno del nemico (veleno, trappola prima dell'attacco, difese), cure di fine turno, Fame del Parassita alla vittoria, stati nella scheda (Avvelenato/Tossina, arma rivestita, Morbo, Scudo di Corteccia, trappola pronta…).
+- **Resistenza al veleno:** campo `resiste: ["veleno"]` in `NEMICI`. Dafne e il sovrano non hanno ancora la loro voce: va aggiunto quando ci saranno.
+- **Borsa dei veleni:** dotazione visibile solo allo Sciamano in `creazione.html`; in gioco 3 dosi da 1d4 + livello punti natura, resta nello zaino da vuota e torna piena a ogni riposo (`riempiBorse`).
+- **Creazione:** lo Sciamano sceglie 2 delle 3 tecniche della natura di livello 1, senza dipendere dall'arma.
+- **Regolamento:** sezione dello Sciamano con regole, tecniche e vie (italiano e inglese) e lo stato Avvelenato.
+- **Sala di prova:** classe «Sciamano» (`tutorial.html?prova`), con la casella «Resiste al veleno».
+
+## Test
+
+- `node tests/sciamano.test.js`: 45 test delle regole con dadi programmati (girano anche nella sala di prova, «Esegui i test»).
+- `node tests/sciamano.browser.js`: 16 test nel browser (partita in italiano e in inglese, creazione, regolamento, sala di prova).

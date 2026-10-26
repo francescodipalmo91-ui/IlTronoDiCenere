@@ -19,7 +19,7 @@
   const SCELTE_PER_LIVELLO = R.TECNICHE_PER_LIVELLO || [2, 2, 1, 1, 1]; /* tecniche da scegliere a ogni livello (1..5) */
   const IRA_PER_COLPO = R.IRA_PER_COLPO || [1, 1, 2, 2, 3];              /* ira per colpo subito, per livello */
   const CONTROLLI = ["frastornato", "bloccato", "silenzio"]; /* i boss non li subiscono mai */
-  const TETTO_BOSS = { debole: 2, sbilanciato: 2, esposto: 2, accecato: 2, avvizzito: 3 }; /* durata massima sui boss */
+  const TETTO_BOSS = { debole: 2, sbilanciato: 2, esposto: 2, accecato: 2, avvizzito: 3, avvelenato: 2 }; /* durata massima sui boss (Avvelenato: Sciamano) */
   const CREPE_MAX = 3, CREPE_MAX_BOSS = 2;             /* Incrinatura: cariche massime (comuni / boss) */
   const PER_SCONTRO = 99;                              /* durata «per tutto lo scontro» (Frattura della Sentenza e del Martello) */
   const CRIT_MIN = 18;                                 /* tetto dell'intervallo di critico: mai sotto 18-20 */

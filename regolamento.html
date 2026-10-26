@@ -121,6 +121,14 @@
       return tendina(nome[L], tabella(base) + ["aldo", "guendalina"].filter(k => via(k).length).map(k => tendina(viaTit(vie[k]), tabella(via(k)))).join(""));
     }).join("");
     const utilitaGuerriero = TEC.filter(t => t.tipo === "Utilita");
+    /* Sciamano: le 15 tecniche della natura e le due vie (con la passiva) */
+    const natura = TEC.filter(t => t.classe === "Forestiero");
+    const vieSciamano = [["aldo", { it: "Signore delle Spore Putride", en: "Lord of the Rotting Spores" }], ["guendalina", { it: "Custode dei Boschi Sacri", en: "Keeper of the Sacred Woods" }]]
+      .map(([k, n]) => {
+        const voci = natura.filter(t => t.via === k), pass = voci.find(t => t.passiva);
+        return tendina(n[L], (pass ? `<p><b>${EN ? "Passive" : "Passiva"} — ${pass.nome[L]}</b>: ${pass.effetto[L]}</p>` : "") + tabella(voci.filter(t => !t.passiva)));
+      }).join("");
+    const tecnicheSciamano = tendina(EN ? "Nature techniques" : "Tecniche della natura", tabella(natura.filter(t => !t.via))) + tendina(EN ? "Prestige paths" : "Vie di prestigio", vieSciamano);
 
     /* incantatori: una tendina per scuola e per via */
     const scuola = (s) => MG ? MG.INCANTESIMI.filter(i => i.scuola === s) : [];
@@ -209,6 +217,7 @@
               <tr><td>Esposto</td><td>i tuoi attacchi fanno critico con un numero in meno, mai sotto 18</td></tr>
               <tr><td>Accecato</td><td>tira 2d20 per colpire e tiene il peggiore</td></tr>
               <tr><td>Avvizzito</td><td>1d4 danni necrotici a ogni suo turno (1d6 dove indicato); si somma al Sanguinamento</td></tr>
+              <tr><td>Avvelenato</td><td>1d4 danni da veleno a ogni suo turno (Tossina: 1d6); si somma a Sanguinamento e Avvizzito</td></tr>
             </table></div>
             <p>Gli effetti non si sommano: uno nuovo dello stesso tipo rinnova la durata. Le eccezioni (Incrinatura, Sigilli) sono spiegate nelle classi.</p>
             <h3>Avversari temibili</h3>
@@ -238,8 +247,22 @@
             ${tendina("Capacità di classe", tabella(utilitaGuerriero))}
             ${ramiGuerriero}`],
           ["Sciamano", `
-            <p>Combatte con l'arma e la forza della natura. Usa i <b>punti natura</b> (${R.RISORSA_BASE} + mod. Spirito) e ha la capacità Mente incrollabile.</p>
-            <p class="avviso">Le tecniche dello Sciamano sono in preparazione: arriveranno con un prossimo aggiornamento.</p>`],
+            <p>Combatte con l'arma e la forza della natura: veleni, trappole, radici e spore. Le tecniche costano <b>punti natura</b>.</p>
+            <h3>Regole della classe</h3>
+            <ul>
+              <li><b>Punti natura</b>: partono da ${R.RISORSA_BASE} + mod. Spirito e a ogni livello aumentano di mod. Spirito + il nuovo livello. Una tecnica che manca il bersaglio costa comunque.</li>
+              <li><b>Attacco</b>: d20 + mod. Vigore, come il Guerriero. <b>Tiro salvezza del nemico</b>: sempre sul corpo, d20 + il suo Vigore contro 8 + il tuo Vigore + livello.</li>
+              <li><b>Recupero</b>: la natura torna quando la natura colpisce, non l'arma. Danni da veleno, Tossina, acido e bulbo, un tiro salvezza fallito contro una tua tecnica, una trappola che scatta e lo Scudo di Corteccia (quando lo crei o quando assorbe) ti danno ${recupero()}, al massimo una volta per turno del nemico; il doppio se il nemico ha la Tossina.</li>
+              <li><b>Posti</b>: ${posti()}. Le tecniche della natura funzionano con qualsiasi arma. Si scelgono in creazione e si cambiano riposando.</li>
+              <li><b>Rivestimento</b>: un attacco che riveste l'arma per 3 turni; ogni colpo a segno (anche gli attacchi normali) ne porta l'effetto. Uno solo alla volta.</li>
+              <li><b>Trappola</b>: un attacco e, nello stesso turno, una trappola che scatta al prossimo attacco del nemico, prima del suo tiro. Una sola alla volta.</li>
+              <li><b>Avvelenato</b>: 1d4 danni a ogni turno del nemico (<b>Tossina</b>: 1d6); si rinnova, non si somma, e si somma a Sanguinamento e Avvizzito. Alcuni avversari resistono al veleno e ne subiscono metà.</li>
+              <li><b>Scudo di Corteccia</b>: salute temporanea che assorbe i danni prima della salute fisica, al massimo 5 + livello, per tutto lo scontro.</li>
+              <li><b>Borsa dei veleni</b> (dotazione dello Sciamano): 3 dosi da 1d4 + livello punti natura, che tornano piene a ogni riposo.</li>
+              <li>Mente incrollabile appartiene alla classe. Dal livello 3 scegli una via di prestigio: una passiva e tre abilità (livelli 3, 4 e 5), sempre pronte e senza occupare posti. La scelta è definitiva.</li>
+            </ul>
+            <h3>Tecniche</h3>
+            ${tecnicheSciamano}`],
           ["Arcanista", `
             <p>Plasma la magia di due scuole: l'<b>Arcano</b> incide Sigilli sul nemico, la <b>Forza</b> li fa esplodere. Gli incantesimi costano mana.</p>
             <h3>Regole della classe</h3>
@@ -410,6 +433,7 @@
               <tr><td>Exposed</td><td>your attacks crit on one number lower, never below 18</td></tr>
               <tr><td>Blinded</td><td>rolls 2d20 to hit and keeps the worse</td></tr>
               <tr><td>Withered</td><td>1d4 necrotic damage each of its turns (1d6 where stated); stacks with Bleeding</td></tr>
+              <tr><td>Poisoned</td><td>1d4 poison damage each of its turns (Toxin: 1d6); stacks with Bleeding and Withered</td></tr>
             </table></div>
             <p>Effects do not stack: a new one of the same kind renews the duration. The exceptions (Cracked, Seals) are explained in the classes.</p>
             <h3>Fearsome foes</h3>
@@ -439,8 +463,22 @@
             ${tendina("Class abilities", tabella(utilitaGuerriero))}
             ${ramiGuerriero}`],
           ["Shaman", `
-            <p>Fights with the weapon and the strength of nature. Uses <b>nature points</b> (${R.RISORSA_BASE} + Spirit mod.) and has the Unshakeable Mind ability.</p>
-            <p class="avviso">The Shaman's techniques are in preparation: they will arrive with a coming update.</p>`],
+            <p>Fights with the weapon and the strength of nature: poisons, traps, roots and spores. Techniques cost <b>nature points</b>.</p>
+            <h3>Class rules</h3>
+            <ul>
+              <li><b>Nature points</b>: start at ${R.RISORSA_BASE} + Spirit mod. and at each level grow by Spirit mod. + the new level. A technique that misses still costs.</li>
+              <li><b>Attack</b>: d20 + Vigour mod., like the Warrior. <b>Enemy saving throw</b>: always on the body, d20 + its Vigour against 8 + your Vigour + level.</li>
+              <li><b>Recovery</b>: nature returns when nature strikes, not the weapon. Poison, Toxin, acid and bulb damage, a failed saving throw against one of your techniques, a trap springing and the Bark Shield (when you create it or when it absorbs) give you ${recupero()}, at most once per enemy turn; double if the enemy has Toxin.</li>
+              <li><b>Slots</b>: ${posti()}. Nature techniques work with any weapon. They are chosen at creation and changed when you rest.</li>
+              <li><b>Coating</b>: an attack that coats your weapon for 3 turns; every hit (normal attacks too) carries its effect. Only one at a time.</li>
+              <li><b>Trap</b>: an attack and, in the same turn, a trap that springs at the enemy's next attack, before its roll. Only one at a time.</li>
+              <li><b>Poisoned</b>: 1d4 damage each enemy turn (<b>Toxin</b>: 1d6); it renews rather than stacking, and stacks with Bleeding and Withered. Some foes resist poison and take half.</li>
+              <li><b>Bark Shield</b>: temporary health that absorbs damage before physical health, at most 5 + level, for the whole fight.</li>
+              <li><b>Poison pouch</b> (Shaman gear): 3 doses of 1d4 + level nature points, refilled at every rest.</li>
+              <li>Unshakeable Mind belongs to the class. From level 3 you choose a prestige path: one passive and three abilities (levels 3, 4 and 5), always ready and taking no slots. The choice is final.</li>
+            </ul>
+            <h3>Techniques</h3>
+            ${tecnicheSciamano}`],
           ["Arcanist", `
             <p>Shapes the magic of two schools: <b>Arcane</b> carves Seals on the enemy, <b>Force</b> makes them explode. Spells cost mana.</p>
             <h3>Class rules</h3>

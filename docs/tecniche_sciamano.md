@@ -1,4 +1,4 @@
-# Sciamano — Tecniche e vie di prestigio (v2, proposta con decisioni del 26/10/2026)
+# Sciamano — Tecniche e vie di prestigio (v3, proposta con decisioni del 26/10/2026)
 
 Adattamento della lista originale (13 poteri in tempo reale) alle regole del gioco. Stessa struttura del Guerriero: d20 contro CA, durate in turni del nemico, 3 tecniche per livello (se ne scelgono 2 ai livelli 1-2, 1 ai livelli 3-5; posti 2, 4, 5, 6, 7), vie di prestigio dal livello 3, immunità e tetti dei boss.
 
@@ -17,15 +17,21 @@ Adattamento della lista originale (13 poteri in tempo reale) alle regole del gio
 | 7 | Costi da 2 a 10 senza regola del livello | Tutte | Fasce del Guerriero: 2-3, 4-5, 5-6, 7-8, 9-10 |
 | 8 | Solo 1 potere al livello 5, nessuna scelta | Livello 5 | 3 opzioni come gli altri livelli (2 nuove) |
 | 9 | Botola e Miasma doppioni di Baccello e Muffa | Livello 4 | Effetti distinti (Frastornato; veleno + corrosione insieme) |
-| 10 | Risorsa "combattendo o raccogliendo" non definita | Punti natura | Regole già nel codice (sotto) |
+| 10 | Risorsa "combattendo o raccogliendo" non definita | Punti natura | Recupero sui danni della natura (sotto) e Borsa dei veleni |
 
 ## 2. Regole della classe
 
 - **Punti natura:** 10 + mod Spirito; a ogni livello + mod Spirito + nuovo livello. Riposo: 1d4 + livello.
-- **Recupero in combattimento (DECISO): sui danni inflitti.** Per ogni tuo colpo a segno: +1 ai livelli 1-2, +2 ai livelli 3-4, +3 al livello 5, doppio sul critico. Stessa tabella del Guerriero, ma su ciò che dai invece che su ciò che subisci.
-  - Contano gli attacchi della tecnica e quelli normali, compresi gli attacchi in più di Linfa Furiosa.
-  - **Non contano** i danni a ogni turno (veleno, Tossina, bulbo della Fioritura) né l'acido della Pelle di Corteccia: altrimenti la natura si ricarica da sola.
-  - Un attacco mancato non dà nulla.
+- **Recupero in combattimento (DECISO): sulla forza della natura.** La natura torna quando la natura colpisce, non l'arma. Stessa tabella del Guerriero: +1 ai livelli 1-2, +2 ai livelli 3-4, +3 al livello 5.
+  - **Cosa conta:**
+    - danni da veleno (Avvelenato) e da Tossina;
+    - danni da acido (Pelle di Corteccia);
+    - danni del bulbo della Fioritura, compresa l'esplosione;
+    - radici e trappole: un tiro salvezza fallito dal nemico contro una tua tecnica, oppure una trappola che scatta (Baccello Esplosivo).
+  - **Al massimo un recupero per turno del nemico**, anche se nello stesso turno ci sono più eventi (veleno + acido, per esempio): così la natura non si ricarica da sola.
+  - **Doppio se nel turno c'è Tossina**: il premio per chi investe nel veleno.
+  - **Non contano** i danni dell'arma, nemmeno sul critico, né gli attacchi in più di Linfa Furiosa.
+  - **Contro gli immuni** (Dafne, il sovrano) il veleno non dà nulla, ma acido, bulbo, radici e trappole sì: lo Sciamano passa al controllo e si ricarica più lentamente. La Borsa dei veleni copre il resto.
 - **Attacco:** d20 + mod Vigore contro CA, danno dell'arma + mod Vigore. Una tecnica che manca costa comunque.
 - **Tiro salvezza del nemico (DECISO): sempre sul corpo.** I veleni agiscono sul corpo: d20 + mod Vigore del nemico (il vecchio Corpo è confluito in Vigore) contro CD = 8 + mod Vigore + livello, come il Guerriero.
 - **Armi:** tutte tranne quelle «da battaglia». Le tecniche non dipendono dal tipo d'arma (niente rami): il veleno funziona su lama, mazza o bastone.
@@ -120,5 +126,4 @@ Servono due cose nel codice: lo stato **Avvelenato anche sul personaggio** (l'In
 
 ## 8. Decisioni aperte
 
-1. **Recupero sui colpi a segno:** con Linfa Furiosa (2 attacchi a turno) lo Sciamano può ricaricarsi in fretta. Se in prova risulta troppo, gli attacchi in più danno solo +1.
-2. **Dafne:** confermi i tre spunti, o vuoi che il suo tema sia diverso dal veleno (per esempio arco e trappole)?
+1. **Dafne:** confermi i tre spunti, o vuoi che il suo tema sia diverso dal veleno (per esempio arco e trappole)?

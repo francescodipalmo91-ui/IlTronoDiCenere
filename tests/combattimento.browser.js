@@ -980,6 +980,21 @@ caso("Giardino: siepi (Sopravvivenza e Indagare col giocattolo), fontana a quatt
   eq(await page.evaluate(() => [pagineTrovate().includes(1), usate.pagine_non_lette]), [true, [1]], "pagina messa via senza leggerla");
   eq(errori, [], "errori"); await chiudi();
 });
+caso("Sconfitta con Ettore: risveglio con Aldo, sala della caccia bloccata, al ritorno Ettore combatte e non si arrende più", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "atrio", usate: { riposo: "sbloccato", q4: "accettata", ettore: "risparmiato" } }));
+  await page.evaluate(() => { vai("cripta"); usate.ettore = "scontro"; avviaScontroEttore(); }); /* si entra senza dialogo, poi lo scontro */
+  await page.waitForFunction(() => !!scontro, null, { timeout: 8000 }); /* lo scontro parte dopo la sua presentazione */
+  await page.evaluate(() => sconfittaScontro());
+  await page.waitForFunction(() => luogo === "sala_caccia", null, { timeout: 8000 });
+  eq(await page.evaluate(() => [usate.ettore, usate.ettore_sconfitte, usate.caccia_rimprovero, aldoNellaSalaCaccia()]), ["rivincita", 1, true, true]);
+  await page.evaluate(() => gestisci("vado nella sala dei trofei")); await page.waitForTimeout(300);
+  eq(await page.evaluate(() => luogo), "sala_caccia", "Aldo blocca la sala dei trofei");
+  await page.evaluate(() => scrittura); /* i comandi aspettano la fine della frase di Aldo */
+  await page.evaluate(() => gestisci("torno nell'atrio")); await page.waitForTimeout(300);
+  eq(await page.evaluate(() => [luogo, usate.caccia_rimprovero]), ["atrio", false], "uscire si può");
+  eq(await page.evaluate(() => IMG_MASTINI_ALDO.map(x => x.split("/").pop())), ["Mastino_aldo_destra.webp", "Mastino_aldo_sinistra.webp"]);
+  eq(errori, [], "errori"); await chiudi();
+});
 caso("Pianerottolo: stanza a sé tra atrio, anticamera e corridoio; «torno indietro» dal primo piano porta qui", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "atrio" }));
   const g = async (t) => { await page.evaluate(x => gestisci(x), t); await page.waitForTimeout(300); return page.evaluate(() => luogo); };

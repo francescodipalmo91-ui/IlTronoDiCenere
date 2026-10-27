@@ -2711,6 +2711,10 @@
           menzognaTit: "Menti ad Aldo", menzognaAzione: "Sostieni lo sguardo di Aldo e gli dici che Ettore è morto."
         },
         ettore: {
+          rivincita1: ["Scendi le scale con attenzione, aspettandoti un'imboscata da parte di Ettore a ogni gradino. Ma quando metti piede sul fondo, lo trovi lì: è seduto su uno dei sarcofagi freddi, l'arma appoggiata al fianco."],
+          rivincita1Ettore: ["«Di nuovo qui? Pensavo proprio che non ti avrei rivisto. E scommetto che ti starai chiedendo perché sei ancora vivo, perché non ti ho finito. Non sei l'unico a portarsi questo dubbio, sai... Ma dopo tutti questi anni, inizio a credere che dipenda tutto dal vecchio e dalla sua volontà. Evidentemente, ha visto in te qualcosa che un tempo aveva scorto anche in me. Ma bando alle ciance: facciamola finita.»", "Con un movimento fluido e naturale, scende quasi svogliatamente dal sarcofago, stringe l'elsa della sua arma e si fa avanti."],
+          rivincita2: ["Avanzi lungo la scala con i muscoli tesi. Una volta giunto alla fine, te lo ritrovi davanti inatteso, appoggiato a un sarcofago con l'arma già in pugno."],
+          rivincita2Ettore: ["«Di ritorno? Pensavo che la lezione fosse bastata a farti fuggire. Ah, già... dimenticavo: da questo posto maledetto non si può fuggire.»", "Un ghigno amaro, poi si stringe attorno all'impugnatura e avanza deciso ad attaccare."],
           aspetta: ["Ettore è seduto sul suo giaciglio, accanto al braciere. Alza la testa quando ti sente scendere, ma non si alza. La spada è posata sulle ginocchia."],
           vuota: ["La cripta è silenziosa. Il braciere si è spento, e del rifugio di Ettore non restano che stracci e cenere fredda."],
           diarioMorto: ["Tra le sue cose, sotto il mantello consumato, trovi un quaderno dalla copertina di pelle, logoro per le mani di un ragazzo. Lo aveva con sé fino all'ultimo."],
@@ -3243,6 +3247,10 @@
           menzognaTit: "You lie to Aldo", menzognaAzione: "You hold Aldo's gaze and tell him Ettore is dead."
         },
         ettore: {
+          rivincita1: ["You go down the stairs carefully, expecting an ambush from Ettore at every step. But when you set foot at the bottom, there he is: sitting on one of the cold sarcophagi, his weapon leaning against his side."],
+          rivincita1Ettore: ["«Here again? I really thought I would not see you again. And I bet you are wondering why you are still alive, why I did not finish you. You are not the only one carrying that doubt, you know... But after all these years, I am starting to believe it all depends on the old man and his will. Clearly he saw something in you that he once saw in me too. But enough talk: let us end this.»", "With a smooth, natural movement he slides almost lazily off the sarcophagus, grips the hilt of his weapon and steps forward."],
+          rivincita2: ["You advance down the stairs with your muscles tense. When you reach the bottom you find him unexpectedly before you, leaning against a sarcophagus with his weapon already in hand."],
+          rivincita2Ettore: ["«Back again? I thought the lesson had been enough to make you run. Ah, of course... I forgot: there is no running from this cursed place.»", "A bitter grin, then his grip tightens on the hilt and he advances, determined to attack."],
           aspetta: ["Ettore is sitting on his bed of rags, beside the brazier. He raises his head when he hears you coming down, but does not get up. The sword rests across his knees."],
           vuota: ["The crypt is silent. The brazier has gone out, and of Ettore's shelter only rags and cold ash remain."],
           diarioMorto: ["Among his belongings, beneath the worn cloak, you find a leather-covered notebook, worn by a boy's hands. He kept it with him to the very end."],
@@ -4317,11 +4325,11 @@
         },
         morte: {
           esito: (d, da, a, sMax) => `La casa non lascia morire i suoi prigionieri. Salute fisica: ${sMax} / ${sMax} · Salute mentale: −1d4 = −${d} · ${da} → ${a}`,
-          caccia: [ /* PROVVISORIO */
-            "Riapri gli occhi su una pelle d'orso, davanti al grande camino spento della sala della caccia. Non ricordi il viaggio di ritorno: solo il freddo della pietra e una presa ferrea sotto le braccia.",
-            "Aldo è in piedi accanto a te, le mani intrecciate dietro la schiena. Ti osserva come si osserva un cane da riporto tornato senza la preda.",
-            "«La casa non lascia morire i suoi ospiti. Io non ho la sua pazienza. La vostra preda vi aspetta ancora: vedete di non farmi perdere altro tempo.»"
-          ]
+          caccia: ["Riapri gli occhi. A giudicare dalle teste di cervo imbalsamate alla parete, sei di nuovo nella sala della caccia. Sei steso a terra, sopraffatto dal freddo, e quando provi a rialzarti lentamente un gemito ti sfugge dalle labbra: la testa ti sta letteralmente esplodendo.", "A poca distanza, Aldo contempla con distacco una delle teche della stanza. Non si premura di volgere lo sguardo nella tua direzione, come se la tua presenza fosse del tutto irrilevante."],
+          cacciaEttore: ["Riapri gli occhi. A giudicare dalle teste di cervo imbalsamate alla parete, sei di nuovo nella sala della caccia. Sei steso a terra, sopraffatto dal freddo, e quando provi a rialzarti lentamente un gemito ti sfugge dalle labbra: la testa ti sta letteralmente esplodendo.", "A poca distanza, Aldo contempla con distacco una delle teche della stanza. Non si premura di volgere lo sguardo nella tua direzione, come se la tua presenza fosse del tutto irrilevante."],
+          aldoEttore: ["«Questa dimora rifiuta di lasciar morire i suoi ospiti prima del dovuto. Una debolezza che, vi assicuro, non condivido affatto. La preda vi attende ancora nella cripta: rimettetevi in piedi e cercate di non farmi sprecare altro tempo.»"],
+          aldoComune: ["«Questa dimora rifiuta di lasciar morire i suoi ospiti prima del dovuto. Una debolezza che, vi assicuro, non condivido affatto. La preda vi attende ancora in giardino: rimettetevi in piedi e cercate di non farmi sprecare altro tempo.»"],
+          blocco: ["«Dove pensate di andare? Qualcuno vi sta aspettando, e credetemi: non sarà felice di rivedervi.»", "«Il contenuto delle teche spetta ai vincenti, non ai fannulloni.»", "«Le teche restano chiuse per chi torna a mani vuote.»", "«Non toccate nulla. Ogni oggetto in questa sala è stato guadagnato; voi non vi siete guadagnati nemmeno l'aria che respirate.»", "«Riposare? Avrete tutto il tempo di riposare quando la preda sarà morta. O quando lo sarete voi.»", "«La saletta dei trofei accoglie le prede, non i cacciatori sconfitti.»", "«La porta è alle vostre spalle. Non vi servono altre indicazioni.»", "«Le domande le farete quando avrete qualcosa da mostrarmi.»"]
         },
         guardiano: { /* PROVVISORIO */
           titolo: "La tua mente si è spezzata",
@@ -4383,11 +4391,11 @@
         },
         morte: {
           esito: (d, da, a, sMax) => `The house does not let its prisoners die. Physical health: ${sMax} / ${sMax} · Mental health: −1d4 = −${d} · ${da} → ${a}`,
-          caccia: [
-            "You open your eyes on a bearskin, before the great cold fireplace of the hunting room. You do not remember the way back: only the chill of stone and an iron grip under your arms.",
-            "Aldo stands beside you, hands clasped behind his back. He watches you the way one watches a retriever that came back without the prey.",
-            "«The house does not let its guests die. I do not have its patience. Your prey is still waiting for you: see that you do not waste more of my time.»"
-          ]
+          caccia: ["You open your eyes. Judging by the stuffed stag heads on the wall, you are back in the hunting hall. You lie on the floor, overcome by the cold, and when you slowly try to get up a groan escapes your lips: your head is literally bursting.", "Not far away, Aldo contemplates one of the room's display cases with detachment. He does not bother to look your way, as if your presence were entirely irrelevant."],
+          cacciaEttore: ["You open your eyes. Judging by the stuffed stag heads on the wall, you are back in the hunting hall. You lie on the floor, overcome by the cold, and when you slowly try to get up a groan escapes your lips: your head is literally bursting.", "Not far away, Aldo contemplates one of the room's display cases with detachment. He does not bother to look your way, as if your presence were entirely irrelevant."],
+          aldoEttore: ["«This house refuses to let its guests die before their time. A weakness which, I assure you, I do not share in the least. The prey still awaits you in the crypt: get back on your feet and try not to make me waste any more time.»"],
+          aldoComune: ["«This house refuses to let its guests die before their time. A weakness which, I assure you, I do not share in the least. The prey still awaits you in the garden: get back on your feet and try not to make me waste any more time.»"],
+          blocco: ["«Where do you think you are going? Someone is waiting for you, and believe me: they will not be pleased to see you again.»", "«The contents of these cases belong to the victorious, not to idlers.»", "«The cases stay closed to those who come back empty-handed.»", "«Touch nothing. Every object in this hall was earned; you have not even earned the air you breathe.»", "«Rest? You will have all the time in the world to rest when the prey is dead. Or when you are.»", "«The trophy room welcomes prey, not beaten hunters.»", "«The door is behind you. You need no further directions.»", "«You may ask your questions when you have something to show me.»"]
         },
         guardiano: {
           titolo: "Your mind has shattered",
@@ -4956,7 +4964,7 @@
 
     /* il buio usa l'immagine dell'esterno, spenta fino al nero (classe "nera") */
     const IMMAGINI = { foresta: "immagini/house/esterno_dungeon.webp", buio: "immagini/house/esterno_dungeon.webp", atrio: "immagini/house/atrio.webp", pianerottolo: "immagini/house/atrio.webp" /* PROVVISORIA: finché non c'è un'immagine del pianerottolo */, sala_caccia: "immagini/house/sala_caccia.webp", sala_caccia_aldo: "immagini/house/sala_caccia_aldo.webp", sala_conversazione: "immagini/house/sala_conversazione.webp", giardino: "immagini/house/giardino.webp", cappella: "immagini/house/cappella.webp", cripta: "immagini/house/cripta.webp", sala_trofei: "immagini/house/sala_trofei.webp", sala_pranzo: "immagini/house/sala_pranzo.webp", corridoio: "immagini/house/corridoio.webp", sala_ballo: "immagini/house/sala_ballo.webp", cucina: "immagini/house/cucina.webp", dispensa: "immagini/house/dispensa.webp", cantina: "immagini/house/cantina.webp", discesa_cantina: "immagini/house/discesa_cantina.webp", mastino: "immagini/house/mastino_cantina.webp", servizio: "immagini/house/discesa_cantina.webp", guendalina: "immagini/house/guendalina.webp" };
-    const DIM_IMMAGINI = { foresta: [1920, 1079], buio: [1920, 1079], corridoio: [2848, 1600], sala_ballo: [2304, 1728], giardino: [2848, 1600], cucina: [1920, 1079], dispensa: [2848, 1600], cantina: [2848, 1600], discesa_cantina: [2780, 1308], servizio: [2780, 1308], guendalina: [2048, 1536], atrio: [1920, 1079], pianerottolo: [1920, 1079], sala_conversazione: [1358, 679], cappella: [2848, 1600] }; /* le altre sono 1536 × 1024 */
+    const DIM_IMMAGINI = { foresta: [1920, 1079], buio: [1920, 1079], corridoio: [2848, 1600], sala_ballo: [2304, 1728], giardino: [2848, 1600], cucina: [1920, 1079], dispensa: [2848, 1600], cantina: [2848, 1600], discesa_cantina: [2780, 1308], servizio: [2780, 1308], guendalina: [2048, 1536], atrio: [1920, 1079], pianerottolo: [1920, 1079], sala_trofei: [2304, 1728], sala_conversazione: [1358, 679], cappella: [2848, 1600] }; /* le altre sono 1536 × 1024 */
     const vista = (id) => ({ titolo: TX.viste[id].titolo, img: IMMAGINI[id] ? { src: IMMAGINI[id], alt: TX.viste[id].alt } : undefined, buia: id === "cantina" && !usate.cantina_luce }); /* cantina al buio: riquadro nero */
 
     /* Una nuova partita parte dalla foresta, fuori dal dungeon; i salvataggi già esistenti riprendono dal loro luogo */
@@ -6639,7 +6647,7 @@
        - Riportato il fermaglio nella sala della caccia, Aldo concede le scelte dalle rastrelliere.
        ===================================================================== */
     const IMG_ALDO = "immagini/house/aldo_sala.webp", IMG_ALDO_MASTINI = "immagini/house/aldo_mastini.webp", DIM_ALDO = [2304, 1728]; /* stessa inquadratura della sala da ballo vuota */
-    const IMG_MASTINI_ALDO = ["immagini/nemici/Mastino_sala.webp", "immagini/nemici/Mastino_catene.webp"];
+    const IMG_MASTINI_ALDO = ["immagini/nemici/Mastino_aldo_destra.webp", "immagini/nemici/Mastino_aldo_sinistra.webp"]; /* ritagli dall'immagine della sala: prima il mastino a destra, poi quello a sinistra */
     const CD_MENZOGNA = 14;
     const haChiavePortone = () => usate.chiave_portone === "presa";
     const cacciaAperta = () => usate.q4 === "prova" || usate.q4 === "completata"; /* Aldo apre la porta di sinistra dell'atrio */
@@ -6733,18 +6741,26 @@
       await new Promise(r => requestAnimationFrame(r));
       sopra.remove();
     }
-    const immaginiSala = () => [...elDiario.querySelectorAll("img.scena")].filter(i => i.src.includes(IMMAGINI.sala_ballo) || i.src.includes(IMG_ALDO));
+    const immaginiSala = () => [...elDiario.querySelectorAll("img.scena")].filter(i => [IMMAGINI.sala_ballo, IMG_ALDO, IMG_ALDO_MASTINI].some(x => i.src.includes(x)));
+    /* cambio dell'immagine principale (27/10): si aspetta che la descrizione sia scritta tutta, poi qualche secondo;
+       la vista sale sull'immagine, la mostra mentre cambia, la lascia qualche secondo e torna giù. Una sola immagine per stanza. */
+    const pausa = (ms) => new Promise(r => setTimeout(r, ms));
+    async function cambiaImmagine(img, src, alt) {
+      occupato = true; stato(true, U.scrive);
+      await scrittura; await pausa(2000);
+      vistaFissa = false; img.closest(".voce").scrollIntoView({ block: "start", behavior: "smooth" }); vistaFissa = true;
+      await pausa(700);
+      await affiora(img, src, alt);
+      await pausa(2500);
+      vistaFissa = false; elDiario.scrollTo({ top: elDiario.scrollHeight, behavior: "smooth" });
+      await pausa(600);
+      occupato = false; stato(false);
+    }
     async function arrivoAldo() {
       usate.aldo_incontrato = true; salvaUsate();
-      const imgs = immaginiSala().filter(i => !i.src.includes(IMG_ALDO));
-      const img = imgs[0];
+      const img = immaginiSala()[0]; /* solo l'immagine principale della sala */
       if (img) {
-        occupato = true; stato(true, U.scrive);
-        vistaFissa = false; img.closest(".voce").scrollIntoView({ block: "start", behavior: "smooth" }); vistaFissa = true;
-        imgs.slice(1).forEach(i => { i.src = IMG_ALDO; i.alt = A.aldo.alt; });
-        await new Promise(r => setTimeout(r, 700));
-        await affiora(img, IMG_ALDO, A.aldo.alt);
-        occupato = false; stato(false);
+        await cambiaImmagine(img, IMG_ALDO, A.aldo.alt);
         fuoriDallaTendina(() => aggiungi({ tipo: "narra", righe: A.aldo.arrivo }));
       } else fuoriDallaTendina(() => aggiungi({ tipo: "narra", imgFissa: true, dim: DIM_ALDO, img: { src: IMG_ALDO, alt: A.aldo.alt }, righe: A.aldo.arrivo }));
       usate.dialogo_aldo_ingresso = usate.ballo_da === "corridoio" ? "servizio" : "ospiti"; /* dalla scala della servitù o dalla porta degli ospiti */
@@ -6753,10 +6769,9 @@
     }
     /* Aldo se ne va: l'ombra che lo ha portato se lo riprende, e la sala torna vuota */
     async function sparisceAldo() {
-      const imgs = immaginiSala().filter(i => i.src.includes(IMG_ALDO));
+      const imgs = immaginiSala().filter(i => !i.src.includes(IMMAGINI.sala_ballo));
       if (!imgs.length || luogo !== "sala_ballo") return;
       const alt = TX.viste.sala_ballo.alt;
-      imgs.slice(1).forEach(i => { i.src = IMMAGINI.sala_ballo; i.alt = alt; });
       occupato = true; stato(true, U.scrive);
       vistaFissa = false; imgs[0].closest(".voce").scrollIntoView({ block: "start", behavior: "smooth" }); vistaFissa = true;
       await new Promise(r => setTimeout(r, 800));
@@ -6766,15 +6781,15 @@
     }
     /* l'immagine della sala da ballo nel diario: con Aldo finché è nella sala, vuota quando se ne è andato */
     /* sala della caccia: con Aldo davanti alla teca finché è nella sala, vuota quando non c'è (usate.aldo_fuori) */
-    function aldoNellaSalaCaccia() { return cacciaAperta() && !usate.aldo_fuori; }
+    function aldoNellaSalaCaccia() { return (cacciaAperta() && !usate.aldo_fuori) || !!usate.caccia_rimprovero; }
     function statoSalaCaccia(img) {
       const conAldo = aldoNellaSalaCaccia();
       img.src = conAldo ? IMMAGINI.sala_caccia_aldo : IMMAGINI.sala_caccia;
       img.alt = conAldo ? TX.viste.sala_caccia.altAldo : TX.viste.sala_caccia.alt;
     }
     function statoSalaBallo(img) {
-      const conAldo = usate.aldo_incontrato && !usate.aldo_esito;
-      img.src = conAldo ? IMG_ALDO : IMMAGINI.sala_ballo; if (conAldo) img.alt = A.aldo.alt;
+      const conAldo = usate.aldo_incontrato && !usate.aldo_esito, conCani = conAldo && usate.aldo_img_mastini && usate.aldo_scontro === "in_corso";
+      img.src = conCani ? IMG_ALDO_MASTINI : conAldo ? IMG_ALDO : IMMAGINI.sala_ballo; if (conAldo) img.alt = conCani ? A.aldo.altMastini : A.aldo.alt;
     }
     function parlaAldo() {
       if (luogo === "sala_ballo") {
@@ -6798,13 +6813,13 @@
       aggiungi({ tipo: "narra", righe: A.aldo.assente });
     }
     /* lo scontro di prova: due mastini, uno alla volta */
-    function mastinoAldo() {
+    async function mastinoAldo() {
       if (luogo !== "sala_ballo" || scontro) return;
-      if (!usate.aldo_img_mastini) { /* una volta sola: Aldo e i mastini, emersi dalla cenere; la vista si ferma sull'immagine */
+      if (!usate.aldo_img_mastini) { /* una volta sola: i mastini emersi dalla cenere compaiono sull'immagine principale della sala */
         usate.aldo_img_mastini = true; salvaUsate();
-        fuoriDallaTendina(() => aggiungi({ tipo: "narra", cane: true, imgFissa: true, dim: DIM_ALDO, img: { src: IMG_ALDO_MASTINI, alt: A.aldo.altMastini }, righe: [] }));
-        const el = [...elDiario.querySelectorAll("img.scena")].pop();
-        if (el) { el.closest(".voce").scrollIntoView({ block: "start", behavior: "smooth" }); vistaFissa = true; setTimeout(() => { vistaFissa = false; }, 3000); }
+        const img = immaginiSala()[0];
+        if (img) await cambiaImmagine(img, IMG_ALDO_MASTINI, A.aldo.altMastini);
+        if (luogo !== "sala_ballo" || scontro) return;
       }
       ultimaImmagineNemico = IMG_MASTINI_ALDO[Math.min(1, Number(usate.aldo_mastini) || 0)];
       avviaScontro("mastino", { ctx: "aldo", testi: "mastino_sala", soffioScarico: !usate.aldo_soffio_carico }); /* i mastini di Aldo partono con il soffio scarico: è una prova, non un'esecuzione */
@@ -6852,8 +6867,10 @@
       } else if (e === "scontro") { /* scontro interrotto (pagina ricaricata): Ettore ti aspetta con la spada in pugno */
         fuoriDallaTendina(() => aggiungi({ tipo: "narra", righe: A.ettore.aspetta }));
         setTimeout(avviaScontroEttore, 600);
-      } else if (e === "tregua") {
-        fuoriDallaTendina(() => aggiungi({ tipo: "narra", righe: A.ettore.aspetta }));
+      } else if (e === "tregua" || e === "rivincita") { /* dopo una sconfitta Ettore non parla più: combatte */
+        const secondo = (Number(usate.ettore_sconfitte) || 1) > 1;
+        fuoriDallaTendina(() => aggiungi({ tipo: "dialogo", fuori: true, tuttoBox: true, chi: "Ettore", macchina: true, righe: secondo ? A.ettore.rivincita2Ettore : A.ettore.rivincita1Ettore }));
+        scrittura.then(() => setTimeout(avviaScontroEttore, 600));
       } else if (e === "incontrato" && (!usate.dialogo_ettore || usate.dialogo_ettore === "fine")) { /* dialogo mai iniziato o rimasto in sospeso */
         setTimeout(() => { if (luogo === "cripta" && !scontro) fuoriDallaTendina(() => avviaDialogo("ettore")); }, 900);
       }
@@ -6861,6 +6878,7 @@
     function parlaEttore() {
       if (usate.ettore === "morto" || usate.ettore === "risparmiato") return aggiungi({ tipo: "narra", righe: usate.ettore === "morto" ? A.ettore.vuotaMorto : A.ettore.vuota });
       if (scontro) return;
+      if (usate.ettore === "rivincita" || usate.ettore === "tregua") return avviaScontroEttore(); /* dopo una sconfitta non c'è più niente da dirsi */
       const st = usate.dialogo_ettore;
       tendinaDialogo();
       if (st && st !== "fine") return nodoDialogo("ettore", st, true);
@@ -8341,7 +8359,7 @@
        I browser avviano l'audio solo dopo un'interazione del giocatore (clic o tasto).
        ===================================================================== */
     /* valore: "crepitio" = scoppiettii generati dal browser; un percorso (es. "audio/camino.mp3") = file audio in ciclo */
-    const SUONI_STANZE = { foresta: "audio/Foresta.mp3", sala_conversazione: "audio/sala_conversazione.mp3" }; /* se il file manca si usa il crepitio generato */
+    const SUONI_STANZE = { foresta: "audio/Foresta.mp3", sala_conversazione: "audio/sala_conversazione.mp3", giardino: "audio/fontana_giardino.mp3" }; /* se il file manca si usa il crepitio generato */
     const VOLUME_AMBIENTE = 0.7; /* volume del file audio, da 0 a 1 */
     /* =====================================================================
        FUOCO DEL CAMINO generato dal browser (Web Audio API), a strati:
@@ -8502,10 +8520,15 @@
       chiudiScelte(); /* eventuali scelte rimaste in sospeso nella stanza che si lascia */
       if (id === "giardino" && usate.giardino_visto !== "si") { usate.giardino_visto = "si"; salvaUsate(); } /* sblocca la domanda sulla fontana con Guendalina */
       if (id === "sala_ballo" && (luogo === "corridoio" || luogo === "corridoio_primo")) usate.ballo_da = luogo; /* «torno indietro»: da dove si è entrati */
+      if (luogo === "sala_caccia" && id !== "sala_caccia" && usate.caccia_rimprovero) { usate.caccia_rimprovero = false; salvaUsate(); }
       luogo = id;
       const s = STANZE[id];
       let tornato = diario.some(e => e.stanza === id);
       if (id === "cripta" && tornato && (usate.ettore === "morto" || usate.ettore === "risparmiato")) opz = { ...opz, righe: usate.ettore === "morto" ? A.ettore.vuotaMorto : A.ettore.vuota };
+      if (id === "cripta" && tornato && (usate.ettore === "rivincita" || usate.ettore === "tregua")) { /* dopo una sconfitta: la pagina della cripta riparte pulita */
+        diario = diario.filter(e => e.stanza !== "cripta"); tornato = false;
+        opz = { ...opz, righe: (Number(usate.ettore_sconfitte) || 1) > 1 ? A.ettore.rivincita2 : A.ettore.rivincita1 };
+      }
       const pulisciCucina = id === "cucina" && tornato && usate.dialogo_guendalina === "fine" && usate.portaCucina === "aperta";
       if (pulisciCucina) diario = diario.filter(e => e.stanza !== "cucina"); /* la chat della cucina si ripulisce */
       mostraStanza(id); /* sparisce il diario della stanza precedente, riappare quello di questa */
@@ -8673,6 +8696,13 @@
         if (luce === "accendi_torcia" || luce === "lancia_luce") return luceCantina(luce === "lancia_luce");
       }
       if (luogo === "foresta" && (await gestisciForesta(t, testo)) !== false) return;
+      /* dopo una sconfitta in caccia, nella sala della caccia si può solo uscire (o usare ciò che si ha nello zaino): Aldo blocca tutto il resto */
+      if (luogo === "sala_caccia" && usate.caccia_rimprovero) {
+        const esce = /\batrio\b|atrium|\bhall\b|\besc\w*|\buscir\w*|\btorn\w*|ritorn\w*|indietro|\bfuori\b|cripta|crypt|giardin|garden|\bleave\b|\bexit\b|\bback\b|\bout\b/.test(t) && !/trofe|troph|teca|teche|rastrell|\bcase/.test(t);
+        const oggetto = (ha(t, "usa") || ha(t, "riponi")) && trovaOggetti(t, () => true).length > 0;
+        if (esce) return vai("atrio");
+        if (!oggetto) return rimproveroAldo();
+      }
 
       /* incantesimo lanciato fuori dal buio: per ora nessun effetto e nessun costo */
       if (/incantesim|\bspell\b|\bcast\w*|\blanci[oa]\b|\bevoc\w*/.test(t)) {
@@ -9386,7 +9416,7 @@
       scontro.tuoTurno = false;
       barraScontro();
       if (scontro.pv <= 0) return setTimeout(vittoriaScontro, PAUSA_SCONTRO / 2);
-      if (scontro.ctx === "ettore" && !scontro.resa && scontro.pv <= Math.ceil(scontro.pvMax / 3)) { scontro.resa = true; return setTimeout(resaEttore, PAUSA_SCONTRO / 2); } /* Ettore si arrende */
+      if (scontro.ctx === "ettore" && !scontro.resa && !(Number(usate.ettore_sconfitte) > 0) && scontro.pv <= Math.ceil(scontro.pvMax / 3)) { /* si arrende solo al primo incontro */ scontro.resa = true; return setTimeout(resaEttore, PAUSA_SCONTRO / 2); } /* Ettore si arrende */
       stato(true, CB.attesa);
       setTimeout(turnoNemScontro, PAUSA_SCONTRO);
     }
@@ -9961,6 +9991,20 @@
         }, 2600);
       }, 2200);
     }
+    /* risveglio nella sala della caccia dopo una sconfitta durante una caccia (27/10): Aldo è lì, davanti a una teca,
+       e finché non si esce dalla sala ogni altra azione è bloccata (usate.caccia_rimprovero) */
+    function risveglioCaccia(ettore, pena) {
+      usate.caccia_rimprovero = true; salvaUsate();
+      fuoriDallaTendina(() => {
+        vai("sala_caccia", { righe: RG.morte.cacciaEttore });
+        aggiungi({ tipo: "dialogo", fuori: true, tuttoBox: true, chi: "Aldo", macchina: true, righe: ettore ? RG.morte.aldoEttore : RG.morte.aldoComune });
+        aggiungi({ tipo: "narra", box: "ko", righe: [pena] }); sist(CB.sistRisveglio);
+      });
+    }
+    function rimproveroAldo() {
+      const B = RG.morte.blocco;
+      aggiungi({ tipo: "dialogo", fuori: true, tuttoBox: true, chi: "Aldo", macchina: true, righe: [B[Math.floor(Math.random() * B.length)]] });
+    }
     function sconfittaScontro() {
       if (scontro && scontro.ctx === "aldo") return interrompiAldo();
       if (scontro && scontro.ctx === "ettore") { /* Ettore non ti finisce: ti risvegli nella cappella e lui ti aspetta ancora */
@@ -9970,8 +10014,8 @@
         stato(true, CB.attesa);
         return setTimeout(() => {
           const pena = penaMorte();
-          usate.ettore = "tregua"; usate.dialogo_ettore = "tregua"; salvaUsate();
-          fuoriDallaTendina(() => { vai("sala_caccia", { righe: RG.morte.caccia }); aggiungi({ tipo: "narra", box: "ko", righe: [pena] }); sist(CB.sistRisveglio); });
+          usate.ettore = "rivincita"; usate.ettore_sconfitte = (Number(usate.ettore_sconfitte) || 0) + 1; salvaUsate(); /* al ritorno Ettore combatte subito, e non si arrende più */
+          risveglioCaccia(true, pena);
           stato(false);
         }, 2200);
       }
@@ -9982,7 +10026,7 @@
         stato(true, CB.attesa);
         return setTimeout(() => {
           const pena = penaMorte();
-          fuoriDallaTendina(() => { vai("sala_caccia", { righe: RG.morte.caccia }); aggiungi({ tipo: "narra", box: "ko", righe: [pena] }); sist(CB.sistRisveglio); });
+          risveglioCaccia(false, pena);
           stato(false);
         }, 2200);
       }

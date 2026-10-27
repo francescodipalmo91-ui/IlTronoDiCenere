@@ -3,7 +3,8 @@
 Documento di riferimento per scrivere diari, flashback, dialoghi e finali. Contiene tutti gli spoiler: non va mostrato al giocatore.
 **Regola di lavoro:** questo file è la linea guida condivisa tra Francesco e Claude. Si aggiorna a ogni decisione, e ogni scelta dell'uno può essere messa in discussione dall'altro.
 
-Ultimo aggiornamento: 26 ottobre 2026 (visioni del Retaggio: nuova sezione 12; riviste 1, 3, 7, 7b, 8 e 9).
+Ultimo aggiornamento: 27 ottobre 2026 (sezione 11: prima visita di Aldo e pianerottolo).
+Aggiornamento precedente: 26 ottobre 2026 (visioni del Retaggio: nuova sezione 12; riviste 1, 3, 7, 7b, 8 e 9).
 
 ---
 
@@ -162,6 +163,8 @@ Non ci sono scontri fisici con Aldo e Guendalina (sono segnati come boss solo pe
 
 - **Secondo piano:** il piano superiore non porta ancora da nessuna parte. Descrizione provvisoria: "un muro di forza ti sbarra la strada". Il mastino a due teste nell'anticamera del trono resta immobile e lascia passare **solo se c'è Aldo**.
 - **Prima visita di Aldo, nella sala da ballo:** due ingressi, un solo esito. Se il giocatore arriva dalla scala di servizio, Aldo osserva che gli ospiti entrano dalla porta principale e la servitù da quella di servizio, e che il giocatore non è né l'uno né l'altro. Se arriva dalla porta principale, Aldo fa un inchino falsamente cortese e beffardo. In **entrambi i casi** la conversazione finisce con lo scontro contro il mastino (la cortesia costa un'umiliazione, la minaccia uno schiaffo e uno schianto).
+  - **Aggiornato il 27 ottobre:** dalla porta principale Aldo non dice più «topo» e chiude con «Gli ospiti, in questa casa, sono sempre annunciati». Le risposte del giocatore sono diverse per ingresso: dalla porta principale [Osserva] «Mi sembra tutto troppo forzato…», [Gentile] «Vi chiedo perdono per questa intrusione…», [Duro] «Dubitate forse che io sia un ospite degno? Chi doveva annunciarmi era troppo occupato a spostare sedie», [Minaccia] «Dimmi come sconfiggere il signore di questo posto…»; dalla scala di servizio restano quelle di prima («Non sono un topo…»). Nuovi i testi di Osserva riuscito, della sfida riuscita (i mastini «uno alla volta, vi prego»), della vittoria (con il consiglio sulla gamba sinistra di Ettore) e della sconfitta («Patetico…»). In entrambe Aldo dice dove trovarlo: la sala della caccia, la porta a sinistra nell'atrio.
+- **Pianerottolo dell'armatura (27 ottobre):** è una stanza a sé tra l'atrio e le due rampe. Lì stanno armatura, vetrata e spada; dall'anticamera e dal corridoio del primo piano «torno indietro» porta sul pianerottolo, «torno nell'atrio» scende fino all'atrio. Immagine provvisoria: quella dell'atrio.
 - **La fontana del giardino:** cura il corpo (non la mente) **una volta per caccia**, e si ricarica quando Aldo manda a una nuova caccia. Il giocatore lo scopre da **Guendalina**, con una domanda nuova nel menu della cucina, sbloccata dopo aver visto il giardino: Aldo non ci va mai ("ne è intimorito"), ma il giocatore non deve esserlo.
 - **Rastrelliere della sala della caccia:** una sola tendina "Rastrelliere della sala della caccia" con sette sotto-tendine: **Armi, Armature, Scudi, Dotazione, Armi speciali, Armature speciali, Scudi speciali**. Ogni caccia completata dà una scelta (due se Aldo è stato battuto con i mastini, per il bronzo).
 - **Oggetti speciali:** *non* si possono prendere subito. **Li sblocca Aldo dopo un certo numero di cacce comuni** portate a termine: Lama del Cervo Bianco (2 cacce), Cotta del Leone (4), Anello di Brace (6). Proposta di Claude: i numeri combaciano con le sei prede (una volta ciascuna).

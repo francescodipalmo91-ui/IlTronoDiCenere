@@ -990,7 +990,7 @@
             impugna: ["Stringi l'elsa e tiri con tutta la tua forza. Le dita di ferro si serrano come una morsa, e un gelo ti risale il braccio fino alle tempie. Lasci la presa, con la mano intorpidita."],
             chiama: ["La tua voce rimbomba nell'atrio vuoto e ti torna indietro estranea, come se fosse di un altro. La spada non risponde."]
           },
-          gestoSi: ["Pieghi un ginocchio sul marmo, davanti all'armatura, e chini il capo, come il cavaliere della vetrata alle tue spalle.", "Per un lungo istante non accade nulla. Poi, sopra di te, senti il ferro scricchiolare: le dita dell'armatura si allentano."],
+          gestoSi: ["Pieghi un ginocchio sul marmo, davanti all'armatura, e chini il capo, come il cavaliere inginocchiato nella vetrata della cappella.", "Per un lungo istante non accade nulla. Poi, sopra di te, senti il ferro scricchiolare: le dita dell'armatura si allentano."],
           respintoDi: ["La pressione ti schiaccia le tempie e ti ricaccia indietro. Ricordi la visione e il suo sapore amaro, ma stavolta non ti travolge: ti limiti a barcollare, con le orecchie che fischiano."],
           respinge: (d) => `L'armatura non si lascia toccare: subisci danni mentali pari a 1d${d}.`,
           respinto: [ /* visione del giardino (Francesco, 26/10): Adele incinta di Agnese, al tavolo il figlio maggiore e Lorenzo */
@@ -1434,7 +1434,7 @@
             impugna: ["You grip the hilt and pull with all your strength. The iron fingers clamp shut like a vice, and a chill runs up your arm to your temples. You let go, your hand numb."],
             chiama: ["Your voice booms through the empty hall and comes back to you strange, as if it belonged to someone else. The sword does not answer."]
           },
-          gestoSi: ["You bend one knee on the marble before the armor and bow your head, like the knight in the stained glass behind you.", "For a long moment nothing happens. Then, above you, you hear iron creak: the armor's fingers loosen."],
+          gestoSi: ["You bend one knee on the marble before the armor and bow your head, like the knight kneeling in the chapel's stained glass.", "For a long moment nothing happens. Then, above you, you hear iron creak: the armor's fingers loosen."],
           respintoDi: ["The pressure crushes your temples and drives you back. You remember the vision and its bitter taste, but this time it does not overwhelm you: you merely stagger, ears ringing."],
           respinge: (d) => `The armor will not let itself be touched: you take 1d${d} mental damage.`,
           respinto: [
@@ -2770,9 +2770,7 @@
                     "Al centro della sala, dove un istante fa non c'era nessuno, un uomo sistema le sedie lungo la parete, una dopo l'altra, allineandole con la punta delle scarpe. È alto, asciutto, i capelli grigi pettinati all'indietro e un paio di baffi curati. Indossa un frac nero impeccabile e guanti bianchi immacolati. Non si volta.",
                     "«Oh. Un ospite.» Pronuncia la parola come si assaggia un vino andato a male. «E dal portone principale, per giunta. Che onore inatteso.»",
                     "Raddrizza l'ultima sedia, poi si gira e si inchina: un inchino perfetto, millimetrico, troppo profondo per essere sincero. Ha gli occhi scuri, cerchiati di rosso, e sulle labbra un sorriso gentile che non arriva da nessuna parte.",
-                    "«Perdonate il disordine: non aspettavamo nessuno. Non aspettiamo mai nessuno. Il mio nome è Aldo, e sono il vostro umile servitore per il tempo, brevissimo temo, che vorrete trattenervi. Ditemi, caro ospite: vi hanno annunciato? No? Che sbadataggine. Gli ospiti, in questa casa, sono sempre annunciati.»",
-                    "Il sorriso non si muove di un millimetro, ma la voce si fa piatta, come una lama sotto un velo.",
-                    "«Voi, per quanto mi riguarda, siete un topo che ha trovato la porta buona.»"
+                    "«Perdonate il disordine: non aspettavamo nessuno. Non aspettiamo mai nessuno. Il mio nome è Aldo, e sono il vostro umile servitore per il tempo, brevissimo temo, che vorrete trattenervi. Ditemi, caro ospite: vi hanno annunciato? No? Che sbadataggine. Gli ospiti, in questa casa, sono sempre annunciati.»"
                   ]
                 },
                 risposte: [
@@ -2818,38 +2816,43 @@
               },
               sfida: {
                 testo: [
-                  "Per la prima volta, qualcosa si muove sul volto di Aldo. Non è un sorriso: è l'ombra di un interesse, come quella di un collezionista davanti a un pezzo inatteso.",
-                  "«Mettervi alla prova.»",
-                  "Si rinfila il guanto con un gesto secco, poi intreccia le mani dietro la schiena.",
-                  "«Il Signore non ha mai disprezzato chi mostra i denti. Ma i denti, viandante, vanno dimostrati.»",
-                  "Schiocca le dita. Il suono rimbomba nella sala come un colpo di frusta, e l'aria davanti a te si addensa in due nubi di cenere grigia che turbinano sul parquet. Quando si diradano, due mastini enormi ti fissano con occhi rossi come braci, le groppe avvolte da fiamme azzurre e fredde.",
-                  "«Uno alla volta. Non sono un macellaio: sono un maggiordomo. E se vi vedrò cadere troppo in basso, fermerò io la danza. Il Signore non sa che farsene di un cadavere.»"
+                  "Per un istante, la flemma di Aldo si incrina. Un'ombra fredda attraversa i suoi tratti: non gioia, né divertimento, ma la curiosità clinica di un collezionista di fronte a un pezzo tanto inatteso quanto affascinante.",
+                  "«Davvero intrigante. Vediamo se le vostre parole valgono quanto il vostro coraggio.»",
+                  "Si cala per bene il guanto con un vigoroso strattone, poi porta le mani dietro la schiena in un rigido e formale riposo.",
+                  "«Il mio Signore ha sempre apprezzato chi mostra gli artigli. Peccato che gli artigli, straniero, vadano anche saputi usare.»",
+                  "Uno schiocco secco spezza il silenzio. L'aria vibra come colpita da una frustata e, dal parquet, due densi sbuffi di cenere grigia prendono forma. La nebbia si dissolve all'istante, rivelando due mastini colossali dagli sguardi di brace viva, cerchiati da spire di fuoco azzurro e tagliente.",
+                  "Si rivolge ai cani:",
+                  "«Uno alla volta, vi prego. Non fate confusione.»",
+                  "Poi lo sguardo torna su di te.",
+                  "«Sarò io a fermare la danza, laddove foste in difficoltà. Il mio Signore non sa che farsene di corpi senza vita.»"
                 ],
                 alla_fine: "aldo_scontro"
               },
               vinto: {
                 testo: [
-                  "Il secondo mastino si sbriciola in cenere ai tuoi piedi. Nel silenzio che segue risuona un battito di mani: lento, misurato, tre colpi soltanto.",
-                  "«Notevole.»",
-                  "Aldo attraversa la sala, scavalca il mucchietto di cenere senza degnarlo di uno sguardo e si ferma davanti a te. Ti studia come si studia un cavallo alla fiera.",
-                  "«Forse il Signore ha trovato finalmente qualcuno che valga il pane che mangia. Ho un compito per voi. Una caccia.»",
-                  "«Fuori da questa casa, oltre la fontana, c'è la cappella di famiglia. Sotto la cappella, la cripta. E nella cripta si nasconde una preda che il Signore desidera vedere morta da molto tempo. Uccidetela e portatemi una prova: il fermaglio di bronzo che porta al petto.»",
-                  "Ti porge una grossa chiave di ferro annerito.",
-                  "«Il portone dell'atrio. Non perdetela. E un consiglio, visto che ve lo siete guadagnato: la preda combatte bene, ma la sua gamba sinistra non regge più come un tempo. Colpitela quando arretra. Vi attenderò nella sala della caccia.»",
-                  "Si volta, e prima che tu possa rispondere le candele del lampadario tremolano. Quando tornano ferme, Aldo non c'è più."
+                  "Dai il colpo definitivo: il mastino crolla a terra e svanisce in un istante, riducendosi a un mucchietto di cenere e scintille morenti. Resti in piedi, il respiro corto e il cuore che martella nel petto.",
+                  "Aldo fissa i resti che si dissolvono sul pavimento, poi accenna un applauso misurato, un gesto freddo e perfettamente meccanico.",
+                  "«Notevole. Bravura o fortuna dei disperati? Questo lo vedremo. In ogni caso, il test è superato.»",
+                  "Si tasta il frac, tira fuori una chiave pesante e la scaglia a terra, facendola rimbalzare appena davanti ai tuoi stivali.",
+                  "«Vi servirà per il portone dell'atrio. Oltre la fontana, all'esterno, sorge la cappella di famiglia; nei suoi sotterranei si cela la cripta e la nostra vera preda. Sbarazzatevene e portatemi il fermaglio di bronzo che custodisce sul petto.»",
+                  "«Un consiglio, visto che ve lo siete guadagnato: la preda combatte bene, ma la sua gamba sinistra non regge più come un tempo. Colpitela quando arretra.»",
+                  "Fa un passo indietro, mentre le fiamme delle candele tremolano all'unisono.",
+                  "«Vi aspetterò nella sala della caccia, la porta a sinistra nell'atrio. Fate in modo di non deludermi.»",
+                  "Un battito di ciglia, e la figura di Aldo svanisce, lasciandoti solo nel silenzio."
                 ],
                 alla_fine: "aldo_caccia"
               },
               perso: {
                 testo: [
+                  "Un colpo di troppo ti spezza le gambe, costringendoti a crollare al suolo con il fiato corto e la guardia completamente aperta. Il mastino si lancia in avanti, le fauci spalancate e cerchiate di fiamme azzurre pronte a sbranarti.",
                   "«Basta.»",
-                  "La parola cade come una lama. Aldo schiocca le dita e il mastino si dissolve a mezz'aria in un turbine di cenere, a un palmo dalla tua gola. Il silenzio torna a riempire la sala, rotto solo dal tuo respiro spezzato.",
-                  "Aldo ti guarda dall'alto, le mani intrecciate dietro la schiena.",
-                  "«Siete ancora vivo. Per ora, mi basta questo. Non è molto, ma il Signore si è dovuto accontentare di peggio.»",
-                  "«Ho un compito per voi. Una caccia. Fuori da questa casa, oltre la fontana, c'è la cappella di famiglia; sotto la cappella, la cripta. Lì si nasconde una preda che il Signore vuole morta. Uccidetela e portatemi il fermaglio di bronzo che porta al petto.»",
-                  "Lascia cadere ai tuoi piedi una grossa chiave di ferro annerito. Non si china a porgertela.",
-                  "«Il portone dell'atrio. Vi attenderò nella sala della caccia. Cercate di non farmi aspettare invano.»",
-                  "Le candele tremolano. Quando tornano ferme, Aldo è sparito."
+                  "Un secco schiocco di dita e la bestia svanisce in un turbine di cenere, a un soffio dalla tua gola. Il silenzio torna a calare sulla sala, pesante, rotto solo dal tuo respiro affannoso.",
+                  "«Patetico. Patetico quanto chi dovrete affrontare per dimostrare ancora il vostro valore, se ci tenete tanto a uscire di qui.»",
+                  "Con un movimento lento, estrae una grossa chiave di ferro annerito e la lascia cadere tintinnando sul pavimento, proprio accanto alla tua mano.",
+                  "«Apre il portone dell'atrio. Oltre la fontana sorge la cappella di famiglia; nei sotterranei troverete la cripta e la nostra vera preda. Poiché la forza non vi sorregge, affidatevi all'astuzia: uccidetela e portatemi il fermaglio di bronzo che custodisce sul petto.»",
+                  "Ti volge le spalle con un fruscio di stoffa impeccabile.",
+                  "«Quando avrete fatto, mi troverete nella sala della caccia, la porta a sinistra nell'atrio. E non pensate nemmeno a fuggire: sarebbe inutile. Avventurieri ben più capaci di voi ci hanno provato... e ora non sono altro che polvere.»",
+                  "Un guizzo improvviso delle fiamme nelle candele, e il maggiordomo svanisce nel nulla."
                 ],
                 alla_fine: "aldo_caccia"
               }
@@ -3298,9 +3301,7 @@
                     "In the middle of the hall, where a moment ago there was no one, a man is setting chairs along the wall, one after another, aligning them with the tip of his shoe. He is tall and lean, his grey hair combed back and a pair of neat moustaches. He wears an impeccable black tailcoat and spotless white gloves. He does not turn round.",
                     "«Oh. A guest.» He pronounces the word as one tastes a wine gone off. «And through the main door, no less. What an unexpected honour.»",
                     "He straightens the last chair, then turns and bows: a perfect, millimetric bow, too deep to be sincere. His eyes are dark, rimmed with red, and on his lips is a gentle smile that reaches nowhere.",
-                    "«Forgive the disorder: we were expecting no one. We never expect anyone. My name is Aldo, and I am your humble servant for the time, very brief I fear, that you care to stay. Tell me, dear guest: were you announced? No? How careless. Guests in this house are always announced.»",
-                    "The smile does not move by a millimetre, but the voice goes flat, like a blade under a veil.",
-                    "«You, as far as I am concerned, are a rat that has found the right door.»"
+                    "«Forgive the disorder: we were expecting no one. We never expect anyone. My name is Aldo, and I am your humble servant for the time, very brief I fear, that you care to stay. Tell me, dear guest: were you announced? No? How careless. Guests in this house are always announced.»"
                   ]
                 },
                 risposte: [
@@ -3346,38 +3347,43 @@
               },
               sfida: {
                 testo: [
-                  "For the first time, something moves on Aldo's face. It is not a smile: it is the shadow of interest, like a collector's before an unexpected piece.",
-                  "«Put you to the test.»",
-                  "He draws his glove back on with a sharp gesture, then clasps his hands behind his back.",
-                  "«The Master has never despised those who show their teeth. But teeth, wanderer, must be proven.»",
-                  "He snaps his fingers. The sound echoes through the hall like the crack of a whip, and the air before you thickens into two clouds of grey ash swirling over the parquet. When they clear, two huge mastiffs stare at you with eyes red as embers, their backs wrapped in cold blue flames.",
-                  "«One at a time. I am no butcher: I am a butler. And should I see you fall too low, I shall stop the dance myself. The Master has no use for a corpse.»"
+                  "For an instant, Aldo's composure cracks. A cold shadow crosses his features: not joy, nor amusement, but the clinical curiosity of a collector before a piece as unexpected as it is fascinating.",
+                  "«Truly intriguing. Let us see whether your words are worth as much as your courage.»",
+                  "He pulls his glove snug with a vigorous tug, then clasps his hands behind his back in a stiff, formal at-ease.",
+                  "«My Master has always appreciated those who show their claws. A pity that claws, stranger, must also be used well.»",
+                  "A sharp snap breaks the silence. The air quivers as if struck by a whip and, from the parquet, two dense puffs of grey ash take shape. The mist dissolves at once, revealing two colossal mastiffs with eyes of live embers, ringed by coils of sharp blue fire.",
+                  "He turns to the hounds:",
+                  "«One at a time, if you please. Let us not make a mess.»",
+                  "Then his gaze returns to you.",
+                  "«I shall be the one to stop the dance, should you find yourself in difficulty. My Master has no use for lifeless bodies.»"
                 ],
                 alla_fine: "aldo_scontro"
               },
               vinto: {
                 testo: [
-                  "The second mastiff crumbles into ash at your feet. In the silence that follows a clapping of hands rings out: slow, measured, three claps only.",
-                  "«Remarkable.»",
-                  "Aldo crosses the hall, steps over the little heap of ash without deigning to look at it and stops in front of you. He studies you as one studies a horse at a fair.",
-                  "«Perhaps the Master has at last found someone worth the bread they eat. I have a task for you. A hunt.»",
-                  "«Outside this house, beyond the fountain, stands the family chapel. Beneath the chapel, the crypt. And in the crypt hides a prey the Master has long wished to see dead. Kill it and bring me proof: the bronze clasp it wears on its chest.»",
-                  "He hands you a large key of blackened iron.",
-                  "«The great door of the hall. Do not lose it. And a piece of advice, since you have earned it: the prey fights well, but its left leg no longer holds as it once did. Strike when it steps back. I shall await you in the hunting hall.»",
-                  "He turns, and before you can answer the candles of the chandelier flicker. When they steady again, Aldo is gone."
+                  "You strike the final blow: the mastiff collapses and vanishes in an instant, reduced to a little heap of ash and dying sparks. You stay on your feet, short of breath, your heart pounding in your chest.",
+                  "Aldo stares at the remains dissolving on the floor, then offers a measured round of applause, a cold and perfectly mechanical gesture.",
+                  "«Remarkable. Skill, or the luck of the desperate? That remains to be seen. In any case, the test is passed.»",
+                  "He pats his tailcoat, takes out a heavy key and tosses it to the floor, where it bounces just in front of your boots.",
+                  "«You will need it for the great door of the hall. Beyond the fountain, outside, stands the family chapel; beneath it lies the crypt, and our true prey. Rid us of it and bring me the bronze clasp it wears on its chest.»",
+                  "«A piece of advice, since you have earned it: the prey fights well, but its left leg no longer holds as it once did. Strike when it falls back.»",
+                  "He steps back as the candle flames flicker in unison.",
+                  "«I shall await you in the hunting hall, the door on the left in the entrance hall. See that you do not disappoint me.»",
+                  "In the blink of an eye Aldo's figure vanishes, leaving you alone in the silence."
                 ],
                 alla_fine: "aldo_caccia"
               },
               perso: {
                 testo: [
+                  "One blow too many breaks your legs, forcing you to the ground, short of breath, your guard wide open. The mastiff lunges forward, jaws agape and ringed with blue flames, ready to tear you apart.",
                   "«Enough.»",
-                  "The word falls like a blade. Aldo snaps his fingers and the mastiff dissolves in mid-air into a swirl of ash, a hand's breadth from your throat. Silence fills the hall again, broken only by your ragged breathing.",
-                  "Aldo looks down at you, hands clasped behind his back.",
-                  "«You are still alive. For now, that is enough for me. It is not much, but the Master has had to make do with worse.»",
-                  "«I have a task for you. A hunt. Outside this house, beyond the fountain, stands the family chapel; beneath the chapel, the crypt. There hides a prey the Master wants dead. Kill it and bring me the bronze clasp it wears on its chest.»",
-                  "He lets a large key of blackened iron fall at your feet. He does not stoop to hand it to you.",
-                  "«The great door of the hall. I shall await you in the hunting hall. Try not to make me wait in vain.»",
-                  "The candles flicker. When they steady again, Aldo has vanished."
+                  "A sharp snap of his fingers and the beast vanishes in a swirl of ash, a breath away from your throat. Silence settles over the hall again, heavy, broken only by your laboured breathing.",
+                  "«Pathetic. As pathetic as the one you must face to prove your worth once more, if you care so much about getting out of here.»",
+                  "With a slow movement he takes out a large key of blackened iron and lets it fall, clinking on the floor, right beside your hand.",
+                  "«It opens the great door of the hall. Beyond the fountain stands the family chapel; beneath it you will find the crypt, and our true prey. Since strength does not sustain you, rely on cunning: kill it and bring me the bronze clasp it wears on its chest.»",
+                  "He turns his back on you with a rustle of impeccable cloth.",
+                  "«When you are done, you will find me in the hunting hall, the door on the left in the entrance hall. And do not even think of fleeing: it would be useless. Adventurers far more capable than you have tried... and now they are nothing but dust.»",
+                  "A sudden flicker of the candle flames, and the butler vanishes into thin air."
                 ],
                 alla_fine: "aldo_caccia"
               }
@@ -3994,9 +4000,10 @@
         },
         aldo: {
           osserva: "Resto in silenzio e lo osservo con attenzione.",
+          ospiti: { osserva: "Mi sembra tutto troppo forzato per essere reale. Osservo con attenzione il maggiordomo.", gentile: "Vi chiedo perdono per questa intrusione inaspettata, vorrei solo trovare l'uscita.", duro: "Dubitate forse che io sia un ospite degno? Chi doveva annunciarmi era troppo occupato a spostare sedie.", minaccia: "Pensi che sia uno stupido? Dimmi come sconfiggere il signore di questo posto e forse ti risparmierò.", sfidaKo: "«Un ospite degno.» Le parole gli escono piatte, annoiate. «Ho conosciuto molti sbruffoni. Gli sbruffoni urlano. I pericolosi no.»", sfidaPieno: "«Troppo occupato a spostare sedie.» Ripete le parole lentamente, come per assaporarle, e l'ombra di un sorriso gli sfiora le labbra. «Sì. Sì, credo proprio che il Signore vorrebbe vedervi.»", topo: ["«Una lingua da diplomatico, in bocca a un ospite mai annunciato.", "«Una lingua da diplomatico, in bocca a un topo."] },
           osserva_ok: [
-            "Lo lasci parlare e lo osservi. Il modo in cui allinea le sedie con la punta della scarpa, il disgusto con cui pronuncia la parola «ospiti», lo sguardo che scivola sulle tue mani prima che sul tuo viso.",
-            "Quest'uomo ha passato secoli a servire. Disprezza chi si piega, perché lo ricorda a sé stesso. Ma chi lo sfida a viso aperto... quello, forse, lo rispetterebbe."
+            "In silenzio, lo osservi. Ogni dettaglio tradisce la sua natura: il modo in cui sposta le sedie con la punta delle scarpe, il disprezzo freddo con cui pronuncia «ospiti», gli occhi che scivolano sulle tue mani prima di salire al tuo sguardo.",
+            "Secoli passati a servire lo hanno reso cinico. Disprezza i deboli perché specchio della sua stessa sottomissione, ma chi osa sfidarlo senza abbassare lo sguardo... forse merita il suo rispetto."
           ],
           osserva_ko: [
             "Cerchi di leggere qualcosa sul suo volto, ma è una maschera di cera: non tradisce nulla.",
@@ -4004,7 +4011,7 @@
           ],
           gentile_ok: [
             "Aldo si ferma, una sedia ancora tra le mani. Per un lungo istante non dice nulla; poi la posa a terra con una cura quasi tenera.",
-            "«Una lingua da diplomatico, in bocca a un topo. Non me l'aspettavo.» Si sfila un guanto, lo ripiega, lo infila nel taschino. «La cortesia non vi aprirà le porte di questa casa. Ma vi siete guadagnato il diritto di provarci in un altro modo.»",
+            "«Una lingua da diplomatico, in bocca a un ospite mai annunciato. Non me l'aspettavo.» Si sfila un guanto, lo ripiega, lo infila nel taschino. «La cortesia non vi aprirà le porte di questa casa. Ma vi siete guadagnato il diritto di provarci in un altro modo.»",
             "Schiocca le dita. L'aria davanti a voi si addensa in due nubi di cenere grigia che turbinano sul parquet; quando si diradano, due mastini enormi vi fissano con occhi rossi come braci. Aldo sfiora il capo di uno dei due con la punta del guanto, e la belva si accuccia ai suoi piedi, immobile.",
             "«Uno solo. È la ricompensa per le vostre buone maniere. Se vi vedrò cadere troppo in basso, fermerò io la danza: il Signore non sa che farsene di un cadavere.»"
           ],
@@ -4066,9 +4073,10 @@
         },
         aldo: {
           osserva: "I stay silent and watch him closely.",
+          ospiti: { osserva: "It all seems too staged to be real. I watch the butler closely.", gentile: "I beg your pardon for this unexpected intrusion; I only wish to find the way out.", duro: "Do you doubt I am a worthy guest? Whoever should have announced me was too busy moving chairs.", minaccia: "Do you take me for a fool? Tell me how to defeat the lord of this place and perhaps I will spare you.", sfidaKo: "«A worthy guest.» The words come out flat, bored. «I have known many braggarts. Braggarts shout. The dangerous ones do not.»", sfidaPieno: "«Too busy moving chairs.» He repeats the words slowly, as if tasting them, and the shadow of a smile brushes his lips. «Yes. Yes, I do believe the Master would like to see you.»", topo: ["«A diplomat's tongue, in the mouth of a guest never announced.", "«A diplomat's tongue, in a rat's mouth."] },
           osserva_ok: [
-            "You let him talk and you watch him. The way he aligns the chairs with the tip of his shoe, the disgust with which he says the word “guests”, the gaze that slides over your hands before your face.",
-            "This man has spent centuries serving. He despises those who bend, because they remind him of himself. But someone who challenged him openly... that one, perhaps, he would respect."
+            "In silence, you watch him. Every detail betrays his nature: the way he moves the chairs with the tip of his shoe, the cold contempt with which he says “guests”, the eyes that slide over your hands before rising to meet your gaze.",
+            "Centuries of service have made him cynical. He despises the weak because they mirror his own submission, but whoever dares to challenge him without lowering their eyes... perhaps deserves his respect."
           ],
           osserva_ko: [
             "You try to read something in his face, but it is a wax mask: it betrays nothing.",
@@ -4076,7 +4084,7 @@
           ],
           gentile_ok: [
             "Aldo stops, a chair still in his hands. For a long moment he says nothing; then he sets it down with an almost tender care.",
-            "«A diplomat's tongue, in a rat's mouth. I did not expect that.» He draws off a glove, folds it, tucks it into his breast pocket. «Courtesy will not open the doors of this house. But you have earned the right to try another way.»",
+            "«A diplomat's tongue, in the mouth of a guest never announced. I did not expect that.» He draws off a glove, folds it, tucks it into his breast pocket. «Courtesy will not open the doors of this house. But you have earned the right to try another way.»",
             "He snaps his fingers. The air before you thickens into two clouds of grey ash swirling over the parquet; when they clear, two huge mastiffs stare at you with eyes red as embers. Aldo brushes the head of one with the tip of his glove, and the beast lies down at his feet, motionless.",
             "«Just one. That is the reward for your good manners. Should I see you fall too low, I shall stop the dance myself: the Master has no use for a corpse.»"
           ],
@@ -4194,20 +4202,27 @@
       G.gentile_pieno = { testo: [...G.gentile.testo, ...P.guendalina.gentile_pieno], poi: "domande" };
       G.brusco_pieno = { testo: [...G.brusco.testo, ...P.guendalina.brusco_pieno], poi: "domande" };
       /* Aldo: osservare (Percezione 12), gentile (Persuasione 18, difficile), sfida (Intimidire 14), minaccia (fallisce sempre) */
-      const N_ = D.aldo.nodi, [aG, aS, aM] = N_.inizio.risposte;
-      const sfida = { tag: "duro", testo: aS.testo, tono: "brusco", vai: "sfida", prova: { abilita: "Intimidire", cd: 14, ko: "sfida_ko", ok: "sfida", pieno: "sfida_pieno" } };
-      const minaccia = { tag: "minaccia", testo: aM.testo, vai: "minaccia" };
-      N_.inizio.risposte = [
-        { tag: "osserva", testo: P.aldo.osserva, vai: "osserva_ok", una: true, prova: { abilita: "Percezione", cd: 12, ko: "osserva_ko", ok: "osserva_ok" } },
-        { tag: "gentile", testo: aG.testo, tono: "gentile", vai: "gentile", prova: { abilita: "Persuasione", cd: 18, ko: "gentile", ok: "gentile_ok" } },
-        sfida, minaccia
-      ];
-      N_.ritorno.risposte = [sfida, minaccia]; /* niente più congedo: ogni strada porta allo scontro */
+      const N_ = D.aldo.nodi, [aG, aS, aM] = N_.inizio.risposte, O = P.aldo.ospiti;
+      /* risposte: dalla scala di servizio quelle di sempre, dalla porta principale le nuove (27/10). La condizione «se» le separa */
+      const risposteAldo = (ingr, t) => {
+        const se = "dialogo_aldo_ingresso=" + ingr;
+        const sfida = { tag: "duro", testo: t.duro, tono: "brusco", vai: "sfida", se, prova: { abilita: "Intimidire", cd: 14, ko: "sfida_ko", ok: "sfida", pieno: "sfida_pieno" } };
+        const minaccia = { tag: "minaccia", testo: t.minaccia, vai: "minaccia", se };
+        return { tutte: [
+          { tag: "osserva", testo: t.osserva, vai: "osserva_ok", una: true, se, prova: { abilita: "Percezione", cd: 12, ko: "osserva_ko", ok: "osserva_ok" } },
+          { tag: "gentile", testo: t.gentile, tono: "gentile", vai: "gentile", se, prova: { abilita: "Persuasione", cd: 18, ko: "gentile", ok: "gentile_ok" } },
+          sfida, minaccia], ritorno: [sfida, minaccia] };
+      };
+      const rServ = risposteAldo("servizio", { osserva: P.aldo.osserva, gentile: aG.testo, duro: aS.testo, minaccia: aM.testo }), rOsp = risposteAldo("ospiti", O);
+      N_.inizio.risposte = [...rServ.tutte, ...rOsp.tutte];
+      N_.ritorno.risposte = [...rServ.ritorno, ...rOsp.ritorno]; /* niente più congedo: ogni strada porta allo scontro */
       N_.osserva_ok = { testo: P.aldo.osserva_ok, poi: "inizio" };
       N_.osserva_ko = { testo: P.aldo.osserva_ko, poi: "inizio" };
-      N_.gentile_ok = { testo: P.aldo.gentile_ok, alla_fine: "aldo_scontro_uno" };
-      N_.sfida_ko = { testo: P.aldo.sfida_ko, alla_fine: "aldo_scontro_carico" };
-      N_.sfida_pieno = { testo: P.aldo.sfida_pieno, alla_fine: "aldo_scontro_uno" };
+      /* le varianti che citavano la vecchia frase («Mettervi alla prova», «topo») restano solo per la scala di servizio */
+      const conRiga = (righe, i, nuova) => righe.map((r, k) => k === i ? nuova : r);
+      N_.gentile_ok = { testo: { ospiti: P.aldo.gentile_ok, servizio: P.aldo.gentile_ok.map(r => r.replace(O.topo[0], O.topo[1])) }, alla_fine: "aldo_scontro_uno" };
+      N_.sfida_ko = { testo: { servizio: P.aldo.sfida_ko, ospiti: conRiga(P.aldo.sfida_ko, 1, O.sfidaKo) }, alla_fine: "aldo_scontro_carico" };
+      N_.sfida_pieno = { testo: { servizio: P.aldo.sfida_pieno, ospiti: conRiga(P.aldo.sfida_pieno, 1, O.sfidaPieno) }, alla_fine: "aldo_scontro_uno" };
       /* la menzogna ad Aldo: già una prova vera (Persuasione 14), ora con l'etichetta giusta */
       D.aldo_caccia.nodi.inizio.risposte.forEach(r => { if (r.vai === "menzogna") { delete r.abilita; r.tag = "menti"; } });
       /* Ettore: risposte sbloccate dalle abilità scelte in creazione */
@@ -4799,17 +4814,27 @@
           vista: { titolo: "Anticamera del trono", alt: "Un'anticamera buia davanti a un portone; un enorme mastino a due teste veglia avvolto da fiamme azzurre." },
           stanza: {
             intro: ["La rampa di sinistra sbocca al primo piano in un'anticamera spoglia, dove l'aria è così densa da bruciare i polmoni. In fondo, sbarrato e cupo, si erge il portone di ferro battuto e legno annerito: oltre quella soglia giace la sala del trono.", "A guardia del varco, steso a terra come un incubo di metallo e cenere, giace il mastino a due teste; il suo pelo nerissimo si fonde con le piastre scure incise da rune azzurre. Le due teste si erigono contemporaneamente, fissando i loro sguardi su di te, mentre un ringhio basso e cavernoso scuote la pietra sotto i tuoi stivali e ti risale lungo le ossa."],
-            nota: "Per tornare nell'atrio scrivi, ad esempio, «torno indietro».",
+            nota: "Per tornare sul pianerottolo scrivi, ad esempio, «torno indietro»; per scendere fino all'atrio, «torno nell'atrio».",
             fallbackLibera: ["Il mastino non ti stacca gli occhi di dosso. Qui non c'è nient'altro da fare che tornare indietro."],
             ritorno: ["Torni nell'anticamera. Il mastino a due teste è già in piedi, tra te e il portone. Il ringhio comincia prima ancora che tu metta piede sull'ultimo gradino."]
           },
           fatti: "Anticamera del trono, primo piano, in cima alla rampa di sinistra dello scalone: spoglia e bollente; in fondo un portone di ferro battuto e legno annerito che conduce alla sala del trono; davanti, sdraiato, il mastino a due teste: pelo nero, piastre di metallo scuro con rune azzurre luminose, collare chiodato, fiamme azzurre fredde sul dorso, occhi bianchi. Si torna nell'atrio dalla rampa."
         },
+        pianerottolo: {
+          vista: {titolo: "Pianerottolo dell'armatura", alt: "Il pianerottolo dello scalone: un'armatura con una spada tra i guanti, davanti a una grande vetrata colorata."},
+          stanza: {
+            intro: ["Sali gli ampi gradini di marmo fino al pianerottolo di metà scala. Qui la luce della vetrata cade piena, in lame cremisi, azzurre e dorate che si posano sull'armatura come un mantello.", "Da vicino l'armatura è ancora più imponente. Tra i guanti di ferro riposa una lunga spada dalla fattura impeccabile, e alle sue spalle l'uomo della vetrata porta la stessa armatura e la stessa spada.", "Da qui lo scalone si divide in due rampe: a sinistra sale verso un'anticamera in ombra, a destra verso un lungo corridoio. Ai tuoi piedi, l'atrio."],
+            nota: "Puoi esaminare l'armatura e la vetrata, prendere la rampa di sinistra o di destra, oppure tornare nell'atrio: scrivi, ad esempio, «torno nell'atrio» o «scendo».",
+            fallbackLibera: ["Sul pianerottolo ci sono soltanto l'armatura, la spada tra i suoi guanti e la vetrata alle sue spalle. Da qui puoi salire una delle due rampe o tornare nell'atrio."],
+            ritorno: ["Torni sul pianerottolo. L'armatura è lì, immobile sotto la luce della vetrata, la spada stretta tra i guanti di ferro."]
+          },
+          fatti: "Pianerottolo di metà scala dello scalone dell'atrio di Casa Vespera: un'armatura completa e lucida regge tra i guanti una lunga spada dalla fattura impeccabile; alle sue spalle una grande vetrata colorata con un uomo che porta la stessa armatura e la stessa spada (il padrone di casa); luce cremisi, azzurra e dorata; lo scalone si divide in due rampe, a sinistra verso l'anticamera del trono, a destra verso il corridoio finestrato del primo piano; sotto, l'atrio con il tappeto cremisi e le fiaccole dalla fiamma azzurra."
+        },
         corridoio_primo: {
           vista: { titolo: "Corridoio finestrato", alt: "Un lungo corridoio con alte finestre sulla sinistra e un'unica porta a metà della parete destra." },
           stanza: {
             intro: ["La rampa di destra sbocca in un lungo corridoio dove il tempo sembra essersi pietrificato. A sinistra, alte vetrate lasciano penetrare il raggio tagliente delle lune: una luce fredda che non illumina, ma svela soltanto la cenere sospesa in un'aria immobile.", "Sulla destra, incastrata a metà parete, si erge un'unica porta a doppio battente, finemente intagliata con motivi di danza i cui ballerini sembrano essersi congelati nel legno.", "Superata la soglia delle scale, l'architettura si comprime: un passaggio secondario piega bruscamente a destra, strozzandosi in un corridoio angusto. Da qui si snoda la rampa per il secondo piano, proseguimento naturale e cupo dello scalone monumentale, che si arrampica nell'ombra verso i livelli superiori."],
-            nota: "Puoi entrare nella sala da ballo, guardare fuori dalle finestre o tornare nell'atrio.",
+            nota: "Puoi entrare nella sala da ballo, guardare fuori dalle finestre o tornare sul pianerottolo.",
             fallbackLibera: ["Il corridoio è silenzioso e vuoto. Le finestre, la porta della sala da ballo e le scale per il secondo piano: nient'altro."],
             ritorno: ["Torni nel corridoio finestrato. La luce delle lune disegna lunghi rettangoli pallidi sul pavimento."]
           },
@@ -4836,17 +4861,27 @@
           vista: { titolo: "Throne antechamber", alt: "A dark antechamber before a great door; a huge two-headed mastiff keeps watch wrapped in blue flames." },
           stanza: {
             intro: ["The left flight opens onto the first floor in a bare antechamber where the air is so dense it burns the lungs. At the far end, barred and sombre, rises the door of wrought iron and blackened wood: beyond that threshold lies the throne room.", "Guarding the passage, stretched out like a nightmare of metal and ash, lies the two-headed mastiff; its jet-black fur blends into dark plates engraved with blue runes. Both heads rise at once, fixing their gaze on you, while a low, cavernous growl shakes the stone beneath your boots and climbs through your bones."],
-            nota: "To go back to the hall write, for example, “I go back”.",
+            nota: "To return to the landing write, for example, “I go back”; to go all the way down to the hall, “I go back to the hall”.",
             fallbackLibera: ["The mastiff never takes its eyes off you. There is nothing to do here but go back."],
             ritorno: ["You return to the antechamber. The two-headed mastiff is already on its feet, between you and the door. The growl begins before you even reach the last step."]
           },
           fatti: "Throne antechamber, first floor, at the top of the left flight of the great staircase: bare and sweltering; at the far end a door of wrought iron and blackened wood leading to the throne room; before it lies the two-headed mastiff: black fur, dark metal plates with glowing blue runes, spiked collar, cold blue flames on its back, white eyes. The hall is reached back down the flight."
         },
+        pianerottolo: {
+          vista: {titolo: "Armour landing", alt: "The landing of the great staircase: a suit of armour holding a sword between its gauntlets, before a great stained-glass window."},
+          stanza: {
+            intro: ["You climb the wide marble steps to the landing halfway up. Here the light of the stained glass falls full, in crimson, blue and golden blades that settle on the armour like a cloak.", "Up close the armour is even more imposing. Between the iron gauntlets rests a long sword of flawless make, and behind it the man in the window wears the same armour and the same sword.", "From here the great staircase splits into two flights: on the left it rises towards a shadowy antechamber, on the right towards a long corridor. At your feet, the hall."],
+            nota: "You can examine the armour and the window, take the left or the right flight, or go back down to the hall: write, for example, “I go back to the hall” or “I go down”.",
+            fallbackLibera: ["On the landing there is only the armour, the sword between its gauntlets and the window behind it. From here you can climb one of the two flights or go back to the hall."],
+            ritorno: ["You return to the landing. The armour stands there, motionless in the light of the window, the sword gripped between its iron gauntlets."]
+          },
+          fatti: "Landing halfway up the great staircase of the hall of Casa Vespera: a full, polished suit of armour holds a long sword of flawless make between its gauntlets; behind it a great stained-glass window showing a man wearing the same armour and sword (the master of the house); crimson, blue and golden light; the staircase splits into two flights, left towards the throne antechamber, right towards the windowed corridor of the first floor; below, the hall with its crimson carpet and blue-flamed torches."
+        },
         corridoio_primo: {
           vista: { titolo: "Windowed corridor", alt: "A long corridor with tall windows on the left and a single door halfway along the right wall." },
           stanza: {
             intro: ["The right flight opens onto a long corridor where time seems to have turned to stone. On the left, tall windows let in the sharp shaft of the moons: a cold light that does not illuminate but only reveals the ash hanging in the motionless air.", "On the right, set halfway into the wall, stands a single double door, finely carved with dancing figures who seem frozen in the wood.", "Past the head of the stairs the architecture tightens: a side passage bends sharply to the right, choking into a narrow corridor. From there winds the flight to the second floor, the dark continuation of the monumental staircase, climbing into the shadows towards the upper levels."],
-            nota: "You can enter the ballroom, look out of the windows or go back to the hall.",
+            nota: "You can enter the ballroom, look out of the windows or go back to the landing.",
             fallbackLibera: ["The corridor is silent and empty. The windows, the ballroom door and the stairs to the second floor: nothing else."],
             ritorno: ["You return to the windowed corridor. The moonlight draws long pale rectangles on the floor."]
           },
@@ -4869,8 +4904,8 @@
         }
       }
     };
-    for (const l of ["it", "en"]) for (const id of ["anticamera_trono", "corridoio_primo"]) { TESTI[l].stanze[id] = P1_TUTTI[l][id].stanza; TESTI[l].viste[id] = P1_TUTTI[l][id].vista; }
-    for (const id of ["anticamera_trono", "corridoio_primo"]) STANZE_FATTI[id] = P1_TUTTI.it[id].fatti;
+    for (const l of ["it", "en"]) for (const id of ["pianerottolo", "anticamera_trono", "corridoio_primo"]) { TESTI[l].stanze[id] = P1_TUTTI[l][id].stanza; TESTI[l].viste[id] = P1_TUTTI[l][id].vista; }
+    for (const id of ["pianerottolo", "anticamera_trono", "corridoio_primo"]) STANZE_FATTI[id] = P1_TUTTI.it[id].fatti;
     const P1 = P1_TUTTI[LINGUA] || P1_TUTTI.it;
     for (const id in P1.luoghi) LUOGHI[id] = { fisso: P1.luoghi[id] }; /* primo piano */
     const STANZE = {};
@@ -4880,8 +4915,8 @@
     }
 
     /* il buio usa l'immagine dell'esterno, spenta fino al nero (classe "nera") */
-    const IMMAGINI = { foresta: "immagini/house/esterno_dungeon.webp", buio: "immagini/house/esterno_dungeon.webp", atrio: "immagini/house/atrio.webp", sala_caccia: "immagini/house/sala_caccia.webp", sala_caccia_aldo: "immagini/house/sala_caccia_aldo.webp", sala_conversazione: "immagini/house/sala_conversazione.webp", giardino: "immagini/house/giardino.webp", cappella: "immagini/house/cappella.webp", cripta: "immagini/house/cripta.webp", sala_trofei: "immagini/house/sala_trofei.webp", sala_pranzo: "immagini/house/sala_pranzo.webp", corridoio: "immagini/house/corridoio.webp", sala_ballo: "immagini/house/sala_ballo.webp", cucina: "immagini/house/cucina.webp", dispensa: "immagini/house/dispensa.webp", cantina: "immagini/house/cantina.webp", discesa_cantina: "immagini/house/discesa_cantina.webp", mastino: "immagini/house/mastino_cantina.webp", servizio: "immagini/house/discesa_cantina.webp", guendalina: "immagini/house/guendalina.webp" };
-    const DIM_IMMAGINI = { foresta: [1920, 1079], buio: [1920, 1079], corridoio: [2848, 1600], sala_ballo: [2304, 1728], giardino: [2848, 1600], cucina: [1920, 1079], dispensa: [2848, 1600], cantina: [2848, 1600], discesa_cantina: [2780, 1308], servizio: [2780, 1308], guendalina: [2048, 1536], atrio: [1920, 1079], sala_conversazione: [1358, 679], cappella: [2848, 1600] }; /* le altre sono 1536 × 1024 */
+    const IMMAGINI = { foresta: "immagini/house/esterno_dungeon.webp", buio: "immagini/house/esterno_dungeon.webp", atrio: "immagini/house/atrio.webp", pianerottolo: "immagini/house/atrio.webp" /* PROVVISORIA: finché non c'è un'immagine del pianerottolo */, sala_caccia: "immagini/house/sala_caccia.webp", sala_caccia_aldo: "immagini/house/sala_caccia_aldo.webp", sala_conversazione: "immagini/house/sala_conversazione.webp", giardino: "immagini/house/giardino.webp", cappella: "immagini/house/cappella.webp", cripta: "immagini/house/cripta.webp", sala_trofei: "immagini/house/sala_trofei.webp", sala_pranzo: "immagini/house/sala_pranzo.webp", corridoio: "immagini/house/corridoio.webp", sala_ballo: "immagini/house/sala_ballo.webp", cucina: "immagini/house/cucina.webp", dispensa: "immagini/house/dispensa.webp", cantina: "immagini/house/cantina.webp", discesa_cantina: "immagini/house/discesa_cantina.webp", mastino: "immagini/house/mastino_cantina.webp", servizio: "immagini/house/discesa_cantina.webp", guendalina: "immagini/house/guendalina.webp" };
+    const DIM_IMMAGINI = { foresta: [1920, 1079], buio: [1920, 1079], corridoio: [2848, 1600], sala_ballo: [2304, 1728], giardino: [2848, 1600], cucina: [1920, 1079], dispensa: [2848, 1600], cantina: [2848, 1600], discesa_cantina: [2780, 1308], servizio: [2780, 1308], guendalina: [2048, 1536], atrio: [1920, 1079], pianerottolo: [1920, 1079], sala_conversazione: [1358, 679], cappella: [2848, 1600] }; /* le altre sono 1536 × 1024 */
     const vista = (id) => ({ titolo: TX.viste[id].titolo, img: IMMAGINI[id] ? { src: IMMAGINI[id], alt: TX.viste[id].alt } : undefined, buia: id === "cantina" && !usate.cantina_luce }); /* cantina al buio: riquadro nero */
 
     /* Una nuova partita parte dalla foresta, fuori dal dungeon; i salvataggi già esistenti riprendono dal loro luogo */
@@ -5023,6 +5058,16 @@
           if (/credenz|\bmobil[ei]\b|cassett|\bante\b|pensil|stovigli|bancon|\bfrug\w*|ispezion\w*|cupboard|cabinet|drawer|dresser|rummag\w*|search\w*/.test(t)) return "cucina_indagare";
         }
         if (torna || /corridoi|corridor/.test(t)) return "torna";
+      }
+      if (luogo === "pianerottolo") {
+        const sx = /sinistr|\bleft\b/.test(t), dx = /destr|\bright\b/.test(t), lama = /\bspad\w*|\bswords?\b|\blama\b|\bblade\b/.test(t);
+        if (torna || atrio || /\bscend\w*|\bgiu\b|\bdown\w*|\bbasso\b/.test(t)) return "torna";
+        if (/\btrono\b|throne|anticamer\w*|antechamber/.test(t)) return "rampa_sx";
+        if (/\bballo\b|ballroom|finestrat\w*|windowed|secondo piano|second floor/.test(t)) return "rampa_dx";
+        if (/\brampa\b|\bflights?\b|\bsal\w*|\bclimb\w*|upstairs|primo piano|first floor/.test(t) || (muovi && sx !== dx)) return sx !== dx ? (sx ? "rampa_sx" : "rampa_dx") : "rampa?";
+        if (lama && ha(t, "prendi")) return "spada";
+        if ((ha(t, "tocca") || ha(t, "prendi")) && (lama || /armatur|corazz|armou?r|guant|gauntlet/.test(t))) return "scale";
+        if (lama || /vetrat|stained|window|glass|cavalier|knight|armatur|armou?r|guant|gauntlet|statu|padron|\bmaster\b|sovran|sovereign/.test(t)) return "armatura";
       }
       if (luogo === "anticamera_trono") {
         if (/attacc\w*|colpi\w*|combatt\w*|ferisc\w*|aggred\w*|assal\w*|uccid\w*|ammazz\w*|scagli\w*|lancio contro|mi lancio|carico il|affront\w*|\battack\w*|\bfight\w*|\bhit\b|\bstrike\w*|\bkill\w*|\bcharge\w*|\bassault\w*|\bslash\w*|\bstab\w*/.test(t)) return "mastino_attacco";
@@ -7999,11 +8044,19 @@
       ]);
     }
 
+    /* Il pianerottolo dell'armatura è una stanza a sé (27/10): dall'anticamera e dal corridoio «torno indietro» porta qui.
+       La prima salita fa partire subito il richiamo dell'armatura, che racconta già la salita; poi (poi) l'azione chiesta dall'atrio */
+    function salePianerottolo(poi) {
+      const prima = !("scale" in usate);
+      vai("pianerottolo", prima ? { righe: [] } : undefined);
+      if (prima) return scale();
+      if (poi) poi();
+    }
     /* "prendo la spada": si può riprovare anche dopo aver rifiutato, ma solo se l'armatura ha ceduto */
     function spada() {
       if (usate.spada === "presa") return aggiungi({ tipo: "narra", righe: [SPADA.giaPresa] });
       if (usate.scale === "ok") return offriSpada();
-      if (luogo === "atrio" && "scale" in usate) return scale(); /* sul pianerottolo: «prendo la spada» riapre il richiamo */
+      if (luogo === "pianerottolo" && "scale" in usate) return scale(); /* sul pianerottolo: «prendo la spada» riapre il richiamo */
       aggiungi({ tipo: "narra", righe: [SPADA.lontana] });
     }
 
@@ -8446,8 +8499,9 @@
        se la stanza nominata confina con quella attuale ci si va; altrimenti si dice da dove passare.
        «torno» da solo (senza una stanza) continua a voler dire «torno indietro». */
     const ADIACENTI = {
-      atrio: ["sala_conversazione", "giardino", "sala_caccia", "anticamera_trono", "corridoio_primo"],
-      anticamera_trono: ["atrio"], corridoio_primo: ["atrio", "sala_ballo"], sala_conversazione: ["atrio", "sala_pranzo"],
+      atrio: ["sala_conversazione", "giardino", "sala_caccia", "pianerottolo", "anticamera_trono", "corridoio_primo"],
+      pianerottolo: ["atrio", "anticamera_trono", "corridoio_primo"],
+      anticamera_trono: ["pianerottolo", "atrio"], corridoio_primo: ["pianerottolo", "atrio", "sala_ballo"], sala_conversazione: ["atrio", "sala_pranzo"],
       sala_pranzo: ["sala_conversazione", "corridoio"], corridoio: ["sala_pranzo", "cucina", "sala_ballo"],
       cucina: ["corridoio", "dispensa", "servizio"], dispensa: ["cucina"], servizio: ["cucina", "cantina"], cantina: ["servizio"],
       sala_ballo: ["corridoio", "corridoio_primo"], giardino: ["atrio", "cappella"], cappella: ["giardino", "cripta"], cripta: ["cappella"],
@@ -8469,7 +8523,8 @@
       ["cripta", /cripta|crypt/],
       ["cappella", /cappell\w*|chapel/],
       ["giardino", /giardin\w*|garden/],
-      ["atrio", /atrio|atrium|foyer|entrance hall/]
+      ["pianerottolo", /pianerottol\w*|\blanding\b/],
+      ["atrio", /atrio|atrium|foyer|entrance hall|\bthe hall\b/] /* «the hall» da solo: le altre sale («hunting hall», «dining hall») sono riconosciute prima */
     ];
     const RE_MOSSA = /\b(torn\w*|ritorn\w*|rientr\w*|vad[oa]|vai|andiamo|andare|entr\w*|esc[oi]\w*|uscire|scend\w*|salgo|sali|salire|raggiung\w*|dirig\w*|cammin\w*|prosegu\w*|avvi\w*|corr[oi]|go|goes|going|head\w*|walk\w*|return\w*|enter\w*|leave|exit\w*|climb\w*|descend\w*|move\w*|run|back)\b/;
     function percorso(da, a) { /* prossima stanza sulla strada più breve */
@@ -8488,8 +8543,9 @@
       if (dest === luogo) return null; /* «vado alla fontana» in giardino: lo gestisce la stanza */
       if (dest === "cantina" && luogo === "cucina") return () => entraCantina(); /* «scendo in cantina» dalla cucina: si passa dalla stanza di servizio */
       /* primo piano dall'atrio: la prima volta si passa per forza dal pianerottolo dell'armatura; la sala da ballo si raggiunge dal corridoio finestrato */
+      if (luogo === "atrio" && dest === "pianerottolo") return () => salePianerottolo();
       if (luogo === "atrio" && ["anticamera_trono", "corridoio_primo", "sala_ballo"].includes(dest)) {
-        if (!("scale" in usate)) return () => scale();
+        if (!("scale" in usate)) return () => salePianerottolo();
         return () => vai(dest === "sala_ballo" ? "corridoio_primo" : dest);
       }
       if (!(ADIACENTI[luogo] || []).includes(dest)) {
@@ -8503,7 +8559,7 @@
       return () => vai(dest);
     }
     /* «torno indietro»: la stanza da cui si è arrivati */
-    const DOVE_TORNA = { cantina: "servizio", dispensa: "cucina", servizio: "cucina", cucina: "corridoio", sala_ballo: "corridoio", corridoio: "sala_pranzo", sala_pranzo: "sala_conversazione", giardino: "atrio", cappella: "giardino", cripta: "cappella", sala_trofei: "sala_caccia", anticamera_trono: "atrio", corridoio_primo: "atrio" };
+    const DOVE_TORNA = { pianerottolo: "atrio", cantina: "servizio", dispensa: "cucina", servizio: "cucina", cucina: "corridoio", sala_ballo: "corridoio", corridoio: "sala_pranzo", sala_pranzo: "sala_conversazione", giardino: "atrio", cappella: "giardino", cripta: "cappella", sala_trofei: "sala_caccia", anticamera_trono: "pianerottolo", corridoio_primo: "pianerottolo" };
     let ultimoTesto = "";
     async function gestisci(testo) {
       const t = norm(testo);
@@ -8567,9 +8623,9 @@
       if (mossa) return mossa();
       const id = luogo === "atrio" ? interpreta(t) : interpretaAltrove(t);
       if (id === "portone_chiuso") return haChiavePortone() ? esciDalPortone() : aggiungi({ tipo: "narra", righe: EST.portoneChiuso });
-      if (id === "spada") return spada();
+      if (id === "spada") return luogo === "atrio" ? salePianerottolo(spada) : spada();
       if (id === "giocattoli") return giocattoli();
-      if (id === "scale") return scale();
+      if (id === "scale") return luogo === "atrio" ? salePianerottolo(ha(t, "tocca") ? scale : null) : scale();
       if (TX.ambigui[id]) return aggiungi({ tipo: "narra", righe: [TX.ambigui[id]] });
       if (id === "entra_sx") return cacciaAperta() ? vai("sala_caccia") : portaChiusa(true); /* chiusa a chiave finché Aldo non la apre (caccia completata) */
       if (id === "entra_dx") return vai("sala_conversazione");
@@ -8588,12 +8644,12 @@
       if (id === "fuoco_freddo" || (id === "camino" && usate.fuoco_sala_conversazione === "spento")) return aggiungi({ tipo: "narra", righe: Q.riposo.caminoFreddo });
       if (id === "entra_corridoio") return vai("corridoio");
       if (id === "entra_ballo") return vai("sala_ballo");
-      if ((id === "rampa_sx" || id === "rampa_dx") && !("scale" in usate)) return scale(); /* prima salita: l'armatura */
+      if ((id === "rampa_sx" || id === "rampa_dx") && !("scale" in usate)) return salePianerottolo(); /* prima salita: l'armatura */
       if (id === "rampa_sx") return vai("anticamera_trono");
       if (id === "rampa_dx") return vai("corridoio_primo");
       if (id === "verso_corridoio_primo") return vai("corridoio_primo");
       if (id === "rampa?") { aggiungi({ tipo: "narra", righe: [P1.rampaDomanda] }); return scelte([{ testo: P1.rampaSx, fn: () => { chiudiScelte(); vai("anticamera_trono"); } }, { testo: P1.rampaDx, fn: () => { chiudiScelte(); vai("corridoio_primo"); } }]); }
-      if (id === "mastino_respinge") { aggiungi({ tipo: "narra", box: "ko", righe: P1.respinge }); return setTimeout(() => fuoriDallaTendina(() => vai("atrio")), 1800); }
+      if (id === "mastino_respinge") { aggiungi({ tipo: "narra", box: "ko", righe: P1.respinge }); return setTimeout(() => fuoriDallaTendina(() => vai("pianerottolo")), 1800); }
       if (id === "mastino_attacco") return assaltoMastino();
       if (id === "secondo_piano_chiuso") return aggiungi({ tipo: "narra", righe: P1.secondoPiano });
       if (id === "ballo_lontano") return aggiungi({ tipo: "narra", righe: [TX.esterno.balloLontano] });

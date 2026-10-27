@@ -959,6 +959,31 @@ caso("Atrio: «vado a destra» sul pianerottolo prende la rampa; «lancia lume a
   eq(await page.evaluate(() => interpretaBuio(norm("lancio luce"))), "lancia_luce");
   eq(errori, [], "errori"); await chiudi();
 });
+caso("Pianerottolo: stanza a sé tra atrio, anticamera e corridoio; «torno indietro» dal primo piano porta qui", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "atrio" }));
+  const g = async (t) => { await page.evaluate(x => gestisci(x), t); await page.waitForTimeout(300); return page.evaluate(() => luogo); };
+  await page.evaluate(() => vai("atrio"));
+  eq(await g("salgo le scale"), "pianerottolo", "atrio → pianerottolo");
+  eq(await page.evaluate(() => document.getElementById("diario").textContent.includes(SCALE.domanda)), true, "la prima salita fa partire il richiamo");
+  await page.evaluate(() => { usate.scale = "no"; chiudiScelte(); });
+  eq(await g("prendo la rampa di sinistra"), "anticamera_trono");
+  eq(await g("torno indietro"), "pianerottolo", "dall'anticamera si torna sul pianerottolo");
+  eq(await g("vado a destra"), "corridoio_primo");
+  eq(await g("torno indietro"), "pianerottolo", "dal corridoio si torna sul pianerottolo");
+  eq(await g("torno nell'atrio"), "atrio");
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Aldo: risposte nuove dalla porta principale, quelle di sempre dalla scala di servizio", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "atrio" }));
+  const risposte = (ingr) => page.evaluate((ingr) => { usate.dialogo_aldo_ingresso = ingr; luogo = "sala_ballo"; mostraStanza("sala_ballo"); mostraRisposte("aldo", "inizio");
+    return [...document.querySelectorAll("button")].filter(b => b.offsetParent && /^\[/.test(b.textContent)).map(b => b.textContent); }, ingr);
+  const O = await page.evaluate(() => DLG_PROVE.it.aldo.ospiti);
+  const osp = await risposte("ospiti"), ser = await risposte("servizio");
+  eq(osp.length, 4); vero([O.osserva, O.gentile, O.duro, O.minaccia].every(f => osp.some(t => t.includes(f))), "porta principale: risposte nuove");
+  eq(ser.length, 4); vero(!ser.some(t => t.includes(O.duro)), "porta di servizio: risposte di sempre");
+  vero(await page.evaluate(() => !DLG().aldo.nodi.inizio.testo.ospiti.join(" ").includes("topo che ha trovato")), "tolta la frase del topo");
+  eq(errori, [], "errori"); await chiudi();
+});
 caso("Spada del Retaggio: primo tocco con la visione, una chiamata per lacrima (Intuizione), poi il gesto", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "atrio" }));
   await page.evaluate(() => { usate.scale = "no"; usate.scale_visione = true; }); /* armatura già toccata */

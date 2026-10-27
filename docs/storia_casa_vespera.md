@@ -3,7 +3,7 @@
 Documento di riferimento per scrivere diari, flashback, dialoghi e finali. Contiene tutti gli spoiler: non va mostrato al giocatore.
 **Regola di lavoro:** questo file è la linea guida condivisa tra Francesco e Claude. Si aggiorna a ogni decisione, e ogni scelta dell'uno può essere messa in discussione dall'altro.
 
-Ultimo aggiornamento: 27 ottobre 2026, sera (sezione 11: cimitero e foresta dei pini accessibili da subito, borsa dei veleni; prima: pianerottolo, stanze che si ripuliscono, paura dei guardiani, diario sigillato).
+Ultimo aggiornamento: 27 ottobre 2026, notte (sezione 10: il carattere di Ettore; sezione 11: cimitero e foresta dei pini accessibili da subito, borsa dei veleni; prima: pianerottolo, stanze che si ripuliscono, paura dei guardiani, diario sigillato).
 Aggiornamento precedente: 26 ottobre 2026 (visioni del Retaggio: nuova sezione 12; riviste 1, 3, 7, 7b, 8 e 9).
 
 ---
@@ -158,6 +158,19 @@ Non ci sono scontri fisici con Aldo e Guendalina (sono segnati come boss solo pe
 - Il quaderno gli fu affidato dal figlio maggiore (sigillato); è Guendalina che gli ha parlato della Signora.
 - Aldo, parlando di lui, dice "il più ostinato che avessi avuto", non "il migliore".
 - La cripta ha tre cose da esaminare: nicchie vuote (Indagare), sarcofago più antico (Atletica, oggi CD 14 nel gioco, da portare a 12 e vincolare al libro; 1d4 danni non letali al fallimento), drappo su una piccola tomba.
+
+### Ettore, il carattere (DECISO la notte del 27)
+- **Chi era:** un cacciatore di taglie di Valdombra (uomini, non bestie: si pagava meglio). Inseguiva un uomo fin dentro la grotta: la preda è morta dopo dieci passi, sbranata dai mastini; lui è rimasto intrappolato. Il vecchio gli ha dato un mestiere che conosceva già.
+- **Le sue prede:** undici esploratori finiti nella casa da altri ingressi. Solo l'ultima portava il fermaglio: il bronzo prima di lui, che gli ha spezzato la gamba sinistra prima di cadere. Aldo conosce la ferita perché c'era.
+- **Il tratto centrale: conta.** Gli anni, le cacce, i giorni, i colpi. Contare è l'ultima cosa che tiene insieme la sua mente. Negli scontri conta ogni suo attacco con una frase provocatoria («Uno. Si comincia sempre da uno.» … «Undici. Come le mie cacce. Al dodicesimo, uno di noi resta qui.» … «Ho perso il conto. Ricomincio: uno.»).
+- **Le tacche in cappella:** sull'ultima panca, sotto le undici tacche grandi (le cacce), centinaia di tacche minuscole, una per giorno, a gruppi di cinque, finché si accavallano e si fermano a metà. Una lettera: E. Prova di Indagare CD 12.
+- **Il codice:** guarda in faccia chi uccide, non si inginocchia. Chiede dignità, non pietà.
+- **Come parla:** frasi brevi, lessico da caccia, non dice mai il nome di Aldo: solo «il vecchio».
+- **Il fuoco:** ha capito da solo che si dorme al sicuro solo dove la fiamma è calda, e che la fiamma si nutre. Lo racconta lui: **la legna fresca del bosco** riaccende un camino spento (sala da conversazione) o il braciere della cripta per un riposo. Una fascina al giorno, al massimo tre.
+- **Cosa vuole:** combattere. Per fermarlo: [Osserva] Intuizione CD 12 per capire quale tono lo raggiunge, poi Socialità con due approcci. Signora: Gentile CD 12, Duro CD 16. Signore: Duro CD 12, Gentile CD 16. Neutro: 14 per entrambi. Riuscita: ti dà il fermaglio e il quaderno e se ne va (reietto). Fallita: «Il codice dice che si muore in piedi» e attacca.
+- **Ramo Signora, se lo attacchi:** getta il quaderno nel braciere. Hai 3 prove di Acrobazia (CD 12, senza danno mentale) per salvarlo; ogni fallimento lo rende meno leggibile (da «solo gli angoli anneriti» a «poche righe»). Il figlio maggiore darà comunque l'indizio che manca.
+- **Ramo Signore, se lo risparmi:** niente più taccuino a parte: ti dà il quaderno sigillato e ti manda a leggere i nomi delle sue prede sulle mensole dei trofei.
+- Le tre versioni (Signora, Signore, neutro) sono tre stadi della stessa mente: chi crede ancora, il soldato aggrappato al codice, il contatore rotto. Conteggio, gamba e fuoco tornano in tutte e tre.
 
 ## 11. La casa: scelte di struttura decise il 25 ottobre
 

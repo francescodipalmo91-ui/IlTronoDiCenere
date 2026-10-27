@@ -215,6 +215,37 @@ caso("Bottega di Guendalina: la parte sblocca il dialogo e la ricetta; l'elisir 
   eq(errori, [], "errori"); await chiudi();
 });
 
+caso("Ettore: Osserva con Intuizione, Gentile convince il ramo Signora; ramo Signora attaccato: quaderno nel fuoco con 3 prove di Acrobazia; conta i colpi", async (b) => {
+  const base = (tono) => PARTITA({ luogo: "cripta", diario: [{ tipo: "narra", stanza: "cripta", righe: ["x"] }], usate: { riposo: "sbloccato", luce: "ok", chiave_portone: "presa", q4: "accettata", ettore: "incontrato", ettore_lato: tono, dialogo_ettore_tono: tono, dialogo_ettore: "scelta" } });
+  const aspetta = (page) => page.waitForFunction(() => document.querySelectorAll("#azioni button:not([disabled])").length > 0, null, { timeout: 30000 });
+  const clicca = async (page, testo) => { await aspetta(page); await page.click(`#azioni button:has-text("${testo}")`); };
+  let { page, errori, chiudi } = await apri(b, "gioco.html", PG(), base("signora"));
+  await clicca(page, "Osserva"); await accoda(page, [R(15, 20)]); await clicca(page, "Lancia");
+  await clicca(page, "Gentile"); await accoda(page, [R(15, 20)]); await clicca(page, "Lancia");
+  await page.waitForFunction(() => usate.ettore === "risparmiato", null, { timeout: 40000 });
+  vero(await page.evaluate(() => zaino.some(x => x.id === "diario_figlio") && zaino.some(x => x.id === "sigillo")), "fermaglio e quaderno");
+  eq(errori, [], "errori"); await chiudi();
+  ({ page, errori, chiudi } = await apri(b, "gioco.html", PG(), base("signora")));
+  await clicca(page, "Mi dispiace");
+  await accoda(page, [R(1, 20)]); await clicca(page, "Lancia");
+  await accoda(page, [R(18, 20)]); await clicca(page, "Lancia");
+  await page.waitForFunction(() => scontro, null, { timeout: 30000 });
+  eq(await page.evaluate(() => usate.diario_leggibile), 2, "un fallimento: meno leggibile");
+  await page.evaluate(() => { scontro.pv = 0; vittoriaScontro(); });
+  vero(/bordo delle pagine è bruciato/.test(await page.evaluate(() => testoOggetto(zaino.find(x => x.id === "diario_figlio")))), "stato del quaderno");
+  eq(await page.evaluate(() => { scontro = { ctx: "ettore", conta: 0 }; const a = contaEttore(), c = contaEttore(); scontro = null; return [a.slice(0, 5), c.slice(0, 5)]; }), ["«Uno.", "«Due."], "il conteggio");
+  eq(errori, [], "errori"); await chiudi();
+});
+
+caso("Legna: si raccoglie nella foresta una volta al giorno e riaccende il camino spento per un riposo", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "pineta", diario: [{ tipo: "narra", stanza: "pineta", righe: ["x"] }], usate: { riposo: "sbloccato", luce: "ok", chiave_portone: "presa", fuoco_sala_conversazione: "spento" } }));
+  await page.evaluate(() => { gestisci("raccolgo legna"); gestisci("raccolgo legna"); });
+  eq(await page.evaluate(() => zaino.find(x => x.id === "legna").usi), 1, "una fascina al giorno");
+  await page.evaluate(() => { vai("sala_conversazione"); gestisci("metto la legna nel camino"); });
+  eq(await page.evaluate(() => [usate.fuoco_sala_conversazione || "acceso", document.body.classList.contains("fuoco-caldo"), zaino.some(x => x.id === "legna")]), ["acceso", true, false], "camino riacceso");
+  eq(errori, [], "errori"); await chiudi();
+});
+
 caso("Sciamano: la Borsa dei veleni non serve al Guerriero", async (b) => {
   const pg = PG(); pg.equipaggiamento.dotazione = [{ nome: "Borsa dei veleni", usi: 3, desc: "x" }];
   const { page, errori, chiudi } = await apri(b, "gioco.html", pg, PARTITA({ risorsaUsata: 5 }));

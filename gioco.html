@@ -4283,6 +4283,278 @@
       E.arcano_ok = { testo: P.ettore.arcano_ok, poi: "scelta", alla_fine: "ettore_trono" };
       E.arcano_ko = { testo: P.ettore.arcano_ko, poi: "scelta" };
     }
+    /* =====================================================================
+       ETTORE, IL CARATTERE (27/10 sera): cacciatore di taglie di Valdombra; la sua preda è morta subito tra i mastini,
+       lui è rimasto intrappolato. Conta tutto: è l'ultima cosa che tiene insieme la sua mente (anche negli scontri).
+       Ha un codice: guarda in faccia chi uccide, non si inginocchia. Vuole combattere: per fermarlo serve Socialità,
+       con l'approccio giusto (Intuizione per capirlo). Ramo Signora: getta il quaderno nel fuoco, 3 prove di Acrobazia.
+       ===================================================================== */
+    const ETT = {
+      it: {
+        inizio: [
+          "Un movimento tra i sarcofagi. Una figura si alza dal giaciglio e si mette tra te e il braciere, una spada sbreccata stretta in pugno.",
+          "È un uomo, o lo è stato. Magro fino all'osso, la barba lunga e sporca di cenere, porta i resti di un'armatura di cuoio e ferro d'una foggia antica, rattoppata con spago e stracci. Sul petto, appuntata al farsetto, brilla una spilla di bronzo a forma di testa di mastino.",
+          "«Ti manda il vecchio, vero?»",
+          "La sua voce è roca, rotta dal disuso. Ti guarda il petto, dove la spilla non c'è, poi le mani, poi gli occhi.",
+          "«Certo che ti manda lui. Manda sempre qualcuno, prima o poi. Io sono Ettore. Undici volte sono sceso a cacciare per lui. Undici. Le ho contate tutte. Alla dodicesima, la preda sono io.»"
+        ],
+        attacco: ["Ettore chiude gli occhi per un istante, come chi sente arrivare una pioggia attesa da tempo.", "«Allora non perdiamo tempo. Ma non aspettarti che mi inginocchi.»", "Solleva la spada e si mette in guardia, la gamba sinistra rigida, piegata appena. «Uno» mormora. «Si comincia sempre da uno.»"],
+        storia: {
+          signora: [
+            "Ettore abbassa appena la spada, senza lasciarla.",
+            "«Ero un cacciatore di taglie, a Valdombra. Uomini, non bestie: si pagava meglio. Ne inseguivo uno fin dentro quella grotta. È morto dopo dieci passi: i cani del vecchio l'hanno fatto a pezzi davanti a me. Io no. Io sono rimasto.»",
+            "«Il vecchio mi ha messo alla prova, come ha fatto con te, e mi ha dato le sue cacce. Undici. Undici prede, undici notti a guardarmi le spalle.» Si tocca la spilla sul petto con due dita, come se scottasse.",
+            "«Poi Guendalina mi ha parlato della Signora, chiusa da qualche parte in questa casa, e dei suoi figli che la cercano ancora. Il maggiore mi ha affidato il suo quaderno, sigillato, perché cercassi per lui ciò che la casa tiene nascosto. Non sono riuscito ad aprirlo, e nemmeno a trovare quello che cercavo: quaggiù la mia mente ha cominciato a sfilacciarsi, e il vecchio ha capito che avevo smesso di essere suo.»",
+            "Indica il braciere con il mento. «Una cosa te la regalo. La casa ti lascia dormire solo dove la fiamma è calda. Ma la fiamma si nutre: legna fresca, dal bosco dietro il cimitero. Un camino spento torna a scaldare per una notte. L'ho imparato tardi.»",
+            "Estrae da sotto il giaciglio un quaderno dalla copertina di pelle, chiuso da un sigillo che brilla appena.",
+            "«Non sono il migliore, né il primo, né l'unico: sono solo quello che ha smesso di obbedire. Se mi uccidi, porti al vecchio la sua prova... e il ragazzo resta senza il suo quaderno, e la Signora senza di noi.»"
+          ],
+          signore: [
+            "Ettore ride, una risata secca che diventa tosse.",
+            "«Il vecchio non ti ha detto niente, vero? Non lo dice mai. Ero un cacciatore di taglie, a Valdombra. Ho seguito un uomo dentro la grotta: i cani l'hanno sbranato prima che potessi mettergli le mani addosso. A me hanno lasciato la vita, e il vecchio mi ha dato un mestiere che conoscevo già.»",
+            "«Undici cacce per il Signore. Undici, mai una domanda. Sai chi erano le mie prede? Gente come te: esploratori finiti qui da altri ingressi, con gli occhi ancora pieni di sole. Solo l'ultima portava il fermaglio: il bronzo, prima di me. Mi ha spezzato la gamba, prima di cadere.» Si batte il pugno sul ginocchio sinistro.",
+            "«Non credere che io sia il migliore. Sono il primo gradino. Sopra di me ce ne sono altri, e in cima a quella scala c'è chi mi ha superato da molto tempo.»",
+            "«Un consiglio da cacciatore, gratis: la casa ti lascia dormire solo vicino a un fuoco caldo. Ma il fuoco si nutre. Legna fresca dal bosco dietro il cimitero, e un camino spento ti regala un'altra notte.»",
+            "Ti guarda negli occhi, e in quello sguardo non c'è odio. Solo una stanchezza infinita.",
+            "«Ho obbedito fino a consumarmi, e tu sei qui per uccidermi in suo nome. Quando avrai finito, porta pure il mio fermaglio al vecchio. Un giorno qualcuno scenderà quelle scale per prendere il tuo.»"
+          ],
+          neutro: [
+            "Ettore inclina la testa, come se faticasse a capire la domanda. Poi si mette a ridere, piano, e non riesce più a smettere.",
+            "«Cosa vuole? Il fermaglio. Sempre il fermaglio. Ero un cacciatore di taglie, sai? Valdombra. Inseguivo un uomo. I cani l'hanno preso. Uno. Il primo che ho perso.» Conta sulle dita, si ferma, ricomincia.",
+            "«Poi undici cacce. Undici spille, sulle mensole del vecchio. E la dodicesima mensola è la mia.»",
+            "Le sue parole si sfilacciano come stoffa vecchia. Parla di mastini, di una panca nella cappella dove incideva i giorni finché le tacche non si sono confuse, di legna da portare dal bosco perché il fuoco non muoia, delle voci che sente la notte dietro i sarcofagi.",
+            "Poi, d'improvviso, torna lucido. Ti fissa con occhi chiarissimi.",
+            "«Non sono il migliore, lo so. Sono il gradino più basso, e lo sanno tutti tranne il vecchio. Non so cosa vuole davvero. So solo che, se mi uccidi, la prossima mensola è la tua.»"
+          ]
+        },
+        osserva: "Resto in silenzio e lo osservo.",
+        osservaOk: {
+          signora: ["Lo osservi mentre parla. Non vuole morire per il vecchio: vuole che la sua morte serva a qualcosa. Ogni volta che nomina Guendalina o il ragazzo, la punta della spada si abbassa di un dito.", "Con la gentilezza, forse, lo fermi. Con la forza no: la prenderebbe come un ordine del vecchio."],
+          signore: ["Lo osservi. Il codice è tutto ciò che gli resta: la pietà lo offende, la sente come un insulto. Ma rispetta chi gli parla da cacciatore a cacciatore.", "Se vuoi fermarlo, devi essere duro."],
+          neutro: ["Lo osservi. Le dita battono sull'elsa: contano, contano. Non è coraggio, è paura di fermarsi.", "Né le carezze né le minacce lo raggiungono del tutto: qualunque strada tu scelga, sarà in salita."]
+        },
+        osservaKo: ["Il suo volto è una maschera di barba e cenere. Non riesci a capire cosa gli passi per la testa."],
+        gentile: "Non devi morire qui, Ettore. Guendalina e il ragazzo hanno ancora bisogno di qualcuno. Dammi il fermaglio e vivi.",
+        duro: "Guardati: una gamba sola e una spada sbreccata. Il codice dice di non combattere battaglie perse. Dammi il fermaglio.",
+        insiste: {
+          signora: ["Ettore scuote la testa, e per un attimo la voce gli si incrina. «Belle parole. Le diceva anche lei, Guendalina. Io ho smesso di crederci.»", "Solleva la spada e si mette in guardia, la gamba sinistra rigida, piegata appena."],
+          signore: ["«Non dirmi cosa dice il codice.» Gli occhi gli si induriscono. «Il codice dice che si muore in piedi.»", "Solleva la spada e si mette in guardia, la gamba sinistra rigida, piegata appena."],
+          neutro: ["Ettore ride, e la risata si spezza in un singhiozzo. «Dodici. Dodici è il numero giusto. Non posso fermarmi a undici.»", "Solleva la spada e si mette in guardia, la gamba sinistra rigida, piegata appena."]
+        },
+        gettaQuaderno: ["Ettore annuisce lentamente. Poi, con un gesto rapido, getta il quaderno di pelle nel braciere.", "«Allora il vecchio non avrà anche questo.»"],
+        risparmiaSignore: [
+          "Ettore resta immobile, la spada a mezz'aria. Poi la abbassa, piano.",
+          "«Nessuno degli undici me l'ha mai detto. E io non l'ho mai detto a nessuno.»",
+          "Sgancia la spilla di bronzo e te la posa nel palmo. Poi ti porge il quaderno di pelle, chiuso dal suo sigillo.",
+          "«Questo me l'ha dato il ragazzo. Non l'ho mai aperto: non era roba mia. I nomi delle mie prede li trovi sulle mensole del vecchio, nella saletta dei trofei. Leggili, prima di decidere a chi sei fedele. E quando menti al vecchio, non abbassare lo sguardo. Mai.»",
+          "Si carica sulle spalle il suo fagotto di stracci e scompare tra le colonne, in un passaggio che non avevi notato."
+        ],
+        fuoco: {
+          intro: "Le fiamme arancioni afferrano la copertina di pelle. Se vuoi salvarlo, devi essere rapido.",
+          azione: "Ti getti verso il braciere e allunghi la mano tra le fiamme.",
+          ok: ["Afferri il quaderno e lo strappi al fuoco. Lo spegni contro la pietra, battendolo con il palmo."],
+          ko: ["Le dita si chiudono sul vuoto e il calore ti respinge: il quaderno scivola più a fondo tra le braci."],
+          ancora: (n) => `Il quaderno brucia ancora. Puoi riprovare (${n} ${n === 1 ? "tentativo rimasto" : "tentativi rimasti"}).`,
+          lascia: "Lasci che il fuoco faccia il suo lavoro.",
+          esito: ["Quando finalmente lo tiri fuori, del quaderno restano la copertina e un mazzetto di pagine nere che si sbriciolano tra le dita.", "Lo salvi a fatica: metà delle pagine sono carbonizzate.", "Il quaderno è salvo, ma il bordo delle pagine è bruciato: qualche parola è andata persa.", "Il quaderno è salvo: solo gli angoli sono anneriti."],
+          dopo: ["Ettore ti guarda, quasi divertito. «Testardo.»", "Solleva la spada e si mette in guardia, la gamba sinistra rigida, piegata appena."],
+          stato: ["Bruciato quasi del tutto: della scrittura restano poche righe.", "Metà delle pagine sono carbonizzate.", "Il bordo delle pagine è bruciato: qualche parola è andata persa.", "Solo gli angoli della copertina sono anneriti."]
+        },
+        conta: ["«Uno. Si comincia sempre da uno.»", "«Due. Quello prima di te è arrivato a tre.»", "«Tre. Respiri troppo forte: ti sento.»", "«Quattro. Il vecchio ti guarda, lo sai?»", "«Cinque. Undici cacce, e tu sei la più lenta.»", "«Sei. Metà strada. Per chi dei due?»", "«Sette. La gamba fa male. A me. A te farà peggio.»", "«Otto. Ho inciso giorni più lunghi di te.»", "«Nove... no. Dieci? Non importa.»", "«Undici. Come le mie cacce. Al dodicesimo, uno di noi resta qui.»", "«Ho perso il conto. Ricomincio: uno.»"],
+        panche: {
+          azione: "Ti chini sull'ultima panca e passi le dita sul legno, tacca per tacca.",
+          successo: ["Sotto le undici tacche grandi ne trovi altre, minuscole, a centinaia: una per ogni giorno, raccolte a gruppi di cinque. Chi le ha incise ha contato a lungo, con pazienza.", "Poi i gruppi si fanno storti, le tacche si accavallano, e a metà della panca si fermano. Sul bordo, a punta di coltello, una sola lettera: E."],
+          fallimento: ["Le tacche si confondono con le venature del legno e i graffi di secoli. Non riesci a ricavarne altro."],
+          gia: { ok: "Le tacche di Ettore: undici cacce e centinaia di giorni, finché ha smesso di contare.", ko: "Hai già esaminato le tacche senza capirci altro." },
+          lascia: "Lasci stare la panca."
+        },
+        legna: {
+          presa: (n) => `Raccogli rami secchi e qualche ciocco di pino resinoso e li leghi in una fascina (fascine: ${n}).`,
+          gia: "Per oggi hai raccolto tutta la legna che puoi portare. Torna dopo un riposo.",
+          piena: "Hai già tre fascine: di più non riesci a portarne.",
+          nessuna: "Non hai legna da mettere nel fuoco. Nel bosco dietro il cimitero ce n'è quanta ne vuoi.",
+          accesa: "Getti la fascina tra le braci e soffi. Le fiamme si riprendono, tornano arancioni e calde: qui si può riposare di nuovo.",
+          giaCalda: "Il fuoco arde già caldo: conserva la legna per quando servirà.",
+          cucina: "Il focolare di Guendalina non si spegne mai: non ha bisogno della tua legna.",
+          niente: "Qui non c'è un fuoco da alimentare."
+        },
+        legnaOgg: { nome: "Fascina di legna", testo: "Rami secchi e ciocchi di pino resinoso, legati con un giunco. Messa in un camino o in un braciere spento, lo riaccende per un riposo." }
+      },
+      en: {
+        inizio: [
+          "A movement among the sarcophagi. A figure rises from the pallet and steps between you and the brazier, a chipped sword clenched in his fist.",
+          "It is a man, or it once was. Thin to the bone, his long beard dirty with ash, he wears the remains of leather-and-iron armour of an ancient make, patched with string and rags. On his chest, pinned to his doublet, gleams a bronze brooch shaped like a mastiff's head.",
+          "“The old man sent you, didn't he?”",
+          "His voice is hoarse, broken by disuse. He looks at your chest, where there is no brooch, then at your hands, then at your eyes.",
+          "“Of course he sent you. He always sends someone, sooner or later. I'm Ettore. Eleven times I went down to hunt for him. Eleven. I counted them all. On the twelfth, the prey is me.”"
+        ],
+        attacco: ["Ettore closes his eyes for an instant, like a man who hears a long-awaited rain coming.", "“Then let's not waste time. But don't expect me to kneel.”", "He raises his sword and takes his guard, his left leg stiff, barely bent. “One,” he murmurs. “You always start from one.”"],
+        storia: {
+          signora: [
+            "Ettore lowers his sword slightly, without letting go.",
+            "“I was a bounty hunter, in Valdombra. Men, not beasts: it paid better. I chased one right into that cave. He died ten steps in: the old man's hounds tore him apart in front of me. Not me. I stayed.”",
+            "“The old man tested me, as he tested you, and gave me his hunts. Eleven. Eleven prey, eleven nights watching my back.” He touches the brooch on his chest with two fingers, as if it burned.",
+            "“Then Guendalina told me about the Lady, locked away somewhere in this house, and about her children who are still looking for her. The eldest entrusted me with his notebook, sealed, so that I might look for what the house keeps hidden. I couldn't open it, nor find what I sought: down here my mind began to fray, and the old man understood I was no longer his.”",
+            "He points his chin at the brazier. “I'll give you one thing. The house lets you sleep only where the flame is warm. But a flame can be fed: fresh wood, from the forest behind the graveyard. A cold hearth warms again for one night. I learned that late.”",
+            "From under the pallet he draws a leather-bound notebook, closed by a faintly glowing seal.",
+            "“I'm not the best, nor the first, nor the only one: just the one who stopped obeying. If you kill me, you bring the old man his proof... and the boy is left without his notebook, and the Lady without us.”"
+          ],
+          signore: [
+            "Ettore laughs, a dry laugh that turns into a cough.",
+            "“The old man told you nothing, did he? He never does. I was a bounty hunter, in Valdombra. I followed a man into the cave: the hounds mauled him before I could lay a hand on him. They left me alive, and the old man gave me a trade I already knew.”",
+            "“Eleven hunts for the Master. Eleven, never a question. Do you know who my prey were? People like you: explorers who ended up here through other entrances, their eyes still full of sun. Only the last one wore the clasp: the bronze, before me. He broke my leg before he fell.” He strikes his left knee with his fist.",
+            "“Don't think I'm the best. I'm the first step. There are others above me, and at the top of that ladder is someone who passed me long ago.”",
+            "“A hunter's advice, free: the house lets you sleep only near a warm fire. But fire can be fed. Fresh wood from the forest behind the graveyard, and a cold hearth gives you another night.”",
+            "He looks you in the eye, and there is no hatred in that look. Only an endless weariness.",
+            "“I obeyed until I was worn out, and you're here to kill me in his name. When you're done, take my clasp to the old man. One day someone will come down those stairs for yours.”"
+          ],
+          neutro: [
+            "Ettore tilts his head, as if struggling to understand the question. Then he starts to laugh, softly, and cannot stop.",
+            "“What does he want? The clasp. Always the clasp. I was a bounty hunter, you know? Valdombra. I was chasing a man. The hounds got him. One. The first one I lost.” He counts on his fingers, stops, starts again.",
+            "“Then eleven hunts. Eleven brooches, on the old man's shelves. And the twelfth shelf is mine.”",
+            "His words fray like old cloth. He talks of mastiffs, of a pew in the chapel where he carved the days until the notches blurred, of wood to fetch from the forest so the fire won't die, of the voices he hears at night behind the sarcophagi.",
+            "Then, suddenly, he is lucid again. He stares at you with very pale eyes.",
+            "“I'm not the best, I know. I'm the lowest step, and everyone knows it except the old man. I don't know what he really wants. I only know that if you kill me, the next shelf is yours.”"
+          ]
+        },
+        osserva: "I stay silent and watch him.",
+        osservaOk: {
+          signora: ["You watch him as he speaks. He doesn't want to die for the old man: he wants his death to mean something. Every time he names Guendalina or the boy, the tip of his sword drops a finger's breadth.", "Kindness might stop him. Force won't: he would take it as an order from the old man."],
+          signore: ["You watch him. The code is all he has left: pity offends him, he feels it as an insult. But he respects anyone who speaks to him hunter to hunter.", "If you want to stop him, you must be hard."],
+          neutro: ["You watch him. His fingers drum on the hilt: counting, counting. It isn't courage, it's fear of stopping.", "Neither kindness nor threats fully reach him: whichever way you choose, it will be uphill."]
+        },
+        osservaKo: ["His face is a mask of beard and ash. You cannot tell what is going through his mind."],
+        gentile: "You don't have to die here, Ettore. Guendalina and the boy still need someone. Give me the clasp and live.",
+        duro: "Look at yourself: one good leg and a chipped sword. The code says you don't fight lost battles. Give me the clasp.",
+        insiste: {
+          signora: ["Ettore shakes his head, and for a moment his voice cracks. “Fine words. Guendalina used to say them too. I stopped believing them.”", "He raises his sword and takes his guard, his left leg stiff, barely bent."],
+          signore: ["“Don't tell me what the code says.” His eyes harden. “The code says you die on your feet.”", "He raises his sword and takes his guard, his left leg stiff, barely bent."],
+          neutro: ["Ettore laughs, and the laugh breaks into a sob. “Twelve. Twelve is the right number. I can't stop at eleven.”", "He raises his sword and takes his guard, his left leg stiff, barely bent."]
+        },
+        gettaQuaderno: ["Ettore nods slowly. Then, with a quick motion, he throws the leather notebook into the brazier.", "“Then the old man won't have this too.”"],
+        risparmiaSignore: [
+          "Ettore stands still, his sword in mid-air. Then he lowers it, slowly.",
+          "“None of the eleven ever said that to me. And I never said it to anyone.”",
+          "He unpins the bronze brooch and lays it in your palm. Then he hands you the leather notebook, closed by its seal.",
+          "“The boy gave me this. I never opened it: it wasn't mine. You'll find the names of my prey on the old man's shelves, in the trophy room. Read them before you decide whom you're loyal to. And when you lie to the old man, don't look away. Never.”",
+          "He shoulders his bundle of rags and vanishes among the columns, into a passage you hadn't noticed."
+        ],
+        fuoco: {
+          intro: "The orange flames seize the leather cover. If you want to save it, you must be quick.",
+          azione: "You throw yourself at the brazier and reach into the flames.",
+          ok: ["You grab the notebook and tear it from the fire. You put it out against the stone, beating it with your palm."],
+          ko: ["Your fingers close on nothing and the heat drives you back: the notebook slips deeper into the embers."],
+          ancora: (n) => `The notebook is still burning. You can try again (${n} ${n === 1 ? "attempt left" : "attempts left"}).`,
+          lascia: "You let the fire do its work.",
+          esito: ["When you finally pull it out, all that is left of the notebook is the cover and a bundle of black pages that crumble between your fingers.", "You barely save it: half the pages are charred.", "The notebook is saved, but the edges of the pages are burned: a few words are lost.", "The notebook is saved: only the corners are blackened."],
+          dopo: ["Ettore looks at you, almost amused. “Stubborn.”", "He raises his sword and takes his guard, his left leg stiff, barely bent."],
+          stato: ["Almost entirely burned: only a few lines of writing remain.", "Half the pages are charred.", "The edges of the pages are burned: a few words are lost.", "Only the corners of the cover are blackened."]
+        },
+        conta: ["“One. You always start from one.”", "“Two. The one before you got to three.”", "“Three. You breathe too loud: I can hear you.”", "“Four. The old man is watching you, you know?”", "“Five. Eleven hunts, and you're the slowest.”", "“Six. Halfway. For which of us?”", "“Seven. The leg hurts. Mine. Yours will hurt worse.”", "“Eight. I've carved days longer than you.”", "“Nine... no. Ten? Doesn't matter.”", "“Eleven. Like my hunts. On the twelfth, one of us stays here.”", "“I've lost count. Starting again: one.”"],
+        panche: {
+          azione: "You bend over the last pew and run your fingers over the wood, notch by notch.",
+          successo: ["Beneath the eleven large notches you find others, tiny, by the hundred: one for each day, grouped in fives. Whoever carved them counted for a long time, patiently.", "Then the groups grow crooked, the notches overlap, and halfway along the pew they stop. On the edge, cut with a knife point, a single letter: E."],
+          fallimento: ["The notches blur into the grain of the wood and centuries of scratches. You can make nothing more of them."],
+          gia: { ok: "Ettore's notches: eleven hunts and hundreds of days, until he stopped counting.", ko: "You have already examined the notches without learning more." },
+          lascia: "You leave the pew alone."
+        },
+        legna: {
+          presa: (n) => `You gather dry branches and a few logs of resinous pine and tie them into a bundle (bundles: ${n}).`,
+          gia: "You have gathered all the wood you can carry for today. Come back after a rest.",
+          piena: "You already have three bundles: you cannot carry more.",
+          nessuna: "You have no wood to put on the fire. In the forest behind the graveyard there is as much as you want.",
+          accesa: "You throw the bundle onto the embers and blow. The flames revive, orange and warm again: you can rest here once more.",
+          giaCalda: "The fire is already burning warm: save the wood for when you need it.",
+          cucina: "Guendalina's hearth never goes out: it does not need your wood.",
+          niente: "There is no fire to feed here."
+        },
+        legnaOgg: { nome: "Bundle of firewood", testo: "Dry branches and logs of resinous pine, tied with a reed. Put into a cold hearth or brazier, it rekindles it for one rest." }
+      }
+    };
+    const ET = ETT[LINGUA] || ETT.it;
+    for (const l of ["it", "en"]) {
+      const E = DIALOGHI[l].ettore.nodi, T = ETT[l];
+      QT[l].oggetti.legna = T.legnaOgg;
+      E.inizio.testo = T.inizio;
+      E.attacco.testo = T.attacco;
+      E.storia.testo = T.storia;
+      E.attacco_dopo.testo = { ...E.attacco_dopo.testo, signora: T.gettaQuaderno };
+      E.attacco_dopo.alla_fine = "ettore_scontro_dopo";
+      E.risparmia.testo = { ...E.risparmia.testo, signore: T.risparmiaSignore };
+      const se = (t) => "dialogo_ettore_tono=" + t;
+      /* l'approccio giusto abbassa la difficoltà: Signora → gentile, Signore → duro, neutro → in salita per entrambi */
+      const CD = { signora: [12, 16], signore: [16, 12], neutro: [14, 14] };
+      const persuadi = Object.entries(CD).flatMap(([t, [g, d]]) => [
+        { tag: "gentile", testo: T.gentile, vai: "insiste", se: se(t), prova: { abilita: "Persuasione", cd: g, ok: "risparmia", ko: "insiste" } },
+        { tag: "duro", testo: T.duro, vai: "insiste", se: se(t), prova: { abilita: "Intimidire", cd: d, ok: "risparmia", ko: "insiste" } }
+      ]);
+      const osserva = { tag: "osserva", testo: T.osserva, vai: "osserva_ok", una: true, prova: { abilita: "Intuizione", cd: 12, ok: "osserva_ok", ko: "osserva_ko" } };
+      const tieni = (lista) => lista.filter(r => r.vai !== "risparmia");
+      E.scelta.risposte = [osserva, ...tieni(E.scelta.risposte), ...persuadi];
+      E.tregua.risposte = [osserva, ...tieni(E.tregua.risposte), ...persuadi];
+      E.osserva_ok = { testo: T.osservaOk, poi: "scelta" };
+      E.osserva_ko = { testo: T.osservaKo, poi: "scelta" };
+      E.insiste = { testo: T.insiste, alla_fine: "ettore_scontro" };
+    }
+    /* il conteggio di Ettore: una frase a ogni suo attacco */
+    function contaEttore() {
+      const C = ET.conta, n = Number(scontro.conta) || 0;
+      scontro.conta = n + 1 >= C.length ? 0 : n + 1;
+      return C[n];
+    }
+    /* ramo Signora: il quaderno nel braciere, 3 prove di Acrobazia; ogni fallimento lo rende meno leggibile (usate.diario_leggibile 0-3) */
+    function salvaQuaderno() {
+      const F = ET.fuoco;
+      let tentativi = 3;
+      usate.diario_leggibile = 3; salvaUsate();
+      const fine = () => {
+        fuoriDallaTendina(() => aggiungi({ tipo: "narra", box: usate.diario_leggibile >= 2 ? "ok" : "ko", righe: [F.esito[usate.diario_leggibile], ...F.dopo] }));
+        setTimeout(avviaScontroEttore, 600);
+      };
+      const prova = () => {
+        const k = "quaderno_fuoco"; delete usate[k];
+        const l = { prova: { abilita: "Acrobazia", dado: 20, cd: 12 }, riprova: true, nessunDanno: true, fuori: true,
+          azione: F.azione, successo: F.ok, fallimento: F.ko, lascia: F.lascia,
+          poi: (ok) => {
+            delete usate[k];
+            if (ok) { salvaUsate(); return fine(); }
+            tentativi--; usate.diario_leggibile = Math.max(0, usate.diario_leggibile - 1); salvaUsate();
+            if (tentativi > 0) { fuoriDallaTendina(() => aggiungi({ tipo: "narra", righe: [F.ancora(tentativi)] })); return prova(); }
+            fine();
+          } };
+        LUOGHI[k] = l;
+        proponiProva(k, l);
+        /* «Lascia perdere»: il quaderno brucia del tutto */
+        const bottoni = elAzioni.querySelectorAll("button"), lascia = bottoni[bottoni.length - 1];
+        if (lascia) lascia.addEventListener("click", () => { usate.diario_leggibile = 0; salvaUsate(); setTimeout(fine, 300); });
+      };
+      fuoriDallaTendina(() => { aggiungi({ tipo: "narra", box: "nem", righe: [F.intro] }); prova(); });
+    }
+    /* la legna: si raccoglie nella foresta (una volta al giorno, fino a 3 fascine) e riaccende un fuoco spento per un riposo */
+    function raccogliLegna() {
+      const L = ET.legna, giorno = Number(usate.giorno) || 1;
+      if (Number(usate.legna_giorno) === giorno) return aggiungi({ tipo: "narra", righe: [L.gia] });
+      const it = zaino.find(x => x.id === "legna");
+      if (it && Number(it.usi) >= 3) return aggiungi({ tipo: "narra", righe: [L.piena] });
+      usate.legna_giorno = giorno; salvaUsate();
+      if (it) it.usi = Number(it.usi) + 1; else zaino.push({ id: "legna", nome: Q.oggetti.legna.nome, tipo: "dotazione", usi: 1, alias: ["legna", "fascina", "wood", "firewood", "bundle"] });
+      aggiornaZaino(); modificato();
+      aggiungi({ tipo: "narra", righe: [L.presa(zaino.find(x => x.id === "legna").usi)] });
+    }
+    function alimentaFuoco() {
+      const L = ET.legna, it = zaino.find(x => x.id === "legna" && Number(x.usi) > 0);
+      if (luogo === "cucina") return aggiungi({ tipo: "narra", righe: [L.cucina] });
+      const qui = luogo === "sala_conversazione" ? "camino" : luogo === "cripta" ? "braciere" : null;
+      if (!qui) return aggiungi({ tipo: "narra", righe: [L.niente] });
+      const caldo = qui === "camino" ? usate.fuoco_sala_conversazione !== "spento" : braciereAcceso();
+      if (caldo) return aggiungi({ tipo: "narra", righe: [L.giaCalda] });
+      if (!it) return aggiungi({ tipo: "narra", righe: [L.nessuna] });
+      it.usi = Number(it.usi) - 1; if (it.usi <= 0) zaino = zaino.filter(x => x !== it);
+      if (qui === "camino") delete usate.fuoco_sala_conversazione;
+      else { usate.braciere_legna = true; if (["incontrato", "tregua"].includes(usate.ettore)) delete usate.fuoco_cripta; }
+      salvaUsate(); aggiornaZaino(); modificato(); aggiornaFuoco();
+      aggiungi({ tipo: "narra", box: "ok", righe: [L.accesa] });
+    }
     const Q = QT[LINGUA] || QT.it;
 
     /* testi delle regole nuove: livelli, risorse, riposo, morte, mente spezzata */
@@ -5095,6 +5367,7 @@
         pineta_cerca: { prova: { abilita: "Indagare", dado: 20, cd: 12 }, poi: erbe } };
       for (const id in M) LUOGHI[id] = { ...M[id], ...EST2.luoghi[id] };
     }
+    LUOGHI.cappella_panche = { ...LUOGHI.cappella_panche, prova: { abilita: "Indagare", dado: 20, cd: 12 }, ...ET.panche }; /* le tacche di Ettore: i suoi giorni */
     PROVE_DICHIARATE.pineta = { Sopravvivenza: "pineta_erbe", Indagare: "pineta_cerca", Percezione: "pineta_alberi" };
     PROVE_DICHIARATE.cimitero = { Indagare: "cim_lapidi", Percezione: "cim_rovi" };
     /* =====================================================================
@@ -5820,7 +6093,7 @@
 
     /* ---------- Nomi e descrizioni degli oggetti nella lingua scelta ---------- */
     const nomeOg = (o) => { const n = (o.id === "giocattoli" ? TX.giocattoli.nome : Q.oggetti[o.id] ? Q.oggetti[o.id].nome : N("oggetti", o.nome)); return o.bonus ? `${n} (+${o.bonus})` : n; };
-    const testoOggetto = (it) => Lingua.conRisorsa(it.id === "diario_adele" ? testoDiarioAdele() : it.id === "arazzo_sx" ? TX.foglietto : it.id === "giocattoli" ? TX.giocattoli.desc : Q.oggetti[it.id] ? Q.oggetti[it.id].testo : (Lingua.desc(it.nome) || it.testo));
+    const testoOggetto = (it) => Lingua.conRisorsa(it.id === "diario_adele" ? testoDiarioAdele() : it.id === "arazzo_sx" ? TX.foglietto : it.id === "giocattoli" ? TX.giocattoli.desc : Q.oggetti[it.id] ? Q.oggetti[it.id].testo + (it.id === "diario_figlio" && usate.diario_leggibile != null ? " " + ET.fuoco.stato[usate.diario_leggibile] : "") : (Lingua.desc(it.nome) || it.testo));
     const maniArma = (o) => Number(o && o.mani) || 1;
     const dettaglioArma = (o) => [o && o.tipoDanno ? N("danni", o.tipoDanno) : null, o && o.mani ? U.mani(maniArma(o)) : null].filter(Boolean).join(" · ");
     const testoDanno = (o) => {
@@ -6907,8 +7180,9 @@
         const cura = curaRiposo(false);
         if (!cura) return aggiungi({ tipo: "narra", righe: Q.riposo.inutile });
         if (cura.fame) return aggiungi({ tipo: "narra", righe: RG.riposo.fame });
-        usate.fuoco_cripta = "spento"; salvaUsate();
-        aggiungi({ tipo: "narra", box: "ok", ...cura, righe: [...A2.braciere.dorme, ...A2.braciere.sveglia] });
+        const conEttore = ["incontrato", "tregua"].includes(usate.ettore);
+        usate.fuoco_cripta = "spento"; usate.braciere_legna = false; salvaUsate();
+        aggiungi({ tipo: "narra", box: "ok", ...cura, righe: conEttore ? [...A2.braciere.dorme, ...A2.braciere.sveglia] : [...Q.riposo.dormeVar[0], ...Q.riposo.sveglia] });
         return offriPreparazione();
       }
       if (luogo === "cripta") return aggiungi({ tipo: "narra", righe: testoBraciereSpento() });
@@ -7223,7 +7497,6 @@
       const righe = [A.sblocco.sigillo];
       aggiungiZaino({ id: "sigillo", nome: "Sigillo del cacciatore", tipo: "missione" });
       if (!usate.q2_diario) { consegnaDiarioFiglio(); righe.push(A.sblocco.diario); } /* il diario arriva da Ettore, che viva o muoia */
-      if (usate.ettore_lato === "signore") { aggiungiZaino({ id: "taccuino", nome: "Taccuino del cacciatore", tipo: "reperto", alias: ["taccuino", "notebook"] }); righe.push(A.sblocco.taccuino); }
       salvaUsate();
       sblocco(righe, "mis"); disegnaMissioni();
       guadagnaPE(NEMICI.esploratore.xp); /* risparmiato: stessa ricompensa */
@@ -7523,6 +7796,7 @@
       aldo_punizione() { const d = tira(6), [da, a] = dannoCorpoNonLetale(d); aggiungi({ tipo: "sistema", box: "ko", righe: [A.aldo.punizione(d, da, a)] }); premioCaccia(false); },
       aldo_delusione() { const d = tira(6), [da, a] = dannoMenteSubito(d); aggiungi({ tipo: "sistema", box: "ko", righe: [A.aldo.delusione(d, da, a)] }); premioCaccia(false); },
       ettore_scontro() { setTimeout(avviaScontroEttore, 400); },
+      ettore_scontro_dopo() { if (usate.dialogo_ettore_tono === "signora") setTimeout(salvaQuaderno, 400); else setTimeout(avviaScontroEttore, 400); }, /* ramo Signora: prima il quaderno nel fuoco */
       ettore_curato() { usate.ettore_curato = true; salvaUsate(); nodoDialogo("ettore", "risparmia"); }, /* curato, ti consegna il fermaglio da sé */
       ettore_trono() { usate.ettore_trono = true; salvaUsate(); },
       aldo_scontro_uno() { usate.aldo_mastini_tot = 1; FINE_DIALOGO.aldo_scontro(); },     /* un solo mastino */
@@ -7842,7 +8116,7 @@
     }
     /* il braciere di Ettore: un fuoco vero, arancione, finché lui è nella cripta */
     const testoBraciereSpento = () => ["incontrato", "tregua"].includes(usate.ettore) ? A2.braciere.consumato : LUOGHI.cripta_braciere_spento.fisso;
-    const braciereAcceso = () => ["incontrato", "tregua"].includes(usate.ettore) && usate.fuoco_cripta !== "spento";
+    const braciereAcceso = () => (["incontrato", "tregua"].includes(usate.ettore) && usate.fuoco_cripta !== "spento") || !!usate.braciere_legna; /* anche riacceso con la legna */
     /* acqua benedetta: in combattimento, solo contro le creature del fuoco eterno */
     function lanciaAcqua() {
       const it = zaino.find(x => x.id === "acqua_benedetta" && Number(x.usi) > 0);
@@ -8437,6 +8711,7 @@
       if (it.tipo === "arma") return equipaggia(it.id);
       if (it.tipo === "scudo") return imbracciaScudo(it.id);
       if (it.tipo === "armatura") return indossa(it.id);
+      if (it.id === "legna") return alimentaFuoco();
       if (it.id === "chiave_portone") return luogo === "atrio" ? (haChiavePortone() ? esciDalPortone() : null) : aggiungi({ tipo: "narra", righe: [A.ui.chiaveAltrove] });
       if (impugnabile(it) && it !== mano) return (soloPrendere || it.usi == null) ? impugna(it.id) : usa(it.id);
       if (it === mano && soloPrendere) return sist(U.giaInMano(nomeOg(it)));
@@ -9139,6 +9414,9 @@
         if (verboUsa && arma.nome !== "—" && citato(arma, t)) return sist(U.giaInPugno(nomeOg(arma)));
       }
 
+      /* alimentare un fuoco con la legna raccolta nel bosco */
+      if (/aliment\w*|ravviv\w*|riaccend\w*|\bfeed\w*|\bstoke\w*|rekindl\w*|relight\w*/.test(t) && /fuoco|camin\w*|bracier\w*|focolar\w*|fiamm\w*|\bfire\b|hearth|brazier|flames?/.test(t)) return alimentaFuoco();
+      if (luogo === "pineta" && /\blegn\w*|\brami\b|ramoscell\w*|fascin\w*|ciocc\w*|\bwood\b|firewood|branches|kindling|sticks/.test(t)) return raccogliLegna();
       /* aprire o sfogliare un libro che si ha con sé (il diario sigillato del figlio maggiore, le pagine di Adele) */
       if (/\bapr\w*|\bsfogli\w*|\bopen\w*|\bleaf\w*/.test(t)) {
         const og = trovaOggetti(t, it => it.id === "diario_figlio" || it.id === "diario_adele");
@@ -10324,6 +10602,7 @@
       }
       const m = modNem("Lotta") + (Number(NEMICI[(scontro || ultimoNemico).id].attacco) || 0) + (Number((scontro || ultimoNemico).bonusAtt) || 0) + CMB.modAttaccoNem(scontro), at = CMB.tiroAttaccoNem(scontro, { tira }), d = at.d, tot = d + m, ca = caScontro(), crit = d === 20 && CMB.critNemPossibile(scontro), ok = crit || tot > ca;
       const righe = [];
+      if (scontro.ctx === "ettore") righe.push(contaEttore()); /* Ettore conta i suoi colpi */
       if (at.tiri) righe.push(Lingua.t({ it: `Il nemico tira due d20 e tiene il peggiore: ${at.tiri[0]} e ${at.tiri[1]}.`, en: `The enemy rolls two d20 and keeps the worse: ${at.tiri[0]} and ${at.tiri[1]}.` }));
       let parato = false;
       let assorbito = false;
@@ -10447,7 +10726,7 @@
       disegnaVitali();
       if (ctx === "ettore") { /* il fermaglio, prova della caccia */
         aggiungiZaino({ id: "sigillo", nome: "Sigillo del cacciatore", tipo: "missione" });
-        aggiungi({ tipo: "sistema", box: "mis", fuori: true, righe: usate.ettore_lato === "signora" ? [A.ettore.bruciato, A.sblocco.sigillo] : [A.sblocco.sigillo] });
+        aggiungi({ tipo: "sistema", box: "mis", fuori: true, righe: [A.sblocco.sigillo] }); /* il quaderno, se gettato nel fuoco, è stato salvato (o quasi) prima dello scontro */
         disegnaMissioni();
       }
       if (ctx === "aldo") { /* il primo mastino è caduto: tocca al secondo; caduto anche lui, Aldo è soddisfatto */

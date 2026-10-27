@@ -4326,6 +4326,8 @@
         morte: {
           esito: (d, da, a, sMax) => `La casa non lascia morire i suoi prigionieri. Salute fisica: ${sMax} / ${sMax} · Salute mentale: −1d4 = −${d} · ${da} → ${a}`,
           caccia: ["Riapri gli occhi. A giudicare dalle teste di cervo imbalsamate alla parete, sei di nuovo nella sala della caccia. Sei steso a terra, sopraffatto dal freddo, e quando provi a rialzarti lentamente un gemito ti sfugge dalle labbra: la testa ti sta letteralmente esplodendo.", "A poca distanza, Aldo contempla con distacco una delle teche della stanza. Non si premura di volgere lo sguardo nella tua direzione, come se la tua presenza fosse del tutto irrilevante."],
+          ferita: (nome, max) => `La sconfitta contro ${nome} ti lascia un segno: salute mentale massima −1 (ora ${max}). La recupererai quando lo avrai vinto o risparmiato.`,
+          guarita: (nome, n, max) => `Hai vinto la paura che ${nome} ti aveva lasciato: recuperi ${n} ${n === 1 ? "punto" : "punti"} di salute mentale massima (ora ${max}).`,
           cacciaEttore: ["Riapri gli occhi. A giudicare dalle teste di cervo imbalsamate alla parete, sei di nuovo nella sala della caccia. Sei steso a terra, sopraffatto dal freddo, e quando provi a rialzarti lentamente un gemito ti sfugge dalle labbra: la testa ti sta letteralmente esplodendo.", "A poca distanza, Aldo contempla con distacco una delle teche della stanza. Non si premura di volgere lo sguardo nella tua direzione, come se la tua presenza fosse del tutto irrilevante."],
           aldoEttore: ["«Questa dimora rifiuta di lasciar morire i suoi ospiti prima del dovuto. Una debolezza che, vi assicuro, non condivido affatto. La preda vi attende ancora nella cripta: rimettetevi in piedi e cercate di non farmi sprecare altro tempo.»"],
           aldoComune: ["«Questa dimora rifiuta di lasciar morire i suoi ospiti prima del dovuto. Una debolezza che, vi assicuro, non condivido affatto. La preda vi attende ancora in giardino: rimettetevi in piedi e cercate di non farmi sprecare altro tempo.»"],
@@ -4392,6 +4394,8 @@
         morte: {
           esito: (d, da, a, sMax) => `The house does not let its prisoners die. Physical health: ${sMax} / ${sMax} · Mental health: −1d4 = −${d} · ${da} → ${a}`,
           caccia: ["You open your eyes. Judging by the stuffed stag heads on the wall, you are back in the hunting hall. You lie on the floor, overcome by the cold, and when you slowly try to get up a groan escapes your lips: your head is literally bursting.", "Not far away, Aldo contemplates one of the room's display cases with detachment. He does not bother to look your way, as if your presence were entirely irrelevant."],
+          ferita: (nome, max) => `Your defeat against ${nome} leaves a mark: maximum mental health −1 (now ${max}). You will recover it once you have beaten or spared him.`,
+          guarita: (nome, n, max) => `You have overcome the fear ${nome} left in you: you recover ${n} ${n === 1 ? "point" : "points"} of maximum mental health (now ${max}).`,
           cacciaEttore: ["You open your eyes. Judging by the stuffed stag heads on the wall, you are back in the hunting hall. You lie on the floor, overcome by the cold, and when you slowly try to get up a groan escapes your lips: your head is literally bursting.", "Not far away, Aldo contemplates one of the room's display cases with detachment. He does not bother to look your way, as if your presence were entirely irrelevant."],
           aldoEttore: ["«This house refuses to let its guests die before their time. A weakness which, I assure you, I do not share in the least. The prey still awaits you in the crypt: get back on your feet and try not to make me waste any more time.»"],
           aldoComune: ["«This house refuses to let its guests die before their time. A weakness which, I assure you, I do not share in the least. The prey still awaits you in the garden: get back on your feet and try not to make me waste any more time.»"],
@@ -5332,7 +5336,11 @@
       const base = attr ? mod(Number(pg.statistiche && pg.statistiche[attr]) || 10) : 0;
       return base - (attr === "Agilità" ? malusArmatura() : 0) + (addestrata(n) ? (Number(pg.livello) || 1) : 0);
     };
-    const maxMentali = () => (pg.saluteMentale != null ? Number(pg.saluteMentale) : 10 + mod(spirito())) + crescitaPg().mente;
+    /* ferite della mente (27/10): ogni sconfitta contro un guardiano toglie 1 alla salute mentale massima, al massimo 3 in tutto;
+       si recupera sconfiggendo o risparmiando quel guardiano. usate.ferite_mente = { ettore: 1, ... } */
+    const FERITE_MAX = 3;
+    const feriteMente = () => { try { return Object.values((usate && usate.ferite_mente) || {}).reduce((a, n) => a + (Number(n) || 0), 0); } catch (e) { return 0; } };
+    const maxMentali = () => (pg.saluteMentale != null ? Number(pg.saluteMentale) : 10 + mod(spirito())) + crescitaPg().mente - feriteMente();
     /* mana (Sapiente e Accolito): il massimo viene dalla creazione (più la crescita di livello), quello speso fa parte della partita */
     const manaMax = () => (pg.mana != null ? Number(pg.mana) + crescitaPg().risorsa : null);
     /* ---------- Incantesimi (Arcanista e Monaco): le scuole di js/magia.js ----------
@@ -5487,6 +5495,22 @@
 
     /* ---------- Morte: la casa non lascia morire i suoi prigionieri ----------
        salute fisica piena, −1d4 di salute mentale; il nemico si riprende del tutto (lo scontro successivo riparte da capo) */
+    /* sconfitta contro un guardiano: −1 al massimo (se non si è già al tetto); restituisce la riga da mostrare, o null */
+    function feritaGuardiano(chi, nome) {
+      if (feriteMente() >= FERITE_MAX) return null;
+      usate.ferite_mente = { ...(usate.ferite_mente || {}), [chi]: (Number((usate.ferite_mente || {})[chi]) || 0) + 1 }; salvaUsate();
+      pg.dannoMentale = Math.min(maxMentali(), pg.dannoMentale || 0);
+      disegnaVitali(); aggiornaMentali(); modificato();
+      return RG.morte.ferita(nome, maxMentali());
+    }
+    /* il guardiano è stato sconfitto o risparmiato: la paura se ne va e il massimo torna */
+    function guarisciFerita(chi, nome) {
+      const n = Number((usate.ferite_mente || {})[chi]) || 0;
+      if (!n) return;
+      const f = { ...usate.ferite_mente }; delete f[chi]; usate.ferite_mente = f; salvaUsate();
+      disegnaVitali(); aggiornaMentali(); modificato();
+      fuoriDallaTendina(() => aggiungi({ tipo: "sistema", box: "ok", righe: [RG.morte.guarita(nome, n, maxMentali())] }));
+    }
     function penaMorte() {
       const d = tira(4), da = mentaliAttuali();
       pg.dannoFisico = 0;
@@ -6915,6 +6939,7 @@
     }
     function risparmiaEttore() {
       usate.ettore = "risparmiato"; usate.q4_esito = "risparmiata";
+      guarisciFerita("ettore", "Ettore");
       if (usate.q4 === "accettata") usate.q4 = "prova";
       const righe = [A.sblocco.sigillo];
       aggiungiZaino({ id: "sigillo", nome: "Sigillo del cacciatore", tipo: "missione" });
@@ -9934,7 +9959,7 @@
         aggiungi({ tipo: "narra", box: "ok", righe: [SCI.testo({ k: "fame", preso })] });
       }
       if (!ctx) usate.cantina_cane = "sconfitto"; /* il mastino della cantina */
-      if (ctx === "ettore") { usate.ettore = "morto"; usate.q4_esito = "uccisa"; if (usate.q4 === "accettata") usate.q4 = "prova"; }
+      if (ctx === "ettore") { usate.ettore = "morto"; usate.q4_esito = "uccisa"; if (usate.q4 === "accettata") usate.q4 = "prova"; guarisciFerita("ettore", "Ettore"); }
       salvaUsate();
       ultimoNemico = { ...scontro, pv: 0, svelata: true };
       chiudiScontro("vinto");
@@ -9993,12 +10018,12 @@
     }
     /* risveglio nella sala della caccia dopo una sconfitta durante una caccia (27/10): Aldo è lì, davanti a una teca,
        e finché non si esce dalla sala ogni altra azione è bloccata (usate.caccia_rimprovero) */
-    function risveglioCaccia(ettore, pena) {
+    function risveglioCaccia(ettore, pena, ferita) {
       usate.caccia_rimprovero = true; salvaUsate();
       fuoriDallaTendina(() => {
         vai("sala_caccia", { righe: RG.morte.cacciaEttore });
         aggiungi({ tipo: "dialogo", fuori: true, tuttoBox: true, chi: "Aldo", macchina: true, righe: ettore ? RG.morte.aldoEttore : RG.morte.aldoComune });
-        aggiungi({ tipo: "narra", box: "ko", righe: [pena] }); sist(CB.sistRisveglio);
+        aggiungi({ tipo: "narra", box: "ko", righe: ferita ? [pena, ferita] : [pena] }); sist(CB.sistRisveglio);
       });
     }
     function rimproveroAldo() {
@@ -10015,7 +10040,8 @@
         return setTimeout(() => {
           const pena = penaMorte();
           usate.ettore = "rivincita"; usate.ettore_sconfitte = (Number(usate.ettore_sconfitte) || 0) + 1; salvaUsate(); /* al ritorno Ettore combatte subito, e non si arrende più */
-          risveglioCaccia(true, pena);
+          const ferita = feritaGuardiano("ettore", "Ettore");
+          risveglioCaccia(true, pena, ferita);
           stato(false);
         }, 2200);
       }

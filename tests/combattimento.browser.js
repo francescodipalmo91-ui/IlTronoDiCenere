@@ -993,6 +993,13 @@ caso("Sconfitta con Ettore: risveglio con Aldo, sala della caccia bloccata, al r
   await page.evaluate(() => gestisci("torno nell'atrio")); await page.waitForTimeout(300);
   eq(await page.evaluate(() => [luogo, usate.caccia_rimprovero]), ["atrio", false], "uscire si può");
   eq(await page.evaluate(() => IMG_MASTINI_ALDO.map(x => x.split("/").pop())), ["Mastino_aldo_destra.webp", "Mastino_aldo_sinistra.webp"]);
+  /* ferite della mente: −1 al massimo per sconfitta contro un guardiano, al massimo −3; si recupera vincendo o risparmiando */
+  const base = await page.evaluate(() => maxMentali() + feriteMente());
+  eq(await page.evaluate(() => [usate.ferite_mente.ettore, feriteMente()]), [1, 1], "prima sconfitta: −1");
+  await page.evaluate(() => { feritaGuardiano("ettore", "Ettore"); feritaGuardiano("ettore", "Ettore"); feritaGuardiano("ettore", "Ettore"); });
+  eq(await page.evaluate(() => [feriteMente(), maxMentali()]), [3, base - 3], "mai oltre −3");
+  await page.evaluate(() => guarisciFerita("ettore", "Ettore"));
+  eq(await page.evaluate(() => [feriteMente(), maxMentali()]), [0, base], "battuto o risparmiato: il massimo torna");
   eq(errori, [], "errori"); await chiudi();
 });
 caso("Pianerottolo: stanza a sé tra atrio, anticamera e corridoio; «torno indietro» dal primo piano porta qui", async (b) => {

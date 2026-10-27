@@ -25,13 +25,14 @@ window.Regole = (() => {
     Gnomo: { bonus: { Spirito: 2, "Agilità": 1 } }
   },
 
-  /* abilità: due per attributo — [nome, attributo, descrizione]. La descrizione compare in creazione e nel regolamento */
+  /* abilità: due per attributo, tre per Mente (Indagare e Percezione separate dal 27/10) — [nome, attributo, descrizione]. La descrizione compare in creazione e nel regolamento */
   ABILITA: [
     ["Atletica", "Vigore", { it: "Forza fisica, resistenza e doti atletiche: arrampicarsi, nuotare in acque agitate, saltare, sfondare ostacoli.", en: "Physical strength, endurance and athletic prowess: climbing, swimming in rough water, leaping, breaking through obstacles." }],
     ["Sopravvivenza", "Vigore", { it: "Seguire tracce, orientarsi, resistere all'ambiente ostile e prestare un primo soccorso pratico.", en: "Following tracks, finding your way, enduring hostile surroundings and giving practical first aid." }],
     ["Furtività", "Agilità", { it: "Muoversi nell'ombra, nascondersi e passare inosservati agli occhi dei nemici.", en: "Moving in the shadows, hiding and slipping past enemies unseen." }],
     ["Acrobazia", "Agilità", { it: "Equilibrio, prontezza e destrezza nei movimenti: schivare, saltare, atterrare senza farsi male, liberarsi da una presa.", en: "Balance, readiness and deftness of movement: dodging, leaping, landing unhurt, slipping free of a grip." }],
-    ["Investigazione", "Mente", { it: "Percezione e indagine in un'unica abilità: notare dettagli, pericoli e indizi, e trarne deduzioni.", en: "Perception and investigation in a single skill: noticing details, dangers and clues, and drawing conclusions." }],
+    ["Indagare", "Mente", { it: "Cercare attivamente: frugare, spostare, toccare, smontare. Trovare ciò che è nascosto e capire come funziona un meccanismo.", en: "Searching actively: rummaging, moving, touching, taking apart. Finding what is hidden and working out how a mechanism works." }],
+    ["Percezione", "Mente", { it: "Usare i sensi: vista, udito, olfatto. Notare un dettaglio fuori posto, un rumore dietro una porta, un pericolo prima che sia troppo tardi.", en: "Using your senses: sight, hearing, smell. Noticing a detail out of place, a sound behind a door, a danger before it is too late." }],
     ["Sapienza", "Mente", { it: "Conoscenza arcana, mistica e medica: magia, spiriti, rituali, rimedi e il funzionamento del corpo.", en: "Arcane, mystical and medical knowledge: magic, spirits, rituals, remedies and the workings of the body." }],
     ["Socialità", "Spirito", { it: "Il modo di trattare con gli altri, gentile o duro: convincere, negoziare, intimidire. Conta l'approccio che scegli.", en: "How you deal with others, kindly or harshly: convincing, negotiating, intimidating. The approach you choose matters." }],
     ["Intuizione", "Spirito", { it: "Leggere le intenzioni altrui: capire chi mente, cosa nasconde un silenzio, cosa vuole davvero chi ti sta davanti.", en: "Reading other people's intentions: telling who is lying, what a silence hides, what the person before you truly wants." }]

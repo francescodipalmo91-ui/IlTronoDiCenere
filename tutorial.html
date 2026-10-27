@@ -329,7 +329,7 @@
         saluteFisica: "Salute fisica", saluteMentale: "Salute mentale", classeArmatura: "Classe armatura", dadoVita: "Dado vita",
         statistiche: "Statistiche", abilita: "Abilità", equipaggiamento: "Equipaggiamento", attacchi: "Attacchi", diario: "Diario dello scontro",
         attr: { Vigore: "Vigore", "Agilità": "Agilità", Mente: "Mente", Spirito: "Spirito" },
-        ab: { Percezione: "Investigazione", Indagare: "Investigazione", Medicina: "Sapienza", Atletica: "Atletica" },
+        ab: { Percezione: "Percezione", Indagare: "Indagare", Medicina: "Sapienza", Atletica: "Atletica" },
         pgNome: "Recluta", pgSotto: "Umano — Guerriero · Livello 1",
         eq: {
           spada: ["Spada corta", "1d6 + Vigore · tagliente · 1 mano"],
@@ -464,7 +464,7 @@
         saluteFisica: "Physical health", saluteMentale: "Mental health", classeArmatura: "Armor class", dadoVita: "Hit die",
         statistiche: "Attributes", abilita: "Skills", equipaggiamento: "Equipment", attacchi: "Attacks", diario: "Combat log",
         attr: { Vigore: "Vigour", "Agilità": "Agility", Mente: "Mind", Spirito: "Spirit" },
-        ab: { Percezione: "Investigation", Indagare: "Investigation", Medicina: "Lore", Atletica: "Athletics" },
+        ab: { Percezione: "Perception", Indagare: "Investigation", Medicina: "Lore", Atletica: "Athletics" },
         pgNome: "Recruit", pgSotto: "Human — Warrior · Level 1",
         eq: {
           spada: ["Short sword", "1d6 + Vigour · slashing · 1 hand"],
@@ -589,7 +589,7 @@
         manoPrimaria: "Mano primaria", manoSecondaria: "Mano secondaria", armaturaG: "Armatura", livello: "livello",
         caBonus: (n) => `CA +${n}`, malusAg: (n) => `Malus Agilità −${n}`, noMalus: "Nessun malus Agilità", mani: (n) => (n === 1 ? "1 mano" : n + " mani"),
         modLotta: "mod. Vigore", malusEquip: (n) => ` (equipaggiamento −${n})`, zainoVuoto: "Lo zaino è vuoto.",
-        abTutte: { Atletica: "Atletica", Sopravvivenza: "Sopravvivenza", "Furtività": "Furtività", Acrobazia: "Acrobazia", Investigazione: "Investigazione", Sapienza: "Sapienza", "Socialità": "Socialità", Intuizione: "Intuizione" },
+        abTutte: { Atletica: "Atletica", Sopravvivenza: "Sopravvivenza", "Furtività": "Furtività", Acrobazia: "Acrobazia", Indagare: "Indagare", Percezione: "Percezione", Sapienza: "Sapienza", "Socialità": "Socialità", Intuizione: "Intuizione" },
         danni: { Tagliente: "Tagliente", Perforante: "Perforante", Contundente: "Contundente" },
         subPg: "Umano — Guerriero, livello 1", subNem: "Belva infernale, livello 1",
         armiNaturali: "Armi naturali", speciale: "Speciale", collareVoce: "Collo",
@@ -686,7 +686,7 @@
         manoPrimaria: "Main hand", manoSecondaria: "Off hand", armaturaG: "Armor", livello: "level",
         caBonus: (n) => `AC +${n}`, malusAg: (n) => `Agility penalty −${n}`, noMalus: "No Agility penalty", mani: (n) => (n === 1 ? "1 hand" : n + " hands"),
         modLotta: "Vigour mod.", malusEquip: (n) => ` (gear −${n})`, zainoVuoto: "Your pack is empty.",
-        abTutte: { Atletica: "Athletics", Sopravvivenza: "Survival", "Furtività": "Stealth", Acrobazia: "Acrobatics", Investigazione: "Investigation", Sapienza: "Lore", "Socialità": "Influence", Intuizione: "Insight" },
+        abTutte: { Atletica: "Athletics", Sopravvivenza: "Survival", "Furtività": "Stealth", Acrobazia: "Acrobatics", Indagare: "Investigation", Percezione: "Perception", Sapienza: "Lore", "Socialità": "Influence", Intuizione: "Insight" },
         danni: { Tagliente: "Slashing", Perforante: "Piercing", Contundente: "Bludgeoning" },
         subPg: "Human — Warrior, level 1", subNem: "Infernal beast, level 1",
         armiNaturali: "Natural weapons", speciale: "Special", collareVoce: "Neck",
@@ -793,15 +793,15 @@
     const PG_BASE = {
       stat: Object.fromEntries(ATTR.map(a => [a, 14])),
       livello: 1, dadoVita: 10, tiroVita: 6,
-      abilita: [["Investigazione", "Mente"], ["Sapienza", "Mente"], ["Atletica", "Vigore"]], /* addestrate: aggiungono il livello */
+      abilita: [["Indagare", "Mente"], ["Percezione", "Mente"], ["Sapienza", "Mente"], ["Atletica", "Vigore"]], /* addestrate: aggiungono il livello */
       armi: { spada: { dado: 6 }, torcia: { dado: 4 } },
       caArmatura: 2, caScudo: 1,
       ritratto: "immagini/pg/Umano_Soldato_1" /* se l'immagine c'è viene mostrata, altrimenti la scheda resta senza ritratto */
     };
     /* Nemico: tutte le statistiche a 10, dado vita d6 → salute 10 + 1d6 + mod Vigore (tirata a inizio scontro, nascosta) */
     const ABILITA_TUTTE = [["Atletica", "Vigore"], ["Sopravvivenza", "Vigore"], ["Furtività", "Agilità"], ["Acrobazia", "Agilità"],
-      ["Investigazione", "Mente"], ["Sapienza", "Mente"], ["Socialità", "Spirito"], ["Intuizione", "Spirito"]];
-    const MAPPA_ABILITA = { Indagare: "Investigazione", Percezione: "Investigazione", Medicina: "Sapienza", Arcano: "Sapienza", Misticismo: "Sapienza", Persuasione: "Socialità", Intimidire: "Socialità" };
+      ["Indagare", "Mente"], ["Percezione", "Mente"], ["Sapienza", "Mente"], ["Socialità", "Spirito"], ["Intuizione", "Spirito"]];
+    const MAPPA_ABILITA = { Medicina: "Sapienza", Arcano: "Sapienza", Misticismo: "Sapienza", Persuasione: "Socialità", Intimidire: "Socialità" };
     const NEM_BASE = { stat: Object.fromEntries(ATTR.map(a => [a, 10])), dadoVita: 6, ca: 10, attacco: 1 }; /* +1 a colpire: compensa il bonus di Agilità alla CA */
     const PROB_PRESA = 0.6;    /* probabilità dopo un attacco del Mastino andato a segno, finché la presa non è stata usata */
     const SCARTO_AGILE = 4;    /* senza scudo: se il Mastino resta sotto la CA di almeno 4 punti, la schivata è "agile" */

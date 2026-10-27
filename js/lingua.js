@@ -14,9 +14,9 @@
     attributi: { Vigore: "Vigour", "Agilità": "Agility", Mente: "Mind", Spirito: "Spirit", Lotta: "Vigour", Corpo: "Vigour", Carisma: "Spirit" },
     abilita: {
       Atletica: "Athletics", Sopravvivenza: "Survival", "Furtività": "Stealth", Acrobazia: "Acrobatics",
-      Investigazione: "Investigation", Sapienza: "Lore", "Socialità": "Influence", Intuizione: "Insight",
+      Indagare: "Investigation", Percezione: "Perception", Investigazione: "Investigation and Perception", Sapienza: "Lore", "Socialità": "Influence", Intuizione: "Insight",
       /* nomi delle abilità accorpate (personaggi e prove scritti prima della revisione) */
-      Indagare: "Investigation", Percezione: "Investigation", Medicina: "Lore", Arcano: "Lore", Misticismo: "Lore", Persuasione: "Influence", Intimidire: "Influence"
+      Medicina: "Lore", Arcano: "Lore", Misticismo: "Lore", Persuasione: "Influence", Intimidire: "Influence"
     },
     danni: { Tagliente: "Slashing", Contundente: "Bludgeoning", Perforante: "Piercing" },
     oggetti: {
@@ -38,7 +38,7 @@
     classi: { Soldato: "Guerriero", Forestiero: "Sciamano", Sapiente: "Arcanista", Accolito: "Monaco" },
     /* attributi e abilità accorpati: le vecchie chiavi si mostrano con il nome nuovo */
     attributi: { Lotta: "Vigore", Corpo: "Vigore", Carisma: "Spirito" },
-    abilita: { Indagare: "Investigazione", Percezione: "Investigazione", Medicina: "Sapienza", Arcano: "Sapienza", Misticismo: "Sapienza", Persuasione: "Socialità", Intimidire: "Socialità" }
+    abilita: { Investigazione: "Indagare e Percezione", Medicina: "Sapienza", Arcano: "Sapienza", Misticismo: "Sapienza", Persuasione: "Socialità", Intimidire: "Socialità" }
   };
 
   /* Descrizioni di dotazione e scudo */

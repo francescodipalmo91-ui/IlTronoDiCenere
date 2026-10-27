@@ -2162,7 +2162,7 @@
           discesa: { titolo: "Discesa in cantina", alt: "Una stretta scala di pietra scende tra alte rastrelliere di legno cariche di bottiglie impolverate e ragnatele; due fiaccole dalla fiamma azzurra illuminano l'arco buio in fondo ai gradini." },
           stanza: {
             intro: ["Scendi gli ultimi gradini della scala a chiocciola. Il bagliore azzurro della fiaccola resta alle tue spalle, e la cantina ti accoglie in un buio pesto: non distingui nemmeno le tue mani."], /* PROVVISORIO: descrizione in arrivo */
-            nota: "È buio pesto. Puoi muoverti con cautela (Furtività), tendere l'orecchio o cercare a tentoni (Investigazione) oppure fare luce con una torcia o con l'incantesimo Luce. Per tornare su scrivi «torno su».",
+            nota: "È buio pesto. Puoi muoverti con cautela (Furtività), tendere l'orecchio o cercare a tentoni (Indagare) oppure fare luce con una torcia o con l'incantesimo Luce. Per tornare su scrivi «torno su».",
             fallbackLibera: ["Nel buio pesto della cantina non riesci a fare granché. Puoi muoverti con cautela, tendere l'orecchio, cercare a tentoni o fare luce."],
             ritorno: ["Scendi di nuovo la scala a chiocciola. Il bagliore azzurro resta alle tue spalle e il buio della cantina ti inghiotte."] /* PROVVISORIO */
           },
@@ -3657,7 +3657,7 @@
           ferisce: (d) => `Le parole di Adele ti restano addosso come cenere: subisci danni mentali pari a 1d${d}.` }, /* PROVVISORIO */
         luoghi: {
           giardino_fontana: {
-            fisso: ["Ti avvicini alla fontana. La vasca è di marmo bianco, scolpita con tralci e cervi rampanti, e l'acqua che vi ricade è così limpida da sembrare vetro in movimento.", "È l'unica cosa in questo giardino che sembra non sapere di essere morta. Per un istante ti chiedi da dove venga, e chi la faccia scorrere ancora."],
+            fisso: ["Ti avvicini alla fontana. La vasca, scolpita in un marmo bianco e impreziosita da tralci e cervi rampanti, custodisce un'acqua di una limpidezza quasi innaturale.", "È l'unica reliquia a non aver dimenticato la vita, in questo giardino spettrale. E guardandola scorrere, non puoi fare a meno di chiederti quale vena segreta alimenti ancora questo flusso, o quale mano invisibile continui a governarlo."],
             ancora: ["Torni a chinarti sulla vasca e lasci che il gorgoglio dell'acqua ti riempia la mente."],
             azione: "Immergi le mani nella vasca, chiudi gli occhi e cerchi di sentire che cosa tiene viva quest'acqua.",
             successo: [
@@ -3671,10 +3671,28 @@
             gia: { ok: "Sai che cosa tiene viva questa fontana: il dolore della Signora. Aldo non la tocca mai.", ko: "" },
             lascia: "Ritrai le mani dalla vasca e ti rimetti in piedi."
           },
+          giardino_siepi_tracce: {
+            fisso: ["Ti avvicini alle siepi, incuriosito dalla loro immobilità innaturale, ma qualcos'altro cattura la tua attenzione: alcuni rami sono spezzati, come se qualcuno o qualcosa avesse fatto forza per farsi largo, senza però riuscirci."],
+            azione: "Ti chini sui rami spezzati e segui con lo sguardo la direzione dello strappo, cercando altri segni sul terreno.",
+            successo: ["Seguendo la direzione dello strappo, abbassi lo sguardo al suolo: noti delle impronte, chiaramente umane ma minuscole, simili a quelle di un bambino o di uno gnomo."],
+            fallimento: ["Studi i rami spezzati a lungo, ma la ghiaia attorno è dura e compatta: non trattiene nessuna traccia, o almeno nessuna che tu sappia leggere."],
+            gia: {"ok": "Le impronte minuscole sono ancora lì, davanti ai rami spezzati: qualcuno di molto piccolo ha provato a passare.", "ko": "Hai già cercato tracce tra le siepi senza trovare nulla."},
+            lascia: "Lasci perdere le siepi."
+          },
+          giardino_siepi_indaga: {
+            fisso: ["Allunghi il passo verso le siepi e le tocchi. Disinteressandoti della loro fittezza, provi a forzarle per passarvi attraverso, ma sono un muro impenetrabile; i rami robusti ti graffiano e arrivano a strapparti il tessuto dei pantaloni."],
+            azione: "Ti sporgi in avanti più che puoi, scostando i rami con le mani, e frughi con lo sguardo dentro il fogliame.",
+            successo: ["Ti sporgi in avanti il più possibile, scrutando tra il fogliame, e lo vedi: un giocattolo in legno, un piccolo animaletto intagliato a mano."],
+            fallimento: ["Frughi tra i rami finché le mani non ti bruciano di graffi, ma dentro la siepe non trovi altro che foglie dure come pietra."],
+            gia: {"ok": "Tra il fogliame, dove hai trovato il giocattolo, non c'è altro.", "ko": "Hai già frugato tra le siepi senza trovare nulla."},
+            lascia: "Ritrai le mani dalle siepi."
+          },
+          giardino_percezione: { fisso: ["Un'unica via conduce alla cappella e, di fronte a te, si apre un panorama mozzafiato: le quattro lune diffondono una luce spettrale, trasformando l'intero giardino in un luogo surreale. La fontana, colpita da quel chiarore, brilla di riflessi iridescenti, quasi fosse davvero incantata.", "Tutto intorno, però, regna un'immobilità assoluta: non c'è vento, né il minimo sibilo. Persino i ciottoli, che dovrebbero scricchiolare sotto i tuoi stivali, tacciono ostinatamente, senza emettere il benché minimo suono. L'unica cosa che puoi udire è lo scrosciare vivo dell'acqua nella vasca."] },
+          giardino_extra: {"beviDomanda": "Vuoi bere dalla fontana?", "beviSi": "Sì, bevo", "beviNo": "No, per ora no", "beviNon": ["Ritrai la mano dall'acqua. Per ora ti basta sapere che è lì."], "leggiDomanda": "Vuoi leggere il foglio?", "leggiSi": "Sì, lo leggo", "leggiNo": "No, lo metto via", "nonLetta": "Hai messo il foglio nel «Diario di Adele», nello zaino: potrai leggerlo quando vorrai.", "gioc": {"nome": "Animaletto di legno", "desc": "Un piccolo animale di legno intagliato a mano, consumato dalle carezze di dita piccole.", "domanda": "Vuoi prendere il giocattolo?", "si": "Sì, lo prendo", "no": "No, lo lascio lì", "presi": ["Allunghi il braccio tra i rami, ignorando i graffi, e lo stringi tra le dita. Lo riponi nello zaino."], "lasciati": ["Lasci il giocattolo dov'è, tra il fogliame."], "giaPreso": "Il giocattolo che era tra le siepi è già nel tuo zaino.", "nonVisto": "Non vedi nessun giocattolo tra le siepi."}},
           giardino_statue: {
-            fisso: ["Lungo i viali, statue di marmo vegliano sulle siepi: dame velate, fanciulli con anfore, un cacciatore con il suo cane. Come tutto il resto, sono immobili; ma per un attimo ti sembra che non lo siano sempre state."],
-            azione: "Passi da una statua all'altra, studiando le pose e gli sguardi, in cerca di qualcosa che non torni.",
-            successo: ["Le statue guardano tutte verso la fontana. Tutte, tranne una: una dama velata, accanto al cancello, ha il viso rivolto alla casa e una mano alzata. Segui la direzione del suo dito: punta a una finestra del piano superiore, sul lato orientale, dove trema la fiamma di una candela.", "L'Ala Est. Qualcuno, lassù, tiene ancora una luce accesa."],
+            fisso: ["Provi ad avvicinarti alle statue, ma le siepi fanno da scudo, così fitte e impenetrabili da impedirti qualsiasi progresso. Non c'è modo di oltrepassarle né di raggiungere i simulacri per poterli osservare da vicino."],
+            azione: "Ti fermi a distanza e aguzzi la vista sulle statue, una dopo l'altra, in cerca di un qualsiasi indizio.",
+            successo: ["Provi comunque ad aguzzare la vista sulle statue, cercando un qualsiasi indizio. Dopo qualche minuto di attenta osservazione, la verità ti appare chiara: tutte le statue del giardino fissano la stessa identica direzione, puntando a una finestra illuminata al secondo piano della dimora, sul lato orientale, calda e accogliente proprio come la sala da conversazione.", "L'Ala Est. Qualcuno, lassù, tiene ancora una luce accesa."],
             fallimento: ["Le statue sono belle e silenziose, ma per quanto le osservi non ti dicono nulla. Hai solo la fastidiosa impressione che, appena ti volti, cambino posizione."],
             gia: { ok: "La dama velata accanto al cancello indica ancora la finestra dell'Ala Est, dove trema una candela.", ko: "Hai già studiato le statue senza cavarne nulla." },
             lascia: "Lasci le statue alla loro veglia."
@@ -3818,7 +3836,7 @@
           ferisce: (d) => `Adele's words cling to you like ash: you take 1d${d} mental damage.` },
         luoghi: {
           giardino_fontana: {
-            fisso: ["You walk up to the fountain. The basin is white marble, carved with vines and rampant stags, and the water falling into it is so clear it looks like moving glass.", "It is the only thing in this garden that seems not to know it is dead. For a moment you wonder where it comes from, and who keeps it flowing."],
+            fisso: ["You walk up to the fountain. The basin, carved in white marble and adorned with vines and rampant stags, holds water of an almost unnatural clarity.", "It is the only relic in this ghostly garden that has not forgotten life. And watching it flow, you cannot help wondering what secret vein still feeds it, or what invisible hand still governs it."],
             ancora: ["You bend over the basin again and let the gurgle of the water fill your mind."],
             azione: "You plunge your hands into the basin, close your eyes and try to feel what keeps this water alive.",
             successo: [
@@ -3832,10 +3850,28 @@
             gia: { ok: "You know what keeps this fountain alive: the Lady's grief. Aldo never touches it.", ko: "" },
             lascia: "You draw your hands out of the basin and stand up."
           },
+          giardino_siepi_tracce: {
+            fisso: ["You approach the hedges, intrigued by their unnatural stillness, but something else catches your eye: some branches are broken, as if someone or something had pushed hard to force a way through, without succeeding."],
+            azione: "You crouch by the broken branches and follow the direction of the tear with your eyes, looking for other signs on the ground.",
+            successo: ["Following the direction of the tear, you lower your gaze to the ground: you notice footprints, clearly human but tiny, like those of a child or a gnome."],
+            fallimento: ["You study the broken branches for a long time, but the gravel around them is hard and packed: it holds no trace, or at least none you can read."],
+            gia: {"ok": "The tiny footprints are still there, before the broken branches: someone very small tried to get through.", "ko": "You have already searched the hedges for tracks and found nothing."},
+            lascia: "You leave the hedges alone."
+          },
+          giardino_siepi_indaga: {
+            fisso: ["You stride towards the hedges and touch them. Ignoring how dense they are, you try to force your way through, but they are an impenetrable wall; the sturdy branches scratch you and even tear the cloth of your trousers."],
+            azione: "You lean forward as far as you can, pushing the branches aside with your hands, and search the foliage with your eyes.",
+            successo: ["You lean forward as far as you can, peering through the foliage, and there it is: a wooden toy, a small hand-carved animal."],
+            fallimento: ["You rummage through the branches until your hands sting with scratches, but inside the hedge you find nothing but leaves as hard as stone."],
+            gia: {"ok": "In the foliage where you found the toy there is nothing else.", "ko": "You have already searched through the hedges and found nothing."},
+            lascia: "You draw your hands back from the hedges."
+          },
+          giardino_percezione: { fisso: ["A single path leads to the chapel and, before you, a breathtaking view opens up: the four moons pour out a ghostly light, turning the whole garden into an unreal place. The fountain, struck by that glow, shines with iridescent reflections, as if it were truly enchanted.", "All around, however, reigns an absolute stillness: no wind, not the faintest whisper. Even the pebbles, which should crunch under your boots, stubbornly stay silent. The only thing you can hear is the lively splash of the water in the basin."] },
+          giardino_extra: {"beviDomanda": "Do you want to drink from the fountain?", "beviSi": "Yes, I drink", "beviNo": "No, not now", "beviNon": ["You draw your hand back from the water. For now it is enough to know it is there."], "leggiDomanda": "Do you want to read the sheet?", "leggiSi": "Yes, I read it", "leggiNo": "No, I put it away", "nonLetta": "You have put the sheet in “Adele's Diary”, in your pack: you can read it whenever you like.", "gioc": {"nome": "Wooden animal", "desc": "A small hand-carved wooden animal, worn smooth by the caresses of little fingers.", "domanda": "Do you want to take the toy?", "si": "Yes, I take it", "no": "No, I leave it there", "presi": ["You reach through the branches, ignoring the scratches, and close your fingers around it. You put it in your pack."], "lasciati": ["You leave the toy where it is, among the leaves."], "giaPreso": "The toy from the hedges is already in your pack.", "nonVisto": "You see no toy among the hedges."}},
           giardino_statue: {
-            fisso: ["Along the paths, marble statues watch over the hedges: veiled ladies, children with amphorae, a hunter with his hound. Like everything else, they are motionless; but for a moment you feel they have not always been."],
-            azione: "You go from one statue to the next, studying their poses and gazes, looking for something that does not add up.",
-            successo: ["The statues all look towards the fountain. All but one: a veiled lady by the gate has her face turned to the house and one hand raised. You follow her finger: it points to an upper-floor window on the eastern side, where a candle flame trembles.", "The East Wing. Someone up there still keeps a light burning."],
+            fisso: ["You try to approach the statues, but the hedges stand guard, so thick and impenetrable that you cannot make any headway. There is no way past them, no way to reach the figures and look at them up close."],
+            azione: "You stop at a distance and sharpen your gaze on the statues, one after another, looking for any clue.",
+            successo: ["You sharpen your gaze on the statues all the same, looking for any clue. After a few minutes of careful observation, the truth becomes clear: every statue in the garden stares in exactly the same direction, towards a lit window on the second floor of the house, on the eastern side, warm and welcoming just like the drawing room.", "The East Wing. Someone up there still keeps a light burning."],
             fallimento: ["The statues are beautiful and silent, but however long you study them they tell you nothing. You are left only with the irritating feeling that they change position as soon as you turn away."],
             gia: { ok: "The veiled lady by the gate still points to the East Wing window, where a candle trembles.", ko: "You have already studied the statues and learned nothing." },
             lascia: "You leave the statues to their watch."
@@ -4541,7 +4577,7 @@
           nuovoPosto: (l) => `Level ${l}: new spells unlocked and a new slot to fill (in the Spells section).`, viaSblocco: "Level 3: you can now choose a prestige path (in the Spells section).",
           viaGuida: "The path gives you one ability at level 3, one at 4 and one at 5, always ready and taking no slots. The choice is permanent.",
           guidaPrep: (tot, p, a) => `Choose ${tot} spells among those unlocked: at most ${p} from your main school and ${a} from the other school.`, max: (n) => `at most ${n}` },
-        investiga: { domanda: "How do you want to investigate?", cerca: "I search the room actively (Investigate)", sensi: "I use my senses: sight, hearing, smell (Perception)" },
+        investiga: { domanda: "How do you want to investigate?", cerca: "I search the room actively (Investigation)", sensi: "I use my senses: sight, hearing, smell (Perception)" },
         speciali: (n, max) => `Special techniques (${n}/${max})`, altrePiuTardi: (n) => `${n === 1 ? "1 free slot" : n + " free slots"}: more techniques unlock as you level up or take up a shield.`, postiVuoti: (n) => n === 1 ? "1 free slot" : `${n} free slots`,
         prep: { btnTec: "Prepare techniques", btnInc: "Prepare spells", nonOra: "Not now", titoloTec: "Prepare your techniques", titoloInc: "Prepare your spells",
           guidaTec: (n) => `Choose ${n} special techniques among the unlocked ones for the weapon type you hold and, with the shield on your arm, the shield: two of level 1, two of level 2 and one of each following level (the shield gives one extra slot, of any level).`,
@@ -4741,9 +4777,13 @@
       disp_percezione: {}, disp_indagare: {}, disp_mobili: {}, disp_sgabuzzino: {}, disp_porta: {},
       /* giardino, cappella e cripta: descrizioni fisse; l'altare nasconde il blasone (solo con la missione del blasone accettata) */
       giardino_fontana: { riprova: true, poi: (ok) => { if (ok) trovaPagina(1); } }, /* prova a scelta: Sapienza, Sopravvivenza o Intuizione (esaminaFontana) */
-      fontana_med: { prova: { abilita: "Sopravvivenza", dado: 20, cd: 12 } }, fontana_arc: { prova: { abilita: "Sapienza", dado: 20, cd: 12 } }, fontana_mis: { prova: { abilita: "Intuizione", dado: 20, cd: 12 } },
+      fontana_med: { prova: { abilita: "Sopravvivenza", dado: 20, cd: 12 } }, fontana_arc: { prova: { abilita: "Sapienza", dado: 20, cd: 12 } }, fontana_mis: { prova: { abilita: "Intuizione", dado: 20, cd: 12 } }, fontana_ind: { prova: { abilita: "Indagare", dado: 20, cd: 12 } },
       giardino_statue: { prova: { abilita: "Percezione", dado: 20, cd: 13 }, poi: (ok) => { if (ok) { usate.q2_candela = true; salvaUsate(); sblocco([A2.statueEst], "mis"); } } },
       giardino_siepi: {}, giardino_cielo: {}, giardino_cappella: {}, giardino_portone: {},
+      /* siepi (27/10): Sopravvivenza trova le impronte piccole, Indagare il giocattolo di Agnese; Percezione dichiarata: il giardino, senza tiro */
+      giardino_siepi_tracce: { prova: { abilita: "Sopravvivenza", dado: 20, cd: 12 } },
+      giardino_siepi_indaga: { prova: { abilita: "Indagare", dado: 20, cd: 10 }, poi: (ok) => { if (ok) offriGiocattoloSiepe(); } },
+      giardino_percezione: {},
       cappella_vetrata: { prova: { abilita: "Misticismo", dado: 20, cd: 14 }, poi: (ok) => { if (ok) { usate.adele_viva = true; salvaUsate(); sblocco([A2.vetrataViva], "mis"); } } },
       cappella_libro: { prova: { abilita: "Arcano", dado: 20, cd: 12 }, riprova: true, poi: (ok) => { if (ok) libroPreghiere(); } },
       cripta_furtiva: { prova: { abilita: "Furtività", dado: 20, cd: 13 }, nessunDanno: true, poi: (ok) => { usate.ettore_sorpreso = ok; salvaUsate(); setTimeout(() => fuoriDallaTendina(() => vai("cripta")), 900); } },
@@ -4767,7 +4807,7 @@
     PROVE_DICHIARATE.cucina = { Indagare: "cucina_indagare", Percezione: "cucina_percezione" };
     PROVE_DICHIARATE.cantina = { "Furtività": "cant_furtivita", Percezione: "cant_percezione", Indagare: "cant_indagare" };
     PROVE_DICHIARATE.dispensa = { Percezione: "disp_percezione", Indagare: "disp_indagare" };
-    PROVE_DICHIARATE.giardino = { Sapienza: "fontana_arc", Sopravvivenza: "fontana_med", Intuizione: "fontana_mis", Misticismo: "fontana_mis", Arcano: "fontana_arc", Medicina: "fontana_med", Percezione: "giardino_statue" };
+    PROVE_DICHIARATE.giardino = { Sapienza: "fontana_arc", Sopravvivenza: "giardino_siepi_tracce", Intuizione: "fontana_mis", Misticismo: "fontana_mis", Arcano: "fontana_arc", Medicina: "fontana_med", Indagare: "giardino_siepi_indaga", Percezione: "giardino_percezione" };
     PROVE_DICHIARATE.cappella = { Percezione: "cappella_percezione", Indagare: "cappella_tracce", Sopravvivenza: "cappella_tracce", Misticismo: "cappella_vetrata", Arcano: "cappella_libro", "Furtività": "cripta_furtiva" };
     PROVE_DICHIARATE.cripta = { Indagare: "cripta_nicchie", Intuizione: "cripta_nicchie", Misticismo: "cripta_nicchie", Atletica: "cripta_sarcofago" };
     for (const id in MECCANICA) LUOGHI[id] = { ...MECCANICA[id], ...TX.luoghi[id] };
@@ -5100,7 +5140,9 @@
         if (/fontan|vasca|\bacqua\b|fountain|basin|water/.test(t)) return /\bbev\w*|\bbere\b|sors\w*|\bdrink\w*|\bsip\w*|disset\w*/.test(t) ? "fontana_bevi" : "giardino_fontana";
         if (/statu\w*|\bdam[ae] velat\w*|statue/.test(t)) return "giardino_statue";
         if (/cancell|confin|\bmur[oa]\b|scapp\w*|fugg\w*|allontan\w*|foresta|\bbosco\b|\bgate\b|boundar\w*|\bwalls?\b|escape|flee|run away|forest|woods/.test(t)) return "giardino_fuga";
-        if (/\bsiep\w*|\balber\w*|\bros[ae]\b|\bfior\w*|foglie|statu\w*|\bape\b|hedge\w*|\btrees?\b|\broses?\b|flowers?|leaves|statue|\bbee\b/.test(t)) return "giardino_siepi";
+        if (/giocattol\w*|animalett\w*|\btoys?\b|wooden animal/.test(t) && (ha(t, "prendi") || /\bsiep\w*|hedge/.test(t))) return "giocattolo_siepe";
+        if (/\bsiep\w*|hedge\w*/.test(t)) return /indag\w*|\bfrug\w*|\bcerc\w*|rovist\w*|scost\w*|\bforz\w*|attravers\w*|search\w*|rummag\w*|investigat\w*|push through|force/.test(t) ? "giardino_siepi_indaga" : "giardino_siepi_tracce";
+        if (/\balber\w*|\bros[ae]\b|\bfior\w*|foglie|\bape\b|\btrees?\b|\broses?\b|flowers?|leaves|\bbee\b/.test(t)) return "giardino_siepi";
         if (/\blun[ae]\b|cielo|stell[ae]|moons?|\bsky\b|stars?/.test(t)) return "giardino_cielo";
         if (torna || atrio || /\bcasa\b|villa|dimora|portone|rientr\w*|dentro|house|manor|inside|great door|front door/.test(t)) return guarda && !muovi && !torna ? "giardino_portone" : "torna";
         if (/conversazion|drawing|pranzo|dining|cucin|kitchen|corridoi|corridor|ballo|ballroom|caccia|hunt/.test(t)) return "casa_lontana";
@@ -5217,13 +5259,13 @@
        REVISIONE ATTRIBUTI E ABILITÀ
        4 attributi: Vigore (ex Lotta + Corpo), Agilità, Mente, Spirito (ex Carisma + Spirito).
        8 abilità: Atletica, Sopravvivenza (Vigore) · Furtività, Acrobazia (Agilità) ·
-                  Investigazione = Percezione + Indagare, Sapienza = Arcano + Misticismo + Medicina (Mente) ·
+                  Indagare, Percezione, Sapienza = Arcano + Misticismo + Medicina (Mente: tre abilità dal 27/10, quando Investigazione è stata di nuovo divisa) ·
                   Socialità = Persuasione + Intimidire, Intuizione (Spirito).
        Le prove scritte nei testi usano ancora i vecchi nomi: qui vengono tradotti nei nuovi.
        I personaggi creati prima vengono convertiti una volta sola (il valore più alto dei due attributi uniti).
        ===================================================================== */
     const MAPPA_ATTR = { Lotta: "Vigore", Corpo: "Vigore", Carisma: "Spirito" };
-    const MAPPA_ABILITA = { Indagare: "Investigazione", Percezione: "Investigazione", Medicina: "Sapienza", Arcano: "Sapienza", Misticismo: "Sapienza", Persuasione: "Socialità", Intimidire: "Socialità" };
+    const MAPPA_ABILITA = { Medicina: "Sapienza", Arcano: "Sapienza", Misticismo: "Sapienza", Persuasione: "Socialità", Intimidire: "Socialità" };
     const abNuova = (n) => MAPPA_ABILITA[n] || n;
     /* le statistiche rispondono anche ai vecchi nomi (statistiche.Lotta → Vigore) */
     const conAttrVecchi = (st) => new Proxy(st, { get: (o, k) => (typeof k === "string" && !(k in o) && MAPPA_ATTR[k]) ? o[MAPPA_ATTR[k]] : o[k] });
@@ -5274,7 +5316,8 @@
       return base + bonusAgilitaCA() + (scudo ? Number(scudo.ca) || 0 : 0) + (anelloAlDito() ? 1 : 0); /* l'anello del Primo Vespera: +1 */
     };
     function anelloAlDito() { return !!(usate && usate.anello_indossato && zaino.some(x => x.id === "anello_vespera")); }
-    const addestrata = (n) => (pg.abilita || []).some(a => abNuova(a.nome) === abNuova(n));
+    /* chi aveva scelto Investigazione (prima del 27/10) è addestrato sia in Indagare sia in Percezione */
+    const addestrata = (n) => (pg.abilita || []).some(a => abNuova(a.nome) === abNuova(n) || (a.nome === "Investigazione" && (n === "Indagare" || n === "Percezione")));
     const valoreAbilita = (n) => {
       n = abNuova(n);
       const attr = (ABILITA_TUTTE.find(x => x[0] === n) || [])[1];
@@ -7228,12 +7271,18 @@
     const DANNO_DIARIO = { bronzo: 2, argento: 2, oro: 4, platino: 4 }; /* dado del danno mentale per grado della pagina (campo «grado», di base bronzo) */
     const pagineTrovate = () => (Array.isArray(usate.pagine_adele) ? usate.pagine_adele : []).filter(n => n >= 1 && n <= PAGINE_ADELE()).sort((a, b) => a - b);
     /* la pagina n (da 1) entra nel «Diario di Adele» e viene mostrata per intero */
-    function trovaPagina(n) {
+    function trovaPagina(n, nonLetta) {
       const prese = pagineTrovate();
       if (prese.includes(n)) return;
-      usate.pagine_adele = [...prese, n].sort((a, b) => a - b); salvaUsate();
+      usate.pagine_adele = [...prese, n].sort((a, b) => a - b);
+      if (nonLetta) usate.pagine_non_lette = [...(usate.pagine_non_lette || []), n];
+      salvaUsate();
       if (!zaino.some(x => x.id === "diario_adele")) zaino.push({ id: "diario_adele", nome: "Diario di Adele", tipo: "reperto", alias: ["diario", "diary", "pagine", "pages", "adele"] });
       aggiornaZaino(); modificato();
+      if (nonLetta) return;
+      leggiPagina(n);
+    }
+    function leggiPagina(n) {
       const P = A2.pagine[n - 1];
       aggiungi({ tipo: "narra", box: "mis", righe: [P.titolo, ...P.testo] });
       sist(A2.diario.trovata(usate.pagine_adele.length, PAGINE_ADELE()));
@@ -7265,14 +7314,18 @@
       it: {
         scegli: "Come vuoi studiare la fontana?",
         opz: {
-          Sopravvivenza: { btn: "La provo come un rimedio d'emergenza.",
-            azione: "Raccogli l'acqua nel palmo, la annusi, ne assaggi una goccia e ne studi il colore controluce, come faresti con un rimedio sconosciuto.",
-            apre: ["L'acqua ha un sapore leggermente salato, che non appartiene a nessuna sorgente: il sapore delle lacrime. E il tuo corpo la riconosce prima della tua mente: il graffio che avevi sul dorso della mano si richiude sotto i tuoi occhi, lasciando la pelle liscia e fresca."],
-            fallimento: ["L'acqua è limpida, fredda, senza odore né sapore. Per quanto ne sai, potrebbe essere acqua qualunque... ed è proprio questo, in un giardino di pietra, a inquietarti."] },
-          Sapienza: { btn: "Cerco tracce di magia nella vasca.",
-            azione: "Tracci sul bordo della vasca i segni di una formula di rivelazione e osservi come l'acqua risponde alla magia.",
-            apre: ["I segni si accendono e subito si spengono, inghiottiti: nessun incantesimo, nessuna runa, nessun legame arcano. Ciò che tiene viva quest'acqua non l'ha scritto nessun mago. È qualcosa di più antico e più semplice: una promessa.", "Per un istante, tra i riflessi della vasca, vedi il volto di una donna che piange."],
-            fallimento: ["I segni restano inerti sulla pietra. O qui non c'è alcuna magia, o è di un genere che i tuoi libri non conoscono."] },
+          Indagare: { btn: "Giro attorno alla vasca e cerco con attenzione.",
+            azione: "Cammini lentamente attorno alla vasca, chinandoti a guardare sotto il pelo dell'acqua da ogni lato.",
+            apre: ["Cammini attorno alla fontana per osservarla da ogni angolazione. Quando ti ritrovi esposto sul lato che dà verso la cappella, il tuo sguardo cade su qualcosa di inatteso annegato all'interno della fontana: un piccolo cilindro porta pergamene. Ti chini a raccoglierlo e, svitandolo, riveli al suo interno un foglietto di carta arrotolato."],
+            fallimento: ["Giri attorno alla vasca più volte, ma i riflessi delle lune sull'acqua ti confondono: sotto la superficie non riesci a distinguere nulla."] },
+          Sopravvivenza: { btn: "Provo l'acqua come farei con una sorgente sconosciuta.",
+            azione: "Ti avvicini alla fontana. L'acqua in superficie è limpida, ma la luce delle lune vi si riflette conferendole tonalità mutevoli, quasi incantate; giureresti di aver scorto lo stesso bagliore che anima certe armi magiche.",
+            apre: ["Incuriosito, decidi di allungare la mano verso uno dei beccucci da cui l'acqua zampilla. La porti al naso per annusarla: niente. Provi ad assaggiarla: è solo semplice acqua.", "Non è avvelenata, e non è stagnante: chi l'ha detto che non si possa bere?"],
+            fallimento: ["Annusi l'acqua, la assaggi, la guardi controluce: niente ti dice se sia sicura. Potrebbe essere acqua qualunque... ed è proprio questo, in un giardino di pietra, a inquietarti."] },
+          Sapienza: { btn: "Cerco nella memoria che cosa so delle fontane incantate.",
+            azione: "Fissi i riflessi dell'acqua e cerchi di ricordare ciò che hai letto sulle fontane magiche dei luoghi maledetti.",
+            apre: ["Ti torna in mente qualcosa, letto chissà dove e in quale polveroso tomo. Non è così raro imbattersi in fontane incantate nei dungeon; tuttavia, per scoprire se a quell'acqua sia legata una benedizione o una maledizione, c'è un solo modo... e l'idea non ti piace affatto.", "Bere."],
+            fallimento: ["Frughi nella memoria, ma non ti torna in mente nulla che possa servirti: solo frammenti di leggende che si contraddicono l'una con l'altra."] },
           Intuizione: { btn: "Cerco di sentire che cosa la tiene viva.",
             azione: "Immergi le mani nella vasca, chiudi gli occhi e cerchi di sentire che cosa tiene viva quest'acqua.",
             apre: ["L'acqua è fredda, poi d'improvviso tiepida, come una mano che stringe la tua. Dietro gli occhi chiusi vedi una donna dal volto severo, la stessa del ritratto sopra il camino, china su questa vasca. Piange in silenzio, e le sue lacrime cadono nell'acqua senza increspare la superficie."],
@@ -7282,14 +7335,18 @@
       en: {
         scegli: "How do you want to study the fountain?",
         opz: {
-          Sopravvivenza: { btn: "I try it as an emergency remedy.",
-            azione: "You scoop the water into your palm, smell it, taste a drop and study its colour against the light, as you would an unknown remedy.",
-            apre: ["The water has a faintly salty taste that belongs to no spring: the taste of tears. And your body recognises it before your mind does: the scratch on the back of your hand closes before your eyes, leaving the skin smooth and cool."],
-            fallimento: ["The water is clear, cold, without smell or taste. For all you know it could be any water... and that, in a garden of stone, is exactly what unsettles you."] },
-          Sapienza: { btn: "I look for traces of magic in the basin.",
-            azione: "You trace the signs of a revealing formula on the rim of the basin and watch how the water answers the magic.",
-            apre: ["The signs flare and at once go out, swallowed: no spell, no rune, no arcane bond. Whatever keeps this water alive was written by no mage. It is something older and simpler: a promise.", "For an instant, among the reflections in the basin, you see the face of a woman weeping."],
-            fallimento: ["The signs lie inert on the stone. Either there is no magic here, or it is of a kind your books do not know."] },
+          Indagare: { btn: "I walk around the basin and search carefully.",
+            azione: "You walk slowly around the basin, bending to look beneath the surface from every side.",
+            apre: ["You walk around the fountain to look at it from every angle. When you find yourself on the side facing the chapel, your gaze falls on something unexpected sunk inside the fountain: a small scroll case. You bend to pick it up and, unscrewing it, reveal a rolled-up sheet of paper inside."],
+            fallimento: ["You circle the basin several times, but the reflections of the moons on the water confuse you: you cannot make out anything beneath the surface."] },
+          Sopravvivenza: { btn: "I test the water as I would an unknown spring.",
+            azione: "You walk up to the fountain. The water on the surface is clear, but the light of the moons is reflected in it, giving it shifting, almost enchanted hues; you would swear you glimpsed the same gleam that lights certain magic weapons.",
+            apre: ["Curious, you reach out to one of the spouts from which the water springs. You raise it to your nose to smell it: nothing. You try a taste: it is just plain water.", "It is not poisoned, nor stagnant: who says it cannot be drunk?"],
+            fallimento: ["You smell the water, taste it, look at it against the light: nothing tells you whether it is safe. It could be any water... and that, in a garden of stone, is exactly what unsettles you."] },
+          Sapienza: { btn: "I search my memory for what I know of enchanted fountains.",
+            azione: "You stare at the reflections in the water and try to remember what you have read about the magic fountains of cursed places.",
+            apre: ["Something comes back to you, read who knows where, in some dusty tome. It is not so rare to come across enchanted fountains in dungeons; yet to find out whether a blessing or a curse is bound to that water, there is only one way... and you do not like the idea at all.", "Drink."],
+            fallimento: ["You search your memory, but nothing useful comes back: only fragments of legends that contradict one another."] },
           Intuizione: { btn: "I try to feel what keeps it alive.",
             azione: "You plunge your hands into the basin, close your eyes and try to feel what keeps this water alive.",
             apre: ["The water is cold, then suddenly warm, like a hand squeezing yours. Behind your closed eyes you see a woman with a stern face, the same as the portrait above the fireplace, bent over this basin. She weeps in silence, and her tears fall into the water without rippling its surface."],
@@ -7297,29 +7354,70 @@
         }
       }
     };
-    const FONTANA_ABILITA = ["Sapienza", "Sopravvivenza", "Intuizione"]; /* tre strade, tre attributi: Mente, Vigore, Spirito */
-    const ID_FONTANA = { fontana_med: "Sopravvivenza", fontana_arc: "Sapienza", fontana_mis: "Intuizione" };
+    /* quattro strade (27/10), ognuna con il suo esito e il suo stato:
+       Indagare → il cilindro con la pagina del diario; Sopravvivenza → l'acqua si può bere; Sapienza → «c'è un solo modo: bere»;
+       Intuizione → la verità sulla fontana (le lacrime di Adele, Aldo che non la tocca): usate.giardino_fontana = "ok" */
+    const FONTANA_ABILITA = ["Indagare", "Sopravvivenza", "Sapienza", "Intuizione"];
+    const ID_FONTANA = { fontana_ind: "Indagare", fontana_med: "Sopravvivenza", fontana_arc: "Sapienza", fontana_mis: "Intuizione" };
+    const STATO_FONTANA = { Indagare: "fontana_ind", Sopravvivenza: "fontana_med", Sapienza: "fontana_arc", Intuizione: "giardino_fontana" };
+    const GX = () => A2.luoghi.giardino_extra;
     function esaminaFontana(abil) {
       if (haLacrima() && usate.giardino_fontana !== "ok") return fontanaConLacrima();
       const l = LUOGHI.giardino_fontana, F = FONTANA_PROVE[LINGUA] || FONTANA_PROVE.it;
-      if (usate.giardino_fontana === "ok") return aggiungi({ tipo: "narra", righe: [l.gia.ok] });
       if (abil) return provaFontana(abil);
-      aggiungi({ tipo: "narra", righe: [...(usate.giardino_fontana === "ko" ? l.ancora : l.fisso), F.scegli] });
-      scelte([...FONTANA_ABILITA.map(a => ({ testo: "[" + N("abilita", a) + "] " + F.opz[a].btn, fn: () => { chiudiScelte(); provaFontana(a); } })),
+      const restano = FONTANA_ABILITA.filter(a => usate[STATO_FONTANA[a]] !== "ok");
+      if (!restano.length) return aggiungi({ tipo: "narra", righe: [l.gia.ok] });
+      aggiungi({ tipo: "narra", righe: [...(FONTANA_ABILITA.some(a => STATO_FONTANA[a] in usate) ? l.ancora : l.fisso), F.scegli] });
+      scelte([...restano.map(a => ({ testo: "[" + N("abilita", a) + "] " + F.opz[a].btn, fn: () => { chiudiScelte(); provaFontana(a); } })),
         { testo: U.lasciaPerdere, fn: () => { chiudiScelte(); aggiungi({ tipo: "narra", righe: [l.lascia] }); } }]);
     }
     function provaFontana(a) {
-      const l = LUOGHI.giardino_fontana, o = (FONTANA_PROVE[LINGUA] || FONTANA_PROVE.it).opz[a];
-      const comune = l.successo.slice(1); /* la verità sulla fontana, Aldo che non la tocca, la pagina del diario */
-      proponiProva("giardino_fontana", { ...l, prova: { abilita: a, dado: 20, cd: 12 }, azione: o.azione, successo: [...o.apre, ...comune], fallimento: o.fallimento });
+      const l = LUOGHI.giardino_fontana, o = (FONTANA_PROVE[LINGUA] || FONTANA_PROVE.it).opz[a], id = STATO_FONTANA[a];
+      if (usate[id] === "ok") return aggiungi({ tipo: "narra", righe: [a === "Intuizione" ? l.gia.ok : U.giaFatto || l.gia.ok] });
+      const verita = l.successo.slice(1, 3); /* la verità sulla fontana e Aldo che non la tocca (la pagina ora la trova Indagare) */
+      const poi = { Indagare: (ok) => { if (ok) offriLettura(1); }, Sopravvivenza: (ok) => { if (ok) offriBere(); }, Sapienza: null, Intuizione: null }[a];
+      proponiProva(id, { ...l, prova: { abilita: a, dado: 20, cd: 12 }, riprova: true, azione: o.azione, successo: a === "Intuizione" ? [...o.apre, ...verita] : o.apre, fallimento: o.fallimento, poi });
+    }
+    function offriBere() {
+      const X = GX();
+      aggiungi({ tipo: "narra", righe: [X.beviDomanda] });
+      scelte([{ testo: X.beviSi, fn: () => { chiudiScelte(); beviFontana(); } }, { testo: X.beviNo, fn: () => { chiudiScelte(); aggiungi({ tipo: "narra", righe: X.beviNon }); } }]);
+    }
+    /* la pagina del diario: va comunque nello zaino; leggerla (e subirne il peso) si può fare subito o più tardi */
+    function offriLettura(n) {
+      const X = GX();
+      aggiungi({ tipo: "narra", righe: [X.leggiDomanda] });
+      scelte([{ testo: X.leggiSi, fn: () => { chiudiScelte(); trovaPagina(n); } },
+        { testo: X.leggiNo, fn: () => { chiudiScelte(); trovaPagina(n, true); sist(X.nonLetta); } }]);
+    }
+    /* giocattoli di Agnese: cinque in tutto, ne servono tre (il contatore comparirà dopo aver parlato con lei). Questo è quello delle siepi */
+    const giocattoliTrovati = () => (usate.giocattoli === "presi" ? 1 : 0) + (usate.giocattolo_siepe === "preso" ? 1 : 0);
+    function offriGiocattoloSiepe() {
+      if (usate.giocattolo_siepe === "preso") return;
+      const G = GX().gioc;
+      aggiungi({ tipo: "narra", righe: [G.domanda] });
+      scelte([
+        { testo: G.si, fn: () => {
+          usate.giocattolo_siepe = "preso"; salvaUsate(); chiudiScelte();
+          aggiungi({ tipo: "narra", righe: G.presi });
+          aggiungiZaino({ id: "giocattolo_siepe", nome: G.nome, tipo: "oggetto", testo: G.desc, alias: ["giocattolo", "animaletto", "toy", "wooden animal"] });
+          sist(U.zainoAgg(G.nome));
+        } },
+        { testo: G.no, fn: () => { usate.giocattolo_siepe = "lasciato"; salvaUsate(); chiudiScelte(); aggiungi({ tipo: "narra", righe: G.lasciati }); } }
+      ]);
+    }
+    function giocattoloSiepe() {
+      const G = GX().gioc;
+      if (usate.giocattolo_siepe === "preso") return aggiungi({ tipo: "narra", righe: [G.giaPreso] });
+      if (usate.giardino_siepi_indaga === "ok") return offriGiocattoloSiepe();
+      aggiungi({ tipo: "narra", righe: [G.nonVisto] });
     }
     /* con la Lacrima della Regina nello zaino la fontana si rivela da sola */
     const haLacrima = () => zaino.some(x => x.id === "lacrima");
     function fontanaConLacrima() {
       const l = LUOGHI.giardino_fontana;
       usate.giardino_fontana = "ok"; salvaUsate();
-      aggiungi({ tipo: "narra", box: "ok", righe: [...l.fisso, ...A2.luoghi.giardino_fontana.successoLacrima, ...l.successo] });
-      trovaPagina(1);
+      aggiungi({ tipo: "narra", box: "ok", righe: [...l.fisso, ...A2.luoghi.giardino_fontana.successoLacrima, ...l.successo.slice(0, 3)] });
     }
     function libroPreghiere() {
       const c = zaino.find(x => x.id === "acqua_benedetta");
@@ -7958,6 +8056,7 @@
       if (impugnabile(it) && it !== mano) return (soloPrendere || it.usi == null) ? impugna(it.id) : usa(it.id);
       if (it === mano && soloPrendere) return sist(U.giaInMano(nomeOg(it)));
       if (it.usi != null) return usa(it.id);
+      if (it.id === "diario_adele" && (usate.pagine_non_lette || []).length) { const da = usate.pagine_non_lette; usate.pagine_non_lette = []; salvaUsate(); return da.forEach(n => leggiPagina(n)); } /* prima lettura di una pagina messa via */
       if (it.id === "diario_adele") return aggiungi({ tipo: "narra", box: "mis", righe: [U.rileggi(nomeOg(it)), ...righeDiarioAdele()] });
       if (it.id === "acqua_benedetta") return scontro ? lanciaAcqua() : sist(A2.acqua.fuoriScontro);
       if (it.id === "anello_vespera") return indossaAnello();
@@ -8590,6 +8689,7 @@
         const lb = bersaglio && LUOGHI[bersaglio];
         if (lb && lb.prova && (abNuova(lb.prova.abilita) === abNuova(ab[0]) || (ab[0] === "Investigazione" && ["Indagare", "Percezione"].includes(lb.prova.abilita)))) return esamina(bersaglio); /* «indago sull'arazzo»: la prova di quell'elemento */
         if ((ab[0] === "Persuasione" || ab[0] === "Intimidire") && luogo === "sala_ballo" && aldoInSala()) return parlaAldo(); /* davanti ad Aldo si parla con lui */
+        if (luogo === "giardino" && bersaglio === "giardino_fontana" && FONTANA_ABILITA.includes(abNuova(ab[0]))) return esaminaFontana(abNuova(ab[0]));
         return provaAbilita(ab[0]);
       }
 
@@ -8668,6 +8768,7 @@
       if (id === "entra_trofei") return vai("sala_trofei");
       if (id === "giardino_fuga") return fugaGiardino();
       if (id === "fontana_bevi") return beviFontana();
+      if (id === "giocattolo_siepe") return giocattoloSiepe();
       if (id === "cripta_tomba") return tombaLorenzo();
       if (id === "cripta_braciere_spento") return aggiungi({ tipo: "narra", righe: testoBraciereSpento() });
       if (id === "cappella_altare_scelta") return esamina(usate.q3 === "accettata" || "cappella_altare" in usate ? "cappella_altare" : "cappella_altare_vuoto");

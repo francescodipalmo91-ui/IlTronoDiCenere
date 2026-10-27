@@ -686,7 +686,7 @@ caso("Regolamento: classi, scuole di magia, stati ed esempi in italiano e in ing
   await page.click("#apriTutto"); eq(await page.$$eval("#sezioni details:not([open])", l => l.length), 0, "Apri tutto"); await page.click("#chiudiTutto");
   eq(await page.$$eval("#sezioni details[open]", l => l.length), 4, "Comprimi lascia aperte solo le parti");
   const t = await page.textContent("body");
-  ["Sigilli", "Detonazione", "Bilancia", "Nadir", "Crepuscolo", "Accecato", "Avvizzito", "Lume Arcano", "Via della Frattura", "Via della Brace", "Via della Lama", "Via dello Scoglio", "Dardo Arcano", "Abbraccio del Vuoto", "Turno 3.", "Punta di Mandragora", "Avvelenato", "Quando serve", "Percezione, Indagare", "Malus alle abilità di Agilità"].forEach(x => vero(t.includes(x), "manca: " + x)); /* lo Sciamano non è più «in preparazione» */
+  ["Sigilli", "Detonazione", "Bilancia", "Nadir", "Crepuscolo", "Accecato", "Avvizzito", "Lume Arcano", "Via della Frattura", "Via della Brace", "Via della Lama", "Via dello Scoglio", "Dardo Arcano", "Abbraccio del Vuoto", "Turno 3.", "Punta di Mandragora", "Avvelenato", "Quando serve", "Indagare o Percezione", "Malus alle abilità di Agilità"].forEach(x => vero(t.includes(x), "manca: " + x)); /* lo Sciamano non è più «in preparazione» */
   /* 60 incantesimi e 12 abilità delle vie, tutte le tecniche del Guerriero in tabella */
   const righe = await page.$$eval("table tr", r => r.length);
   vero(righe > 60 + 12 + 85, "tabelle incomplete: " + righe);
@@ -957,6 +957,27 @@ caso("Atrio: «vado a destra» sul pianerottolo prende la rampa; «lancia lume a
   eq(await page.evaluate(() => interpreta(norm("vado a sinistra"))), "rampa_sx");
   eq(await page.evaluate(() => interpretaBuio(norm("lancia lume arcano"))), "lancia_luce");
   eq(await page.evaluate(() => interpretaBuio(norm("lancio luce"))), "lancia_luce");
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Abilità: nove, Indagare e Percezione separate; chi aveva Investigazione è addestrato in entrambe", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ abilita: [{ nome: "Investigazione", attributo: "Mente", valore: 1 }] }), PARTITA());
+  eq(await page.evaluate(() => Regole.ABILITA.length), 9);
+  eq(await page.evaluate(() => Regole.ABILITA.filter(a => a[1] === "Mente").map(a => a[0])), ["Indagare", "Percezione", "Sapienza"]);
+  eq(await page.evaluate(() => [addestrata("Indagare"), addestrata("Percezione"), addestrata("Sapienza")]), [true, true, false]);
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Giardino: siepi (Sopravvivenza e Indagare col giocattolo), fontana a quattro strade, statue con Percezione", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "atrio" }));
+  await page.evaluate(() => vai("giardino"));
+  eq(await page.evaluate(() => [interpretaAltrove(norm("esamino la siepe")), interpretaAltrove(norm("indago sulla siepe")), interpretaAltrove(norm("prendo il giocattolo tra le siepi"))]),
+    ["giardino_siepi_tracce", "giardino_siepi_indaga", "giocattolo_siepe"]);
+  eq(await page.evaluate(() => [LUOGHI.giardino_siepi_tracce.prova.abilita, LUOGHI.giardino_siepi_tracce.prova.cd, LUOGHI.giardino_siepi_indaga.prova.abilita, LUOGHI.giardino_siepi_indaga.prova.cd, LUOGHI.giardino_statue.prova.abilita, LUOGHI.giardino_statue.prova.cd]),
+    ["Sopravvivenza", 12, "Indagare", 10, "Percezione", 13]);
+  eq(await page.evaluate(() => FONTANA_ABILITA), ["Indagare", "Sopravvivenza", "Sapienza", "Intuizione"]);
+  await page.evaluate(() => esaminaFontana());
+  eq(await page.$$eval("#azioni button, #scelte button", x => x.filter(b => b.offsetParent && /^\[/.test(b.textContent)).length), 4, "quattro strade per la fontana");
+  await page.evaluate(() => { chiudiScelte(); trovaPagina(1, true); });
+  eq(await page.evaluate(() => [pagineTrovate().includes(1), usate.pagine_non_lette]), [true, [1]], "pagina messa via senza leggerla");
   eq(errori, [], "errori"); await chiudi();
 });
 caso("Pianerottolo: stanza a sé tra atrio, anticamera e corridoio; «torno indietro» dal primo piano porta qui", async (b) => {

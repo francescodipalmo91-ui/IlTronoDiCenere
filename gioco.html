@@ -2572,7 +2572,7 @@
               "Candele dalle fiammelle azzurre ardono immobili nei candelabri di ferro, senza consumarsi. Sopra l'altare, la vetrata che hai visto dal giardino raffigura una dama e un cavaliere inginocchiati ai lati di un albero, i volti consumati da crepe sottili che corrono nel vetro come vene.",
               "Sull'altare, una tovaglia ricamata con lo stemma dei Vespera; accanto, su un leggio, un libro di preghiere chiuso. Dietro di esso, sulla destra, una pesante grata di ferro è stata spalancata: rivela una scala di pietra che scende nel buio. Da laggiù sale un odore di terra, di cera... e di fumo recente."
             ],
-            nota: "Per scendere scrivi, ad esempio, «scendo nella cripta»; per tornare indietro «torno in giardino».",
+            nota: "Per scendere scrivi, ad esempio, «scendo nella cripta»; dalla porticina sul retro si va al cimitero («vado al cimitero»); per tornare indietro «torno in giardino».",
             fallbackLibera: ["Ci provi, ma la cappella non ti offre nulla di utile in questo senso. Le panche, l'altare, la vetrata e la scala che scende nella cripta sono ciò che hai intorno."],
             ritorno: ["Torni nella cappella. Le candele azzurre ardono immobili, e la scala dietro l'altare continua a sprofondare nel buio."]
           },
@@ -3117,7 +3117,7 @@
               "Candles with blue flames burn motionless in iron candlesticks, never burning down. Above the altar, the window you saw from the garden depicts a lady and a knight kneeling on either side of a tree, their faces worn by fine cracks that run through the glass like veins.",
               "On the altar lies a cloth embroidered with the arms of the Vespera; beside it, on a lectern, a closed prayer book. Behind it, on the right, a heavy iron grate has been flung open: it reveals a stone stair descending into the dark. From down there rises a smell of earth, of wax... and of recent smoke."
             ],
-            nota: "To go down write, for example, “I go down into the crypt”; to go back, “I return to the garden”.",
+            nota: "To go down write, for example, “I go down into the crypt”; the little back door leads to the graveyard (“I go to the graveyard”); to go back, “I return to the garden”.",
             fallbackLibera: ["You try, but the chapel offers you nothing useful in that respect. The pews, the altar, the window and the stair down to the crypt are what lie around you."],
             ritorno: ["You return to the chapel. The blue candles burn motionless, and the stair behind the altar still sinks into the dark."]
           }
@@ -4960,6 +4960,143 @@
     };
     for (const l of ["it", "en"]) for (const id of ["pianerottolo", "anticamera_trono", "corridoio_primo"]) { TESTI[l].stanze[id] = P1_TUTTI[l][id].stanza; TESTI[l].viste[id] = P1_TUTTI[l][id].vista; }
     for (const id of ["pianerottolo", "anticamera_trono", "corridoio_primo"]) STANZE_FATTI[id] = P1_TUTTI.it[id].fatti;
+
+    /* =====================================================================
+       FUORI DALLA CASA, OLTRE LA CAPPELLA (27/10 sera): cappella → cimitero → foresta dei pini.
+       - Il cimitero per ora è solo un passaggio (Enea arriverà con la caccia d'argento).
+       - La foresta dei pini è accessibile da subito (con la chiave del portone): a ogni ingresso il 30% di incontrare
+         una preda delle cacce comuni, al massimo uno scontro per riposo. Metà dei PE della caccia, niente trofeo;
+         a volte la preda lascia una dose per la borsa dei veleni. Con Sopravvivenza o Indagare si trovano gli
+         ingredienti che riempiono la borsa (una volta al giorno). Dafne arriverà con la caccia all'oro.
+       TESTI PROVVISORI, da riscrivere.
+       ===================================================================== */
+    const ESTERNI = {
+      it: {
+        cimitero: {
+          vista: { titolo: "Cimitero dei Vespera", alt: "Un piccolo cimitero di famiglia dietro la cappella: lapidi annerite, un albero inciso sulle tombe e, oltre l'ultima fila, rovi fitti e i pini." },
+          stanza: {
+            intro: ["La porticina sul retro della cappella si apre su un piccolo cimitero di famiglia, chiuso da un muretto di pietra. Le lapidi stanno in file storte, annerite come se il fuoco le avesse lambite tutte nella stessa notte; su molte è inciso lo stesso albero dalle radici intrecciate.", "Le tombe più grandi, vicino alla cappella, portano nomi consumati dal tempo; più in là, verso il fondo, quelle dei rami minori della famiglia si fanno piccole e spoglie. Oltre l'ultima fila crescono rovi fitti e neri, e dietro i rovi un cancelletto di ferro arrugginito si apre su una foresta di pini."],
+            nota: "Per entrare nella foresta scrivi, ad esempio, «vado nella foresta»; per tornare «torno nella cappella».",
+            fallbackLibera: ["Ci provi, ma il cimitero non ti offre nulla di utile in questo senso. Le lapidi, i rovi in fondo e il cancelletto verso i pini sono ciò che hai intorno."],
+            ritorno: ["Torni tra le lapidi. Il silenzio qui è diverso da quello della casa: più vecchio, più paziente."]
+          },
+          fatti: "Cimitero di famiglia dei Vespera, dietro la cappella, cinto da un muretto di pietra: lapidi annerite in file storte, molte con l'albero dalle radici intrecciate inciso sopra; vicino alla cappella le tombe più grandi, verso il fondo quelle piccole e spoglie dei rami minori; oltre l'ultima fila rovi fitti e neri; dietro i rovi un cancelletto di ferro arrugginito che dà sulla foresta di pini. Nessuno in vista. Si torna nella cappella dalla porticina sul retro."
+        },
+        pineta: {
+          vista: { titolo: "Foresta dei pini", alt: "Una foresta di pini alti e scuri sotto le lune, con un sentiero coperto di aghi." },
+          stanza: {
+            intro: ["Oltre il cancelletto, il terreno si copre di aghi secchi che attutiscono ogni passo. I pini si alzano dritti e scuri, tanto vicini che le chiome si toccano e la luce delle lune arriva a terra in lame sottili.", "L'aria sa di resina e di qualcosa di bruciato, lontano. Un sentiero si inoltra tra i tronchi, ma dopo pochi passi ogni pino sembra identico all'altro. Tra le radici crescono funghi pallidi, bacche scure e ciuffi d'erba che non hai mai visto."],
+            nota: "Puoi cercare ingredienti tra il sottobosco o tornare al cimitero: scrivi, ad esempio, «cerco erbe e radici» o «torno al cimitero».",
+            fallbackLibera: ["Ci provi, ma la foresta non ti offre nulla di utile in questo senso. I pini, il sottobosco e il sentiero sono ciò che hai intorno; il cancelletto riporta al cimitero."],
+            ritorno: ["Torni tra i pini. Gli aghi scricchiolano sotto gli stivali, e da qualche parte, tra i tronchi, qualcosa smette di muoversi."]
+          },
+          fatti: "Foresta di pini attorno a Casa Vespera, oltre il cimitero: pini alti, dritti e scuri, chiome che si toccano, luce delle lune in lame sottili; terreno coperto di aghi secchi; odore di resina e di bruciato lontano; un sentiero che dopo pochi passi riporta sempre al punto di partenza (la casa non lascia andare nessuno); tra le radici funghi pallidi, bacche scure ed erbe sconosciute. Ci vivono creature di cenere e di brace. Si torna al cimitero dal cancelletto."
+        },
+        luoghi: {
+          cim_lapidi: { fisso: ["Ti chini sulle lapidi. I nomi sono quasi tutti illeggibili, scavati dal tempo e anneriti dal fuoco. Riesci a decifrare solo qualche data, tanto antica da non dirti nulla, e lo stesso albero inciso più e più volte, come una firma."] },
+          cim_rovi: { fisso: ["I rovi in fondo al cimitero sono fitti e neri, con spine lunghe come dita. Qualcosa, tra i rami, cattura per un istante la luce delle lune. O forse è solo una goccia di rugiada che non dovrebbe esserci."] },
+          cim_cancello: { fisso: ["Il cancelletto di ferro è arrugginito ma non chiuso: cigola appena al tocco. Oltre, i pini cominciano subito, fitti e scuri."] },
+          pineta_alberi: { fisso: ["Appoggi la mano su un tronco: la corteccia è ruvida e calda, come se sotto scorresse qualcosa di vivo. Alzi lo sguardo, ma le chiome sono così fitte che le lune si vedono solo a tratti."] },
+          pineta_sentiero: { fisso: ["Segui il sentiero per un po', contando i passi. Pini, aghi, ancora pini. Poi, tra i tronchi, ricompare il cancelletto del cimitero, esattamente dove l'avevi lasciato. Il bosco gira in tondo attorno alla casa: non c'è un'uscita, solo un ritorno."] },
+          pineta_erbe: {
+            fisso: [], azione: "Ti chini tra le radici dei pini, cercando con lo sguardo e con l'olfatto le piante giuste: funghi, bacche, spore.",
+            successo: ["Riconosci quello che serve: un fungo dal cappello grigio che stilla un succo amaro, bacche nere che lasciano le dita intorpidite, una muffa polverosa tra le radici. Li raccogli con cura."],
+            fallimento: ["Tutto si assomiglia, sotto i pini: funghi pallidi, bacche scure, erbe che non conosci. Non sai distinguere ciò che serve da ciò che uccide, e lasci tutto dov'è."],
+            gia: { ok: "Oggi hai già raccolto quello che il sottobosco poteva darti. Torna dopo un riposo.", ko: "Hai già cercato tra le radici senza trovare nulla di utile." },
+            lascia: "Lasci stare il sottobosco."
+          },
+          pineta_cerca: {
+            fisso: [], azione: "Scosti gli aghi e frughi tra le radici con le mani, rivoltando le pietre e i rami caduti.",
+            successo: ["Sotto un tronco caduto trovi un piccolo tesoro di sottobosco: funghi grigi dal succo amaro, bacche nere, spore che si sollevano come fumo. Li raccogli con cura."],
+            fallimento: ["Rivolti aghi e pietre, ma trovi solo terra, resina e qualche osso di piccolo animale. Niente che possa servirti."],
+            gia: { ok: "Oggi hai già raccolto quello che il sottobosco poteva darti. Torna dopo un riposo.", ko: "Hai già frugato tra le radici senza trovare nulla di utile." },
+            lascia: "Lasci stare il sottobosco."
+          }
+        },
+        erbePiene: (a) => `Trovi gli ingredienti giusti: la borsa dei veleni torna piena (${a}/3).`,
+        erbeInutili: "Riconosci radici e spore velenose, ma senza l'arte dello Sciamano non sapresti dosarle: le lasci dove sono.",
+        erbeGiaPiena: "La tua borsa dei veleni è già piena: lasci il resto al bosco.",
+        dose: (a) => `Tra la cenere della preda trovi qualcosa che puoi usare: una dose per la borsa dei veleni (${a}/3).`,
+        pineLontana: "Da qui non ci arrivi direttamente: la foresta dei pini si raggiunge dal cimitero, dietro la cappella.",
+        risveglio: ["Quando riapri gli occhi sei disteso sul pavimento della cucina, il viso di Guendalina chino su di te. «Vi hanno riportato dal bosco» dice soltanto. Le ferite si sono richiuse, ma qualcosa nella tua mente si è incrinato."],
+        prede: {
+          ratto: { intro: ["Qualcosa corre tra gli aghi, rasente le radici: un ratto grosso come un gatto, il pelo impastato di cenere, gli occhi due braci. Ti ha sentito arrivare."], vittoria: "Il ratto squittisce un'ultima volta e si disfa in un mucchietto di cenere grigia, che si mescola agli aghi di pino." },
+          corvo: { intro: ["Un gracchio spezza il silenzio tra i pini. Su un ramo basso un corvo grande quanto un'oca ti fissa con occhi di brace. Spalanca le ali e scende su di te."], vittoria: "Il corvo gracchia un'ultima volta e cade in un lampo di brace spenta, sciogliendosi in una nube di cenere che sale tra le chiome." },
+          cinghiale: { intro: ["Un grugnito sordo scuote il sottobosco. Tra i tronchi esce un cinghiale grosso come un cavallino, il dorso cosparso di braci. Raspa gli aghi e abbassa le zanne."], vittoria: "Il cinghiale stramazza con un grugnito spezzato; la brace nel suo petto si spegne e il corpo crolla in un cumulo di cenere calda che fuma tra gli aghi." },
+          lupo: { intro: ["Un ululato basso corre tra i pini. Un lupo magro e alto, il pelo grigio di cenere e gli occhi due braci, esce dall'ombra dei tronchi e ti gira attorno, senza fretta."], vittoria: "Il lupo ulula un'ultima volta, un suono che si spezza a metà, e si sgretola in un turbine di cenere che il bosco inghiotte." },
+          branco: { intro: ["Il sottobosco sussulta: da ogni lato escono sagome basse e fumanti. Cani magri, il pelo grigio di cenere, gli occhi punte di brace. Ti accerchiano tra i tronchi, poi uno ringhia, e tutti insieme cominciano a stringere."], vittoria: "L'ultimo segugio crolla con un guaito. Uno dopo l'altro i corpi si sfaldano in cenere, e il branco intero sparisce tra gli aghi." },
+          sciame: { intro: ["Le chiome dei pini si agitano tutte insieme. Poi il cielo tra i rami si riempie di ali: decine di corvi di brace che scendono su di te come una pioggia di scintille."], vittoria: "Gli ultimi corvi cadono in una pioggia di scintille spente, e la cenere dello sciame si posa lenta sugli aghi di pino." }
+        }
+      },
+      en: {
+        cimitero: {
+          vista: { titolo: "Vespera graveyard", alt: "A small family graveyard behind the chapel: blackened headstones, a tree carved on the tombs and, beyond the last row, thick brambles and the pines." },
+          stanza: {
+            intro: ["The little door at the back of the chapel opens onto a small family graveyard, enclosed by a low stone wall. The headstones stand in crooked rows, blackened as if fire had licked them all on the same night; on many of them the same tree with intertwined roots is carved.", "The largest tombs, near the chapel, bear names worn away by time; further on, towards the back, those of the minor branches of the family grow small and bare. Beyond the last row grow thick black brambles, and behind the brambles a little rusty iron gate opens onto a pine forest."],
+            nota: "To enter the forest write, for example, “I go into the forest”; to go back, “I return to the chapel”.",
+            fallbackLibera: ["You try, but the graveyard offers you nothing useful in that respect. The headstones, the brambles at the back and the little gate towards the pines are what lie around you."],
+            ritorno: ["You return among the headstones. The silence here is different from the house's: older, more patient."]
+          }
+        },
+        pineta: {
+          vista: { titolo: "Pine forest", alt: "A forest of tall dark pines under the moons, with a path covered in needles." },
+          stanza: {
+            intro: ["Beyond the little gate the ground is covered in dry needles that muffle every step. The pines rise straight and dark, so close that their crowns touch and the light of the moons reaches the ground in thin blades.", "The air smells of resin and of something burnt, far away. A path winds between the trunks, but after a few steps every pine looks like the last. Among the roots grow pale mushrooms, dark berries and tufts of grass you have never seen."],
+            nota: "You can search the undergrowth for ingredients or go back to the graveyard: write, for example, “I search for herbs and roots” or “I return to the graveyard”.",
+            fallbackLibera: ["You try, but the forest offers you nothing useful in that respect. The pines, the undergrowth and the path are what lie around you; the little gate leads back to the graveyard."],
+            ritorno: ["You return among the pines. The needles crunch under your boots, and somewhere between the trunks something stops moving."]
+          }
+        },
+        luoghi: {
+          cim_lapidi: { fisso: ["You bend over the headstones. The names are almost all illegible, worn by time and blackened by fire. You can make out only a few dates, too ancient to tell you anything, and the same tree carved again and again, like a signature."] },
+          cim_rovi: { fisso: ["The brambles at the back of the graveyard are thick and black, with thorns as long as fingers. Something among the branches catches the moonlight for an instant. Or perhaps it is only a drop of dew that should not be there."] },
+          cim_cancello: { fisso: ["The little iron gate is rusty but not locked: it creaks faintly at your touch. Beyond it the pines begin at once, thick and dark."] },
+          pineta_alberi: { fisso: ["You rest your hand on a trunk: the bark is rough and warm, as if something alive flowed beneath it. You look up, but the crowns are so thick that the moons show only in glimpses."] },
+          pineta_sentiero: { fisso: ["You follow the path for a while, counting your steps. Pines, needles, more pines. Then, between the trunks, the graveyard gate reappears, exactly where you left it. The wood circles the house: there is no way out, only a way back."] },
+          pineta_erbe: {
+            fisso: [], azione: "You crouch among the roots of the pines, searching by sight and smell for the right plants: mushrooms, berries, spores.",
+            successo: ["You recognise what you need: a grey-capped mushroom that oozes a bitter juice, black berries that leave your fingers numb, a powdery mould among the roots. You gather them carefully."],
+            fallimento: ["Everything looks alike under the pines: pale mushrooms, dark berries, herbs you do not know. You cannot tell what helps from what kills, and you leave it all where it is."],
+            gia: { ok: "Today you have already gathered what the undergrowth could give you. Come back after a rest.", ko: "You have already searched among the roots without finding anything useful." },
+            lascia: "You leave the undergrowth alone."
+          },
+          pineta_cerca: {
+            fisso: [], azione: "You brush aside the needles and dig among the roots with your hands, turning over stones and fallen branches.",
+            successo: ["Under a fallen trunk you find a small treasure of undergrowth: grey mushrooms with bitter juice, black berries, spores that rise like smoke. You gather them carefully."],
+            fallimento: ["You turn over needles and stones, but find only earth, resin and a few bones of some small animal. Nothing you can use."],
+            gia: { ok: "Today you have already gathered what the undergrowth could give you. Come back after a rest.", ko: "You have already dug among the roots without finding anything useful." },
+            lascia: "You leave the undergrowth alone."
+          }
+        },
+        erbePiene: (a) => `You find the right ingredients: the poison pouch is full again (${a}/3).`,
+        erbeInutili: "You recognise poisonous roots and spores, but without the Shaman's art you would not know how to dose them: you leave them where they are.",
+        erbeGiaPiena: "Your poison pouch is already full: you leave the rest to the wood.",
+        dose: (a) => `In the prey's ashes you find something you can use: one dose for the poison pouch (${a}/3).`,
+        pineLontana: "You cannot get there directly from here: the pine forest is reached from the graveyard, behind the chapel.",
+        risveglio: ["When you open your eyes you are lying on the kitchen floor, Guendalina's face bent over you. “They brought you back from the wood,” is all she says. Your wounds have closed, but something in your mind has cracked."],
+        prede: {
+          ratto: { intro: ["Something scurries among the needles, hugging the roots: a rat as big as a cat, its fur matted with ash, its eyes two embers. It heard you coming."], vittoria: "The rat squeals one last time and falls apart into a little heap of grey ash that mingles with the pine needles." },
+          corvo: { intro: ["A croak breaks the silence among the pines. On a low branch a crow as big as a goose stares at you with eyes of ember. It spreads its wings and swoops."], vittoria: "The crow croaks one last time and falls in a flash of spent embers, melting into a cloud of ash that rises among the crowns." },
+          cinghiale: { intro: ["A dull grunt shakes the undergrowth. From between the trunks steps a boar as big as a pony, its back strewn with embers. It scrapes the needles and lowers its tusks."], vittoria: "The boar collapses with a broken grunt; the ember in its chest goes out and its body falls into a heap of warm ash that smokes among the needles." },
+          lupo: { intro: ["A low howl runs between the pines. A tall, gaunt wolf, its fur ash-grey and its eyes two embers, steps out of the shadow of the trunks and circles you, unhurried."], vittoria: "The wolf howls one last time, a sound that breaks in half, and crumbles into a swirl of ash that the wood swallows." },
+          branco: { intro: ["The undergrowth shudders: from every side low, smoking shapes step out. Lean hounds, fur ash-grey, eyes points of ember. They ring you among the trunks, then one growls, and all together they begin to close in."], vittoria: "The last hound collapses with a yelp. One after another the bodies flake into ash, and the whole pack vanishes among the needles." },
+          sciame: { intro: ["The crowns of the pines stir all at once. Then the sky between the branches fills with wings: dozens of ember crows dropping on you like a rain of sparks."], vittoria: "The last crows fall in a rain of spent sparks, and the swarm's ash settles slowly on the pine needles." }
+        }
+      }
+    };
+    ESTERNI.en.cimitero.fatti = ESTERNI.it.cimitero.fatti; ESTERNI.en.pineta.fatti = ESTERNI.it.pineta.fatti;
+    for (const l of ["it", "en"]) for (const id of ["cimitero", "pineta"]) { TESTI[l].stanze[id] = ESTERNI[l][id].stanza; TESTI[l].viste[id] = ESTERNI[l][id].vista; Object.assign(TESTI[l].luoghi, ESTERNI[l].luoghi); }
+    for (const id of ["cimitero", "pineta"]) STANZE_FATTI[id] = ESTERNI.it[id].fatti;
+    const EST2 = ESTERNI[LINGUA] || ESTERNI.it;
+    { /* luoghi del cimitero e della foresta: due prove per gli ingredienti, che si riaprono a ogni riposo */
+      const erbe = (ok) => { if (ok) { usate.pineta_erbe = usate.pineta_cerca = "ok"; salvaUsate(); raccogliErbe(); } };
+      const M = { cim_lapidi: {}, cim_rovi: {}, cim_cancello: {}, pineta_alberi: {}, pineta_sentiero: {},
+        pineta_erbe: { prova: { abilita: "Sopravvivenza", dado: 20, cd: 12 }, poi: erbe },
+        pineta_cerca: { prova: { abilita: "Indagare", dado: 20, cd: 12 }, poi: erbe } };
+      for (const id in M) LUOGHI[id] = { ...M[id], ...EST2.luoghi[id] };
+    }
+    PROVE_DICHIARATE.pineta = { Sopravvivenza: "pineta_erbe", Indagare: "pineta_cerca", Percezione: "pineta_alberi" };
+    PROVE_DICHIARATE.cimitero = { Indagare: "cim_lapidi", Percezione: "cim_rovi" };
     const P1 = P1_TUTTI[LINGUA] || P1_TUTTI.it;
     for (const id in P1.luoghi) LUOGHI[id] = { fisso: P1.luoghi[id] }; /* primo piano */
     const STANZE = {};
@@ -5166,6 +5303,8 @@
           if (guarda && !muovi && !/scend|down/.test(t)) return "stanza_corrente";
           return (!usate.ettore && /furtiv\w*|silenzi\w*|soppiatt\w*|quatt\w*|felpat\w*|sneak\w*|stealth\w*|quiet\w*|silent\w*|tiptoe\w*|cautel\w*|carefully/.test(t)) ? "cripta_furtiva" : "entra_cripta";
         }
+        if (/cimiter\w*|camposanto|lapid\w*|tomb[ae]\b|porticin\w*|\bretro\b|graveyard|cemetery|headstones?|back door|little door/.test(t)) return guarda && !muovi ? "cappella_porticina" : "entra_cimitero";
+        if (/pinet\w*|\bpini\b|forest\w*|\bbosco\b|\bwoods?\b|\bpines?\b/.test(t)) return "pineta_lontana";
         if (torna || /giardin|garden|fontan|fountain|fuori|outside/.test(t)) return "torna";
         if (atrio || /\bcasa\b|house|manor|conversazion|drawing|pranzo|dining|cucin|kitchen/.test(t)) return "casa_lontana";
         if (/\blibr[oi]\b|preghier\w*|leggio|ampoll\w*|\bbooks?\b|prayer|lectern|vials?/.test(t)) return "cappella_libro";
@@ -5174,6 +5313,22 @@
         if (/altar\w*|tovagli\w*|\bcloth\b/.test(t)) return "cappella_altare_scelta";
         if (/vetrat\w*|finestr\w*|\bdama\b|cavalier\w*|crep[ae]\b|window|stained|glass|\blady\b|knight|crack\w*/.test(t)) return "cappella_vetrata";
         if (/\bpanc[ah]\w*|tacch\w*|incision\w*|\bpews?\b|bench\w*|notch\w*/.test(t)) return "cappella_panche";
+      }
+      if (luogo === "cimitero") {
+        if (/pinet\w*|\bpini\b|forest\w*|\bbosco\b|\bwoods?\b|\bpines?\b/.test(t)) return guarda && !muovi ? "cim_cancello" : "entra_pineta";
+        if (/cancell\w*|\bgate\b/.test(t)) return muovi || ha(t, "tocca") ? "entra_pineta" : "cim_cancello";
+        if (torna || /cappell|chapel|porticin|giardin|garden/.test(t)) return "torna";
+        if (atrio || /\bcasa\b|house|manor|cripta|crypt/.test(t)) return "casa_lontana";
+        if (/\brov[oi]\b|spin[ae]\b|bramble\w*|thorns?/.test(t)) return "cim_rovi";
+        if (/lapid\w*|tomb\w*|nom[ei]\b|alber\w*|headstones?|graves?|names?|tree/.test(t)) return "cim_lapidi";
+      }
+      if (luogo === "pineta") {
+        if (torna || /cimiter\w*|cancell\w*|lapid\w*|graveyard|cemetery|\bgate\b/.test(t)) return "torna";
+        if (atrio || /\bcasa\b|house|manor|cappell|chapel|cripta|crypt|giardin|garden/.test(t)) return "casa_lontana";
+        if (/\berb[ae]\b|ingredient\w*|radic\w*|fung\w*|bacch\w*|spor[ae]\b|sottobosc\w*|veleni?\b|raccogl\w*|herbs?|roots?|mushroom\w*|berr\w*|spores?|undergrowth|poisons?|gather\w*|forag\w*/.test(t))
+          return /indag\w*|\bfrug\w*|rovist\w*|scav\w*|rivolt\w*|search\w*|rummag\w*|\bdig\w*/.test(t) ? "pineta_cerca" : "pineta_erbe";
+        if (/sentier\w*|\bpath\w*|\btrail\b|esplor\w*|explor\w*|cammin\w*|inoltr\w*|walk\w*/.test(t)) return "pineta_sentiero";
+        if (/\bpin[oi]\b|alber\w*|tronc\w*|cortecc\w*|chiom\w*|\blun[ae]\b|pines?|trees?|trunks?|bark|moons?/.test(t)) return "pineta_alberi";
       }
       if (luogo === "cripta") {
         if (/\bettore\b|esplorator\w*|\buomo\b|\bparl\w*|\btalk\w*|\bspeak\w*|explorer|\bman\b/.test(t)) return "parla_ettore";
@@ -6660,7 +6815,8 @@
     }
     function offriPreparazione() { /* chiamata solo dopo un riposo riuscito */
       usate.perRiposo = {}; if (usate.scale === "ko") usate.scale = "attesa"; salvaUsate(); /* vecchi salvataggi: la spada ora chiama a ogni lacrima, non al riposo */
-      riempiBorse(); aggiornaEquip(); modificato(); /* la borsa dei veleni torna piena */ /* Cataclisma del Filo Rovinato torna disponibile */
+      if (usate.pineta_erbe === "ok" || usate.pineta_cerca === "ok") { delete usate.pineta_erbe; delete usate.pineta_cerca; salvaUsate(); } /* il sottobosco si può cercare di nuovo */
+      aggiornaEquip(); modificato(); /* la borsa dei veleni non si riempie più al riposo: gli ingredienti si trovano nella foresta (27/10) */ /* Cataclisma del Filo Rovinato torna disponibile */
       if (!haPreparazione() || finePartita) return;
       scelte([
         { testo: haTecniche() ? RT.prep.btnTec : RT.prep.btnInc, fn: () => { chiudiScelte(); apriPreparazione(false); } },
@@ -7093,6 +7249,28 @@
       ultimaImmagineNemico = null;
       aggiungi({ tipo: "narra", box: "nem", righe: PREDE[id][LINGUA].intro });
       avviaScontro(id, { ctx: "caccia", testi: id });
+    }
+    /* foresta dei pini: 30% a ogni ingresso, al massimo uno scontro per riposo (usate.pineta_giorno = giorno dello scontro).
+       Le prede crescono con il livello: livello 1 solo grado 1, livello 2 fino al grado 2, poi tutte. */
+    const PROB_PINETA = 0.3;
+    function incontroPineta() {
+      const giorno = Number(usate.giorno) || 1;
+      if (luogo !== "pineta" || scontro || Number(usate.pineta_giorno) === giorno) return;
+      if (Math.random() >= PROB_PINETA) return;
+      usate.pineta_giorno = giorno; salvaUsate();
+      const gMax = livelloPg() <= 1 ? 1 : livelloPg() === 2 ? 2 : 3;
+      const ids = Object.keys(PREDE).filter(k => PREDE[k].grado <= gMax), id = ids[Math.floor(Math.random() * ids.length)];
+      ultimaImmagineNemico = null;
+      fuoriDallaTendina(() => aggiungi({ tipo: "narra", box: "nem", righe: EST2.prede[id].intro }));
+      avviaScontro(id, { ctx: "pineta", testi: "p_" + id });
+    }
+    function borsaVeleni() { return [...zaino, mano].find(it => it && ricaricabile(it)); }
+    function raccogliErbe() {
+      const b = borsaVeleni();
+      if (!b) return aggiungi({ tipo: "narra", righe: [EST2.erbeInutili] });
+      if (Number(b.usi) >= DOSI_BORSA) return aggiungi({ tipo: "narra", righe: [EST2.erbeGiaPiena] });
+      b.usi = DOSI_BORSA; aggiornaEquip(); modificato();
+      sist(EST2.erbePiene(b.usi));
     }
     function trofeoCaccia(id) {
       const n = PREDE[id][LINGUA].nome, C = CCT();
@@ -8006,7 +8184,7 @@
     /* effetti dei consumabili: dalla dotazione (per nome) o dal laboratorio (per effetto) */
     const effettoDi = (it) => it && (it.effetto || { "Pozione di cura": "pozCura", "Pozione di essenza": "pozMana", "Pozione di mana": "pozMana", "Razioni da viaggio": "razione", "Borsa dei veleni": "borsa" }[it.nome]);
     const EFFETTI_BEVANDA = ["pozCura", "pozMana", "serenita", "razione", "borsa"]; /* consumabili con un effetto immediato (in combattimento sono l'azione del turno) */
-    /* Borsa dei veleni (Sciamano): 3 dosi che tornano piene a ogni riposo; vuota resta nello zaino */
+    /* Borsa dei veleni (Sciamano): 3 dosi; vuota resta nello zaino e si riempie con gli ingredienti della foresta dei pini */
     const DOSI_BORSA = 3;
     const ricaricabile = (it) => effettoDi(it) === "borsa";
     function riempiBorse() { [...zaino, mano].filter(it => it && ricaricabile(it)).forEach(it => { it.usi = DOSI_BORSA; }); }
@@ -8620,6 +8798,7 @@
         vistaFissa = true;
       }
       if (id === "cripta") entraCripta();
+      if (id === "pineta") setTimeout(incontroPineta, 900);
       if (id === "giardino" && usate.cc_stato === "attiva") setTimeout(imboscataGiardino, 900);
       if (id === "sala_caccia" && usate.cc_stato === "trofeo") setTimeout(() => fuoriDallaTendina(consegnaCaccia), 900);
       if (id === "sala_caccia" && usate.q4 === "completata" && udienzaFatta("bronzo")) aggiungi({ tipo: "narra", righe: [AL.presente] }); /* Aldo resta nella sala della caccia */
@@ -8684,7 +8863,7 @@
       anticamera_trono: ["pianerottolo", "atrio"], corridoio_primo: ["pianerottolo", "atrio", "sala_ballo"], sala_conversazione: ["atrio", "sala_pranzo"],
       sala_pranzo: ["sala_conversazione", "corridoio"], corridoio: ["sala_pranzo", "cucina", "sala_ballo"],
       cucina: ["corridoio", "dispensa", "servizio"], dispensa: ["cucina"], servizio: ["cucina", "cantina"], cantina: ["servizio"],
-      sala_ballo: ["corridoio", "corridoio_primo"], giardino: ["atrio", "cappella"], cappella: ["giardino", "cripta"], cripta: ["cappella"],
+      sala_ballo: ["corridoio", "corridoio_primo"], giardino: ["atrio", "cappella"], cappella: ["giardino", "cripta", "cimitero"], cripta: ["cappella"], cimitero: ["cappella", "pineta"], pineta: ["cimitero"],
       sala_caccia: ["atrio", "sala_trofei"], sala_trofei: ["sala_caccia"]
     };
     const NOMI_STANZE = [ /* dal più specifico al più generico */
@@ -8701,6 +8880,8 @@
       ["servizio", /stanza di servizio|saletta di servizio|servizio|service room/],
       ["cantina", /cantin\w*|cellar/],
       ["cripta", /cripta|crypt/],
+      ["cimitero", /cimiter\w*|camposanto|graveyard|cemetery/],
+      ["pineta", /pinet\w*|\bpini\b|forest\w*|\bbosco\b|\bwoods?\b|\bpines?\b/],
       ["cappella", /cappell\w*|chapel/],
       ["giardino", /giardin\w*|garden/],
       ["pianerottolo", /pianerottol\w*|\blanding\b/],
@@ -8739,7 +8920,7 @@
       return () => vai(dest);
     }
     /* «torno indietro»: la stanza da cui si è arrivati */
-    const DOVE_TORNA = { pianerottolo: "atrio", cantina: "servizio", dispensa: "cucina", servizio: "cucina", cucina: "corridoio", sala_ballo: "corridoio", corridoio: "sala_pranzo", sala_pranzo: "sala_conversazione", giardino: "atrio", cappella: "giardino", cripta: "cappella", sala_trofei: "sala_caccia", anticamera_trono: "pianerottolo", corridoio_primo: "pianerottolo" };
+    const DOVE_TORNA = { pianerottolo: "atrio", cantina: "servizio", dispensa: "cucina", servizio: "cucina", cucina: "corridoio", sala_ballo: "corridoio", corridoio: "sala_pranzo", sala_pranzo: "sala_conversazione", giardino: "atrio", cappella: "giardino", cimitero: "cappella", pineta: "cimitero", cripta: "cappella", sala_trofei: "sala_caccia", anticamera_trono: "pianerottolo", corridoio_primo: "pianerottolo" };
     let ultimoTesto = "";
     async function gestisci(testo) {
       const t = norm(testo);
@@ -8865,6 +9046,10 @@
       if (id === "trofei_lontani") return aggiungi({ tipo: "narra", righe: [A.ui.trofeiLontani] });
       if (id === "entra_cappella") return vai("cappella");
       if (id === "entra_cripta") return vai("cripta");
+      if (id === "entra_cimitero") return vai("cimitero");
+      if (id === "entra_pineta") return vai("pineta");
+      if (id === "pineta_lontana") return aggiungi({ tipo: "narra", righe: [EST2.pineLontana] });
+      if (id === "cappella_porticina") return aggiungi({ tipo: "narra", righe: [LINGUA === "en" ? "At the back of the chapel, to the left of the altar, a low little door opens onto the family graveyard." : "Sul fondo della cappella, a sinistra dell'altare, una porticina bassa dà sul cimitero di famiglia."] });
       if (id === "entra_trofei") return vai("sala_trofei");
       if (id === "giardino_fuga") return fugaGiardino();
       if (id === "fontana_bevi") return beviFontana();
@@ -9337,6 +9522,11 @@
       };
     }
     { const L = LINGUA === "en" ? "en" : "it"; for (const id of Object.keys(PREDE)) CACCIA[L].nemici[id] = testiPreda(L, id); }
+    { /* le stesse prede nella foresta dei pini: descrizioni del bosco, risveglio in cucina */
+      const L = LINGUA === "en" ? "en" : "it";
+      for (const id of Object.keys(PREDE)) { const b = CACCIA[L].nemici[id];
+        CACCIA[L].nemici["p_" + id] = { ...b, sotto: String(b.sotto).replace(/giardino/, "foresta dei pini").replace(/garden/, "pine forest"), vittoria: [ESTERNI[L].prede[id].vittoria], risveglio: ESTERNI[L].risveglio }; }
+    }
 
     const testiScontro = (k) => (k && A.nemici[k]) ? { ...CB_BASE, ...A.nemici[k], inc: { ...CB_BASE.inc, ...(A.nemici[k].inc || {}) } } : CB_BASE;
 
@@ -10021,9 +10211,11 @@
         if (c) { c.classList.add("dissolto"); setTimeout(() => { const v = c.closest(".voce"); c.remove(); if (v && !v.textContent.trim()) v.remove(); }, 3100); }
       }
       aggiungi({ tipo: "narra", fuori: true, righe: CB.vittoria });
-      guadagnaPE(D.xp);
-      aggiungi({ tipo: "narra", box: "ok", fuori: true, righe: [CB.bannerVinto, CB.xp(D.xp, pg.esperienza)] });
+      const xpVinti = ctx === "pineta" ? Math.ceil(D.xp / 2) : D.xp; /* foresta dei pini: metà dei PE della caccia */
+      guadagnaPE(xpVinti);
+      aggiungi({ tipo: "narra", box: "ok", fuori: true, righe: [CB.bannerVinto, CB.xp(xpVinti, pg.esperienza)] });
       controllaLivello();
+      if (ctx === "pineta") { const b = borsaVeleni(); if (b && Number(b.usi) < DOSI_BORSA && Math.random() < 0.5) { b.usi = Number(b.usi) + 1; aggiornaEquip(); sist(EST2.dose(b.usi)); } }
       if (ctx === "caccia") { usate.cc_stato = "trofeo"; salvaUsate(); trofeoCaccia(idNem); sist(CCT().preso); }
       if (ctx === "ettore" && !usate.q2_diario) { /* Ettore morto: il diario del figlio maggiore è tra le sue cose */
         consegnaDiarioFiglio();

@@ -72,8 +72,8 @@
       en: "A steel grappling hook tied to several metres of sturdy rope: useful for climbing walls, crossing drops and reaching places otherwise out of reach."
     },
     "Borsa dei veleni": {
-      it: "Una borsa di cuoio scuro piena di fiale, radici essiccate e spore in polvere: solo uno Sciamano sa dosarle. Tre dosi: ognuna fa recuperare 1d4 + il livello del personaggio in punti natura (una a turno). Le dosi tornano piene a ogni riposo.",
-      en: "A dark leather pouch full of vials, dried roots and powdered spores: only a Shaman knows how to measure them. Three doses: each restores 1d4 + the character's level in nature points (one per turn). The doses refill at every rest."
+      it: "Una borsa di cuoio scuro piena di fiale, radici essiccate e spore in polvere: solo uno Sciamano sa dosarle. Tre dosi: ognuna fa recuperare 1d4 + il livello del personaggio in punti natura (una a turno). Vuota, si riempie con gli ingredienti giusti, che si trovano nella foresta.",
+      en: "A dark leather pouch full of vials, dried roots and powdered spores: only a Shaman knows how to measure them. Three doses: each restores 1d4 + the character's level in nature points (one per turn). When empty, it is refilled with the right ingredients, found in the forest."
     },
     Scudo: { /* PROVVISORIO */
       it: "Uno scudo di legno robusto, cerchiato di ferro: devia i colpi, ma il suo peso rende i movimenti meno agili. Occupa una mano.",

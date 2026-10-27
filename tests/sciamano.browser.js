@@ -156,7 +156,7 @@ caso("Sciamano: preparazione al riposo tra le tecniche della natura, con le quot
   vero(/qualsiasi arma/.test(await page.innerText("#prepBox")), "guida dello Sciamano"); vero(!(await page.$('#prepBox input[name="serie"]')), "niente serie della via");
   eq(errori, [], "errori"); await chiudi();
 });
-caso("Sciamano: Borsa dei veleni — 1d4 + livello punti natura, vuota resta nello zaino, il riposo la riempie", async (b) => {
+caso("Sciamano: Borsa dei veleni — 1d4 + livello punti natura, vuota resta nello zaino, il riposo non la riempie, gli ingredienti della foresta sì", async (b) => {
   const pg = SC(); pg.equipaggiamento.dotazione = [{ nome: "Borsa dei veleni", usi: 3, desc: "x" }];
   const { page, errori, chiudi } = await apri(b, "gioco.html", pg, PARTITA({ risorsaUsata: 8 }));
   const id = await page.evaluate(() => zaino.find(x => x.nome === "Borsa dei veleni").id);
@@ -167,9 +167,34 @@ caso("Sciamano: Borsa dei veleni — 1d4 + livello punti natura, vuota resta nel
   await page.evaluate((id) => { zaino.find(x => x.id === id).usi = 0; usa(id); }, id);
   vero(await page.evaluate(() => !!zaino.find(x => x.nome === "Borsa dei veleni")), "la borsa vuota è sparita"); vero(/borsa dei veleni è vuota/.test(await diario(page)), "manca l'avviso");
   await page.evaluate(() => offriPreparazione());
-  eq(await page.evaluate(() => zaino.find(x => x.nome === "Borsa dei veleni").usi), 3, "piena dopo il riposo");
+  eq(await page.evaluate(() => zaino.find(x => x.nome === "Borsa dei veleni").usi), 0, "il riposo non la riempie più");
+  await page.evaluate(() => raccogliErbe());
+  eq(await page.evaluate(() => zaino.find(x => x.nome === "Borsa dei veleni").usi), 3, "piena con gli ingredienti della foresta");
   eq(errori, [], "errori"); await chiudi();
 });
+caso("Foresta dei pini: cappella → cimitero → foresta, ingredienti con Sopravvivenza, 30% di preda una volta per riposo, metà PE", async (b) => {
+  const pg = SC(); pg.equipaggiamento.dotazione = [{ nome: "Borsa dei veleni", usi: 3, desc: "x" }];
+  const { page, errori, chiudi } = await apri(b, "gioco.html", pg, PARTITA({ luogo: "cappella", diario: [{ tipo: "narra", stanza: "cappella", righe: ["x"] }], usate: { riposo: "sbloccato", luce: "ok", chiave_portone: "presa" } }));
+  await page.evaluate(() => { zaino.find(x => x.nome === "Borsa dei veleni").usi = 0; });
+  await page.evaluate(() => gestisci("vado al cimitero")); eq(await page.evaluate(() => luogo), "cimitero", "cimitero");
+  await accoda(page, [], [0.99]); /* niente preda */
+  await page.evaluate(() => gestisci("vado nella foresta")); eq(await page.evaluate(() => luogo), "pineta", "foresta");
+  await page.waitForTimeout(1200); eq(await page.evaluate(() => !!scontro), false, "preda con 0.99");
+  await page.evaluate(() => gestisci("cerco erbe e radici"));
+  await accoda(page, [R(15, 20)]); await page.click("#azioni button");
+  eq(await page.evaluate(() => zaino.find(x => x.nome === "Borsa dei veleni").usi), 3, "borsa piena con gli ingredienti");
+  await page.evaluate(() => { vai("cimitero"); });
+  await accoda(page, [], [0.1, 0]); /* preda: 0.1 < 30%, poi la prima del grado 1 (ratto) */
+  await page.evaluate(() => { vai("pineta"); }); await page.waitForTimeout(1500);
+  eq(await page.evaluate(() => scontro && [scontro.id, scontro.ctx]), ["ratto", "pineta"], "preda della foresta");
+  await page.evaluate(() => { scontro.pv = 0; vittoriaScontro(); });
+  eq(await page.evaluate(() => pg.esperienza), 50, "metà dei PE della caccia");
+  await accoda(page, [], [0.1]);
+  await page.evaluate(() => { vai("cimitero"); vai("pineta"); }); await page.waitForTimeout(1500);
+  eq(await page.evaluate(() => !!scontro), false, "un solo scontro per riposo");
+  eq(errori, [], "errori"); await chiudi();
+});
+
 caso("Sciamano: la Borsa dei veleni non serve al Guerriero", async (b) => {
   const pg = PG(); pg.equipaggiamento.dotazione = [{ nome: "Borsa dei veleni", usi: 3, desc: "x" }];
   const { page, errori, chiudi } = await apri(b, "gioco.html", pg, PARTITA({ risorsaUsata: 5 }));

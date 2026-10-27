@@ -3,7 +3,7 @@
 Documento di riferimento per scrivere diari, flashback, dialoghi e finali. Contiene tutti gli spoiler: non va mostrato al giocatore.
 **Regola di lavoro:** questo file è la linea guida condivisa tra Francesco e Claude. Si aggiorna a ogni decisione, e ogni scelta dell'uno può essere messa in discussione dall'altro.
 
-Ultimo aggiornamento: 27 ottobre 2026, sera (sezione 11: pianerottolo, stanze che si ripuliscono, paura dei guardiani, diario sigillato, borsa dei veleni).
+Ultimo aggiornamento: 27 ottobre 2026, sera (sezione 11: cimitero e foresta dei pini accessibili da subito, borsa dei veleni; prima: pianerottolo, stanze che si ripuliscono, paura dei guardiani, diario sigillato).
 Aggiornamento precedente: 26 ottobre 2026 (visioni del Retaggio: nuova sezione 12; riviste 1, 3, 7, 7b, 8 e 9).
 
 ---
@@ -174,7 +174,10 @@ Non ci sono scontri fisici con Aldo e Guendalina (sono segnati come boss solo pe
 - **Sconfitta in caccia:** le frasi con cui Aldo blocca le azioni stanno nella tendina dell'azione che le ha provocate.
 - **Cripta:** il suggerimento sulle tre cose da esaminare è tolto; resta solo «Per tornare su scrivi «torno nella cappella»».
 - **Diario del figlio maggiore sigillato:** «apro/leggo/sfoglio il diario» → «Provi ad aprirlo, ma una runa antica si accende sulla copertina… Forse il legittimo proprietario potrà aiutarti». «Esamino il diario» dà la descrizione della rilegatura.
-- **Borsa dei veleni (in discussione):** vuota, dice «trova gli ingredienti giusti nella foresta». Idea di Francesco: alcuni nemici hanno dosi con sé, altre si trovano con prove di Sopravvivenza o Indagare nella foresta. Finché non è deciso quali nemici, la borsa si riempie ancora al riposo (la foresta è raggiungibile solo con Dafne, al livello 4).
+- **Fuori casa, oltre la cappella (DECISO la sera del 27):** l'ordine è **cappella → cimitero → foresta dei pini**, tutto accessibile da subito (con la chiave del portone, dalla prima caccia di Aldo). Dalla cappella si passa per una porticina sul retro.
+  - **Cimitero:** per ora solo un passaggio (lapidi annerite con l'albero, tombe dei rami minori in fondo, rovi, cancelletto verso i pini). Enea arriverà con la caccia d'argento.
+  - **Foresta dei pini:** niente Dafne per ora (arriverà con la caccia all'oro). A ogni ingresso il **30%** di incontrare una preda delle cacce comuni, **al massimo uno scontro per riposo**. Prede in base al livello: livello 1 solo grado 1, livello 2 fino al grado 2, poi tutte. Danno **metà dei PE** della caccia, niente trofeo né rastrelliere, e nel 50% dei casi una dose per la borsa dei veleni. Sconfitti, ci si risveglia in cucina («Vi hanno riportato dal bosco»). Il sentiero gira in tondo: la casa non lascia andare nessuno. Per ora senza immagine.
+  - **Borsa dei veleni:** non si riempie più al riposo. Vuota, dice «trova gli ingredienti giusti nella foresta». Nel sottobosco, prova di **Sopravvivenza** («cerco erbe e radici») o **Indagare** («frugo tra le radici»), CD 12, una volta al giorno: riuscita, la borsa torna piena. Chi non è Sciamano riconosce i veleni ma non sa dosarli.
 - **Ritmo degli scontri:** pausa tra i colpi portata da 0,9 a 2,2 secondi nel gioco (la sala di prova del tutorial resta veloce).
 - **Giardino:** sottofondo audio della fontana (audio/fontana_giardino.mp3). **Sala dei trofei:** immagine nuova, senza logo (immagini/house/sala_trofei.webp).
 - **Giardino (27 ottobre):**

@@ -4022,8 +4022,8 @@
     const PIENO = 5; /* margine per il successo pieno */
     /* titolo della tendina che raccoglie i turni di uno scontro concluso */
     const SCONTRO_TIT = {
-      it: { tit: (nome, n, esito) => `Scontro con ${nome} — ${esito} (${n === 1 ? "1 turno" : n + " turni"})`, vinto: "vittoria", perso: "sconfitta", fermato: "fermato da Aldo", resa: "si arrende" },
-      en: { tit: (nome, n, esito) => `Fight with ${nome} — ${esito} (${n === 1 ? "1 round" : n + " rounds"})`, vinto: "victory", perso: "defeat", fermato: "stopped by Aldo", resa: "surrenders" }
+      it: { tit: (nome, n, esito) => `Scontro con ${nome} — ${esito} (${n === 1 ? "1 turno" : n + " turni"})`, vinto: "vittoria", perso: "sconfitta", fuggito: "è fuggito", fermato: "fermato da Aldo", resa: "si arrende" },
+      en: { tit: (nome, n, esito) => `Fight with ${nome} — ${esito} (${n === 1 ? "1 round" : n + " rounds"})`, vinto: "victory", perso: "defeat", fuggito: "it fled", fermato: "stopped by Aldo", resa: "surrenders" }
     };
     const DLG_PROVE = {
       it: {
@@ -5097,6 +5097,110 @@
     }
     PROVE_DICHIARATE.pineta = { Sopravvivenza: "pineta_erbe", Indagare: "pineta_cerca", Percezione: "pineta_alberi" };
     PROVE_DICHIARATE.cimitero = { Indagare: "cim_lapidi", Percezione: "cim_rovi" };
+    /* =====================================================================
+       STATI ALTERATI DEL PERSONAGGIO E BOTTEGA DI GUENDALINA (27/10 sera)
+       Gli stati restano finché non si beve l'elisir giusto o si riposa (usate.stati_pg).
+       Le parti degli animali della foresta, portate a Guendalina, sbloccano un dialogo e la ricetta dell'elisir.
+       ===================================================================== */
+    const BOTTEGA = {
+      it: {
+        stati: {
+          ustione: { nome: "Ustionato", effetto: "1 danno all'inizio di ogni tuo turno di scontro", preso: "Il fuoco ti ha lasciato la pelle ustionata: stato Ustionato (1 danno all'inizio di ogni tuo turno di scontro, finché non lo curi o non riposi).", tick: (da, a) => `L'ustione brucia: −1 salute fisica · ${da} → ${a}.` },
+          veleno: { nome: "Avvelenato", effetto: "−2 alle prove di abilità e ai tiri salvezza", preso: "Il veleno ti entra nel sangue: stato Avvelenato (−2 alle prove di abilità e ai tiri salvezza, finché non lo curi o non riposi).", resiste: (d, m, tot, cd) => `Tiro salvezza sul Vigore: ${d} ${fmtN(m)} = ${tot} contro CD ${cd}. Resisti al veleno.`, cede: (d, m, tot, cd) => `Tiro salvezza sul Vigore: ${d} ${fmtN(m)} = ${tot} contro CD ${cd}.` },
+          debole: { nome: "Indebolito", effetto: "−2 ai tiri per colpire", preso: "Il colpo ti ha tolto le forze: stato Indebolito (−2 ai tiri per colpire, finché non lo curi o non riposi)." },
+          paura: { nome: "Impaurito", effetto: "−2 alla Classe armatura", preso: "Il terrore ti fa tremare le mani: stato Impaurito (−2 alla Classe armatura, finché non lo curi o non riposi)." }
+        },
+        statiTit: "Stati",
+        riposoCura: (n) => `Il riposo scaccia ${n}.`,
+        oggetti: {
+          zampa_coniglio: { nome: "Zampa di coniglio", testo: "La zampa posteriore di un coniglio selvatico, morbida e ancora tiepida. Guendalina saprà che farne." },
+          velluto_cervo: { nome: "Velluto di cervo", testo: "Il velluto che copre il palco di un cervo giovane, ruvido da una parte e morbido dall'altra. Guendalina saprà che farne." },
+          grasso_cinghiale: { nome: "Grasso di cinghiale", testo: "Un pane di grasso bianco tagliato dal fianco di un cinghiale selvatico. Guendalina saprà che farne." },
+          fiele_vipera: { nome: "Fiele di vipera", testo: "Una piccola sacca verdastra presa da una vipera dei pini. Va maneggiata con cura. Guendalina saprà che farne." },
+          balsamo: { nome: "Balsamo di grasso di cinghiale", testo: "Un balsamo denso e lucido che rinfresca la pelle. Cura lo stato Ustionato." },
+          infuso: { nome: "Infuso di velluto di cervo", testo: "Un infuso scuro e amaro che rimette in forze le braccia. Cura lo stato Indebolito." },
+          tintura: { nome: "Tintura di fiele", testo: "Poche gocce verdi in un'ampolla: veleno contro veleno. Cura lo stato Avvelenato." },
+          sale: { nome: "Sale di zampa di coniglio", testo: "Sale grigio pestato con le ossa di una zampa di coniglio, da sciogliere sotto la lingua. Cura lo stato Impaurito." }
+        },
+        bevi: (nome, stato) => `Bevi ${nome}: lo stato ${stato} se ne va.`,
+        inutile: (stato) => `Non sei ${stato.toLowerCase()}: meglio conservarlo.`,
+        parte: (n, nome) => `Raccogli ${n > 1 ? n + " × " : ""}${nome} (nello zaino).`,
+        domande: {
+          grasso_cinghiale: { testo: "Ho del grasso di cinghiale, viene dal bosco.", risposta: ["Guendalina lo annusa e annuisce, quasi sorpresa. «Un cinghiale vero. Nel bosco c'è ancora qualcosa di vivo, allora.»", "«Sciolto piano con la cera, fa un balsamo per le bruciature. I cani del Signore mordono col fuoco: ve ne servirà. Me ne portate due pezzi e ve lo preparo.»"] },
+          velluto_cervo: { testo: "Questo l'ho preso a un cervo.", risposta: ["Guendalina passa il pollice sul velluto. «Il Signore andava a caccia di cervi, una volta. Riportava il velluto per me.»", "«Messo in infusione restituisce la forza alle braccia, quando un colpo ve l'ha tolta. Portatemene un pezzo e avrete il vostro infuso.»"] },
+          fiele_vipera: { testo: "Ho il fiele di una vipera.", risposta: ["Guendalina prende la sacca con due dita, lontano dal viso. «Attento con questa. Ma avete fatto bene a portarla.»", "«Veleno contro veleno: poche gocce diluite e il sangue si pulisce. Con un fiele vi faccio una tintura.»"] },
+          zampa_coniglio: { testo: "Ho trovato un coniglio, nel bosco.", risposta: ["Guendalina rigira la zampa tra le dita e per un attimo sorride. «La piccola ne teneva una sotto il cuscino, contro gli incubi.»", "«Le ossa pestate col sale scacciano la paura, o almeno così diceva mia nonna. Portatemene una e vi preparo il sale.»"] }
+        },
+        nuovaRicetta: (n) => `Nuova ricetta nel laboratorio di Guendalina: ${n}.`
+      },
+      en: {
+        stati: {
+          ustione: { nome: "Burned", effetto: "1 damage at the start of each of your combat turns", preso: "The fire has left your skin burned: Burned (1 damage at the start of each of your combat turns, until cured or until you rest).", tick: (da, a) => `The burn stings: −1 physical health · ${da} → ${a}.` },
+          veleno: { nome: "Poisoned", effetto: "−2 to skill checks and saving throws", preso: "The venom enters your blood: Poisoned (−2 to skill checks and saving throws, until cured or until you rest).", resiste: (d, m, tot, cd) => `Might saving throw: ${d} ${fmtN(m)} = ${tot} against DC ${cd}. You resist the venom.`, cede: (d, m, tot, cd) => `Might saving throw: ${d} ${fmtN(m)} = ${tot} against DC ${cd}.` },
+          debole: { nome: "Weakened", effetto: "−2 to attack rolls", preso: "The blow has drained your strength: Weakened (−2 to attack rolls, until cured or until you rest)." },
+          paura: { nome: "Frightened", effetto: "−2 to Armor Class", preso: "Terror makes your hands shake: Frightened (−2 to Armor Class, until cured or until you rest)." }
+        },
+        statiTit: "Conditions",
+        riposoCura: (n) => `Rest drives away: ${n}.`,
+        oggetti: {
+          zampa_coniglio: { nome: "Rabbit's foot", testo: "The hind foot of a wild rabbit, soft and still warm. Guendalina will know what to do with it." },
+          velluto_cervo: { nome: "Stag velvet", testo: "The velvet covering a young stag's antlers, rough on one side and soft on the other. Guendalina will know what to do with it." },
+          grasso_cinghiale: { nome: "Boar fat", testo: "A slab of white fat cut from a wild boar's flank. Guendalina will know what to do with it." },
+          fiele_vipera: { nome: "Viper gall", testo: "A small greenish sac taken from a pine viper. Handle with care. Guendalina will know what to do with it." },
+          balsamo: { nome: "Boar-fat balm", testo: "A thick, glossy balm that cools the skin. Cures Burned." },
+          infuso: { nome: "Stag-velvet infusion", testo: "A dark, bitter infusion that restores strength to your arms. Cures Weakened." },
+          tintura: { nome: "Gall tincture", testo: "A few green drops in a vial: poison against poison. Cures Poisoned." },
+          sale: { nome: "Rabbit-foot salt", testo: "Grey salt ground with the bones of a rabbit's foot, to dissolve under the tongue. Cures Frightened." }
+        },
+        bevi: (nome, stato) => `You take ${nome}: the ${stato} condition fades.`,
+        inutile: (stato) => `You are not ${stato.toLowerCase()}: better keep it.`,
+        parte: (n, nome) => `You gather ${n > 1 ? n + " × " : ""}${nome} (in your backpack).`,
+        domande: {
+          grasso_cinghiale: { testo: "I have some boar fat, from the wood.", risposta: ["Guendalina sniffs it and nods, almost surprised. “A real boar. So there is still something alive in the wood.”", "“Melted slowly with wax, it makes a balm for burns. The Master's hounds bite with fire: you will need it. Bring me two pieces and I will make it for you.”"] },
+          velluto_cervo: { testo: "I took this from a stag.", risposta: ["Guendalina runs her thumb over the velvet. “The Master used to hunt stags, once. He brought the velvet back for me.”", "“Steeped, it gives strength back to the arms when a blow has taken it. Bring me a piece and you will have your infusion.”"] },
+          fiele_vipera: { testo: "I have a viper's gall.", risposta: ["Guendalina takes the sac with two fingers, away from her face. “Careful with this. But you did well to bring it.”", "“Poison against poison: a few diluted drops and the blood runs clean. With one gall I will make you a tincture.”"] },
+          zampa_coniglio: { testo: "I found a rabbit in the wood.", risposta: ["Guendalina turns the foot between her fingers and for a moment she smiles. “The little one kept one under her pillow, against nightmares.”", "“The bones ground with salt drive fear away, or so my grandmother said. Bring me one and I will make you the salt.”"] }
+        },
+        nuovaRicetta: (n) => `New recipe in Guendalina's workshop: ${n}.`
+      }
+    };
+    for (const l of ["it", "en"]) Object.assign(QT[l].oggetti, BOTTEGA[l].oggetti);
+    const BT = BOTTEGA[LINGUA] || BOTTEGA.it;
+    /* ricette degli elisir: compaiono nel laboratorio solo dopo il dialogo con Guendalina sulla parte (usate.ricette_animali) */
+    const RICETTE_ANIMALI = [
+      { id: "balsamo", effetto: "cura_ustione", richiede: { grasso_cinghiale: 2 }, parte: "grasso_cinghiale" },
+      { id: "infuso", effetto: "cura_debole", richiede: { velluto_cervo: 1 }, parte: "velluto_cervo" },
+      { id: "tintura", effetto: "cura_veleno", richiede: { fiele_vipera: 1 }, parte: "fiele_vipera" },
+      { id: "sale", effetto: "cura_paura", richiede: { zampa_coniglio: 1 }, parte: "zampa_coniglio" }
+    ];
+    const statiPg = () => (usate && usate.stati_pg) || {};
+    const haStato = (k) => !!statiPg()[k];
+    function applicaStatoPg(k, righe) {
+      if (haStato(k)) return;
+      usate.stati_pg = { ...statiPg(), [k]: 1 }; salvaUsate();
+      (righe || []).push(BT.stati[k].preso);
+      if (!righe) sist(BT.stati[k].preso);
+      disegnaVitali();
+    }
+    function togliStatoPg(k) { const s = { ...statiPg() }; delete s[k]; usate.stati_pg = s; salvaUsate(); disegnaVitali(); }
+    const malusStatoAtt = () => haStato("debole") ? -2 : 0;
+    const malusStatoProva = () => haStato("veleno") ? -2 : 0;
+    const malusStatoCA = () => haStato("paura") ? -2 : 0;
+    /* stato inflitto da un colpo del nemico (animali della foresta) */
+    function statoDaColpo(D, crit, righe) {
+      if (D.critStato && crit) applicaStatoPg(D.critStato, righe);
+      if (D.colpoStato === "veleno" && !haStato("veleno")) {
+        const cd = 11, m = mod(statPg("Vigore")) + malusStatoProva(), d = tira(20), tot = d + m;
+        if (tot >= cd) righe.push(BT.stati.veleno.resiste(d, m, tot, cd));
+        else { righe.push(BT.stati.veleno.cede(d, m, tot, cd)); applicaStatoPg("veleno", righe); }
+      }
+    }
+    /* ustione: 1 danno all'inizio del tuo turno di scontro (non può ucciderti: resta almeno 1) */
+    function tickUstione() {
+      if (!haStato("ustione") || pvPg() <= 1) return;
+      const da = pvPg(); pg.dannoFisico = (pg.dannoFisico || 0) + 1; disegnaVitali(); scuotiScheda(); modificato();
+      aggiungi({ tipo: "narra", box: "nem", righe: [BT.stati.ustione.tick(da, pvPg())] });
+    }
     const P1 = P1_TUTTI[LINGUA] || P1_TUTTI.it;
     for (const id in P1.luoghi) LUOGHI[id] = { fisso: P1.luoghi[id] }; /* primo piano */
     const STANZE = {};
@@ -5787,6 +5891,7 @@
       riga(vit, U.puntiSalute, testoSalute(), "salute");
       riga(vit, U.puntiMentali, testoMentali(), "mentali");
       riga(vit, U.classeArmatura, String(caAttuale()));
+      { const st = Object.keys(statiPg()); if (st.length) riga(vit, BT.statiTit, st.map(k => BT.stati[k].nome).join(", "), "stati"); } /* stati alterati: restano fino all'elisir o al riposo */
       const magia = manaMax() != null || cdIncantesimi() != null || risorsaPg() != null;
       if (magia) sep("sep-spazio");
       if (manaMax() != null) riga(vit, U.mana, `${manaAttuale()} / ${manaMax()}`, "mana");
@@ -6647,6 +6752,15 @@
         if (n.alla_fine) scrittura.then(() => FINE_DIALOGO[n.alla_fine]());
         scrittura.then(menuGuendalina); /* finita la risposta, il menu torna */
       }));
+      RICETTE_ANIMALI.forEach(r => { /* parte di animale portata per la prima volta: dialogo e nuova ricetta */
+        if (qtaMateriale(r.parte) <= 0 || (usate.ricette_animali || []).includes(r.parte)) return;
+        const Dq = BT.domande[r.parte];
+        lista.push(voce(Dq.testo, () => {
+          usate.ricette_animali = [...(usate.ricette_animali || []), r.parte]; salvaUsate();
+          aggiungi({ tipo: "dialogo", tuttoBox: true, chi: "Guendalina", macchina: true, righe: Dq.risposta });
+          scrittura.then(() => { sist(BT.nuovaRicetta(Q.oggetti[r.id].nome)); menuGuendalina(); });
+        }));
+      });
       if (usate.laboratorio === "sbloccato") lista.push(voce(P.chiediLab, () => aggiungi({ tipo: "laboratorio", fuori: true })));
       lista.push(voce(P.chiediMissioni, () => {
         const ids = missioniDisponibili().filter(id => usate[id] !== "completata");
@@ -6757,7 +6871,7 @@
        Restituisce null se non c'è niente da recuperare, { fame: true } se servono razioni. */
     function curaRiposo(conDigiuno) {
       const ris = risorsaPg();
-      const pieno = !(pg.dannoFisico > 0) && !(pg.dannoMentale > 0) && !(pg.manaUsato > 0 && manaMax() != null) && !(pg.risorsaUsata > 0 && ris);
+      const pieno = !(pg.dannoFisico > 0) && !(pg.dannoMentale > 0) && !(pg.manaUsato > 0 && manaMax() != null) && !(pg.risorsaUsata > 0 && ris) && !Object.keys(statiPg()).length; /* con uno stato alterato si può sempre riposare */
       if (pieno) return null;
       let scorta = razioni();
       if (scorta <= 0 && !conDigiuno) return { fame: true };
@@ -6774,6 +6888,7 @@
       if (manaMax() != null) { const da = manaAttuale(); pg.manaUsato = Math.max(0, (pg.manaUsato || 0) - rec); righe.push(R.riga(U.mana, da, manaAttuale())); }
       if (ris) { const da = risorsaAttuale(); pg.risorsaUsata = Math.max(0, (pg.risorsaUsata || 0) - rec); righe.push(R.riga(nomeRisorsa(), da, risorsaAttuale())); }
       usate.giorno = (Number(usate.giorno) || 1) + 1;
+      if (Object.keys(statiPg()).length) { righe.push(BT.riposoCura(Object.keys(statiPg()).map(k => BT.stati[k].nome).join(", "))); usate.stati_pg = {}; } /* il riposo scaccia gli stati alterati */
       for (const id in LUOGHI) if (usate[id] === "ko" && provaRipetibileDopoRiposo(id, LUOGHI[id])) delete usate[id]; /* il riposo sblocca le prove fallite */
       if (!usate.guendalinaAssente) { /* Guendalina cucina per il nuovo giorno */
         const prima = scorta; scorta = Math.min(RAZIONI_MAX, scorta + RAZIONI_AL_GIORNO);
@@ -7252,17 +7367,52 @@
     }
     /* foresta dei pini: 30% a ogni ingresso, al massimo uno scontro per riposo (usate.pineta_giorno = giorno dello scontro).
        Le prede crescono con il livello: livello 1 solo grado 1, livello 2 fino al grado 2, poi tutte. */
-    const PROB_PINETA = 0.3;
+    const PROB_PINETA = 0.3, PROB_ANIMALE = 0.7;
+    const ANIMALI_IDS = () => Object.keys(PREDE).filter(k => PREDE[k].grado === 0);
+    /* Finché non li hai incontrati tutti, nella foresta compare sempre (al primo ingresso del giorno) un animale nuovo:
+       così si sbloccano tutti gli elisir. Poi 30% di incontro, e in quel caso 70% animale, 30% preda infernale. */
     function incontroPineta() {
       const giorno = Number(usate.giorno) || 1;
       if (luogo !== "pineta" || scontro || Number(usate.pineta_giorno) === giorno) return;
-      if (Math.random() >= PROB_PINETA) return;
-      usate.pineta_giorno = giorno; salvaUsate();
-      const gMax = livelloPg() <= 1 ? 1 : livelloPg() === 2 ? 2 : 3;
-      const ids = Object.keys(PREDE).filter(k => PREDE[k].grado <= gMax), id = ids[Math.floor(Math.random() * ids.length)];
+      const visti = usate.animali_visti || [], nuovi = ANIMALI_IDS().filter(k => !visti.includes(k));
+      let id;
+      if (nuovi.length) id = nuovi[Math.floor(Math.random() * nuovi.length)];
+      else {
+        if (Math.random() >= PROB_PINETA) return;
+        if (Math.random() < PROB_ANIMALE) { const a = ANIMALI_IDS(); id = a[Math.floor(Math.random() * a.length)]; }
+        else {
+          const gMax = livelloPg() <= 1 ? 1 : livelloPg() === 2 ? 2 : 3;
+          const ids = PRESE_INFERNALI().filter(k => PREDE[k].grado <= gMax); id = ids[Math.floor(Math.random() * ids.length)];
+        }
+      }
+      usate.pineta_giorno = giorno;
+      if (PREDE[id].grado === 0 && !visti.includes(id)) usate.animali_visti = [...visti, id];
+      salvaUsate();
       ultimaImmagineNemico = null;
-      fuoriDallaTendina(() => aggiungi({ tipo: "narra", box: "nem", righe: EST2.prede[id].intro }));
-      avviaScontro(id, { ctx: "pineta", testi: "p_" + id });
+      const animale = PREDE[id].grado === 0, T = animale ? PREDE[id][LINGUA === "en" ? "en" : "it"] : null;
+      fuoriDallaTendina(() => aggiungi({ tipo: "narra", box: "nem", righe: animale ? T.intro : EST2.prede[id].intro }));
+      if (animale && PREDE[id].avvicina) return avvicinaAnimale(id);
+      avviaScontro(id, { ctx: "pineta", testi: animale ? id : "p_" + id });
+    }
+    /* coniglio e cervo: prima bisogna avvicinarsi (Furtività o Sopravvivenza, CD 12). Fallita, l'animale scappa; nessun danno alla mente */
+    function avvicinaAnimale(id) {
+      const P = PREDE[id], T = P[LINGUA === "en" ? "en" : "it"], k = "avv_" + id, it = LINGUA !== "en";
+      delete usate[k];
+      const l = { prova: { abilita: P.avvicina, dado: 20, cd: 12 }, riprova: true, nessunDanno: true, fuori: true, senzaLascia: false,
+        azione: it ? (P.avvicina === "Furtività" ? `Ti avvicini piano ${T.al}, un passo alla volta, trattenendo il respiro.` : `Segui le tracce ${T.del} tra gli aghi, cercando di arrivargli sottovento.`)
+                   : (P.avvicina === "Furtività" ? `You creep towards ${T.the}, one step at a time, holding your breath.` : `You follow ${T.the}'s tracks among the needles, trying to come at it from downwind.`),
+        successo: [it ? `Arrivi a pochi passi ${T.al} senza che se ne accorga.` : `You get within a few steps of ${T.the} without it noticing.`],
+        fallimento: [T.vede], lascia: it ? `Lasci andare ${T.il}.` : `You let ${T.the} go.`,
+        poi: (ok) => { delete usate[k]; salvaUsate(); if (ok) avviaScontro(id, { ctx: "pineta", testi: id, primo: "pg", sorpresa: it ? "Lo sorprendi: agisci per primo." : "You surprise it: you act first." }); } };
+      LUOGHI[k] = l;
+      proponiProva(k, l);
+    }
+    function fugaAnimale() {
+      const T = PREDE[scontro.id][LINGUA === "en" ? "en" : "it"];
+      chiudiScontro("fuggito");
+      scontro = null; MusicaScontro.ferma(); barraScontro();
+      aggiungi({ tipo: "narra", box: "nem", fuori: true, righe: [T.fuga] });
+      stato(false); disegnaVitali();
     }
     function borsaVeleni() { return [...zaino, mano].find(it => it && ricaricabile(it)); }
     function raccogliErbe() {
@@ -7892,7 +8042,7 @@
         m = mod(Number(pg.statistiche && pg.statistiche[p.attributo]) || 10);
       } else {
         nome = N("abilita", p.abilita);
-        m = valoreAbilita(p.abilita);
+        m = valoreAbilita(p.abilita) + malusStatoProva(); /* Avvelenato: −2 */
         nota = addestrata(p.abilita) ? "" : U.nonAddestrata;
       }
       /* Riquadro che mostra al giocatore cosa sta facendo e come funziona la prova */
@@ -8084,7 +8234,7 @@
       el.replaceChildren();
       const t = document.createElement("p"); t.textContent = L.titolo; el.append(t);
       const i = document.createElement("p"); i.className = "p-nota"; i.textContent = L.intro; el.append(i);
-      RICETTE.forEach(r => {
+      [...RICETTE, ...RICETTE_ANIMALI.filter(r => (usate.ricette_animali || []).includes(r.parte))].forEach(r => {
         const O = Q.oggetti[r.id], ok = ricettaPronta(r), k = "lab-" + r.id;
         const det = document.createElement("details"); det.className = "proposta"; det.open = aperti.has(k);
         det.addEventListener("toggle", () => { if (det.open) aperti.add(k); else aperti.delete(k); });
@@ -8183,7 +8333,7 @@
 
     /* effetti dei consumabili: dalla dotazione (per nome) o dal laboratorio (per effetto) */
     const effettoDi = (it) => it && (it.effetto || { "Pozione di cura": "pozCura", "Pozione di essenza": "pozMana", "Pozione di mana": "pozMana", "Razioni da viaggio": "razione", "Borsa dei veleni": "borsa" }[it.nome]);
-    const EFFETTI_BEVANDA = ["pozCura", "pozMana", "serenita", "razione", "borsa"]; /* consumabili con un effetto immediato (in combattimento sono l'azione del turno) */
+    const EFFETTI_BEVANDA = ["pozCura", "pozMana", "serenita", "razione", "borsa", "cura_ustione", "cura_debole", "cura_veleno", "cura_paura"]; /* consumabili con un effetto immediato (in combattimento sono l'azione del turno) */
     /* Borsa dei veleni (Sciamano): 3 dosi; vuota resta nello zaino e si riempie con gli ingredienti della foresta dei pini */
     const DOSI_BORSA = 3;
     const ricaricabile = (it) => effettoDi(it) === "borsa";
@@ -8211,6 +8361,12 @@
         if (prima >= ris.max) return { no: Q.oggetti.inutile.pozMana };
         const d = tira(6) + liv; pg.risorsaUsata = Math.max(0, (pg.risorsaUsata || 0) - d);
         return { ok: B.pozMana(nome, d, prima, liv, risorsaAttuale()) };
+      }
+      if (/^cura_/.test(ef)) { /* elisir della bottega: curano uno stato alterato */
+        const k = ef.slice(5), S = BT.stati[k];
+        if (!haStato(k)) return { no: BT.inutile(S.nome) };
+        togliStatoPg(k);
+        return { ok: BT.bevi(nome, S.nome) };
       }
       if (ef === "borsa") { /* Borsa dei veleni: 1d4 + livello punti natura, solo per lo Sciamano */
         const ris = risorsaPg();
@@ -9457,7 +9613,62 @@
           intro: ["The sky over the garden darkens: a cloud of black wings tears loose from the pines and plunges towards you. Crows, dozens of them, eyes of ember, cawing in unison."],
           vittoria: "With a common shriek the swarm comes apart: the crows fall like flakes of spent ember, dissolving into ash before touching the ground." } }
     };
-    for (const [id, p] of Object.entries(PREDE)) NEMICI[id] = { ca: p.ca, dadoVita: p.dadoVita, pvBase: p.pvBase, dannoDado: p.dannoDado, xp: p.xp, boss: false, attacco: p.attacco, attacchi: p.attacchi, probPresa: 0, probSoffio: 0, soffio: null, ritratto: null, comune: true };
+    /* Animali selvatici della foresta dei pini (27/10 sera): grado 0, prede semplici e PE bassi (non dimezzati).
+       Ognuno lascia una parte per la bottega di Guendalina. fugge: dopo quanti turni del nemico scappa; passivo: non attacca;
+       avvicina: prova per avvicinarsi senza farlo scappare; colpoStato/critStato: stato alterato inflitto al personaggio. */
+    const ANIMALI = {
+      coniglio: { grado: 0, ca: 13, dadoVita: 2, pvBase: 2, dannoDado: 2, attacco: -2, attacchi: 1, xp: 20, parte: "zampa_coniglio", qta: 1, fugge: 1, passivo: true, avvicina: "Furtività",
+        it: { nome: "Coniglio selvatico", il: "il coniglio", Il: "Il coniglio", al: "al coniglio", del: "del coniglio", att1: "Morso", att2: "Calcio", sotto: "Animale selvatico · foresta dei pini",
+          cond: ["Annusa l'aria, le orecchie dritte: è illeso.", "È ferito e trema, pronto a scappare.", "Si trascina tra gli aghi, il fiato corto.", "Giace immobile tra gli aghi."],
+          ok1: ["Il coniglio ti morde la mano e si divincola."], ok2: ["Un calcio delle zampe posteriori ti coglie il polso."], crit: "Il coniglio ti morde il dito fino all'osso, poi si divincola.",
+          intro: ["Tra le radici di un pino, un coniglio selvatico dal pelo grigio bruca un ciuffo d'erba. È vivo, vero: il primo essere vivo che vedi da quando sei entrato nella casa. Non ti ha ancora sentito."],
+          vittoria: "Il coniglio sussulta e resta immobile. Non diventa cenere: è carne e sangue, come te.",
+          fuga: "Il coniglio scatta via tra gli aghi in un lampo grigio e sparisce tra i tronchi.", vede: "Un ramo scricchiola sotto il tuo stivale: il coniglio drizza le orecchie e schizza via tra i pini." },
+        en: { nome: "Wild Rabbit", the: "the rabbit", The: "The rabbit", att1: "Bite", att2: "Kick", sotto: "Wild animal · pine forest",
+          cond: ["It sniffs the air, ears up: unharmed.", "It is wounded and trembling, ready to bolt.", "It drags itself among the needles, breath short.", "It lies still among the needles."],
+          ok1: ["The rabbit bites your hand and wriggles free."], ok2: ["A kick of its hind legs catches your wrist."], crit: "The rabbit bites your finger to the bone, then wriggles free.",
+          intro: ["Among the roots of a pine, a grey wild rabbit nibbles a tuft of grass. It is alive, truly alive: the first living thing you have seen since you entered the house. It has not heard you yet."],
+          vittoria: "The rabbit twitches and lies still. It does not turn to ash: it is flesh and blood, like you.",
+          fuga: "The rabbit bolts among the needles in a grey flash and vanishes between the trunks.", vede: "A twig snaps under your boot: the rabbit pricks up its ears and darts away among the pines." } },
+      cervo: { grado: 0, ca: 11, dadoVita: 6, pvBase: 6, dannoDado: 4, attacco: 0, attacchi: 1, xp: 40, parte: "velluto_cervo", qta: 1, fugge: 2, avvicina: "Sopravvivenza",
+        it: { nome: "Cervo", il: "il cervo", Il: "Il cervo", al: "al cervo", del: "del cervo", att1: "Incornata", att2: "Zoccolata", sotto: "Animale selvatico · foresta dei pini",
+          cond: ["Ti fissa, alto e fiero: è illeso.", "È ferito: zoppica e sbuffa.", "Barcolla, il respiro rotto.", "Giace tra gli aghi, il palco spezzato."],
+          ok1: ["Il cervo abbassa il palco e ti colpisce al fianco."], ok2: ["Uno zoccolo ti centra la coscia."], crit: "Il cervo carica a testa bassa e il palco ti solleva da terra.",
+          intro: ["Un cervo si muove tra i pini, il palco coperto di velluto. Bruca, alza la testa, riprende. Le sue impronte si perdono tra gli aghi."],
+          vittoria: "Il cervo cade sulle ginocchia, poi su un fianco. Il suo respiro si fa lento, poi si ferma. Nessuna cenere: solo un animale morto nel bosco.",
+          fuga: "Il cervo si volta e balza via tra i tronchi, in pochi salti è già lontano.", vede: "Perdi le tracce tra gli aghi. Quando le ritrovi, il cervo ti ha già visto: un balzo, e non c'è più." },
+        en: { nome: "Stag", the: "the stag", The: "The stag", att1: "Gore", att2: "Hoof", sotto: "Wild animal · pine forest",
+          cond: ["It stares at you, tall and proud: unharmed.", "It is wounded: it limps and snorts.", "It staggers, breath ragged.", "It lies among the needles, antlers broken."],
+          ok1: ["The stag lowers its antlers and strikes your flank."], ok2: ["A hoof catches your thigh."], crit: "The stag charges head down and its antlers lift you off the ground.",
+          intro: ["A stag moves between the pines, its antlers covered in velvet. It grazes, lifts its head, grazes again. Its tracks fade among the needles."],
+          vittoria: "The stag falls to its knees, then onto its side. Its breathing slows, then stops. No ash: only a dead animal in the wood.",
+          fuga: "The stag turns and bounds away between the trunks; in a few leaps it is gone.", vede: "You lose the tracks among the needles. When you find them again the stag has already seen you: one leap, and it is gone." } },
+      cinghiale_bosco: { grado: 0, ca: 11, dadoVita: 8, pvBase: 8, dannoDado: 6, attacco: 1, attacchi: 1, xp: 60, parte: "grasso_cinghiale", qta: 2, critStato: "debole",
+        it: { nome: "Cinghiale selvatico", il: "il cinghiale", Il: "Il cinghiale", al: "al cinghiale", del: "del cinghiale", att1: "Zannata", att2: "Carica", sotto: "Animale selvatico · foresta dei pini",
+          cond: ["Grugnisce e raspa il terreno: è illeso.", "È ferito: sanguina dal fianco.", "Barcolla, la bava alla bocca.", "Giace tra gli aghi."],
+          ok1: ["Le zanne del cinghiale ti squarciano la coscia."], ok2: ["Il cinghiale ti travolge con una carica e ti manda a terra."], crit: "Il cinghiale ti carica in pieno: le zanne ti affondano nel fianco e il colpo ti lascia senza forze.",
+          intro: ["Un grugnito tra i cespugli. Un cinghiale selvatico, nero e irsuto, esce da sotto un pino abbattuto, abbassa le zanne e raspa gli aghi con lo zoccolo."],
+          vittoria: "Il cinghiale stramazza con un ultimo grugnito. È solo una bestia del bosco, pesante e calda.", fuga: "", vede: "" },
+        en: { nome: "Wild Boar", the: "the boar", The: "The boar", att1: "Tusk", att2: "Charge", sotto: "Wild animal · pine forest",
+          cond: ["It grunts and paws the ground: unharmed.", "It is wounded: it bleeds from the flank.", "It staggers, foam at its mouth.", "It lies among the needles."],
+          ok1: ["The boar's tusks rip your thigh."], ok2: ["The boar bowls you over with a charge."], crit: "The boar charges you full on: its tusks sink into your side and the blow leaves you drained.",
+          intro: ["A grunt among the bushes. A black, bristly wild boar steps out from under a fallen pine, lowers its tusks and paws the needles."],
+          vittoria: "The boar collapses with a last grunt. It is only a beast of the wood, heavy and warm.", fuga: "", vede: "" } },
+      vipera: { grado: 0, ca: 13, dadoVita: 4, pvBase: 3, dannoDado: 3, attacco: 2, attacchi: 1, xp: 40, parte: "fiele_vipera", qta: 1, colpoStato: "veleno",
+        it: { nome: "Vipera dei pini", il: "la vipera", Il: "La vipera", al: "alla vipera", del: "della vipera", att1: "Morso", att2: "Scatto", sotto: "Animale selvatico · foresta dei pini",
+          cond: ["Sibila, arrotolata su sé stessa: è illesa.", "È ferita: si contorce tra gli aghi.", "Si trascina, la testa bassa.", "Giace tra gli aghi, immobile."],
+          ok1: ["La vipera scatta e ti pianta i denti nella caviglia."], ok2: ["Uno scatto fulmineo: i denti ti sfiorano il polso e lasciano due punture."], crit: "La vipera ti morde il polso e non molla: senti il veleno salire lungo il braccio.",
+          intro: ["Tra gli aghi qualcosa si srotola, lento: una vipera scura con una fila di rombi sul dorso. Alza la testa e sibila."],
+          vittoria: "La vipera si contorce un'ultima volta e resta immobile tra gli aghi.", fuga: "", vede: "" },
+        en: { nome: "Pine Viper", the: "the viper", The: "The viper", att1: "Bite", att2: "Strike", sotto: "Wild animal · pine forest",
+          cond: ["It hisses, coiled: unharmed.", "It is wounded: it writhes among the needles.", "It drags itself, head low.", "It lies still among the needles."],
+          ok1: ["The viper strikes and sinks its fangs into your ankle."], ok2: ["A lightning strike: its fangs graze your wrist and leave two punctures."], crit: "The viper bites your wrist and will not let go: you feel the venom climbing your arm.",
+          intro: ["Something uncoils among the needles, slowly: a dark viper with a row of diamonds along its back. It raises its head and hisses."],
+          vittoria: "The viper writhes one last time and lies still among the needles.", fuga: "", vede: "" } }
+    };
+    Object.assign(PREDE, ANIMALI);
+    const PRESE_INFERNALI = () => Object.keys(PREDE).filter(k => PREDE[k].grado >= 1);
+    for (const [id, p] of Object.entries(PREDE)) NEMICI[id] = { ca: p.ca, dadoVita: p.dadoVita, pvBase: p.pvBase, dannoDado: p.dannoDado, xp: p.xp, boss: false, attacco: p.attacco, attacchi: p.attacchi, probPresa: 0, probSoffio: 0, soffio: null, ritratto: null, comune: true , colpoStato: p.colpoStato, critStato: p.critStato, fugge: p.fugge, passivo: p.passivo, parte: p.parte, qta: p.qta, animale: p.grado === 0 };
     /* testi dello scontro di una preda: derivano da quelli del mastino, con il nome della preda al posto di «la belva» */
     function testiPreda(L, id) {
       const p = PREDE[id], t = p[L], B = CB_BASE, n = p.attacchi; /* CB_BASE è già nella lingua corrente */
@@ -9525,6 +9736,7 @@
     { /* le stesse prede nella foresta dei pini: descrizioni del bosco, risveglio in cucina */
       const L = LINGUA === "en" ? "en" : "it";
       for (const id of Object.keys(PREDE)) { const b = CACCIA[L].nemici[id];
+        if (PREDE[id].grado === 0) { b.risveglio = ESTERNI[L].risveglio; b.attesaPassivo = L === "en" ? `${PREDE[id].en.The} watches you, ready to bolt.` : `${PREDE[id].it.Il} ti osserva, pronto a scappare.`; continue; }
         CACCIA[L].nemici["p_" + id] = { ...b, sotto: String(b.sotto).replace(/giardino/, "foresta dei pini").replace(/garden/, "pine forest"), vittoria: [ESTERNI[L].prede[id].vittoria], risveglio: ESTERNI[L].risveglio }; }
     }
 
@@ -9539,7 +9751,7 @@
     const statPg = (a) => (Number(pg.statistiche && pg.statistiche[a]) || 10) + (eff("potenza") ? 2 : 0);
     const modLottaPg = () => mod(statPg("Lotta"));
     const modAgiPg = () => mod(statPg("Agilità"));
-    const caScontro = () => (Number(caAttuale()) || 10) + (eff("scudo") ? 2 : 0) + (eff("muro") ? 3 : 0) + (eff("cerchio") ? 2 : 0) + (eff("guardia") ? (Number(scontro.guardiaVal) || 2) : 0);
+    const caScontro = () => (Number(caAttuale()) || 10) + malusStatoCA() + (eff("scudo") ? 2 : 0) + (eff("muro") ? 3 : 0) + (eff("cerchio") ? 2 : 0) + (eff("guardia") ? (Number(scontro.guardiaVal) || 2) : 0);
     const passoDado = (d) => (d >= 12 ? 12 : d + 2); /* Arma Migliorata: 1d6→1d8, 1d8→1d10, 1d10→1d12 */
     const dadoArmaPg = (conTorcia) => {
       let d = 2;
@@ -9670,6 +9882,7 @@
       if (!scontro) return;
       if (scontro.primo === "pg") apriTurno();
       scontro.tuoTurno = true; scontro.cambio = false; scontro.frontaleUsato = false;
+      tickUstione();
       const rilascio = CMB.inizioTurnoPg(scontro, ctxTecnica()); /* la Parata scade; Mare Profondo ed Egida rilasciano l'onda */
       if (rilascio.length) {
         aggiungi({ tipo: "narra", box: "mia", righe: rilascio.map(rigaScudo).filter(Boolean) }); scuotiNemico();
@@ -9706,7 +9919,7 @@
       const coraggio = anelloAlDito() && pvPg() <= Math.floor(pvMaxPg() / 4) ? 1 : 0; /* coraggio dei Vespera: +1 al tiro per colpire a salute bassa */
       if (coraggio && !scontro.coraggio) { scontro.coraggio = true; sist(A2.anello.coraggio); }
       const pre = scontro.prossimo || {}; scontro.prossimo = null; /* Puntura di Spillo, Colpo alla Giuntura */
-      const ca = caNem(), m = modLottaPg(), mA = m + coraggio + (pre.bonus || 0), d = tira(20), tot = d + mA, crit = d >= CMB.sogliaCrit(scontro, 20), ok = crit || tot > ca; /* Esposto e Mille Soli allargano il critico */
+      const ca = caNem(), m = modLottaPg(), mA = m + coraggio + (pre.bonus || 0) + malusStatoAtt(), d = tira(20), tot = d + mA, crit = d >= CMB.sogliaCrit(scontro, 20), ok = crit || tot > ca; /* Esposto e Mille Soli allargano il critico */
       const righe = [];
       if (crit) guadagnaIra(2);
       if (ok) {
@@ -9752,7 +9965,7 @@
     function ctxIncantesimo() {
       const m = mod(statPg(ATTR_INC[pg.classe] || "Mente"));
       return {
-        ...ctxTecnica(), modAtt: m, modDanno: m, dado: 6, cd: cdIncantesimi(), modTs: modNem("Vigore"),
+        ...ctxTecnica(), modAtt: m + malusStatoAtt(), modDanno: m, dado: 6, cd: cdIncantesimi(), modTs: modNem("Vigore"),
         cura: (n) => curaPgN(n), pvMancanti: () => Math.max(0, pvMaxPg() - pvPg()), dannoCorpo: (n) => { const [a, b] = dannoCorpoNonLetale(n); return a - b; },
         manaPiu: (n) => { const r = Math.min(n, pg.manaUsato || 0); pg.manaUsato = (pg.manaUsato || 0) - r; return r; },
         dannoMente: (n) => dannoMenteNonLetale(n)
@@ -9887,7 +10100,7 @@
     function ctxTecnica() {
       const nem = scontro || ultimoNemico;
       return {
-        tira, liv: livelloPg(), modAtt: modLottaPg(), modDanno: modLottaPg(), dado: dadoArmaPg(false), ca: caNem, boss: bossNem(),
+        tira, liv: livelloPg(), modAtt: modLottaPg() + malusStatoAtt(), modDanno: modLottaPg(), dado: dadoArmaPg(false), ca: caNem, boss: bossNem(),
         cd: cdTecniche(), modTs: modNem("Vigore"),
         modSpirito: mod(statPg("Spirito")),
         resisteVeleno: !!(nem && NEMICI[nem.id] && (NEMICI[nem.id].resiste || []).includes("veleno")), /* Dafne e il sovrano */
@@ -10054,6 +10267,8 @@
       }
       if (eff("bloccato")) { aggiungi({ tipo: "narra", box: "mia", righe: [CB.bloccatoTxt] }); segnaTurno(CB.lblBloccato); return fineTurnoNem(); }
       const D = NEMICI[scontro.id];
+      if (D.fugge) { scontro.turniNem = (Number(scontro.turniNem) || 0) + 1; if (scontro.turniNem >= D.fugge) return fugaAnimale(); } /* animali: scappano */
+      if (D.passivo) { aggiungi({ tipo: "narra", box: "nem", righe: [CB.attesaPassivo || CB.attesa] }); return fineTurnoNem(); }
       if (D.soffio && !scontro.soffioPronto) { /* ricarica del soffio: 5-6 su 1d6 */
         const r = tira(6); scontro.soffioPronto = r >= D.soffio.ricarica;
         aggiungi({ tipo: "narra", box: "nem", righe: [pesca(scontro.soffioPronto ? CB.ricaricaSi : CB.ricaricaNo)] }); /* il tiro di ricarica resta segreto */
@@ -10132,6 +10347,7 @@
           if (sub.eventi.some(e => e.k === "rimbalzo" || e.k === "elasticaColpo")) scuotiNemico();
           const dannoFin = difesaNatura(sub.danno, righe); /* Pelle e Scudo di Corteccia */
           if (dannoFin > 0) dannoAlPg(dannoFin, morso ? "Perforante" : "Tagliente", righe);
+          if (dannoFin > 0) statoDaColpo(D, crit, righe); /* animali della foresta: veleno della vipera, carica del cinghiale */
           const ira = guadagnaIra(sub.ira); if (ira) righe.push(ira); /* l'ira cresce con i colpi subiti (non con quelli inghiottiti dallo scudo, salvo Batteria e Baluardo) */
         }
       } else {
@@ -10171,7 +10387,7 @@
     }
     /* Soffio Infuocato: tiro salvezza su Agilità CD 12 o 2d6 danni; poi va ricaricato (5-6 su 1d6) */
     function soffioScontro() {
-      const S = NEMICI[scontro.id].soffio, m = modAgiPg() + (eff("furore") ? 4 : 0) + (window.MagiaCombattimento ? window.MagiaCombattimento.bonusTsPg(scontro) : 0); /* Aureola +1, Cerchio del Focolare +2 */
+      const S = NEMICI[scontro.id].soffio, m = modAgiPg() + malusStatoProva() + (eff("furore") ? 4 : 0) + (window.MagiaCombattimento ? window.MagiaCombattimento.bonusTsPg(scontro) : 0); /* Aureola +1, Cerchio del Focolare +2 */
       scontro.soffioPronto = false;
       aggiungi({ tipo: "narra", box: "nem", righe: [CB.soffioLog] });
       segnaTurno(CB.attSoffio);
@@ -10183,7 +10399,7 @@
         if (ok) aggiungi({ tipo: "narra", box: "mia", esito: CB.soffioSalvo, righe: [CB.soffioSalvoTxt, CB.soffioTiro(d, m, tot)] });
         else {
           const tiri = tiraDadi(S.dadi, S.dado), pieno = somma(tiri), danno = eff("cerchio") ? Math.floor(pieno / 2) : pieno, righe = [CB.soffioPresoTxt, CB.soffioTiro(d, m, tot), CB.tiroDanno(S.dadi, S.dado, tiri, 0, danno)];
-          const ds = difesaNatura(danno, righe); if (ds > 0) dannoAlPg(ds, "Fuoco", righe);
+          const ds = difesaNatura(danno, righe); if (ds > 0) { dannoAlPg(ds, "Fuoco", righe); applicaStatoPg("ustione", righe); }
           const ira = guadagnaIra(CMB.iraPerColpo(livelloPg(), false)); if (ira) righe.push(ira); /* il soffio a segno conta come un colpo subito */
           aggiungi({ tipo: "narra", box: "nem", esito: CB.soffioPreso, righe });
         }
@@ -10211,10 +10427,11 @@
         if (c) { c.classList.add("dissolto"); setTimeout(() => { const v = c.closest(".voce"); c.remove(); if (v && !v.textContent.trim()) v.remove(); }, 3100); }
       }
       aggiungi({ tipo: "narra", fuori: true, righe: CB.vittoria });
-      const xpVinti = ctx === "pineta" ? Math.ceil(D.xp / 2) : D.xp; /* foresta dei pini: metà dei PE della caccia */
+      const xpVinti = ctx === "pineta" && !D.animale ? Math.ceil(D.xp / 2) : D.xp; /* foresta dei pini: metà dei PE della caccia; gli animali hanno già PE bassi */
       guadagnaPE(xpVinti);
       aggiungi({ tipo: "narra", box: "ok", fuori: true, righe: [CB.bannerVinto, CB.xp(xpVinti, pg.esperienza)] });
       controllaLivello();
+      if (D.parte) { const n = Number(D.qta) || 1; aggiungiMateriale(D.parte, n); aggiungi({ tipo: "sistema", box: "cap", fuori: true, righe: [BT.parte(n, Q.oggetti[D.parte].nome)] }); }
       if (ctx === "pineta") { const b = borsaVeleni(); if (b && Number(b.usi) < DOSI_BORSA && Math.random() < 0.5) { b.usi = Number(b.usi) + 1; aggiornaEquip(); sist(EST2.dose(b.usi)); } }
       if (ctx === "caccia") { usate.cc_stato = "trofeo"; salvaUsate(); trofeoCaccia(idNem); sist(CCT().preso); }
       if (ctx === "ettore" && !usate.q2_diario) { /* Ettore morto: il diario del figlio maggiore è tra le sue cose */

@@ -172,26 +172,46 @@ caso("Sciamano: Borsa dei veleni — 1d4 + livello punti natura, vuota resta nel
   eq(await page.evaluate(() => zaino.find(x => x.nome === "Borsa dei veleni").usi), 3, "piena con gli ingredienti della foresta");
   eq(errori, [], "errori"); await chiudi();
 });
-caso("Foresta dei pini: cappella → cimitero → foresta, ingredienti con Sopravvivenza, 30% di preda una volta per riposo, metà PE", async (b) => {
+caso("Foresta dei pini: cappella → cimitero → foresta, ingredienti con Sopravvivenza, prima tutti gli animali, poi 30% una volta per riposo", async (b) => {
   const pg = SC(); pg.equipaggiamento.dotazione = [{ nome: "Borsa dei veleni", usi: 3, desc: "x" }];
-  const { page, errori, chiudi } = await apri(b, "gioco.html", pg, PARTITA({ luogo: "cappella", diario: [{ tipo: "narra", stanza: "cappella", righe: ["x"] }], usate: { riposo: "sbloccato", luce: "ok", chiave_portone: "presa" } }));
+  const { page, errori, chiudi } = await apri(b, "gioco.html", pg, PARTITA({ luogo: "cappella", diario: [{ tipo: "narra", stanza: "cappella", righe: ["x"] }], usate: { riposo: "sbloccato", luce: "ok", chiave_portone: "presa", animali_visti: ["coniglio", "cervo", "vipera"] } }));
   await page.evaluate(() => { zaino.find(x => x.nome === "Borsa dei veleni").usi = 0; });
   await page.evaluate(() => gestisci("vado al cimitero")); eq(await page.evaluate(() => luogo), "cimitero", "cimitero");
-  await accoda(page, [], [0.99]); /* niente preda */
+  await accoda(page, [], [0]); /* l'unico animale non ancora visto: il cinghiale */
   await page.evaluate(() => gestisci("vado nella foresta")); eq(await page.evaluate(() => luogo), "pineta", "foresta");
-  await page.waitForTimeout(1200); eq(await page.evaluate(() => !!scontro), false, "preda con 0.99");
+  await page.waitForFunction(() => scontro, null, { timeout: 15000 });
+  eq(await page.evaluate(() => [scontro.id, scontro.ctx]), ["cinghiale_bosco", "pineta"], "animale nuovo");
+  await page.evaluate(() => { scontro.pv = 0; vittoriaScontro(); });
+  eq(await page.evaluate(() => [pg.esperienza, qtaMateriale("grasso_cinghiale")]), [60, 2], "PE dell'animale e grasso");
   await page.evaluate(() => gestisci("cerco erbe e radici"));
   await accoda(page, [R(15, 20)]); await page.click("#azioni button");
   eq(await page.evaluate(() => zaino.find(x => x.nome === "Borsa dei veleni").usi), 3, "borsa piena con gli ingredienti");
-  await page.evaluate(() => { vai("cimitero"); });
-  await accoda(page, [], [0.1, 0]); /* preda: 0.1 < 30%, poi la prima del grado 1 (ratto) */
-  await page.evaluate(() => { vai("pineta"); }); await page.waitForTimeout(1500);
-  eq(await page.evaluate(() => scontro && [scontro.id, scontro.ctx]), ["ratto", "pineta"], "preda della foresta");
-  await page.evaluate(() => { scontro.pv = 0; vittoriaScontro(); });
-  eq(await page.evaluate(() => pg.esperienza), 50, "metà dei PE della caccia");
   await accoda(page, [], [0.1]);
   await page.evaluate(() => { vai("cimitero"); vai("pineta"); }); await page.waitForTimeout(1500);
   eq(await page.evaluate(() => !!scontro), false, "un solo scontro per riposo");
+  await page.evaluate(() => { usate.giorno = 5; });
+  await page.evaluate(() => { vai("cimitero"); luogo = "pineta"; window.__caso.length = 0; window.__caso.push(0.1, 0.9, 0); incontroPineta(); }); /* 30%: sì; 70% animale: no → preda infernale (ratto) */
+  await page.waitForFunction(() => scontro, null, { timeout: 15000 });
+  eq(await page.evaluate(() => scontro.id), "ratto", "preda infernale");
+  await page.evaluate(() => { scontro.pv = 0; vittoriaScontro(); });
+  eq(await page.evaluate(() => pg.esperienza), 110, "metà dei PE della preda infernale");
+  eq(errori, [], "errori"); await chiudi();
+});
+
+caso("Bottega di Guendalina: la parte sblocca il dialogo e la ricetta; l'elisir cura lo stato; il riposo scaccia gli stati", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "cucina", diario: [{ tipo: "narra", stanza: "cucina", righe: ["x"] }], usate: { riposo: "sbloccato", luce: "ok", laboratorio: "sbloccato", dialogo_guendalina: "fine", portaCucina: "aperta" } }));
+  await page.evaluate(() => { aggiungiMateriale("fiele_vipera", 1); applicaStatoPg("veleno"); });
+  vero(/Avvelenato/.test(await page.evaluate(() => document.getElementById("vitali").textContent)), "stato nella scheda");
+  eq(await page.evaluate(() => malusStatoProva()), -2, "malus del veleno");
+  await page.evaluate(() => menuGuendalina());
+  await page.click("#azioni button:has-text('fiele')");
+  await page.waitForFunction(() => (usate.ricette_animali || []).includes("fiele_vipera"), null, { timeout: 20000 });
+  await page.evaluate(() => { prepara(RICETTE_ANIMALI.find(r => r.id === "tintura")); });
+  const id = await page.evaluate(() => zaino.find(x => x.id === "tintura").id);
+  await page.evaluate((id) => usa(id), id);
+  eq(await page.evaluate(() => haStato("veleno")), false, "la tintura cura il veleno");
+  await page.evaluate(() => { applicaStatoPg("ustione"); pg.dannoFisico = 3; curaRiposo(true); });
+  eq(await page.evaluate(() => Object.keys(usate.stati_pg || {}).length), 0, "il riposo scaccia gli stati");
   eq(errori, [], "errori"); await chiudi();
 });
 

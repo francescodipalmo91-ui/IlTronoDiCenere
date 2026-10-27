@@ -100,6 +100,65 @@
     const righeRazze = Object.entries(R.RAZZE).map(([r, d]) => `<tr><td>${N("razze", r)}</td><td>${d.punti ? (EN ? `+${d.punti} free points` : `+${d.punti} punti liberi`) : per(d.bonus)}</td></tr>`).join("");
     const righeAbilita = R.ABILITA.map(([a, at]) => `<tr><td>${N("abilita", a)}</td><td>${N("attributi", at)}</td></tr>`).join("");
 
+    /* ---------- capitolo Abilità: descrizioni da regole.js (le stesse della creazione), esempi qui ---------- */
+    const ESEMPI_ABILITA = {
+      Atletica: { it: ["spostare qualcosa di pesante", "arrampicarsi", "forzare un passaggio"], en: ["moving something heavy", "climbing", "forcing a way through"] },
+      Sopravvivenza: { it: ["seguire una traccia", "capire da dove è passato qualcuno", "orientarsi all'aperto"], en: ["following a trail", "working out where someone went", "finding your way outdoors"] },
+      "Furtività": { it: ["avvicinarsi senza farsi sentire", "nascondersi", "agire senza lasciare segni"], en: ["creeping up unheard", "hiding", "acting without leaving a trace"] },
+      Acrobazia: { it: ["mantenere l'equilibrio", "saltare un ostacolo", "divincolarsi"], en: ["keeping your balance", "leaping an obstacle", "wriggling free"] },
+      Investigazione: { it: ["frugare in un mobile", "ascoltare dietro una porta", "notare un dettaglio fuori posto"], en: ["searching a piece of furniture", "listening at a door", "spotting something out of place"] },
+      Sapienza: { it: ["riconoscere un simbolo o un rituale", "capire un fenomeno magico", "valutare una ferita o un rimedio"], en: ["recognising a symbol or a ritual", "understanding a magical effect", "judging a wound or a remedy"] },
+      "Socialità": { it: ["convincere qualcuno con le buone", "imporsi con le cattive", "ottenere un favore"], en: ["winning someone over kindly", "imposing yourself harshly", "getting a favour"] },
+      Intuizione: { it: ["capire se qualcuno mente", "cogliere ciò che non viene detto", "intuire cosa vuole davvero"], en: ["telling whether someone is lying", "catching what goes unsaid", "sensing what they really want"] }
+    };
+    const VECCHI_NOMI = { it: [["Percezione, Indagare", "Investigazione"], ["Arcano, Misticismo, Medicina", "Sapienza"], ["Persuasione, Intimidire", "Socialità"]],
+                          en: [["Perception, Investigate", "Investigation"], ["Arcana, Mysticism, Medicine", "Lore"], ["Persuasion, Intimidation", "Influence"]] }[L];
+    const abilitaDi = (attr) => `<ul>${R.ABILITA.filter(x => x[1] === attr).map(([a, , d]) =>
+      `<li><b>${N("abilita", a)}</b>: ${d[L]}<br><span class="esempio">${EN ? "When it helps" : "Quando serve"}: ${ESEMPI_ABILITA[a][L].join(", ")}. ${EN ? "To call it" : "Per chiederla"}: «${EN ? "I use " : "uso "}${N("abilita", a).toLowerCase()}».</span></li>`).join("")}</ul>`;
+    const titoloAttr = (attr) => `${N("attributi", attr)}: ${R.ABILITA.filter(x => x[1] === attr).map(x => N("abilita", x[0])).join(EN ? " and " : " e ")}`;
+    const malusAbilita = Object.entries(R.MALUS_AGILITA).map(([o, m]) => `<tr><td>${N("oggetti", o)}</td><td>${m ? "−" + m : (EN ? "none" : "nessuno")}</td></tr>`).join("");
+    const sezioneAbilita = () => EN ? `
+            <p>Skills are what your character is good at outside combat: they come into play in every check. There are eight, two for each attribute.</p>
+            <h3>How they work</h3>
+            <span class="formula">Skill value = attribute modifier (+ your level, if you chose the skill)</span>
+            <p>At creation you choose ${R.MAX_ABILITA}: those are your strengths, and they grow by 1 at every level. You can still attempt every other skill, with the attribute modifier alone.</p>
+            <p class="esempio">Example: Mind 14 (+2), level 2. Investigation, chosen: +2 + 2 = +4. Lore, not chosen: +2.</p>
+            <p>Armor and shield weigh you down: Agility skills (${N("abilita", "Furtività")} and ${N("abilita", "Acrobazia")}) take a penalty. The shield only counts while it is strapped on. The character sheet already shows the value with the penalty included.</p>
+            <div class="scroll"><table><tr><th>Gear</th><th>Agility skill penalty</th></tr>${malusAbilita}</table></div>
+            <h3>${titoloAttr("Vigore")}</h3>${abilitaDi("Vigore")}
+            <h3>${titoloAttr("Agilità")}</h3>${abilitaDi("Agilità")}
+            <h3>${titoloAttr("Mente")}</h3>${abilitaDi("Mente")}
+            <h3>${titoloAttr("Spirito")}</h3>${abilitaDi("Spirito")}
+            <h3>Which skill to use</h3>
+            <ul>
+              <li>Most of the time you don't need to name a skill: write what you do and the game picks the right check.</li>
+              <li><b>Investigation</b>: the game asks whether you are searching actively or using your senses (see «Skill checks»).</li>
+              <li><b>Influence</b>: first you choose the approach, kind or harsh, then you roll. The approach decides how the other person reacts; the roll decides whether you succeed.</li>
+              <li><b>Insight</b> and Influence work together: one reads the other person, the other acts on them.</li>
+            </ul>
+            <p>The game still recognises the old skill names:</p>
+            <div class="scroll"><table><tr><th>If you write</th><th>It counts as</th></tr>${VECCHI_NOMI.map(([v, n]) => `<tr><td>${v}</td><td>${n}</td></tr>`).join("")}</table></div>` : `
+            <p>Le abilità sono ciò in cui il tuo personaggio è bravo fuori dal combattimento: entrano in gioco in ogni prova. Sono otto, due per attributo.</p>
+            <h3>Come funzionano</h3>
+            <span class="formula">Valore dell'abilità = modificatore dell'attributo (+ il tuo livello, se l'hai scelta)</span>
+            <p>In creazione ne scegli ${R.MAX_ABILITA}: sono i tuoi punti di forza, e a ogni livello crescono di 1. Tutte le altre puoi tentarle comunque, con il solo modificatore dell'attributo.</p>
+            <p class="esempio">Esempio: Mente 14 (+2), livello 2. Investigazione, scelta: +2 + 2 = +4. Sapienza, non scelta: +2.</p>
+            <p>Armatura e scudo appesantiscono: le abilità di Agilità (Furtività e Acrobazia) subiscono un malus. Lo scudo conta solo se è imbracciato. La scheda del personaggio mostra già il valore con il malus compreso.</p>
+            <div class="scroll"><table><tr><th>Equipaggiamento</th><th>Malus alle abilità di Agilità</th></tr>${malusAbilita}</table></div>
+            <h3>${titoloAttr("Vigore")}</h3>${abilitaDi("Vigore")}
+            <h3>${titoloAttr("Agilità")}</h3>${abilitaDi("Agilità")}
+            <h3>${titoloAttr("Mente")}</h3>${abilitaDi("Mente")}
+            <h3>${titoloAttr("Spirito")}</h3>${abilitaDi("Spirito")}
+            <h3>Quale abilità usare</h3>
+            <ul>
+              <li>Quasi sempre non serve nominare l'abilità: scrivi cosa fai e il gioco sceglie la prova giusta.</li>
+              <li><b>Investigazione</b>: il gioco ti chiede se cerchi attivamente o usi i sensi (vedi «Prove di abilità»).</li>
+              <li><b>Socialità</b>: prima scegli l'approccio, gentile o duro, poi tiri. L'approccio decide come reagisce l'altro, il tiro se ci riesci.</li>
+              <li><b>Intuizione</b> e Socialità lavorano insieme: una legge l'altro, l'altra agisce su di lui.</li>
+            </ul>
+            <p>Il gioco riconosce ancora i vecchi nomi delle abilità:</p>
+            <div class="scroll"><table><tr><th>Se scrivi</th><th>Vale come</th></tr>${VECCHI_NOMI.map(([v, n]) => `<tr><td>${v}</td><td>${n}</td></tr>`).join("")}</table></div>`;
+
     /* ---------- tabelle di tecniche e incantesimi ---------- */
     const H = EN ? ["Lv", "Name", "Cost", "Effect"] : ["Liv", "Nome", "Costo", "Effetto"];
     const tabella = (voci) => `<div class="scroll"><table><tr>${H.map(h => `<th>${h}</th>`).join("")}</tr>${voci.slice().sort((a, b) => a.liv - b.liv).map(v =>
@@ -140,7 +199,7 @@
       it: {
         torna: "← Pagina iniziale", titolo: "Regolamento", sotto: "Le regole del gioco, da consultare quando vuoi.",
         parte: "Parte", capitolo: "Capitolo", apri: "Apri tutto", chiudi: "Comprimi",
-        parti: [["Il personaggio", [0, 10]], ["Le classi", [4, 5, 6, 7]], ["Giocare", [2, 1, 9, 11, 12]], ["Combattimento", [3, 8]]],
+        parti: [["Il personaggio", [0, 13, 10]], ["Le classi", [4, 5, 6, 7]], ["Giocare", [2, 1, 9, 11, 12]], ["Combattimento", [3, 8]]],
         sezioni: [
           ["Il personaggio", `
             <h3>Attributi</h3>
@@ -161,9 +220,8 @@
             <span class="formula">Salute mentale = ${R.SALUTE_BASE} + dado vita + mod. Spirito</span>
             <span class="formula">Mana, punti fede, ira, natura = ${R.RISORSA_BASE} + modificatore dell'attributo della classe</span>
             <h3>Abilità</h3>
-            <p>Ne scegli ${R.MAX_ABILITA}. Il valore di un'abilità è il modificatore del suo attributo; quelle scelte aggiungono anche il tuo livello.</p>
-            <div class="scroll"><table><tr><th>Abilità</th><th>Attributo</th></tr>${righeAbilita}</table></div>
-            <p>Armatura media e pesante e scudo danno un malus alle abilità di Agilità.</p>`],
+            <p>Ne scegli ${R.MAX_ABILITA} in creazione. Cosa fa ciascuna, come si calcola il valore e il malus dell'armatura sono spiegati nel capitolo «Abilità».</p>
+            <div class="scroll"><table><tr><th>Abilità</th><th>Attributo</th></tr>${righeAbilita}</table></div>`],
           ["Prove di abilità", `
             <p>Scrivi ciò che fa il tuo personaggio («esamino l'arazzo», «uso investigazione»). Quando l'esito è incerto il gioco ti chiede una prova e ti mostra difficoltà, dado e modificatore.</p>
             <span class="formula">d20 + valore dell'abilità ≥ difficoltà (CD) → prova superata</span>
@@ -350,13 +408,14 @@
             <p>Anche certe scoperte sulla casa feriscono la mente (da 1 a 4 punti, solo la prima volta), ma da sole non la portano mai a 0: lasciano sempre almeno 1 punto.</p>`],
           ["Salvataggi", `
             <p>Puoi tenere fino a tre personaggi. Salva con il pulsante in alto nella pagina di gioco.</p>
-            <p>Accedendo con Google dalla pagina iniziale, i salvataggi sono condivisi tra computer e telefono.</p>`]
+            <p>Accedendo con Google dalla pagina iniziale, i salvataggi sono condivisi tra computer e telefono.</p>`],
+          ["Abilità", sezioneAbilita()]
         ]
       },
       en: {
         torna: "← Home page", titolo: "Rules", sotto: "The rules of the game, to look up whenever you like.",
         parte: "Part", capitolo: "Chapter", apri: "Expand all", chiudi: "Collapse",
-        parti: [["The character", [0, 10]], ["The classes", [4, 5, 6, 7]], ["Playing", [2, 1, 9, 11, 12]], ["Combat", [3, 8]]],
+        parti: [["The character", [0, 13, 10]], ["The classes", [4, 5, 6, 7]], ["Playing", [2, 1, 9, 11, 12]], ["Combat", [3, 8]]],
         sezioni: [
           ["Your character", `
             <h3>Attributes</h3>
@@ -377,9 +436,8 @@
             <span class="formula">Mental health = ${R.SALUTE_BASE} + hit die + Spirit mod.</span>
             <span class="formula">Mana, faith, rage, nature points = ${R.RISORSA_BASE} + modifier of the class attribute</span>
             <h3>Skills</h3>
-            <p>You choose ${R.MAX_ABILITA}. A skill's value is its attribute modifier; the ones you choose also add your level.</p>
-            <div class="scroll"><table><tr><th>Skill</th><th>Attribute</th></tr>${righeAbilita}</table></div>
-            <p>Medium and heavy armor and the shield give a penalty to Agility skills.</p>`],
+            <p>You choose ${R.MAX_ABILITA} at creation. What each one does, how its value is worked out and the armor penalty are explained in the «Skills» chapter.</p>
+            <div class="scroll"><table><tr><th>Skill</th><th>Attribute</th></tr>${righeAbilita}</table></div>`],
           ["Skill checks", `
             <p>Write what your character does (“I examine the tapestry”, “I use investigation”). When the outcome is uncertain the game asks for a check and shows you difficulty, die and modifier.</p>
             <span class="formula">d20 + skill value ≥ difficulty (DC) → check passed</span>
@@ -566,7 +624,8 @@
             <p>Some discoveries about the house also wound the mind (1 to 4 points, only the first time), but on their own they never bring it to 0: they always leave at least 1 point.</p>`],
           ["Saving", `
             <p>You can keep up to three characters. Save with the button at the top of the game page.</p>
-            <p>If you sign in with Google on the home page, your saves are shared between computer and phone.</p>`]
+            <p>If you sign in with Google on the home page, your saves are shared between computer and phone.</p>`],
+          ["Skills", sezioneAbilita()]
         ]
       }
     }[L];

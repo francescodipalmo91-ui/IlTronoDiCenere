@@ -25,13 +25,18 @@ window.Regole = (() => {
     Gnomo: { bonus: { Spirito: 2, "Agilità": 1 } }
   },
 
-  /* abilità: due per attributo */
+  /* abilità: due per attributo — [nome, attributo, descrizione]. La descrizione compare in creazione e nel regolamento */
   ABILITA: [
-    ["Atletica", "Vigore"], ["Sopravvivenza", "Vigore"],
-    ["Furtività", "Agilità"], ["Acrobazia", "Agilità"],
-    ["Investigazione", "Mente"], ["Sapienza", "Mente"],
-    ["Socialità", "Spirito"], ["Intuizione", "Spirito"]
+    ["Atletica", "Vigore", { it: "Forza fisica, resistenza e doti atletiche: arrampicarsi, nuotare in acque agitate, saltare, sfondare ostacoli.", en: "Physical strength, endurance and athletic prowess: climbing, swimming in rough water, leaping, breaking through obstacles." }],
+    ["Sopravvivenza", "Vigore", { it: "Seguire tracce, orientarsi, resistere all'ambiente ostile e prestare un primo soccorso pratico.", en: "Following tracks, finding your way, enduring hostile surroundings and giving practical first aid." }],
+    ["Furtività", "Agilità", { it: "Muoversi nell'ombra, nascondersi e passare inosservati agli occhi dei nemici.", en: "Moving in the shadows, hiding and slipping past enemies unseen." }],
+    ["Acrobazia", "Agilità", { it: "Equilibrio, prontezza e destrezza nei movimenti: schivare, saltare, atterrare senza farsi male, liberarsi da una presa.", en: "Balance, readiness and deftness of movement: dodging, leaping, landing unhurt, slipping free of a grip." }],
+    ["Investigazione", "Mente", { it: "Percezione e indagine in un'unica abilità: notare dettagli, pericoli e indizi, e trarne deduzioni.", en: "Perception and investigation in a single skill: noticing details, dangers and clues, and drawing conclusions." }],
+    ["Sapienza", "Mente", { it: "Conoscenza arcana, mistica e medica: magia, spiriti, rituali, rimedi e il funzionamento del corpo.", en: "Arcane, mystical and medical knowledge: magic, spirits, rituals, remedies and the workings of the body." }],
+    ["Socialità", "Spirito", { it: "Il modo di trattare con gli altri, gentile o duro: convincere, negoziare, intimidire. Conta l'approccio che scegli.", en: "How you deal with others, kindly or harshly: convincing, negotiating, intimidating. The approach you choose matters." }],
+    ["Intuizione", "Spirito", { it: "Leggere le intenzioni altrui: capire chi mente, cosa nasconde un silenzio, cosa vuole davvero chi ti sta davanti.", en: "Reading other people's intentions: telling who is lying, what a silence hides, what the person before you truly wants." }]
   ],
+  MALUS_AGILITA: { "Armatura leggera": 0, "Armatura media": 1, "Armatura pesante": 2, Scudo: 1 }, /* malus alle abilità di Agilità */
   MAX_ABILITA: 4,
   MAX_DOTAZIONE: 3,
 

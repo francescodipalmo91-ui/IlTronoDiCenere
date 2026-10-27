@@ -71,7 +71,7 @@ Stessa scelta del taglio (Aldo o Guendalina, `sceglieVia`), ma con abilità dive
 | Aldo | 5 | Martello del Mastro | 10 | Se ha le cariche massime e colpisci: sempre critico + Frattura per tutto lo scontro |
 | Guendalina | 3 | Rintocco | 5 | Tiro salvezza → Frastornato 1 (boss: Indebolito 2); +2 CA fino al tuo turno |
 | Guendalina | 4 | Cadenza della Campana | 8 | +1 dado; tiro salvezza → Stordito 1 (boss: Indebolito + Sbilanciato 2); prossima tecnica −2 ira |
-| Guendalina | 5 | Silenzio della Casa | 10 | +1 dado; Indebolito + Sbilanciato 3; niente attacchi speciali 2 (boss: +4 ai tuoi tiri salvezza e prove contrapposte per 3 turni); +2 CA per 3 turni |
+| Guendalina | 5 | Silenzio della Casa | 10 | +1 dado; Indebolito + Sbilanciato 3; Inibito 2 (boss: +4 ai tuoi tiri salvezza e prove contrapposte per 3 turni); +2 CA per 3 turni |
 
 ## 5. Decisioni (24/10/2026)
 

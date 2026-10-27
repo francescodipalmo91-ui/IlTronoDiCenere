@@ -57,7 +57,7 @@ window.TECNICHE = [
   { id: "squarcia", liv: 4, tipo: "Tagliente", costo: 8,
     nome: { it: "Squarcia-Articolazioni", en: "Joint Ripper" },
     desc: { it: "Una sequenza mirata a spalla e polso dell'avversario.", en: "A sequence aimed at the opponent's shoulder and wrist." },
-    effetto: { it: "Attacco con un dado di danno in più; se colpisce e il nemico fallisce il tiro salvezza, è Frastornato e non usa attacchi speciali per 2 turni.", en: "Attack with one extra damage die; on a hit, if the enemy fails its saving throw it is Dazed and uses no special attacks for 2 turns." } },
+    effetto: { it: "Attacco con un dado di danno in più; se colpisce e il nemico fallisce il tiro salvezza, è Frastornato e Inibito per 2 turni.", en: "Attack with one extra damage die; on a hit, if the enemy fails its saving throw it is Dazed and Inhibited for 2 turns." } },
   { id: "mutilazione", liv: 4, tipo: "Tagliente", costo: 8,
     nome: { it: "Mutilazione del Carnefice", en: "Executioner's Maiming" },
     desc: { it: "Un colpo brutale diretto alle parti più vulnerabili.", en: "A brutal blow at the most vulnerable points." },
@@ -191,7 +191,7 @@ window.TECNICHE = [
   { id: "silenzio_casa", liv: 5, tipo: "Contundente", costo: 10, via: "guendalina",
     nome: { it: "Silenzio della Casa", en: "Silence of the House" },
     desc: { it: "Quando colpisci tu, la casa tace.", en: "When you strike, the house falls silent." },
-    effetto: { it: "Attacco con un dado di danno in più; se colpisce, Indebolito e Sbilanciato per 3 turni e niente attacchi speciali per 2 turni (contro un avversario potente, invece, +4 ai tuoi tiri salvezza e alle prove contrapposte per 3 turni). Per 3 turni hai +2 alla Classe armatura.", en: "Attack with one extra damage die; on a hit, Weakened and Off-balance for 3 turns and no special attacks for 2 turns (against a powerful foe, +4 to your saving throws and opposed checks for 3 turns instead). For 3 turns you have +2 Armor class." } },
+    effetto: { it: "Attacco con un dado di danno in più; se colpisce, Indebolito e Sbilanciato per 3 turni e Inibito per 2 turni (contro un avversario potente, invece, +4 ai tuoi tiri salvezza e alle prove contrapposte per 3 turni). Per 3 turni hai +2 alla Classe armatura.", en: "Attack with one extra damage die; on a hit, Weakened and Off-balance for 3 turns and Inhibited for 2 turns (against a powerful foe, +4 to your saving throws and opposed checks for 3 turns instead). For 3 turns you have +2 Armor class." } },
 
   /* ---------- Armi perforanti: Precisione e Critico (Esposto: i tuoi attacchi fanno critico con un numero in meno; il critico non scende mai sotto 18) ---------- */
   { id: "cuore", liv: 1, tipo: "Perforante", costo: 2,
@@ -333,7 +333,7 @@ window.TECNICHE = [
   { id: "frantumazione", liv: 4, tipo: "Scudo", costo: 8,
     nome: { it: "Frantumazione della Riserva", en: "Reserve Breaker" },
     desc: { it: "Una carica pesantissima che spezza la concentrazione del nemico.", en: "A crushing charge that breaks the enemy's focus." },
-    effetto: { it: "Colpo di scudo con un dado di danno in più (2d6 + Vigore); se colpisce e il nemico fallisce il tiro salvezza, non usa attacchi speciali ed è Indebolito per 2 turni (boss: Indebolito e Sbilanciato per 2 turni, senza tiro).", en: "Shield strike with one extra damage die (2d6 + Vigour); on a hit, if the enemy fails its saving throw it uses no special attacks and is Weakened for 2 turns (boss: Weakened and Off-balance for 2 turns, no roll)." } },
+    effetto: { it: "Colpo di scudo con un dado di danno in più (2d6 + Vigore); se colpisce e il nemico fallisce il tiro salvezza, è Inibito e Indebolito per 2 turni (boss: Indebolito e Sbilanciato per 2 turni, senza tiro).", en: "Shield strike with one extra damage die (2d6 + Vigour); on a hit, if the enemy fails its saving throw it is Inhibited and Weakened for 2 turns (boss: Weakened and Off-balance for 2 turns, no roll)." } },
   { id: "tempesta_risacca", liv: 5, tipo: "Scudo", costo: 10,
     nome: { it: "Tempesta di Risacca", en: "Undertow Storm" },
     desc: { it: "Parate e contraccolpi in cui l'energia rimbalza tra te e il nemico.", en: "Parries and counterblows as the energy bounces between you and the enemy." },
@@ -341,7 +341,7 @@ window.TECNICHE = [
   { id: "ancoraggio", liv: 5, tipo: "Scudo", costo: 9, difesa: true,
     nome: { it: "Ancoraggio del Cosmo", en: "Cosmic Anchor" },
     desc: { it: "Sbatti lo scudo a terra in un campo di stasi.", en: "You slam the shield into the ground in a field of stasis." },
-    effetto: { it: "Consuma l'azione. Il primo colpo che ti raggiunge fa 0 danni; le Cariche Cinetiche salgono al massimo; se il nemico fallisce il tiro salvezza, non usa attacchi speciali per 3 turni (boss: Indebolito per 2 turni).", en: "Uses your action. The first blow that reaches you deals 0 damage; your Kinetic Charges rise to the maximum; if the enemy fails its saving throw, it uses no special attacks for 3 turns (boss: Weakened for 2 turns)." } },
+    effetto: { it: "Consuma l'azione. Il primo colpo che ti raggiunge fa 0 danni; le Cariche Cinetiche salgono al massimo; se il nemico fallisce il tiro salvezza, è Inibito per 3 turni (boss: Indebolito per 2 turni).", en: "Uses your action. The first blow that reaches you deals 0 damage; your Kinetic Charges rise to the maximum; if the enemy fails its saving throw, it is Inhibited for 3 turns (boss: Weakened for 2 turns)." } },
   { id: "egida", liv: 5, tipo: "Scudo", costo: 10, difesa: true, unaPerRiposo: true,
     nome: { it: "Egida del Vuoto Assoluto", en: "Aegis of the Utter Void" },
     desc: { it: "Lo scudo inghiotte tutto e lo restituisce in un'unica onda.", en: "The shield swallows everything and returns it in a single wave." },
@@ -363,15 +363,15 @@ window.TECNICHE = [
   { id: "drenaggio", liv: 3, tipo: "Scudo", costo: 5, via: "guendalina",
     nome: { it: "Drenaggio d'Urto", en: "Draining Blow" },
     desc: { it: "Un colpo di scudo che spezza la concentrazione del nemico.", en: "A shield blow that breaks the enemy's focus." },
-    effetto: { it: "Colpo di scudo (1d4 + Vigore); se colpisce e il nemico fallisce il tiro salvezza, non usa attacchi speciali per 1 turno (boss: Indebolito per 2 turni). +2 alla Classe armatura fino al tuo turno; se il nemico ti manca, +1 ira e 1 Carica Cinetica.", en: "Shield strike (1d4 + Vigour); on a hit, if the enemy fails its saving throw it uses no special attacks for 1 turn (boss: Weakened for 2 turns). +2 Armor class until your turn; if the enemy misses you, +1 rage and 1 Kinetic Charge." } },
+    effetto: { it: "Colpo di scudo (1d4 + Vigore); se colpisce e il nemico fallisce il tiro salvezza, è Inibito per 1 turno (boss: Indebolito per 2 turni). +2 alla Classe armatura fino al tuo turno; se il nemico ti manca, +1 ira e 1 Carica Cinetica.", en: "Shield strike (1d4 + Vigour); on a hit, if the enemy fails its saving throw it is Inhibited for 1 turn (boss: Weakened for 2 turns). +2 Armor class until your turn; if the enemy misses you, +1 rage and 1 Kinetic Charge." } },
   { id: "sigillo_monolito", liv: 4, tipo: "Scudo", costo: 8, via: "guendalina",
     nome: { it: "Sigillo del Monolito", en: "Monolith Seal" },
     desc: { it: "Pianti lo scudo come una pietra che nulla smuove.", en: "You plant the shield like a stone nothing can move." },
-    effetto: { it: "Colpo di scudo con un dado di danno in più (2d6 + Vigore); se colpisce e il nemico fallisce il tiro salvezza, non usa attacchi speciali per 2 turni (boss: Indebolito e Sbilanciato per 2 turni). +2 alla Classe armatura per 2 turni; la tua prossima tecnica costa 2 ira in meno.", en: "Shield strike with one extra damage die (2d6 + Vigour); on a hit, if the enemy fails its saving throw it uses no special attacks for 2 turns (boss: Weakened and Off-balance for 2 turns). +2 Armor class for 2 turns; your next technique costs 2 rage less." } },
+    effetto: { it: "Colpo di scudo con un dado di danno in più (2d6 + Vigore); se colpisce e il nemico fallisce il tiro salvezza, è Inibito per 2 turni (boss: Indebolito e Sbilanciato per 2 turni). +2 alla Classe armatura per 2 turni; la tua prossima tecnica costa 2 ira in meno.", en: "Shield strike with one extra damage die (2d6 + Vigour); on a hit, if the enemy fails its saving throw it is Inhibited for 2 turns (boss: Weakened and Off-balance for 2 turns). +2 Armor class for 2 turns; your next technique costs 2 rage less." } },
   { id: "fortezza_eterna", liv: 5, tipo: "Scudo", costo: 10, via: "guendalina",
     nome: { it: "Fortezza Eterna", en: "Eternal Fortress" },
     desc: { it: "Diventi una fortezza che non può cadere.", en: "You become a fortress that cannot fall." },
-    effetto: { it: "Colpo di scudo con un dado di danno in più (2d6 + Vigore); se colpisce, il nemico non usa attacchi speciali ed è Indebolito per 3 turni (boss: Indebolito e Sbilanciato per 2 turni). Per 3 turni +2 alla Classe armatura e, una volta per scontro, il primo colpo che ti porterebbe a 0 salute ti lascia a 1 e ti dà 3 Cariche Cinetiche.", en: "Shield strike with one extra damage die (2d6 + Vigour); on a hit, the enemy uses no special attacks and is Weakened for 3 turns (boss: Weakened and Off-balance for 2 turns). For 3 turns +2 Armor class and, once per fight, the first blow that would drop you to 0 health leaves you at 1 and gives you 3 Kinetic Charges." } },
+    effetto: { it: "Colpo di scudo con un dado di danno in più (2d6 + Vigore); se colpisce, il nemico è Inibito e Indebolito per 3 turni (boss: Indebolito e Sbilanciato per 2 turni). Per 3 turni +2 alla Classe armatura e, una volta per scontro, il primo colpo che ti porterebbe a 0 salute ti lascia a 1 e ti dà 3 Cariche Cinetiche.", en: "Shield strike with one extra damage die (2d6 + Vigour); on a hit, the enemy is Inhibited and Weakened for 3 turns (boss: Weakened and Off-balance for 2 turns). For 3 turns +2 Armor class and, once per fight, the first blow that would drop you to 0 health leaves you at 1 and gives you 3 Kinetic Charges." } },
   /* =====================================================================
      SCIAMANO (classe interna "Forestiero") — docs/tecniche_sciamano.md
      - tipo "Natura": non dipendono dall'arma; classe: "Forestiero" (il Guerriero non le vede).
@@ -411,7 +411,7 @@ window.TECNICHE = [
   { id: "radici", liv: 3, tipo: "Natura", classe: "Forestiero", costo: 5, famiglia: "radice",
     nome: { it: "Radici Strangolatrici", en: "Strangling Roots" },
     desc: { it: "Robuste radici germogliano dal terreno e afferrano il nemico.", en: "Sturdy roots sprout from the ground and seize the enemy." },
-    effetto: { it: "Senza tiro per colpire: se il nemico fallisce il tiro salvezza è Sbilanciato e senza attacchi speciali per 2 turni; se resiste, Sbilanciato per 1 turno (boss: Sbilanciato per 2 turni).", en: "No attack roll: if the enemy fails its saving throw it is Off-balance and has no special attacks for 2 turns; if it resists, Off-balance for 1 turn (boss: Off-balance for 2 turns)." } },
+    effetto: { it: "Senza tiro per colpire: se il nemico fallisce il tiro salvezza è Sbilanciato e Inibito per 2 turni; se resiste, Sbilanciato per 1 turno (boss: Sbilanciato per 2 turni).", en: "No attack roll: if the enemy fails its saving throw it is Off-balance and Inhibited for 2 turns; if it resists, Off-balance for 1 turn (boss: Off-balance for 2 turns)." } },
   { id: "fumo", liv: 3, tipo: "Natura", classe: "Forestiero", costo: 6, famiglia: "spora",
     nome: { it: "Fumo della Palude", en: "Swamp Smoke" },
     desc: { it: "Una densa cortina di spore opache e soffocanti ti avvolge.", en: "A thick curtain of murky, choking spores surrounds you." },
@@ -439,7 +439,7 @@ window.TECNICHE = [
   { id: "abbraccio", liv: 5, tipo: "Natura", classe: "Forestiero", costo: 10, famiglia: "radice",
     nome: { it: "Abbraccio della Foresta", en: "Embrace of the Forest" },
     desc: { it: "La foresta intera si chiude intorno al nemico.", en: "The whole forest closes around the enemy." },
-    effetto: { it: "Attacco con un dado di danno in più; se il nemico fallisce il tiro salvezza è senza attacchi speciali e Sbilanciato per 3 turni (boss: Sbilanciato e Indebolito per 2 turni, senza tiro). Per 3 turni +2 alla Classe armatura.", en: "Attack with one extra damage die; if the enemy fails its saving throw it has no special attacks and is Off-balance for 3 turns (boss: Off-balance and Weakened for 2 turns, no roll). For 3 turns +2 Armor class." } },
+    effetto: { it: "Attacco con un dado di danno in più; se il nemico fallisce il tiro salvezza è Inibito e Sbilanciato per 3 turni (boss: Sbilanciato e Indebolito per 2 turni, senza tiro). Per 3 turni +2 alla Classe armatura.", en: "Attack with one extra damage die; if the enemy fails its saving throw it is Inhibited and Off-balance for 3 turns (boss: Off-balance and Weakened for 2 turns, no roll). For 3 turns +2 Armor class." } },
 
   /* ---------- Vie di prestigio dello Sciamano ---------- */
   { id: "fame_parassita", liv: 3, tipo: "Natura", classe: "Forestiero", costo: 0, via: "aldo", passiva: true,

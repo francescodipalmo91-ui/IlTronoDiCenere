@@ -29,7 +29,7 @@ Bozza da leggere, **niente codice ancora**. Segue le regole del Guerriero: d20 c
 | **Accecato** | Il nemico tira 2d20 per colpire e tiene il peggiore | Massimo 2 turni |
 | **Avvizzito** | 1d4 necrotico all'inizio del turno del nemico (1d6 dove indicato). Si somma al Sanguinamento: sono due ferite diverse | Massimo 3 turni |
 
-Gli altri stati sono quelli che il gioco ha già: Indebolito, Sbilanciato, Esposto, Frastornato, Bloccato, Silenzio (niente attacchi speciali).
+Gli altri stati sono quelli che il gioco ha già: Indebolito, Sbilanciato, Esposto, Frastornato, Bloccato, Inibito (Inibito).
 
 ---
 

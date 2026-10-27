@@ -23,7 +23,7 @@
     ["stasi", 2, 4, "Stasi", "Stasis", "Tiro salvezza → Stordito per 1 turno (avversari temibili: 2 Sigilli).", "Saving throw → Stunned for 1 turn (fearsome foes: 2 Seals)."],
     ["specchio_rune", 2, 3, "Specchio di Rune", "Rune Mirror", "Consuma l'azione; il primo colpo che subisci fa metà danni e incide 1 Sigillo su chi ti ha colpito.", "Uses your action; the first blow you take deals half damage and carves 1 Seal on the attacker."],
     ["catena_glifi", 3, 5, "Catena di Glifi", "Glyph Chain", "Attacco magico, 2d6 arcano; se colpisce, 2 Sigilli.", "Spell attack, 2d6 arcane; on a hit, 2 Seals."],
-    ["sigillo_silenzio", 3, 5, "Sigillo del Silenzio", "Seal of Silence", "Tiro salvezza → senza attacchi speciali per 2 turni (avversari temibili: Indebolito 2). 1 Sigillo.", "Saving throw → no special attacks for 2 turns (fearsome foes: Weakened 2). 1 Seal."],
+    ["sigillo_silenzio", 3, 5, "Sigillo del Silenzio", "Seal of Silence", "Tiro salvezza → Inibito per 2 turni (avversari temibili: Indebolito 2). 1 Sigillo.", "Saving throw → Inhibited for 2 turns (fearsome foes: Weakened 2). 1 Seal."],
     ["disfare", 3, 4, "Disfare", "Unravel", "Ti libera dalla Presa e scarica l'attacco speciale pronto del nemico. 1 Sigillo.", "Frees you from a Grab and discharges the enemy's readied special attack. 1 Seal."],
     ["risonanza", 4, 6, "Risonanza", "Resonance", "Attacco magico, 2d8 arcano, +1d8 per ogni Sigillo, senza consumarli.", "Spell attack, 2d8 arcane, +1d8 per Seal, without spending them."],
     ["prigione_rune", 4, 7, "Prigione di Rune", "Rune Prison", "Tiro salvezza → Stordito per 2 turni (avversari temibili: Sbilanciato 2 e 1 Sigillo).", "Saving throw → Stunned for 2 turns (fearsome foes: Off-balance 2 and 1 Seal)."],
@@ -71,7 +71,7 @@
 
   const OMBRA = [
     ["tocco_avvizzente", 1, 2, "Tocco Avvizzente", "Withering Touch", "Attacco magico, 1d6 necrotico; ti curi della metà dei danni.", "Spell attack, 1d6 necrotic; you heal half the damage."],
-    ["sussurro_paura", 1, 2, "Sussurro della Paura", "Whisper of Fear", "Tiro salvezza → senza attacchi speciali per 1 turno (avversari temibili: Indebolito 1).", "Saving throw → no special attacks for 1 turn (fearsome foes: Weakened 1)."],
+    ["sussurro_paura", 1, 2, "Sussurro della Paura", "Whisper of Fear", "Tiro salvezza → Inibito per 1 turno (avversari temibili: Indebolito 1).", "Saving throw → Inhibited for 1 turn (fearsome foes: Weakened 1)."],
     ["manto_ombra", 1, 1, "Manto d'Ombra", "Cloak of Shadow", "Il prossimo attacco del nemico tira 2d20 e tiene il peggiore. Fuori dallo scontro: +2 a Furtività per una stanza.", "The enemy's next attack rolls 2d20 and keeps the worse. Outside combat: +2 Stealth for one room."],
     ["avvizzire", 2, 3, "Avvizzire", "Wither", "Tiro salvezza → Avvizzito 3.", "Saving throw → Withered 3."],
     ["sete_tenebra", 2, 4, "Sete di Tenebra", "Thirst of Darkness", "Attacco magico, 2d6 necrotico; se colpisce, recuperi 1 punto fede.", "Spell attack, 2d6 necrotic; on a hit, you recover 1 faith point."],
@@ -94,7 +94,7 @@
         ["crollo_arcano", 5, 9, "Crollo", "Collapse", "Consuma tutti i Sigilli: 2d10 forza per Sigillo, senza tiro; se il nemico arriva a 0, recuperi il mana speso.", "Spends all Seals: 2d10 force per Seal, no roll; if the enemy drops to 0, you recover the mana spent."]
       ].map(voce("forza", "aldo")),
     ...[["filo_rune", 3, 5, "Filo di Rune", "Thread of Runes", "2 Sigilli senza tiro. Per tutto lo scontro, finché il nemico ha almeno 2 Sigilli, ha −2 per colpirti.", "2 Seals with no roll. For the whole fight, while the enemy has at least 2 Seals, it has −2 to hit you."],
-        ["ricamo_rune", 4, 7, "Ricamo di Rune", "Rune Embroidery", "Tiro salvezza → senza attacchi speciali 2 ed Esposto 2 (avversari temibili: Indebolito ed Esposto 2); il prossimo incantesimo costa 2 in meno.", "Saving throw → no special attacks 2 and Exposed 2 (fearsome foes: Weakened and Exposed 2); your next spell costs 2 less."],
+        ["ricamo_rune", 4, 7, "Ricamo di Rune", "Rune Embroidery", "Tiro salvezza → Inibito 2 ed Esposto 2 (avversari temibili: Indebolito ed Esposto 2); il prossimo incantesimo costa 2 in meno.", "Saving throw → Inhibited 2 and Exposed 2 (fearsome foes: Weakened and Exposed 2); your next spell costs 2 less."],
         ["quiete_assoluta", 5, 9, "Quiete Assoluta", "Absolute Stillness", "Per 3 turni gli incantesimi d'Arcano non costano mana: ognuno consuma 1 Sigillo al suo posto (senza Sigilli si paga normalmente).", "For 3 turns Arcane spells cost no mana: each spends 1 Seal instead (with no Seals you pay as usual)."]
       ].map(voce("arcano", "guendalina")),
     ...[["rancore", 3, 5, "Rancore", "Grudge", "Attacco magico, 2d6 necrotico, +1d6 per ogni colpo subito in questo scontro (massimo 3).", "Spell attack, 2d6 necrotic, +1d6 per blow taken this fight (maximum 3)."],

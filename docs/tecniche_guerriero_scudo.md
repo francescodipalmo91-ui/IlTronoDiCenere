@@ -18,7 +18,7 @@ Lo scudo non è un'arma: le sue tecniche si usano con **qualsiasi arma a una man
 | 6 | Raddoppia la tua risorsa, blocca il nemico per tutto lo scontro | 14 | Troppo forte: Cariche al massimo e blocco a turni |
 | 7 | Danni pari a tutti quelli tentati nello scontro, azione extra, "consuma tutto" | 15 | Ridimensionata sulle Cariche, una volta per riposo come gli altri livello 5 |
 | 8 | 4 colpi nella Tempesta | 13 | Portati a 3, come le altre Cateratte |
-| 9 | Contro i boss "senza attacchi speciali" non funziona (immuni) | 5, 12, 14 | Ripiego per i boss su Indebolito e Sbilanciato |
+| 9 | Contro i boss "Inibito" non funziona (immuni) | 5, 12, 14 | Ripiego per i boss su Indebolito e Sbilanciato |
 | 10 | Le 6 tecniche di scudo attuali si sovrappongono | Codice | Tolte tutte (vedi Decisioni) |
 
 ## 2. Regole nuove
@@ -45,16 +45,16 @@ Lo scudo non è un'arma: le sue tecniche si usano con **qualsiasi arma a una man
 | 1 | Postura Salda | 2 | Consuma l'azione; +3 CA fino al tuo turno e la Presa non ti afferra; se il nemico ti manca, 1 Carica |
 | 1 | Rimbalzo della Marea | 3 | Consuma l'azione; il primo colpo subito fa metà danni, l'altra metà colpisce il nemico senza tiro; 1 Carica |
 | 2 | Batteria Cinetica | 4 | Consuma l'azione; il primo colpo subito fa 0 danni ma ti dà l'ira come se fosse andato a segno; 1 Carica |
-| 2 | Spinta della Risacca | 4 | Colpo di scudo 1d6; tiro salvezza → perde l'attacco speciale pronto (il Soffio va ricaricato) e niente attacchi speciali 1; se resiste (o è un boss) Sbilanciato 1 |
+| 2 | Spinta della Risacca | 4 | Colpo di scudo 1d6; tiro salvezza → perde l'attacco speciale pronto (il Soffio va ricaricato) e Inibito 1; se resiste (o è un boss) Sbilanciato 1 |
 | 2 | Muro di Assorbimento | 5 | Consuma l'azione; il primo colpo subito fa 0 danni e ti dà 3 Cariche |
 | 3 | Inversione della Marea | 5 | Colpo di scudo; se il nemico ti ha colpito nel suo ultimo turno, +1 dado e +2 CA per 2 turni |
 | 3 | Onda di Ritorno | 6 | Spendi tutte le Cariche (almeno 1): 1d6 per Carica + mod Vigore, senza tiro per colpire |
 | 3 | Baluardo d'Acciaio | 6 | Consuma l'azione; per 2 turni +2 CA, ogni colpo subito ti dà il doppio dell'ira e 1 Carica |
 | 4 | Risucchio della Voragine | 7 | Colpo di scudo 1d6, +1 dado; se colpisce, 1 Carica e recuperi 1d4 ira |
 | 4 | Postura del Mare Profondo | 8 | Consuma l'azione; fino al tuo turno ogni colpo subito fa 0 danni e ti dà 1 Carica; all'inizio del tuo turno l'onda colpisce senza tiro per 1d6 + mod Vigore per ogni colpo assorbito |
-| 4 | Frantumazione della Riserva | 8 | Colpo di scudo 1d6, +1 dado; tiro salvezza → niente attacchi speciali 2 + Indebolito 2 (boss: Indebolito + Sbilanciato 2) |
+| 4 | Frantumazione della Riserva | 8 | Colpo di scudo 1d6, +1 dado; tiro salvezza → Inibito 2 + Indebolito 2 (boss: Indebolito + Sbilanciato 2) |
 | 5 | Tempesta di Risacca | 10 | 3 colpi di scudo col solo dado, ognuno a segno dà 1 Carica; 3 su 3 + tiro salvezza → Stordito 1 (boss: Sbilanciato 2) |
-| 5 | Ancoraggio del Cosmo | 9 | Consuma l'azione; il primo colpo subito fa 0 danni; Cariche al massimo; tiro salvezza → niente attacchi speciali 3 (boss: Indebolito 2) |
+| 5 | Ancoraggio del Cosmo | 9 | Consuma l'azione; il primo colpo subito fa 0 danni; Cariche al massimo; tiro salvezza → Inibito 3 (boss: Indebolito 2) |
 | 5 | Egida del Vuoto Assoluto | 10 | Una volta per riposo; consuma l'azione; fino al tuo turno ogni colpo fa 0 danni e ti dà 1 Carica; all'inizio del tuo turno, senza spendere l'azione, rilasci 2d6 per Carica + mod Vigore senza tiro, e le Cariche si azzerano |
 
 Note:
@@ -71,7 +71,7 @@ Stessa scelta degli altri rami (Aldo o Guendalina, `sceglieVia`) e stessa strutt
 | # | Problema | Dove | Soluzione |
 |---|---|---|---|
 | 1 | 2 abilità su 3 per livello, molte passive | Tutte | Il gioco dà 1 abilità della via per livello: le passive migliori diventano l'effetto "finché…" dell'abilità attiva, come Marchio del Guardiano e Sigillo del Demolitore |
-| 2 | Furia del nemico (drenare, azzerare, nemico a zero furia) | Postura A2, A3, B2, B3, C1, C3 | Diventa "niente attacchi speciali", con ripiego per i boss, e ira per te |
+| 2 | Furia del nemico (drenare, azzerare, nemico a zero furia) | Postura A2, A3, B2, B3, C1, C3 | Diventa "Inibito", con ripiego per i boss, e ira per te |
 | 3 | Cariche massime +2, Cariche che non decadono | Risacca A1, C1 | Le Cariche durano già tutto lo scontro; il massimo resta 3 (deciso) |
 | 4 | Percentuali (15% respinto, 40%, +25% per carica, 50% di non consumare, +30% Difesa, +20% danni, 15% e 20% dei PV) | Quasi tutte | Convertite in dadi, metà danni e CA |
 | 5 | Danno pari a tutti i colpi parati nello scontro | Risacca C3 | Contatore dei colpi assorbiti, con tetto |
@@ -95,9 +95,9 @@ Stessa scelta degli altri rami (Aldo o Guendalina, `sceglieVia`) e stessa strutt
 
 | Liv | Abilità | Costo | Effetto |
 |---|---|---|---|
-| 3 | Drenaggio d'Urto | 5 | Colpo di scudo; tiro salvezza → niente attacchi speciali 1 (boss: Indebolito 2); +2 CA fino al tuo turno; se il nemico ti manca, +1 ira e 1 Carica |
-| 4 | Sigillo del Monolito | 8 | Colpo di scudo 1d6, +1 dado; tiro salvezza → niente attacchi speciali 2 (boss: Indebolito + Sbilanciato 2); +2 CA per 2 turni; prossima tecnica −2 ira |
-| 5 | Fortezza Eterna | 10 | Colpo di scudo 1d6, +1 dado; niente attacchi speciali 3 + Indebolito 3 (boss: Indebolito + Sbilanciato 2); per 3 turni +2 CA e, una volta per scontro, il primo colpo che ti porterebbe a 0 salute ti lascia a 1 e ti dà 3 Cariche |
+| 3 | Drenaggio d'Urto | 5 | Colpo di scudo; tiro salvezza → Inibito 1 (boss: Indebolito 2); +2 CA fino al tuo turno; se il nemico ti manca, +1 ira e 1 Carica |
+| 4 | Sigillo del Monolito | 8 | Colpo di scudo 1d6, +1 dado; tiro salvezza → Inibito 2 (boss: Indebolito + Sbilanciato 2); +2 CA per 2 turni; prossima tecnica −2 ira |
+| 5 | Fortezza Eterna | 10 | Colpo di scudo 1d6, +1 dado; Inibito 3 + Indebolito 3 (boss: Indebolito + Sbilanciato 2); per 3 turni +2 CA e, una volta per scontro, il primo colpo che ti porterebbe a 0 salute ti lascia a 1 e ti dà 3 Cariche |
 
 - **Drenaggio d'Urto** riunisce Drenaggio d'Urto e Parassita Posturale (il nemico che ti manca ti "regala" ira).
 - **Sigillo del Monolito** riunisce Sigillo e Postura di Marmo (+2 CA), con lo sconto sulla tecnica successiva come Ritmo del Duello e Cadenza della Campana.

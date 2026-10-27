@@ -36,7 +36,7 @@ Versione finale, ora nel codice. Le regole stanno in `js/combattimento.js`; le t
 | Sbilanciato | −2 alla CA | Massimo 2 turni |
 | Frastornato | −4 per colpire, niente critici | Immune, senza tiro |
 | Stordito | Salta il turno | Immune, senza tiro |
-| Senza attacchi speciali | Niente Presa né Soffio | Immune, senza tiro |
+| Inibito | Niente Presa né Soffio | Immune, senza tiro |
 | Esecuzione (Mutilazione) | Nemico comune sotto 1/4 della salute | Mai |
 
 **Boss:** Guendalina, Aldo, il sovrano, Adele, Ettore, Enea, Dafne, Atena, il mastino a due teste e il mastino della camera di Adele. Nel codice basta `boss: true` in `NEMICI`; oggi esiste solo Ettore.
@@ -54,7 +54,7 @@ Versione finale, ora nel codice. Le regole stanno in `js/combattimento.js`; le t
 | 3 | Eco del Metallo Stridente | 6 | Tiro salvezza → Stordito 1; se resiste (o è un boss) Sbilanciato 1 |
 | 3 | Lacerazione delle Arterie | 6 | Emorragia 1d6 per 3, recuperi 1d4 salute |
 | 3 | Spezza-Guardia | 5 | Sbilanciato 2, +2 per colpire al prossimo attacco |
-| 4 | Squarcia-Articolazioni | 8 | +1 dado; tiro salvezza → Frastornato 2 + niente attacchi speciali 2 |
+| 4 | Squarcia-Articolazioni | 8 | +1 dado; tiro salvezza → Frastornato 2 + Inibito 2 |
 | 4 | Mutilazione del Carnefice | 8 | +1 dado; Indebolito 3 + Sanguinamento 2; esecuzione sotto 1/4 (comuni) |
 | 4 | Parata Mutilante | 7 | Consuma l'azione; il primo colpo fa 0 danni, contrattacco + Sanguinamento 2 |
 | 5 | Cateratta delle Cento Lacerazioni | 10 | 3 attacchi col solo dado, rinnovano il sanguinamento; 3 su 3 + tiro salvezza → Stordito 1 |

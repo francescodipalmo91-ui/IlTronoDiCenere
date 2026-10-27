@@ -77,7 +77,7 @@ caso("Sala di prova: Squarcia-Articolazioni su un mastino comune blocca Presa e 
   await page.click('[data-tec="squarcia"]');
   const st = await page.evaluate(() => SalaProva.stato().s.eff);
   eq(st.silenzio, 1, "silenzio dopo un turno nemico"); eq(st.frastornato, 1);
-  const log = await page.innerText("#svLog"); vero(!/Soffio Infuocato|Presa:/.test(log), "il mastino ha usato un attacco speciale"); vero(/Senza attacchi speciali/.test(await page.innerText("#svNem")), "scheda nemico senza lo stato");
+  const log = await page.innerText("#svLog"); vero(!/Soffio Infuocato|Presa:/.test(log), "il mastino ha usato un attacco speciale"); vero(/Inibito/.test(await page.innerText("#svNem")), "scheda nemico senza lo stato");
   eq(errori, [], "errori"); await chiudi();
 });
 caso("Sala di prova: un boss ignora lo stordimento di Eco del Metallo e resta Sbilanciato", async (b) => {

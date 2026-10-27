@@ -50,7 +50,7 @@ Adattamento della lista originale (13 poteri in tempo reale) alle regole del gio
 |---|---|---|
 | **Avvelenato** | 1d4 danni da veleno all'inizio del turno del nemico (**Tossina:** 1d6). Si somma a Sanguinamento e Avvizzito; un nuovo Avvelenato rinnova, non si somma | Sì, massimo 2 turni |
 
-Gli altri effetti usano stati che esistono già: Indebolito, Sbilanciato, Accecato, Frastornato, Stordito, Senza attacchi speciali.
+Gli altri effetti usano stati che esistono già: Indebolito, Sbilanciato, Accecato, Frastornato, Stordito, Inibito.
 
 ### Resistenza al veleno (DECISO)
 
@@ -77,14 +77,14 @@ Nel codice: `resiste: ["veleno"]` per Dafne e il sovrano (danno dimezzato), in `
 | 2 | Baccello Esplosivo | Trappola | 4 | Attacco normale; il baccello scoppia al prossimo attacco del nemico: Accecato 2 |
 | 2 | Pelle di Corteccia e Resina | Difesa | 5 | Attacco normale; fino al tuo prossimo turno il primo colpo che subisci fa metà danni e l'aggressore subisce 1d4 danni da acido |
 | 3 | Spore Paralizzanti | Rivestimento | 6 | Attacco normale; per 3 turni ogni colpo a segno dà Indebolito 1; al primo colpo a segno il nemico fa un tiro salvezza → Stordito 1 (boss: Indebolito 2) |
-| 3 | Radici Strangolatrici | Radice | 5 | Tiro salvezza → Sbilanciato 2 + Senza attacchi speciali 2; se resiste, Sbilanciato 1 (boss: Sbilanciato 2) |
+| 3 | Radici Strangolatrici | Radice | 5 | Tiro salvezza → Sbilanciato 2 + Inibito 2; se resiste, Sbilanciato 1 (boss: Sbilanciato 2) |
 | 3 | Fumo della Palude | Spora | 6 | Consuma l'azione; il nemico è Accecato 2 e tu hai +2 CA per 2 turni |
 | 4 | Miasma Corrosivo | Rivestimento | 8 | Attacco con +1 dado; per 3 turni ogni colpo a segno dà Avvelenato 2 e Sbilanciato 2 |
 | 4 | Botola di Spore | Trappola | 7 | Attacco normale; al prossimo attacco del nemico: tiro salvezza → Frastornato 2; se resiste (o è un boss), Accecato 2 |
 | 4 | Linfa Furiosa | Potenziamento | 8 | Attacco normale; per 3 turni fai un attacco in più a ogni turno (solo il dado dell'arma). Alla fine subisci 1d6 danni |
 | 5 | Fioritura del Parassita Colossale | Spora | 10 | Una volta per riposo. Consuma l'azione. Il bulbo vive 3 turni: all'inizio di ogni turno del nemico gli fa 1d6 veleno e rinnova Avvelenato e Sbilanciato; tu recuperi 1d4 salute a ogni tuo turno. Al terzo turno esplode: 2d6 + mod Spirito, tiro salvezza → Stordito 1 (boss: Indebolito 2) |
 | 5 | Cuore di Tossina *(nuova)* | Spora | 9 | Attacco con +1 dado; se il nemico è Avvelenato, il veleno diventa Tossina per 3 turni + Indebolito 3; altrimenti Avvelenato 2 |
-| 5 | Abbraccio della Foresta *(nuova)* | Radice | 10 | Attacco con +1 dado; tiro salvezza → Senza attacchi speciali 3 + Sbilanciato 3 (boss: Sbilanciato + Indebolito 2); per 3 turni +2 CA |
+| 5 | Abbraccio della Foresta *(nuova)* | Radice | 10 | Attacco con +1 dado; tiro salvezza → Inibito 3 + Sbilanciato 3 (boss: Sbilanciato + Indebolito 2); per 3 turni +2 CA |
 
 Note:
 - Linfa Furiosa: i 1d6 finali non si riducono e non danno natura.

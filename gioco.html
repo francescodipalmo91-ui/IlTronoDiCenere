@@ -979,17 +979,26 @@
           banner: "SUCCESSO, hai ferito il sovrano del trono di cenere !!",
           no: ["Distogli lo sguardo e ritrai i passi, una mano stretta contro il fianco. Il richiamo non svanisce: aspetta, paziente, come ha sempre fatto."],
           ritenta: ["Il richiamo non è cessato. L'armatura è lì, immobile, e la spada vibra appena tra le dita di ferro, come se ti chiamasse per nome."],
-          bloccata: "Il richiamo ti attraversa di nuovo, ma la mente è ancora scossa dall'ultimo assalto: non reggeresti la presa. Prima devi riposare.",
-          prova: "Il richiamo preme sulla tua mente. Resistergli richiede una prova di Spirito.",
-          placato: ["Sali verso l'armatura, preparandoti all'urto. Ma stavolta la pressione non viene. Il richiamo, respinto tre volte, sembra essersi stancato di testarti: scivola via da te come un'onda che si ritira, e ti lascia passare."],
-          respintoDi: ["La pressione ti schiaccia le tempie e ti ricaccia indietro. Ricordi la visione e il suo sapore amaro, ma stavolta non ti travolge: ti limiti a barcollare, con le orecchie che fischiano.", "Non riuscirai a tenere quella presa finché non avrai riposato."],
+          prova: "Il richiamo preme sulla tua mente, sottile e insistente. Per coglierlo serve una prova di Intuizione.",
+          attesa: ["Sali verso l'armatura. La spada riposa immobile tra le dita di ferro, muta. Hai la sensazione che stia aspettando qualcosa: qualcosa di freddo e prezioso che ancora non porti con te."],
+          chiamataPersa: ["Il richiamo ti sfugge come un sussurro coperto dal vento. La spada smette di vibrare e torna immobile tra le dita di ferro.", "Forse tornerà a chiamarti, quando avrai trovato qualcos'altro che le appartiene."],
+          esaurita: ["Sali verso l'armatura, ma la spada non vibra più. Qualunque cosa la tenga legata a quelle dita di ferro, non sarai tu a spezzarla. Non da solo, almeno."],
+          nuovaChiamata: "Lontano, nell'atrio, ti sembra di sentire la spada vibrare tra i guanti dell'armatura. Ti sta chiamando di nuovo.",
+          gesto: ["La pressione sulle tempie si scioglie all'improvviso. La spada vibra tra i guanti dell'armatura, la lama attraversata da una luce sottile, ma le dita di ferro non si aprono.", "Non vuole essere presa. Vuole qualcosa da te."],
+          gestoBtn: { impugna: "Stringi l'elsa e tira", inginocchia: "Inginocchiati davanti all'armatura", chiama: "Chiamala ad alta voce" },
+          gestoNo: {
+            impugna: ["Stringi l'elsa e tiri con tutta la tua forza. Le dita di ferro si serrano come una morsa, e un gelo ti risale il braccio fino alle tempie. Lasci la presa, con la mano intorpidita."],
+            chiama: ["La tua voce rimbomba nell'atrio vuoto e ti torna indietro estranea, come se fosse di un altro. La spada non risponde."]
+          },
+          gestoSi: ["Pieghi un ginocchio sul marmo, davanti all'armatura, e chini il capo, come il cavaliere della vetrata alle tue spalle.", "Per un lungo istante non accade nulla. Poi, sopra di te, senti il ferro scricchiolare: le dita dell'armatura si allentano."],
+          respintoDi: ["La pressione ti schiaccia le tempie e ti ricaccia indietro. Ricordi la visione e il suo sapore amaro, ma stavolta non ti travolge: ti limiti a barcollare, con le orecchie che fischiano."],
           respinge: (d) => `L'armatura non si lascia toccare: subisci danni mentali pari a 1d${d}.`,
-          respinto: [
-            "Una fitta lancinante ti attraversa la testa. Istintivamente porti le mani alle orecchie mentre le gambe cedono e crolli a terra, sostenendoti su un ginocchio.",
-            "Poi la visione ti investe.",
-            "Una famiglia felice è riunita attorno a una tavola imbandita in un elegante giardino. Pranzano sotto l'ombra rassicurante di un grande albero, mentre alle loro spalle si erge una villa immensa e sfarzosa. Poco distante, un maggiordomo e una cameriera osservano la scena con sorrisi caldi e benevoli, quasi fossero parte di quella serenità.",
+          respinto: [ /* visione del giardino (Francesco, 26/10): Adele incinta di Agnese, al tavolo il figlio maggiore e Lorenzo */
+            "Una fitta improvvisa e lancinante ti trafigge le tempie, costringendoti a barcollare e a portare le mani al capo per soffocare il dolore. Quando riapri gli occhi, il mondo è cambiato: l'atrio della dimora e la vecchia armatura sono svaniti nel nulla, sostituiti da una realtà improvvisa e lontana.",
+            "Sei testimone di una visione, cristallizzata in un giardino baciato da una luce calda e irreale. Intorno a un tavolo di legno massello, quattro persone godono della quiete di un mattino qualunque. Un uomo e una donna conversano a bassa voce, immersi in un'intesa serena; lei, con un gesto tenero e istintivo, si accarezza il ventre arrotondato con un sorriso luminoso. Poco distante, seduti sul prato o aggrappati alle sedie, due maschietti ridono spensierati, muovendo tra le dita piccoli giocattoli intagliati nel legno.",
+            "Più in disparte, immobili come statue silenziose ma vigili, due domestici, un uomo e una donna, osservano la scena. I loro volti sono rigati da sorrisi gentili e accoglienti.",
             "Eppure qualcosa non va.",
-            "Nonostante i volti sorridenti, l'aria è intrisa di malinconia. Una tristezza sottile e indefinibile permea ogni dettaglio della scena, come l'eco di un dolore lontano che nessuno sembra vedere, ma che tu percepisci con chiarezza assoluta."
+            "Nonostante i volti sorridenti, l'aria è intrisa di malinconia: una tristezza sottile e indefinibile, come l'eco di un dolore lontano che nessuno di loro sembra vedere, ma che tu percepisci con chiarezza assoluta."
           ]
         },
         spada: {
@@ -1414,17 +1423,26 @@
           banner: "SUCCESS, you have wounded the sovereign of the throne of ashes!!",
           no: ["You look away and step back, one hand pressed against your side. The call does not fade: it waits, patient, as it always has."],
           ritenta: ["The call has not ceased. The armor stands there, motionless, and the sword quivers faintly between the iron fingers, as if calling you by name."],
-          bloccata: "The call runs through you again, but your mind is still shaken from the last assault: you could not bear its grip. You must rest first.",
-          prova: "The call presses on your mind. Resisting it takes a Spirit check.",
-          placato: ["You climb towards the armor, bracing for the blow. But this time the pressure does not come. The call, rebuffed three times, seems tired of testing you: it slips away from you like a retreating wave, and lets you through."],
-          respintoDi: ["The pressure crushes your temples and drives you back. You remember the vision and its bitter taste, but this time it does not overwhelm you: you merely stagger, ears ringing.", "You will not be able to bear that grip until you have rested."],
+          prova: "The call presses on your mind, faint and insistent. Catching it takes an Insight check.",
+          attesa: ["You climb towards the armor. The sword rests motionless between the iron fingers, silent. You sense it is waiting for something: something cold and precious that you do not yet carry."],
+          chiamataPersa: ["The call slips away from you like a whisper drowned by the wind. The sword stops quivering and lies still between the iron fingers.", "Perhaps it will call you again, once you have found something else that belongs to it."],
+          esaurita: ["You climb towards the armor, but the sword no longer quivers. Whatever binds it to those iron fingers, you will not be the one to break it. Not alone, at least."],
+          nuovaChiamata: "Far away, in the hall, you seem to hear the sword quivering between the armor's gauntlets. It is calling you again.",
+          gesto: ["The pressure on your temples suddenly melts away. The sword quivers between the armor's gauntlets, a faint light running along the blade, but the iron fingers do not open.", "It does not want to be taken. It wants something from you."],
+          gestoBtn: { impugna: "Grip the hilt and pull", inginocchia: "Kneel before the armor", chiama: "Call to it aloud" },
+          gestoNo: {
+            impugna: ["You grip the hilt and pull with all your strength. The iron fingers clamp shut like a vice, and a chill runs up your arm to your temples. You let go, your hand numb."],
+            chiama: ["Your voice booms through the empty hall and comes back to you strange, as if it belonged to someone else. The sword does not answer."]
+          },
+          gestoSi: ["You bend one knee on the marble before the armor and bow your head, like the knight in the stained glass behind you.", "For a long moment nothing happens. Then, above you, you hear iron creak: the armor's fingers loosen."],
+          respintoDi: ["The pressure crushes your temples and drives you back. You remember the vision and its bitter taste, but this time it does not overwhelm you: you merely stagger, ears ringing."],
           respinge: (d) => `The armor will not let itself be touched: you take 1d${d} mental damage.`,
           respinto: [
-            "A piercing pain shoots through your head. Instinctively you clap your hands to your ears as your legs give way and you collapse, holding yourself up on one knee.",
-            "Then the vision overwhelms you.",
-            "A happy family is gathered around a laden table in an elegant garden. They dine in the reassuring shade of a great tree, while behind them rises an immense, sumptuous villa. Not far away, a butler and a maid watch the scene with warm, kindly smiles, almost as if they were part of that serenity.",
+            "A sudden, piercing pain stabs your temples, making you stagger and clutch your head to stifle it. When you open your eyes again, the world has changed: the hall of the mansion and the old armor have vanished, replaced by a reality sudden and far away.",
+            "You are witness to a vision, frozen in a garden kissed by a warm, unreal light. Around a solid wooden table, four people enjoy the quiet of an ordinary morning. A man and a woman talk softly, lost in a calm understanding; she, with a tender, instinctive gesture, strokes her rounded belly with a radiant smile. Not far away, sitting on the lawn or clinging to the chairs, two little boys laugh carefree, turning small carved wooden toys between their fingers.",
+            "Further off, still as silent but watchful statues, two servants, a man and a woman, watch the scene. Their faces are lined with gentle, welcoming smiles.",
             "And yet something is wrong.",
-            "Despite the smiling faces, the air is steeped in melancholy. A subtle, indefinable sadness pervades every detail of the scene, like the echo of a distant pain that no one seems to see, but which you perceive with absolute clarity."
+            "Despite the smiling faces, the air is steeped in melancholy: a subtle, indefinable sadness, like the echo of a distant pain that none of them seems to see, but which you perceive with absolute clarity."
           ]
         },
         spada: {
@@ -3713,7 +3731,7 @@
             lascia: "Ritrai le mani dalla pietra."
           },
           cripta_sarcofago: {
-            fisso: ["Il sarcofago più antico, in fondo alla cripta, ha il coperchio scolpito con un cavaliere disteso e la scritta «Primo dei Vespera». Sotto il nome, un albero dalle radici intrecciate. Una crepa corre lungo il bordo: con abbastanza forza (una prova di Atletica, difficoltà 14) si potrebbe spostare il coperchio. Se la prova fallisce ti schiacci le dita (1d4 danni non letali), ma puoi riprovare."],
+            fisso: ["Il sarcofago più antico, in fondo alla cripta, ha il coperchio scolpito con un cavaliere disteso e la scritta «Primo dei Vespera». Sotto il nome, un albero dalle radici intrecciate. Una crepa corre lungo il bordo: con abbastanza forza (una prova di Atletica, difficoltà 12) si potrebbe spostare il coperchio. Se la prova fallisce ti schiacci le dita (1d4 danni non letali), ma puoi riprovare."],
             ancora: ["Torni a puntare le mani sul bordo del coperchio."],
             azione: "Punti i piedi sulla pietra, infili le dita sotto il bordo del coperchio e spingi con tutta la tua forza.",
             successo: ["Con uno stridio di pietra contro pietra, il coperchio scivola di un palmo. Dentro, tra le ossa avvolte in un mantello consumato, brilla un anello d'oro rosso, inciso con un albero dalle radici intrecciate e una scritta: «Dal fuoco nasciamo, nel fuoco torniamo»."],
@@ -3741,6 +3759,14 @@
           ottenuta: "Oggetto ottenuto: Acqua benedetta ×2 (nello zaino)."
         },
         anello: { nome: "Anello del Primo Vespera", testo: "Reliquia del capostipite dei Vespera: un anello d'oro rosso, inciso con l'albero dalle radici intrecciate e il motto della casata, «Dal fuoco nasciamo, nel fuoco torniamo». Al dito è tiepido, come una mano posata sulla spalla. Protezione del capostipite: +1 alla Classe Armatura finché lo porti. Coraggio dei Vespera: in combattimento, quando la tua salute fisica scende a un quarto o meno, +1 ai tiri per colpire.",
+          visioneDanno: (d) => `La visione ti ferisce: subisci danni mentali pari a 1d${d}.`,
+          visione: [ /* visione dell'anello (Francesco, 26/10): il funerale di Lorenzo */
+            "Un'altra fitta spaventosa ti trafigge le tempie. Cerchi aria a vuoto mentre ti aggrappi al sarcofago per non crollare, prima che il buio inghiotta ogni cosa.",
+            "Riapri gli occhi e la realtà è incrinata: il braciere e il giaciglio di Ettore sono svaniti. Al loro posto, la fatiscente cripta è divenuta una solenne camera funeraria, soffocata dal profumo denso di fiori freschi.",
+            "Ti volti verso l'ingresso. Un brivido ti percuote: l'ambiente è gremito di figure spettrali. Ti fissano, ma i loro occhi sono privi di vita. Solo un volto risalta nitido: è la donna del ritratto sopra il camino della sala da conversazione. È pietrificata dal dolore, una sola lacrima a solcarle il viso.",
+            "Comprendi di essere invisibile. Segui i loro sguardi e il sangue ti si gela: alle tue spalle giace ora una piccola bara cerimoniale.",
+            "Poi, un secondo dolore ti squarcia la testa e l'oscurità torna a divorare la visione."
+          ],
           ottenuto: "Oggetto ottenuto: Anello del Primo Vespera, reliquia (nello zaino). Indossalo dallo zaino, oppure scrivi «indosso l'anello».",
           reliquia: ["Lo prendi tra le dita. L'oro è caldo, troppo caldo per un oggetto rimasto secoli in una tomba, e per un istante senti addosso uno sguardo antico e severo: non ostile, ma vigile. Come quello di un padre che osserva il figlio partire per la guerra."],
           indossi: ["Infili l'anello al dito. Un calore lento ti risale il braccio e si posa sulle spalle, come un mantello. Ti senti osservato da qualcuno che non ti lascerà cadere facilmente."],
@@ -3866,7 +3892,7 @@
             lascia: "You take your hands off the stone."
           },
           cripta_sarcofago: {
-            fisso: ["The oldest sarcophagus, at the back of the crypt, has a lid carved with a reclining knight and the words “First of the Vespera”. Beneath the name, a tree with intertwined roots. A crack runs along the edge: with enough strength (an Athletics check, difficulty 14) the lid could be moved. If the check fails you crush your fingers (1d4 non-lethal damage), but you can try again."],
+            fisso: ["The oldest sarcophagus, at the back of the crypt, has a lid carved with a reclining knight and the words “First of the Vespera”. Beneath the name, a tree with intertwined roots. A crack runs along the edge: with enough strength (an Athletics check, difficulty 12) the lid could be moved. If the check fails you crush your fingers (1d4 non-lethal damage), but you can try again."],
             ancora: ["You brace your hands against the edge of the lid again."],
             azione: "You plant your feet on the stone, slide your fingers under the edge of the lid and push with all your strength.",
             successo: ["With a screech of stone on stone, the lid slides a hand's breadth. Inside, among bones wrapped in a worn cloak, gleams a ring of red gold, engraved with a tree with intertwined roots and the words: “From fire we are born, to fire we return”."],
@@ -3894,6 +3920,14 @@
           ottenuta: "Item obtained: Holy water ×2 (in your pack)."
         },
         anello: { nome: "Ring of the First Vespera", testo: "Relic of the founder of the Vespera: a ring of red gold, engraved with the intertwined-root tree and the family motto, “From fire we are born, to fire we return”. On the finger it is warm, like a hand resting on your shoulder. Founder's protection: +1 Armor Class while you wear it. Courage of the Vespera: in combat, when your physical health drops to a quarter or less, +1 to attack rolls.",
+          visioneDanno: (d) => `The vision wounds you: you take 1d${d} mental damage.`,
+          visione: [
+            "Another terrible pain stabs your temples. You gasp for air as you cling to the sarcophagus so as not to collapse, before the darkness swallows everything.",
+            "You open your eyes and reality is cracked: Ettore's brazier and bedroll have vanished. In their place, the crumbling crypt has become a solemn funeral chamber, stifled by the thick scent of fresh flowers.",
+            "You turn towards the entrance. A shiver runs through you: the room is crowded with ghostly figures. They stare at you, but their eyes are lifeless. Only one face stands out clearly: the woman in the portrait above the drawing-room fireplace. She is frozen with grief, a single tear running down her face.",
+            "You realise you are invisible. You follow their gaze and your blood runs cold: behind you now lies a small ceremonial coffin.",
+            "Then a second pain tears through your head and the darkness devours the vision once more."
+          ],
           ottenuto: "Item obtained: Ring of the First Vespera, relic (in your pack). Wear it from your pack, or write “I wear the ring”.",
           reliquia: ["You take it between your fingers. The gold is warm, far too warm for something left for centuries in a tomb, and for a moment you feel an ancient, stern gaze upon you: not hostile, but watchful. Like a father watching his son leave for war."],
           indossi: ["You slip the ring onto your finger. A slow warmth climbs your arm and settles on your shoulders like a cloak. You feel watched by someone who will not let you fall easily."],
@@ -4702,7 +4736,7 @@
       cappella_tracce: { prova: { abilita: "Indagare", dado: 20, cd: 12 }, poi: (ok) => { if (ok) { usate.ettore_tracce = true; salvaUsate(); applicaTracce(); } } },
       cripta_tomba: {},
       cripta_nicchie: { prova: { abilita: "Indagare", dado: 20, cd: 12 }, poi: (ok) => { if (ok) trovaPagina(4); } },
-      cripta_sarcofago: { prova: { abilita: "Atletica", dado: 20, cd: 14 }, riprova: true, nessunDanno: true, poi: (ok) => sarcofago(ok) },
+      cripta_sarcofago: { prova: { abilita: "Atletica", dado: 20, cd: 12 }, riprova: true, nessunDanno: true, poi: (ok) => sarcofago(ok) },
       cripta_braciere_spento: {},
       cappella_altare: { prova: { abilita: "Indagare", dado: 20, cd: 12 }, riprova: true, nessunDanno: true, poi: (ok) => { if (ok && usate.q3 === "accettata") prendiBlasone(); } },
       cappella_altare_vuoto: {}, cappella_panche: {},
@@ -6418,6 +6452,7 @@
       usate.q3 = "completata"; salvaUsate();
       aggiungi({ tipo: "narra", righe: Q.q3.inserisci });
       sblocco(Q.sblocco.completata3, "mis"); disegnaMissioni();
+      avvisaChiamata();
     }
 
     /* ---------- Razioni di Adele (nello zaino, come materiale) ---------- */
@@ -6496,8 +6531,8 @@
       offriPreparazione();
     }
     function offriPreparazione() { /* chiamata solo dopo un riposo riuscito */
-      usate.perRiposo = {}; if (usate.scale === "ko") usate.scale = "no"; salvaUsate();
-      riempiBorse(); aggiornaEquip(); modificato(); /* la borsa dei veleni torna piena */ /* la spada può richiamarti di nuovo */ /* Cataclisma del Filo Rovinato torna disponibile */
+      usate.perRiposo = {}; if (usate.scale === "ko") usate.scale = "attesa"; salvaUsate(); /* vecchi salvataggi: la spada ora chiama a ogni lacrima, non al riposo */
+      riempiBorse(); aggiornaEquip(); modificato(); /* la borsa dei veleni torna piena */ /* Cataclisma del Filo Rovinato torna disponibile */
       if (!haPreparazione() || finePartita) return;
       scelte([
         { testo: haTecniche() ? RT.prep.btnTec : RT.prep.btnInc, fn: () => { chiudiScelte(); apriPreparazione(false); } },
@@ -7271,7 +7306,14 @@
       if (ok) {
         aggiungiZaino({ id: "anello_vespera", nome: "Anello del Primo Vespera", tipo: "reliquia", alias: ["anello", "ring", "reliquia", "relic"] });
         aggiungi({ tipo: "narra", righe: A2.anello.reliquia });
-        return sist(A2.anello.ottenuto);
+        sist(A2.anello.ottenuto);
+        if (usate.flash_anello) return;
+        usate.flash_anello = true; salvaUsate(); /* visione del funerale: 1d4 mentale, non letale, solo la prima volta */
+        aggiungi({ tipo: "narra", righe: [A2.anello.visioneDanno(4)] });
+        return scelte([{ testo: U.lancia(4), fn: () => {
+          const d = dannoMenteNonLetale(tira(4)); salvaPg(); chiudiScelte();
+          aggiungi({ tipo: "narra", box: "ko", esito: U.dannoSubito(d), righe: A2.anello.visione });
+        } }]);
       }
       const d = tira(4), [da, a] = dannoCorpoNonLetale(d);
       aggiungi({ tipo: "sistema", box: "ko", righe: [A2.anello.dita(d, da, a)] });
@@ -7961,49 +8003,81 @@
     function spada() {
       if (usate.spada === "presa") return aggiungi({ tipo: "narra", righe: [SPADA.giaPresa] });
       if (usate.scale === "ok") return offriSpada();
-      if (usate.scale === "ko") return aggiungi({ tipo: "narra", righe: [SCALE.bloccata] });
       if (luogo === "atrio" && "scale" in usate) return scale(); /* sul pianerottolo: «prendo la spada» riapre il richiamo */
       aggiungi({ tipo: "narra", righe: [SPADA.lontana] });
     }
 
-    /* Il richiamo dell'armatura e della spada: prova di Spirito (CD 12).
-       - superata: si tocca l'armatura e si può prendere la spada (usate.scale = "ok");
-       - fallita: la spada respinge (usate.scale = "ko") finché non ci si riposa; la prima volta con la visione (1d4 mentale, non letale);
-       - dopo tre fallimenti il richiamo si placa da solo: la quarta volta passa. Non è mai una porta chiusa per sempre. */
+    /* Il richiamo della spada (deciso il 26/10, storia_casa_vespera.md sezioni 7b e 13):
+       - primo tocco: l'armatura respinge, senza prova, con la visione del giardino (1d4 mentale, non letale);
+       - la chiamata si risveglia a ogni Lacrima di Adele trovata: 3 occasioni in tutta la storia;
+       - a ogni chiamata: prova di Intuizione (CD 12); se fallisce, quella chiamata è persa (e costa 1 punto mentale, come ogni prova);
+       - superata la prova: il gesto giusto (inginocchiarsi, come il cavaliere della vetrata). Un gesto sbagliato costa 1 punto mentale ma la chiamata resta;
+       - tre chiamate fallite: la spada tace. Il ripiego (Adele liberata, solo nel finale positivo) arriverà con il finale. */
     const CD_RICHIAMO = 12, CHANCE_RICHIAMO = 3;
-    function richiamoSuperato(placato) {
+    const lacrimeTrovate = () => (usate.q3 === "completata" ? 1 : 0) + (usate.lacrima2 ? 1 : 0) + (usate.lacrima3 ? 1 : 0);
+    const chiamateUsate = () => Number(usate.spada_chiamate) || 0;
+    const chiamateLibere = () => Math.max(0, Math.min(CHANCE_RICHIAMO, lacrimeTrovate()) - chiamateUsate());
+    /* una lacrima appena trovata risveglia la chiamata (solo se l'armatura è già stata toccata e la spada non è stata presa) */
+    function avvisaChiamata() {
+      if (usate.spada === "presa" || usate.scale === "ok" || !usate.scale_visione) return;
+      if (chiamateUsate() >= CHANCE_RICHIAMO) return;
+      sist(SCALE.nuovaChiamata);
+    }
+    /* una fitta alla mente come per le prove fallite: −1. Mente incrollabile solo per le prove, non per gli enigmi (il gesto) */
+    function fittaMente(incrollabile) {
+      const prima = Math.max(0, maxMentali() - (pg.dannoMentale || 0));
+      if (incrollabile && prima > 0 && puoIncrollabile()) offertaIncrollabile = true;
+      if (prima > 0) pg.dannoMentale = (pg.dannoMentale || 0) + 1;
+      salvaPg(); aggiornaMentali(); scuotiScheda();
+      return U.dannoMentale(prima, Math.max(0, maxMentali() - pg.dannoMentale));
+    }
+    function richiamoSuperato() {
       usate.scale = "ok"; salvaUsate();
-      aggiungi({ tipo: "narra", box: "ok", righe: placato ? [...SCALE.placato, ...SCALE.si] : SCALE.si, banner: SCALE.banner });
+      aggiungi({ tipo: "narra", box: "ok", righe: SCALE.si, banner: SCALE.banner });
       offriSpada();
     }
+    function sceltaGesto() {
+      usate.scale = "gesto"; salvaUsate();
+      const B = SCALE.gestoBtn;
+      const sbagliato = (k) => () => { chiudiScelte(); aggiungi({ tipo: "narra", box: "ko", righe: [...SCALE.gestoNo[k], fittaMente()] }); sceltaGesto(); };
+      aggiungi({ tipo: "narra", righe: SCALE.gesto });
+      scelte([
+        { testo: B.impugna, fn: sbagliato("impugna") },
+        { testo: B.inginocchia, fn: () => { chiudiScelte(); aggiungi({ tipo: "narra", box: "ok", righe: SCALE.gestoSi }); richiamoSuperato(); } },
+        { testo: B.chiama, fn: sbagliato("chiama") }
+      ]);
+    }
+    function primoTocco() {
+      usate.scale_visione = true; usate.scale = "attesa"; salvaUsate();
+      aggiungi({ tipo: "narra", righe: [SCALE.respinge(SCALE.dannoDado)] });
+      scelte([{ testo: U.lancia(SCALE.dannoDado), fn: () => {
+        const d = dannoMenteNonLetale(tira(SCALE.dannoDado)); salvaPg(); /* flashback: 1d4, non letale */
+        chiudiScelte();
+        aggiungi({ tipo: "narra", box: "ko", esito: U.dannoSubito(d), righe: SCALE.respinto });
+      } }]);
+    }
     function provaRichiamo() {
-      if ((Number(usate.spada_falliti) || 0) >= CHANCE_RICHIAMO) return richiamoSuperato(true);
-      const m = mod(spirito()), nomeSp = LINGUA === "en" ? "Spirit" : "Spirito";
-      aggiungi({ tipo: "prova", titolo: U.prova(nomeSp), dati: [U.difficolta(CD_RICHIAMO), "d20", U.modificatore(fmtN(m))], righe: [SCALE.prova + " " + U.istruzioni(20, CD_RICHIAMO)] });
+      const ab = "Intuizione", m = valoreAbilita(ab), nome = N("abilita", ab), nota = addestrata(ab) ? "" : U.nonAddestrata;
+      aggiungi({ tipo: "prova", titolo: U.prova(nome), dati: [U.difficolta(CD_RICHIAMO), "d20", U.modificatore(fmtN(m))], righe: [SCALE.prova + " " + U.istruzioni(20, CD_RICHIAMO) + nota] });
       scelte([{ testo: U.lancia(20), fn: () => {
         chiudiScelte();
         const tiro = tira(20), tot = tiro + m, ok = tot >= CD_RICHIAMO;
-        aggiungi({ tipo: "narra", prova: true, box: ok ? "ok" : "ko", esito: U.esito(tiro, m, tot, CD_RICHIAMO, ok), righe: [] });
-        if (ok) return richiamoSuperato(false);
-        usate.scale = "ko"; usate.spada_falliti = (Number(usate.spada_falliti) || 0) + 1; salvaUsate();
-        if (usate.scale_visione) return aggiungi({ tipo: "narra", box: "ko", righe: SCALE.respintoDi });
-        usate.scale_visione = true; salvaUsate();
-        aggiungi({ tipo: "narra", righe: [SCALE.respinge(SCALE.dannoDado)] });
-        scelte([{ testo: U.lancia(SCALE.dannoDado), fn: () => {
-          const d = dannoMenteNonLetale(tira(SCALE.dannoDado)); salvaPg(); /* flashback: 1d4, non letale */
-          chiudiScelte();
-          aggiungi({ tipo: "narra", box: "ko", esito: U.dannoSubito(d), righe: SCALE.respinto });
-        } }]);
+        if (ok) { aggiungi({ tipo: "narra", prova: true, box: "ok", esito: U.esito(tiro, m, tot, CD_RICHIAMO, ok), righe: [] }); return sceltaGesto(); }
+        usate.spada_chiamate = chiamateUsate() + 1; usate.scale = "attesa"; salvaUsate();
+        aggiungi({ tipo: "narra", prova: true, box: "ko", esito: U.esito(tiro, m, tot, CD_RICHIAMO, ok), righe: [...SCALE.respintoDi, ...SCALE.chiamataPersa, fittaMente(true)] });
+        offriIncrollabile();
       } }]);
     }
     function scale() {
       const st = usate.scale;
       if (st === "ok") { aggiungi({ tipo: "narra", righe: [SCALE.gia + (usate.spada !== "presa" ? " " + SPADA.ancoraLi : "")] }); return; }
-      if (st === "ko") { aggiungi({ tipo: "narra", righe: [SCALE.bloccata] }); return; }
-      aggiungi({ tipo: "narra", righe: [...(st === "no" ? SCALE.ritenta : SCALE.testo), SCALE.domanda] });
+      if (st === "gesto") return sceltaGesto();                       /* la prova era già superata: manca il gesto */
+      const primaVolta = !usate.scale_visione;
+      if (!primaVolta && chiamateLibere() === 0) return aggiungi({ tipo: "narra", righe: chiamateUsate() >= CHANCE_RICHIAMO ? SCALE.esaurita : SCALE.attesa });
+      aggiungi({ tipo: "narra", righe: [...(primaVolta && st !== "no" ? SCALE.testo : SCALE.ritenta), SCALE.domanda] });
       scelte([
-        { testo: SCALE.si_btn, fn: () => { chiudiScelte(); provaRichiamo(); } },
-        { testo: SCALE.no_btn, fn: () => { usate.scale = "no"; salvaUsate(); chiudiScelte(); aggiungi({ tipo: "narra", righe: SCALE.no }); } }
+        { testo: SCALE.si_btn, fn: () => { chiudiScelte(); primaVolta ? primoTocco() : provaRichiamo(); } },
+        { testo: SCALE.no_btn, fn: () => { if (primaVolta) usate.scale = "no"; salvaUsate(); chiudiScelte(); aggiungi({ tipo: "narra", righe: SCALE.no }); } }
       ]);
     }
 

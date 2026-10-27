@@ -678,22 +678,22 @@ caso("Regolamento: classi, scuole di magia, stati ed esempi in italiano e in ing
   const parti = await page.$$eval("#sezioni > details.parte > summary", s => s.map(x => x.textContent));
   eq(parti.length, 4, "quattro parti"); vero(/Parte 1/.test(parti[0]) && /Parte 4/.test(parti[3]), "numerazione delle parti");
   const titoli = await page.$$eval("#sezioni details.cap > summary .tt", s => s.map(x => x.textContent));
-  eq(titoli.length, 13, "tredici capitoli");
-  ["Guerriero", "Sciamano", "Arcanista", "Monaco", "Esempi di combattimento"].forEach(x => vero(titoli.some(t => t.endsWith(": " + x)), "manca la sezione: " + x));
+  eq(titoli.length, 14, "quattordici capitoli");
+  ["Abilità", "Guerriero", "Sciamano", "Arcanista", "Monaco", "Esempi di combattimento"].forEach(x => vero(titoli.some(t => t.endsWith(": " + x)), "manca la sezione: " + x));
   eq(await page.$$eval("#sezioni details.parte[open]", l => l.length), 4, "le parti sono aperte all'inizio");
   eq(await page.$$eval("#sezioni details.cap[open]", l => l.length), 0, "i capitoli sono chiusi all'inizio");
   eq(await page.$$eval("#sezioni h3", l => l.length), 0, "ogni titoletto è diventato una tendina");
   await page.click("#apriTutto"); eq(await page.$$eval("#sezioni details:not([open])", l => l.length), 0, "Apri tutto"); await page.click("#chiudiTutto");
   eq(await page.$$eval("#sezioni details[open]", l => l.length), 4, "Comprimi lascia aperte solo le parti");
   const t = await page.textContent("body");
-  ["Sigilli", "Detonazione", "Bilancia", "Nadir", "Crepuscolo", "Accecato", "Avvizzito", "Lume Arcano", "Via della Frattura", "Via della Brace", "Via della Lama", "Via dello Scoglio", "Dardo Arcano", "Abbraccio del Vuoto", "Turno 3.", "Punta di Mandragora", "Avvelenato"].forEach(x => vero(t.includes(x), "manca: " + x)); /* lo Sciamano non è più «in preparazione» */
+  ["Sigilli", "Detonazione", "Bilancia", "Nadir", "Crepuscolo", "Accecato", "Avvizzito", "Lume Arcano", "Via della Frattura", "Via della Brace", "Via della Lama", "Via dello Scoglio", "Dardo Arcano", "Abbraccio del Vuoto", "Turno 3.", "Punta di Mandragora", "Avvelenato", "Quando serve", "Percezione, Indagare", "Malus alle abilità di Agilità"].forEach(x => vero(t.includes(x), "manca: " + x)); /* lo Sciamano non è più «in preparazione» */
   /* 60 incantesimi e 12 abilità delle vie, tutte le tecniche del Guerriero in tabella */
   const righe = await page.$$eval("table tr", r => r.length);
   vero(righe > 60 + 12 + 85, "tabelle incomplete: " + righe);
   vero(!/Aldo|Guendalina/.test((await page.textContent("#sezioni")).replace(/«parlo con Guendalina»/g, "")), "il regolamento nomina i PNG delle vie");
   await page.evaluate(() => { localStorage.setItem("lingua", "en"); }); await page.reload();
   const e = await page.textContent("body");
-  ["Seals", "Detonation", "Balance", "Twilight", "Blinded", "Withered", "Arcane Glow", "Path of the Fracture", "Path of the Ember", "Combat examples", "Shadow Monk"].forEach(x => vero(e.includes(x), "missing: " + x));
+  ["Seals", "Detonation", "Balance", "Twilight", "Blinded", "Withered", "Arcane Glow", "Path of the Fracture", "Path of the Ember", "Combat examples", "Shadow Monk", "When it helps", "Agility skill penalty"].forEach(x => vero(e.includes(x), "missing: " + x));
   eq(errori, [], "errori"); await chiudi();
 });
 caso("Gioco in inglese: una tecnica nuova si usa senza errori e con i testi inglesi", async (b) => {
@@ -959,14 +959,30 @@ caso("Atrio: «vado a destra» sul pianerottolo prende la rampa; «lancia lume a
   eq(await page.evaluate(() => interpretaBuio(norm("lancio luce"))), "lancia_luce");
   eq(errori, [], "errori"); await chiudi();
 });
-caso("Spada del Retaggio: dopo un fallimento resta chiusa; dopo tre la chiamata si placa", async (b) => {
+caso("Spada del Retaggio: primo tocco con la visione, una chiamata per lacrima (Intuizione), poi il gesto", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "atrio" }));
+  await page.evaluate(() => { usate.scale = "no"; usate.scale_visione = true; }); /* armatura già toccata */
+  eq(await page.evaluate(() => { scale(); return document.getElementById("diario").textContent.includes(SCALE.attesa[0]); }), true, "senza lacrime la spada tace");
   await accoda(page, [R(1, 20)]);
-  await page.evaluate(() => provaRichiamo()); await page.click("#azioni button, #scelte button"); await page.waitForTimeout(300);
-  eq(await page.evaluate(() => [usate.scale, usate.spada_falliti]), ["ko", 1]);
-  eq(await page.evaluate(() => { scale(); return document.getElementById("diario").textContent.includes(SCALE.bloccata); }), true, "bloccata fino al riposo");
-  await page.evaluate(() => { usate.scale = "no"; usate.spada_falliti = 3; provaRichiamo(); });
-  eq(await page.evaluate(() => usate.scale), "ok", "dopo 3 fallimenti la quarta è automatica");
+  await page.evaluate(() => { usate.q3 = "completata"; provaRichiamo(); }); await page.click("#azioni button, #scelte button"); await page.waitForTimeout(300);
+  eq(await page.evaluate(() => [usate.scale, usate.spada_chiamate, chiamateLibere()]), ["attesa", 1, 0], "prova fallita: chiamata consumata");
+  await accoda(page, [R(20, 20)]);
+  await page.evaluate(() => { usate.lacrima2 = true; provaRichiamo(); }); await page.click("#azioni button, #scelte button"); await page.waitForTimeout(300);
+  eq(await page.evaluate(() => usate.scale), "gesto", "prova superata: si sceglie il gesto");
+  await page.evaluate(() => { const b = [...document.querySelectorAll("#azioni button, #scelte button")].find(x => x.textContent === SCALE.gestoBtn.inginocchia); b.click(); });
+  await page.waitForTimeout(300);
+  eq(await page.evaluate(() => usate.scale), "ok", "inginocchiarsi apre la spada");
+  await page.evaluate(() => { usate.scale = "attesa"; usate.spada_chiamate = 3; usate.lacrima3 = true; });
+  eq(await page.evaluate(() => { scale(); return document.getElementById("diario").textContent.includes(SCALE.esaurita[0]); }), true, "tre chiamate fallite: la spada tace");
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Anello del Primo Vespera: CD 12 e visione del funerale una sola volta", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "cripta" }));
+  eq(await page.evaluate(() => LUOGHI.cripta_sarcofago.prova.cd), 12);
+  await accoda(page, [R(2, 4)]);
+  await page.evaluate(() => sarcofago(true)); await page.click("#azioni button, #scelte button"); await page.waitForTimeout(300);
+  eq(await page.evaluate(() => [usate.flash_anello, document.getElementById("diario").textContent.includes(A2.anello.visione[3])]), [true, true]);
+  eq(await page.evaluate(() => pg.dannoMentale || 0), 2, "1d4 mentale");
   eq(errori, [], "errori"); await chiudi();
 });
 

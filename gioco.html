@@ -2312,7 +2312,8 @@
                   serenita: (t, d, da, a) => `Bevi ${t}: brucia la gola, poi un calore improvviso ti scioglie i pensieri. Salute mentale +${d} (1d4) · ${da} → ${a}`,
                   razione: (t, d, da, liv, a) => `Mangi una razione: è secca, salata e sa di cuoio, ma ti rimette in piedi. Salute fisica +${d} (1 + livello ${liv}) · ${da} → ${a}`,
                   borsa: (d, da, liv, a, dosi) => `Sciogli una dose della borsa dei veleni sulla lingua: amara, viva, ti riaccende la natura dentro. Punti natura +${d} (1d4 + ${liv}) · ${da} → ${a}. Dosi rimaste: ${dosi}/3.` },
-          inutile: { pozCura: "Sei già in piena salute: meglio conservarla.", pozMana: "Hai già tutti i tuoi punti al massimo: meglio conservarla.", serenita: "La tua mente è già serena: meglio conservarlo.", razione: "Non hai bisogno di mangiare adesso: sei in piena salute.", borsa: "I tuoi punti natura sono già al massimo: meglio conservare le dosi.", borsaVuota: "La borsa dei veleni è vuota: si riempirà al prossimo riposo.", borsaClasse: "Solo uno Sciamano sa usare i veleni di questa borsa.", noMana: "La tua classe non ha punti da recuperare: questa pozione non ti servirebbe a nulla." },
+          diarioSigillato: "Provi ad aprirlo, ma una runa antica si accende sulla copertina e ti impedisce di sollevarla. Forse il legittimo proprietario potrà aiutarti.",
+          inutile: { pozCura: "Sei già in piena salute: meglio conservarla.", pozMana: "Hai già tutti i tuoi punti al massimo: meglio conservarla.", serenita: "La tua mente è già serena: meglio conservarlo.", razione: "Non hai bisogno di mangiare adesso: sei in piena salute.", borsa: "I tuoi punti natura sono già al massimo: meglio conservare le dosi.", borsaVuota: "La borsa dei veleni è vuota: trova gli ingredienti giusti nella foresta.", borsaClasse: "Solo uno Sciamano sa usare i veleni di questa borsa.", noMana: "La tua classe non ha punti da recuperare: questa pozione non ti servirebbe a nulla." },
           bottino: (pelo, larve, ghi) => `Bottino: frughi tra i resti fumanti del mastino. Ciuffi di pelo di mastino ×${pelo} · dal suo collare di cuoio, Larve di falena ×${larve} · Ghiandole del fuoco ×${ghi}.`
         }
       },
@@ -2532,7 +2533,8 @@
                   serenita: (t, d, da, a) => `You drink ${t}: it burns your throat, then a sudden warmth loosens your thoughts. Mental health +${d} (1d4) · ${da} → ${a}`,
                   razione: (t, d, da, liv, a) => `You eat a ration: dry, salty and tasting of leather, but it puts you back on your feet. Physical health +${d} (1 + level ${liv}) · ${da} → ${a}`,
                   borsa: (d, da, liv, a, dosi) => `You melt a dose from the poison pouch on your tongue: bitter and alive, it rekindles the nature within you. Nature points +${d} (1d4 + ${liv}) · ${da} → ${a}. Doses left: ${dosi}/3.` },
-          inutile: { pozCura: "You are already at full health: better keep it.", pozMana: "Your points are already full: better keep it.", serenita: "Your mind is already at peace: better keep it.", razione: "You do not need to eat right now: you are in full health.", borsa: "Your nature points are already full: better save the doses.", borsaVuota: "The poison pouch is empty: it will refill at your next rest.", borsaClasse: "Only a Shaman knows how to use the poisons in this pouch.", noMana: "Your class has no points to restore: this potion would be of no use to you." },
+          diarioSigillato: "You try to open it, but an ancient rune flares on the cover and keeps you from lifting it. Perhaps its rightful owner can help you.",
+          inutile: { pozCura: "You are already at full health: better keep it.", pozMana: "Your points are already full: better keep it.", serenita: "Your mind is already at peace: better keep it.", razione: "You do not need to eat right now: you are in full health.", borsa: "Your nature points are already full: better save the doses.", borsaVuota: "The poison pouch is empty: find the right ingredients in the forest.", borsaClasse: "Only a Shaman knows how to use the poisons in this pouch.", noMana: "Your class has no points to restore: this potion would be of no use to you." },
           bottino: (pelo, larve, ghi) => `Loot: you search the smoking remains of the mastiff. Tufts of mastiff fur ×${pelo} · from its leather collar, Moth larvae ×${larve} · Fire glands ×${ghi}.`
         }
       }
@@ -2583,7 +2585,7 @@
               "Scendi i gradini di pietra con cautela. La scala piega su sé stessa due volte, poi si apre in una cripta bassa dal soffitto a volta, sorretto da tozze colonne. Lungo le pareti, nicchie scavate nella roccia accolgono sarcofagi di pietra, ognuno con il nome di un Vespera inciso sul coperchio.",
               "In fondo, tra due sarcofagi, qualcuno ha improvvisato un rifugio: un giaciglio di stracci, una lanterna spenta, ossa di topo spolpate e un piccolo braciere in cui brucia ancora un fuoco debole, arancione. Un fuoco vero."
             ],
-            nota: "In questa cripta ci sono tre cose da esaminare: le due nicchie vuote accanto all'ingresso (Indagare), il sarcofago più antico con il coperchio incrinato (Atletica) e il drappo tra due nicchie, che nasconde qualcosa di piccolo. Scrivi, ad esempio, «ispeziono le nicchie», «sposto il coperchio» o «sollevo il drappo». Per tornare su scrivi «torno nella cappella».",
+            nota: "Per tornare su scrivi «torno nella cappella».",
             fallbackLibera: ["Ci provi, ma la cripta non ti offre nulla di utile in questo senso. I sarcofagi, il giaciglio e il braciere sono ciò che hai intorno; la scala riporta alla cappella."],
             ritorno: ["Scendi di nuovo nella cripta. I sarcofagi riposano nelle loro nicchie, e il braciere in fondo getta ancora la sua luce arancione sulle volte."]
           },
@@ -3127,7 +3129,7 @@
               "You go down the stone steps with care. The stair turns on itself twice, then opens into a low crypt with a vaulted ceiling held up by squat columns. Along the walls, niches cut into the rock hold stone sarcophagi, each with the name of a Vespera carved on its lid.",
               "At the far end, between two sarcophagi, someone has made a shelter: a bed of rags, a dead lantern, picked-clean rat bones and a small brazier in which a weak, orange fire still burns. A real fire."
             ],
-            nota: "There are three things to examine in this crypt: the two empty niches beside the entrance (Investigate), the oldest sarcophagus with the cracked lid (Athletics) and the drape between two niches, which hides something small. Write, for example, “I inspect the niches”, “I move the lid” or “I lift the drape”. To go back up write “I return to the chapel”.",
+            nota: "To go back up write “I return to the chapel”.",
             fallbackLibera: ["You try, but the crypt offers you nothing useful in that respect. The sarcophagi, the bed of rags and the brazier are what lie around you; the stair leads back to the chapel."],
             ritorno: ["You go down into the crypt again. The sarcophagi rest in their niches, and the brazier at the far end still casts its orange light on the vaults."]
           }
@@ -4327,7 +4329,7 @@
           esito: (d, da, a, sMax) => `La casa non lascia morire i suoi prigionieri. Salute fisica: ${sMax} / ${sMax} · Salute mentale: −1d4 = −${d} · ${da} → ${a}`,
           caccia: ["Riapri gli occhi. A giudicare dalle teste di cervo imbalsamate alla parete, sei di nuovo nella sala della caccia. Sei steso a terra, sopraffatto dal freddo, e quando provi a rialzarti lentamente un gemito ti sfugge dalle labbra: la testa ti sta letteralmente esplodendo.", "A poca distanza, Aldo contempla con distacco una delle teche della stanza. Non si premura di volgere lo sguardo nella tua direzione, come se la tua presenza fosse del tutto irrilevante."],
           ferita: (nome, max) => `La sconfitta contro ${nome} ti lascia un segno: salute mentale massima −1 (ora ${max}). La recupererai quando lo avrai vinto o risparmiato.`,
-          guarita: (nome, n, max) => `Hai vinto la paura che ${nome} ti aveva lasciato: recuperi ${n} ${n === 1 ? "punto" : "punti"} di salute mentale massima (ora ${max}).`,
+          guarita: (nome, n, max, d, da, a) => `Hai vinto la paura che ${nome} ti aveva lasciato: ` + [n ? `recuperi ${n} ${n === 1 ? "punto" : "punti"} di salute mentale massima` : "", d ? `ti tornano i ${d} punti di salute mentale persi nelle sconfitte` : ""].filter(Boolean).join(" e ") + `. Salute mentale ${da} → ${a} / ${max}.`,
           cacciaEttore: ["Riapri gli occhi. A giudicare dalle teste di cervo imbalsamate alla parete, sei di nuovo nella sala della caccia. Sei steso a terra, sopraffatto dal freddo, e quando provi a rialzarti lentamente un gemito ti sfugge dalle labbra: la testa ti sta letteralmente esplodendo.", "A poca distanza, Aldo contempla con distacco una delle teche della stanza. Non si premura di volgere lo sguardo nella tua direzione, come se la tua presenza fosse del tutto irrilevante."],
           aldoEttore: ["«Questa dimora rifiuta di lasciar morire i suoi ospiti prima del dovuto. Una debolezza che, vi assicuro, non condivido affatto. La preda vi attende ancora nella cripta: rimettetevi in piedi e cercate di non farmi sprecare altro tempo.»"],
           aldoComune: ["«Questa dimora rifiuta di lasciar morire i suoi ospiti prima del dovuto. Una debolezza che, vi assicuro, non condivido affatto. La preda vi attende ancora in giardino: rimettetevi in piedi e cercate di non farmi sprecare altro tempo.»"],
@@ -4395,7 +4397,7 @@
           esito: (d, da, a, sMax) => `The house does not let its prisoners die. Physical health: ${sMax} / ${sMax} · Mental health: −1d4 = −${d} · ${da} → ${a}`,
           caccia: ["You open your eyes. Judging by the stuffed stag heads on the wall, you are back in the hunting hall. You lie on the floor, overcome by the cold, and when you slowly try to get up a groan escapes your lips: your head is literally bursting.", "Not far away, Aldo contemplates one of the room's display cases with detachment. He does not bother to look your way, as if your presence were entirely irrelevant."],
           ferita: (nome, max) => `Your defeat against ${nome} leaves a mark: maximum mental health −1 (now ${max}). You will recover it once you have beaten or spared him.`,
-          guarita: (nome, n, max) => `You have overcome the fear ${nome} left in you: you recover ${n} ${n === 1 ? "point" : "points"} of maximum mental health (now ${max}).`,
+          guarita: (nome, n, max, d, da, a) => `You have overcome the fear ${nome} left in you: ` + [n ? `you recover ${n} ${n === 1 ? "point" : "points"} of maximum mental health` : "", d ? `the ${d} points of mental health lost in your defeats come back` : ""].filter(Boolean).join(" and ") + `. Mental health ${da} → ${a} / ${max}.`,
           cacciaEttore: ["You open your eyes. Judging by the stuffed stag heads on the wall, you are back in the hunting hall. You lie on the floor, overcome by the cold, and when you slowly try to get up a groan escapes your lips: your head is literally bursting.", "Not far away, Aldo contemplates one of the room's display cases with detachment. He does not bother to look your way, as if your presence were entirely irrelevant."],
           aldoEttore: ["«This house refuses to let its guests die before their time. A weakness which, I assure you, I do not share in the least. The prey still awaits you in the crypt: get back on your feet and try not to make me waste any more time.»"],
           aldoComune: ["«This house refuses to let its guests die before their time. A weakness which, I assure you, I do not share in the least. The prey still awaits you in the garden: get back on your feet and try not to make me waste any more time.»"],
@@ -4875,7 +4877,7 @@
         pianerottolo: {
           vista: {titolo: "Pianerottolo dell'armatura", alt: "Il pianerottolo dello scalone: un'armatura con una spada tra i guanti, davanti a una grande vetrata colorata."},
           stanza: {
-            intro: ["Sali gli ampi gradini di marmo fino al pianerottolo di metà scala. Qui la luce della vetrata cade piena, in lame cremisi, azzurre e dorate che si posano sull'armatura come un mantello.", "Da vicino l'armatura è ancora più imponente. Tra i guanti di ferro riposa una lunga spada dalla fattura impeccabile, e alle sue spalle l'uomo della vetrata porta la stessa armatura e la stessa spada.", "Da qui lo scalone si divide in due rampe: a sinistra sale verso un'anticamera in ombra, a destra verso un lungo corridoio. Ai tuoi piedi, l'atrio."],
+            intro: ["Ti trovi sul pianerottolo dell'armatura. Da qui puoi ammirare da vicino la magnificenza della pesante corazza e la luce fredda che filtra attraverso la splendida vetrata.", "Ai lati partono altre scalinate: sporgendoti appena a sinistra, intravedi quella che sembra una camera vuota, mentre a destra si apre un lungo corridoio d'ombra."],
             nota: "Puoi esaminare l'armatura e la vetrata, prendere la rampa di sinistra o di destra, oppure tornare nell'atrio: scrivi, ad esempio, «torno nell'atrio» o «scendo».",
             fallbackLibera: ["Sul pianerottolo ci sono soltanto l'armatura, la spada tra i suoi guanti e la vetrata alle sue spalle. Da qui puoi salire una delle due rampe o tornare nell'atrio."],
             ritorno: ["Torni sul pianerottolo. L'armatura è lì, immobile sotto la luce della vetrata, la spada stretta tra i guanti di ferro."]
@@ -4922,7 +4924,7 @@
         pianerottolo: {
           vista: {titolo: "Armour landing", alt: "The landing of the great staircase: a suit of armour holding a sword between its gauntlets, before a great stained-glass window."},
           stanza: {
-            intro: ["You climb the wide marble steps to the landing halfway up. Here the light of the stained glass falls full, in crimson, blue and golden blades that settle on the armour like a cloak.", "Up close the armour is even more imposing. Between the iron gauntlets rests a long sword of flawless make, and behind it the man in the window wears the same armour and the same sword.", "From here the great staircase splits into two flights: on the left it rises towards a shadowy antechamber, on the right towards a long corridor. At your feet, the hall."],
+            intro: ["You stand on the landing of the armour. From here you can admire up close the magnificence of the heavy plate and the cold light filtering through the splendid stained-glass window.", "Other staircases rise on either side: leaning out a little to the left, you glimpse what looks like an empty room, while to the right a long corridor of shadow opens up."],
             nota: "You can examine the armour and the window, take the left or the right flight, or go back down to the hall: write, for example, “I go back to the hall” or “I go down”.",
             fallbackLibera: ["On the landing there is only the armour, the sword between its gauntlets and the window behind it. From here you can climb one of the two flights or go back to the hall."],
             ritorno: ["You return to the landing. The armour stands there, motionless in the light of the window, the sword gripped between its iron gauntlets."]
@@ -4967,8 +4969,8 @@
     }
 
     /* il buio usa l'immagine dell'esterno, spenta fino al nero (classe "nera") */
-    const IMMAGINI = { foresta: "immagini/house/esterno_dungeon.webp", buio: "immagini/house/esterno_dungeon.webp", atrio: "immagini/house/atrio.webp", pianerottolo: "immagini/house/atrio.webp" /* PROVVISORIA: finché non c'è un'immagine del pianerottolo */, sala_caccia: "immagini/house/sala_caccia.webp", sala_caccia_aldo: "immagini/house/sala_caccia_aldo.webp", sala_conversazione: "immagini/house/sala_conversazione.webp", giardino: "immagini/house/giardino.webp", cappella: "immagini/house/cappella.webp", cripta: "immagini/house/cripta.webp", sala_trofei: "immagini/house/sala_trofei.webp", sala_pranzo: "immagini/house/sala_pranzo.webp", corridoio: "immagini/house/corridoio.webp", sala_ballo: "immagini/house/sala_ballo.webp", cucina: "immagini/house/cucina.webp", dispensa: "immagini/house/dispensa.webp", cantina: "immagini/house/cantina.webp", discesa_cantina: "immagini/house/discesa_cantina.webp", mastino: "immagini/house/mastino_cantina.webp", servizio: "immagini/house/discesa_cantina.webp", guendalina: "immagini/house/guendalina.webp" };
-    const DIM_IMMAGINI = { foresta: [1920, 1079], buio: [1920, 1079], corridoio: [2848, 1600], sala_ballo: [2304, 1728], giardino: [2848, 1600], cucina: [1920, 1079], dispensa: [2848, 1600], cantina: [2848, 1600], discesa_cantina: [2780, 1308], servizio: [2780, 1308], guendalina: [2048, 1536], atrio: [1920, 1079], pianerottolo: [1920, 1079], sala_trofei: [2304, 1728], sala_conversazione: [1358, 679], cappella: [2848, 1600] }; /* le altre sono 1536 × 1024 */
+    const IMMAGINI = { foresta: "immagini/house/esterno_dungeon.webp", buio: "immagini/house/esterno_dungeon.webp", atrio: "immagini/house/atrio.webp", pianerottolo: "immagini/house/pianerottolo.webp" /* ritaglio dell'atrio: vetrata, armatura e scalinata */, sala_caccia: "immagini/house/sala_caccia.webp", sala_caccia_aldo: "immagini/house/sala_caccia_aldo.webp", sala_conversazione: "immagini/house/sala_conversazione.webp", giardino: "immagini/house/giardino.webp", cappella: "immagini/house/cappella.webp", cripta: "immagini/house/cripta.webp", sala_trofei: "immagini/house/sala_trofei.webp", sala_pranzo: "immagini/house/sala_pranzo.webp", corridoio: "immagini/house/corridoio.webp", sala_ballo: "immagini/house/sala_ballo.webp", cucina: "immagini/house/cucina.webp", dispensa: "immagini/house/dispensa.webp", cantina: "immagini/house/cantina.webp", discesa_cantina: "immagini/house/discesa_cantina.webp", mastino: "immagini/house/mastino_cantina.webp", servizio: "immagini/house/discesa_cantina.webp", guendalina: "immagini/house/guendalina.webp" };
+    const DIM_IMMAGINI = { foresta: [1920, 1079], buio: [1920, 1079], corridoio: [2848, 1600], sala_ballo: [2304, 1728], giardino: [2848, 1600], cucina: [1920, 1079], dispensa: [2848, 1600], cantina: [2848, 1600], discesa_cantina: [2780, 1308], servizio: [2780, 1308], guendalina: [2048, 1536], atrio: [1920, 1079], pianerottolo: [1600, 900], sala_trofei: [2304, 1728], sala_conversazione: [1358, 679], cappella: [2848, 1600] }; /* le altre sono 1536 × 1024 */
     const vista = (id) => ({ titolo: TX.viste[id].titolo, img: IMMAGINI[id] ? { src: IMMAGINI[id], alt: TX.viste[id].alt } : undefined, buia: id === "cantina" && !usate.cantina_luce }); /* cantina al buio: riquadro nero */
 
     /* Una nuova partita parte dalla foresta, fuori dal dungeon; i salvataggi già esistenti riprendono dal loro luogo */
@@ -5504,17 +5506,23 @@
       return RG.morte.ferita(nome, maxMentali());
     }
     /* il guardiano è stato sconfitto o risparmiato: la paura se ne va e il massimo torna */
+    /* 27/10 sera: tornano anche i punti di salute mentale attuale persi nelle sconfitte contro quel guardiano (usate.paura_danno) */
     function guarisciFerita(chi, nome) {
-      const n = Number((usate.ferite_mente || {})[chi]) || 0;
-      if (!n) return;
-      const f = { ...usate.ferite_mente }; delete f[chi]; usate.ferite_mente = f; salvaUsate();
+      const n = Number((usate.ferite_mente || {})[chi]) || 0, d0 = Number((usate.paura_danno || {})[chi]) || 0;
+      if (!n && !d0) return;
+      const da = mentaliAttuali();
+      const f = { ...usate.ferite_mente }; delete f[chi]; usate.ferite_mente = f;
+      const pd = { ...usate.paura_danno }; delete pd[chi]; usate.paura_danno = pd; salvaUsate();
+      const d = Math.min(d0, pg.dannoMentale || 0);
+      pg.dannoMentale = Math.max(0, (pg.dannoMentale || 0) - d);
       disegnaVitali(); aggiornaMentali(); modificato();
-      fuoriDallaTendina(() => aggiungi({ tipo: "sistema", box: "ok", righe: [RG.morte.guarita(nome, n, maxMentali())] }));
+      fuoriDallaTendina(() => aggiungi({ tipo: "sistema", box: "ok", righe: [RG.morte.guarita(nome, n, maxMentali(), d, da, mentaliAttuali())] }));
     }
-    function penaMorte() {
+    function penaMorte(guardiano) {
       const d = tira(4), da = mentaliAttuali();
       pg.dannoFisico = 0;
       pg.dannoMentale = Math.min(maxMentali(), (pg.dannoMentale || 0) + d);
+      if (guardiano) { usate.paura_danno = { ...(usate.paura_danno || {}), [guardiano]: (Number((usate.paura_danno || {})[guardiano]) || 0) + (da - mentaliAttuali()) }; salvaUsate(); } /* torna quando il guardiano è vinto */
       disegnaVitali(); aggiornaMentali(); modificato();
       return RG.morte.esito(d, da, mentaliAttuali(), saluteMaxPg());
     }
@@ -7528,7 +7536,7 @@
       mb.querySelector("summary").textContent = M.titoloSez; cb.querySelector("summary").textContent = M.capacitaSez;
       const box = document.getElementById("missioni"); box.replaceChildren();
       const fattiDi = {
-        q1: (q) => [q === "scaletta" || q === "completata" || diario.some(e => e.stanza === "cantina"), q === "scaletta" || q === "completata", q === "completata"],
+        q1: (q) => [q === "scaletta" || q === "completata" || visitata("cantina"), q === "scaletta" || q === "completata", q === "completata"],
         q2: (q) => M.q2.obiettivi.map((_, i) => q === "completata" || (i === 1 && !!usate.q2_diario) || (i === 2 && usate.giocattoli === "presi")), /* diario (da Ettore) e giocattoli (sparsi per casa) restano in memoria anche prima di accettare la missione */
         q3: (q) => [q === "blasone" || q === "completata", q === "completata"],
         q4: (q) => [!!usate.portone_aperto, !!usate.ettore, q === "prova" || q === "completata", q === "completata"]
@@ -8103,7 +8111,7 @@
       if (it.id === "diario_adele") return aggiungi({ tipo: "narra", box: "mis", righe: [U.rileggi(nomeOg(it)), ...righeDiarioAdele()] });
       if (it.id === "acqua_benedetta") return scontro ? lanciaAcqua() : sist(A2.acqua.fuoriScontro);
       if (it.id === "anello_vespera") return indossaAnello();
-      if (it.id === "diario_figlio" && !usate.diario_aperto) return aggiungi({ tipo: "narra", righe: [testoOggetto(it)] }); /* sigillato: lo aprirà il figlio maggiore */
+      if (it.id === "diario_figlio" && !usate.diario_aperto) return aggiungi({ tipo: "narra", righe: [Q.oggetti.diarioSigillato] }); /* sigillato: lo aprirà il figlio maggiore */
       if (it.tipo === "nota" || it.tipo === "reperto") return aggiungi({ tipo: "narra", righe: [U.rileggi(nomeOg(it)), testoOggetto(it)] });
       return aggiungi({ tipo: "narra", righe: [U.nienteDaFare(nomeOg(it))] });
     }
@@ -8291,8 +8299,9 @@
 
     function entraBuio() {
       chiudiScelte();
+      lasciaStanza(luogo, "buio");
       luogo = "buio";
-      const tornato = diario.some(e => e.stanza === "buio");
+      const tornato = visitata("buio");
       mostraStanza("buio");
       Suono.aggiorna();
       aggiungi({ tipo: "narra", ...vista("buio"), righe: tornato ? STANZE.buio.ritorno : STANZE.buio.intro, nota: notaBuio() });
@@ -8313,6 +8322,7 @@
     function luceNelBuio(passaggio, msg, torciaSpenta) {
       chiudiScelte();
       usate.luce = "ok"; salvaUsate();
+      lasciaStanza(luogo, "atrio");
       luogo = "atrio";
       mostraStanza("atrio");
       Suono.aggiorna();
@@ -8540,7 +8550,23 @@
     }
 
     /* opz (facoltativo): { prima: righe da raccontare prima della stanza, righe: testo al posto di quello abituale } */
+    /* Uscendo da una stanza le sue azioni si cancellano (27/10): al ritorno la pagina riparte da titolo, immagine e descrizione,
+       con la frase di ritorno sotto. Le stanze già viste restano segnate in usate.visitate. */
+    function lasciaStanza(da, a) {
+      if (!da || da === a) return;
+      usate.visitate = { ...(usate.visitate || {}), [da]: 1 };
+      diario = diario.filter(e => e.stanza !== da);
+      salvaUsate();
+    }
+    function visitata(id) { return !!(usate.visitate && usate.visitate[id]) || diario.some(e => e.stanza === id); }
+    function introStanza(id) {
+      const s = STANZE[id];
+      if (id === "atrio") return [...TX.intro, EST.portone]; /* la descrizione dell'atrio sta in TX.intro */
+      return (id === "sala_caccia" && !aldoNellaSalaCaccia() && s.introSenzaAldo) ? s.introSenzaAldo : s.intro;
+    }
+
     function vai(id, opz) {
+      lasciaStanza(luogo, id);
       ultimoNemico = null; disegnaNemico(); /* la scheda del nemico si chiude cambiando stanza */
       chiudiScelte(); /* eventuali scelte rimaste in sospeso nella stanza che si lascia */
       if (id === "giardino" && usate.giardino_visto !== "si") { usate.giardino_visto = "si"; salvaUsate(); } /* sblocca la domanda sulla fontana con Guendalina */
@@ -8548,10 +8574,10 @@
       if (luogo === "sala_caccia" && id !== "sala_caccia" && usate.caccia_rimprovero) { usate.caccia_rimprovero = false; salvaUsate(); }
       luogo = id;
       const s = STANZE[id];
-      let tornato = diario.some(e => e.stanza === id);
+      let tornato = visitata(id);
       if (id === "cripta" && tornato && (usate.ettore === "morto" || usate.ettore === "risparmiato")) opz = { ...opz, righe: usate.ettore === "morto" ? A.ettore.vuotaMorto : A.ettore.vuota };
       if (id === "cripta" && tornato && (usate.ettore === "rivincita" || usate.ettore === "tregua")) { /* dopo una sconfitta: la pagina della cripta riparte pulita */
-        diario = diario.filter(e => e.stanza !== "cripta"); tornato = false;
+        diario = diario.filter(e => e.stanza !== "cripta");
         opz = { ...opz, righe: (Number(usate.ettore_sconfitte) || 1) > 1 ? A.ettore.rivincita2 : A.ettore.rivincita1 };
       }
       const pulisciCucina = id === "cucina" && tornato && usate.dialogo_guendalina === "fine" && usate.portaCucina === "aperta";
@@ -8561,17 +8587,24 @@
       Suono.aggiorna(); /* il suono di ambiente segue la stanza */
       if (id === "cantina" && tornato && usate.cantina_cane === "sconfitto") { usate.cantina_luce = "ok"; salvaUsate(); } /* dopo una vittoria la cantina resta illuminata */
       if (opz && opz.prima) aggiungi({ tipo: "narra", righe: opz.prima });
-      if (opz && opz.righe) aggiungi({ tipo: "narra", ...(tornato ? {} : vista(id)), righe: opz.righe, nota: tornato ? undefined : s.nota });
+      if (opz && opz.righe && tornato) { /* ritorno con un evento (risveglio, Ettore che aspetta…): prima la descrizione, poi l'evento */
+        aggiungi({ tipo: "narra", ...vista(id), righe: introStanza(id), nota: s.nota });
+        if (opz.righe.length) aggiungi({ tipo: "narra", righe: opz.righe });
+      }
+      else if (opz && opz.righe) aggiungi({ tipo: "narra", ...vista(id), righe: opz.righe, nota: s.nota });
       else if (tornato && id === "cantina" && usate.cantina_cane === "sconfitto") aggiungi({ tipo: "narra", ...vista(id), righe: Q.cantina.ritornoLuce });
       else if (tornato && id === "foresta") aggiungi({ tipo: "narra", ...vista(id), anim: "esce", righe: s.ritorno }); /* zoom indietro dal buio alla foresta */
       else if (pulisciCucina) { /* chat ripulita: Guendalina e il suo saluto, poi il menu */
         const conScaletta = usate.q1 === "scaletta";
-        aggiungi({ tipo: "narra", ...vista(id), chi: "Guendalina", righe: conScaletta ? [] : [Q.parla.bentornato] });
+        aggiungi({ tipo: "narra", ...vista(id), righe: introStanza(id), nota: s.nota });
+        if (!conScaletta) aggiungi({ tipo: "narra", chi: "Guendalina", righe: [Q.parla.bentornato] });
         if (!conScaletta) setTimeout(menuGuendalina, 300);
       }
-      else if (tornato && id === "cucina") aggiungi({ tipo: "narra", ...vista(id), righe: s.ritorno }); /* in cucina l'immagine si vede sempre (con Guendalina, dopo l'incontro) */
-      else if (tornato) aggiungi({ tipo: "narra", righe: s.ritorno });
-      else aggiungi({ tipo: "narra", ...vista(id), righe: (id === "sala_caccia" && !aldoNellaSalaCaccia() && s.introSenzaAldo) ? s.introSenzaAldo : s.intro, nota: s.nota });
+      else if (tornato) { /* la descrizione serve sempre: prima la stanza, sotto la frase di ritorno */
+        aggiungi({ tipo: "narra", ...vista(id), righe: introStanza(id), nota: s.nota });
+        if (s.ritorno && s.ritorno.length) aggiungi({ tipo: "narra", righe: s.ritorno });
+      }
+      else aggiungi({ tipo: "narra", ...vista(id), righe: introStanza(id), nota: s.nota });
       riprendiDialoghi();
       /* Aldo, la caccia, Ettore */
       if (id === "sala_ballo" && tornato) {
@@ -8769,6 +8802,18 @@
         if (verboUsa && arma.nome !== "—" && citato(arma, t)) return sist(U.giaInPugno(nomeOg(arma)));
       }
 
+      /* aprire o sfogliare un libro che si ha con sé (il diario sigillato del figlio maggiore, le pagine di Adele) */
+      if (/\bapr\w*|\bsfogli\w*|\bopen\w*|\bleaf\w*/.test(t)) {
+        const og = trovaOggetti(t, it => it.id === "diario_figlio" || it.id === "diario_adele");
+        if (og.length === 1) return azioneOggetto(og[0]);
+        if (og.length > 1) return aggiungi({ tipo: "narra", righe: [U.piuOggetti] });
+      }
+      /* esaminare una nota o un reperto dello zaino: la sua descrizione */
+      if (ha(t, "guarda")) {
+        const og = trovaOggetti(t, it => it.tipo === "nota" || it.tipo === "reperto");
+        if (og.length === 1) return aggiungi({ tipo: "narra", righe: [testoOggetto(og[0])] });
+      }
+
       /* 3. il luogo */
       if (luogo === "buio") return buio();
       if (luogo === "foresta") return aggiungi({ tipo: "narra", righe: (await narra(COMPITI.libera, stanza.fatti, testo)) || stanza.fallbackLibera });
@@ -8894,7 +8939,7 @@
     };
     const nomeRisorsaInc = () => (pg && pg.classe === "Accolito" ? (Lingua.t({ it: "punti fede", en: "faith" })) : "mana");
     const cdIncantesimi = () => { const a = pg && ATTR_INC[pg.classe]; return a ? 8 + mod(statPg(a)) + (Number(pg.livello) || 1) : null; };
-    const SCARTO_AGILE = 4, PAUSA_SCONTRO = 900;
+    const SCARTO_AGILE = 4, PAUSA_SCONTRO = 2200; /* 27/10: da 900 a 2200 ms, per avere il tempo di leggere ogni colpo */
     const MUSICHE_SCONTRO = ["audio/combat1.mp3", "audio/combat2.mp3", "audio/sala_addestramento.mp3"]; /* una a caso a ogni scontro */
 
     const CB_BASE = ({
@@ -9329,7 +9374,12 @@
       app.classList.toggle("con-nemico", !!n);
       if (!n) return;
       const D = NEMICI[n.id], scoperta = n.svelata || n.pv <= 0, ig = CB.ignoto, $n = (id) => document.getElementById(id);
-      $n("ritrattoNem").style.backgroundImage = (n.img || D.ritratto) ? `url('${n.img || D.ritratto}')` : "none";
+      { /* le immagini delle stanze (house/) vanno ritagliate sul cane; i ritratti già ritagliati (nemici/) si mostrano interi */
+        const src = n.img || D.ritratto, el = $n("ritrattoNem"), intero = !!src && !/\/house\//.test(src);
+        el.style.backgroundImage = src ? `url('${src}')` : "none";
+        el.style.backgroundSize = intero ? "cover" : "";
+        el.style.backgroundPosition = intero ? "50% 30%" : "";
+      }
       $n("nomeNem").textContent = CB.nomeLungo;
       $n("subNem").textContent = scoperta ? CB.sotto : CB.sottoVelato;
       const r = n.pv / n.pvMax;
@@ -10028,7 +10078,7 @@
     }
     function rimproveroAldo() {
       const B = RG.morte.blocco;
-      aggiungi({ tipo: "dialogo", fuori: true, tuttoBox: true, chi: "Aldo", macchina: true, righe: [B[Math.floor(Math.random() * B.length)]] });
+      aggiungi({ tipo: "dialogo", tuttoBox: true, chi: "Aldo", macchina: true, righe: [B[Math.floor(Math.random() * B.length)]] }); /* dentro la tendina dell'azione bloccata */
     }
     function sconfittaScontro() {
       if (scontro && scontro.ctx === "aldo") return interrompiAldo();
@@ -10038,7 +10088,7 @@
         aggiungi({ tipo: "narra", box: "ko", righe: CB.sconfitta });
         stato(true, CB.attesa);
         return setTimeout(() => {
-          const pena = penaMorte();
+          const pena = penaMorte("ettore");
           usate.ettore = "rivincita"; usate.ettore_sconfitte = (Number(usate.ettore_sconfitte) || 0) + 1; salvaUsate(); /* al ritorno Ettore combatte subito, e non si arrende più */
           const ferita = feritaGuardiano("ettore", "Ettore");
           risveglioCaccia(true, pena, ferita);
@@ -10124,6 +10174,10 @@
       if (!diario.length) { /* nuova partita: si comincia all'accampamento, fuori dal dungeon */
         luogo = "foresta";
         diario.push({ tipo: "narra", stanza: "foresta", ...vista("foresta"), righe: STANZE.foresta.intro });
+      }
+      if (diario.some(e => e.stanza !== luogo)) { /* salvataggi precedenti al 27/10: le altre stanze diventano «visitate» e le loro azioni si cancellano */
+        diario.forEach(e => { if (e.stanza && e.stanza !== luogo) usate.visitate = { ...(usate.visitate || {}), [e.stanza]: 1 }; });
+        diario = diario.filter(e => e.stanza === luogo); salvaUsate();
       }
       mostraStanza(luogo);
       riprendiDialoghi();
@@ -10251,6 +10305,8 @@
         const dd = document.querySelector("#vitaliNem dd");
         $("miniNemPv").textContent = dd ? dd.textContent : "";
         $("miniNemImg").style.backgroundImage = $("ritrattoNem").style.backgroundImage;
+        $("miniNemImg").style.backgroundSize = $("ritrattoNem").style.backgroundSize;
+        $("miniNemImg").style.backgroundPosition = $("ritrattoNem").style.backgroundPosition;
         btnNem.setAttribute("aria-label", `${t.apriNem}: ${$("nomeNem").textContent}`);
         if (aperto === "nemico-aperto" && !app.classList.contains("con-nemico")) chiudi(); /* scontro finito */
       }

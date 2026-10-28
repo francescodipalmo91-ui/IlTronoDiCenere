@@ -233,7 +233,7 @@ caso("Ettore: Osserva con Intuizione, Gentile convince il ramo Signora; ramo Sig
   eq(await page.evaluate(() => usate.diario_leggibile), 2, "un fallimento: meno leggibile");
   await page.evaluate(() => { scontro.pv = 0; vittoriaScontro(); });
   vero(/bordo delle pagine è bruciato/.test(await page.evaluate(() => testoOggetto(zaino.find(x => x.id === "diario_figlio")))), "stato del quaderno");
-  eq(await page.evaluate(() => { scontro = { ctx: "ettore", conta: 0 }; const a = contaEttore(), c = contaEttore(); scontro = null; return [a.slice(0, 5), c.slice(0, 5)]; }), ["«Uno.", "«Due."], "il conteggio");
+  eq(await page.evaluate(() => { scontro = { ctx: "ettore", conta: 0, pv: 30, pvMax: 30 }; const a = contaEttore().riga, c = contaEttore().riga; scontro = null; return [a.slice(0, 5), c.slice(0, 5)]; }), ["«Uno.", "«Due."], "il conteggio");
   eq(errori, [], "errori"); await chiudi();
 });
 

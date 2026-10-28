@@ -4386,6 +4386,40 @@
           cucina: "Il focolare di Guendalina non si spegne mai: non ha bisogno della tua legna.",
           niente: "Qui non c'è un fuoco da alimentare."
         },
+        /* capacità in combattimento (28/10, approvate: bilanciamento_nemici_oggetti.md sez. 5). Testi PROVVISORI */
+        scontro: {
+          pa: "Punti abilità",
+          abilita: [
+            ["Il conteggio", "Conta i suoi attacchi; all'undicesimo sferra il dodicesimo colpo (vantaggio e +1d8). Perde il conto sotto metà salute o se provi a stordirlo."],
+            ["Fendente sporco (2)", "Se colpisce: tiro salvezza su Vigore CD 12, altrimenti Sanguinamento."],
+            ["Colpo basso (3, una volta)", "Se ti chiudi in difesa, ti aggira con il coltello: 1d4 senza tiro e Sanguinamento."],
+            ["Le braci (3, una volta)", "Sotto metà salute calcia le braci: tiro salvezza su Agilità CD 12, altrimenti 1d4 e Ustionato."],
+            ["La gamba", "Un tuo colpo critico gli fa saltare il turno."]
+          ],
+          vulnTit: "Vulnerabile", vulnDesc: "armi contundenti e incantesimi di forza: un dado di danno in più.",
+          vulnColpo: "Il colpo trova il suo punto debole: un dado di danno in più.",
+          fendente: "Fendente sporco",
+          fendenteLog: "Ettore gira la lama sbreccata e la trascina di taglio, per aprire la carne più che per uccidere.",
+          sangueResiste: (d, m, tot, cd) => `Tiro salvezza sul Vigore: ${d} ${fmtN(m)} = ${tot} contro CD ${cd}. La ferita si chiude.`,
+          sangueCede: (d, m, tot, cd) => `Tiro salvezza sul Vigore: ${d} ${fmtN(m)} = ${tot} contro CD ${cd}. La ferita non si chiude.`,
+          dodici: "«Dodici.»",
+          dodiciLog: "Ettore smette di contare. Il colpo arriva con il peso di undici cacce.",
+          dodiciNome: "Il dodicesimo colpo",
+          dodiciTiri: (a, b) => `Il dodicesimo colpo: due d20, tiene il migliore: ${a} e ${b}.`,
+          dodiciDanno: (x) => `Il dodicesimo colpo: +1d8 = ${x} danni.`,
+          perso: "«Ho perso il conto. Ricomincio: uno.»",
+          colpoBasso: "Colpo basso",
+          colpoBassoLog: "Ti chiudi in guardia, ed Ettore lo legge prima ancora che tu lo faccia: il coltello delle tacche sbuca dal basso e ti morde il fianco.",
+          colpoBassoDanno: (x) => `Colpo basso: 1d4 = ${x} danni, senza tiro.`,
+          braci: "Le braci",
+          braciLog: "Ettore arretra fino al braciere e lo calcia di lato: una pioggia di braci ti investe. Il grosso del fuoco resta nel braciere, ma la pietra intorno a te sfrigola.",
+          braciResiste: (d, m, tot, cd) => `Tiro salvezza sull'Agilità: ${d} ${fmtN(m)} = ${tot} contro CD ${cd}. Ti scansi in tempo.`,
+          braciCede: (d, m, tot, cd) => `Tiro salvezza sull'Agilità: ${d} ${fmtN(m)} = ${tot} contro CD ${cd}. Le braci ti raggiungono.`,
+          braciDanno: (x) => `Le braci: 1d4 = ${x} danni.`,
+          gambaPronta: "Il colpo gli piega la gamba sinistra: al suo turno dovrà rialzarsi.",
+          gamba: "La gamba sinistra di Ettore cede: crolla su un ginocchio e perde il turno per rialzarsi.",
+          gambaLbl: "La gamba cede"
+        },
         legnaOgg: { nome: "Fascina di legna", testo: "Rami secchi e ciocchi di pino resinoso, legati con un giunco. In un camino spento basta per un riposo; nel braciere della cripta arde per un'ora (fino a cinque fascine)." }
       },
       en: {
@@ -4451,6 +4485,39 @@
           cucina: "Guendalina's hearth never goes out: it does not need your wood.",
           niente: "There is no fire to feed here."
         },
+        scontro: {
+          pa: "Ability points",
+          abilita: [
+            ["The count", "He counts his attacks; on the eleventh he strikes the twelfth blow (advantage and +1d8). He loses count below half health or if you try to stun him."],
+            ["Dirty slash (2)", "On a hit: Might saving throw DC 12, or Bleeding."],
+            ["Low blow (3, once)", "If you shut yourself in defence, he slips round it with the knife: 1d4 with no roll and Bleeding."],
+            ["The embers (3, once)", "Below half health he kicks the embers: Agility saving throw DC 12, or 1d4 and Burned."],
+            ["The leg", "A critical hit of yours makes him lose his turn."]
+          ],
+          vulnTit: "Vulnerable", vulnDesc: "bludgeoning weapons and force spells: one extra damage die.",
+          vulnColpo: "The blow finds his weak point: one extra damage die.",
+          fendente: "Dirty slash",
+          fendenteLog: "Ettore turns the chipped blade and drags it edgewise, to open flesh rather than to kill.",
+          sangueResiste: (d, m, tot, cd) => `Might saving throw: ${d} ${fmtN(m)} = ${tot} against DC ${cd}. The wound closes.`,
+          sangueCede: (d, m, tot, cd) => `Might saving throw: ${d} ${fmtN(m)} = ${tot} against DC ${cd}. The wound will not close.`,
+          dodici: "“Twelve.”",
+          dodiciLog: "Ettore stops counting. The blow comes with the weight of eleven hunts.",
+          dodiciNome: "The twelfth blow",
+          dodiciTiri: (a, b) => `The twelfth blow: two d20, he keeps the better: ${a} and ${b}.`,
+          dodiciDanno: (x) => `The twelfth blow: +1d8 = ${x} damage.`,
+          perso: "“I've lost count. Starting again: one.”",
+          colpoBasso: "Low blow",
+          colpoBassoLog: "You shut yourself in your guard, and Ettore reads it before you even do it: the notch knife darts in low and bites your side.",
+          colpoBassoDanno: (x) => `Low blow: 1d4 = ${x} damage, no roll.`,
+          braci: "The embers",
+          braciLog: "Ettore backs up to the brazier and kicks it sideways: a shower of embers falls on you. Most of the fire stays in the brazier, but the stone around you hisses.",
+          braciResiste: (d, m, tot, cd) => `Agility saving throw: ${d} ${fmtN(m)} = ${tot} against DC ${cd}. You dodge in time.`,
+          braciCede: (d, m, tot, cd) => `Agility saving throw: ${d} ${fmtN(m)} = ${tot} against DC ${cd}. The embers reach you.`,
+          braciDanno: (x) => `The embers: 1d4 = ${x} damage.`,
+          gambaPronta: "The blow buckles his left leg: on his turn he will have to get back up.",
+          gamba: "Ettore's left leg gives way: he drops to one knee and loses his turn getting up.",
+          gambaLbl: "The leg gives way"
+        },
         legnaOgg: { nome: "Bundle of firewood", testo: "Dry branches and logs of resinous pine, tied with a reed. In a cold hearth it is enough for one rest; in the crypt brazier it burns for an hour (up to five bundles)." }
       }
     };
@@ -4481,11 +4548,63 @@
       E.insiste = { testo: T.insiste, alla_fine: "ettore_scontro" };
     }
     /* il conteggio di Ettore: il numero a ogni suo attacco, la frase intera solo a uno, quattro, sette, undici e quando perde il conto (28/10) */
-    const CONTA_INTERA = [0, 3, 6, 9, 10];
+    /* 28/10: nove e dieci li confonde («Nove… dieci?»), così la frase «Undici» arriva al decimo attacco e il dodicesimo colpo all'undicesimo.
+       Perde il conto (riparte da uno) quando scende sotto metà salute e quando provi a stordirlo. Dalla rivincita riparte da tre. */
+    const CONTA_INTERA = [0, 3, 6, 9];
     function contaEttore() {
-      const C = ET.conta, n = Number(scontro.conta) || 0;
-      scontro.conta = n + 1 >= C.length ? 0 : n + 1;
-      return CONTA_INTERA.includes(n) || !ET.numeri ? C[n] : ET.numeri[n];
+      const C = ET.conta;
+      let n = Number(scontro.conta) || 0, perso = false;
+      const meta = scontro.pv < scontro.pvMax / 2 && !scontro.metaContata;
+      if (meta) scontro.metaContata = true;
+      if ((meta || scontro.contoPerso) && n > 0) { n = 0; perso = true; }
+      scontro.contoPerso = false;
+      const dodici = n === 10;
+      scontro.conta = dodici ? 0 : n + 1;
+      return { dodici, riga: perso ? ET.scontro.perso : dodici ? ET.scontro.dodici : (CONTA_INTERA.includes(n) ? C[n] : ET.numeri[n]) };
+    }
+    /* azioni del personaggio che contano per Ettore: provare a stordirlo gli fa perdere il conto; chiudersi in difesa apre il colpo basso */
+    const DIFESE_INC = ["scudo", "scudo_fede", "muro_forza", "specchio_rune", "barriera_cinetica", "respingere", "santuario", "invulnerabilita", "manto_ombra", "pelle_pietra"];
+    function notaAzioneEttore(eventi, difesa) {
+      if (!scontro || scontro.ctx !== "ettore") return;
+      if ((eventi || []).some(e => (e.k === "immune" || e.k === "stato") && ["frastornato", "intontito", "bloccato"].includes(e.s))) scontro.contoPerso = true;
+      if (difesa) scontro.difesaUltima = true;
+    }
+    function gambaEttore(righe) {
+      if (!scontro || scontro.ctx !== "ettore" || scontro.pv <= 0) return;
+      scontro.gamba = true; righe.push(ET.scontro.gambaPronta);
+    }
+    /* Sanguinamento sul personaggio: 1d4 a inizio turno, non scende sotto 1 */
+    function tickSangue() {
+      if (!haStato("sangue") || pvPg() <= 1) return;
+      const da = pvPg(), d = Math.min(tira(4), da - 1); pg.dannoFisico = (pg.dannoFisico || 0) + d; disegnaVitali(); scuotiScheda(); modificato();
+      aggiungi({ tipo: "narra", box: "nem", righe: [BT.stati.sangue.tick(d, da, pvPg())] });
+    }
+    function salvezzaSangue(righe) {
+      if (haStato("sangue")) return;
+      const cd = 12, m = mod(statPg("Vigore")) + malusStatoProva(), d = tira(20), tot = d + m;
+      if (tot >= cd) righe.push(ET.scontro.sangueResiste(d, m, tot, cd));
+      else { righe.push(ET.scontro.sangueCede(d, m, tot, cd)); applicaStatoPg("sangue", righe); }
+    }
+    /* prima dell'attacco di Ettore: la gamba (perde il turno), le braci (una volta, sotto metà salute), il colpo basso (una volta, se ti difendi). true se il turno è finito */
+    function abilitaEttorePrimaDiAttaccare() {
+      const S = ET.scontro;
+      if (scontro.gamba) { scontro.gamba = false; aggiungi({ tipo: "narra", box: "mia", righe: [S.gamba] }); segnaTurno(S.gambaLbl); fineTurnoNem(); return true; }
+      if (!scontro.braciUsate && scontro.pv < scontro.pvMax / 2 && (scontro.pa || 0) >= 3) {
+        scontro.braciUsate = true; scontro.pa -= 3;
+        const cd = 12, m = modAgiPg() + malusStatoProva() + (window.MagiaCombattimento ? window.MagiaCombattimento.bonusTsPg(scontro) : 0), d = tira(20), tot = d + m, righe = [S.braciLog];
+        if (tot >= cd) righe.push(S.braciResiste(d, m, tot, cd));
+        else { righe.push(S.braciCede(d, m, tot, cd)); const x = tira(4); righe.push(S.braciDanno(x)); dannoAlPg(x, "Fuoco", righe); applicaStatoPg("ustione", righe); }
+        aggiungi({ tipo: "narra", box: tot >= cd ? "mia" : "nem", esito: S.braci, righe }); segnaTurno(S.braci); barraScontro(); disegnaVitali();
+        fineTurnoNem(); return true;
+      }
+      if (scontro.difesaUltima && !scontro.colpoBassoUsato && (scontro.pa || 0) >= 3) {
+        scontro.colpoBassoUsato = true; scontro.pa -= 3;
+        const x = tira(4), righe = [S.colpoBassoLog, S.colpoBassoDanno(x)];
+        dannoAlPg(x, "Perforante", righe); applicaStatoPg("sangue", righe);
+        aggiungi({ tipo: "narra", box: "nem", esito: S.colpoBasso, righe }); segnaTurno(S.colpoBasso); barraScontro(); disegnaVitali();
+        if (pvPg() <= 0) { fineTurnoNem(); return true; }
+      }
+      return false;
     }
     /* ramo Signora: il quaderno nel braciere, 3 prove di Acrobazia; ogni fallimento lo rende meno leggibile (usate.diario_leggibile 0-3) */
     function salvaQuaderno() {
@@ -5383,7 +5502,9 @@
           ustione: { nome: "Ustionato", effetto: "1 danno all'inizio di ogni tuo turno di scontro", preso: "Il fuoco ti ha lasciato la pelle ustionata: stato Ustionato (1 danno all'inizio di ogni tuo turno di scontro, finché non lo curi o non riposi).", tick: (da, a) => `L'ustione brucia: −1 salute fisica · ${da} → ${a}.` },
           veleno: { nome: "Avvelenato", effetto: "−2 alle prove di abilità e ai tiri salvezza", preso: "Il veleno ti entra nel sangue: stato Avvelenato (−2 alle prove di abilità e ai tiri salvezza, finché non lo curi o non riposi).", resiste: (d, m, tot, cd) => `Tiro salvezza sul Vigore: ${d} ${fmtN(m)} = ${tot} contro CD ${cd}. Resisti al veleno.`, cede: (d, m, tot, cd) => `Tiro salvezza sul Vigore: ${d} ${fmtN(m)} = ${tot} contro CD ${cd}.` },
           debole: { nome: "Indebolito", effetto: "−2 ai tiri per colpire", preso: "Il colpo ti ha tolto le forze: stato Indebolito (−2 ai tiri per colpire, finché non lo curi o non riposi)." },
-          paura: { nome: "Impaurito", effetto: "−2 alla Classe armatura", preso: "Il terrore ti fa tremare le mani: stato Impaurito (−2 alla Classe armatura, finché non lo curi o non riposi)." }
+          paura: { nome: "Impaurito", effetto: "−2 alla Classe armatura", preso: "Il terrore ti fa tremare le mani: stato Impaurito (−2 alla Classe armatura, finché non lo curi o non riposi)." },
+          /* 28/10: dalle lame di Ettore; finisce con lo scontro, per ora senza cura */
+          sangue: { nome: "Sanguinamento", effetto: "1d4 danni all'inizio di ogni tuo turno di scontro (non scendi sotto 1); finisce con lo scontro", preso: "La ferita non smette di sanguinare: stato Sanguinamento (1d4 danni all'inizio di ogni tuo turno di scontro, fino alla fine dello scontro).", tick: (d, da, a) => `La ferita sanguina: −${d} salute fisica · ${da} → ${a}.`, fine: "Lo scontro è finito: stringi la ferita e il sangue smette di scorrere." }
         },
         statiTit: "Stati",
         riposoCura: (n) => `Il riposo scaccia ${n}.`,
@@ -5413,7 +5534,8 @@
           ustione: { nome: "Burned", effetto: "1 damage at the start of each of your combat turns", preso: "The fire has left your skin burned: Burned (1 damage at the start of each of your combat turns, until cured or until you rest).", tick: (da, a) => `The burn stings: −1 physical health · ${da} → ${a}.` },
           veleno: { nome: "Poisoned", effetto: "−2 to skill checks and saving throws", preso: "The venom enters your blood: Poisoned (−2 to skill checks and saving throws, until cured or until you rest).", resiste: (d, m, tot, cd) => `Might saving throw: ${d} ${fmtN(m)} = ${tot} against DC ${cd}. You resist the venom.`, cede: (d, m, tot, cd) => `Might saving throw: ${d} ${fmtN(m)} = ${tot} against DC ${cd}.` },
           debole: { nome: "Weakened", effetto: "−2 to attack rolls", preso: "The blow has drained your strength: Weakened (−2 to attack rolls, until cured or until you rest)." },
-          paura: { nome: "Frightened", effetto: "−2 to Armor Class", preso: "Terror makes your hands shake: Frightened (−2 to Armor Class, until cured or until you rest)." }
+          paura: { nome: "Frightened", effetto: "−2 to Armor Class", preso: "Terror makes your hands shake: Frightened (−2 to Armor Class, until cured or until you rest)." },
+          sangue: { nome: "Bleeding", effetto: "1d4 damage at the start of each of your combat turns (never below 1); ends with the fight", preso: "The wound will not stop bleeding: Bleeding (1d4 damage at the start of each of your combat turns, until the end of the fight).", tick: (d, da, a) => `The wound bleeds: −${d} physical health · ${da} → ${a}.`, fine: "The fight is over: you bind the wound and the blood stops." }
         },
         statiTit: "Conditions",
         riposoCura: (n) => `Rest drives away: ${n}.`,
@@ -6609,6 +6731,7 @@
     }
     /* a fine scontro i turni si richiudono tutti dentro un'unica tendina */
     function chiudiScontro(esito) {
+      if (haStato("sangue")) { togliStatoPg("sangue"); sist(BT.stati.sangue.fine); } /* il Sanguinamento finisce con lo scontro */
       if (!scontro || !scontro.sid) return;
       const T = SCONTRO_TIT[LINGUA] || SCONTRO_TIT.it, sid = scontro.sid;
       const titolo = T.tit(CB.nomeLungo, scontro.round || 0, T[esito] || esito);
@@ -7481,7 +7604,7 @@
       if (indizio) sist(A.ettore.indizio);
       const sorpreso = usate.ettore_sorpreso === true && !usate.ettore_sorpresa_usata; /* sceso in silenzio: la prima volta agisci per primo */
       if (sorpreso) { usate.ettore_sorpresa_usata = true; salvaUsate(); }
-      avviaScontro("esploratore", { ctx: "ettore", testi: "esploratore", caMod: indizio ? -2 : 0, primo: sorpreso ? "pg" : null, sorpresa: A2.sorpresa });
+      avviaScontro("esploratore", { ctx: "ettore", testi: "esploratore", caMod: indizio ? -2 : 0, primo: sorpreso ? "pg" : null, sorpresa: A2.sorpresa, conta: Number(usate.ettore_sconfitte) > 0 ? 3 : 0 });
     }
     /* Ettore a terra: finirlo o risparmiarlo */
     function resaEttore() {
@@ -9610,12 +9733,16 @@
         soffio: { cd: 12, dadi: 2, dado: 6, ricarica: 5 }, /* tiro salvezza su Agilità CD 12 o 2d6; si ricarica con 5-6 su 1d6 */
         ritratto: "immagini/house/mastino_cantina.webp" /* immagine di riserva: di norma si usa quella caricata alla comparsa */
       },
-      /* Ettore, l'esploratore della cripta (PROVVISORIO): spada 1d6, niente attacchi speciali; si arrende a un terzo della salute */
-      esploratore: { ca: 13, dadoVita: 8, dannoDado: 6, xp: 500, attacco: 1, boss: true, /* boss: niente effetti di controllo, durate brevi, niente esecuzione */ /* custode del fermaglio: 500 PE, gli stessi se risparmiato */ probPresa: 0, probSoffio: 0, soffio: null, ritratto: "immagini/nemici/Ettore.webp" } /* immagine da aggiungere */
+      /* Ettore, l'esploratore della cripta (28/10, bilanciamento sez. 5): livello 2, statistiche fisse, salute 30, attacco +4,
+         spada 1d6 + 4, 8 punti abilità; +5 salute, +1 per colpire e +1 punto abilità per ogni livello del personaggio oltre il 2 (max +2).
+         Vulnerabile a contundente e forza (+1 dado). Si arrende a un terzo della salute solo al primo incontro. */
+      esploratore: { ca: 13, dadoVita: 8, dannoDado: 6, xp: 400, attacco: 2, boss: true, livello: 2, pvFissi: 30, pa: 8, ettore: true,
+        statFisse: { Vigore: 14, "Agilità": 13, Mente: 12, Spirito: 8 }, vulnerabile: ["Contundente", "Forza"], /* boss: niente effetti di controllo, durate brevi, niente esecuzione */ /* custode del fermaglio: 400 PE, gli stessi se risparmiato */ probPresa: 0, probSoffio: 0, soffio: null, ritratto: "immagini/nemici/Ettore.webp" } /* immagine da aggiungere */
     };
     /* boss: Guendalina, Aldo, il sovrano, Adele, i guardiani dei fermagli e i due mastini speciali (campo boss in NEMICI) */
     /* resistenze: resiste: ["veleno"] dimezza i danni da veleno dello Sciamano (da mettere a Dafne e al sovrano quando avranno la loro voce qui) */
     const bossNem = () => { const n = scontro || ultimoNemico; return !!(n && NEMICI[n.id] && NEMICI[n.id].boss); };
+    const dadiVuln = (tipo) => { const n = scontro || ultimoNemico, D = n && NEMICI[n.id]; return D && D.vulnerabile && tipo && D.vulnerabile.includes(tipo) ? 1 : 0; }; /* +1 dado di danno (28/10) */
     const caNem = () => { const n = scontro || ultimoNemico; return NEMICI[n.id].ca + (Number(n.caMod) || 0) - (n.eff ? CMB.malusCA(n) : 0); }; /* il consiglio di Aldo abbassa la CA di Ettore; Sbilanciato e Incrinatura la abbassano */
     /* classe difficoltà degli incantesimi: 8 + modificatore (Mente per il Sapiente, Spirito per l'Accolito) + livello */
     const ATTR_INC = { Sapiente: "Mente", Accolito: "Spirito" };
@@ -10136,6 +10263,7 @@
       const vit = $n("vitaliNem"); vit.replaceChildren();
       riga(vit, CB.salute, scoperta ? `${Math.max(0, n.pv)} / ${n.pvMax}` : ig);
       riga(vit, CB.ca, scoperta ? String(caNem()) : ig);
+      if (n.paMax) riga(vit, (D.ettore ? ET.scontro.pa : null) || Lingua.t({ it: "Punti abilità", en: "Ability points" }), scoperta ? `${Math.max(0, n.pa)} / ${n.paMax}` : ig);
       if (scontro) righeEffetti(vit, scontro, EFF_NEM, (c) => { const d = document.createElement("div"); d.className = c; vit.append(d); });
       $n("titStatNem").textContent = CB.caratteristiche; $n("titAttNem").textContent = CB.attacchi; $n("titSpecNem").textContent = CB.speciali;
       const st = $n("statNem"), at = $n("attNem");
@@ -10150,7 +10278,7 @@
       const dl = document.createElement("dl");
       ATTR_NEM.forEach(a => riga(dl, N("attributi", a), `${n.stat[a]} (${fmtN(mod(n.stat[a]))})`));
       st.append(dl);
-      const m = mod(n.stat.Lotta);
+      const m = mod(n.stat.Lotta) + (D.statFisse ? (Number(D.attacco) || 0) + (Number(n.bonusAtt) || 0) : 0); /* guardiani: il bonus vero (danno = dado + bonus) */
       const voce = (box, t, d) => {
         const p = document.createElement("p"); p.className = "att";
         const b = document.createElement("b"); b.textContent = t;
@@ -10160,6 +10288,7 @@
       voce(at, CB.attMorso, CB.descMorso(m)); voce(at, CB.attZampata, CB.descZampata(m));
       if (D.probPresa) voce(sp, CB.attPresa, CB.descPresa);
       if (D.soffio) voce(sp, CB.attSoffio, CB.descSoffio(n.soffioPronto));
+      if (D.ettore) { ET.scontro.abilita.forEach(([t, d]) => voce(sp, t, d)); voce(sp, ET.scontro.vulnTit, ET.scontro.vulnDesc); }
       if (!sp.children.length) { const v = document.createElement("p"); v.className = "vuoto"; v.textContent = CB.nessunoSpeciale || "—"; sp.append(v); }
     }
     function scuotiNemico() { const e = document.getElementById("schedaNem"); e.classList.remove("colpito"); void e.offsetWidth; e.classList.add("colpito"); }
@@ -10193,10 +10322,13 @@
       opz = opz || {};
       CB = testiScontro(opz.testi || id);
       const D = NEMICI[id];
-      const stat = conAttrVecchi(Object.fromEntries(ATTR_NEM.map(a => [a, 10 + (["Vigore", "Agilità"].includes(a) ? tira(6) : 0)]))); /* ogni nemico del seminterrato è diverso */
+      const stat = conAttrVecchi(D.statFisse ? { ...Object.fromEntries(ATTR_NEM.map(a => [a, 10])), ...D.statFisse } : Object.fromEntries(ATTR_NEM.map(a => [a, 10 + (["Vigore", "Agilità"].includes(a) ? tira(6) : 0)]))); /* ogni nemico del seminterrato è diverso; i guardiani hanno statistiche fisse */
       const potenziato = id === "mastino" && !opz.ctx && usate.mastino_potenziato; /* Intuizione fallita con Guendalina: +5% */
-      const pv = Math.max(1, Math.ceil(((D.pvBase != null ? D.pvBase : 10) + tira(D.dadoVita) + mod(stat.Corpo)) * (potenziato ? 1.05 : 1)));
-      scontro = { id, img: ultimaImmagineNemico || D.ritratto, stat, pv, pvMax: pv, presaUsata: false, soffioPronto: true, round: 0, primo: null, tuoTurno: false, cambio: false, turno: null, svelata: false, eff: {}, effMax: {}, ctx: opz.ctx || null, bonusAtt: potenziato ? 1 : 0, caMod: Number(opz.caMod) || 0, resa: false, sid: "s" + Date.now().toString(36) };
+      const crescita = D.livello ? Math.max(0, Math.min(2, livelloPg() - D.livello)) : 0; /* guardiani: +5 salute, +1 per colpire, +1 punto abilità per livello oltre quello atteso */
+      const pv = D.pvFissi ? D.pvFissi + 5 * crescita : Math.max(1, Math.ceil(((D.pvBase != null ? D.pvBase : 10) + tira(D.dadoVita) + mod(stat.Corpo)) * (potenziato ? 1.05 : 1)));
+      const pa = D.pa ? D.pa + crescita : 0; /* punti abilità del nemico: si spendono per le abilità, tornano pieni a ogni scontro */
+      scontro = { id, img: ultimaImmagineNemico || D.ritratto, stat, pv, pvMax: pv, pa, paMax: pa, presaUsata: false, soffioPronto: true, round: 0, primo: null, tuoTurno: false, cambio: false, turno: null, svelata: false, eff: {}, effMax: {}, ctx: opz.ctx || null, bonusAtt: (potenziato ? 1 : 0) + crescita, caMod: Number(opz.caMod) || 0, resa: false, sid: "s" + Date.now().toString(36) };
+      if (opz.conta) scontro.conta = opz.conta; /* Ettore dalla rivincita: «eravamo arrivati a tre» */
       if (opz.soffioScarico) scontro.soffioPronto = false;
       ultimoNemico = null;
       MusicaScontro.avvia();
@@ -10228,8 +10360,8 @@
     function turnoPgScontro() {
       if (!scontro) return;
       if (scontro.primo === "pg") apriTurno();
-      scontro.tuoTurno = true; scontro.cambio = false; scontro.frontaleUsato = false;
-      tickUstione();
+      scontro.tuoTurno = true; scontro.cambio = false; scontro.frontaleUsato = false; scontro.difesaUltima = false;
+      tickUstione(); tickSangue();
       const rilascio = CMB.inizioTurnoPg(scontro, ctxTecnica()); /* la Parata scade; Mare Profondo ed Egida rilasciano l'onda */
       if (rilascio.length) {
         aggiungi({ tipo: "narra", box: "mia", righe: rilascio.map(rigaScudo).filter(Boolean) }); scuotiNemico();
@@ -10270,10 +10402,13 @@
       const righe = [];
       if (crit) guadagnaIra(2);
       if (ok) {
-        const dado = dadoArmaPg(conTorcia), nd = (crit ? 2 : 1) * (1 + (pre.piuDadi || 0)), tiri = tiraDadi(nd, dado), base = Math.max(1, somma(tiri) + m);
+        const vuln = dadiVuln(conTorcia ? "Contundente" : tipoArmaInMano()); /* la torcia colpisce come un'arma contundente */
+        const dado = dadoArmaPg(conTorcia), nd = (crit ? 2 : 1) * (1 + (pre.piuDadi || 0) + vuln), tiri = tiraDadi(nd, dado), base = Math.max(1, somma(tiri) + m);
         const marc = CMB.marchiato(scontro) ? tira(4) : 0, sig = scontro.sigillo && CMB.crepePiene(scontro, { boss: bossNem() }) ? tira(4) : 0, seg = CMB.segnato(scontro) ? tira(4) : 0, danno = base + marc + sig + seg; /* Marchio del Guardiano, Sigillo del Demolitore e Segno del Cacciatore: +1d4 agli attacchi normali */
         scontro.pv -= danno;
         righe.push(pesca(crit ? CB.critPg : conTorcia ? CB.colpTorcia : CB.colpArma), crit ? CB.tiroAttCrit(mA, tot, d) : CB.tiroAtt(d, mA, tot, ca), CB.tiroDanno(nd, dado, tiri, m, base));
+        if (vuln) righe.push(ET.scontro.vulnColpo);
+        if (crit) gambaEttore(righe); /* Ettore: un critico gli fa perdere il turno */
         if (marc) righe.push(RT.marchioDanno(marc));
         if (sig) righe.push(RT.sigilloDanno(sig));
         if (seg) righe.push(RT.segnoDanno(seg));
@@ -10320,14 +10455,17 @@
     }
     function lanciaMagia(inc) {
       const MC = window.MagiaCombattimento, ctx = ctxIncantesimo();
+      ctx.piuDadiVuln = dadiVuln(inc.scuola === "forza" ? "Forza" : null); /* gli incantesimi non usano la vulnerabilità all'arma */
       const disp = MC.disponibile(inc, scontro, ctx); if (!disp.ok) return sist(MC.testo({ k: disp.motivo }));
       const costo = MC.costo(inc, scontro);
       if (manaAttuale() < costo) return sist(CB.pocoMana(costo, manaAttuale()));
       pg.manaUsato = (pg.manaUsato || 0) + costo; /* si paga prima: il mana recuperato con la Detonazione arriva dopo */
       const pvPrima = scontro.pv;
       const r = MC.lancia(inc, scontro, ctx);
-      const { righe, esiti, ts } = righeEventi(r.eventi, inc);
+      const { righe, esiti, ts, crit } = righeEventi(r.eventi, inc);
       righe.unshift(Lingua.t(inc.effetto));
+      if (crit) gambaEttore(righe);
+      notaAzioneEttore(r.eventi, DIFESE_INC.includes(inc.id));
       righe.push(CB.costo(costo, manaAttuale()));
       if (scontro.pv < pvPrima) scuotiNemico();
       const esito = nomeInc(inc) + (esiti.length ? ": " + esiti.join(", ") : "");
@@ -10369,6 +10507,7 @@
         case "aumento_potenza": durata("potenza", 3); disegnaVitali(); break;
       }
       if (manaMax() != null) righe.push(CB.costo(costo, manaAttuale()));
+      notaAzioneEttore(salvezza && !salvezza.ok && ["stop", "folgorazione"].includes(inc.id) ? [{ k: "stato", s: "bloccato" }] : [], DIFESE_INC.includes(inc.id));
       aggiungi({ tipo: "narra", box: "mia", esito: nomeInc(inc), righe });
       if (salvezza) {
         const z = salvezza;
@@ -10448,6 +10587,7 @@
       const nem = scontro || ultimoNemico;
       return {
         tira, liv: livelloPg(), modAtt: modLottaPg() + malusStatoAtt(), modDanno: modLottaPg(), dado: dadoArmaPg(false), ca: caNem, boss: bossNem(),
+        piuDadiVuln: dadiVuln(tipoArmaInMano()), /* vulnerabilità del nemico al tipo d'arma */
         cd: cdTecniche(), modTs: modNem("Vigore"),
         modSpirito: mod(statPg("Spirito")),
         resisteVeleno: !!(nem && NEMICI[nem.id] && (NEMICI[nem.id].resiste || []).includes("veleno")), /* Dafne e il sovrano */
@@ -10555,6 +10695,8 @@
       const { righe, esiti, crit, ts, colpito } = righeEventi(r.eventi, t);
       righe.unshift(Lingua.t(t.desc));
       for (let i = 0; i < crit; i++) { const ira = guadagnaIra(2); if (ira) righe.push(ira); } /* un tuo colpo critico: +2 ira, come per gli attacchi normali */
+      if (crit) gambaEttore(righe);
+      notaAzioneEttore(r.eventi, t.difesa || t.id === "parata" || t.famiglia === "difesa");
       if (colpito) scuotiNemico();
       righe.push(sciamano() ? RT.costoRigaNatura(risorsaAttuale(), risorsaPg().max) : RT.costoRiga(risorsaAttuale(), risorsaPg().max));
       aggiungi({ tipo: "narra", box: crit ? "ok" : "mia", esito: nomeTec(t) + (esiti.length ? ": " + esiti.join(", ") : ""), righe });
@@ -10623,6 +10765,7 @@
       if (sciamano() && scontro.trappola) { /* la trappola dello Sciamano scatta prima dell'attacco */
         mostraNatura(SCI.scattaTrappola(scontro, ctxTecnica())); barraScontro(); disegnaVitali();
       }
+      if (D.ettore && abilitaEttorePrimaDiAttaccare()) return; /* la gamba, le braci, il colpo basso */
       if (fratturaPrimaDiAttaccare()) return;
       if (D.soffio && scontro.soffioPronto && !eff("silenzio") && Math.random() < D.probSoffio) return soffioScontro();
       scontro.attRest = Math.max(0, (Number(D.attacchi) || 1) - 1);
@@ -10669,15 +10812,23 @@
         segnaTurno(`${nome}: ${esitoBreve(CB.mancato)}`);
         return fineAttaccoNem();
       }
-      const m = modNem("Lotta") + (Number(NEMICI[(scontro || ultimoNemico).id].attacco) || 0) + (Number((scontro || ultimoNemico).bonusAtt) || 0) + CMB.modAttaccoNem(scontro), at = CMB.tiroAttaccoNem(scontro, { tira }), d = at.d, tot = d + m, ca = caScontro(), crit = d === 20 && CMB.critNemPossibile(scontro), ok = crit || tot > ca;
+      const conto = scontro.ctx === "ettore" ? contaEttore() : null; /* Ettore conta i suoi colpi; all'undicesimo il dodicesimo colpo */
+      const fendente = !!(D.ettore && !conto.dodici && !haStato("sangue") && (scontro.pa || 0) >= 2 + (scontro.braciUsate ? 0 : 3)); /* tiene da parte i punti per le braci */
+      if (fendente) scontro.pa -= 2;
+      let at = CMB.tiroAttaccoNem(scontro, { tira });
+      if (conto && conto.dodici && !at.tiri) { const a = tira(20), b = tira(20); at = { d: Math.max(a, b), dodici: [a, b] }; } /* vantaggio (se non è accecato) */
+      const m = modNem("Lotta") + (Number(NEMICI[(scontro || ultimoNemico).id].attacco) || 0) + (Number((scontro || ultimoNemico).bonusAtt) || 0) + CMB.modAttaccoNem(scontro), d = at.d, tot = d + m, ca = caScontro(), crit = d === 20 && CMB.critNemPossibile(scontro), ok = crit || tot > ca;
       const righe = [];
-      if (scontro.ctx === "ettore") righe.push(contaEttore()); /* Ettore conta i suoi colpi */
+      if (conto) righe.push(conto.riga);
+      if (conto && conto.dodici) righe.push(ET.scontro.dodiciLog);
+      if (fendente) righe.push(ET.scontro.fendenteLog);
+      if (at.dodici) righe.push(ET.scontro.dodiciTiri(at.dodici[0], at.dodici[1]));
       if (at.tiri) righe.push(Lingua.t({ it: `Il nemico tira due d20 e tiene il peggiore: ${at.tiri[0]} e ${at.tiri[1]}.`, en: `The enemy rolls two d20 and keeps the worse: ${at.tiri[0]} and ${at.tiri[1]}.` }));
       let parato = false;
       let assorbito = false;
       if (ok) {
         const parataPronta = !!scontro.parata;
-        const nd = crit ? 2 : 1, tiri = parataPronta ? [] : tiraDadi(nd, D.dannoDado), danno = parataPronta ? 0 : Math.max(1, somma(tiri) + m); /* con la Parata il danno non si tira */
+        const nd = crit ? 2 : 1, tiri = parataPronta ? [] : tiraDadi(nd, D.dannoDado), extra = conto && conto.dodici && !parataPronta ? tira(8) : 0, danno = parataPronta ? 0 : Math.max(1, somma(tiri) + m) + extra; /* con la Parata il danno non si tira; il dodicesimo colpo +1d8 */
         const sub = CMB.colpoSubito(scontro, ctxTecnica(), crit, danno); /* Parata, assorbimento dello scudo, ira: 1/2/3 per livello, doppia sui critici */
         if (sub.annullato && parataPronta) {
           parato = true;
@@ -10690,12 +10841,14 @@
           scuotiNemico();
         } else {
           assorbito = sub.annullato;
-          righe.push(assorbito ? pesca(CB.parata) : pesca(crit ? CB.critNem : morso ? CB.morsoOk : CB.zampaOk), CB.tiroAttNem(d, m, tot, ca), CB.tiroDanno(nd, D.dannoDado, tiri, m, danno));
+          righe.push(assorbito ? pesca(CB.parata) : pesca(crit ? CB.critNem : morso ? CB.morsoOk : CB.zampaOk), CB.tiroAttNem(d, m, tot, ca), CB.tiroDanno(nd, D.dannoDado, tiri, m, danno - extra));
+          if (extra) righe.push(ET.scontro.dodiciDanno(extra));
           sub.eventi.forEach(e => { const x = rigaScudo(e); if (x) righe.push(x); });
           if (sub.eventi.some(e => e.k === "rimbalzo" || e.k === "elasticaColpo")) scuotiNemico();
           const dannoFin = difesaNatura(sub.danno, righe); /* Pelle e Scudo di Corteccia */
           if (dannoFin > 0) dannoAlPg(dannoFin, morso ? "Perforante" : "Tagliente", righe);
           if (dannoFin > 0) statoDaColpo(D, crit, righe); /* animali della foresta: veleno della vipera, carica del cinghiale */
+          if (dannoFin > 0 && fendente) salvezzaSangue(righe); /* Fendente sporco: Vigore CD 12 o Sanguinamento */
           const ira = guadagnaIra(sub.ira); if (ira) righe.push(ira); /* l'ira cresce con i colpi subiti (non con quelli inghiottiti dallo scudo, salvo Batteria e Baluardo) */
         }
       } else {
@@ -10703,8 +10856,9 @@
         CMB.colpoMancato(scontro, ctxTecnica()).forEach(e => { const x = rigaScudo(e); if (x) righe.push(x); }); /* Postura Salda, Drenaggio d'Urto */
       }
       const esitoN = parato ? CB.mancato : assorbito ? RT.scudo.assorbitoEsito : crit ? CB.critico : ok ? CB.colpito : CB.mancato;
-      aggiungi({ tipo: "narra", box: parato || assorbito ? "mia" : crit ? "ko" : "nem", esito: `${nome}: ${esitoN}`, righe });
-      segnaTurno(`${nome}: ${esitoBreve(esitoN)}`);
+      const nomeAtt = conto && conto.dodici ? ET.scontro.dodiciNome : fendente ? ET.scontro.fendente : nome;
+      aggiungi({ tipo: "narra", box: parato || assorbito ? "mia" : crit ? "ko" : "nem", esito: `${nomeAtt}: ${esitoN}`, righe });
+      segnaTurno(`${nomeAtt}: ${esitoBreve(esitoN)}`);
       barraScontro(); disegnaVitali();
       if (pvPg() <= 0 || scontro.pv <= 0) return fineAttaccoNem();
       if (ok && !parato && !assorbito && morso && !scontro.presaUsata && !eff("silenzio") && !CMB.presaBloccata(scontro) && !eff("muro") && Math.random() < D.probPresa) return setTimeout(presaScontro, PAUSA_SCONTRO * 0.7); /* la presa segue solo un morso a segno; Postura Salda la blocca */

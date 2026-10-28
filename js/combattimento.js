@@ -142,7 +142,7 @@
     const ev = { k: "colpo", d, mA, tot, ca, crit, ok, danno: 0 };
     if (soglia < 20) ev.critDa = soglia;
     if (ok) {
-      const dado = o.dado || ctx.dado, nd = (crit ? 2 : 1) * (1 + (o.piuDadi || 0) + (pre.piuDadi || 0)), tiri = tiraDadi(ctx, nd, dado), mm = o.conMod === false ? 0 : ctx.modDanno;
+      const dado = o.dado || ctx.dado, nd = (crit ? 2 : 1) * (1 + (o.piuDadi || 0) + (pre.piuDadi || 0) + (ctx.piuDadiVuln || 0)), tiri = tiraDadi(ctx, nd, dado), mm = o.conMod === false ? 0 : ctx.modDanno;
       let danno = Math.max(1, somma(tiri) + mm);
       Object.assign(ev, { nd, dado, tiri, mm });
       if (o.base && marchiato(s)) { const x = ctx.tira(4); danno += x; ev.marchio = x; }

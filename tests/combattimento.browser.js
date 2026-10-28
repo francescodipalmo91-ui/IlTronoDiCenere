@@ -1121,8 +1121,41 @@ caso("Cripta: discesa furtiva riuscita, scelta tra farsi avanti e colpire; il co
   await page.evaluate(() => [...document.querySelectorAll("#azioni button, #scelte button")].find(x => x.textContent === A2.furtivo.avanti).click());
   await page.waitForTimeout(500);
   eq(await page.evaluate(() => [usate.dialogo_ettore, usate.ettore_sorpresa_usata]), ["inizio_furtivo", true], "dialogo furtivo, sorpresa persa");
-  const conta = await page.evaluate(() => { scontro = { conta: 0 }; const r = []; for (let i = 0; i < 11; i++) r.push(contaEttore()); scontro = null; return r; });
-  eq([conta[0], conta[1], conta[3], conta[10]], await page.evaluate(() => [ET.conta[0], ET.numeri[1], ET.conta[3], ET.conta[10]]), "numero e frasi");
+  const conta = await page.evaluate(() => { scontro = { conta: 0, pv: 30, pvMax: 30 }; const r = []; for (let i = 0; i < 12; i++) r.push(contaEttore()); scontro = null; return r; });
+  eq([conta[0].riga, conta[1].riga, conta[3].riga, conta[9].riga, conta[10].riga, conta[10].dodici, conta[11].riga], await page.evaluate(() => [ET.conta[0], ET.numeri[1], ET.conta[3], ET.conta[9], ET.scontro.dodici, true, ET.conta[0]]), "numero, frasi e dodicesimo colpo all'undicesimo attacco");
+  eq(errori, [], "errori"); await chiudi();
+});
+
+/* ======================= Ettore in combattimento (28/10) ======================= */
+caso("Ettore: livello 2 fisso (30 salute, 8 punti abilità, 400 PE), crescita oltre il livello 2, vulnerabile a contundente e forza", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "cripta", usate: { riposo: "sbloccato", ettore: "scontro" } }));
+  await page.evaluate(() => { luogo = "cripta"; avviaScontro("esploratore", { ctx: "ettore", testi: "esploratore", primo: "pg" }); }); await aspettaTurnoPg(page);
+  eq(await page.evaluate(() => [scontro.pvMax, scontro.paMax, scontro.stat.Vigore, scontro.stat.Spirito, NEMICI.esploratore.xp, dadiVuln("Contundente"), dadiVuln("Forza"), dadiVuln("Tagliente")]), [30, 8, 14, 8, 400, 1, 1, 0]);
+  vero(await page.evaluate(() => document.getElementById("vitaliNem").textContent.includes(ET.scontro.pa) || !scontro.svelata), "punti abilità nella scheda");
+  await page.evaluate(() => { scontro.svelata = true; disegnaNemico(); });
+  vero(await page.evaluate(() => document.getElementById("vitaliNem").textContent.includes("8 / 8") && document.getElementById("specNem").textContent.includes(ET.scontro.abilita[1][0])), "scheda con punti abilità e abilità");
+  await page.evaluate(() => { chiudiScontro("vinto"); scontro = null; pg.livello = 3; avviaScontro("esploratore", { ctx: "ettore", testi: "esploratore", primo: "pg", conta: 3 }); }); await aspettaTurnoPg(page);
+  eq(await page.evaluate(() => [scontro.pvMax, scontro.paMax, scontro.bonusAtt, scontro.conta]), [35, 9, 1, 3], "livello 3: +5 salute, +1 PA, +1 per colpire; rivincita da tre");
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Ettore: fendente sporco e Sanguinamento, braci sotto metà salute, colpo basso dopo una difesa, la gamba, conto perso", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "cripta", usate: { riposo: "sbloccato", ettore: "scontro" } }));
+  await page.evaluate(() => { luogo = "cripta"; avviaScontro("esploratore", { ctx: "ettore", testi: "esploratore", primo: "pg" }); }); await aspettaTurnoPg(page);
+  await accoda(page, [R(18, 20), R(3, 6), R(1, 20)], [0.1]);
+  await page.evaluate(() => { scontro.tuoTurno = false; attaccoNemScontro(); });
+  eq(await page.evaluate(() => [scontro.pa, haStato("sangue")]), [6, true], "fendente: 2 PA e Sanguinamento");
+  await page.waitForTimeout(3500); await aspettaTurnoPg(page);
+  eq(await page.evaluate(() => [haStato("sangue"), document.getElementById("diario").textContent.includes(BT.stati.sangue.tick(1, 1, 1).split(":")[0])]), [true, true], "il sangue scorre all'inizio del tuo turno");
+  await accoda(page, [R(1, 20), R(3, 4)]);
+  eq(await page.evaluate(() => { scontro.pv = 14; const fine = abilitaEttorePrimaDiAttaccare(); return [fine, scontro.braciUsate, scontro.pa, haStato("ustione")]; }), [true, true, 3, true], "le braci");
+  await page.waitForTimeout(3500); await aspettaTurnoPg(page);
+  await accoda(page, [R(2, 4)]);
+  eq(await page.evaluate(() => { scontro.difesaUltima = true; const fine = abilitaEttorePrimaDiAttaccare(); return [fine, scontro.colpoBassoUsato, scontro.pa]; }), [false, true, 0], "colpo basso, poi l'attacco");
+  eq(await page.evaluate(() => { scontro.gamba = true; return [abilitaEttorePrimaDiAttaccare(), scontro.gamba]; }), [true, false], "la gamba: perde il turno");
+  eq(await page.evaluate(() => { scontro.conta = 5; scontro.metaContata = false; return contaEttore().riga === ET.scontro.perso && scontro.conta === 1; }), true, "sotto metà salute perde il conto");
+  await page.waitForTimeout(3000);
+  await page.evaluate(() => { if (scontro) { chiudiScontro("vinto"); scontro = null; } });
+  eq(await page.evaluate(() => haStato("sangue")), false, "il Sanguinamento finisce con lo scontro");
   eq(errori, [], "errori"); await chiudi();
 });
 

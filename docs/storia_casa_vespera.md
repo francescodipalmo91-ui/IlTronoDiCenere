@@ -170,6 +170,7 @@ Non ci sono scontri fisici con Aldo e Guendalina (sono segnati come boss solo pe
 - **Il buio della cripta:** con il braciere spento la cripta è buia (immagine nera), ma **solo quando ci rientri**: se il fuoco si spegne mentre sei dentro, l'immagine non cambia. Al buio torcia e Luce servono **solo a vedere**; per riposare serve il braciere, e **una fascina lo accende anche al buio**.
 - **Le braci (proposta, accettata il 28):** se Ettore calcia il braciere in combattimento, a fine scontro il braciere torna in piedi e l'ora di fuoco parte comunque. *Da fare insieme alle capacità di Ettore.*
 - **Numeri fissi detti da Ettore:** nove sarcofagi; quarantadue (quarantatré) assi bruciate nel braciere.
+- **Immagine della cripta (28 ottobre):** è il punto di vista del personaggio appena sceso: la scala verso la cappella e gli altri sarcofagi (fino a nove) sono alle sue spalle, fuori inquadratura. I teschi sui coperchi si ignorano nel testo. Il braciere è un tripode di ferro (non più l'elmo rovesciato). Manca ancora il giaciglio di Ettore.
 - **Livello (28 ottobre):** Ettore è tarato sul **livello 2**, il livello a cui il personaggio arriva di solito. Statistiche e abilità proposte in bilanciamento_nemici_oggetti.md, sezione 5.
 
 ### Ettore, il carattere (DECISO la notte del 27)

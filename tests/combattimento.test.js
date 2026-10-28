@@ -48,16 +48,17 @@
 
   /* ================= 2. Sanguinamento ed Emorragia ================= */
   caso("2a. Sanguinamento: 1d4 all'inizio del turno del nemico, la durata scende", () => {
-    const s = scontro(), c = ctx({ dadi: [15, 4, 3, 2] }); /* colpo 15+3, danno 4+3=7; poi due tick: 3 e 2 */
+    const s = scontro(), c = ctx({ dadi: [15, 4, 3, 2, 1] }); /* colpo 15+3, danno 4+3=7; poi tre tick (28/10: 3 turni): 3, 2 e 1 */
     prova(s, c, "morso_acciaio");
-    eq(s.pv, 33, "danno del colpo"); eq(s.eff.sanguina, 2); eq(s.sangueDado, 4);
-    eq(C.tickSangue(s, c).d, 3); C.fineTurnoNemico(s); eq(s.eff.sanguina, 1);
-    eq(C.tickSangue(s, c).d, 2); C.fineTurnoNemico(s); eq(s.eff.sanguina, 0);
-    eq(C.tickSangue(s, c), null, "finito: niente tick"); eq(s.pv, 28);
+    eq(s.pv, 33, "danno del colpo"); eq(s.eff.sanguina, 3); eq(s.sangueDado, 4);
+    eq(C.tickSangue(s, c).d, 3); C.fineTurnoNemico(s); eq(s.eff.sanguina, 2);
+    eq(C.tickSangue(s, c).d, 2); C.fineTurnoNemico(s); eq(s.eff.sanguina, 1);
+    eq(C.tickSangue(s, c).d, 1); C.fineTurnoNemico(s); eq(s.eff.sanguina, 0);
+    eq(C.tickSangue(s, c), null, "finito: niente tick"); eq(s.pv, 27);
   });
   caso("2b. Rinnovo senza somma: un secondo sanguinamento riporta la durata, non la somma", () => {
     const s = scontro({ eff: { sanguina: 1 }, sangueDado: 4 }), c = ctx({ dadi: [15, 1] });
-    prova(s, c, "morso_acciaio"); eq(s.eff.sanguina, 2, "2, non 3");
+    prova(s, c, "morso_acciaio"); eq(s.eff.sanguina, 3, "3, non 4");
   });
   caso("2c. Emorragia 1d6 sostituisce il sanguinamento e un 1d4 successivo non la abbassa", () => {
     const s = scontro(), c = ctx({ liv: 3, dadi: [15, 1, 2, 15, 1, 6] });
@@ -106,7 +107,7 @@
   caso("5b. Mutilazione: un boss (Ettore) non muore e Indebolito scende a 2 turni", () => {
     const s = scontro({ pv: 14, pvMax: 40 }), c = ctx({ liv: 4, boss: true, dadi: [15, 1, 1] });
     const r = prova(s, c, "mutilazione"); eq(s.pv, 9); eq(ev(r, "esecuzione").length, 0);
-    eq(s.eff.debole, 2, "tetto dei boss"); eq(ev(r, "stato").find(e => e.s === "debole").ridotto, true); eq(s.eff.sanguina, 2);
+    eq(s.eff.debole, 2, "durata comune"); eq(s.eff.sanguina, 3);
   });
 
   /* ================= 6. Parata Mutilante ================= */
@@ -115,7 +116,7 @@
     const r = prova(s, c, "parata"); eq(ev(r, "colpo").length, 0, "nessun tiro: consuma l'azione"); eq(s.parata, true);
     const c2 = ctx({ liv: 4, dadi: [5] }); c2.s = s;
     const sub = C.colpoSubito(s, c2, false);
-    eq(sub.annullato, true); eq(sub.ira, 0); eq(s.pv, 32, "5 + 3 di contrattacco"); eq(s.eff.sanguina, 2); eq(s.parata, false);
+    eq(sub.annullato, true); eq(sub.ira, 0); eq(s.pv, 32, "5 + 3 di contrattacco"); eq(s.eff.sanguina, 3); eq(s.parata, false);
     eq(C.colpoSubito(s, c2, false).annullato, false, "solo il primo colpo");
   });
   caso("6b. Parata Mutilante: finisce all'inizio del tuo turno se nessuno ti colpisce", () => {
@@ -169,8 +170,8 @@
     const st = ev(r, "sangueTutto")[0]; eq(st.n, 3); eq(st.tiri, [4, 3, 1]); eq(s.eff.sanguina, 0); eq(s.marchio, false);
     eq(s.pv, 40 - 5 - 8);
   });
-  caso("11b. Ferita Riaperta senza sanguinamento: lo applica per 2 turni", () => {
-    const s = scontro(), c = ctx({ liv: 4, dadi: [15, 2] }); prova(s, c, "ferita_riaperta"); eq(s.eff.sanguina, 2);
+  caso("11b. Ferita Riaperta senza sanguinamento: lo applica per 3 turni (durata comune)", () => {
+    const s = scontro(), c = ctx({ liv: 4, dadi: [15, 2] }); prova(s, c, "ferita_riaperta"); eq(s.eff.sanguina, 3);
   });
 
   /* ================= Le altre tecniche del taglio ================= */
@@ -181,13 +182,13 @@
     const s = scontro(), c = ctx({ dadi: [15, 2] }); prova(s, c, "pomolo"); eq(s.eff.sbilanciato, 1); eq(c.ca(), 10);
   });
   caso("Recisione dei Tendini: Sanguinamento 2 e Sbilanciato 1", () => {
-    const s = scontro(); prova(s, ctx({ liv: 2, dadi: [15, 2] }), "tendini"); eq([s.eff.sanguina, s.eff.sbilanciato], [2, 1]);
+    const s = scontro(); prova(s, ctx({ liv: 2, dadi: [15, 2] }), "tendini"); eq([s.eff.sanguina, s.eff.sbilanciato], [3, 1]);
   });
   caso("Stoccata Cremisi: +1 dado; con sanguinamento lo rinnova e indebolisce, senza no", () => {
     const s = scontro(); const r = prova(s, ctx({ liv: 2, dadi: [15, 2, 2] }), "cremisi");
     eq(ev(r, "colpo")[0].nd, 2); eq(s.eff.sanguina || 0, 0); eq(s.eff.debole || 0, 0);
     const s2 = scontro({ eff: { sanguina: 1 }, sangueDado: 4 }); prova(s2, ctx({ liv: 2, dadi: [15, 2, 2] }), "cremisi");
-    eq([s2.eff.sanguina, s2.eff.debole], [2, 2]);
+    eq([s2.eff.sanguina, s2.eff.debole], [3, 2]);
   });
   caso("Eco del Metallo: comune non resiste → Stordito; resiste → Sbilanciato; boss → Sbilanciato senza tiro", () => {
     const a = scontro(); prova(a, ctx({ liv: 3, dadi: [15, 2, 3] }), "eco"); eq(a.eff.bloccato, 1);
@@ -201,12 +202,12 @@
   });
   caso("Cateratta: 3 attacchi col solo dado; 3 a segno + tiro salvezza fallito → Stordito; boss immune", () => {
     const s = scontro(), r = prova(s, ctx({ liv: 5, dadi: [15, 2, 15, 2, 15, 2, 3] }), "cateratta");
-    eq(ev(r, "colpo").map(e => e.danno), [2, 2, 2], "senza modificatore"); eq(s.eff.sanguina, 2); eq(s.eff.bloccato, 1);
+    eq(ev(r, "colpo").map(e => e.danno), [2, 2, 2], "senza modificatore"); eq(s.eff.sanguina, 3); eq(s.eff.bloccato, 1);
     const b = scontro(), rb = prova(b, ctx({ liv: 5, boss: true, dadi: [15, 2, 15, 2, 15, 2] }), "cateratta"); eq(b.eff.bloccato || 0, 0); eq(ev(rb, "immune").length, 1);
     const m = scontro(), rm = prova(m, ctx({ liv: 5, dadi: [15, 2, 1, 15, 2] }), "cateratta"); eq(ev(rm, "ts").length, 0, "uno mancato: niente stordimento");
   });
-  caso("Diluvio Rosso: Emorragia 1d6 3 turni e Indebolito 3 (2 su un boss)", () => {
-    const s = scontro(); prova(s, ctx({ liv: 5, dadi: [15, 2, 2] }), "diluvio"); eq([s.eff.sanguina, s.sangueDado, s.eff.debole], [3, 6, 3]);
+  caso("Diluvio Rosso: Emorragia 1d6 3 turni e Indebolito 2 (durata comune)", () => {
+    const s = scontro(); prova(s, ctx({ liv: 5, dadi: [15, 2, 2] }), "diluvio"); eq([s.eff.sanguina, s.sangueDado, s.eff.debole], [3, 6, 2]);
     const b = scontro(); prova(b, ctx({ liv: 5, boss: true, dadi: [15, 2, 2] }), "diluvio"); eq(b.eff.debole, 2);
   });
   caso("Cataclisma: doppi dadi, Frastornato e Sbilanciato 3, attacco gratuito, una volta per riposo", () => {
@@ -237,11 +238,11 @@
   });
   caso("Ritmo del Duello: la tecnica successiva costa 2 in meno (minimo 1)", () => {
     const s = scontro(), c = ctx({ liv: 4, dadi: [15, 2, 2, 15, 15, 2] });
-    prova(s, c, "ritmo"); eq(s.sconto, 2); eq(s.eff.debole, 3);
+    prova(s, c, "ritmo"); eq(s.sconto, 2); eq(s.eff.debole, 2);
     eq(C.costo(tec("polso"), s), 1, "2 − 2 → minimo 1"); const r = prova(s, c, "polso"); eq(r.costo, 1); eq(s.sconto, 0, "lo sconto si consuma");
   });
   caso("Veglia Inflessibile: Indebolito e Sbilanciato 3, +2 CA e +4 ai tiri salvezza (Furore) per 3 turni", () => {
-    const s = scontro(); prova(s, ctx({ liv: 5, dadi: [15, 2, 2] }), "veglia_inflessibile"); eq([s.eff.debole, s.eff.sbilanciato, s.eff.guardia, s.eff.furore], [3, 3, 3, 3]); eq(s.eff.incrollabile, undefined);
+    const s = scontro(); prova(s, ctx({ liv: 5, dadi: [15, 2, 2] }), "veglia_inflessibile"); eq([s.eff.debole, s.eff.sbilanciato, s.eff.guardia, s.eff.furore], [2, 3, 3, 3]); eq(s.eff.incrollabile, undefined);
   });
   caso("Guardia: una guardia scaduta non lascia il vecchio valore (Postura Salda +3 poi Veglia di Ferro +2)", () => {
     const s = scontro(); prova(s, ctx(), "postura_salda"); eq(s.guardiaVal, 3); C.fineTurnoNemico(s);
@@ -284,11 +285,11 @@
   /* ================= Contundenti: le 15 tecniche ================= */
   caso("Percossa al Mento: Indebolito 1 e niente critici nel prossimo turno, anche su un boss", () => {
     const s = scontro(), c = ctx({ liv: 1, boss: true, dadi: [15, 2] }); prova(s, c, "mento");
-    eq([s.eff.debole, s.eff.intontito], [1, 1]); eq(C.critNemPossibile(s), false); eq(C.modAttaccoNem(s), -2);
+    eq([s.eff.debole, s.eff.intontito], [2, 1]); eq(C.critNemPossibile(s), false); eq(C.modAttaccoNem(s), -2);
     C.fineTurnoNemico(s); eq(C.critNemPossibile(s), true);
   });
   caso("Impatto Sbilanciante: Sbilanciato 1 e Indebolito 1", () => {
-    const s = scontro(); prova(s, ctx({ dadi: [15, 2] }), "sbilanciante"); eq([s.eff.sbilanciato, s.eff.debole], [1, 1]);
+    const s = scontro(); prova(s, ctx({ dadi: [15, 2] }), "sbilanciante"); eq([s.eff.sbilanciato, s.eff.debole], [1, 2]);
   });
   caso("Frantumazione dello Scudo: 2 cariche di Incrinatura", () => {
     const s = scontro(); prova(s, ctx({ liv: 2, dadi: [15, 2] }), "frantumascudo"); eq(s.crepe, 2);
@@ -311,7 +312,7 @@
   });
   caso("Spezza-Ginocchia: +1 dado, Indebolito e Sbilanciato 3 (2 su un boss), costa 8", () => {
     eq(tec("ginocchia").costo, 8);
-    const s = scontro(); prova(s, ctx({ liv: 4, dadi: [15, 2, 2] }), "ginocchia"); eq([s.eff.debole, s.eff.sbilanciato], [3, 3]);
+    const s = scontro(); prova(s, ctx({ liv: 4, dadi: [15, 2, 2] }), "ginocchia"); eq([s.eff.debole, s.eff.sbilanciato], [2, 3]);
     const b = scontro(); prova(b, ctx({ liv: 4, boss: true, dadi: [15, 2, 2] }), "ginocchia"); eq([b.eff.debole, b.eff.sbilanciato], [2, 2]);
   });
   caso("Demolizione della Guardia: due attacchi col solo dado; due a segno → 2 cariche e Stordito (boss: Sbilanciato 2)", () => {
@@ -327,7 +328,7 @@
     const sub = C.colpoSubito(s, c2, false); eq(sub.annullato, true); eq(sub.ira, 0); eq(s.pv, 32); eq(s.crepe, 1); eq(s.eff.sanguina || 0, 0, "niente sanguinamento");
     const p = scontro(); prova(p, ctx({ liv: 4 }), "controschiaccio"); C.inizioTurnoPg(p); eq([p.parata, p.parataCrepe], [false, false]);
     const q = scontro(); prova(q, ctx({ liv: 4 }), "controschiaccio"); C.inizioTurnoPg(q); prova(q, ctx({ liv: 4 }), "parata");
-    C.colpoSubito(q, ctx({ liv: 4, dadi: [1, 1] }), false); eq([q.crepe || 0, q.eff.sanguina], [0, 2], "la Parata di dopo resta da taglio");
+    C.colpoSubito(q, ctx({ liv: 4, dadi: [1, 1] }), false); eq([q.crepe || 0, q.eff.sanguina], [0, 3], "la Parata di dopo resta da taglio");
   });
   caso("Cateratta della Roccia: 3 attacchi col solo dado, 1 carica a colpo; 3 su 3 → Stordito (boss: Sbilanciato 2)", () => {
     const s = scontro(), r = prova(s, ctx({ liv: 5, dadi: [15, 2, 15, 2, 15, 2, 3] }), "cateratta_roccia");
@@ -368,7 +369,7 @@
     const b = scontro(); prova(b, ctx({ liv: 4, boss: true, dadi: [15, 2, 2] }), "cadenza"); eq([b.eff.bloccato || 0, b.eff.debole, b.eff.sbilanciato], [0, 2, 2]);
   });
   caso("Silenzio della Casa: niente attacchi speciali sui comuni, +4 ai tiri salvezza contro i boss, +2 CA per 3 turni", () => {
-    const s = scontro(); prova(s, ctx({ liv: 5, dadi: [15, 2, 2] }), "silenzio_casa"); eq([s.eff.debole, s.eff.sbilanciato, s.eff.silenzio, s.eff.guardia, s.eff.furore || 0], [3, 3, 2, 3, 0]);
+    const s = scontro(); prova(s, ctx({ liv: 5, dadi: [15, 2, 2] }), "silenzio_casa"); eq([s.eff.debole, s.eff.sbilanciato, s.eff.silenzio, s.eff.guardia, s.eff.furore || 0], [2, 3, 2, 3, 0]);
     const b = scontro(); prova(b, ctx({ liv: 5, boss: true, dadi: [15, 2, 2] }), "silenzio_casa"); eq([b.eff.silenzio || 0, b.eff.furore, b.eff.guardia], [0, 3, 3]);
   });
 
@@ -454,7 +455,7 @@
   });
   caso("Affondo dei Mille Soli: Esposto e Indebolito 3, +2 CA e critico da 18 per 3 turni", () => {
     const s = scontro(), c = ctx({ liv: 5, dadi: [15, 1, 1, 18, 1, 1] }); c.s = s;
-    prova(s, c, "mille_soli"); eq([s.eff.esposto, s.eff.debole, s.eff.guardia, s.eff.precisione], [3, 3, 3, 3]);
+    prova(s, c, "mille_soli"); eq([s.eff.esposto, s.eff.debole, s.eff.guardia, s.eff.precisione], [3, 2, 3, 3]);
     eq(C.colpo(s, c, { base: true }).crit, true, "18 è critico");
   });
 
@@ -542,7 +543,7 @@
     const v = scontro(); prova(v, ctx({ liv: 5 }), "egida"); const w = C.inizioTurnoPg(v, ctx({ liv: 5 })); eq(w[0].k, "ondaVuota"); eq(v.pv, 40);
   });
   caso("S17. Fortezza Eterna (via di Guendalina): una volta per scontro il colpo mortale ti lascia a 1 e dà 3 Cariche", () => {
-    const s = scontro(), c = ctx({ liv: 5, dadi: [15, 1, 1] }); prova(s, c, "fortezza_eterna"); eq([s.eff.silenzio, s.eff.debole, s.eff.guardia, s.eff.fortezza], [3, 3, 3, 3]);
+    const s = scontro(), c = ctx({ liv: 5, dadi: [15, 1, 1] }); prova(s, c, "fortezza_eterna"); eq([s.eff.silenzio, s.eff.debole, s.eff.guardia, s.eff.fortezza], [3, 2, 3, 3]);
     const f = C.fortezza(s, 10, 6); eq([f.danno, s.cariche, s.fortezzaUsata], [5, 3, true]); eq(C.fortezza(s, 10, 1).danno, 10, "una sola volta");
     eq(C.fortezza(scontro(), 10, 6).danno, 10, "senza Fortezza nulla cambia");
     const b = scontro(); prova(b, ctx({ liv: 5, boss: true, dadi: [15, 1, 1] }), "fortezza_eterna"); eq([b.eff.silenzio || 0, b.eff.debole, b.eff.sbilanciato], [0, 2, 2]);

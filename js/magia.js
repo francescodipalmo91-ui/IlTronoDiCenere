@@ -44,7 +44,7 @@
     ["pressione", 3, 5, "Pressione", "Pressure", "Tiro salvezza → Indebolito 2 e 1d6 forza all'inizio dei suoi 2 turni. Detonazione.", "Saving throw → Weakened 2 and 1d6 force at the start of its next 2 turns. Detonation."],
     ["muro_forza", 3, 5, "Muro di Forza", "Wall of Force", "Per 2 turni +3 alla Classe armatura e la Presa non ti afferra.", "For 2 turns +3 Armor class and Grab cannot hold you."],
     ["maglio_invisibile", 4, 7, "Maglio Invisibile", "Invisible Maul", "Attacco magico, 3d8 forza, critico con 19-20. Detonazione.", "Spell attack, 3d8 force, crits on 19-20. Detonation."],
-    ["gravita", 4, 6, "Gravità", "Gravity", "Tiro salvezza → Stordito 1 e Sbilanciato 2 (avversari temibili: Sbilanciato 2 e Indebolito 1).", "Saving throw → Stunned 1 and Off-balance 2 (fearsome foes: Off-balance 2 and Weakened 1)."],
+    ["gravita", 4, 6, "Gravità", "Gravity", "Tiro salvezza → Stordito 1 e Sbilanciato 2 (avversari temibili: Sbilanciato 2 e Indebolito 2).", "Saving throw → Stunned 1 and Off-balance 2 (fearsome foes: Off-balance 2 and Weakened 2)."],
     ["respingere", 4, 7, "Respingere", "Repel", "Consuma l'azione; fino al tuo turno ogni colpo fa 0 danni e restituisce 1d6 forza.", "Uses your action; until your turn every blow deals 0 damage and returns 1d6 force."],
     ["singolarita", 5, 9, "Singolarità", "Singularity", "Una volta per riposo. Consuma tutti i Sigilli: 3d6 forza per Sigillo + mod. Mente, senza tiro. Detonazione sempre doppia.", "Once per rest. Spends all Seals: 3d6 force per Seal + Mind mod., no roll. Always a double Detonation."],
     ["invulnerabilita", 5, 8, "Invulnerabilità", "Invulnerability", "Una volta per riposo. Fino al tuo turno non subisci danni da nulla, soffio compreso.", "Once per rest. Until your turn you take no damage from anything, breath included."],
@@ -52,7 +52,7 @@
   ].map(voce("forza"));
 
   const LUCE = [
-    ["dardo_luce", 1, 2, "Dardo di Luce", "Bolt of Light", "Attacco magico, 1d8 radiante; sul critico anche Accecato 1.", "Spell attack, 1d8 radiant; on a critical also Blinded 1."],
+    ["dardo_luce", 1, 2, "Dardo di Luce", "Bolt of Light", "Attacco magico, 1d8 radiante; sul critico anche Accecato 2.", "Spell attack, 1d8 radiant; on a critical also Blinded 2."],
     ["tocco_lenitivo", 1, 2, "Tocco Lenitivo", "Soothing Touch", "Cura 1d8 + mod. Spirito.", "Heals 1d8 + Spirit mod."],
     ["scudo_fede", 1, 1, "Scudo della Fede", "Shield of Faith", "+2 alla Classe armatura per 2 turni.", "+2 Armor class for 2 turns."],
     ["accecare", 2, 3, "Accecare", "Blind", "Tiro salvezza → Accecato 2.", "Saving throw → Blinded 2."],
@@ -62,7 +62,7 @@
     ["santuario", 3, 5, "Santuario", "Sanctuary", "Consuma l'azione; per 2 turni il primo colpo di ogni turno fa metà danni; alla fine cura 1d6.", "Uses your action; for 2 turns the first blow each turn deals half damage; at the end heals 1d6."],
     ["purificazione", 3, 4, "Purificazione", "Purification", "Ti libera dalla Presa e dalle bruciature, cura 1d6.", "Frees you from a Grab and from burns, heals 1d6."],
     ["lancia_sole", 4, 7, "Lancia del Sole", "Sun Spear", "Attacco magico, 3d8 radiante; se colpisce, tiro salvezza → Accecato 2.", "Spell attack, 3d8 radiant; on a hit, saving throw → Blinded 2."],
-    ["corona_raggi", 4, 6, "Corona di Raggi", "Crown of Rays", "Per 3 turni 1d6 radiante al nemico all'inizio del suo turno; se ti colpisce, Accecato 1.", "For 3 turns 1d6 radiant to the enemy at the start of its turn; if it hits you, Blinded 1."],
+    ["corona_raggi", 4, 6, "Corona di Raggi", "Crown of Rays", "Per 3 turni 1d6 radiante al nemico all'inizio del suo turno; se ti colpisce, Accecato 2.", "For 3 turns 1d6 radiant to the enemy at the start of its turn; if it hits you, Blinded 2."],
     ["grazia", 4, 6, "Grazia", "Grace", "Cura 2d8 + mod. Spirito e +2 alla Classe armatura per 2 turni.", "Heals 2d8 + Spirit mod. and +2 Armor class for 2 turns."],
     ["alba_eterna", 5, 9, "Alba Eterna", "Eternal Dawn", "Una volta per riposo. Senza tiro, 4d8 radiante e Accecato 2; ti curi della metà dei danni.", "Once per rest. No roll, 4d8 radiant and Blinded 2; you heal half the damage."],
     ["seconda_vita", 5, 8, "Seconda Vita", "Second Life", "Una volta per scontro, si lancia prima: il primo colpo che ti porterebbe a 0 ti lascia a 1 e ti cura 2d6.", "Once per fight, cast in advance: the first blow that would drop you to 0 leaves you at 1 and heals 2d6."],
@@ -71,7 +71,7 @@
 
   const OMBRA = [
     ["tocco_avvizzente", 1, 2, "Tocco Avvizzente", "Withering Touch", "Attacco magico, 1d6 necrotico; ti curi della metà dei danni.", "Spell attack, 1d6 necrotic; you heal half the damage."],
-    ["sussurro_paura", 1, 2, "Sussurro della Paura", "Whisper of Fear", "Tiro salvezza → Inibito per 1 turno (avversari temibili: Indebolito 1).", "Saving throw → Inhibited for 1 turn (fearsome foes: Weakened 1)."],
+    ["sussurro_paura", 1, 2, "Sussurro della Paura", "Whisper of Fear", "Tiro salvezza → Inibito per 1 turno (avversari temibili: Indebolito 2).", "Saving throw → Inhibited for 1 turn (fearsome foes: Weakened 2)."],
     ["manto_ombra", 1, 1, "Manto d'Ombra", "Cloak of Shadow", "Il prossimo attacco del nemico tira 2d20 e tiene il peggiore. Fuori dallo scontro: +2 a Furtività per una stanza.", "The enemy's next attack rolls 2d20 and keeps the worse. Outside combat: +2 Stealth for one room."],
     ["avvizzire", 2, 3, "Avvizzire", "Wither", "Tiro salvezza → Avvizzito 3.", "Saving throw → Withered 3."],
     ["sete_tenebra", 2, 4, "Sete di Tenebra", "Thirst of Darkness", "Attacco magico, 2d6 necrotico; se colpisce, recuperi 1 punto fede.", "Spell attack, 2d6 necrotic; on a hit, you recover 1 faith point."],
@@ -90,7 +90,7 @@
   /* vie di prestigio: Arcanista Frattura (aldo) / Sutura (guendalina), Monaco Cenere (aldo) / Brace (guendalina) */
   const VIE = [
     ...[["colpo_demolitore", 3, 5, "Colpo Demolitore", "Wrecking Blow", "Attacco magico, 2d8 forza; Detonazione con 1d8 per Sigillo. Per tutto lo scontro ogni tua Detonazione fa anche Sbilanciato 1.", "Spell attack, 2d8 force; Detonation with 1d8 per Seal. For the whole fight every Detonation of yours also causes Off-balance 1."],
-        ["spezzare_vincolo", 4, 7, "Spezzare il Vincolo", "Break the Bond", "Tiro salvezza → Indebolito 3 (avversari temibili 2); per tutto lo scontro la sua Classe armatura −2.", "Saving throw → Weakened 3 (fearsome foes 2); for the whole fight its Armor class −2."],
+        ["spezzare_vincolo", 4, 7, "Spezzare il Vincolo", "Break the Bond", "Tiro salvezza → Indebolito 2 (avversari temibili 2); per tutto lo scontro la sua Classe armatura −2.", "Saving throw → Weakened 2 (fearsome foes 2); for the whole fight its Armor class −2."],
         ["crollo_arcano", 5, 9, "Crollo", "Collapse", "Consuma tutti i Sigilli: 2d10 forza per Sigillo, senza tiro; se il nemico arriva a 0, recuperi il mana speso.", "Spends all Seals: 2d10 force per Seal, no roll; if the enemy drops to 0, you recover the mana spent."]
       ].map(voce("forza", "aldo")),
     ...[["filo_rune", 3, 5, "Filo di Rune", "Thread of Runes", "2 Sigilli senza tiro. Per tutto lo scontro, finché il nemico ha almeno 2 Sigilli, ha −2 per colpirti.", "2 Seals with no roll. For the whole fight, while the enemy has at least 2 Seals, it has −2 to hit you."],

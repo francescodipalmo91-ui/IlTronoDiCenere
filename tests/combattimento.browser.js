@@ -94,7 +94,7 @@ caso("Sala di prova: Parata Mutilante annulla il morso, niente ira, contrattacco
   const prima = await page.evaluate(() => ({ pv: SalaProva.stato().pg.pv, ira: SalaProva.stato().pg.ira }));
   await page.click('[data-tec="parata"]');
   const dopo = await page.evaluate(() => ({ pv: SalaProva.stato().pg.pv, ira: SalaProva.stato().pg.ira, sang: SalaProva.stato().s.eff.sanguina }));
-  eq(dopo.pv, prima.pv, "salute"); eq(dopo.ira, prima.ira - 7, "ira: solo il costo"); eq(dopo.sang, 1, "sanguinamento 2 → 1 dopo il turno"); await chiudi();
+  eq(dopo.pv, prima.pv, "salute"); eq(dopo.ira, prima.ira - 7, "ira: solo il costo"); eq(dopo.sang, 2, "sanguinamento 3 → 2 dopo il turno (28/10: durata comune 3)"); await chiudi();
 });
 caso("Sala di prova: colpo subito al livello 3 dà 2 ira, un critico 4; un mancato niente", async (b) => {
   const { page, chiudi } = await apri(b, "tutorial.html?prova");
@@ -238,9 +238,9 @@ caso("Gioco: tecnica a segno (Morso dell'Acciaio), ira spesa, Sanguinamento nell
   await aspettaTurnoPg(page);
   await accoda(page, [R(18, 20), R(4, 6)]);
   await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "morso_acciaio")));
-  eq(await page.evaluate(() => pg.risorsaUsata), 3, "ira spesa"); eq(await page.evaluate(() => scontro.eff.sanguina), 2);
+  eq(await page.evaluate(() => pg.risorsaUsata), 3, "ira spesa"); eq(await page.evaluate(() => scontro.eff.sanguina), 3, "durata comune");
   vero(/Sanguinamento/.test(await page.innerText("#schedaNem")), "scheda nemico senza Sanguinamento");
-  vero(/sanguina: 1d4 danni per 2 turni/i.test(await diario(page)), "manca il testo nel diario");
+  vero(/sanguina: 1d4 danni per 3 turni/i.test(await diario(page)), "manca il testo nel diario");
   eq(errori, [], "errori"); await chiudi();
 });
 caso("Gioco: tecnica mancata spende l'ira e non applica nulla", async (b) => {
@@ -259,7 +259,7 @@ caso("Gioco: Parata Mutilante annulla il morso, niente danni né ira, contrattac
   await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "parata")));
   await aspettaTurnoPg(page);
   const dopo = await page.evaluate(() => ({ df: pg.dannoFisico || 0, ira: pg.risorsaUsata || 0, sang: scontro.eff.sanguina, parata: scontro.parata }));
-  eq(dopo.df, prima.df, "danni subiti"); eq(dopo.ira, prima.ira + 7, "ira: solo il costo"); eq(dopo.sang, 1, "sanguinamento 2 → 1"); eq(dopo.parata, false);
+  eq(dopo.df, prima.df, "danni subiti"); eq(dopo.ira, prima.ira + 7, "ira: solo il costo"); eq(dopo.sang, 2, "sanguinamento 3 → 2"); eq(dopo.parata, false);
   vero(/Pari il colpo/.test(await diario(page)), "manca il testo della parata"); eq(errori, [], "errori"); await chiudi();
 });
 caso("Gioco: un morso subito al livello 4 restituisce 2 ira (scala per livello)", async (b) => {
@@ -565,7 +565,7 @@ caso("Gioco: un salvataggio con le perforanti tolte lascia i posti vuoti e tiene
 
 /* ---------- Gioco: scudo ---------- */
 const SPADA_SCUDO = { arma: "Spada corta", armaDanno: "1d6", armaTipoDanno: "Tagliente", armaMani: 1, armatura: "Armatura media", armaturaCA: 4, malusAgilita: 0, scudo: { nome: "Scudo", ca: 1, malus: 1 }, dotazione: [] };
-const danniMorso = (page, v) => page.evaluate((v) => Math.max(1, v + modNem("Lotta") + (Number(NEMICI[scontro.id].attacco) || 0) + (Number(scontro.bonusAtt) || 0)), v);
+const danniMorso = (page, v) => page.evaluate((v) => { const D = NEMICI[scontro.id]; return Math.max(1, v + (D.dannoBonus != null ? D.dannoBonus : modNem("Lotta") + (Number(D.attacco) || 0) + (Number(scontro.bonusAtt) || 0))); }, v); /* 28/10: danno = dado + dannoBonus */
 caso("Gioco: Assorbimento Minimale — il morso fa metà danni, 1 Carica nella scheda e testo nel diario", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ equipaggiamento: SPADA_SCUDO }), PARTITA({ livello: 1, usate: { riposo: "sbloccato", tecPreparate: ["polso", "morso_acciaio", "assorbimento"] } }));
   await page.evaluate(() => avviaScontro("mastino", { primo: "pg", soffioScarico: true })); await aspettaTurnoPg(page);
@@ -752,7 +752,7 @@ caso("Gioco: Arcanista lancia in scontro — Sigillo, costo, Detonazione e mana 
   const pv = await page.evaluate(() => scontro.pv);
   await accoda(page, [R(15, 20), R(5, 10), R(3, 6)]); await page.evaluate(() => lanciaIncantesimo(listaIncantesimi().find(i => i.id === "pugno_forza")));
   eq(await page.evaluate(() => scontro.sigilli), 0, "Sigillo esploso"); eq(await page.evaluate(() => manaAttuale()), 10, "11 − 2 + 1");
-  eq(pv - (await page.evaluate(() => scontro.pv)), 5 + 3, "1d10 senza modificatore + 1d6 di Detonazione");
+  eq(pv - (await page.evaluate(() => scontro.pv)), 5 + 3 + 3, "1d10 + mod Mente 3 (28/10) + 1d6 di Detonazione");
   vero(/Detonazione/.test(await diario(page)), "manca la Detonazione nel diario"); eq(errori, [], "errori"); await chiudi();
 });
 caso("Gioco: un incantesimo senza mana non parte e non spende nulla", async (b) => {
@@ -865,11 +865,11 @@ caso("Gioco in inglese: la Bilancia e il Crepuscolo si leggono in inglese", asyn
 
 /* ======================= Cacce comuni e rastrelliere ======================= */
 const USATE_CC = (o) => Object.assign({ riposo: "sbloccato", q4: "completata", fermaglio: "bronzo", udienze: ["bronzo"], cantina_cane: "sconfitto" }, o || {});
-caso("Cacce: le rastrelliere sono una tendina con 7 sotto-tendine e gli speciali restano bloccati", async (b) => {
+caso("Cacce: le rastrelliere sono una tendina con 8 sotto-tendine (Elisir compresa) e gli speciali restano bloccati", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "sala_caccia", usate: USATE_CC({ armeria_scelte: 1, cc_fatte_lista: [] }) }));
   await page.evaluate(() => mostraArmeria()); await page.waitForTimeout(300);
   const nomi = await page.evaluate(() => [...document.querySelectorAll(".voce.arm details.gruppo.sotto > summary")].map(x => x.textContent));
-  eq(nomi, ["Armi", "Armature", "Scudi", "Dotazione", "Armi speciali", "Armature speciali", "Scudi speciali"]);
+  eq(nomi, ["Armi", "Armature", "Scudi", "Dotazione", "Armi speciali", "Armature speciali", "Scudi speciali", "Elisir"]);
   eq(await page.evaluate(() => document.querySelector(".voce.arm details.gruppo > summary").textContent), "Rastrelliere della sala della caccia");
   eq(await page.evaluate(() => ARMERIA.filter(o => o.sblocco).map(o => [o.id, o.sblocco, o.cat])), [["lama_cervo", 2, "armi_sp"], ["cotta_leone", 4, "armature_sp"], ["anello_brace", 6, "dotazione"]]);
   await page.evaluate(() => prendiDallaRastrelliera(ARMERIA.find(o => o.id === "lama_cervo")));
@@ -902,7 +902,7 @@ caso("Cacce: accetto, la preda mi aspetta in giardino, la abbatto e consegno il 
 });
 caso("Cacce: il branco è una sola creatura che attacca due volte per turno", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "giardino", usate: USATE_CC() }));
-  await page.evaluate(() => avviaScontro("branco", { ctx: "caccia", testi: "branco", primo: "nem", soffioScarico: true }));
+  await page.evaluate(() => { NEMICI.branco.abilita = []; avviaScontro("branco", { ctx: "caccia", testi: "branco", primo: "nem", soffioScarico: true }); }); /* senza abilità a punti: solo i due attacchi */
   await accoda(page, [R(1, 20), R(1, 20)], [0.1, 0.9]);
   await aspettaTurnoPg(page);
   eq(await page.evaluate(() => scontro.turno.parti.length), 2, "due attacchi nel turno del branco");
@@ -910,12 +910,12 @@ caso("Cacce: il branco è una sola creatura che attacca due volte per turno", as
   eq(await page.evaluate(() => CB.nome), "Branco di segugi di cenere");
   eq(errori, [], "errori"); await chiudi();
 });
-caso("Cacce: se la preda ti abbatte ti risvegli nella sala della caccia e la caccia resta aperta", async (b) => {
+caso("Cacce: se la preda ti abbatte muori (28/10: Aldo salva solo contro i guardiani)", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "giardino", usate: USATE_CC({ cc_stato: "attiva", cc_grado: 2, cc_preda: "lupo" }) }));
   await page.evaluate(() => avviaScontro("lupo", { ctx: "caccia", testi: "lupo", primo: "pg" })); await aspettaTurnoPg(page);
   await page.evaluate(() => { pg.dannoFisico = 999; sconfittaScontro(); });
-  await page.waitForFunction(() => luogo === "sala_caccia", null, { timeout: 8000 });
-  eq(await page.evaluate(() => [usate.cc_stato, usate.cc_preda]), ["attiva", "lupo"]);
+  await page.waitForFunction(() => finePartita === true, null, { timeout: 8000 });
+  vero(/parte di Casa Vespera/.test(await diario(page)), "manca la morte");
   eq(errori, [], "errori"); await chiudi();
 });
 caso("Cacce in inglese: le prede e i loro testi esistono", async (b) => {
@@ -1130,7 +1130,7 @@ caso("Cripta: discesa furtiva riuscita, scelta tra farsi avanti e colpire; il co
 caso("Ettore: livello 2 fisso (30 salute, 8 punti abilità, 400 PE), crescita oltre il livello 2, vulnerabile a contundente e forza", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "cripta", usate: { riposo: "sbloccato", ettore: "scontro" } }));
   await page.evaluate(() => { luogo = "cripta"; avviaScontro("esploratore", { ctx: "ettore", testi: "esploratore", primo: "pg" }); }); await aspettaTurnoPg(page);
-  eq(await page.evaluate(() => [scontro.pvMax, scontro.paMax, scontro.stat.Vigore, scontro.stat.Spirito, NEMICI.esploratore.xp, dadiVuln("Contundente"), dadiVuln("Forza"), dadiVuln("Tagliente")]), [30, 8, 14, 8, 400, 1, 1, 0]);
+  eq(await page.evaluate(() => [scontro.pvMax, scontro.paMax, scontro.stat.Vigore, scontro.stat.Spirito, NEMICI.esploratore.xp, dadiVuln("Contundente"), dadiVuln("Forza"), dadiVuln("Tagliente")]), [30, 8, 12, 8, 400, 1, 1, 0], "28/10: Vigore 12");
   vero(await page.evaluate(() => document.getElementById("vitaliNem").textContent.includes(ET.scontro.pa) || !scontro.svelata), "punti abilità nella scheda");
   await page.evaluate(() => { scontro.svelata = true; disegnaNemico(); });
   vero(await page.evaluate(() => document.getElementById("vitaliNem").textContent.includes("8 / 8") && document.getElementById("specNem").textContent.includes(ET.scontro.abilita[1][0])), "scheda con punti abilità e abilità");
@@ -1150,7 +1150,7 @@ caso("Ettore: fendente sporco e Sanguinamento, braci sotto metà salute, colpo b
   eq(await page.evaluate(() => { scontro.pv = 14; const fine = abilitaEttorePrimaDiAttaccare(); return [fine, scontro.braciUsate, scontro.pa, haStato("ustione")]; }), [true, true, 3, true], "le braci");
   await page.waitForTimeout(3500); await aspettaTurnoPg(page);
   await accoda(page, [R(2, 4)]);
-  eq(await page.evaluate(() => { scontro.difesaUltima = true; const fine = abilitaEttorePrimaDiAttaccare(); return [fine, scontro.colpoBassoUsato, scontro.pa]; }), [false, true, 0], "colpo basso, poi l'attacco");
+  eq(await page.evaluate(() => { pg.dannoFisico = 0; scontro.difesaUltima = true; const fine = abilitaEttorePrimaDiAttaccare(); return [fine, scontro.colpoBassoUsato, scontro.pa]; }), [false, true, 0], "colpo basso, poi l'attacco"); /* 28/10: gli stati sono letali, si riparte da salute piena */
   eq(await page.evaluate(() => { scontro.gamba = true; return [abilitaEttorePrimaDiAttaccare(), scontro.gamba]; }), [true, false], "la gamba: perde il turno");
   eq(await page.evaluate(() => { scontro.conta = 5; scontro.metaContata = false; return contaEttore().riga === ET.scontro.perso && scontro.conta === 1; }), true, "sotto metà salute perde il conto");
   await page.waitForTimeout(3000);

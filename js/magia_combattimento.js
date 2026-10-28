@@ -11,7 +11,7 @@
    Il Monaco (Luce e Ombra, punti fede, Spirito) usa lo stesso motore: la Bilancia va da Luce 3 (+3) a Ombra 3 (−3), parte da 0 a ogni scontro e
    ogni incantesimo di Luce/Ombra la sposta di 1 (Aureola, Velo, Zenit, Nadir, Crepuscolo: vedi lancia()).
    Regole (docs/incantesimi_arcanista_monaco.md):
-   - attacco magico = d20 + mod Mente contro la CA; i dadi del danno non aggiungono il modificatore; critico = doppio dei dadi
+   - attacco magico = d20 + mod Mente contro la CA; dal 28/10 il danno aggiunge il modificatore (ctx.modDanno), come le armi il Vigore; critico = doppio dei dadi
    - tiro salvezza del nemico: d20 + suo Vigore contro 8 + Mente + livello; i boss ignorano i controlli e usano il ripiego del testo
    - Sigilli (Arcano): massimo 3, 2 sui boss, per tutto lo scontro
    - Detonazione (Forza): consuma tutti i Sigilli, +1d6 per Sigillo; recupero di mana per Detonazione = 1/1/2/2/3 per livello,
@@ -80,7 +80,7 @@
     const fx = (k, n) => E.push(C.metti(s, ctx, k, n));
     const vivo = () => s.pv > 0;
     const hit = (o) => {
-      const r = C.colpo(s, ctx, { conMod: false, ...o, critDa: (o && o.critDa) || (occhio ? 19 : undefined) });
+      const r = C.colpo(s, ctx, { ...o, critDa: (o && o.critDa) || (occhio ? 19 : undefined) });
       E.push(r); if (r.crit) crits++; return r;
     };
     /* tiro salvezza: la Parola Vera toglie 4 ai tiri del nemico */

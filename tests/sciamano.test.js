@@ -41,16 +41,16 @@
   const vero = (x, msg) => { if (!x) throw new Error(msg || "atteso vero"); };
 
   /* ================= 1. Rivestimenti ================= */
-  caso("1a. Punta di Mandragora: attacco, l'arma resta rivestita 3 turni e il colpo avvelena (1d4 per 2 turni)", () => {
+  caso("1a. Punta di Mandragora: attacco, l'arma resta rivestita 3 turni e il colpo avvelena (1d4 per 3 turni, durata comune)", () => {
     const s = scontro(), c = ctx({ dadi: [15, 4] });
     const r = prova(s, c, "mandragora");
-    eq(r.costo, 2, "costo"); eq(s.pv, 33, "danno 4 + 3"); eq(s.eff.avvelenato, 2); eq(s.velenoDado, 4);
+    eq(r.costo, 2, "costo"); eq(s.pv, 33, "danno 4 + 3"); eq(s.eff.avvelenato, 3); eq(s.velenoDado, 4);
     eq(s.rivest, "mandragora"); eq(s.eff.rivest, 3); eq(c.natura, 0, "il colpo d'arma non dà natura");
   });
   caso("1b. Il rivestimento vale anche sugli attacchi normali; uno nuovo sostituisce il vecchio", () => {
     const s = scontro(), c = ctx({ dadi: [15, 4] });
     prova(s, c, "mandragora"); s.eff.avvelenato = 1;
-    S.suColpo(s, c, { ok: true, danno: 5 }); eq(s.eff.avvelenato, 2, "l'attacco normale rinnova il veleno");
+    S.suColpo(s, c, { ok: true, danno: 5 }); eq(s.eff.avvelenato, 3, "l'attacco normale rinnova il veleno");
     nuovi(c, [15, 2]); c.liv = 2; prova(s, c, "muffa");
     eq(s.rivest, "muffa"); eq(s.eff.sbilanciato, 2, "la muffa vale già sul suo colpo");
     s.eff.avvelenato = 1; S.suColpo(s, c, { ok: true, danno: 3 }); eq(s.eff.avvelenato, 1, "la mandragora non c'è più");
@@ -62,8 +62,8 @@
   caso("1d. Spore Paralizzanti: Indebolito a ogni colpo, il tiro salvezza solo al primo colpo a segno", () => {
     const s = scontro(), c = ctx({ liv: 3, dadi: [15, 2, 5] });
     const r = prova(s, c, "spore_paralizzanti");
-    eq(s.eff.debole, 1); eq(s.eff.bloccato, 1, "Stordito"); eq(ev(r, "ts").length, 1); eq(c.natura, 2, "tiro salvezza fallito: evento di recupero (liv 3)");
-    nuovi(c, []); s.eff.debole = 0; S.suColpo(s, c, { ok: true, danno: 3 }); eq(s.eff.debole, 1, "nessun nuovo tiro salvezza");
+    eq(s.eff.debole, 2); eq(s.eff.bloccato, 1, "Stordito"); eq(ev(r, "ts").length, 1); eq(c.natura, 2, "tiro salvezza fallito: evento di recupero (liv 3)");
+    nuovi(c, []); s.eff.debole = 0; S.suColpo(s, c, { ok: true, danno: 3 }); eq(s.eff.debole, 2, "nessun nuovo tiro salvezza");
   });
   caso("1e. Spore Paralizzanti su un boss: niente tiro, Indebolito 2", () => {
     const s = scontro(), c = ctx({ liv: 3, boss: true, dadi: [15, 2] });
@@ -81,7 +81,7 @@
   });
   caso("1h. Miasma Corrosivo: un dado in più, Avvelenato e Sbilanciato", () => {
     const s = scontro(), c = ctx({ liv: 4, dadi: [15, 2, 3] });
-    prova(s, c, "miasma"); eq(s.pv, 32, "2 + 3 + 3"); eq(s.eff.avvelenato, 2); eq(s.eff.sbilanciato, 2);
+    prova(s, c, "miasma"); eq(s.pv, 32, "2 + 3 + 3"); eq(s.eff.avvelenato, 3); eq(s.eff.sbilanciato, 2);
   });
 
   /* ================= 2. Veleno, Tossina, resistenza ================= */
@@ -97,25 +97,25 @@
   });
   caso("2c. Cuore di Tossina: sul nemico avvelenato il veleno diventa Tossina 1d6 per 3 turni, e la natura raddoppia", () => {
     const s = scontro({ eff: { avvelenato: 1 }, velenoDado: 4 }), c = ctx({ liv: 5, dadi: [15, 3, 3] });
-    const r = prova(s, c, "cuore_tossina"); eq(r.costo, 9); eq(s.velenoDado, 6); eq(s.eff.avvelenato, 3); eq(s.eff.debole, 3);
+    const r = prova(s, c, "cuore_tossina"); eq(r.costo, 9); eq(s.velenoDado, 6); eq(s.eff.avvelenato, 3); eq(s.eff.debole, 2);
     nuovi(c, [5]); const E = S.tickNemico(s, c); eq(ev(E, "velenoTick")[0].dado, 6); eq(c.natura, 6, "3 al livello 5, doppio con la Tossina"); vero(ev(E, "natura")[0].doppio);
   });
   caso("2d. Cuore di Tossina senza veleno: solo Avvelenato", () => {
     const s = scontro(), c = ctx({ liv: 5, dadi: [15, 3, 3] });
-    prova(s, c, "cuore_tossina"); eq(s.velenoDado, 4); eq(s.eff.avvelenato, 2); eq(s.eff.debole || 0, 0);
+    prova(s, c, "cuore_tossina"); eq(s.velenoDado, 4); eq(s.eff.avvelenato, 3); eq(s.eff.debole || 0, 0);
   });
   caso("2e. Resistenza al veleno (Dafne, il sovrano): metà danno per difetto, e niente natura se fa 0", () => {
     const s = scontro({ eff: { avvelenato: 3 }, velenoDado: 4 }), c = ctx({ resisteVeleno: true, dadi: [3] });
     let E = S.tickNemico(s, c); eq(s.pv, 39); eq(ev(E, "velenoTick")[0].dimezzato, true); eq(c.natura, 1, "il veleno dimezzato fa danno: dà natura");
     nuovi(c, [1]); E = S.tickNemico(s, c); eq(s.pv, 39, "1 → 0"); eq(c.natura, 1, "nessun danno, nessun recupero");
   });
-  caso("2f. Sui boss Avvelenato e Tossina durano al massimo 2 turni", () => {
+  caso("2f. Sui boss Avvelenato e Tossina durano 3 turni come per tutti (28/10: niente tetto)", () => {
     const s = scontro({ eff: { avvelenato: 1 }, velenoDado: 4 }), c = ctx({ liv: 5, boss: true, dadi: [15, 3, 3] });
-    const r = prova(s, c, "cuore_tossina"); eq(s.eff.avvelenato, 2); vero(ev(r, "veleno")[0].ridotto, "ridotto"); eq(s.eff.debole, 2);
+    const r = prova(s, c, "cuore_tossina"); eq(s.eff.avvelenato, 3); vero(!ev(r, "veleno")[0].ridotto, "non ridotto"); eq(s.eff.debole, 2);
   });
   caso("2g. Il veleno si rinnova senza sommarsi", () => {
     const s = scontro({ eff: { avvelenato: 1 }, velenoDado: 4 }), c = ctx();
-    S.veleno(s, c, 4, 2); eq(s.eff.avvelenato, 2, "2, non 3");
+    S.veleno(s, c, 4, 2); eq(s.eff.avvelenato, 3, "3, non 4");
   });
 
   /* ================= 3. Trappole ================= */
@@ -222,7 +222,7 @@
   caso("8a. Fioritura: una per riposo, tre turni di veleno, cura a ogni turno ed esplosione al terzo", () => {
     const s = scontro({ pv: 60, pvMax: 60 }), c = ctx({ liv: 5, modSpirito: 2 });
     prova(s, c, "fioritura"); eq(s.eff.bulbo, 3); eq(prova(s, c, "fioritura").rifiutata, true, "una per riposo");
-    S.tickNemico(s, nuovi(c, [4])); eq(s.pv, 56); eq(s.eff.avvelenato, 2); eq(s.eff.sbilanciato, 2); eq(c.natura, 3);
+    S.tickNemico(s, nuovi(c, [4])); eq(s.pv, 56); eq(s.eff.avvelenato, 3); eq(s.eff.sbilanciato, 2); eq(c.natura, 3);
     S.cureFineTurno(s, nuovi(c, [2])); C.fineTurnoNemico(s);
     S.tickNemico(s, nuovi(c, [1, 3])); eq(s.pv, 52, "veleno 1 + bulbo 3"); eq(c.natura, 6, "un solo recupero nel turno");
     S.cureFineTurno(s, nuovi(c, [2])); C.fineTurnoNemico(s);

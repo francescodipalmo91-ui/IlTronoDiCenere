@@ -263,6 +263,11 @@
       </div>
 
       <div class="fine">
+        <fieldset id="modalita" style="border:1px solid var(--line, #8884);border-radius:8px;padding:0.6rem 0.9rem;margin:0 0 0.9rem;text-align:left">
+          <legend id="mod-tit" style="font-weight:600;padding:0 0.3rem">Modalità</legend>
+          <label style="display:block;margin:0.2rem 0"><input type="radio" name="modalita" value="facile" checked> <b id="mod-f">Facile</b> <span id="mod-fd" class="guida"></span></label>
+          <label style="display:block;margin:0.2rem 0"><input type="radio" name="modalita" value="difficile"> <b id="mod-d">Difficile</b> <span id="mod-dd" class="guida"></span></label>
+        </fieldset>
         <button type="submit" class="btn" id="crea" aria-describedby="avviso" style="margin-top:0" data-t="entra">Entra nel dungeon</button>
         <p id="avviso" class="formati"></p>
         <p id="esito" aria-live="polite"></p>
@@ -273,6 +278,13 @@
   <script>
     /* ---------- Lingua ---------- */
     const LINGUA = Lingua.get();
+    { /* 28/10: scelta della modalità */
+      const M = LINGUA === "en"
+        ? { t: "Mode", f: "Easy", fd: "— after death you start again from your last save; you save whenever you like.", d: "Hard", dd: "— death is permanent; a single automatic save, erased when you die. You can switch to easy later, never back." }
+        : { t: "Modalità", f: "Facile", fd: "— dopo la morte riparti dall'ultimo salvataggio; salvi quando vuoi.", d: "Difficile", dd: "— la morte è permanente; un solo salvataggio automatico, cancellato alla morte. Potrai passare a facile, mai tornare indietro." };
+      const set = (id, t) => { const e = document.getElementById(id); if (e) e.textContent = t; };
+      set("mod-tit", M.t); set("mod-f", M.f); set("mod-fd", M.fd); set("mod-d", M.d); set("mod-dd", M.dd);
+    }
     const L = Lingua.t, N = Lingua.nome;
     const T = {
       it: {
@@ -285,7 +297,7 @@
         dadoVita: "Dado vita", saluteFisica: "Salute fisica", saluteMentale: "Salute mentale", classeArmatura: "Classe armatura", entra: "Entra nel dungeon",
         sceglineUna: "Scegline una.", nonDisponibili: (c) => ` Alcune non sono disponibili per la classe ${c}.`,
         guidaScudo: "Facoltativo. Occupa una mano.", scudoNo: "Facoltativo. Non si può usare con un'arma a due mani.",
-        lanciaDado: "Lancia il dado", lanciaD: (d) => `Lancia d${d}`, risultato: (t, d) => `Risultato: ${t} (d${d})`,
+        lanciaDado: "Lancia il dado", lanciaD: (d) => `Lancia d${d}`, risultato: (t, d) => `Risultato: ${t} (d${d})`, massimo: (t, d) => `Al livello 1 il dado vita vale il massimo: d${d} = ${t}. A ogni livello crescerai di un valore fisso.`,
         cambiaClasse: "Cambiando classe il tiro si azzera.", primaClasse: "Scegli prima una classe.",
         lanciaDadoVita: "Lancia il dado vita", scegliArmatura: "Scegli l'armatura",
         diminuisci: (n) => `Diminuisci ${n}`, aumenta: (n) => `Aumenta ${n}`,
@@ -316,7 +328,7 @@
         dadoVita: "Hit die", saluteFisica: "Physical health", saluteMentale: "Mental health", classeArmatura: "Armor class", entra: "Enter the dungeon",
         sceglineUna: "Choose one.", nonDisponibili: (c) => ` Some are not available to the ${c} class.`,
         guidaScudo: "Optional. Takes up one hand.", scudoNo: "Optional. Cannot be used with a two-handed weapon.",
-        lanciaDado: "Roll the die", lanciaD: (d) => `Roll d${d}`, risultato: (t, d) => `Result: ${t} (d${d})`,
+        lanciaDado: "Roll the die", lanciaD: (d) => `Roll d${d}`, risultato: (t, d) => `Result: ${t} (d${d})`, massimo: (t, d) => `At level 1 your hit die counts as its maximum: d${d} = ${t}. Each level you grow by a fixed amount.`,
         cambiaClasse: "Changing class resets the roll.", primaClasse: "Choose a class first.",
         lanciaDadoVita: "Roll the hit die", scegliArmatura: "Choose your armor",
         diminuisci: (n) => `Decrease ${n}`, aumenta: (n) => `Increase ${n}`,
@@ -573,7 +585,7 @@
     Object.keys(CLASSI).forEach(nome => {
       const l = document.createElement("label");
       Sicuro.html(l, `<input type="radio" name="classe" value="${nome}" aria-describedby="tip-${nome}"><span>${N("classi", nome)}</span><small class="tip" id="tip-${nome}" role="tooltip"><em class="tip-riga">${riepilogoClasse(nome)}</em>${L(DESC_CLASSI[nome])}</small>`);
-      l.querySelector("input").addEventListener("change", () => { if (classe !== nome) { classe = nome; tiro = null; } aggiorna(); });
+      l.querySelector("input").addEventListener("change", () => { if (classe !== nome) { classe = nome; tiro = CLASSI[nome]; } aggiorna(); }); /* 28/10: al livello 1 il dado vita vale il massimo, niente tiro */
       $("classi").appendChild(l);
     });
     Object.keys(RAZZE).forEach(nome => {
@@ -716,9 +728,8 @@
       });
 
       const l = $("lancia");
-      l.textContent = classe ? t.lanciaD(CLASSI[classe]) : t.lanciaDado;
-      l.disabled = !classe || tiro !== null;
-      $("pv").textContent = tiro !== null ? t.risultato(tiro, CLASSI[classe]) : (classe ? t.cambiaClasse : t.primaClasse);
+      l.hidden = true; l.disabled = true;
+      $("pv").textContent = tiro !== null ? t.massimo(tiro, CLASSI[classe]) : t.primaClasse;
       ABILITA.forEach(([, a], i) => {
         const c = document.querySelector(`input[name="abilita"][value="${i}"]`);
         $("ab" + i).textContent = `${N("attributi", a)} ${fmt(valoreAbilita(a) + (c && c.checked ? LIVELLO : 0))}`;
@@ -737,9 +748,9 @@
       const segno = (n) => (n < 0 ? "−" : "+") + " " + Math.abs(n);
       const modC = modDi("Vigore"), modM = modDi("Spirito");
       $("sf-v").textContent = tiro === null ? "–" : PV_BASE + tiro + modC;
-      $("sf-f").textContent = tiro === null ? t.lanciaDadoVita : `${PV_BASE} + ${tiro} ${segno(modC)}`;
+      $("sf-f").textContent = tiro === null ? t.primaClasse : `${PV_BASE} + ${tiro} ${segno(modC)}`;
       $("sm-v").textContent = tiro === null ? "–" : PV_BASE + tiro + modM;
-      $("sm-f").textContent = tiro === null ? t.lanciaDadoVita : `${PV_BASE} + ${tiro} ${segno(modM)}`;
+      $("sm-f").textContent = tiro === null ? t.primaClasse : `${PV_BASE} + ${tiro} ${segno(modM)}`;
       const bAg = arm ? bonusAgilitaCA(arm) : 0;
       $("ca-v").textContent = arm ? CA_BASE + arm.ca + bAg + (sc ? SCUDO.ca : 0) : "–";
       $("ca-f").textContent = arm ? `${CA_BASE} + ${arm.ca}${bAg ? " + " + bAg + " (" + N("attributi", "Agilità") + ")" : ""}${sc ? " + " + SCUDO.ca : ""}` : t.scegliArmatura;
@@ -867,6 +878,7 @@
         scuola: usaMagia() ? scuola : null, /* scuola principale dell'Arcanista e del Monaco */
         incantesimi: incantesimiScelti().map(inc => inc.id), /* id di js/magia.js: nomi, costi ed effetti si leggono da lì */
         tecniche: tecnicheScelte(), /* tecniche speciali del Guerriero */
+        modalita: (document.querySelector('input[name="modalita"]:checked') || {}).value === "difficile" ? "difficile" : "facile", /* 28/10: facile (si riparte dal salvataggio) o difficile (morte permanente) */
         abilita: abilitaScelte().map(([n, a]) => ({ nome: n, attributo: a, valore: valoreAbilita(a) + LIVELLO })),
         equipaggiamento: {
           arma: arma.nome, armaDanno: arma.danno, armaTipoDanno: arma.tipo, armaMani: arma.mani,

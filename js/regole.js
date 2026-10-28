@@ -53,7 +53,7 @@ window.Regole = (() => {
   TECNICHE_PER_LIVELLO: [2, 2, 1, 1, 1], /* scelte nuove a ogni livello: posti 2, 4, 5, 6, 7 */
   IRA_PER_COLPO: [1, 1, 2, 2, 3], /* ira guadagnata per ogni colpo subito, per livello (doppia sui critici) */
   TECNICHE_SCUDO: 1,           /* una tecnica in più con lo scudo imbracciato */
-  SALUTE_BASE: 10,             /* salute fisica e mentale = 10 + dado vita + modificatore */
+  SALUTE_BASE: 10,             /* salute fisica e mentale = 10 + massimo del dado vita + modificatore (28/10) */
   CA_BASE: 10,
   TETTO_AGILITA: { "Armatura leggera": 3, "Armatura media": 2, "Armatura pesante": 0 },
 
@@ -67,6 +67,7 @@ window.Regole = (() => {
 
   /* livelli */
   LIVELLO_MAX: 5,
-  SOGLIE_PE: [0, 500, 1500, 3000, 5000] /* PE totali per raggiungere il livello 2, 3, 4, 5 */
+  SOGLIE_PE: [0, 300, 1000, 2400, 4400], /* PE totali per raggiungere il livello 2, 3, 4, 5 (28/10) */
+  CRESCITA_FISSA: (dado, modAttr) => Math.max(1, Math.floor(dado / 2) + 1 + modAttr) /* salute e mente a ogni livello: metà del dado + 1 + mod (28/10, niente tiro) */
 });
 })();

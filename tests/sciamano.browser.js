@@ -83,7 +83,7 @@ caso("Sciamano: Punta di Mandragora avvelena; il veleno al turno del nemico rest
   await usaTec(page, "mandragora");
   eq(await page.evaluate(() => pg.risorsaUsata), 2, "natura spesa"); vero(/Avvelenato/.test(await page.innerText("#schedaNem")), "scheda nemico senza Avvelenato");
   await aspettaTurnoPg(page);
-  eq(await page.evaluate(() => [pg.risorsaUsata, scontro.eff.avvelenato, scontro.pv]), [1, 1, 60 - 7 - 2], "recupero, durata, danni");
+  eq(await page.evaluate(() => [pg.risorsaUsata, scontro.eff.avvelenato, scontro.pv]), [1, 2, 60 - 7 - 2], "recupero, durata (28/10: 3 → 2), danni");
   const d = await diario(page); vero(/Il veleno brucia: 2 danni/.test(d), "manca il tick"); vero(/Forza della natura: \+1 punti natura/.test(d), "manca il recupero");
   vero(/Arma rivestita/.test(await page.innerText("#schedaPg, body")), "manca l'arma rivestita nella scheda");
   eq(errori, [], "errori"); await chiudi();
@@ -94,7 +94,7 @@ caso("Sciamano: il rivestimento vale anche sull'attacco normale", async (b) => {
   await page.evaluate(() => { scontro.pv = 60; scontro.pvMax = 60; scontro.rivest = "mandragora"; scontro.eff.rivest = 3; });
   await accoda(page, [R(18, 20), R(2, 6)]);
   await page.evaluate(() => attaccoPgScontro(false));
-  eq(await page.evaluate(() => scontro.eff.avvelenato), 2); eq(errori, [], "errori"); await chiudi();
+  eq(await page.evaluate(() => scontro.eff.avvelenato), 3, "durata comune"); eq(errori, [], "errori"); await chiudi();
 });
 caso("Sciamano: Baccello Esplosivo — la trappola scatta prima della zampata e il nemico tira due d20", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", SC(), PARTITA({ livello: 2, usate: { riposo: "sbloccato", tecPreparate: PREP2 } }));
@@ -172,9 +172,9 @@ caso("Sciamano: Borsa dei veleni — 1d4 + livello punti natura, vuota resta nel
   eq(await page.evaluate(() => zaino.find(x => x.nome === "Borsa dei veleni").usi), 3, "piena con gli ingredienti della foresta");
   eq(errori, [], "errori"); await chiudi();
 });
-caso("Foresta dei pini: cappella → cimitero → foresta, ingredienti con Sopravvivenza, prima tutti gli animali, poi 30% una volta per riposo", async (b) => {
+caso("Foresta dei pini: cappella → cimitero → foresta, ingredienti con Sopravvivenza, prima tutti gli animali, poi 40% senza limite (28/10)", async (b) => {
   const pg = SC(); pg.equipaggiamento.dotazione = [{ nome: "Borsa dei veleni", usi: 3, desc: "x" }];
-  const { page, errori, chiudi } = await apri(b, "gioco.html", pg, PARTITA({ luogo: "cappella", diario: [{ tipo: "narra", stanza: "cappella", righe: ["x"] }], usate: { riposo: "sbloccato", luce: "ok", chiave_portone: "presa", animali_visti: ["coniglio", "cervo", "vipera"] } }));
+  const { page, errori, chiudi } = await apri(b, "gioco.html", pg, PARTITA({ luogo: "cappella", diario: [{ tipo: "narra", stanza: "cappella", righe: ["x"] }], usate: { riposo: "sbloccato", luce: "ok", chiave_portone: "presa", animali_visti: ["lupo_comune", "cervo", "vipera"] } }));
   await page.evaluate(() => { zaino.find(x => x.nome === "Borsa dei veleni").usi = 0; });
   await page.evaluate(() => gestisci("vado al cimitero")); eq(await page.evaluate(() => luogo), "cimitero", "cimitero");
   await accoda(page, [], [0]); /* l'unico animale non ancora visto: il cinghiale */
@@ -182,19 +182,17 @@ caso("Foresta dei pini: cappella → cimitero → foresta, ingredienti con Sopra
   await page.waitForFunction(() => scontro, null, { timeout: 15000 });
   eq(await page.evaluate(() => [scontro.id, scontro.ctx]), ["cinghiale_bosco", "pineta"], "animale nuovo");
   await page.evaluate(() => { scontro.pv = 0; vittoriaScontro(); });
-  eq(await page.evaluate(() => [pg.esperienza, qtaMateriale("grasso_cinghiale")]), [60, 2], "PE dell'animale e grasso");
+  eq(await page.evaluate(() => [pg.esperienza, qtaMateriale("grasso_cinghiale")]), [75, 2], "PE dell'animale e grasso");
   await page.evaluate(() => gestisci("cerco erbe e radici"));
   await accoda(page, [R(15, 20)]); await page.click("#azioni button");
   eq(await page.evaluate(() => zaino.find(x => x.nome === "Borsa dei veleni").usi), 3, "borsa piena con gli ingredienti");
-  await accoda(page, [], [0.1]);
-  await page.evaluate(() => { vai("cimitero"); vai("pineta"); }); await page.waitForTimeout(1500);
-  eq(await page.evaluate(() => !!scontro), false, "un solo scontro per riposo");
-  await page.evaluate(() => { usate.giorno = 5; });
-  await page.evaluate(() => { vai("cimitero"); luogo = "pineta"; window.__caso.length = 0; window.__caso.push(0.1, 0.9, 0); incontroPineta(); }); /* 30%: sì; 70% animale: no → preda infernale (ratto) */
+  await page.evaluate(() => { luogo = "pineta"; window.__caso.length = 0; window.__caso.push(0.9); incontroPineta(); }); await page.waitForTimeout(500);
+  eq(await page.evaluate(() => !!scontro), false, "0,9: nessun incontro (40%)");
+  await page.evaluate(() => { luogo = "pineta"; window.__caso.length = 0; window.__caso.push(0.1, 0.9, 0); incontroPineta(); }); /* 40%: sì; 70% animale: no → infernale di grado 1 (vipera di brace); nessun limite per riposo */
   await page.waitForFunction(() => scontro, null, { timeout: 15000 });
-  eq(await page.evaluate(() => scontro.id), "ratto", "preda infernale");
+  eq(await page.evaluate(() => scontro.id), "vipera_brace", "preda infernale");
   await page.evaluate(() => { scontro.pv = 0; vittoriaScontro(); });
-  eq(await page.evaluate(() => pg.esperienza), 110, "metà dei PE della preda infernale");
+  eq(await page.evaluate(() => pg.esperienza), 150, "75 PE dell'infernale di grado 1");
   eq(errori, [], "errori"); await chiudi();
 });
 
@@ -202,7 +200,7 @@ caso("Bottega di Guendalina: la parte sblocca il dialogo e la ricetta; l'elisir 
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "cucina", diario: [{ tipo: "narra", stanza: "cucina", righe: ["x"] }], usate: { riposo: "sbloccato", luce: "ok", laboratorio: "sbloccato", dialogo_guendalina: "fine", portaCucina: "aperta" } }));
   await page.evaluate(() => { aggiungiMateriale("fiele_vipera", 1); applicaStatoPg("veleno"); });
   vero(/Avvelenato/.test(await page.evaluate(() => document.getElementById("vitali").textContent)), "stato nella scheda");
-  eq(await page.evaluate(() => malusStatoProva()), -2, "malus del veleno");
+  eq(await page.evaluate(() => [malusStatoProva(), usate.stati_pg.veleno]), [0, 3], "28/10: il veleno fa 1d4 per 3 turni, niente malus");
   await page.evaluate(() => menuGuendalina());
   await page.click("#azioni button:has-text('fiele')");
   await page.waitForFunction(() => (usate.ricette_animali || []).includes("fiele_vipera"), null, { timeout: 20000 });
@@ -297,7 +295,7 @@ caso("Sala di prova: lo Sciamano vede le tecniche della natura; Mandragora avvel
   await page.evaluate(() => SalaProva.accoda(15, 4, /* veleno */ 2));
   await page.click('[data-tec="mandragora"]');
   const st = await page.evaluate(() => ({ nat: SalaProva.stato().pg.ira, av: SalaProva.stato().s.eff.avvelenato, pv: SalaProva.stato().s.pv }));
-  eq([st.nat, st.av, st.pv], [10, 1, 60 - 7 - 2], "11 − 2 + 1, veleno 2 → 1");
+  eq([st.nat, st.av, st.pv], [10, 2, 60 - 7 - 2], "11 − 2 + 1, veleno 3 → 2");
   vero(/Forza della natura/.test(await page.innerText("#svLog")), "manca il recupero"); vero(/Avvelenato 1d4/.test(await page.innerText("#svNem")), "scheda nemico");
   eq(errori, [], "errori"); await chiudi();
 });

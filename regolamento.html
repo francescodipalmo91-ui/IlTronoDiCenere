@@ -218,8 +218,8 @@
             <h3>Classi</h3><div class="scroll"><table><tr><th>Classe</th><th>Dado vita</th><th>Risorsa</th><th>Armature</th></tr>${righeClassi}</table></div>
             <p>Le armi «da battaglia» sono riservate al Guerriero. Ogni classe ha la sua sezione in questo regolamento, con tutte le tecniche o gli incantesimi.</p>
             <h3>Salute e risorse</h3>
-            <span class="formula">Salute fisica = ${R.SALUTE_BASE} + dado vita + mod. Vigore</span>
-            <span class="formula">Salute mentale = ${R.SALUTE_BASE} + dado vita + mod. Spirito</span>
+            <span class="formula">Salute fisica = ${R.SALUTE_BASE} + massimo del dado vita + mod. Vigore</span>
+            <span class="formula">Salute mentale = ${R.SALUTE_BASE} + massimo del dado vita + mod. Spirito</span>
             <span class="formula">Mana, punti fede, ira, natura = ${R.RISORSA_BASE} + modificatore dell'attributo della classe</span>
             <h3>Abilità</h3>
             <p>Ne scegli ${R.MAX_ABILITA} in creazione. Cosa fa ciascuna, come si calcola il valore e il malus dell'armatura sono spiegati nel capitolo «Abilità».</p>
@@ -255,6 +255,7 @@
             <p>A ogni turno hai un'azione: attaccare, usare una tecnica, lanciare un incantesimo o usare un oggetto. Prendere in mano la torcia o imbracciare lo scudo non consuma l'azione. L'attacco con l'arma è sempre gratuito.</p>
             <span class="formula">Attacco con l'arma: d20 + mod. Vigore, colpisce se supera la Classe armatura del bersaglio</span>
             <span class="formula">Attacco magico: d20 + mod. Mente (Arcanista) o Spirito (Monaco), colpisce se supera la Classe armatura</span>
+            <span class="formula">Danno dell'attacco magico = dadi dell'incantesimo + mod. Mente o Spirito, come le armi aggiungono il Vigore</span>
             <span class="formula">Danno dell'arma: dado dell'arma + mod. Vigore (torcia 1d4, a mani nude 1d2)</span>
             <p><b>Colpo critico</b>: un 20 sul dado colpisce sempre e tira il doppio dei dadi di danno. Vale anche per i nemici. Alcuni effetti allargano il critico a 19-20 o 18-20 (mai oltre).</p>
             <p><b>Tiro salvezza del nemico</b>: quando un effetto gli concede di resistere, il nemico tira d20 + il suo modificatore contro la tua difficoltà.</p>
@@ -268,18 +269,24 @@
             <p>Ogni classe ha una risorsa (ira, natura, mana, fede) che si ricarica riposando. Durante lo scontro ne recuperi un po', ognuno a modo suo, con la stessa tabella: ${recupero()}, il doppio nel caso migliore. Il dettaglio è nella sezione di ogni classe.</p>
             <h3>Stati</h3>
             <div class="scroll"><table><tr><th>Stato</th><th>Effetto</th></tr>
-              <tr><td>Indebolito</td><td>−2 per colpire</td></tr>
+              <tr><td>Indebolito</td><td>−2 per colpire · 2 turni</td></tr>
               <tr><td>Sbilanciato</td><td>−2 alla Classe armatura</td></tr>
               <tr><td>Frastornato</td><td>−4 per colpire, niente critici</td></tr>
               <tr><td>Stordito</td><td>salta il prossimo turno</td></tr>
               <tr><td>Inibito</td><td>non può usare i suoi attacchi speciali</td></tr>
-              <tr><td>Sanguinamento</td><td>1d4 danni a ogni suo turno (Emorragia: 1d6)</td></tr>
+              <tr><td>Sanguinamento</td><td>1d4 danni a ogni suo turno (Emorragia: 1d6) · 3 turni</td></tr>
               <tr><td>Esposto</td><td>i tuoi attacchi fanno critico con un numero in meno, mai sotto 18</td></tr>
-              <tr><td>Accecato</td><td>tira 2d20 per colpire e tiene il peggiore</td></tr>
+              <tr><td>Accecato</td><td>tira 2d20 per colpire e tiene il peggiore · 2 turni</td></tr>
               <tr><td>Avvizzito</td><td>1d4 danni necrotici a ogni suo turno (1d6 dove indicato); si somma al Sanguinamento</td></tr>
-              <tr><td>Avvelenato</td><td>1d4 danni da veleno a ogni suo turno (Tossina: 1d6); si somma a Sanguinamento e Avvizzito</td></tr>
+              <tr><td>Avvelenato</td><td>1d4 danni da veleno a ogni suo turno (Tossina: 1d6); si somma a Sanguinamento e Avvizzito · 3 turni</td></tr>
+              <tr><td>Ustionato</td><td>1d4 danni da fuoco a ogni suo turno (1d6 se potenziato) · 3 turni</td></tr>
+              <tr><td>Impaurito</td><td>−2 alla Classe armatura · 2 turni</td></tr>
             </table></div>
             <p>Gli effetti non si sommano: uno nuovo dello stesso tipo rinnova la durata. Le eccezioni (Incrinatura, Sigilli) sono spiegate nelle classi.</p>
+            <p><b>Sei stati valgono allo stesso modo per te e per i nemici</b>: Ustionato, Sanguinamento e Avvelenato (1d4 a turno per 3 turni, 1d6 nella versione potenziata), Indebolito, Impaurito e Accecato (2 turni). Stati diversi si sommano. Finiscono con lo scontro. Le creature di cenere non sanguinano; quelle di fuoco non si ustionano.</p>
+            <p><b>Elisir.</b> Ogni elisir della bottega cura uno stato; bevuto prima, ne protegge per lo scontro successivo (una protezione alla volta). Un nemico che vede fallire il suo stato contro la protezione non ci riprova. I concentrati (con le parti delle creature di cenere) curano e rendono immuni per il resto dello scontro, o proteggono fino al riposo. Ne porti al massimo 2 per stato.</p>
+            <p><b>Abilità dei nemici.</b> Anche i nemici hanno punti abilità: ogni abilità che infligge uno stato costa punti (2 per uno stato, 3 per uno potenziato o per due stati, 4 per un controllo come Stordito o Bloccato). Finiti i punti, solo attacchi normali.</p>
+            <p><b>Fuga.</b> Scrivi «fuggo»: prova di Atletica o Acrobazia contro CD 10 + livello del nemico. Riesci e torni nella stanza da cui sei arrivato; fallisci e il nemico ti colpisce con vantaggio. Non si fugge dai guardiani.</p>
             <h3>Avversari temibili</h3>
             <p>Gli avversari più temibili non subiscono gli effetti che tolgono azioni o attacchi (Frastornato, Stordito, Inibito); al loro posto molte tecniche e incantesimi hanno un effetto di ripiego, indicato tra parentesi. Su di loro gli altri effetti durano al massimo 2 turni (Avvizzito 3), e cariche e Sigilli arrivano al massimo a 2.</p>
             <h3>Debolezze e resistenze</h3>
@@ -368,9 +375,9 @@
             <p class="esempio">L'ira sale quando ti colpiscono: il Guerriero non teme di prendere colpi, teme di restare a secco.</p>
             <h3>Arcanista d'Arcano, con un posto di Forza</h3>
             <p class="esempio">Livello 1, Mente 16 (+3), 13 mana. Contro lo stesso nemico.</p>
-            <div class="turno"><b>Turno 1.</b> Dardo Arcano (2 mana, restano 11). Tiri 11: 11 + 3 = 14, colpisci. 1d8: fai 5, e incidi 1 Sigillo.</div>
+            <div class="turno"><b>Turno 1.</b> Dardo Arcano (2 mana, restano 11). Tiri 11: 11 + 3 = 14, colpisci. 1d8 + 3: fai 5 + 3 = 8, e incidi 1 Sigillo.</div>
             <div class="turno"><b>Turno 2.</b> Scopri Carte (1 mana, restano 10). Vedi la scheda del nemico e incidi il secondo Sigillo, senza tiro.</div>
-            <div class="turno"><b>Turno 3.</b> Pugno di Forza (2 mana, restano 8). Tiri 14: 17, colpisci. 1d10 fa 6, e la Detonazione consuma i 2 Sigilli: +2d6, esce 7. Totale 13 danni. La Detonazione ti restituisce 1 mana (9). Con 3 Sigilli sarebbero stati 2.</div>
+            <div class="turno"><b>Turno 3.</b> Pugno di Forza (2 mana, restano 8). Tiri 14: 17, colpisci. 1d10 + 3 fa 6 + 3, e la Detonazione consuma i 2 Sigilli: +2d6, esce 7. Totale 16 danni. La Detonazione ti restituisce 1 mana (9). Con 3 Sigilli sarebbero stati 2.</div>
             <p class="esempio">L'Arcanista prepara e poi colpisce: più aspetti, più fa male, ma il nemico intanto attacca.</p>
             <h3>Monaco d'Ombra, con un posto di Luce</h3>
             <p class="esempio">Livello 2, Spirito 16 (+3), 18 punti fede. La Bilancia parte da 0.</p>
@@ -398,14 +405,16 @@
             <div class="scroll"><table><tr><th>Livello</th><th>PE necessari</th><th>PE totali</th></tr>${soglie}</table></div>
             <p>A ogni livello:</p>
             <ul>
-              <li>salute fisica + (dado vita + mod. Vigore);</li>
-              <li>salute mentale + (dado vita + mod. Spirito);</li>
+              <li>salute fisica + (metà del dado vita + 1 + mod. Vigore), un valore fisso: Guerriero 6, Sciamano 5, Arcanista e Monaco 4, più il modificatore;</li>
+              <li>salute mentale + (metà del dado vita + 1 + mod. Spirito);</li>
               <li>risorsa della classe + (modificatore del suo attributo + nuovo livello), senza dado;</li>
               <li>le abilità scelte crescono di 1 e si sbloccano nuove tecniche o incantesimi.</li>
             </ul>
             <p>Ogni aumento vale almeno 1.</p>`],
           ["Morte e salute mentale", `
-            <p>Se la salute fisica arriva a 0 non muori davvero: ti risvegli in un luogo sicuro con la salute piena, ma perdi 1d4 punti di salute mentale. Il nemico che ti ha sconfitto si riprende del tutto.</p>
+            <p><b>Contro i guardiani non si muore:</b> se la salute fisica arriva a 0, la casa ti riporta indietro, con la salute piena ma 1d4 punti di salute mentale in meno.</p>
+            <p><b>Contro animali, prede delle cacce e mastini si muore:</b> a 0 salute fisica diventi parte di Casa Vespera. Lo stesso accade se la salute mentale arriva a 0. Gli stati alterati, durante lo scontro, possono ucciderti.</p>
+            <p><b>Modalità</b> (si sceglie in creazione): in <b>facile</b> dopo la morte riparti dall'ultimo salvataggio e salvi quando vuoi; in <b>difficile</b> la morte è permanente e c'è un solo salvataggio, automatico. Puoi passare da difficile a facile, mai il contrario.</p>
             <p><b>Se la salute mentale arriva a 0, la partita finisce.</b> Tienila d'occhio: prove fallite, enigmi sbagliati, sconfitte, certi incantesimi e certi luoghi la consumano.</p>
             <p><b>Le sconfitte contro gli avversari più temibili lasciano un segno:</b> ognuna toglie 1 punto alla salute mentale massima, fino a un massimo di 3 punti in tutto. Il punto torna quando quell'avversario viene sconfitto o risparmiato.</p>
             <p>Anche certe scoperte sulla casa feriscono la mente (da 1 a 4 punti, solo la prima volta), ma da sole non la portano mai a 0: lasciano sempre almeno 1 punto.</p>`],
@@ -435,8 +444,8 @@
             <h3>Classes</h3><div class="scroll"><table><tr><th>Class</th><th>Hit die</th><th>Resource</th><th>Armor</th></tr>${righeClassi}</table></div>
             <p>“Battle” weapons are reserved for the Warrior. Each class has its own section in these rules, with all its techniques or spells.</p>
             <h3>Health and resources</h3>
-            <span class="formula">Physical health = ${R.SALUTE_BASE} + hit die + Vigour mod.</span>
-            <span class="formula">Mental health = ${R.SALUTE_BASE} + hit die + Spirit mod.</span>
+            <span class="formula">Physical health = ${R.SALUTE_BASE} + maximum of the hit die + Vigour mod.</span>
+            <span class="formula">Mental health = ${R.SALUTE_BASE} + maximum of the hit die + Spirit mod.</span>
             <span class="formula">Mana, faith, rage, nature points = ${R.RISORSA_BASE} + modifier of the class attribute</span>
             <h3>Skills</h3>
             <p>You choose ${R.MAX_ABILITA} at creation. What each one does, how its value is worked out and the armor penalty are explained in the «Skills» chapter.</p>
@@ -472,6 +481,7 @@
             <p>Each turn you have one action: attack, use a technique, cast a spell or use an item. Taking up the torch or the shield does not use your action. A weapon attack is always free.</p>
             <span class="formula">Weapon attack: d20 + Vigour mod., hits if it beats the target's Armor class</span>
             <span class="formula">Spell attack: d20 + Mind (Arcanist) or Spirit (Monk) mod., hits if it beats the Armor class</span>
+            <span class="formula">Spell attack damage = the spell's dice + Mind or Spirit mod., just as weapons add Vigour</span>
             <span class="formula">Weapon damage: weapon die + Vigour mod. (torch 1d4, bare hands 1d2)</span>
             <p><b>Critical hit</b>: a 20 on the die always hits and rolls double the damage dice. Enemies too. Some effects widen the critical to 19-20 or 18-20 (never further).</p>
             <p><b>Enemy saving throw</b>: when an effect lets the enemy resist, it rolls d20 + its modifier against your difficulty.</p>
@@ -485,18 +495,24 @@
             <p>Every class has a resource (rage, nature, mana, faith) that recharges by resting. During a fight you recover some, each class in its own way, with the same table: ${recupero()}, double in the best case. Details are in each class section.</p>
             <h3>Conditions</h3>
             <div class="scroll"><table><tr><th>Condition</th><th>Effect</th></tr>
-              <tr><td>Weakened</td><td>−2 to hit</td></tr>
+              <tr><td>Weakened</td><td>−2 to hit · 2 turns</td></tr>
               <tr><td>Off-balance</td><td>−2 Armor class</td></tr>
               <tr><td>Dazed</td><td>−4 to hit, no criticals</td></tr>
               <tr><td>Stunned</td><td>skips its next turn</td></tr>
               <tr><td>Inhibited</td><td>cannot use its special attacks</td></tr>
-              <tr><td>Bleeding</td><td>1d4 damage each of its turns (Haemorrhage: 1d6)</td></tr>
+              <tr><td>Bleeding</td><td>1d4 damage each of its turns (Haemorrhage: 1d6) · 3 turns</td></tr>
               <tr><td>Exposed</td><td>your attacks crit on one number lower, never below 18</td></tr>
-              <tr><td>Blinded</td><td>rolls 2d20 to hit and keeps the worse</td></tr>
+              <tr><td>Blinded</td><td>rolls 2d20 to hit and keeps the worse · 2 turns</td></tr>
               <tr><td>Withered</td><td>1d4 necrotic damage each of its turns (1d6 where stated); stacks with Bleeding</td></tr>
-              <tr><td>Poisoned</td><td>1d4 poison damage each of its turns (Toxin: 1d6); stacks with Bleeding and Withered</td></tr>
+              <tr><td>Poisoned</td><td>1d4 poison damage each of its turns (Toxin: 1d6); stacks with Bleeding and Withered · 3 turns</td></tr>
+              <tr><td>Burned</td><td>1d4 fire damage each of its turns (1d6 if empowered) · 3 turns</td></tr>
+              <tr><td>Frightened</td><td>−2 Armor class · 2 turns</td></tr>
             </table></div>
             <p>Effects do not stack: a new one of the same kind renews the duration. The exceptions (Cracked, Seals) are explained in the classes.</p>
+            <p><b>Six conditions work the same for you and for enemies</b>: Burned, Bleeding and Poisoned (1d4 per turn for 3 turns, 1d6 when empowered), Weakened, Frightened and Blinded (2 turns). Different conditions stack. They end with the fight. Ash creatures do not bleed; fire creatures do not burn.</p>
+            <p><b>Elixirs.</b> Each elixir from the workshop cures one condition; drunk beforehand, it protects you from it in the next fight (one protection at a time). An enemy that sees its condition fail against the protection does not try again. Concentrates (made with parts of ash creatures) cure and make you immune for the rest of the fight, or protect until rest. You carry at most 2 per condition.</p>
+            <p><b>Enemy abilities.</b> Enemies have ability points too: every ability that inflicts a condition costs points (2 for a condition, 3 for an empowered one or for two conditions, 4 for a control like Stunned or Held). Out of points, only normal attacks.</p>
+            <p><b>Fleeing.</b> Write “I flee”: Athletics or Acrobatics check against DC 10 + the enemy's level. Succeed and you return to the room you came from; fail and the enemy strikes you with advantage. You cannot flee from guardians.</p>
             <h3>Fearsome foes</h3>
             <p>The most fearsome foes are immune to effects that take away actions or attacks (Dazed, Stunned, Inhibited); against them many techniques and spells have a fallback effect, shown in brackets. On them other effects last at most 2 turns (Withered 3), and charges and Seals reach at most 2.</p>
             <h3>Weaknesses and resistances</h3>
@@ -585,9 +601,9 @@
             <p class="esempio">Rage rises when you are hit: the Warrior does not fear taking blows, he fears running dry.</p>
             <h3>Arcane Arcanist, with one Force slot</h3>
             <p class="esempio">Level 1, Mind 16 (+3), 13 mana. Against the same enemy.</p>
-            <div class="turno"><b>Turn 1.</b> Arcane Bolt (2 mana, 11 left). You roll 11: 11 + 3 = 14, you hit. 1d8: you deal 5, and carve 1 Seal.</div>
+            <div class="turno"><b>Turn 1.</b> Arcane Bolt (2 mana, 11 left). You roll 11: 11 + 3 = 14, you hit. 1d8 + 3: you deal 5 + 3 = 8, and carve 1 Seal.</div>
             <div class="turno"><b>Turn 2.</b> Reveal Cards (1 mana, 10 left). You see the enemy's sheet and carve the second Seal, with no roll.</div>
-            <div class="turno"><b>Turn 3.</b> Force Fist (2 mana, 8 left). You roll 14: 17, you hit. 1d10 gives 6, and the Detonation spends the 2 Seals: +2d6, you roll 7. Total 13 damage. The Detonation gives you back 1 mana (9). With 3 Seals it would have been 2.</div>
+            <div class="turno"><b>Turn 3.</b> Force Fist (2 mana, 8 left). You roll 14: 17, you hit. 1d10 + 3 gives 6 + 3, and the Detonation spends the 2 Seals: +2d6, you roll 7. Total 16 damage. The Detonation gives you back 1 mana (9). With 3 Seals it would have been 2.</div>
             <p class="esempio">The Arcanist prepares, then strikes: the longer you wait, the more it hurts, but meanwhile the enemy attacks.</p>
             <h3>Shadow Monk, with one Light slot</h3>
             <p class="esempio">Level 2, Spirit 16 (+3), 18 faith points. The Balance starts at 0.</p>
@@ -615,14 +631,16 @@
             <div class="scroll"><table><tr><th>Level</th><th>XP needed</th><th>Total XP</th></tr>${soglie}</table></div>
             <p>At each level:</p>
             <ul>
-              <li>physical health + (hit die + Vigour mod.);</li>
-              <li>mental health + (hit die + Spirit mod.);</li>
+              <li>physical health + (half the hit die + 1 + Vigour mod.), a fixed amount: Warrior 6, Shaman 5, Arcanist and Monk 4, plus the modifier;</li>
+              <li>mental health + (half the hit die + 1 + Spirit mod.);</li>
               <li>class resource + (its attribute modifier + the new level), no die;</li>
               <li>your chosen skills grow by 1 and new techniques or spells unlock.</li>
             </ul>
             <p>Each increase is at least 1.</p>`],
           ["Death and mental health", `
-            <p>If your physical health reaches 0 you do not truly die: you wake up in a safe place at full health, but lose 1d4 points of mental health. The enemy that beat you recovers fully.</p>
+            <p><b>You cannot die against guardians:</b> if your physical health reaches 0, the house brings you back, at full health but with 1d4 fewer points of mental health.</p>
+            <p><b>Against animals, hunt prey and hounds you die:</b> at 0 physical health you become part of House Vespera. The same happens if your mental health reaches 0. Conditions can kill you during a fight.</p>
+            <p><b>Mode</b> (chosen at creation): in <b>easy</b> after death you start again from your last save and save whenever you like; in <b>hard</b> death is permanent and there is a single, automatic save. You can switch from hard to easy, never back.</p>
             <p><b>If your mental health reaches 0, the game is over.</b> Keep an eye on it: failed checks, wrong riddle answers, defeats, certain spells and certain places wear it down.</p>
             <p><b>Defeats against the most fearsome foes leave a mark:</b> each one takes 1 point from your maximum mental health, up to 3 points in all. The point comes back once that foe has been beaten or spared.</p>
             <p>Some discoveries about the house also wound the mind (1 to 4 points, only the first time), but on their own they never bring it to 0: they always leave at least 1 point.</p>`],

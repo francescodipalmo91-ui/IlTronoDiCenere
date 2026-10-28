@@ -14,7 +14,7 @@
   }
   function ctx(o) {
     o = o || {};
-    const c = { liv: 1, modAtt: 3, boss: false, cd: 12, modTs: 0, caBase: 12, mana: 0, mente: 0, usate: {} };
+    const c = { liv: 1, modAtt: 3, modDanno: 0, boss: false, cd: 12, modTs: 0, caBase: 12, mana: 0, mente: 0, usate: {} }; /* modDanno 0: i casi storici contano i soli dadi; il caso del 28/10 lo alza */
     Object.assign(c, o);
     c.tira = dadi(o.dadi || []);
     c.ca = () => c.caBase - (c.s ? C.malusCA(c.s) : 0);
@@ -55,6 +55,10 @@
     let s = scontro(), c = ctx({ dadi: [15, 5] }); /* 15+3 = 18 contro CA 12 */
     let r = lancia("dardo_arcano", s, c); eq(r.costo, 2); eq(s.pv, 75, "5 danni senza modificatore"); eq(s.sigilli, 1);
     s = scontro(); c = ctx({ dadi: [2] }); r = lancia("dardo_arcano", s, c); eq(s.pv, 80); eq(s.sigilli || 0, 0);
+  });
+  caso("28/10: l'attacco magico aggiunge il modificatore al danno (Dardo Arcano 1d8 + 3)", () => {
+    const s = scontro(), c = ctx({ dadi: [15, 5], modDanno: 3 });
+    lancia("dardo_arcano", s, c); eq(s.pv, 72, "5 + 3 danni");
   });
   caso("I Sigilli si fermano a 3, a 2 sui boss; il resto va perso", () => {
     const s = scontro({ sigilli: 2 }), c = ctx({ dadi: [15, 4] });
@@ -192,7 +196,7 @@
   });
   caso("Gravità: Bloccato 1 e Sbilanciato 2 se fallisce; sui boss Sbilanciato 2 e Indebolito 1", () => {
     let s = scontro(), c = ctx({ dadi: [3] }); lancia("gravita", s, c); eq(s.eff.bloccato, 1); eq(s.eff.sbilanciato, 2);
-    s = scontro(); c = ctx({ boss: true }); lancia("gravita", s, c); eq(s.eff.bloccato || 0, 0); eq(s.eff.sbilanciato, 2); eq(s.eff.debole, 1);
+    s = scontro(); c = ctx({ boss: true }); lancia("gravita", s, c); eq(s.eff.bloccato || 0, 0); eq(s.eff.sbilanciato, 2); eq(s.eff.debole, 2, "durata comune");
   });
   caso("Respingere: ogni colpo fa 0 e torna 1d6, fino al tuo turno", () => {
     const s = scontro(), c = ctx({ dadi: [3, 2] }); lancia("respingere", s, c);
@@ -219,7 +223,7 @@
     s.eff.sbilanciato = 0; s.sigilli = 1; lancia("pugno_forza", s, ctx({ dadi: [15, 2, 3] })); eq(s.eff.sbilanciato, 1, "ogni Detonazione, anche delle altre");
   });
   caso("Spezzare il Vincolo: Indebolito 3 e CA −2 per tutto lo scontro se fallisce; boss: Indebolito 2", () => {
-    let s = scontro(), c = ctx({ dadi: [3] }); lancia("spezzare_vincolo", s, c); eq(s.eff.debole, 3); eq(s.caMeno, 2); eq(C.malusCA(s), 2);
+    let s = scontro(), c = ctx({ dadi: [3] }); lancia("spezzare_vincolo", s, c); eq(s.eff.debole, 2, "durata comune"); eq(s.caMeno, 2); eq(C.malusCA(s), 2);
     s = scontro(); c = ctx({ dadi: [3], boss: true }); lancia("spezzare_vincolo", s, c); eq(s.eff.debole, 2, "tetto boss");
     s = scontro(); c = ctx({ dadi: [18] }); lancia("spezzare_vincolo", s, c); eq(s.caMeno || 0, 0);
   });
@@ -298,7 +302,7 @@
   });
   caso("Dardo di Luce: 1d8; sul critico anche Accecato 1", () => {
     let s = scontro(), c = ctx({ dadi: [15, 6] }); lancia("dardo_luce", s, c); eq(s.pv, 74); eq(s.eff.accecato || 0, 0);
-    s = scontro(); c = ctx({ dadi: [20, 3, 4] }); lancia("dardo_luce", s, c); eq(s.pv, 73); eq(s.eff.accecato, 1);
+    s = scontro(); c = ctx({ dadi: [20, 3, 4] }); lancia("dardo_luce", s, c); eq(s.pv, 73); eq(s.eff.accecato, 2, "durata comune");
   });
   caso("Tocco Lenitivo: cura 1d8 + Spirito e non oltre la salute mancante", () => {
     const s = scontro(), c = ctx({ dadi: [6], mancano: 4 }); lancia("tocco_lenitivo", s, c); eq(c.curato, 4);
@@ -323,7 +327,7 @@
   caso("Corona di Raggi: 1d6 a inizio turno per 3 turni; se ti colpisce, il nemico è Accecato 1", () => {
     const s = scontro(), c = ctx(); lancia("corona_raggi", s, c); eq(s.eff.corona, 3);
     M.inizioTurnoNemico(s, ctx({ dadi: [5] })); eq(s.pv, 75);
-    C.colpoSubito(s, ctx({ boss: false }), false, 3); eq(s.eff.accecato, 1);
+    C.colpoSubito(s, ctx({ boss: false }), false, 3); eq(s.eff.accecato, 2, "durata comune");
   });
   caso("Grazia: 2d8 + Spirito e +2 CA per 2 turni", () => {
     const s = scontro(), c = ctx({ dadi: [4, 5] }); lancia("grazia", s, c); eq(c.curato, 12); eq(s.eff.scudo, 2);
@@ -355,7 +359,7 @@
   });
   caso("Sussurro della Paura e Catene d'Ombra: controlli, con il ripiego sui boss", () => {
     let s = scontro(), c = ctx({ dadi: [3] }); lancia("sussurro_paura", s, c); eq(s.eff.silenzio, 1);
-    s = scontro(); c = ctx({ boss: true }); lancia("sussurro_paura", s, c); eq(s.eff.debole, 1);
+    s = scontro(); c = ctx({ boss: true }); lancia("sussurro_paura", s, c); eq(s.eff.debole, 2, "durata comune");
     s = scontro(); c = ctx({ liv: 2, dadi: [3] }); lancia("catene_ombra", s, c); eq(s.eff.bloccato, 1);
     s = scontro(); c = ctx({ liv: 2, boss: true }); lancia("catene_ombra", s, c); eq(s.eff.sbilanciato, 2);
   });
@@ -385,7 +389,7 @@
     lancia("accecare", s, ctx({ dadi: [13], boss: true })); eq(s.eff.accecato, 2, "13 − 2 = 11 contro 12: fallisce");
   });
   caso("Notte Senza Fine: nemico Accecato e Avvizzito (1d6), Ombra −2, 1d4 salute mentale, una volta per riposo", () => {
-    const s = scontro(), c = ctx({ liv: 5, dadi: [3] }); lancia("notte_senza_fine", s, c); eq(s.eff.accecato, 3); eq(s.eff.avvizzito, 3); eq(s.avvizzitoDado, 6); eq(c.mente, 3);
+    const s = scontro(), c = ctx({ liv: 5, dadi: [3] }); lancia("notte_senza_fine", s, c); eq(s.eff.accecato, 2, "durata comune"); eq(s.eff.avvizzito, 3); eq(s.avvizzitoDado, 6); eq(c.mente, 3);
     eq(M.costo(inc("tocco_avvizzente"), s), 1, "2 − 2, minimo 1"); eq(M.costo(inc("abbraccio_vuoto"), s), 7);
     eq(M.disponibile(inc("notte_senza_fine"), s, c).motivo, "giaUsataRiposo");
   });

@@ -19,7 +19,9 @@
   const SCELTE_PER_LIVELLO = R.TECNICHE_PER_LIVELLO || [2, 2, 1, 1, 1]; /* tecniche da scegliere a ogni livello (1..5) */
   const IRA_PER_COLPO = R.IRA_PER_COLPO || [1, 1, 2, 2, 3];              /* ira per colpo subito, per livello */
   const CONTROLLI = ["frastornato", "bloccato", "silenzio"]; /* i boss non li subiscono mai */
-  const TETTO_BOSS = { debole: 2, sbilanciato: 2, esposto: 2, accecato: 2, avvizzito: 3, avvelenato: 2 }; /* durata massima sui boss (Avvelenato: Sciamano) */
+  const TETTO_BOSS = { debole: 2, sbilanciato: 2, esposto: 2, accecato: 2, avvizzito: 3 }; /* durata massima sui boss */
+  /* 28/10: i sei stati comuni a giocatore e PNG hanno una durata fissa, qualunque cosa dica la tecnica: 3 turni quelli che tolgono salute, 2 i malus */
+  const DURATE_COMUNI = { sanguina: 3, avvelenato: 3, debole: 2, accecato: 2 };
   const CREPE_MAX = 3, CREPE_MAX_BOSS = 2;             /* Incrinatura: cariche massime (comuni / boss) */
   const PER_SCONTRO = 99;                              /* durata «per tutto lo scontro» (Frattura della Sentenza e del Martello) */
   const CRIT_MIN = 18;                                 /* tetto dell'intervallo di critico: mai sotto 18-20 */
@@ -56,7 +58,8 @@
   const sogliaCrit = (s, base) => Math.max(CRIT_MIN, attivo(s, "precisione") ? CRIT_MIN : (base || 20) - (attivo(s, "esposto") ? 1 : 0));
   function metti(s, ctx, k, turni) { /* applica uno stato al nemico rispettando le regole dei boss */
     if (ctx.boss && CONTROLLI.includes(k)) return { k: "immune", s: k };
-    let n = turni, ridotto = false;
+    if (ctx.immuni && ctx.immuni.includes(k)) return { k: "immune", s: k }; /* 28/10: le creature di cenere non sanguinano */
+    let n = DURATE_COMUNI[k] && turni !== PER_SCONTRO ? DURATE_COMUNI[k] : turni, ridotto = false;
     if (ctx.boss && TETTO_BOSS[k] && n > TETTO_BOSS[k]) { n = TETTO_BOSS[k]; ridotto = true; }
     s.eff[k] = Math.max(s.eff[k] || 0, n);
     s.effMax = s.effMax || {}; s.effMax[k] = Math.max(s.effMax[k] || 0, s.eff[k]);
@@ -135,7 +138,7 @@
   function colpo(s, ctx, o) {
     o = o || {};
     const pre = o.base ? {} : (s.prossimo || {}); if (!o.base) s.prossimo = null;
-    const mA = ctx.modAtt + (o.bonus || 0) + (pre.bonus || 0), ca = ctx.ca(), d = ctx.tira(20), tot = d + mA;
+    const mA = ctx.modAtt + (o.bonus || 0) + (pre.bonus || 0), ca = ctx.ca(), d = ctx.svantaggio ? Math.min(ctx.tira(20), ctx.tira(20)) : ctx.tira(20), tot = d + mA; /* 28/10: chi attacca Accecato tira 2d20 e tiene il peggiore */
     const soglia = sogliaCrit(s, o.critDa);
     let crit = d >= soglia, ok = crit || tot > ca;
     if (ok && o.sempreCrit) crit = true;

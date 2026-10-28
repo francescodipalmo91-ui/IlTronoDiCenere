@@ -2544,6 +2544,8 @@
        ALDO, LA PRIMA CACCIA, IL GIARDINO, LA CAPPELLA, LA CRIPTA
        E LA SALA DELLA CACCIA CON LA SALETTA DEI TROFEI (versione di prova)
        Tutti i testi qui sotto sono PROVVISORI: scritti da me, da sostituire con le descrizioni definitive.
+       Cappella e cripta (28/10): i testi della cripta, delle tracce, dell'ascolto e della discesa sono di Francesco;
+       restano PROVVISORI solo quelli segnati come tali (buio, fuoco, sarcofago di Rodolfo e Adele, scelta furtiva).
        ===================================================================== */
     const CACCIA = {
       it: {
@@ -2570,26 +2572,28 @@
             intro: [
               "Spingi la porta socchiusa ed entri. La cappella è piccola, poco più di una navata, e l'aria qui dentro è fredda e densa d'incenso stantio. Due file di panche di legno scuro conducono all'altare, e i tuoi passi sul pavimento di pietra risuonano come in una tomba.",
               "Candele dalle fiammelle azzurre ardono immobili nei candelabri di ferro, senza consumarsi. Sopra l'altare, la vetrata che hai visto dal giardino raffigura una dama e un cavaliere inginocchiati ai lati di un albero, i volti consumati da crepe sottili che corrono nel vetro come vene.",
-              "Sull'altare, una tovaglia ricamata con lo stemma dei Vespera; accanto, su un leggio, un libro di preghiere chiuso. Dietro di esso, sulla destra, una pesante grata di ferro è stata spalancata: rivela una scala di pietra che scende nel buio. Da laggiù sale un odore di terra, di cera... e di fumo recente."
+              "Sull'altare, una tovaglia ricamata con lo stemma dei Vespera; accanto, su un leggio, un libro di preghiere chiuso. Dietro di esso, sulla destra, un pesante cancello di ferro è stato spalancato: rivela una scala di pietra che scende nel buio. Da laggiù sale un odore di terra, di cera... e di fumo recente."
             ],
             nota: "Per scendere scrivi, ad esempio, «scendo nella cripta»; dalla porticina sul retro si va al cimitero («vado al cimitero»); per tornare indietro «torno in giardino».",
             fallbackLibera: ["Ci provi, ma la cappella non ti offre nulla di utile in questo senso. Le panche, l'altare, la vetrata e la scala che scende nella cripta sono ciò che hai intorno."],
             ritorno: ["Torni nella cappella. Le candele azzurre ardono immobili, e la scala dietro l'altare continua a sprofondare nel buio."]
           },
-          fatti: "Cappella di famiglia dei Vespera, nel giardino, a poche decine di passi dalla casa: piccola, una sola navata, aria fredda e odore di incenso stantio; due file di panche di legno scuro; candele dalle fiamme azzurre che non si consumano in candelabri di ferro; un altare di pietra scura coperto da una tovaglia ricamata con lo stemma dei Vespera (un albero dalle radici intrecciate); sopra l'altare una vetrata con una dama e un cavaliere inginocchiati ai lati di un albero, attraversata da crepe sottili; dietro l'altare, a destra, una grata di ferro spalancata e una scala di pietra che scende nella cripta, da cui sale odore di terra, cera e fumo recente. Si torna in giardino dalla porta da cui si è entrati."
+          fatti: "Cappella di famiglia dei Vespera, nel giardino, a poche decine di passi dalla casa: piccola, una sola navata, aria fredda e odore di incenso stantio; due file di panche di legno scuro; candele dalle fiamme azzurre che non si consumano in candelabri di ferro; un altare di pietra scura coperto da una tovaglia ricamata con lo stemma dei Vespera (un albero dalle radici intrecciate); sopra l'altare una vetrata con una dama e un cavaliere inginocchiati ai lati di un albero, attraversata da crepe sottili; dietro l'altare, a destra, un cancello di ferro spalancato e una scala di pietra che scende nella cripta, da cui sale odore di terra, cera e fumo recente. Si torna in giardino dalla porta da cui si è entrati."
         },
         cripta: {
-          vista: { titolo: "Cripta dei Vespera", alt: "Una cripta bassa a volta con sarcofagi di pietra nelle nicchie e, in fondo, un giaciglio di stracci accanto a un piccolo braciere acceso." },
+          vista: { titolo: "Cripta dei Vespera", alt: "Una cripta bassa a volta con sarcofagi di pietra nelle nicchie e, a metà della stanza, tra due colonne, un giaciglio di stracci accanto a un piccolo braciere acceso." },
           stanza: {
             intro: [
               "Scendi i gradini di pietra con cautela. La scala piega su sé stessa due volte, poi si apre in una cripta bassa dal soffitto a volta, sorretto da tozze colonne. Lungo le pareti, nicchie scavate nella roccia accolgono sarcofagi di pietra, ognuno con il nome di un Vespera inciso sul coperchio.",
-              "In fondo, tra due sarcofagi, qualcuno ha improvvisato un rifugio: un giaciglio di stracci, una lanterna spenta, ossa di topo spolpate e un piccolo braciere in cui brucia ancora un fuoco debole, arancione. Un fuoco vero."
+              "A metà della stanza, tra due colonne, qualcuno ha improvvisato un rifugio: un giaciglio di stracci, una lanterna spenta, ossa di topo spolpate e un piccolo braciere dove brucia ancora un debole fuoco. Un fuoco vero."
             ],
             nota: "Per tornare su scrivi «torno nella cappella».",
+            /* discesa furtiva riuscita (Francesco, 28/10): niente seconda discesa, l'uomo è di spalle */ /* PROVVISORIO */
+            introFurtiva: ["Arrivi in fondo alla scala senza un suono. La cripta è bassa, dal soffitto a volta sorretto da tozze colonne; lungo le pareti, nicchie scavate nella roccia accolgono sarcofagi di pietra, ognuno con il nome di un Vespera inciso sul coperchio.", "A metà della stanza, tra due colonne, qualcuno ha improvvisato un rifugio: un giaciglio di stracci, una lanterna spenta, ossa di topo spolpate e un piccolo braciere dove brucia ancora un debole fuoco. Accanto, di spalle, siede l'uomo che hai visto dalla scala: rigira l'arma tra le mani e non si è accorto di te."],
             fallbackLibera: ["Ci provi, ma la cripta non ti offre nulla di utile in questo senso. I sarcofagi, il giaciglio e il braciere sono ciò che hai intorno; la scala riporta alla cappella."],
-            ritorno: ["Scendi di nuovo nella cripta. I sarcofagi riposano nelle loro nicchie, e il braciere in fondo getta ancora la sua luce arancione sulle volte."]
+            ritorno: ["Scendi di nuovo nella cripta. Il braciere arde ancora, e la sua luce arancione danza sulle volte e sui nomi incisi nei sarcofagi."],
           },
-          fatti: "Cripta sotto la cappella dei Vespera: bassa, soffitto a volta sorretto da tozze colonne; nicchie scavate nella roccia con sarcofagi di pietra, ognuno con il nome di un Vespera inciso sul coperchio; in fondo, tra due sarcofagi, un rifugio improvvisato con un giaciglio di stracci, una lanterna spenta, ossa di topo e un piccolo braciere dal fuoco arancione. Una scala di pietra risale alla cappella."
+          fatti: "Cripta sotto la cappella dei Vespera, oltre un cancello di ferro e una scala di pietra: bassa, soffitto a volta sorretto da tozze colonne; lungo le pareti nicchie scavate nella roccia con pochi sarcofagi di pietra, tutti con il nome Vespera inciso sul coperchio; il più antico, in fondo, ha un cavaliere disteso scolpito sul coperchio; un sarcofago con i nomi di Rodolfo e Adele, socchiuso e senza data di morte, ai cui piedi c'è una piccola tomba coperta da un drappo polveroso; a metà della stanza, tra due colonne, un rifugio improvvisato con un giaciglio di stracci, una lanterna spenta, ossa di topo spolpate e un piccolo braciere dal fuoco arancione. Una scala di pietra risale alla cappella."
         },
         sala_trofei: {
           vista: { titolo: "Saletta dei giochi e dei trofei", alt: "Una saletta con velluti verdi, un tavolo da gioco con una partita a scacchi interrotta e mensole con oggetti di viaggiatori e targhe d'ottone." },
@@ -2643,10 +2647,10 @@
           },
           cappella_altare_vuoto: { fisso: ["L'altare è un blocco di pietra scura coperto da una tovaglia ricamata con lo stemma dei Vespera: un albero dalle radici intrecciate. Sopra, due candelabri di ferro e un libro di preghiere chiuso, la copertina incollata dalla polvere."] },
           cappella_vetrata: { fisso: ["La vetrata raffigura una dama e un cavaliere inginocchiati ai lati di un albero dalle radici intrecciate. Lui porta la stessa armatura dell'atrio; lei ha i capelli raccolti e il volto severo del ritratto sopra il camino.", "Crepe sottili attraversano il vetro come vene: tutte partono dal cuore della dama, e nessuna sfiora il cavaliere."] },
-          cappella_panche: { fisso: ["Le panche sono di legno scuro, consumato al centro dalle ginocchia di chissà quante preghiere. Sul bordo dell'ultima, qualcuno ha inciso con la punta di un coltello una fila di tacche verticali.", "Le conti: sono undici, incise con cura, una accanto all'altra. Accanto all'ultima c'è lo spazio per una dodicesima, appena graffiata e mai finita."] },
-          cripta_sarcofagi: { fisso: ["Passi lungo le nicchie, leggendo i nomi incisi sui coperchi: Vespera, Vespera, Vespera, generazioni intere ridotte a un nome e a due date che non riconosci.", "Due nicchie, accanto all'ingresso, sono ancora vuote. Sopra la prima è inciso «Rodolfo»; sopra la seconda, «Adele». Nessuna data.", "In fondo alla cripta, il sarcofago più antico ha una crepa lungo il bordo del coperchio. E tra due nicchie, quasi nascosto da un drappo, c'è qualcosa di più piccolo."] },
-          cripta_braciere: { fisso: ["Il piccolo braciere è stato ricavato da un elmo rovesciato. Dentro bruciano assi di panca spezzate e stracci: un fuoco povero, arancione, che scalda davvero. Qualcuno lo ha tenuto acceso per molto, molto tempo."] },
-          cripta_giaciglio: { fisso: ["Il giaciglio è un nido di stracci, mantelli strappati e coperte d'altare. Accanto, una lanterna senza olio, una ciotola di legno, una pietra per affilare consumata fino a diventare una scheggia."] },
+          cappella_panche: { fisso: ["Le panche sono di legno scuro, consumato al centro dalle ginocchia di chissà quante preghiere. Sul bordo dell'ultima, qualcuno ha inciso con la punta di un coltello una fila di tacche verticali.", "Le conti: sono undici, incise con cura, una accanto all'altra. Accanto all'ultima c'è lo spazio per una dodicesima, appena graffiata e mai finita."] }, /* definitivo (Francesco, 28/10) */
+          cripta_sarcofagi: { fisso: ["Passi in rassegna i pochi sarcofagi presenti: riportano tutti un unico nome, Vespera. Deve trattarsi della sepoltura di un'antica stirpe, destinata ai primi membri della famiglia; il più antico, in fondo, porta scolpito sul coperchio un cavaliere disteso. Poi, però, lo sguardo cade su due nomi che riconosci: Rodolfo e Adele. Il coperchio è leggermente socchiuso, e la lastra non riporta alcuna data di morte. Proprio ai suoi piedi, parzialmente nascosto da un drappo polveroso, fa capolino qualcosa di più piccolo."] }, /* Francesco, 28/10 */
+          cripta_braciere: { fisso: ["Nel piccolo braciere bruciano assi di panca spezzate e stracci: un fuoco povero, che però scalda davvero. Ettore lo ha tenuto alimentato per molto, molto tempo."] }, /* Francesco, 28/10 */
+          cripta_giaciglio: { fisso: ["Il giaciglio è un misero nido di stracci, mantelli laceri e coperte d'altare. Lì accanto giacciono una lanterna priva d'olio, una ciotola di legno e una pietra per affilare, consumata fino a ridursi a una scheggia."] }, /* Francesco, 28/10 */
           caccia_teste: { fisso: ["Le teste imbalsamate ti fissano dall'alto con i loro occhi di vetro: cervi dai palchi enormi, cinghiali dalle zanne ingiallite, lupi con le fauci socchiuse. Sotto ciascuna, una targhetta con un luogo e una data. Nessuna di quelle date è recente."] },
           caccia_camino: { fisso: ["Il camino è enorme, abbastanza grande da arrostirci un cervo intero. È spento, la pietra fredda, e la cenere sul fondo è così vecchia da essersi indurita come gesso."] },
           caccia_tavolo: { fisso: ["Il lungo tavolo di quercia è segnato da tagli e bruciature: qui si pulivano le armi e si dividevano le prede. Al centro, una mappa della tenuta incisa direttamente nel legno: la casa, il giardino, la cappella... e oltre, soltanto una fitta nebbia intagliata a mano."] },
@@ -2718,12 +2722,12 @@
           rivincita2: ["Avanzi lungo la scala con i muscoli tesi. Una volta giunto alla fine, te lo ritrovi davanti inatteso, appoggiato a un sarcofago con l'arma già in pugno."],
           rivincita2Ettore: ["«Di ritorno? Pensavo che la lezione fosse bastata a farti fuggire. Ah, già... dimenticavo: da questo posto maledetto non si può fuggire.»", "Un ghigno amaro, poi si stringe attorno all'impugnatura e avanza deciso ad attaccare."],
           aspetta: ["Ettore è seduto sul suo giaciglio, accanto al braciere. Alza la testa quando ti sente scendere, ma non si alza. La spada è posata sulle ginocchia."],
-          vuota: ["La cripta è silenziosa. Il braciere si è spento, e del rifugio di Ettore non restano che stracci e cenere fredda."],
-          diarioMorto: ["Tra le sue cose, sotto il mantello consumato, trovi un quaderno dalla copertina di pelle, logoro per le mani di un ragazzo. Lo aveva con sé fino all'ultimo."],
+          vuota: ["La cripta è silenziosa. Del rifugio di Ettore restano soltanto stracci, ossa di topo spolpate e il braciere, che arde ancora del fuoco che lui ha nutrito fino all'ultimo. Nessuno, ormai, lo alimenterà più."], /* PROVVISORIO: risparmiato, braciere ancora acceso (al buio vale il testo del buio) */
+          diarioMorto: ["Tra le sue cose, sotto il mantello consumato, trovi un quaderno dalla copertina di pelle logora. Lo aveva con sé fino all'ultimo."],
           vuotaMorto: ["La cripta è silenziosa. Sul giaciglio di Ettore resta soltanto un velo di cenere grigia, che nessun respiro muove."],
-          resa: ["Ettore barcolla, il sangue che gli cola dalla fronte nella barba. La gamba sinistra cede: cade su un ginocchio e la spada gli sfugge di mano, rotolando sulla pietra.", "«Basta... basta. Hai vinto.» Alza le mani, i palmi aperti e tremanti. «Fai quello che devi. Ma guardami in faccia mentre lo fai.»"],
+          resa: ["Ettore barcolla, il sangue che gli cola dalla fronte nella barba. La gamba sinistra cede: cade su un ginocchio e la spada gli sfugge di mano, rotolando sulla pietra.", "«Basta... basta. Hai vinto.» Alza le mani, i palmi aperti e tremanti. «Fai quello che devi. Ma guardami in faccia mentre lo fai. E conta. Conta fino a dodici, per me.»"],
           finiscilo: "Finiscilo", risparmialo: "Risparmialo",
-          finito: ["Non distogli lo sguardo. Ettore annuisce appena, come se ti ringraziasse, e il colpo cade."],
+          finito: ["Non distogli lo sguardo. Ettore muove le labbra un'ultima volta, «…dodici», e il colpo cade."],
           bruciato: "Tra le sue cose trovi la copertina annerita di un quaderno di pelle: le pagine sono state bruciate nel braciere. Qualunque cosa contenessero, nessuno le leggerà mai.",
           indizio: "Il consiglio di Aldo ti torna in mente: Ettore regge male sulla gamba sinistra. La sua Classe Armatura scende di 2."
         },
@@ -2921,8 +2925,8 @@
               attacco_dopo: {
                 testo: {
                   signora: ["Ettore annuisce lentamente. Poi, con un gesto rapido, getta il quaderno di pelle nel braciere: le fiamme arancioni lo divorano in un istante.", "«Allora il vecchio non avrà anche questo.»", "Solleva la spada e si mette in guardia, la gamba sinistra rigida, piegata appena."],
-                  signore: ["Ettore sorride, quasi sollevato.", "«Lo sapevo. Lo avrei fatto anch'io.»", "Solleva la spada e si mette in guardia, la gamba sinistra rigida, piegata appena."],
-                  neutro: ["Ettore smette di ridere.", "«Va bene. Va bene così.»", "Solleva la spada e si mette in guardia, la gamba sinistra rigida, piegata appena."]
+                  signore: ["Ettore sorride, quasi sollevato.", "«Lo sapevo. Lo avrei fatto anch'io. L'ho fatto anch'io, undici volte.»", "Solleva la spada e si mette in guardia, la gamba sinistra rigida, piegata appena."],
+                  neutro: ["Ettore smette di ridere di colpo, come se qualcuno avesse chiuso una porta.", "«Va bene. Va bene così. Va bene.»", "Solleva la spada e si mette in guardia, la gamba sinistra rigida, piegata appena."]
                 },
                 alla_fine: "ettore_scontro"
               },
@@ -2933,7 +2937,7 @@
                     "«Il vecchio non è uno sciocco. Guardalo negli occhi quando gli dici che sono morto, e non abbassare lo sguardo. Mai.»",
                     "Ti porge anche il quaderno di pelle.",
                     "«Prendi anche questo. Portalo a chi può farne buon uso: a Guendalina, ai ragazzi, a lei. Io troverò un altro buco in cui nascondermi. Sono bravo, in questo.»",
-                    "Raccoglie la lanterna spenta e la spada, e senza voltarsi sparisce tra le colonne, in un passaggio che non avevi notato."
+                    "Raccoglie la lanterna spenta e la spada, e senza voltarsi sparisce tra le colonne, in un passaggio che non avevi notato. Lo senti contare i propri passi, finché la voce non si perde."
                   ],
                   signore: [
                     "Ettore resta immobile, la spada a mezz'aria. Poi la abbassa, piano.",
@@ -2944,7 +2948,7 @@
                   ],
                   neutro: [
                     "Ettore ti guarda come se lo avessi colpito. Poi la sua mano trema, e la spada gli scivola tra le dita, tintinnando sulla pietra.",
-                    "«Grazie...» mormora. «Grazie, grazie.»",
+                    "«Grazie...» mormora. «Grazie, grazie.» Continua a ripeterlo, contando i grazie sulle dita.",
                     "Si strappa la spilla di bronzo dal petto e te la spinge in mano, come se bruciasse. Poi raccoglie i suoi stracci e indietreggia tra le colonne, ridendo e piangendo insieme, finché il buio lo inghiotte."
                   ]
                 },
@@ -3087,7 +3091,7 @@
             tsEffetto: { stop: "Ettore resta pietrificato, incapace di muoversi, per 2 turni.", folgorazione: "Ettore resta paralizzato dalla scarica per 2 turni.", accecare: "Ettore è accecato: per 2 turni avrà il 50% di possibilità di mancarti." },
             resistito: "Ettore scuote il capo e si libera dalla presa dell'incantesimo: non ha alcun effetto.",
             vittoria: ["Ettore crolla in ginocchio. Ti guarda, e per un attimo sembra quasi sollevato. Poi il suo corpo comincia a sgretolarsi come tutto ciò che muore in questa casa: prima le mani, poi il viso, infine la spilla di bronzo, che cade tintinnando su un mucchietto di cenere grigia.", "Raccogli il fermaglio. È ancora tiepido."],
-            sconfitta: ["Le gambe ti cedono e crolli sulla pietra della cripta. Vedi la spada di Ettore sollevarsi sopra di te... e fermarsi.", "«No», sussurra. «Io non sono come lui. Non ancora.»"],
+            sconfitta: ["Le gambe ti cedono e crolli sulla pietra della cripta. Vedi la spada di Ettore sollevarsi sopra di te... e fermarsi.", "«No», sussurra. «A terra non si conta. Io non sono come lui. Non ancora.»"],
             risveglio: ["Riapri gli occhi sul pavimento freddo della cappella, sotto la vetrata incrinata. Qualcuno ti ha trascinato su per le scale e ti ha lasciato lì, con le mani incrociate sul petto, come un morto in veglia."],
             sistRisveglio: "Ettore ti aspetta ancora nella cripta, di nuovo in piene forze."
           }
@@ -3115,7 +3119,7 @@
             intro: [
               "You push the half-open door and step inside. The chapel is small, little more than a nave, and the air in here is cold and thick with stale incense. Two rows of dark wooden pews lead to the altar, and your steps on the stone floor echo as in a tomb.",
               "Candles with blue flames burn motionless in iron candlesticks, never burning down. Above the altar, the window you saw from the garden depicts a lady and a knight kneeling on either side of a tree, their faces worn by fine cracks that run through the glass like veins.",
-              "On the altar lies a cloth embroidered with the arms of the Vespera; beside it, on a lectern, a closed prayer book. Behind it, on the right, a heavy iron grate has been flung open: it reveals a stone stair descending into the dark. From down there rises a smell of earth, of wax... and of recent smoke."
+              "On the altar lies a cloth embroidered with the arms of the Vespera; beside it, on a lectern, a closed prayer book. Behind it, on the right, a heavy iron gate has been flung open: it reveals a stone stair descending into the dark. From down there rises a smell of earth, of wax... and of recent smoke."
             ],
             nota: "To go down write, for example, “I go down into the crypt”; the little back door leads to the graveyard (“I go to the graveyard”); to go back, “I return to the garden”.",
             fallbackLibera: ["You try, but the chapel offers you nothing useful in that respect. The pews, the altar, the window and the stair down to the crypt are what lie around you."],
@@ -3123,15 +3127,16 @@
           }
         },
         cripta: {
-          vista: { titolo: "Crypt of the Vespera", alt: "A low vaulted crypt with stone sarcophagi in niches and, at the far end, a bed of rags beside a small lit brazier." },
+          vista: { titolo: "Crypt of the Vespera", alt: "A low vaulted crypt with stone sarcophagi in niches and, halfway across the room between two columns, a bed of rags beside a small lit brazier." },
           stanza: {
             intro: [
               "You go down the stone steps with care. The stair turns on itself twice, then opens into a low crypt with a vaulted ceiling held up by squat columns. Along the walls, niches cut into the rock hold stone sarcophagi, each with the name of a Vespera carved on its lid.",
-              "At the far end, between two sarcophagi, someone has made a shelter: a bed of rags, a dead lantern, picked-clean rat bones and a small brazier in which a weak, orange fire still burns. A real fire."
+              "Halfway across the room, between two columns, someone has made a shelter: a bed of rags, a dead lantern, picked-clean rat bones and a small brazier where a weak fire still burns. A real fire."
             ],
             nota: "To go back up write “I return to the chapel”.",
+            introFurtiva: ["You reach the bottom of the stair without a sound. The crypt is low, its vaulted ceiling held up by squat columns; along the walls, niches cut into the rock hold stone sarcophagi, each with the name of a Vespera carved on its lid.", "Halfway across the room, between two columns, someone has made a shelter: a bed of rags, a dead lantern, picked-clean rat bones and a small brazier where a weak fire still burns. Beside it, his back to you, sits the man you saw from the stair: he turns his weapon over in his hands and has not noticed you."],
             fallbackLibera: ["You try, but the crypt offers you nothing useful in that respect. The sarcophagi, the bed of rags and the brazier are what lie around you; the stair leads back to the chapel."],
-            ritorno: ["You go down into the crypt again. The sarcophagi rest in their niches, and the brazier at the far end still casts its orange light on the vaults."]
+            ritorno: ["You go down into the crypt again. The brazier is still burning, and its orange light dances on the vaults and on the names carved into the sarcophagi."],
           }
         },
         sala_trofei: {
@@ -3182,9 +3187,9 @@
           cappella_altare_vuoto: { fisso: ["The altar is a block of dark stone covered by a cloth embroidered with the arms of the Vespera: a tree with intertwined roots. On it stand two iron candlesticks and a closed prayer book, its cover glued shut with dust."] },
           cappella_vetrata: { fisso: ["The window depicts a lady and a knight kneeling on either side of a tree with intertwined roots. He wears the same armor as in the hall; she has her hair pinned up and the stern face of the portrait above the fireplace.", "Fine cracks run through the glass like veins: they all start from the lady's heart, and none of them touches the knight."] },
           cappella_panche: { fisso: ["The pews are of dark wood, worn in the middle by the knees of who knows how many prayers. On the edge of the last one, someone has carved a row of vertical notches with the tip of a knife.", "You count them: eleven, cut with care, one beside the other. Next to the last there is room for a twelfth, barely scratched and never finished."] },
-          cripta_sarcofagi: { fisso: ["You walk along the niches, reading the names carved on the lids: Vespera, Vespera, Vespera, whole generations reduced to a name and two dates you do not recognise.", "Two niches, beside the entrance, are still empty. Above the first is carved “Rodolfo”; above the second, “Adele”. No dates.", "At the back of the crypt, the oldest sarcophagus has a crack along the edge of its lid. And between two niches, almost hidden by a drape, there is something smaller."] },
-          cripta_braciere: { fisso: ["The small brazier has been made from an upturned helmet. Inside burn broken pew boards and rags: a poor, orange fire that truly gives warmth. Someone has kept it alight for a long, long time."] },
-          cripta_giaciglio: { fisso: ["The bed is a nest of rags, torn cloaks and altar cloths. Beside it, a lantern with no oil, a wooden bowl, a whetstone worn down to a sliver."] },
+          cripta_sarcofagi: { fisso: ["You look over the few sarcophagi here: they all bear a single name, Vespera. This must be the burial place of an ancient line, meant for the first members of the family; the oldest, at the back, has a reclining knight carved on its lid. Then, though, your eye falls on two names you recognise: Rodolfo and Adele. The lid is slightly ajar, and the slab bears no date of death. Right at its foot, half hidden by a dusty drape, something smaller peeks out."] },
+          cripta_braciere: { fisso: ["In the small brazier burn broken pew boards and rags: a poor fire, but one that truly gives warmth. Ettore has kept it fed for a long, long time."] },
+          cripta_giaciglio: { fisso: ["The bed is a wretched nest of rags, torn cloaks and altar cloths. Beside it lie a lantern with no oil, a wooden bowl and a whetstone worn down to a sliver."] },
           caccia_teste: { fisso: ["The mounted heads stare down at you with their glass eyes: stags with enormous antlers, boars with yellowed tusks, wolves with parted jaws. Beneath each, a small plaque with a place and a date. None of those dates is recent."] },
           caccia_camino: { fisso: ["The fireplace is huge, big enough to roast a whole stag. It is cold, the stone chilly, and the ash at the bottom is so old it has hardened like chalk."] },
           caccia_tavolo: { fisso: ["The long oak table is scarred with cuts and burns: here weapons were cleaned and prey divided. At its centre, a map of the estate carved straight into the wood: the house, the garden, the chapel... and beyond, only a thick fog carved by hand."] },
@@ -3254,12 +3259,12 @@
           rivincita2: ["You advance down the stairs with your muscles tense. When you reach the bottom you find him unexpectedly before you, leaning against a sarcophagus with his weapon already in hand."],
           rivincita2Ettore: ["«Back again? I thought the lesson had been enough to make you run. Ah, of course... I forgot: there is no running from this cursed place.»", "A bitter grin, then his grip tightens on the hilt and he advances, determined to attack."],
           aspetta: ["Ettore is sitting on his bed of rags, beside the brazier. He raises his head when he hears you coming down, but does not get up. The sword rests across his knees."],
-          vuota: ["The crypt is silent. The brazier has gone out, and of Ettore's shelter only rags and cold ash remain."],
-          diarioMorto: ["Among his belongings, beneath the worn cloak, you find a leather-covered notebook, worn by a boy's hands. He kept it with him to the very end."],
+          vuota: ["The crypt is silent. Of Ettore's shelter only rags, picked-clean rat bones and the brazier remain, still burning with the fire he fed to the very end. No one will feed it now."],
+          diarioMorto: ["Among his belongings, beneath the worn cloak, you find a notebook with a worn leather cover. He kept it with him to the very end."],
           vuotaMorto: ["The crypt is silent. On Ettore's bed only a veil of grey ash remains, stirred by no breath."],
-          resa: ["Ettore staggers, blood running from his brow into his beard. His left leg gives way: he falls to one knee and the sword slips from his hand, rolling across the stone.", "“Enough... enough. You have won.” He raises his hands, palms open and trembling. “Do what you must. But look me in the face while you do it.”"],
+          resa: ["Ettore staggers, blood running from his brow into his beard. His left leg gives way: he falls to one knee and the sword slips from his hand, rolling across the stone.", "“Enough... enough. You have won.” He raises his hands, palms open and trembling. “Do what you must. But look me in the face while you do it. And count. Count to twelve, for me.”"],
           finiscilo: "Finish him", risparmialo: "Spare him",
-          finito: ["You do not look away. Ettore barely nods, as if thanking you, and the blow falls."],
+          finito: ["You do not look away. Ettore moves his lips one last time, “…twelve”, and the blow falls."],
           bruciato: "Among his things you find the blackened cover of a leather notebook: its pages were burned in the brazier. Whatever they held, no one will ever read it.",
           indizio: "Aldo's advice comes back to you: Ettore is weak on his left leg. His Armor Class drops by 2."
         },
@@ -3456,8 +3461,8 @@
               attacco_dopo: {
                 testo: {
                   signora: ["Ettore nods slowly. Then, with a quick movement, he throws the leather notebook into the brazier: the orange flames devour it in an instant.", "«Then the old man will not have this too.»", "He raises his sword and takes his guard, his left leg stiff, barely bent."],
-                  signore: ["Ettore smiles, almost relieved.", "«I knew it. I would have done the same.»", "He raises his sword and takes his guard, his left leg stiff, barely bent."],
-                  neutro: ["Ettore stops laughing.", "«All right. That is all right.»", "He raises his sword and takes his guard, his left leg stiff, barely bent."]
+                  signore: ["Ettore smiles, almost relieved.", "«I knew it. I would have done the same. I did the same, eleven times.»", "He raises his sword and takes his guard, his left leg stiff, barely bent."],
+                  neutro: ["Ettore stops laughing all at once, as if someone had shut a door.", "«All right. That is all right. All right.»", "He raises his sword and takes his guard, his left leg stiff, barely bent."]
                 },
                 alla_fine: "ettore_scontro"
               },
@@ -3468,7 +3473,7 @@
                     "«The old man is no fool. Look him in the eyes when you tell him I am dead, and do not lower your gaze. Ever.»",
                     "He hands you the leather notebook as well.",
                     "«Take this too. Bring it to someone who can make good use of it: to Guendalina, to the children, to her. I will find another hole to hide in. I am good at that.»",
-                    "He picks up the dead lantern and the sword, and without turning disappears among the columns, through a passage you had not noticed."
+                    "He picks up the dead lantern and the sword, and without turning disappears among the columns, through a passage you had not noticed. You hear him counting his own steps, until his voice fades."
                   ],
                   signore: [
                     "Ettore stands still, sword in mid-air. Then he lowers it, slowly.",
@@ -3479,7 +3484,7 @@
                   ],
                   neutro: [
                     "Ettore looks at you as if you had struck him. Then his hand trembles, and the sword slips from his fingers, ringing on the stone.",
-                    "«Thank you...» he murmurs. «Thank you, thank you.»",
+                    "«Thank you...» he murmurs. «Thank you, thank you.» He keeps saying it, counting the thank-yous on his fingers.",
                     "He tears the bronze brooch from his chest and pushes it into your hand, as if it burned. Then he gathers his rags and backs away among the columns, laughing and weeping at once, until the dark swallows him."
                   ]
                 },
@@ -3620,7 +3625,7 @@
             tsEffetto: { stop: "Ettore stays frozen, unable to move, for 2 turns.", folgorazione: "Ettore stays paralysed by the shock for 2 turns.", accecare: "Ettore is blinded: for 2 turns he has a 50% chance to miss you." },
             resistito: "Ettore shakes his head and shrugs off the spell's grip: it has no effect.",
             vittoria: ["Ettore falls to his knees. He looks at you, and for a moment he seems almost relieved. Then his body begins to crumble like everything that dies in this house: first the hands, then the face, finally the bronze brooch, which falls ringing onto a little heap of grey ash.", "You pick up the clasp. It is still warm."],
-            sconfitta: ["Your legs give way and you collapse on the stone of the crypt. You see Ettore's sword rise above you... and stop.", "«No,» he whispers. «I am not like him. Not yet.»"],
+            sconfitta: ["Your legs give way and you collapse on the stone of the crypt. You see Ettore's sword rise above you... and stop.", "«No,» he whispers. «On the ground, you don't count. I am not like him. Not yet.»"],
             risveglio: ["You open your eyes on the cold floor of the chapel, beneath the cracked window. Someone dragged you up the stairs and left you there, hands crossed on your chest, like a corpse at a wake."],
             sistRisveglio: "Ettore is still waiting for you in the crypt, back at full strength."
           }
@@ -3633,9 +3638,10 @@
          I   l'amore e la fontana, dono di nozze di Rodolfo        → la fontana (Misticismo)
          II  la febbre del piccolo Lorenzo e il libro proibito    → il libro di preghiere della cappella (Arcano)
          III la notte della festa del raccolto: l'incendio        → la tomba di Lorenzo, nella cripta
-         IV  la prigionia e il Signore che diventa il Trono di Cenere → la nicchia di Adele, nella cripta (Misticismo)
+         IV  la prigionia e il Signore che diventa il Trono di Cenere → il sarcofago di Rodolfo e Adele, nella cripta (Indagare, 28/10)
        Si trovano in qualsiasi ordine; nello zaino il «Diario di Adele» le mostra in ordine di tempo.
        Tutti i testi sono PROVVISORI: da sostituire con quelli definitivi.
+       Eccezione (28/10): le prove di cappella e cripta riscritte da Francesco; le nicchie non esistono più (la prova è sul sarcofago di Rodolfo e Adele).
        ===================================================================== */
     const CACCIA2 = {
       it: {
@@ -3727,43 +3733,44 @@
             gia: { ok: "Hai già letto tutto ciò che il libro di preghiere poteva dirti.", ko: "" },
             lascia: "Richiudi il libro e lo rimetti sul leggio."
           },
-          cappella_tracce: {
-            fisso: ["Il pavimento della cappella è coperto da un velo di polvere e cenere. Qualcuno è passato di qui, più di una volta."],
-            azione: "Ti aggiri tra i banchi della piccola cappella, chinandoti sulle lastre e sulle panche in cerca di qualcosa fuori posto.",
-            successo: ["Aggirandoti tra i banchi della piccola cappella trovi segni di passaggi recenti: laddove ti aspetteresti di vedere polvere ci sono scie di dita, e impronte relativamente fresche. Tra la polvere distingui impronte di stivali, sempre le stesse, che vanno e vengono dalla botola della cripta: un solo uomo, che trascina appena la gamba sinistra.", "Sui gradini c'è cera fresca e dal basso sale un filo di fumo: là sotto qualcuno tiene acceso un fuoco. Chi si nasconde nella cripta è sveglio, ma non ti aspetta.", "Scendendo in silenzio sarà più facile coglierlo di sorpresa (Furtività: CD 10 invece di 13)."],
-            fallimento: ["La polvere è stata calpestata così tante volte che le impronte si confondono in un'unica macchia grigia. Non riesci a capire chi sia passato di qui, né quando."],
-            gia: { ok: "Le impronte portano alla botola della cripta: là sotto c'è un uomo, sveglio, accanto a un fuoco.", ko: "Hai già cercato tracce sul pavimento: la polvere non ti dirà altro." },
+          cappella_tracce: { /* Francesco, 28/10 (fallimento: bozza PROVVISORIA) */
+            fisso: ["Un velo di polvere e cenere soffoca il pavimento della cappella. Qui, più che in ogni altra stanza della casa, regna l'abbandono."],
+            azione: "Mentre percorri la navata centrale, scruti le lastre del pavimento e lo spazio tra le panche alla ricerca di indizi.",
+            successo: ["Ispezionando l'area, noti subito i segni inequivocabili di passaggi recenti: laddove la polvere dovrebbe essere intatta, si aprono scie di dita e impronte fresche. Distingui la sagoma di pesanti stivali — sempre i medesimi — che vanno e vengono dal cancello della cripta. È il passo di un unico uomo, che trascina appena la gamba sinistra.", "Sui gradini brilla cera fresca, accompagnata da un tenue filo di fumo che sale dalle profondità. Qualcuno sta alimentando un fuoco là sotto: è sveglio, e non si aspetta visite.", "Scendendo in silenzio sarà più facile coglierlo di sorpresa (Furtività: CD 10 invece di 12)."],
+            fallimento: ["Ti chini sulle lastre, ma la polvere è stata calpestata così tante volte che le impronte si confondono in un'unica macchia grigia. Non riesci a capire chi sia passato di qui, né quando. Scendere senza sapere cosa ti aspetta renderà più difficile muoverti senza fare rumore (Furtività: CD 14 invece di 12)."],
+            gia: { ok: "Le impronte portano al cancello della cripta: là sotto c'è un uomo, sveglio, accanto a un fuoco.", ko: "Hai già cercato tracce sul pavimento: la polvere non ti dirà altro." },
             lascia: "Lasci perdere le tracce."
           },
-          cappella_percezione: {
-            fisso: [], azione: "Trattieni il respiro e tendi l'orecchio, cercando di cogliere ogni rumore nella cappella.",
-            successo: ["Dal pavimento, attraverso la botola della cripta, salgono rumori sospetti: un raschiare metallico, come di una lama affilata su una pietra, e un borbottio sommesso di voce d'uomo.", "Aldo sapeva esattamente cosa stava dicendo: là sotto c'è davvero qualcuno."],
-            fallimento: ["Tendi l'orecchio, ma la cappella è piena dei suoi rumori consueti: il vento tra le crepe della vetrata, il tetto che scricchiola. Se qualcosa si muove là sotto, non riesci a distinguerlo."],
-            gia: { ok: "Dalla botola della cripta salgono ancora quei rumori sospetti: qualcuno, là sotto, è sveglio.", ko: "Hai già teso l'orecchio senza distinguere nulla." },
+          cappella_percezione: { /* Francesco, 28/10 */
+            fisso: [], azione: "Nel silenzio quasi sacrale della cappella, persino l'eco dei tuoi passi sembra troppo rumoroso. Ti fermi pietrificato e tendi l'udito, prestando attenzione a ogni minimo fruscio.",
+            successo: ["Oltre il cancello che conduce alla cripta risuonano dei rumori: lo stridere di una pietra che affila una lama, lo scoppiettio della legna che arde e una voce maschile che ripete un conteggio in modo ossessivo.", "Aldo sapeva esattamente cosa stava dicendo: là sotto c'è davvero qualcuno."],
+            fallimento: ["Tendi i sensi nella speranza di cogliere un rumore, ma invano. L'immobilità di questo luogo è assoluta: persino il vento sembra aver dimenticato come soffiare."],
+            gia: { ok: "Dal cancello della cripta salgono ancora quei rumori sospetti: qualcuno, là sotto, è sveglio.", ko: "Hai già teso l'orecchio senza distinguere nulla." },
             lascia: "Smetti di ascoltare."
           },
-          cripta_furtiva: {
+          cripta_furtiva: { /* Francesco, 28/10 */
             fisso: [], azione: "Scendi la scala della cripta un gradino alla volta, trattenendo il respiro e tenendoti all'ombra del muro.",
-            successo: ["I tuoi passi non fanno alcun rumore sulla pietra. Arrivi in fondo alla scala e, dall'ombra di una colonna, vedi un uomo seduto accanto a un braciere, di spalle, che rigira una spada sbreccata tra le mani. Non si è accorto di te."],
+            successo: ["Riesci a raggiungere il piano sotterraneo, immerso nella penombra. A metà della cripta, tra due colonne, c'è un uomo seduto accanto a un piccolo braciere: rigira l'arma tra le mani con un gesto meccanico, ripetuto chissà quante volte. Sembra non essersi accorto della tua presenza."],
             fallimento: ["A metà della scala un sassolino ti scivola sotto lo stivale e rimbalza giù per i gradini, tintinnando. In fondo, qualcosa si muove in fretta."],
             gia: { ok: "", ko: "" }, lascia: "Lasci perdere e resti in cima alla scala."
           },
-          cripta_tomba: { fisso: [
-            "Tra due nicchie, quasi nascosta da un drappo, c'è una tomba più piccola delle altre. Troppo piccola. Sul coperchio è inciso un solo nome: «Lorenzo». Nessuna data.",
-            "Ai piedi della tomba qualcuno ha lasciato un cavallino di legno intagliato a mano. È l'unica cosa, in tutta la cripta, che non è coperta di polvere."
+          cripta_tomba: { fisso: [ /* Francesco, 28/10 */
+            "Ai piedi del sarcofago di Rodolfo e Adele, parzialmente occultata da un drappo, c'è una tomba ben più piccola delle altre. Troppo piccola. Sul coperchio è inciso un unico nome: «Lorenzo». Nessuna data. Ai piedi del sepolcro qualcuno ha deposto un cavallino di legno, intagliato a mano. È l'unico oggetto, nell'intera cripta, a non essere velato di polvere."
           ] },
-          cripta_tomba_pagina: ["Sollevi il cavallino di legno. Sotto, ripiegata in quattro, c'è una pagina strappata da un diario. La carta è macchiata da gocce rotonde, asciugate da tempo."],
-          cripta_nicchie: {
-            fisso: ["Accanto all'ingresso, due nicchie sono ancora vuote. Sopra la prima è inciso «Rodolfo»; sopra la seconda, «Adele». Nessuna data."],
-            azione: "Passi le mani sulla pietra delle due nicchie vuote e le ispezioni con cura, cercando segni, incisioni, qualcosa di nascosto.",
+          cripta_tomba_pagina: ["Sollevi il cavallino di legno. Nascosta sotto la statuetta, ripiegata in quattro, c'è una pagina strappata da un diario. La carta reca l'impronta di alcune gocce rotonde, ormai secche da tempo."],
+          cripta_nicchie: { /* le nicchie non ci sono più (Francesco, 28/10): la prova è sul sarcofago di Rodolfo e Adele. Testi PROVVISORI */
+            fisso: ["Il sarcofago di Rodolfo e Adele ha il coperchio leggermente socchiuso, e la lastra non riporta alcuna data di morte."],
+            azione: "Ti avvicini al sarcofago di Rodolfo e Adele, infili le dita nella fessura del coperchio e lo ispezioni con cura, cercando segni, incisioni, qualcosa di nascosto.",
             successo: [
-              "La nicchia di Rodolfo è tiepida, come un focolare spento da poco, e sa di cenere. Quella di Adele è gelida: un velo di brina la ricopre, e sotto la brina, schiacciata contro la pietra, c'è una pagina di diario, intatta come se il freddo l'avesse protetta.",
+              "Dalla fessura non sale odore di morte: il sarcofago è vuoto. Eppure la pietra non è fredda allo stesso modo: dalla parte di Rodolfo è tiepida, come un focolare spento da poco, e sa di cenere; dalla parte di Adele è gelida, velata di brina. Sotto la brina, schiacciata contro la pietra, c'è una pagina di diario, intatta come se il freddo l'avesse protetta.",
               "Nessuno dei due è mai stato sepolto qui. Lui è diventato fuoco; lei, lacrime."
             ],
-            fallimento: ["Tocchi la pietra delle nicchie, ma senti soltanto il freddo umido della cripta. Eppure, ritraendo la mano, ti sembra di sentire un respiro alle tue spalle."],
-            gia: { ok: "La nicchia di Rodolfo è ancora tiepida, quella di Adele gelida.", ko: "Hai già toccato le nicchie, senza sentire altro che il freddo della cripta." },
+            fallimento: ["Passi le dita lungo la fessura del coperchio, ma senti soltanto il freddo umido della pietra. Eppure, ritraendo la mano, ti sembra di sentire un respiro alle tue spalle."],
+            gia: { ok: "Il sarcofago di Rodolfo e Adele è vuoto: tiepido da una parte, gelido dall'altra.", ko: "Hai già esaminato il sarcofago, senza trovare altro che il freddo della pietra." },
             lascia: "Ritrai le mani dalla pietra."
           },
+          /* il Primo dei Vespera prima che il figlio maggiore apra il suo quaderno (usate.diario_aperto). PROVVISORIO */
+          cripta_primo_chiuso: { fisso: ["Il sarcofago più antico, in fondo alla cripta, ha il coperchio scolpito con un cavaliere disteso e la scritta «Primo dei Vespera». Sotto il nome, un albero dalle radici intrecciate. Il coperchio è sigillato da secoli, e nulla, qui, suggerisce che valga la pena disturbarne il sonno."] },
           cripta_sarcofago: {
             fisso: ["Il sarcofago più antico, in fondo alla cripta, ha il coperchio scolpito con un cavaliere disteso e la scritta «Primo dei Vespera». Sotto il nome, un albero dalle radici intrecciate. Una crepa corre lungo il bordo: con abbastanza forza (una prova di Atletica, difficoltà 12) si potrebbe spostare il coperchio. Se la prova fallisce ti schiacci le dita (1d4 danni non letali), ma puoi riprovare."],
             ancora: ["Torni a puntare le mani sul bordo del coperchio."],
@@ -3773,7 +3780,7 @@
             gia: { ok: "Il sarcofago del Primo dei Vespera è aperto: non c'è altro da prendere.", ko: "" },
             lascia: "Lasci stare il sarcofago."
           },
-          cripta_braciere_spento: { fisso: ["Il braciere ricavato dall'elmo rovesciato è spento. Le assi carbonizzate sono fredde, e il suo calore se n'è andato insieme a chi lo teneva acceso."] }
+          cripta_braciere_spento: { fisso: ["Un piccolo braciere spento. Le assi carbonizzate sono fredde, e il suo calore se n'è andato insieme a chi lo teneva acceso."] } /* Francesco, 28/10 */
         },
         fontana: {
           bevi: ["Ti chini sulla vasca e bevi a lunghi sorsi. L'acqua è fresca e dolce, e mentre scende ti senti sciogliere ogni ferita, ogni livido, ogni dolore, come se qualcuno ti accarezzasse da dentro."],
@@ -3809,10 +3816,23 @@
           coraggio: "L'anello del Primo Vespera arde al tuo dito: un coraggio antico, che non è il tuo, ti sostiene la mano. +1 ai tiri per colpire finché la salute resta così bassa.",
           etichetta: "Reliquia", ca: "CA +1", bonus: "+1 all'attacco a salute bassa", togliBtn: "Togli", dita: (d, da, a) => `Danni fisici: ${d} (1d4) · salute fisica ${da} → ${a}` },
         sorpresa: " Ettore non ti ha sentito arrivare: agisci per primo.",
-        braciere: {
-          dorme: ["Ettore ti guarda sederti accanto al suo fuoco. Per un lungo istante non dice nulla. Poi si sposta di lato, quel tanto che basta a farti spazio. «Dormi», borbotta. «Finché sei qui, non ti tocco.»", "Il calore del braciere è povero, ma vero. Chiudi gli occhi."],
-          sveglia: ["Quando ti svegli il braciere si è consumato fino alla brace, ed Ettore è ancora seduto lì, la spada sulle ginocchia, a fissare il fuoco."],
-          consumato: ["Nel braciere restano soltanto poche braci rosse. Ettore le attizza con la punta della spada, senza guardarti. «Il legno è finito», dice. «Ti ho già dato tutto il calore che avevo.»"]
+        furtivo: { avanti: "Mi faccio avanti", colpisci: "Colpisco per primo", attacco: ["Ti stacchi dall'ombra e scatti prima che possa voltarsi."] }, /* discesa furtiva (28/10). PROVVISORIO */
+        braciere: { /* il fuoco della cripta (28/10): di Ettore finché è vivo; poi un'ora reale per fascina, fino a 5; il buio solo al rientro. PROVVISORI */
+          rifiuto: ["Fai per sederti accanto al braciere, ma la lama di Ettore si alza prima di te, a un palmo dal tuo petto. «No.» La voce è un ringhio basso. «Questo fuoco l'ho nutrito io, asse dopo asse. Quarantadue assi. Quarantatré, con quella di ieri. Il suo calore è mio. Vattene a scaldare altrove.»"],
+          legnaEttore: ["Ettore si mette tra te e il braciere. «Il mio fuoco lo nutro io», ringhia. «Tienti la tua legna.»"],
+          dorme: ["Ti siedi accanto al braciere, sulla pietra dove Ettore ha passato chissà quante notti. Il calore è povero, ma vero. Chiudi gli occhi."],
+          sveglia: ["Quando ti svegli, il fuoco si è abbassato: una fascina se n'è andata in cenere."],
+          accesoDopo: ["Nel piccolo braciere il fuoco arde ancora, povero ma vero. Nessuno, ormai, lo alimenta se non tu."],
+          buio: ["Scendi l'ultimo gradino e il buio ti inghiotte. Nessuna brace, nessun bagliore: soltanto l'odore di cenere fredda e il silenzio dei morti. Senza luce non vedi nemmeno le tue mani."],
+          notaBuio: "È buio pesto. Puoi accendere una torcia, lanciare Luce, accendere il braciere con una fascina («metto la legna nel braciere») oppure tornare nella cappella.",
+          buioAzione: ["Nel buio della cripta non vedi nulla. Prima ti serve un po' di luce."],
+          luce: ["Alla luce che porti con te, la cripta riemerge dal buio: vicino al braciere ormai spento giacciono ancora alcune ossa di topo spolpate, mentre i sarcofagi svettano immutati al loro posto."], /* Francesco, 28/10 */
+          giaLuce: "La cripta è già illuminata.",
+          accesa: ["Getti la fascina nel braciere e la accendi. Il pino resinoso prende fuoco con uno scoppiettio, e una luce arancione, calda, si allarga sulle volte della cripta. Qui si può riposare."],
+          accesaBuio: ["Tasti a memoria il bordo del braciere e vi getti la fascina. Una scintilla, due, poi il pino resinoso prende fuoco: la luce arancione ricaccia il buio negli angoli della cripta."],
+          aggiunta: ["Aggiungi una fascina alle fiamme. Il fuoco si alza, scoppietta e si fa più vivo: arderà più a lungo."],
+          pieno: "Il braciere è colmo: un'altra fascina soffocherebbe il fuoco.",
+          ore: (n) => `Il fuoco arderà ancora per circa ${n} ${n === 1 ? "ora" : "ore"} (tempo reale).`
         },
         statueEst: "Missione «Il Vincolo del Silenzio»: hai scoperto che nell'Ala Est qualcuno tiene ancora una candela accesa.",
         vetrataViva: "La Signora Adele è viva, imprigionata da qualche parte in Casa Vespera."
@@ -3907,42 +3927,42 @@
             lascia: "You close the book and put it back on the lectern."
           },
           cappella_tracce: {
-            fisso: ["The chapel floor is covered by a veil of dust and ash. Someone has passed this way, more than once."],
-            azione: "You walk between the pews of the little chapel, crouching over the flagstones and benches, looking for anything out of place.",
-            successo: ["Moving between the pews of the little chapel you find signs of recent passage: where you would expect dust there are finger trails, and relatively fresh footprints. In the dust you make out boot prints, always the same ones, coming and going from the crypt hatch: a single man, slightly dragging his left leg.", "There is fresh wax on the steps and a thread of smoke rises from below: someone down there keeps a fire lit. Whoever hides in the crypt is awake, but not expecting you.", "If you go down quietly it will be easier to take him by surprise (Stealth: DC 10 instead of 13)."],
-            fallimento: ["The dust has been trampled so many times that the prints blur into a single grey smudge. You cannot tell who came this way, or when."],
-            gia: { ok: "The prints lead to the crypt hatch: down there is a man, awake, beside a fire.", ko: "You have already searched the floor for tracks: the dust will tell you nothing more." },
+            fisso: ["A veil of dust and ash smothers the chapel floor. Here, more than in any other room of the house, abandonment reigns."],
+            azione: "As you walk the central nave, you scan the flagstones and the space between the pews for clues.",
+            successo: ["Searching the area, you at once notice unmistakable signs of recent passage: where the dust should be untouched, there are finger trails and fresh prints. You make out the outline of heavy boots — always the same ones — going to and from the crypt gate. It is the tread of a single man, who drags his left leg slightly.", "Fresh wax gleams on the steps, along with a faint thread of smoke rising from the depths. Someone is feeding a fire down there: he is awake, and expects no visitors.", "Going down in silence will make it easier to catch him by surprise (Stealth: DC 10 instead of 12)."],
+            fallimento: ["You crouch over the flagstones, but the dust has been trampled so many times that the prints blur into a single grey smudge. You cannot tell who passed this way, nor when. Going down without knowing what awaits you will make it harder to move without a sound (Stealth: DC 14 instead of 12)."],
+            gia: { ok: "The prints lead to the crypt gate: down there is a man, awake, beside a fire.", ko: "You have already searched the floor for tracks: the dust will tell you nothing more." },
             lascia: "You leave the tracks be."
           },
           cappella_percezione: {
-            fisso: [], azione: "You hold your breath and strain your ears, trying to catch every sound in the chapel.",
-            successo: ["Through the crypt hatch in the floor rise suspicious noises: a metallic scraping, like a sharpened blade on stone, and the low muttering of a man's voice.", "Aldo knew exactly what he was saying: there really is someone down there."],
-            fallimento: ["You strain your ears, but the chapel is full of its usual sounds: the wind in the cracks of the window, the roof creaking. If something is moving down there, you cannot make it out."],
-            gia: { ok: "Those suspicious noises still rise from the crypt hatch: someone down there is awake.", ko: "You have already listened without making out anything." },
+            fisso: [], azione: "In the almost sacred silence of the chapel, even the echo of your footsteps seems too loud. You stand stock-still and strain your hearing, alert to the faintest rustle.",
+            successo: ["Beyond the gate leading to the crypt, sounds ring out: the grating of a stone sharpening a blade, the crackle of burning wood and a man's voice obsessively repeating a count.", "Aldo knew exactly what he was saying: there really is someone down there."],
+            fallimento: ["You strain your senses in the hope of catching a sound, but in vain. The stillness of this place is absolute: even the wind seems to have forgotten how to blow."],
+            gia: { ok: "Those suspicious sounds still rise from the crypt gate: someone down there is awake.", ko: "You have already listened without making anything out." },
             lascia: "You stop listening."
           },
           cripta_furtiva: {
             fisso: [], azione: "You go down the crypt stair one step at a time, holding your breath and keeping to the shadow of the wall.",
-            successo: ["Your steps make no sound on the stone. You reach the bottom of the stair and, from the shadow of a column, you see a man sitting by a brazier, his back to you, turning a notched sword in his hands. He has not noticed you."],
+            successo: ["You manage to reach the underground floor, steeped in half-light. Halfway across the crypt, between two columns, a man sits beside a small brazier: he turns his weapon over in his hands with a mechanical gesture, repeated who knows how many times. He does not seem to have noticed you."],
             fallimento: ["Halfway down, a pebble slips under your boot and bounces down the steps, tinkling. Below, something moves quickly."],
             gia: { ok: "", ko: "" }, lascia: "You give up and stay at the top of the stair."
           },
           cripta_tomba: { fisso: [
-            "Between two niches, almost hidden by a drape, is a tomb smaller than the others. Too small. On the lid a single name is carved: “Lorenzo”. No date.",
-            "At the foot of the tomb someone has left a little hand-carved wooden horse. It is the only thing in the whole crypt not covered in dust."
+            "At the foot of Rodolfo and Adele's sarcophagus, half hidden by a drape, is a tomb far smaller than the others. Too small. A single name is carved on its lid: “Lorenzo”. No date. At the foot of the grave someone has laid a little wooden horse, carved by hand. It is the only object in the whole crypt not veiled in dust."
           ] },
-          cripta_tomba_pagina: ["You lift the wooden horse. Beneath it, folded in four, lies a page torn from a diary. The paper is stained with round drops, long since dried."],
+          cripta_tomba_pagina: ["You lift the wooden horse. Hidden beneath the figure, folded in four, lies a page torn from a diary. The paper bears the marks of a few round drops, long since dried."],
           cripta_nicchie: {
-            fisso: ["Beside the entrance, two niches are still empty. Above the first is carved “Rodolfo”; above the second, “Adele”. No dates."],
-            azione: "You run your hands over the stone of the two empty niches and inspect them carefully, looking for marks, carvings, anything hidden.",
+            fisso: ["The lid of Rodolfo and Adele's sarcophagus is slightly ajar, and the slab bears no date of death."],
+            azione: "You approach Rodolfo and Adele's sarcophagus, slide your fingers into the gap under the lid and inspect it carefully, looking for marks, carvings, anything hidden.",
             successo: [
-              "Rodolfo's niche is warm, like a hearth recently gone out, and smells of ash. Adele's is icy: a veil of frost covers it, and beneath the frost, pressed against the stone, lies a diary page, untouched, as if the cold had protected it.",
+              "No smell of death rises from the gap: the sarcophagus is empty. And yet the stone is not cold in the same way: on Rodolfo's side it is warm, like a hearth recently gone out, and smells of ash; on Adele's side it is icy, veiled with frost. Beneath the frost, pressed against the stone, lies a diary page, intact as if the cold had protected it.",
               "Neither of them was ever buried here. He became fire; she, tears."
             ],
-            fallimento: ["You touch the stone of the niches, but feel only the damp cold of the crypt. And yet, as you draw your hand back, you think you feel a breath behind you."],
-            gia: { ok: "Rodolfo's niche is still warm, Adele's icy.", ko: "You have already touched the niches, feeling nothing but the cold of the crypt." },
+            fallimento: ["You run your fingers along the gap under the lid, but feel only the damp cold of the stone. And yet, as you draw your hand back, you seem to feel a breath behind you."],
+            gia: { ok: "Rodolfo and Adele's sarcophagus is empty: warm on one side, icy on the other.", ko: "You have already examined the sarcophagus, finding nothing but the cold of the stone." },
             lascia: "You take your hands off the stone."
           },
+          cripta_primo_chiuso: { fisso: ["The oldest sarcophagus, at the back of the crypt, has a lid carved with a reclining knight and the words “First of the Vespera”. Beneath the name, a tree with intertwined roots. The lid has been sealed for centuries, and nothing here suggests it is worth disturbing his sleep."] },
           cripta_sarcofago: {
             fisso: ["The oldest sarcophagus, at the back of the crypt, has a lid carved with a reclining knight and the words “First of the Vespera”. Beneath the name, a tree with intertwined roots. A crack runs along the edge: with enough strength (an Athletics check, difficulty 12) the lid could be moved. If the check fails you crush your fingers (1d4 non-lethal damage), but you can try again."],
             ancora: ["You brace your hands against the edge of the lid again."],
@@ -3952,7 +3972,7 @@
             gia: { ok: "The sarcophagus of the First of the Vespera is open: there is nothing else to take.", ko: "" },
             lascia: "You leave the sarcophagus alone."
           },
-          cripta_braciere_spento: { fisso: ["The brazier made from the upturned helmet has gone out. The charred boards are cold, and its warmth has left together with the one who kept it burning."] }
+          cripta_braciere_spento: { fisso: ["A small brazier, gone out. The charred boards are cold, and its warmth has left together with the one who kept it burning."] }
         },
         fontana: {
           bevi: ["You bend over the basin and drink deeply. The water is cool and sweet, and as it goes down you feel every wound, every bruise, every pain dissolve, as if someone were caressing you from within."],
@@ -3988,10 +4008,23 @@
           coraggio: "The Ring of the First Vespera burns on your finger: an ancient courage, not your own, steadies your hand. +1 to attack rolls while your health stays this low.",
           etichetta: "Relic", ca: "AC +1", bonus: "+1 to hit at low health", togliBtn: "Take off", dita: (d, da, a) => `Physical damage: ${d} (1d4) · physical health ${da} → ${a}` },
         sorpresa: " Ettore did not hear you coming: you act first.",
+        furtivo: { avanti: "I step forward", colpisci: "I strike first", attacco: ["You break from the shadow and lunge before he can turn."] },
         braciere: {
-          dorme: ["Ettore watches you sit down by his fire. For a long moment he says nothing. Then he shifts aside, just enough to make room for you. “Sleep,” he mutters. “While you are here, I won't touch you.”", "The brazier's warmth is poor, but real. You close your eyes."],
-          sveglia: ["When you wake, the brazier has burned down to embers, and Ettore is still sitting there, sword across his knees, staring into the fire."],
-          consumato: ["Only a few red embers remain in the brazier. Ettore stirs them with the tip of his sword, without looking at you. “The wood is gone,” he says. “I have already given you all the warmth I had.”"]
+          rifiuto: ["You make to sit down by the brazier, but Ettore's blade rises before you do, a hand's breadth from your chest. “No.” His voice is a low growl. “I fed this fire, board after board. Forty-two boards. Forty-three, with yesterday's. Its warmth is mine. Go and warm yourself somewhere else.”"],
+          legnaEttore: ["Ettore steps between you and the brazier. “I feed my own fire,” he growls. “Keep your wood.”"],
+          dorme: ["You sit by the brazier, on the stone where Ettore spent who knows how many nights. The warmth is poor, but real. You close your eyes."],
+          sveglia: ["When you wake, the fire has sunk low: one bundle has gone to ash."],
+          accesoDopo: ["In the small brazier the fire still burns, poor but real. No one feeds it now but you."],
+          buio: ["You step off the last stair and the darkness swallows you. No embers, no glow: only the smell of cold ash and the silence of the dead. Without light you cannot even see your own hands."],
+          notaBuio: "It is pitch dark. You can light a torch, cast Light, light the brazier with a bundle of wood (“I put the wood in the brazier”) or go back to the chapel.",
+          buioAzione: ["In the darkness of the crypt you see nothing. First you need some light."],
+          luce: ["By the light you carry, the crypt rises out of the dark: beside the dead brazier a few picked-clean rat bones still lie, while the sarcophagi stand unchanged in their places."],
+          giaLuce: "The crypt is already lit.",
+          accesa: ["You throw the bundle into the brazier and light it. The resinous pine catches with a crackle, and a warm orange light spreads across the vaults of the crypt. You can rest here."],
+          accesaBuio: ["You feel for the rim of the brazier from memory and throw in the bundle. One spark, two, then the resinous pine catches: the orange light drives the darkness back into the corners of the crypt."],
+          aggiunta: ["You add a bundle to the flames. The fire rises, crackles and grows livelier: it will burn longer."],
+          pieno: "The brazier is full: another bundle would smother the fire.",
+          ore: (n) => `The fire will burn for about ${n} more ${n === 1 ? "hour" : "hours"} (real time).`
         },
         statueEst: "Quest “The Bond of Silence”: you have discovered that someone in the East Wing still keeps a candle burning.",
         vetrataViva: "Lady Adele is alive, imprisoned somewhere in Casa Vespera."
@@ -4082,11 +4115,11 @@
             "Ettore esita, la spada a mezz'aria. Poi, lentamente, la abbassa e si siede sul bordo di un sarcofago, allungando la gamba con una smorfia.",
             "Il ginocchio è gonfio, il tendine mal saldato da una vecchia ferita mai curata. Lo fasci stretto con una striscia del tuo mantello, sistemando l'osso con un colpo secco. Ettore stringe i denti ma non grida.",
             "Quando ti rialzi, ti guarda come se non capisse.",
-            "«In tutti questi anni... nessuno mi ha mai toccato se non per uccidermi.»"
+            "«In tutti questi anni... nessuno mi ha mai toccato se non per uccidermi.» Si guarda la gamba fasciata e muove le labbra: uno, due, tre giri di stoffa."
           ],
           medicina_ko: [
             "Fai un passo verso di lui, ma Ettore arretra di scatto, la spada di nuovo puntata contro il tuo petto.",
-            "«No. Non avvicinarti. L'ultimo che ha voluto «guardarmi la gamba» aveva un coltello nella manica.»"
+            "«No. Non avvicinarti. L'ultimo che ha voluto «guardarmi la gamba» aveva un coltello nella manica. Il terzo. Era il terzo.»"
           ],
           arcano_ok: [
             "Gli parli del fuoco che non consuma, delle formule del primo Vespera, dei legami che un fuoco così crea tra chi lo accende e ciò che brucia. Ettore ti ascolta con gli occhi socchiusi.",
@@ -4155,11 +4188,11 @@
             "Ettore hesitates, sword in mid-air. Then, slowly, he lowers it and sits on the edge of a sarcophagus, stretching out his leg with a grimace.",
             "The knee is swollen, the tendon badly knit from an old wound never tended. You bind it tight with a strip of your cloak, setting the bone with a sharp jerk. Ettore clenches his teeth but does not cry out.",
             "When you stand up, he looks at you as if he does not understand.",
-            "«In all these years... no one has ever touched me except to kill me.»"
+            "«In all these years... no one has ever touched me except to kill me.» He looks at his bandaged leg and moves his lips: one, two, three turns of cloth."
           ],
           medicina_ko: [
             "You take a step towards him, but Ettore springs back, his sword pointed at your chest again.",
-            "«No. Stay back. The last one who wanted to “look at my leg” had a knife up his sleeve.»"
+            "«No. Stay back. The last one who wanted to “look at my leg” had a knife up his sleeve. The third. It was the third.»"
           ],
           arcano_ok: [
             "You tell him of the fire that does not consume, of the formulas of the first Vespera, of the bonds such a fire creates between the one who kindles it and what it burns. Ettore listens with half-closed eyes.",
@@ -4291,41 +4324,14 @@
        ===================================================================== */
     const ETT = {
       it: {
-        inizio: [
-          "Un movimento tra i sarcofagi. Una figura si alza dal giaciglio e si mette tra te e il braciere, una spada sbreccata stretta in pugno.",
-          "È un uomo, o lo è stato. Magro fino all'osso, la barba lunga e sporca di cenere, porta i resti di un'armatura di cuoio e ferro d'una foggia antica, rattoppata con spago e stracci. Sul petto, appuntata al farsetto, brilla una spilla di bronzo a forma di testa di mastino.",
-          "«Ti manda il vecchio, vero?»",
-          "La sua voce è roca, rotta dal disuso. Ti guarda il petto, dove la spilla non c'è, poi le mani, poi gli occhi.",
-          "«Certo che ti manda lui. Manda sempre qualcuno, prima o poi. Io sono Ettore. Undici volte sono sceso a cacciare per lui. Undici. Le ho contate tutte. Alla dodicesima, la preda sono io.»"
-        ],
-        attacco: ["Ettore chiude gli occhi per un istante, come chi sente arrivare una pioggia attesa da tempo.", "«Allora non perdiamo tempo. Ma non aspettarti che mi inginocchi.»", "Solleva la spada e si mette in guardia, la gamba sinistra rigida, piegata appena. «Uno» mormora. «Si comincia sempre da uno.»"],
-        storia: {
-          signora: [
-            "Ettore abbassa appena la spada, senza lasciarla.",
-            "«Ero un cacciatore di taglie, a Valdombra. Uomini, non bestie: si pagava meglio. Ne inseguivo uno fin dentro quella grotta. È morto dopo dieci passi: i cani del vecchio l'hanno fatto a pezzi davanti a me. Io no. Io sono rimasto.»",
-            "«Il vecchio mi ha messo alla prova, come ha fatto con te, e mi ha dato le sue cacce. Undici. Undici prede, undici notti a guardarmi le spalle.» Si tocca la spilla sul petto con due dita, come se scottasse.",
-            "«Poi Guendalina mi ha parlato della Signora, chiusa da qualche parte in questa casa, e dei suoi figli che la cercano ancora. Il maggiore mi ha affidato il suo quaderno, sigillato, perché cercassi per lui ciò che la casa tiene nascosto. Non sono riuscito ad aprirlo, e nemmeno a trovare quello che cercavo: quaggiù la mia mente ha cominciato a sfilacciarsi, e il vecchio ha capito che avevo smesso di essere suo.»",
-            "Indica il braciere con il mento. «Una cosa te la regalo. La casa ti lascia dormire solo dove la fiamma è calda. Ma la fiamma si nutre: legna fresca, dal bosco dietro il cimitero. Un camino spento torna a scaldare per una notte. L'ho imparato tardi.»",
-            "Estrae da sotto il giaciglio un quaderno dalla copertina di pelle, chiuso da un sigillo che brilla appena.",
-            "«Non sono il migliore, né il primo, né l'unico: sono solo quello che ha smesso di obbedire. Se mi uccidi, porti al vecchio la sua prova... e il ragazzo resta senza il suo quaderno, e la Signora senza di noi.»"
-          ],
-          signore: [
-            "Ettore ride, una risata secca che diventa tosse.",
-            "«Il vecchio non ti ha detto niente, vero? Non lo dice mai. Ero un cacciatore di taglie, a Valdombra. Ho seguito un uomo dentro la grotta: i cani l'hanno sbranato prima che potessi mettergli le mani addosso. A me hanno lasciato la vita, e il vecchio mi ha dato un mestiere che conoscevo già.»",
-            "«Undici cacce per il Signore. Undici, mai una domanda. Sai chi erano le mie prede? Gente come te: esploratori finiti qui da altri ingressi, con gli occhi ancora pieni di sole. Solo l'ultima portava il fermaglio: il bronzo, prima di me. Mi ha spezzato la gamba, prima di cadere.» Si batte il pugno sul ginocchio sinistro.",
-            "«Non credere che io sia il migliore. Sono il primo gradino. Sopra di me ce ne sono altri, e in cima a quella scala c'è chi mi ha superato da molto tempo.»",
-            "«Un consiglio da cacciatore, gratis: la casa ti lascia dormire solo vicino a un fuoco caldo. Ma il fuoco si nutre. Legna fresca dal bosco dietro il cimitero, e un camino spento ti regala un'altra notte.»",
-            "Ti guarda negli occhi, e in quello sguardo non c'è odio. Solo una stanchezza infinita.",
-            "«Ho obbedito fino a consumarmi, e tu sei qui per uccidermi in suo nome. Quando avrai finito, porta pure il mio fermaglio al vecchio. Un giorno qualcuno scenderà quelle scale per prendere il tuo.»"
-          ],
-          neutro: [
-            "Ettore inclina la testa, come se faticasse a capire la domanda. Poi si mette a ridere, piano, e non riesce più a smettere.",
-            "«Cosa vuole? Il fermaglio. Sempre il fermaglio. Ero un cacciatore di taglie, sai? Valdombra. Inseguivo un uomo. I cani l'hanno preso. Uno. Il primo che ho perso.» Conta sulle dita, si ferma, ricomincia.",
-            "«Poi undici cacce. Undici spille, sulle mensole del vecchio. E la dodicesima mensola è la mia.»",
-            "Le sue parole si sfilacciano come stoffa vecchia. Parla di mastini, di una panca nella cappella dove incideva i giorni finché le tacche non si sono confuse, di legna da portare dal bosco perché il fuoco non muoia, delle voci che sente la notte dietro i sarcofagi.",
-            "Poi, d'improvviso, torna lucido. Ti fissa con occhi chiarissimi.",
-            "«Non sono il migliore, lo so. Sono il gradino più basso, e lo sanno tutti tranne il vecchio. Non so cosa vuole davvero. So solo che, se mi uccidi, la prossima mensola è la tua.»"
-          ]
+        inizio: ["Un movimento tra le colonne. Una figura si alza dal giaciglio e si mette tra te e il braciere, una spada sbreccata stretta in pugno.", "È un uomo, o lo è stato. Magro fino all'osso, la barba lunga e sporca di cenere, porta i resti di un'armatura di cuoio e ferro d'una foggia antica, rattoppata con spago e stracci. Sul petto, appuntata al farsetto, brilla una spilla di bronzo a forma di testa di mastino.", "«…uno, due… tre.» Sta contando i tuoi respiri, a fior di labbra. Poi alza gli occhi su di te. «Ti manda il vecchio, vero?»", "La sua voce è roca, rotta dal disuso. Ti guarda il petto, dove la spilla non c'è, poi le mani, poi gli occhi. Muove le labbra in silenzio: due mani, dieci dita, due occhi.", "«Certo che ti manda lui. Manda sempre qualcuno. Io sono… Ettore. Sì. Ettore.» Lo dice come chi controlla che il nome sia ancora al suo posto. «Undici volte sono sceso a cacciare per lui. Undici. Le ho contate tutte, le ho contate due volte. Alla dodicesima, la preda sono io.»"],
+        /* discesa furtiva, «Mi faccio avanti»: sostituisce la prima riga dell'inizio. PROVVISORIO */
+        inizioFurtivo: "Fai un passo fuori dall'ombra della colonna. L'uomo si irrigidisce, ma non si volta. «Sei silenzioso», dice al fuoco. «Non ti ho contato. Non ti ho contato…» Sembra spaventato più da questo che dalla tua lama. Poi si alza e si mette tra te e il braciere, una spada sbreccata stretta in pugno.",
+        attacco: ["Ettore chiude gli occhi per un istante, come chi sente arrivare una pioggia attesa da tempo.", "«Allora non perdiamo tempo. Non perdiamo… il tempo si perde, quaggiù. Ma non aspettarti che mi inginocchi. Non mi sono inginocchiato nemmeno davanti ai cani.»", "Solleva la spada e si mette in guardia, la gamba sinistra rigida, piegata appena. «Uno» mormora. «Si comincia sempre da uno.»"],
+        storia: { /* la pazzia di Ettore (28/10): il conteggio di tanto in tanto, le informazioni chiave nei momenti lucidi */
+          signora: ["Ettore abbassa appena la spada, senza lasciarla.", "«Ero un cacciatore di taglie, a Valdombra. Uomini, non bestie: si pagava meglio. Ne inseguivo uno fin dentro quella grotta. Dieci passi. Ha fatto dieci passi, poi i cani del vecchio… dieci passi.» Si interrompe, conta qualcosa sulle dita, ricomincia. «Lui è morto. Io no. Io sono rimasto.»", "«Il vecchio mi ha messo alla prova, come ha fatto con te, e mi ha dato le sue cacce. Undici. Undici prede, undici notti a guardarmi le spalle.» Si tocca la spilla sul petto con due dita, come se scottasse. «Undici. Lo ripeto, così non mi sfugge.»", "«Poi Guendalina mi ha parlato della Signora, chiusa da qualche parte in questa casa, e dei suoi figli che la cercano ancora. Il maggiore mi ha affidato il suo quaderno, sigillato, perché cercassi per lui ciò che la casa tiene nascosto. Non sono riuscito ad aprirlo, e nemmeno a trovare quello che cercavo: quaggiù la mia mente ha cominciato a sfilacciarsi. Certe notti i sarcofagi parlano. Nove. Sono nove, li ho contati. E il vecchio ha capito che avevo smesso di essere suo.»", "Indica il braciere con il mento, e la mano gli corre all'elsa, come per difenderlo. «Una cosa te la regalo. La casa ti lascia dormire solo dove la fiamma è calda. Ma la fiamma si nutre: legna fresca, dal bosco dietro il cimitero. Un camino spento torna a scaldare per una notte.» Batte la lama sul bordo del braciere. «Questo, finché respiro, è mio.»", "Estrae da sotto il giaciglio un quaderno dalla copertina di pelle, chiuso da un sigillo che brilla appena.", "«Non sono il migliore, né il primo, né l'unico: sono solo quello che ha smesso di obbedire. Se mi uccidi, porti al vecchio la sua prova... e il ragazzo resta senza il suo quaderno, e la Signora senza di noi. Senza di noi. Due. Saremmo stati due.»"],
+          signore: ["Ettore ride, una risata secca che diventa tosse, e poi di nuovo risata.", "«Il vecchio non ti ha detto niente, vero? Non lo dice mai. Ero un cacciatore di taglie, a Valdombra. Ho seguito un uomo dentro la grotta: i cani l'hanno sbranato prima che potessi mettergli le mani addosso. Mio. Era mio, quello.» Lo dice con rancore, come se gliel'avessero rubato ieri. «A me hanno lasciato la vita, e il vecchio mi ha dato un mestiere che conoscevo già.»", "«Undici cacce per il Signore. Undici, mai una domanda. Sai chi erano le mie prede? Gente come te: esploratori finiti qui da altri ingressi, con gli occhi ancora pieni di sole. Li ricordo dagli occhi: uno, due, tre… Solo l'ultima portava il fermaglio: il bronzo, prima di me. Mi ha spezzato la gamba, prima di cadere.» Si batte il pugno sul ginocchio sinistro, una, due, tre volte, finché il dolore non lo fa smettere.", "«Non credere che io sia il migliore. Sono il primo gradino. Sopra di me ce ne sono altri, e in cima a quella scala c'è chi mi ha superato da molto tempo. Molto tempo. Quanto tempo?» Lo chiede a sé stesso, non a te.", "«Un consiglio da cacciatore, gratis: la casa ti lascia dormire solo vicino a un fuoco caldo. Ma il fuoco si nutre. Legna fresca dal bosco dietro il cimitero, e un camino spento ti regala un'altra notte.» Lancia un'occhiata al braciere. «Non questo. Questo non lo tocchi.»", "Ti guarda negli occhi, e in quello sguardo non c'è odio. Solo una stanchezza infinita.", "«Ho obbedito fino a consumarmi, e tu sei qui per uccidermi in suo nome. Quando avrai finito, porta pure il mio fermaglio al vecchio. Un giorno qualcuno scenderà quelle scale per prendere il tuo.»"],
+          neutro: ["Ettore inclina la testa, come se faticasse a capire la domanda. Poi si mette a ridere, piano, e non riesce più a smettere.", "«Cosa vuole? Il fermaglio. Sempre il fermaglio. Ero un cacciatore di taglie, sai? Valdombra. Inseguivo un uomo. I cani l'hanno preso. Uno. Il primo che ho perso.» Conta sulle dita, si ferma, ricomincia. «Uno. No. Il primo sono io. Mi sono perso io.»", "«Poi undici cacce. Undici spille, sulle mensole del vecchio. Le spolvera, sai? Tutte le mattine. E la dodicesima mensola è la mia. È già pulita. La tiene pulita.»", "Le sue parole si sfilacciano come stoffa vecchia. Parla di mastini, di una panca nella cappella dove incideva i giorni finché le tacche non si sono confuse, di legna da portare dal bosco perché il fuoco non muoia, delle voci che sente la notte dietro i sarcofagi. A un tratto si rivolge al braciere, non a te, e gli chiede scusa per qualcosa.", "Poi, d'improvviso, torna lucido. Ti fissa con occhi chiarissimi.", "«Non sono il migliore, lo so. Sono il gradino più basso, e lo sanno tutti tranne il vecchio. Non so cosa vuole davvero. So solo che, se mi uccidi, la prossima mensola è la tua.»"]
         },
         osserva: "Resto in silenzio e lo osservo.",
         osservaOk: {
@@ -4337,17 +4343,17 @@
         gentile: "Non devi morire qui, Ettore. Guendalina e il ragazzo hanno ancora bisogno di qualcuno. Dammi il fermaglio e vivi.",
         duro: "Guardati: una gamba sola e una spada sbreccata. Il codice dice di non combattere battaglie perse. Dammi il fermaglio.",
         insiste: {
-          signora: ["Ettore scuote la testa, e per un attimo la voce gli si incrina. «Belle parole. Le diceva anche lei, Guendalina. Io ho smesso di crederci.»", "Solleva la spada e si mette in guardia, la gamba sinistra rigida, piegata appena."],
-          signore: ["«Non dirmi cosa dice il codice.» Gli occhi gli si induriscono. «Il codice dice che si muore in piedi.»", "Solleva la spada e si mette in guardia, la gamba sinistra rigida, piegata appena."],
+          signora: ["Ettore scuote la testa, e per un attimo la voce gli si incrina. «Belle parole. Le diceva anche lei, Guendalina. Quante volte? Ho smesso di contarle. Ho smesso di crederci.»", "Solleva la spada e si mette in guardia, la gamba sinistra rigida, piegata appena."],
+          signore: ["«Non dirmi cosa dice il codice.» Gli occhi gli si induriscono. «Il codice dice che si muore in piedi. In piedi. Su due gambe.» Si guarda la sinistra, e ride.", "Solleva la spada e si mette in guardia, la gamba sinistra rigida, piegata appena."],
           neutro: ["Ettore ride, e la risata si spezza in un singhiozzo. «Dodici. Dodici è il numero giusto. Non posso fermarmi a undici.»", "Solleva la spada e si mette in guardia, la gamba sinistra rigida, piegata appena."]
         },
-        gettaQuaderno: ["Ettore annuisce lentamente. Poi, con un gesto rapido, getta il quaderno di pelle nel braciere.", "«Allora il vecchio non avrà anche questo.»"],
+        gettaQuaderno: ["Ettore annuisce lentamente. Poi, con un gesto rapido, getta il quaderno di pelle nel braciere.", "«Allora il vecchio non avrà anche questo.» Guarda le fiamme mordere la pelle e le conta a mezza voce, come conta tutto."],
         risparmiaSignore: [
           "Ettore resta immobile, la spada a mezz'aria. Poi la abbassa, piano.",
           "«Nessuno degli undici me l'ha mai detto. E io non l'ho mai detto a nessuno.»",
           "Sgancia la spilla di bronzo e te la posa nel palmo. Poi ti porge il quaderno di pelle, chiuso dal suo sigillo.",
           "«Questo me l'ha dato il ragazzo. Non l'ho mai aperto: non era roba mia. I nomi delle mie prede li trovi sulle mensole del vecchio, nella saletta dei trofei. Leggili, prima di decidere a chi sei fedele. E quando menti al vecchio, non abbassare lo sguardo. Mai.»",
-          "Si carica sulle spalle il suo fagotto di stracci e scompare tra le colonne, in un passaggio che non avevi notato."
+          "Si carica sulle spalle il suo fagotto di stracci e scompare tra le colonne, in un passaggio che non avevi notato. Lo senti contare i propri passi, finché la voce non si perde."
         ],
         fuoco: {
           intro: "Le fiamme arancioni afferrano la copertina di pelle. Se vuoi salvarlo, devi essere rapido.",
@@ -4357,10 +4363,12 @@
           ancora: (n) => `Il quaderno brucia ancora. Puoi riprovare (${n} ${n === 1 ? "tentativo rimasto" : "tentativi rimasti"}).`,
           lascia: "Lasci che il fuoco faccia il suo lavoro.",
           esito: ["Quando finalmente lo tiri fuori, del quaderno restano la copertina e un mazzetto di pagine nere che si sbriciolano tra le dita.", "Lo salvi a fatica: metà delle pagine sono carbonizzate.", "Il quaderno è salvo, ma il bordo delle pagine è bruciato: qualche parola è andata persa.", "Il quaderno è salvo: solo gli angoli sono anneriti."],
-          dopo: ["Ettore ti guarda, quasi divertito. «Testardo.»", "Solleva la spada e si mette in guardia, la gamba sinistra rigida, piegata appena."],
+          dopo: ["Ettore ti guarda, quasi divertito. «Testardo. Le mani nel fuoco, per un quaderno. Le ho contate, sai?»", "Solleva la spada e si mette in guardia, la gamba sinistra rigida, piegata appena."],
           stato: ["Bruciato quasi del tutto: della scrittura restano poche righe.", "Metà delle pagine sono carbonizzate.", "Il bordo delle pagine è bruciato: qualche parola è andata persa.", "Solo gli angoli della copertina sono anneriti."]
         },
         conta: ["«Uno. Si comincia sempre da uno.»", "«Due. Quello prima di te è arrivato a tre.»", "«Tre. Respiri troppo forte: ti sento.»", "«Quattro. Il vecchio ti guarda, lo sai?»", "«Cinque. Undici cacce, e tu sei la più lenta.»", "«Sei. Metà strada. Per chi dei due?»", "«Sette. La gamba fa male. A me. A te farà peggio.»", "«Otto. Ho inciso giorni più lunghi di te.»", "«Nove... no. Dieci? Non importa.»", "«Undici. Come le mie cacce. Al dodicesimo, uno di noi resta qui.»", "«Ho perso il conto. Ricomincio: uno.»"],
+        /* il numero da solo (28/10): la frase intera solo a uno, quattro, sette, undici e quando perde il conto */
+        numeri: ["«Uno.»", "«Due.»", "«Tre.»", "«Quattro.»", "«Cinque.»", "«Sei.»", "«Sette.»", "«Otto.»", "«Nove… dieci?»", "«Undici.»", "«Ho perso il conto. Ricomincio: uno.»"],
         panche: {
           azione: "Ti chini sull'ultima panca e passi le dita sul legno, tacca per tacca.",
           successo: ["Sotto le undici tacche grandi ne trovi altre, minuscole, a centinaia: una per ogni giorno, raccolte a gruppi di cinque. Chi le ha incise ha contato a lungo, con pazienza.", "Poi i gruppi si fanno storti, le tacche si accavallano, e a metà della panca si fermano. Sul bordo, a punta di coltello, una sola lettera: E."],
@@ -4378,44 +4386,17 @@
           cucina: "Il focolare di Guendalina non si spegne mai: non ha bisogno della tua legna.",
           niente: "Qui non c'è un fuoco da alimentare."
         },
-        legnaOgg: { nome: "Fascina di legna", testo: "Rami secchi e ciocchi di pino resinoso, legati con un giunco. Messa in un camino o in un braciere spento, lo riaccende per un riposo." }
+        legnaOgg: { nome: "Fascina di legna", testo: "Rami secchi e ciocchi di pino resinoso, legati con un giunco. In un camino spento basta per un riposo; nel braciere della cripta arde per un'ora (fino a cinque fascine)." }
       },
       en: {
-        inizio: [
-          "A movement among the sarcophagi. A figure rises from the pallet and steps between you and the brazier, a chipped sword clenched in his fist.",
-          "It is a man, or it once was. Thin to the bone, his long beard dirty with ash, he wears the remains of leather-and-iron armour of an ancient make, patched with string and rags. On his chest, pinned to his doublet, gleams a bronze brooch shaped like a mastiff's head.",
-          "“The old man sent you, didn't he?”",
-          "His voice is hoarse, broken by disuse. He looks at your chest, where there is no brooch, then at your hands, then at your eyes.",
-          "“Of course he sent you. He always sends someone, sooner or later. I'm Ettore. Eleven times I went down to hunt for him. Eleven. I counted them all. On the twelfth, the prey is me.”"
-        ],
-        attacco: ["Ettore closes his eyes for an instant, like a man who hears a long-awaited rain coming.", "“Then let's not waste time. But don't expect me to kneel.”", "He raises his sword and takes his guard, his left leg stiff, barely bent. “One,” he murmurs. “You always start from one.”"],
-        storia: {
-          signora: [
-            "Ettore lowers his sword slightly, without letting go.",
-            "“I was a bounty hunter, in Valdombra. Men, not beasts: it paid better. I chased one right into that cave. He died ten steps in: the old man's hounds tore him apart in front of me. Not me. I stayed.”",
-            "“The old man tested me, as he tested you, and gave me his hunts. Eleven. Eleven prey, eleven nights watching my back.” He touches the brooch on his chest with two fingers, as if it burned.",
-            "“Then Guendalina told me about the Lady, locked away somewhere in this house, and about her children who are still looking for her. The eldest entrusted me with his notebook, sealed, so that I might look for what the house keeps hidden. I couldn't open it, nor find what I sought: down here my mind began to fray, and the old man understood I was no longer his.”",
-            "He points his chin at the brazier. “I'll give you one thing. The house lets you sleep only where the flame is warm. But a flame can be fed: fresh wood, from the forest behind the graveyard. A cold hearth warms again for one night. I learned that late.”",
-            "From under the pallet he draws a leather-bound notebook, closed by a faintly glowing seal.",
-            "“I'm not the best, nor the first, nor the only one: just the one who stopped obeying. If you kill me, you bring the old man his proof... and the boy is left without his notebook, and the Lady without us.”"
-          ],
-          signore: [
-            "Ettore laughs, a dry laugh that turns into a cough.",
-            "“The old man told you nothing, did he? He never does. I was a bounty hunter, in Valdombra. I followed a man into the cave: the hounds mauled him before I could lay a hand on him. They left me alive, and the old man gave me a trade I already knew.”",
-            "“Eleven hunts for the Master. Eleven, never a question. Do you know who my prey were? People like you: explorers who ended up here through other entrances, their eyes still full of sun. Only the last one wore the clasp: the bronze, before me. He broke my leg before he fell.” He strikes his left knee with his fist.",
-            "“Don't think I'm the best. I'm the first step. There are others above me, and at the top of that ladder is someone who passed me long ago.”",
-            "“A hunter's advice, free: the house lets you sleep only near a warm fire. But fire can be fed. Fresh wood from the forest behind the graveyard, and a cold hearth gives you another night.”",
-            "He looks you in the eye, and there is no hatred in that look. Only an endless weariness.",
-            "“I obeyed until I was worn out, and you're here to kill me in his name. When you're done, take my clasp to the old man. One day someone will come down those stairs for yours.”"
-          ],
-          neutro: [
-            "Ettore tilts his head, as if struggling to understand the question. Then he starts to laugh, softly, and cannot stop.",
-            "“What does he want? The clasp. Always the clasp. I was a bounty hunter, you know? Valdombra. I was chasing a man. The hounds got him. One. The first one I lost.” He counts on his fingers, stops, starts again.",
-            "“Then eleven hunts. Eleven brooches, on the old man's shelves. And the twelfth shelf is mine.”",
-            "His words fray like old cloth. He talks of mastiffs, of a pew in the chapel where he carved the days until the notches blurred, of wood to fetch from the forest so the fire won't die, of the voices he hears at night behind the sarcophagi.",
-            "Then, suddenly, he is lucid again. He stares at you with very pale eyes.",
-            "“I'm not the best, I know. I'm the lowest step, and everyone knows it except the old man. I don't know what he really wants. I only know that if you kill me, the next shelf is yours.”"
-          ]
+        inizio: ["A movement among the columns. A figure rises from the pallet and steps between you and the brazier, a chipped sword clenched in his fist.", "It is a man, or it once was. Thin to the bone, his long beard dirty with ash, he wears the remains of leather-and-iron armour of an ancient make, patched with string and rags. On his chest, pinned to his doublet, gleams a bronze brooch shaped like a mastiff's head.", "“…one, two… three.” He is counting your breaths, under his breath. Then he raises his eyes to you. “The old man sent you, didn't he?”", "His voice is hoarse, broken by disuse. He looks at your chest, where there is no brooch, then at your hands, then at your eyes. His lips move silently: two hands, ten fingers, two eyes.", "“Of course he sent you. He always sends someone. I'm… Ettore. Yes. Ettore.” He says it like a man checking that his name is still where he left it. “Eleven times I went down to hunt for him. Eleven. I counted them all, I counted them twice. On the twelfth, the prey is me.”"],
+        /* discesa furtiva, «Mi faccio avanti»: sostituisce la prima riga dell'inizio. PROVVISORIO */
+        inizioFurtivo: "You step out of the column's shadow. The man stiffens, but does not turn. “You're quiet,” he says to the fire. “I didn't count you. I didn't count you…” He seems more frightened by that than by your blade. Then he rises and steps between you and the brazier, a chipped sword clenched in his fist.",
+        attacco: ["Ettore closes his eyes for an instant, like a man who hears a long-awaited rain coming.", "“Then let's not waste time. Not waste… time gets lost, down here. But don't expect me to kneel. I didn't kneel even before the hounds.”", "He raises his sword and takes his guard, his left leg stiff, barely bent. “One,” he murmurs. “You always start from one.”"],
+        storia: { /* la pazzia di Ettore (28/10): il conteggio di tanto in tanto, le informazioni chiave nei momenti lucidi */
+          signora: ["Ettore lowers his sword slightly, without letting go.", "“I was a bounty hunter, in Valdombra. Men, not beasts: it paid better. I chased one right into that cave. Ten steps. He took ten steps, then the old man's hounds… ten steps.” He breaks off, counts something on his fingers, starts again. “He died. Not me. I stayed.”", "“The old man tested me, as he tested you, and gave me his hunts. Eleven. Eleven prey, eleven nights watching my back.” He touches the brooch on his chest with two fingers, as if it burned. “Eleven. I say it again, so it doesn't slip away.”", "“Then Guendalina told me about the Lady, locked away somewhere in this house, and about her children who are still looking for her. The eldest entrusted me with his notebook, sealed, so that I might look for what the house keeps hidden. I couldn't open it, nor find what I sought: down here my mind began to fray. Some nights the sarcophagi talk. Nine. There are nine, I counted them. And the old man understood I was no longer his.”", "He points his chin at the brazier, and his hand goes to the hilt, as if to defend it. “I'll give you one thing. The house lets you sleep only where the flame is warm. But a flame can be fed: fresh wood, from the forest behind the graveyard. A cold hearth warms again for one night.” He taps his blade on the rim of the brazier. “This one, while I breathe, is mine.”", "From under the pallet he draws a leather-bound notebook, closed by a faintly glowing seal.", "“I'm not the best, nor the first, nor the only one: just the one who stopped obeying. If you kill me, you bring the old man his proof... and the boy is left without his notebook, and the Lady without us. Without us. Two. We would have been two.”"],
+          signore: ["Ettore laughs, a dry laugh that turns into a cough, and then into laughter again.", "“The old man told you nothing, did he? He never does. I was a bounty hunter, in Valdombra. I followed a man into the cave: the hounds mauled him before I could lay a hand on him. Mine. He was mine, that one.” He says it with resentment, as if he had been robbed of him yesterday. “They left me alive, and the old man gave me a trade I already knew.”", "“Eleven hunts for the Master. Eleven, never a question. Do you know who my prey were? People like you: explorers who ended up here through other entrances, their eyes still full of sun. I remember them by their eyes: one, two, three… Only the last one wore the clasp: the bronze, before me. He broke my leg before he fell.” He strikes his left knee with his fist, once, twice, three times, until the pain makes him stop.", "“Don't think I'm the best. I'm the first step. There are others above me, and at the top of that ladder is someone who passed me long ago. Long ago. How long?” He asks himself, not you.", "“A hunter's advice, free: the house lets you sleep only near a warm fire. But fire can be fed. Fresh wood from the forest behind the graveyard, and a cold hearth gives you another night.” He glances at the brazier. “Not this one. This one you don't touch.”", "He looks you in the eye, and there is no hatred in that look. Only an endless weariness.", "“I obeyed until I was worn out, and you're here to kill me in his name. When you're done, take my clasp to the old man. One day someone will come down those stairs for yours.”"],
+          neutro: ["Ettore tilts his head, as if struggling to understand the question. Then he starts to laugh, softly, and cannot stop.", "“What does he want? The clasp. Always the clasp. I was a bounty hunter, you know? Valdombra. I was chasing a man. The hounds got him. One. The first one I lost.” He counts on his fingers, stops, starts again. “One. No. The first one is me. I'm the one who got lost.”", "“Then eleven hunts. Eleven brooches, on the old man's shelves. He dusts them, you know? Every morning. And the twelfth shelf is mine. It's already clean. He keeps it clean.”", "His words fray like old cloth. He talks of mastiffs, of a pew in the chapel where he carved the days until the notches blurred, of wood to fetch from the forest so the fire won't die, of the voices he hears at night behind the sarcophagi. Suddenly he turns to the brazier, not to you, and apologises to it for something.", "Then, suddenly, he is lucid again. He stares at you with very pale eyes.", "“I'm not the best, I know. I'm the lowest step, and everyone knows it except the old man. I don't know what he really wants. I only know that if you kill me, the next shelf is yours.”"]
         },
         osserva: "I stay silent and watch him.",
         osservaOk: {
@@ -4427,17 +4408,17 @@
         gentile: "You don't have to die here, Ettore. Guendalina and the boy still need someone. Give me the clasp and live.",
         duro: "Look at yourself: one good leg and a chipped sword. The code says you don't fight lost battles. Give me the clasp.",
         insiste: {
-          signora: ["Ettore shakes his head, and for a moment his voice cracks. “Fine words. Guendalina used to say them too. I stopped believing them.”", "He raises his sword and takes his guard, his left leg stiff, barely bent."],
-          signore: ["“Don't tell me what the code says.” His eyes harden. “The code says you die on your feet.”", "He raises his sword and takes his guard, his left leg stiff, barely bent."],
+          signora: ["Ettore shakes his head, and for a moment his voice cracks. “Fine words. Guendalina used to say them too. How many times? I stopped counting them. I stopped believing them.”", "He raises his sword and takes his guard, his left leg stiff, barely bent."],
+          signore: ["“Don't tell me what the code says.” His eyes harden. “The code says you die on your feet. On your feet. On two legs.” He looks at his left one, and laughs.", "He raises his sword and takes his guard, his left leg stiff, barely bent."],
           neutro: ["Ettore laughs, and the laugh breaks into a sob. “Twelve. Twelve is the right number. I can't stop at eleven.”", "He raises his sword and takes his guard, his left leg stiff, barely bent."]
         },
-        gettaQuaderno: ["Ettore nods slowly. Then, with a quick motion, he throws the leather notebook into the brazier.", "“Then the old man won't have this too.”"],
+        gettaQuaderno: ["Ettore nods slowly. Then, with a quick motion, he throws the leather notebook into the brazier.", "“Then the old man won't have this too.” He watches the flames bite into the leather and counts them under his breath, the way he counts everything."],
         risparmiaSignore: [
           "Ettore stands still, his sword in mid-air. Then he lowers it, slowly.",
           "“None of the eleven ever said that to me. And I never said it to anyone.”",
           "He unpins the bronze brooch and lays it in your palm. Then he hands you the leather notebook, closed by its seal.",
           "“The boy gave me this. I never opened it: it wasn't mine. You'll find the names of my prey on the old man's shelves, in the trophy room. Read them before you decide whom you're loyal to. And when you lie to the old man, don't look away. Never.”",
-          "He shoulders his bundle of rags and vanishes among the columns, into a passage you hadn't noticed."
+          "He shoulders his bundle of rags and vanishes among the columns, into a passage you hadn't noticed. You hear him counting his own steps, until his voice fades."
         ],
         fuoco: {
           intro: "The orange flames seize the leather cover. If you want to save it, you must be quick.",
@@ -4447,10 +4428,12 @@
           ancora: (n) => `The notebook is still burning. You can try again (${n} ${n === 1 ? "attempt left" : "attempts left"}).`,
           lascia: "You let the fire do its work.",
           esito: ["When you finally pull it out, all that is left of the notebook is the cover and a bundle of black pages that crumble between your fingers.", "You barely save it: half the pages are charred.", "The notebook is saved, but the edges of the pages are burned: a few words are lost.", "The notebook is saved: only the corners are blackened."],
-          dopo: ["Ettore looks at you, almost amused. “Stubborn.”", "He raises his sword and takes his guard, his left leg stiff, barely bent."],
+          dopo: ["Ettore looks at you, almost amused. “Stubborn. Your hands in the fire, for a notebook. I counted them, you know?”", "He raises his sword and takes his guard, his left leg stiff, barely bent."],
           stato: ["Almost entirely burned: only a few lines of writing remain.", "Half the pages are charred.", "The edges of the pages are burned: a few words are lost.", "Only the corners of the cover are blackened."]
         },
         conta: ["“One. You always start from one.”", "“Two. The one before you got to three.”", "“Three. You breathe too loud: I can hear you.”", "“Four. The old man is watching you, you know?”", "“Five. Eleven hunts, and you're the slowest.”", "“Six. Halfway. For which of us?”", "“Seven. The leg hurts. Mine. Yours will hurt worse.”", "“Eight. I've carved days longer than you.”", "“Nine... no. Ten? Doesn't matter.”", "“Eleven. Like my hunts. On the twelfth, one of us stays here.”", "“I've lost count. Starting again: one.”"],
+        /* il numero da solo (28/10): la frase intera solo a uno, quattro, sette, undici e quando perde il conto */
+        numeri: ["“One.”", "“Two.”", "“Three.”", "“Four.”", "“Five.”", "“Six.”", "“Seven.”", "“Eight.”", "“Nine… ten?”", "“Eleven.”", "“I've lost count. Starting again: one.”"],
         panche: {
           azione: "You bend over the last pew and run your fingers over the wood, notch by notch.",
           successo: ["Beneath the eleven large notches you find others, tiny, by the hundred: one for each day, grouped in fives. Whoever carved them counted for a long time, patiently.", "Then the groups grow crooked, the notches overlap, and halfway along the pew they stop. On the edge, cut with a knife point, a single letter: E."],
@@ -4468,7 +4451,7 @@
           cucina: "Guendalina's hearth never goes out: it does not need your wood.",
           niente: "There is no fire to feed here."
         },
-        legnaOgg: { nome: "Bundle of firewood", testo: "Dry branches and logs of resinous pine, tied with a reed. Put into a cold hearth or brazier, it rekindles it for one rest." }
+        legnaOgg: { nome: "Bundle of firewood", testo: "Dry branches and logs of resinous pine, tied with a reed. In a cold hearth it is enough for one rest; in the crypt brazier it burns for an hour (up to five bundles)." }
       }
     };
     const ET = ETT[LINGUA] || ETT.it;
@@ -4494,13 +4477,15 @@
       E.tregua.risposte = [osserva, ...tieni(E.tregua.risposte), ...persuadi];
       E.osserva_ok = { testo: T.osservaOk, poi: "scelta" };
       E.osserva_ko = { testo: T.osservaKo, poi: "scelta" };
+      E.inizio_furtivo = { ...E.inizio, testo: [T.inizioFurtivo, ...T.inizio.slice(1)] }; /* discesa furtiva: «Mi faccio avanti» */
       E.insiste = { testo: T.insiste, alla_fine: "ettore_scontro" };
     }
-    /* il conteggio di Ettore: una frase a ogni suo attacco */
+    /* il conteggio di Ettore: il numero a ogni suo attacco, la frase intera solo a uno, quattro, sette, undici e quando perde il conto (28/10) */
+    const CONTA_INTERA = [0, 3, 6, 9, 10];
     function contaEttore() {
       const C = ET.conta, n = Number(scontro.conta) || 0;
       scontro.conta = n + 1 >= C.length ? 0 : n + 1;
-      return C[n];
+      return CONTA_INTERA.includes(n) || !ET.numeri ? C[n] : ET.numeri[n];
     }
     /* ramo Signora: il quaderno nel braciere, 3 prove di Acrobazia; ogni fallimento lo rende meno leggibile (usate.diario_leggibile 0-3) */
     function salvaQuaderno() {
@@ -4546,14 +4531,31 @@
       if (luogo === "cucina") return aggiungi({ tipo: "narra", righe: [L.cucina] });
       const qui = luogo === "sala_conversazione" ? "camino" : luogo === "cripta" ? "braciere" : null;
       if (!qui) return aggiungi({ tipo: "narra", righe: [L.niente] });
-      const caldo = qui === "camino" ? usate.fuoco_sala_conversazione !== "spento" : braciereAcceso();
-      if (caldo) return aggiungi({ tipo: "narra", righe: [L.giaCalda] });
+      if (qui === "braciere") return legnaNelBraciere(it);
+      if (usate.fuoco_sala_conversazione !== "spento") return aggiungi({ tipo: "narra", righe: [L.giaCalda] });
       if (!it) return aggiungi({ tipo: "narra", righe: [L.nessuna] });
-      it.usi = Number(it.usi) - 1; if (it.usi <= 0) zaino = zaino.filter(x => x !== it);
-      if (qui === "camino") delete usate.fuoco_sala_conversazione;
-      else { usate.braciere_legna = true; if (["incontrato", "tregua"].includes(usate.ettore)) delete usate.fuoco_cripta; }
+      consumaFascina(it);
+      delete usate.fuoco_sala_conversazione;
       salvaUsate(); aggiornaZaino(); modificato(); aggiornaFuoco();
       aggiungi({ tipo: "narra", box: "ok", righe: [L.accesa] });
+    }
+    function consumaFascina(it) { it.usi = Number(it.usi) - 1; if (it.usi <= 0) zaino = zaino.filter(x => x !== it); }
+    /* il braciere della cripta (28/10): un'ora reale per fascina, fino a 5; finché Ettore è vivo il fuoco è suo */
+    function legnaNelBraciere(it) {
+      const B = A2.braciere, L = ET.legna;
+      if (!ettoreAndato()) return aggiungi({ tipo: "narra", righe: B.legnaEttore });
+      if (!it) return aggiungi({ tipo: "narra", righe: [L.nessuna] });
+      const ora = Date.now(), resta = Math.max(0, fineBraciere() - ora);
+      if (resta + ORA_FUOCO > MAX_FASCINE * ORA_FUOCO) return aggiungi({ tipo: "narra", righe: [B.pieno, B.ore(Math.ceil(resta / ORA_FUOCO))] });
+      consumaFascina(it);
+      const eraBuia = !!usate.cripta_buia;
+      usate.braciere_fine = (resta > 0 ? fineBraciere() : ora) + ORA_FUOCO;
+      usate.cripta_buia = false;
+      salvaUsate(); aggiornaZaino(); modificato(); aggiornaFuoco();
+      const righe = resta > 0 ? B.aggiunta : eraBuia ? B.accesaBuio : B.accesa;
+      const ore = Math.ceil((usate.braciere_fine - ora) / ORA_FUOCO);
+      if (eraBuia) aggiungi({ tipo: "narra", box: "ok", ...vista("cripta"), titolo: undefined, righe: [...righe, B.ore(ore)] }); /* la cripta torna visibile */
+      else aggiungi({ tipo: "narra", box: "ok", righe: [...righe, B.ore(ore)] });
     }
     const Q = QT[LINGUA] || QT.it;
 
@@ -5072,13 +5074,13 @@
       giardino_percezione: {},
       cappella_vetrata: { prova: { abilita: "Misticismo", dado: 20, cd: 14 }, poi: (ok) => { if (ok) { usate.adele_viva = true; salvaUsate(); sblocco([A2.vetrataViva], "mis"); } } },
       cappella_libro: { prova: { abilita: "Arcano", dado: 20, cd: 12 }, riprova: true, poi: (ok) => { if (ok) libroPreghiere(); } },
-      cripta_furtiva: { prova: { abilita: "Furtività", dado: 20, cd: 13 }, nessunDanno: true, poi: (ok) => { usate.ettore_sorpreso = ok; salvaUsate(); setTimeout(() => fuoriDallaTendina(() => vai("cripta")), 900); } },
+      cripta_furtiva: { prova: { abilita: "Furtività", dado: 20, cd: 12 }, nessunDanno: true, poi: (ok) => { usate.ettore_sorpreso = ok; salvaUsate(); setTimeout(() => fuoriDallaTendina(() => vai("cripta")), 900); } },
       cappella_percezione: { prova: { abilita: "Percezione", dado: 20, cd: 11 }, nessunDanno: true },
-      cappella_tracce: { prova: { abilita: "Indagare", dado: 20, cd: 12 }, poi: (ok) => { if (ok) { usate.ettore_tracce = true; salvaUsate(); applicaTracce(); } } },
+      cappella_tracce: { prova: { abilita: "Indagare", dado: 20, cd: 12 }, poi: (ok) => { if (ok || usate.ettore_tracce !== true) { usate.ettore_tracce = ok ? true : "ko"; salvaUsate(); applicaTracce(); } } }, /* trovate: Furtività CD 10; fallita: CD 14 */
       cripta_tomba: {},
       cripta_nicchie: { prova: { abilita: "Indagare", dado: 20, cd: 12 }, poi: (ok) => { if (ok) trovaPagina(4); } },
       cripta_sarcofago: { prova: { abilita: "Atletica", dado: 20, cd: 12 }, riprova: true, nessunDanno: true, poi: (ok) => sarcofago(ok) },
-      cripta_braciere_spento: {},
+      cripta_braciere_spento: {}, cripta_primo_chiuso: {},
       cappella_altare: { prova: { abilita: "Indagare", dado: 20, cd: 12 }, riprova: true, nessunDanno: true, poi: (ok) => { if (ok && usate.q3 === "accettata") prendiBlasone(); } },
       cappella_altare_vuoto: {}, cappella_panche: {},
       cripta_sarcofagi: {}, cripta_braciere: {}, cripta_giaciglio: {},
@@ -5095,10 +5097,10 @@
     PROVE_DICHIARATE.dispensa = { Percezione: "disp_percezione", Indagare: "disp_indagare" };
     PROVE_DICHIARATE.giardino = { Sapienza: "fontana_arc", Sopravvivenza: "giardino_siepi_tracce", Intuizione: "fontana_mis", Misticismo: "fontana_mis", Arcano: "fontana_arc", Medicina: "fontana_med", Indagare: "giardino_siepi_indaga", Percezione: "giardino_percezione" };
     PROVE_DICHIARATE.cappella = { Percezione: "cappella_percezione", Indagare: "cappella_tracce", Sopravvivenza: "cappella_tracce", Misticismo: "cappella_vetrata", Arcano: "cappella_libro", "Furtività": "cripta_furtiva" };
-    PROVE_DICHIARATE.cripta = { Indagare: "cripta_nicchie", Intuizione: "cripta_nicchie", Misticismo: "cripta_nicchie", Atletica: "cripta_sarcofago" };
+    PROVE_DICHIARATE.cripta = { Indagare: "cripta_nicchie", Atletica: "cripta_sarcofago" }; /* le nicchie non ci sono più: Indagare sul sarcofago di Rodolfo e Adele (28/10) */
     for (const id in MECCANICA) LUOGHI[id] = { ...MECCANICA[id], ...TX.luoghi[id] };
     /* tracce di Ettore trovate con Sopravvivenza: scendere in silenzio diventa più facile */
-    function applicaTracce() { if (usate.ettore_tracce && LUOGHI.cripta_furtiva && LUOGHI.cripta_furtiva.prova) LUOGHI.cripta_furtiva.prova = { ...LUOGHI.cripta_furtiva.prova, cd: 10 }; }
+    function applicaTracce() { if (usate.ettore_tracce && LUOGHI.cripta_furtiva && LUOGHI.cripta_furtiva.prova) LUOGHI.cripta_furtiva.prova = { ...LUOGHI.cripta_furtiva.prova, cd: usate.ettore_tracce === true ? 10 : 14 }; }
     /* risposte generiche per le abilità nuove (quando nella stanza non c'è una prova per loro) */
     Object.assign(TESTI.it.prove.generiche, {
       Sopravvivenza: ["Non ci sono tracce da seguire né insidie dell'ambiente da affrontare, qui.", "Il luogo non offre nulla che richieda istinto di sopravvivenza o primo soccorso."],
@@ -5485,7 +5487,7 @@
     /* il buio usa l'immagine dell'esterno, spenta fino al nero (classe "nera") */
     const IMMAGINI = { foresta: "immagini/house/esterno_dungeon.webp", buio: "immagini/house/esterno_dungeon.webp", atrio: "immagini/house/atrio.webp", pianerottolo: "immagini/house/pianerottolo.webp" /* ritaglio dell'atrio: vetrata, armatura e scalinata */, sala_caccia: "immagini/house/sala_caccia.webp", sala_caccia_aldo: "immagini/house/sala_caccia_aldo.webp", sala_conversazione: "immagini/house/sala_conversazione.webp", giardino: "immagini/house/giardino.webp", cappella: "immagini/house/cappella.webp", cripta: "immagini/house/cripta.webp", sala_trofei: "immagini/house/sala_trofei.webp", sala_pranzo: "immagini/house/sala_pranzo.webp", corridoio: "immagini/house/corridoio.webp", sala_ballo: "immagini/house/sala_ballo.webp", cucina: "immagini/house/cucina.webp", dispensa: "immagini/house/dispensa.webp", cantina: "immagini/house/cantina.webp", discesa_cantina: "immagini/house/discesa_cantina.webp", mastino: "immagini/house/mastino_cantina.webp", servizio: "immagini/house/discesa_cantina.webp", guendalina: "immagini/house/guendalina.webp" };
     const DIM_IMMAGINI = { foresta: [1920, 1079], buio: [1920, 1079], corridoio: [2848, 1600], sala_ballo: [2304, 1728], giardino: [2848, 1600], cucina: [1920, 1079], dispensa: [2848, 1600], cantina: [2848, 1600], discesa_cantina: [2780, 1308], servizio: [2780, 1308], guendalina: [2048, 1536], atrio: [1920, 1079], pianerottolo: [1600, 900], sala_trofei: [2304, 1728], sala_conversazione: [1358, 679], cappella: [2848, 1600] }; /* le altre sono 1536 × 1024 */
-    const vista = (id) => ({ titolo: TX.viste[id].titolo, img: IMMAGINI[id] ? { src: IMMAGINI[id], alt: TX.viste[id].alt } : undefined, buia: id === "cantina" && !usate.cantina_luce }); /* cantina al buio: riquadro nero */
+    const vista = (id) => ({ titolo: TX.viste[id].titolo, img: IMMAGINI[id] ? { src: IMMAGINI[id], alt: TX.viste[id].alt } : undefined, buia: (id === "cantina" && !usate.cantina_luce) || (id === "cripta" && !!usate.cripta_buia) }); /* cantina al buio: riquadro nero */
 
     /* Una nuova partita parte dalla foresta, fuori dal dungeon; i salvataggi già esistenti riprendono dal loro luogo */
     let luogo = (salvata && Array.isArray(salvata.diario) && salvata.diario.length) ? "atrio" : "foresta";
@@ -5708,10 +5710,12 @@
         if (/\bpin[oi]\b|alber\w*|tronc\w*|cortecc\w*|chiom\w*|\blun[ae]\b|pines?|trees?|trunks?|bark|moons?/.test(t)) return "pineta_alberi";
       }
       if (luogo === "cripta") {
+        if (criptaBuia()) return (torna || atrio || /cappell|chapel|\bsal[igo]\w*|upstairs|\bsu\b|\bscal[ae]\b|\bstairs?\b|giardin|garden|\bcasa\b|house/.test(t)) ? "torna" : "cripta_buio"; /* al buio non si vede nulla */
         if (/\bettore\b|esplorator\w*|\buomo\b|\bparl\w*|\btalk\w*|\bspeak\w*|explorer|\bman\b/.test(t)) return "parla_ettore";
         if (torna || atrio || /cappell|chapel|\bsal[igo]\w*|upstairs|\bsu\b|\bscal[ae]\b|\bstairs?\b|giardin|garden|\bcasa\b|house/.test(t)) return "torna";
         if (/lorenzo|piccol\w*|bambin\w*|cavallin\w*|drapp\w*|tend[ae]\b|telo|stoffa|nascost\w*|small\w*|little|child\w*|wooden horse|drape\w*|cloth|hidden/.test(t)) return "cripta_tomba"; /* «sollevo il drappo», «guardo la cosa nascosta» */
-        if (/rodolfo|adele|nicchi\w* vuot\w*|vuot\w*|empty|niches?/.test(t)) return "cripta_nicchie";
+        if (/rodolfo|adele|nicchi\w* vuot\w*|vuot\w*|empty|niches?/.test(t) || (/sarcofag\w*|sarcophag\w*|coperch\w*|fessur\w*/.test(t) && /indag\w*|ispezion\w*|perquis\w*|investig\w*|\bcerc\w*|fessur\w*|\bsearch\w*|inspect\w*|\bgap\b/.test(t))) return "cripta_nicchie"; /* il sarcofago di Rodolfo e Adele (28/10) */
+        if (/primo (dei )?vespera|first of the vespera|cavalier\w*|pi[uù] antic\w*|\bknight\b|oldest/.test(t) && !/\bapr\w*|\bforz\w*|sollev\w*|spost\w*|sping\w*|\bopen\w*|\bforce\w*|\blift\w*|\bpush\w*|\bmove\b|\bpry\b/.test(t)) return usate.diario_aperto ? "cripta_sarcofago" : "cripta_primo_chiuso";
         if (/sarcofag\w*|coperch\w*|sarcophag\w*|\blids?\b|primo (dei )?vespera|first of the vespera/.test(t) && /\bapr\w*|\bforz\w*|sollev\w*|spost\w*|sping\w*|\bopen\w*|\bforce\w*|\blift\w*|\bpush\w*|\bmove\b|\bpry\b|atletic|athletic/.test(t)) return "cripta_sarcofago";
         if (/sarcofag\w*|\btomb\w*|sarcophag\w*|nicchi\w*/.test(t)) return "cripta_sarcofagi";
         if (/\bbrac\w*|\bfuoco\b|\belmo\b|brazier|\bfire\b|helmet/.test(t)) return braciereAcceso() ? "cripta_braciere" : "cripta_braciere_spento";
@@ -6821,7 +6825,7 @@
       usate[chiaveDlg(id)] = conRisposte ? (n.poi || nodo) : "fine"; salvaUsate();
       if (!soloRisposte) {
         const testo = testoDlg(n.testo, id);
-        if (testo) aggiungi({ tipo: "dialogo", fuori: nodo === "inizio", tuttoBox: nodo !== "inizio", chi: d.nome, macchina: true, righe: testo });
+        if (testo) aggiungi({ tipo: "dialogo", fuori: nodo === "inizio" || nodo === "inizio_furtivo", tuttoBox: nodo !== "inizio" && nodo !== "inizio_furtivo", chi: d.nome, macchina: true, righe: testo });
         if (n.alla_fine) scrittura.then(() => FINE_DIALOGO[n.alla_fine]()); /* cosa succede quando il nodo finisce */
       }
       if (n.poi) { if (!soloRisposte) scrittura.then(() => mostraRisposte(id, n.poi)); else mostraRisposte(id, n.poi); return; }
@@ -7175,14 +7179,17 @@
     }
     let ultimoRiposoTesto = -1;
     function riposa() {
-      if (luogo === "cripta" && braciereAcceso() && !scontro) { /* Ettore ti lascia dormire accanto al suo fuoco */
+      if (luogo === "cripta" && !scontro && !ettoreAndato()) return aggiungi({ tipo: "narra", righe: A2.braciere.rifiuto }); /* il fuoco è suo: niente riposo (28/10) */
+      if (luogo === "cripta" && braciereAcceso() && !scontro) { /* dopo Ettore: ogni riposo brucia un'ora di fuoco (una fascina) */
         if (usate.riposo !== "sbloccato") return aggiungi({ tipo: "narra", righe: Q.riposo.bloccato });
         const cura = curaRiposo(false);
         if (!cura) return aggiungi({ tipo: "narra", righe: Q.riposo.inutile });
         if (cura.fame) return aggiungi({ tipo: "narra", righe: RG.riposo.fame });
-        const conEttore = ["incontrato", "tregua"].includes(usate.ettore);
-        usate.fuoco_cripta = "spento"; usate.braciere_legna = false; salvaUsate();
-        aggiungi({ tipo: "narra", box: "ok", ...cura, righe: conEttore ? [...A2.braciere.dorme, ...A2.braciere.sveglia] : [...Q.riposo.dormeVar[0], ...Q.riposo.sveglia] });
+        const resta = fineBraciere() - ORA_FUOCO;
+        usate.braciere_fine = resta > Date.now() ? resta : 0;
+        salvaUsate(); aggiornaFuoco();
+        const B = A2.braciere, ore = Math.ceil(Math.max(0, usate.braciere_fine - Date.now()) / ORA_FUOCO);
+        aggiungi({ tipo: "narra", box: "ok", ...cura, righe: [...B.dorme, ...B.sveglia, ore ? B.ore(ore) : testoBraciereSpento()[0]] });
         return offriPreparazione();
       }
       if (luogo === "cripta") return aggiungi({ tipo: "narra", righe: testoBraciereSpento() });
@@ -7440,7 +7447,12 @@
       const e = usate.ettore;
       if (!e) {
         usate.ettore = "incontrato"; salvaUsate();
-        setTimeout(() => { if (luogo === "cripta" && !scontro) fuoriDallaTendina(() => avviaDialogo("ettore")); }, 900);
+        if (usate.ettore_sorpreso === true && !usate.ettore_sorpresa_usata) { /* discesa furtiva riuscita: scegli tu (28/10) */
+          setTimeout(() => { if (luogo !== "cripta" || scontro) return; fuoriDallaTendina(() => scelte([
+            { testo: A2.furtivo.avanti, fn: () => { chiudiScelte(); usate.ettore_sorpresa_usata = true; salvaUsate(); fuoriDallaTendina(() => nodoDialogo("ettore", "inizio_furtivo")); } },
+            { testo: A2.furtivo.colpisci, fn: () => { chiudiScelte(); fuoriDallaTendina(() => aggiungi({ tipo: "narra", righe: A2.furtivo.attacco })); setTimeout(avviaScontroEttore, 600); } }
+          ])); }, 900);
+        } else setTimeout(() => { if (luogo === "cripta" && !scontro) fuoriDallaTendina(() => avviaDialogo("ettore")); }, 900);
       } else if (e === "scontro") { /* scontro interrotto (pagina ricaricata): Ettore ti aspetta con la spada in pugno */
         fuoriDallaTendina(() => aggiungi({ tipo: "narra", righe: A.ettore.aspetta }));
         setTimeout(avviaScontroEttore, 600);
@@ -7453,7 +7465,7 @@
       }
     }
     function parlaEttore() {
-      if (usate.ettore === "morto" || usate.ettore === "risparmiato") return aggiungi({ tipo: "narra", righe: usate.ettore === "morto" ? A.ettore.vuotaMorto : A.ettore.vuota });
+      if (ettoreAndato()) return aggiungi({ tipo: "narra", righe: usate.ettore === "morto" ? A.ettore.vuotaMorto : braciereAcceso() ? A.ettore.vuota : testoBraciereSpento() });
       if (scontro) return;
       if (usate.ettore === "rivincita" || usate.ettore === "tregua") return avviaScontroEttore(); /* dopo una sconfitta non c'è più niente da dirsi */
       const st = usate.dialogo_ettore;
@@ -7491,7 +7503,7 @@
       usate.q2_diario = true; salvaUsate(); disegnaMissioni();
     }
     function risparmiaEttore() {
-      usate.ettore = "risparmiato"; usate.q4_esito = "risparmiata";
+      usate.ettore = "risparmiato"; usate.q4_esito = "risparmiata"; fuocoDiEttoreLasciato();
       guarisciFerita("ettore", "Ettore");
       if (usate.q4 === "accettata") usate.q4 = "prova";
       const righe = [A.sblocco.sigillo];
@@ -8115,8 +8127,51 @@
       aggiungi({ tipo: "sistema", box: "ko", righe: [A2.anello.dita(d, da, a)] });
     }
     /* il braciere di Ettore: un fuoco vero, arancione, finché lui è nella cripta */
-    const testoBraciereSpento = () => ["incontrato", "tregua"].includes(usate.ettore) ? A2.braciere.consumato : LUOGHI.cripta_braciere_spento.fisso;
-    const braciereAcceso = () => (["incontrato", "tregua"].includes(usate.ettore) && usate.fuoco_cripta !== "spento") || !!usate.braciere_legna; /* anche riacceso con la legna */
+    /* il fuoco della cripta (28/10): finché Ettore è vivo arde sempre ed è suo; quando se ne va (ucciso o risparmiato) resta un'ora reale,
+       poi si spegne. Ogni fascina aggiunge un'ora (fino a 5), ogni riposo ne brucia una. La cripta diventa buia solo quando ci rientri. */
+    const ORA_FUOCO = 60 * 60 * 1000, MAX_FASCINE = 5;
+    const ettoreAndato = () => usate.ettore === "morto" || usate.ettore === "risparmiato";
+    function fineBraciere() {
+      if (usate.braciere_fine == null && ettoreAndato()) { /* salvataggi precedenti: il fuoco riacceso con la legna vale un'ora da adesso */
+        usate.braciere_fine = usate.braciere_legna ? Date.now() + ORA_FUOCO : 0;
+        delete usate.braciere_legna; delete usate.fuoco_cripta; salvaUsate();
+      }
+      return Number(usate.braciere_fine) || 0;
+    }
+    const braciereAcceso = () => !ettoreAndato() || Date.now() < fineBraciere();
+    const criptaBuia = () => luogo === "cripta" && !!usate.cripta_buia;
+    const testoBraciereSpento = () => LUOGHI.cripta_braciere_spento.fisso;
+    function fuocoDiEttoreLasciato() { usate.braciere_fine = Date.now() + ORA_FUOCO; } /* Ettore se ne va: il suo fuoco arde ancora un'ora */
+    /* torcia o Luce nella cripta buia: si vede, ma per riposare serve il braciere */
+    function luceCripta(incantesimo) {
+      const B = A2.braciere;
+      if (!criptaBuia()) return sist(B.giaLuce);
+      if (incantesimo) {
+        const inc = incantesimoLuce();
+        if (!inc) return aggiungi({ tipo: "narra", righe: [TX.esterno.nessunIncantesimo] });
+        const costo = Number(inc.costo) || 1;
+        if (manaMax() != null) {
+          if (manaAttuale() < costo) return aggiungi({ tipo: "narra", righe: [TX.esterno.pocoMana(costo, manaAttuale())] });
+          pg.manaUsato = (pg.manaUsato || 0) + costo; disegnaVitali(); modificato();
+        }
+        usate.cripta_buia = false; salvaUsate();
+        aggiungi({ tipo: "narra", ...vista("cripta"), titolo: undefined, righe: B.luce });
+        sist(TX.esterno.incantesimoUsato(costo, manaMax() != null ? manaAttuale() : "—"));
+      } else {
+        const it = torciaUtile();
+        if (!it) return aggiungi({ tipo: "narra", righe: [TX.esterno.nessunaTorcia] });
+        usate.cripta_buia = false; salvaUsate();
+        aggiungi({ tipo: "narra", ...vista("cripta"), titolo: undefined, righe: B.luce });
+        usa(it.id); /* la torcia va in mano e consuma un utilizzo */
+      }
+    }
+    /* ritorno nella cripta dopo Ettore: al buio, o con il fuoco ancora acceso */
+    function mostraCriptaVuota() {
+      const B = A2.braciere;
+      if (usate.cripta_buia) return aggiungi({ tipo: "narra", ...vista("cripta"), righe: B.buio, nota: B.notaBuio });
+      aggiungi({ tipo: "narra", ...vista("cripta"), righe: introStanza("cripta"), nota: STANZE.cripta.nota });
+      aggiungi({ tipo: "narra", righe: usate.ettore === "morto" ? A.ettore.vuotaMorto : A.ettore.vuota });
+    }
     /* acqua benedetta: in combattimento, solo contro le creature del fuoco eterno */
     function lanciaAcqua() {
       const it = zaino.find(x => x.id === "acqua_benedetta" && Number(x.usi) > 0);
@@ -8296,6 +8351,8 @@
       if (id === "giardino_fontana") return esaminaFontana();
       if (ID_FONTANA[id]) return esaminaFontana(ID_FONTANA[id]); /* «faccio una prova di arcano» in giardino */
       if (l.bassi && (pg.razza === "Nano" || pg.razza === "Gnomo")) return aggiungi({ tipo: "narra", righe: l.bassi }); /* troppo in alto per loro */
+      if (id === "cripta_sarcofago" && !usate.diario_aperto && usate.cripta_sarcofago !== "ok") return aggiungi({ tipo: "narra", righe: LUOGHI.cripta_primo_chiuso.fisso }); /* si apre solo dopo il quaderno del figlio maggiore (28/10) */
+      if (luogo === "cripta" && criptaBuia()) return aggiungi({ tipo: "narra", righe: A2.braciere.buioAzione, nota: A2.braciere.notaBuio });
       if (l.prova && (id in usate)) {
         if (usate[id] === "ok") { aggiungi({ tipo: "narra", righe: [l.gia.ok] }); if (l.dopo === "giocattoli") offriGiocattoli(); return; }
         if (!l.riprova) { aggiungi({ tipo: "narra", righe: [(l.gia.ko + (provaRipetibileDopoRiposo(id, l) ? U.dopoRiposo : "")).trim()] }); return; }
@@ -8970,6 +9027,7 @@
       const luce = inc === incantesimoLuce();
       if (luce && luogo === "buio") return lanciaLuce();
       if (luce && luogo === "cantina") return luceCantina(true);
+      if (luce && criptaBuia()) return luceCripta(true);
       if (luce && luogo === "foresta") return aggiungi({ tipo: "narra", righe: [EST.entraConLuce] });
       aggiungi({ tipo: "narra", righe: [EST.incInutile(nomeInc(inc))] });
     }
@@ -9171,6 +9229,7 @@
     function introStanza(id) {
       const s = STANZE[id];
       if (id === "atrio") return [...TX.intro, EST.portone]; /* la descrizione dell'atrio sta in TX.intro */
+      if (id === "cripta" && !usate.ettore && usate.ettore_sorpreso === true && s.introFurtiva) return s.introFurtiva; /* discesa furtiva: niente seconda discesa */
       return (id === "sala_caccia" && !aldoNellaSalaCaccia() && s.introSenzaAldo) ? s.introSenzaAldo : s.intro;
     }
 
@@ -9184,7 +9243,8 @@
       luogo = id;
       const s = STANZE[id];
       let tornato = visitata(id);
-      if (id === "cripta" && tornato && (usate.ettore === "morto" || usate.ettore === "risparmiato")) opz = { ...opz, righe: usate.ettore === "morto" ? A.ettore.vuotaMorto : A.ettore.vuota };
+      if (id === "cripta") { usate.cripta_buia = ettoreAndato() && !braciereAcceso(); salvaUsate(); } /* il buio si decide solo quando entri */
+      const criptaVuota = id === "cripta" && tornato && ettoreAndato();
       if (id === "cripta" && tornato && (usate.ettore === "rivincita" || usate.ettore === "tregua")) { /* dopo una sconfitta: la pagina della cripta riparte pulita */
         diario = diario.filter(e => e.stanza !== "cripta");
         opz = { ...opz, righe: (Number(usate.ettore_sconfitte) || 1) > 1 ? A.ettore.rivincita2 : A.ettore.rivincita1 };
@@ -9196,7 +9256,8 @@
       Suono.aggiorna(); /* il suono di ambiente segue la stanza */
       if (id === "cantina" && tornato && usate.cantina_cane === "sconfitto") { usate.cantina_luce = "ok"; salvaUsate(); } /* dopo una vittoria la cantina resta illuminata */
       if (opz && opz.prima) aggiungi({ tipo: "narra", righe: opz.prima });
-      if (opz && opz.righe && tornato) { /* ritorno con un evento (risveglio, Ettore che aspetta…): prima la descrizione, poi l'evento */
+      if (criptaVuota) mostraCriptaVuota(); /* dopo Ettore: al buio o con il fuoco acceso */
+      else if (opz && opz.righe && tornato) { /* ritorno con un evento (risveglio, Ettore che aspetta…): prima la descrizione, poi l'evento */
         aggiungi({ tipo: "narra", ...vista(id), righe: introStanza(id), nota: s.nota });
         if (opz.righe.length) aggiungi({ tipo: "narra", righe: opz.righe });
       }
@@ -9365,6 +9426,12 @@
         const luce = interpretaBuio(t);
         if (luce === "accendi_torcia" || luce === "lancia_luce") return luceCantina(luce === "lancia_luce");
       }
+      if (luogo === "cripta" && !scontro) { /* cripta (28/10): luce al buio, legna nel braciere */
+        const luce = criptaBuia() ? interpretaBuio(t) : null;
+        if (luce === "accendi_torcia" || luce === "lancia_luce") return luceCripta(luce === "lancia_luce");
+        if (/bracier\w*|brazier|\bfuoco\b|\bfire\b|fiamm\w*|flames?/.test(t) && /accend\w*|\bmett\w*|\bgett\w*|\bbutt\w*|aggiung\w*|aliment\w*|ravviv\w*|riaccend\w*|\blight\w*|\bput\w*|\badd\w*|\bthrow\w*|\bfeed\w*|\bstoke\w*|rekindl\w*|relight\w*/.test(t)) return alimentaFuoco();
+        if (/fascin\w*|\blegn\w*|bundle|firewood|\bwood\b/.test(t) && /\bmett\w*|\bgett\w*|\bbutt\w*|aggiung\w*|\busa\b|\buso\b|\bput\w*|\badd\w*|\bthrow\w*|\buse\b/.test(t)) return alimentaFuoco();
+      }
       if (luogo === "foresta" && (await gestisciForesta(t, testo)) !== false) return;
       /* dopo una sconfitta in caccia, nella sala della caccia si può solo uscire (o usare ciò che si ha nello zaino): Aldo blocca tutto il resto */
       if (luogo === "sala_caccia" && usate.caccia_rimprovero) {
@@ -9488,6 +9555,8 @@
       if (id === "giardino_fuga") return fugaGiardino();
       if (id === "fontana_bevi") return beviFontana();
       if (id === "giocattolo_siepe") return giocattoloSiepe();
+      if (id === "cripta_buio") return aggiungi({ tipo: "narra", righe: A2.braciere.buioAzione, nota: A2.braciere.notaBuio });
+      if (id === "cripta_braciere" && ettoreAndato()) return aggiungi({ tipo: "narra", righe: A2.braciere.accesoDopo });
       if (id === "cripta_tomba") return tombaLorenzo();
       if (id === "cripta_braciere_spento") return aggiungi({ tipo: "narra", righe: testoBraciereSpento() });
       if (id === "cappella_altare_scelta") return esamina(usate.q3 === "accettata" || "cappella_altare" in usate ? "cappella_altare" : "cappella_altare_vuoto");
@@ -10694,7 +10763,7 @@
         aggiungi({ tipo: "narra", box: "ok", righe: [SCI.testo({ k: "fame", preso })] });
       }
       if (!ctx) usate.cantina_cane = "sconfitto"; /* il mastino della cantina */
-      if (ctx === "ettore") { usate.ettore = "morto"; usate.q4_esito = "uccisa"; if (usate.q4 === "accettata") usate.q4 = "prova"; guarisciFerita("ettore", "Ettore"); }
+      if (ctx === "ettore") { usate.ettore = "morto"; usate.q4_esito = "uccisa"; fuocoDiEttoreLasciato(); if (usate.q4 === "accettata") usate.q4 = "prova"; guarisciFerita("ettore", "Ettore"); }
       salvaUsate();
       ultimoNemico = { ...scontro, pv: 0, svelata: true };
       chiudiScontro("vinto");

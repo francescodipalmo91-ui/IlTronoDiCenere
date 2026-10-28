@@ -1054,6 +1054,78 @@ caso("Anello del Primo Vespera: CD 12 e visione del funerale una sola volta", as
   eq(errori, [], "errori"); await chiudi();
 });
 
+/* ======================= Cripta (28/10): fuoco, buio, sarcofagi, discesa furtiva, conteggio ======================= */
+const testoDiario = (page, espr) => page.evaluate((e) => document.getElementById("diario").textContent.includes(eval(e)), espr); /* espr: testo atteso, valutato nella pagina */
+caso("Cripta: con Ettore vivo niente riposo né legna; poi un'ora di fuoco, il riposo brucia una fascina", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "cripta", usate: { riposo: "sbloccato", ettore: "incontrato", dialogo_ettore: "scelta" } }));
+  await page.evaluate(() => { luogo = "cripta"; zaino.push({ id: "legna", nome: "Fascina di legna", tipo: "dotazione", usi: 3 }); zaino.push({ id: "razioni_adele", nome: "Razioni di Adele", tipo: "consumabile", qta: 6 }); pg.dannoFisico = 5; riposa(); });
+  vero(await testoDiario(page, `A2.braciere.rifiuto[0].slice(0, 40)`), "Ettore deve rifiutare il riposo");
+  await page.evaluate(() => alimentaFuoco());
+  vero(await testoDiario(page, `A2.braciere.legnaEttore[0].slice(0, 30)`), "Ettore deve rifiutare la legna");
+  eq(await page.evaluate(() => zaino.find(x => x.id === "legna").usi), 3, "la legna non si consuma");
+  await page.evaluate(() => { usate.ettore = "morto"; fuocoDiEttoreLasciato(); });
+  eq(await page.evaluate(() => braciereAcceso()), true, "il fuoco di Ettore resta un'ora");
+  await page.evaluate(() => riposa()); await page.waitForTimeout(200);
+  eq(await page.evaluate(() => [braciereAcceso(), usate.braciere_fine]), [false, 0], "il riposo brucia l'unica ora");
+  await page.evaluate(() => { chiudiScelte(); alimentaFuoco(); alimentaFuoco(); alimentaFuoco(); });
+  eq(await page.evaluate(() => [braciereAcceso(), Math.round((usate.braciere_fine - Date.now()) / ORA_FUOCO), zaino.some(x => x.id === "legna")]), [true, 3, false], "tre fascine, tre ore");
+  await page.evaluate(() => { zaino.push({ id: "legna", nome: "Fascina di legna", tipo: "dotazione", usi: 3 }); alimentaFuoco(); alimentaFuoco(); alimentaFuoco(); });
+  eq(await page.evaluate(() => [Math.round((usate.braciere_fine - Date.now()) / ORA_FUOCO), zaino.find(x => x.id === "legna").usi]), [5, 1], "al massimo cinque ore");
+  vero(await testoDiario(page, `A2.braciere.pieno`), "braciere colmo");
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Cripta: il buio arriva solo al rientro; torcia per vedere, fascina per riaccendere", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "cappella", usate: { riposo: "sbloccato", ettore: "risparmiato", visitate: { cripta: 1 } } }));
+  await page.evaluate(() => { usate.braciere_fine = Date.now() + 1000; vai("cripta"); });
+  eq(await page.evaluate(() => [usate.cripta_buia, !!document.querySelector("#diario img.scena.buia")]), [false, false], "fuoco acceso: la cripta si vede");
+  await page.waitForTimeout(1200);
+  eq(await page.evaluate(() => [braciereAcceso(), criptaBuia()]), [false, false], "spento mentre sei dentro: l'immagine non cambia");
+  await page.evaluate(() => { vai("cappella"); vai("cripta"); });
+  eq(await page.evaluate(() => [criptaBuia(), !!document.querySelector("#diario img.scena.buia")]), [true, true], "al rientro è buio");
+  await page.fill("#testo", "esamino il sarcofago"); await page.press("#testo", "Enter"); await page.waitForTimeout(300);
+  vero(await testoDiario(page, `A2.braciere.buioAzione[0]`), "al buio non si vede nulla");
+  await page.evaluate(() => { zaino.push({ id: "torcia", nome: "Torcia", tipo: "dotazione", usi: 2 }); });
+  await page.fill("#testo", "accendo la torcia"); await page.press("#testo", "Enter"); await page.waitForTimeout(300);
+  eq(await page.evaluate(() => [criptaBuia(), braciereAcceso()]), [false, false], "la torcia fa luce ma non accende il braciere");
+  await page.evaluate(() => riposa());
+  vero(await testoDiario(page, `LUOGHI.cripta_braciere_spento.fisso[0].slice(0, 30)`), "senza braciere non si riposa");
+  await page.evaluate(() => { vai("cappella"); vai("cripta"); zaino.push({ id: "legna", nome: "Fascina di legna", tipo: "dotazione", usi: 1 }); });
+  await page.fill("#testo", "metto la legna nel braciere"); await page.press("#testo", "Enter"); await page.waitForTimeout(300);
+  eq(await page.evaluate(() => [criptaBuia(), braciereAcceso()]), [false, true], "la fascina accende anche al buio");
+  vero(await testoDiario(page, `A2.braciere.accesaBuio[0].slice(0, 30)`), "testo della fascina al buio");
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Cripta: Indagare sul sarcofago di Rodolfo e Adele dà la pagina IV; il Primo dei Vespera aspetta il quaderno", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "cripta", usate: { riposo: "sbloccato", ettore: "morto", braciere_fine: Date.now() + 3600000, visitate: { cripta: 1 } } }));
+  await page.evaluate(() => vai("cripta"));
+  eq(await page.evaluate(() => interpretaAltrove(norm("indago il sarcofago di rodolfo e adele"))), "cripta_nicchie");
+  eq(await page.evaluate(() => PROVE_DICHIARATE.cripta.Indagare), "cripta_nicchie");
+  eq(await page.evaluate(() => { LUOGHI.cripta_nicchie.poi(true); return pagineTrovate().includes(4); }), true, "la pagina IV");
+  eq(await page.evaluate(() => interpretaAltrove(norm("apro il sarcofago del primo dei vespera"))), "cripta_sarcofago");
+  await page.evaluate(() => esamina("cripta_sarcofago"));
+  vero(await testoDiario(page, `LUOGHI.cripta_primo_chiuso.fisso[0].slice(0, 40)`), "senza quaderno il coperchio resta sigillato");
+  eq(await page.evaluate(() => !!document.querySelector("#azioni:not([hidden]) button")), false, "nessuna prova di Atletica");
+  await page.evaluate(() => { usate.diario_aperto = true; esamina("cripta_sarcofago"); });
+  eq(await page.evaluate(() => !!document.querySelector("#azioni:not([hidden]) button")), true, "con il quaderno aperto la prova c'è");
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Cripta: discesa furtiva riuscita, scelta tra farsi avanti e colpire; il conteggio mostra il numero e a volte la frase", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "cappella", usate: { riposo: "sbloccato", q4: "accettata", ettore_tracce: "ko" } }));
+  eq(await page.evaluate(() => { applicaTracce(); return LUOGHI.cripta_furtiva.prova.cd; }), 14, "tracce fallite: CD 14");
+  await page.evaluate(() => { usate.ettore_tracce = true; applicaTracce(); usate.ettore_sorpreso = true; vai("cripta"); });
+  vero(await testoDiario(page, `STANZE.cripta.introFurtiva[1].slice(0, 40)`), "descrizione della discesa furtiva");
+  await page.waitForSelector("#azioni:not([hidden]) button, #scelte button", { timeout: 5000 });
+  const bottoni = await page.evaluate(() => [...document.querySelectorAll("#azioni button, #scelte button")].map(x => x.textContent));
+  const etich = await page.evaluate(() => [A2.furtivo.avanti, A2.furtivo.colpisci]);
+  vero(bottoni.includes(etich[0]) && bottoni.includes(etich[1]), "mancano le due scelte: " + bottoni);
+  await page.evaluate(() => [...document.querySelectorAll("#azioni button, #scelte button")].find(x => x.textContent === A2.furtivo.avanti).click());
+  await page.waitForTimeout(500);
+  eq(await page.evaluate(() => [usate.dialogo_ettore, usate.ettore_sorpresa_usata]), ["inizio_furtivo", true], "dialogo furtivo, sorpresa persa");
+  const conta = await page.evaluate(() => { scontro = { conta: 0 }; const r = []; for (let i = 0; i < 11; i++) r.push(contaEttore()); scontro = null; return r; });
+  eq([conta[0], conta[1], conta[3], conta[10]], await page.evaluate(() => [ET.conta[0], ET.numeri[1], ET.conta[3], ET.conta[10]]), "numero e frasi");
+  eq(errori, [], "errori"); await chiudi();
+});
+
 (async () => {
   const browser = await chromium.launch();
   let ko = 0;

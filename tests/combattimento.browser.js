@@ -876,7 +876,7 @@ caso("Cacce: le rastrelliere sono una tendina con 8 sotto-tendine (Elisir compre
   eq(await page.evaluate(() => usate.armeria_scelte), 1, "bloccata: la scelta non si spende");
   await page.evaluate(() => { usate.cc_fatte_lista = ["ratto", "corvo"]; prendiDallaRastrelliera(ARMERIA.find(o => o.id === "lama_cervo")); });
   eq(await page.evaluate(() => usate.armeria_scelte), 0);
-  vero(await page.evaluate(() => zaino.some(x => x.tipo === "arma" && /Cervo/.test(x.nome) && x.danno === "1d8")), "manca la lama nello zaino");
+  vero(await page.evaluate(() => zaino.some(x => x.tipo === "arma" && /Cervo/.test(x.nome) && x.danno === "1d8" && x.bonus === livelloPg())), "manca la lama nello zaino (+livello)");
   eq(errori, [], "errori"); await chiudi();
 });
 caso("Cacce: accetto, la preda mi aspetta in giardino, la abbatto e consegno il trofeo ad Aldo", async (b) => {
@@ -906,7 +906,7 @@ caso("Cacce: il branco è una sola creatura che attacca due volte per turno", as
   await accoda(page, [R(1, 20), R(1, 20)], [0.1, 0.9]);
   await aspettaTurnoPg(page);
   eq(await page.evaluate(() => scontro.turno.parti.length), 2, "due attacchi nel turno del branco");
-  vero(await page.evaluate(() => scontro.pvMax >= 8 && scontro.pvMax <= 8 + 6 + 2), "salute condivisa del branco");
+  eq(await page.evaluate(() => scontro.pvMax), 26, "salute condivisa del branco");
   eq(await page.evaluate(() => CB.nome), "Branco di segugi di cenere");
   eq(errori, [], "errori"); await chiudi();
 });

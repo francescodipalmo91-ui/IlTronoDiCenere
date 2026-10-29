@@ -298,6 +298,19 @@ caso("Agguati: orchi e goblin lasciano un oggetto comune; PE a scalare (gruppi p
   eq(errori, [], "errori"); await chiudi();
 });
 
+caso("Agguati: la banda si muove come un gruppo (scena prima degli attacchi); il pugnale di Isotta è un'arma 1d4 + livello", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ livello: 4 }), BRONZO({ livello: 4, esperienza: 2400 }));
+  await page.evaluate(() => { NEMICI.banda_orchi.abilita = []; avviaScontro("banda_orchi", { ctx: "agguato", testi: "banda_orchi", primo: "nem" }); });
+  await aspettaTurnoPg(page);
+  const d = await diario(page), sc = await page.evaluate(() => PREDE.banda_orchi.it.scene);
+  vero(sc.some(x => d.includes(x)), "manca la scena di gruppo");
+  eq(await page.evaluate(() => [scontro.pvMax, NEMICI.banda_goblin.pvFissi]), [28, 20]);
+  await page.evaluate(() => { chiudiScontro("fuggito"); scontro = null; bottinoAgguato("isotta", { L: 4 }); });
+  const p = await page.evaluate(() => zaino.find(x => x.nome === "Pugnale della Biscia"));
+  eq([p.tipo, p.danno, p.bonus, p.mani], ["arma", "1d4", 4, 1]);
+  eq(errori, [], "errori"); await chiudi();
+});
+
 (async () => {
   const browser = await chromium.launch();
   let ok = 0;

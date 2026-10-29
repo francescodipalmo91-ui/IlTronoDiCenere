@@ -8120,7 +8120,7 @@
     const BOTTINO_AVV = {
       brunilde: (L) => [{ nome: "Ascia da battaglia di Mezzaluna", tipo: "arma", danno: "1d8", tipoDanno: "Tagliente", mani: 2, bonus: L, alias: ["ascia", "axe"] }],
       corrado: () => [{ nome: "Scudo di Vallerossa", tipo: "scudo", ca: 2, malus: 1, bonus: 1, alias: ["scudo", "shield"] }],
-      isotta: () => [{ nome: "Pugnale della Biscia", tipo: "dotazione", usi: null, alias: ["pugnale", "dagger"] }],
+      isotta: (L) => [{ nome: "Pugnale della Biscia", tipo: "arma", danno: "1d4", tipoDanno: "Perforante", mani: 1, bonus: L, alias: ["pugnale", "dagger"] }],
       anselmo: (L) => [{ nome: "Bastone di Anselmo", tipo: "arma", danno: "1d6", tipoDanno: "Contundente", mani: 2, bonus: L, alias: ["bastone", "staff"] }],
       tobia: () => [{ nome: "Piede di porco", tipo: "dotazione", usi: null }, { nome: "Corda e rampino", tipo: "dotazione", usi: null }]
     };
@@ -8339,7 +8339,7 @@
     const nomeArmeria = (o) => o.id && Q.oggetti[o.id] ? Q.oggetti[o.id].nome : N("oggetti", o.nome);
     const infoArmatura = (o) => [U.caBonus(Number(o.ca) || 0), Number(o.malus) ? U.malusAg(Number(o.malus)) : U.noMalus].join(" · ");
     const dettaglioArmeria = (o) => o.id ? Q.oggetti[o.id].testo
-      : o.tipo === "arma" ? [o.danno + " + " + U.modLotta, N("danni", o.tipoDanno), U.mani(o.mani)].join(" · ")
+      : o.tipo === "arma" ? [o.danno + " + " + livelloPg() + " + " + U.modLotta, N("danni", o.tipoDanno), U.mani(o.mani)].join(" · ")
       : (o.tipo === "armatura" || o.tipo === "scudo") ? infoArmatura(o)
       : (Lingua.desc(o.nome) || "") + (o.usi ? ` (×${o.usi})` : "");
     function mostraArmeria() { aggiungi({ tipo: "armeria", fuori: true }); }
@@ -8410,10 +8410,10 @@
       if (!(Number(usate.armeria_scelte) > 0) || (o.sblocco && ccFatte() < o.sblocco) || !permessoArmeria(o)) return;
       usate.armeria_scelte = Number(usate.armeria_scelte) - 1; salvaUsate();
       let it;
-      if (o.sp === "arma") it = { id: nuovoId(), nome: Q.oggetti[o.id].nome, tipo: "arma", danno: o.danno, tipoDanno: o.tipoDanno, mani: o.mani, alias: [], testo: Q.oggetti[o.id].testo };
+      if (o.sp === "arma") it = { id: nuovoId(), nome: Q.oggetti[o.id].nome, tipo: "arma", danno: o.danno, tipoDanno: o.tipoDanno, mani: o.mani, bonus: livelloPg(), alias: [], testo: Q.oggetti[o.id].testo }; /* 29/10: armi delle cacce comuni «+livello», fissato alla scelta */
       else if (o.sp === "armatura") it = { id: nuovoId(), nome: Q.oggetti[o.id].nome, tipo: "armatura", ca: o.ca, malus: o.malus, testo: Q.oggetti[o.id].testo };
       else if (o.sp === "reperto") it = { id: o.id, nome: Q.oggetti[o.id].nome, tipo: "reperto", testo: Q.oggetti[o.id].testo, alias: [] };
-      else if (o.tipo === "arma") it = { id: nuovoId(), nome: o.nome, tipo: "arma", danno: o.danno, tipoDanno: o.tipoDanno, mani: o.mani, alias: [] };
+      else if (o.tipo === "arma") it = { id: nuovoId(), nome: o.nome, tipo: "arma", danno: o.danno, tipoDanno: o.tipoDanno, mani: o.mani, bonus: livelloPg(), alias: [] };
       else if (o.tipo === "armatura") it = { id: nuovoId(), nome: o.nome, tipo: "armatura", ca: o.ca, malus: o.malus };
       else if (o.tipo === "scudo") it = { id: nuovoId(), nome: "Scudo", tipo: "scudo", ca: o.ca, malus: o.malus };
       else it = { id: nuovoId(), nome: o.nome, tipo: "dotazione", usi: o.usi != null ? o.usi : null, testo: Lingua.desc(o.nome), impugnabile: !!o.impugnabile };
@@ -10460,7 +10460,7 @@
           crit: "The wolf springs without a sound, leaps on you and pins you down: its fangs seek your throat and find your shoulder, where they sink in.",
           intro: ["A low, long howl runs across the garden. A tall, gaunt wolf, its fur ash-grey and its eyes two embers, steps out of the chapel's shadow and circles you, unhurried."],
           vittoria: "The wolf howls one last time, a long sound that breaks in half, and crumbles into a swirl of grey ash that the breeze carries beyond the hedges." } },
-      branco: { grado: 3, livello: 4, zone: [], ca: 9, dadoVita: 6, pvBase: 8, dannoDado: 4, attacco: 0, attacchi: 2, xp: 200, pa: 5, immune: ["ustione", "sangue"], /* statistiche da fissare con il punto 2 */
+      branco: { grado: 3, livello: 4, zone: [], ca: 11, pvFissi: 26, dannoDado: 4, dannoBonus: 1, attacco: 3, attacchi: 2, xp: 200, pa: 5, immune: ["ustione", "sangue"], /* 29/10: statistiche fisse, 15% di sconfitta peggiore al livello 4 */
         abilita: [{ id: "ululato_branco", costo: 2, tipo: "ts", stato: "paura", ts: "Spirito", cd: 12 }, { id: "assalto", costo: 2, tipo: "colpo", stato: "ustione", ts: "Vigore", cd: 12 }],
         it: { nome: "Branco di segugi di cenere", il: "il branco", Il: "Il branco", al: "al branco", del: "del branco", att1: "Morsi", att2: "Assalto", sotto: "Gruppo di creature di cenere · giardino",
           cond: ["Il branco ringhia compatto: sembra ancora del tutto integro.", "Il branco è ferito: qualche segugio zoppica, perdendo cenere.", "Il branco arretra, i corpi consumati: pochi segugi reggono ancora in piedi.", "Il branco è sparso a terra, ridotto in cenere."],
@@ -10476,7 +10476,7 @@
           crit: "The pack closes a circle around you and hurls itself at you as a single beast: for an instant you feel a thousand fangs upon you.",
           intro: ["The hedges shudder: from every side low, smoking shapes step out. Lean hounds, fur ash-grey, eyes two points of ember. Five of them, perhaps six. They ring you in silence, then one growls, and all together they begin to close in."],
           vittoria: "The last hound collapses with a yelp. One after another the bodies flake into ash and the whole pack scatters on the garden wind." } },
-      sciame: { grado: 3, livello: 4, zone: [], ca: 9, dadoVita: 4, pvBase: 6, dannoDado: 4, attacco: -1, attacchi: 3, xp: 200, pa: 5, immune: ["ustione"], /* statistiche da fissare con il punto 2 */
+      sciame: { grado: 3, livello: 4, zone: [], ca: 12, pvFissi: 22, dannoDado: 4, dannoBonus: 0, attacco: 2, attacchi: 3, xp: 200, pa: 5, immune: ["ustione"], /* 29/10: statistiche fisse, 13% di sconfitta peggiore al livello 4 */
         abilita: [{ id: "nuvola_becchi", costo: 2, tipo: "ts", stato: "cieco", ts: "Agilità", cd: 12 }, { id: "piume_ardenti", costo: 2, tipo: "colpo", stato: "ustione", ts: "Vigore", cd: 12 }],
         it: { nome: "Sciame di corvi di brace", il: "lo sciame", Il: "Lo sciame", al: "allo sciame", del: "dello sciame", att1: "Beccate", att2: "Artigli", sotto: "Gruppo di creature di brace · giardino",
           cond: ["Lo sciame turbina compatto: sembra ancora del tutto integro.", "Lo sciame è ferito: qualche corvo cade a terra, spento.", "Lo sciame si sfilaccia: pochi corvi reggono ancora il volo.", "Lo sciame è caduto, ridotto in cenere."],
@@ -10649,13 +10649,14 @@
           crit: "The orc raises its axe in both hands and brings it down on you with a roar: the blow tears the breath and nearly the senses out of you.",
           agguati: ["The ground shakes under heavy steps. An orc bursts from the shadow of a wall and bars your way. Its axe is already raised.", "You smell it before you see it: sweat, old blood, smoke. The orc grunts a word you do not understand, then charges."],
           vittoria: "The orc falls to its knees, then face down. The dull thud sends the crows flying from the cemetery." } },
-      banda_goblin: { agguato: true, umano: true, gruppo: true, livello: 4, peFino: 4, zone: [], ca: 12, pvFissi: 18, dannoDado: 4, dannoBonus: 0, attacco: 2, attacchi: 2, xp: 125, xpZona: 125, pa: 4,
+      banda_goblin: { agguato: true, umano: true, gruppo: true, livello: 4, peFino: 4, zone: [], ca: 12, pvFissi: 20, dannoDado: 4, dannoBonus: 0, attacco: 2, attacchi: 2, xp: 125, xpZona: 125, pa: 4,
         abilita: [{ id: "lama_sporca", costo: 2, tipo: "colpo", stato: "veleno", ts: "Vigore", cd: 12 }],
         it: { nome: "Banda di goblin", il: "la banda", Il: "La banda", al: "alla banda", del: "della banda", att1: "Coltellate", att2: "Sassate", sotto: "Gruppo di goblin · agguato",
           cond: ["La banda ti gira attorno, strillando: sembra ancora del tutto integra.", "La banda è ferita: un goblin zoppica, un altro si tiene il braccio.", "La banda si sfalda: i pochi goblin in piedi si guardano alle spalle.", "La banda è a terra, dispersa."],
           ok1: ["Due goblin ti si buttano alle gambe insieme: un coltello trova la carne.", "Mentre ne scacci uno, un altro ti punge alla schiena."],
           ok2: ["Un sasso ti centra la tempia e per un istante vedi bianco.", "Una pioggia di sassi ti tempesta le spalle: uno fa male davvero."],
           crit: "La banda ti salta addosso tutta insieme: mani, unghie e coltelli dappertutto, e per un istante non riesci nemmeno a respirare.",
+          scene: ["Il goblin più grosso si fa avanti; gli altri restano indietro a strillare incoraggiamenti.", "Due goblin si spingono a vicenda per arrivare primi: il terzo ne approfitta e ti salta addosso.", "Uno dei goblin ti tira un sasso, un altro ride così forte che quasi cade.", "I goblin ti girano attorno: uno finta, l'altro colpisce.", "Il più piccolo della banda viene spinto avanti a calci dagli altri, che si godono lo spettacolo."],
           agguati: ["Risatine stridule da ogni lato. Da dietro le lapidi e i cespugli spuntano teste verdi, una, tre, cinque: una banda di goblin, coltelli in mano, che ti chiude il cerchio attorno.", "«Roba! Tanta roba!» Una voce stridula, poi un coro. I goblin escono allo scoperto tutti insieme e caricano senza ordine, spingendosi a vicenda."],
           vittoria: "L'ultimo goblin in piedi lascia cadere il coltello e scappa strillando. Gli altri restano a terra. Tra stracci e ossa di topo c'è qualcosa che vale la pena raccogliere." },
         en: { nome: "Goblin Gang", the: "the gang", The: "The gang", att1: "Stabs", att2: "Stones", sotto: "Group of goblins · ambush",
@@ -10663,15 +10664,17 @@
           ok1: ["Two goblins throw themselves at your legs together: a knife finds flesh.", "As you drive one off, another pricks your back."],
           ok2: ["A stone hits your temple and for an instant you see white.", "A hail of stones pelts your shoulders: one really hurts."],
           crit: "The whole gang leaps on you at once: hands, nails and knives everywhere, and for an instant you cannot even breathe.",
+          scene: ["The biggest goblin steps forward; the others hang back, shrieking encouragement.", "Two goblins shove each other to get there first: the third takes the chance and leaps at you.", "One of the goblins throws a stone at you, another laughs so hard it nearly falls over.", "The goblins circle you: one feints, the other strikes.", "The smallest of the gang is kicked forward by the others, who enjoy the show."],
           agguati: ["Shrill giggles from every side. From behind the gravestones and bushes green heads pop up, one, three, five: a gang of goblins, knives in hand, closing the circle around you.", "“Stuff! Lots of stuff!” A shrill voice, then a chorus. The goblins break cover all together and charge with no order at all, shoving one another."],
           vittoria: "The last goblin standing drops its knife and runs off shrieking. The others stay on the ground. Among rags and rat bones there is something worth picking up." } },
-      banda_orchi: { agguato: true, umano: true, gruppo: true, livello: 4, peFino: 4, zone: [], ca: 10, pvFissi: 26, dannoDado: 6, dannoBonus: 0, attacco: 3, attacchi: 2, xp: 150, xpZona: 150, pa: 5,
+      banda_orchi: { agguato: true, umano: true, gruppo: true, livello: 4, peFino: 4, zone: [], ca: 10, pvFissi: 28, dannoDado: 6, dannoBonus: 0, attacco: 3, attacchi: 2, xp: 150, xpZona: 150, pa: 5,
         abilita: [{ id: "ruggito", costo: 2, tipo: "ts", stato: "paura", ts: "Spirito", cd: 12 }, { id: "fendente_orco", costo: 2, tipo: "colpo", stato: "sangue", ts: "Vigore", cd: 12 }],
         it: { nome: "Banda di orchi", il: "la banda", Il: "La banda", al: "alla banda", del: "della banda", att1: "Asce", att2: "Mazze", sotto: "Gruppo di orchi · agguato",
           cond: ["Gli orchi avanzano spalla a spalla: la banda sembra ancora del tutto integra.", "La banda è ferita: uno degli orchi sanguina e impreca nella sua lingua.", "La banda vacilla: gli orchi rimasti arretrano di un passo.", "La banda è a terra."],
           ok1: ["Un'ascia ti cala sulla spalla mentre pari quella dell'altro orco.", "Due orchi ti stringono da lati opposti: una lama trova il fianco."],
           ok2: ["Una mazza ti spazza le gambe e finisci in ginocchio.", "Il manico di una mazza ti centra lo sterno."],
           crit: "Gli orchi colpiscono insieme, con un ruggito solo: due colpi, uno sopra l'altro, e il mondo ti si rovescia attorno.",
+          scene: ["L'orco con la cicatrice si fa avanti; gli altri due guardano divertiti, appoggiati alle asce.", "Gli orchi si danno il turno come a una festa: tocca al più giovane, e gli altri lo incitano battendo le armi.", "Uno degli orchi grugnisce qualcosa agli altri, che scoppiano a ridere. Poi carica.", "Due orchi avanzano insieme, il terzo resta indietro a sbarrarti la strada.", "Il capo della banda alza una mano: gli altri si fermano, e lui viene avanti da solo, per il gusto di farlo."],
           agguati: ["Il terreno trema sotto passi pesanti, e non sono di uno solo. Due orchi sbucano dall'ombra del muro, poi un terzo. Ti sbarrano la strada senza fretta: sanno di essere di più.", "L'odore arriva prima di loro: sudore, sangue vecchio, fumo. Poi le voci, gutturali, e la banda di orchi esce allo scoperto con le armi già alzate."],
           vittoria: "L'ultimo orco crolla sopra gli altri con un tonfo che fa volare via i corvi dal cimitero. Il silenzio torna, pesante." },
         en: { nome: "Orc Warband", the: "the warband", The: "The warband", att1: "Axes", att2: "Maces", sotto: "Group of orcs · ambush",
@@ -10679,6 +10682,7 @@
           ok1: ["An axe comes down on your shoulder while you parry the other orc's.", "Two orcs close in from opposite sides: a blade finds your flank."],
           ok2: ["A mace sweeps your legs and you drop to your knees.", "The haft of a mace hits your breastbone."],
           crit: "The orcs strike together, with a single roar: two blows, one on top of the other, and the world turns over around you.",
+          scene: ["The scarred orc steps forward; the other two watch, amused, leaning on their axes.", "The orcs take turns as if at a feast: it is the youngest's go, and the others egg him on, beating their weapons.", "One of the orcs grunts something to the others, who burst out laughing. Then it charges.", "Two orcs advance together, the third hangs back to bar your way.", "The leader of the warband raises a hand: the others stop, and he comes forward alone, just for the pleasure of it."],
           agguati: ["The ground shakes under heavy steps, and not just one pair. Two orcs burst from the shadow of the wall, then a third. They bar your way unhurried: they know they outnumber you.", "The smell arrives before they do: sweat, old blood, smoke. Then the voices, guttural, and the orc warband breaks cover with weapons already raised."],
           vittoria: "The last orc collapses on top of the others with a thud that sends the crows flying from the cemetery. Silence returns, heavy." } },
       /* i cinque: livello = personaggio (minimo 2), +1 al ritorno; salute 15 + 3 per livello oltre il 2 (+ pvMod); +3 per colpire; arma magica dado + livello; 6 PA; CD 8 + livello */
@@ -11555,6 +11559,7 @@
       scontro.vantaggioNem = false;
       const m = modNem("Lotta") + (Number(NEMICI[(scontro || ultimoNemico).id].attacco) || 0) + (Number((scontro || ultimoNemico).bonusAtt) || 0) + CMB.modAttaccoNem(scontro), d = at.d, tot = d + m, ca = caScontro(), crit = d === 20 && CMB.critNemPossibile(scontro), ok = crit || tot > ca;
       const righe = [];
+      if (D.gruppo && scontro.attRest === Math.max(0, (Number(D.attacchi) || 1) - 1)) { const sc = PREDE[scontro.id][LINGUA === "en" ? "en" : "it"].scene; if (sc) righe.push(pesca(sc)); } /* 29/10: la banda si muove come un gruppo */
       if (conto) righe.push(conto.riga);
       if (conto && conto.dodici) righe.push(ET.scontro.dodiciLog);
       if (fendente) righe.push(ET.scontro.fendenteLog);

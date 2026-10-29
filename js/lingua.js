@@ -45,10 +45,6 @@
 
   /* Descrizioni di dotazione e scudo */
   const DESC = {
-    "Pugnale della Biscia": {
-      it: "Il pugnale sottile di Isotta, la lama scurita da un veleno ormai secco. Troppo corto per combattere ad armi pari, ma perfetto per tagliare lacci e forzare sigilli.",
-      en: "Isotta's slender dagger, its blade darkened by a long-dried poison. Too short to fight on equal terms, but perfect for cutting cords and prying seals."
-    },
     "Scudo di Vallerossa": {
       it: "Lo scudo di Corrado, ammaccato da cento parate, con lo stemma della sua vecchia compagnia raschiato via.",
       en: "Corrado's shield, dented by a hundred parries, the crest of his old company scraped away."

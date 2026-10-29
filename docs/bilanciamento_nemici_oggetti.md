@@ -308,8 +308,8 @@ Il lupo normale è stato abbassato: con 11 di salute e 1d6 + 1 dava il 15% di sc
 | Corvo di brace | 1 | 3 | Come sopra |
 | Cinghiale di brace | 2 | 4 | Come sopra |
 | Lupo di cenere | 2 | 4 | Come sopra |
-| Branco di segugi di cenere | 3 | 5 | Ululato del branco (2): TS Spirito → Impaurito; Assalto (2): Ustionato |
-| Sciame di corvi di brace | 3 | 5 | Nuvola di becchi (2): TS Agilità → Accecato; Piume ardenti (2): Ustionato |
+| Branco di segugi di cenere (26 salute, CA 11, +3, 2 × 1d4 + 1; 15% al livello 4) | 3 | 5 | Ululato del branco (2): TS Spirito → Impaurito; Assalto (2): Ustionato |
+| Sciame di corvi di brace (22 salute, CA 12, +2, 3 × 1d4; 13% al livello 4) | 3 | 5 | Nuvola di becchi (2): TS Agilità → Accecato; Piume ardenti (2): Ustionato |
 
 ### Mastini
 
@@ -514,7 +514,7 @@ Livello = livello del personaggio (minimo 2), +1 al ritorno. **Salute 15 + 3 per
 |---|---|---|---|---|---|
 | **Brunilde Mezzaluna** | Nana, minatrice: entrata dal pozzo di una galleria crollata. Brusca, conta i giorni in monete di rame | Ascia a due mani 1d8 + liv; salute −2; CA 13 | Squarcio (2): se colpisce, TS Vigore → Sanguinamento | Ascia di Mezzaluna (due mani) | «Tu hai avuto una porta. Io un pozzo.» |
 | **Corrado Vallerossa** | Umano, soldato disertore: crede ancora negli ordini, ora li prende dal vecchio | Spada e scudo 1d6 + liv; CA 14 | Colpo di scudo (2): TS Vigore → Indebolito | Scudo di Vallerossa (+1 CA) | «Anche qui qualcuno dà ordini. Io li eseguo.» |
-| **Isotta la Biscia** | Elfa, sicaria: seguiva un contratto fin dentro la grotta | Due pugnali, 2 attacchi da **1d4 + metà del livello** (con il livello pieno era troppo forte: Arcanista 37-46% di sconfitta); salute −3; CA 13 | Lama intinta (2): se colpisce, TS Vigore → Avvelenato | Pugnale della Biscia (Dotazione) | «Il vecchio dice che hai la chiave. Fammela vedere.» |
+| **Isotta la Biscia** | Elfa, sicaria: seguiva un contratto fin dentro la grotta | Due pugnali, 2 attacchi da **1d4 + metà del livello** (con il livello pieno era troppo forte: Arcanista 37-46% di sconfitta); salute −3; CA 13 | Lama intinta (2): se colpisce, TS Vigore → Avvelenato | Pugnale della Biscia (arma 1d4 + livello, una mano) | «Il vecchio dice che hai la chiave. Fammela vedere.» |
 | **Fra' Anselmo** | Umano, monaco itinerante: ha smesso di pregare per uscire | Bastone 1d6 + liv; CA 12 | Anatema (2): TS Spirito → Indebolito · Preghiera (2, una volta): si cura 1d6 + liv | Bastone di Anselmo (due mani) | «Ho pregato per uscire. Mi hanno risposto i cani.» |
 | **Tobia Spillo** | Gnomo, trappolaio: ruba più che combattere | Pugnale 1d4 + liv; salute −3; CA 13 | Tagliola (2): al posto dell'attacco, TS Agilità → Sanguinamento · **Sotto un terzo di salute prova a fuggire**: se ci riesce torna più avanti, come se l'avessi risparmiato | Borsa degli attrezzi: piede di porco e corda (Dotazione) | «Non è niente di personale. È che la porta l'hai trovata tu.» |
 
@@ -552,14 +552,14 @@ Le indicazioni di scena (tra parentesi) diventano narrazione, le battute dialogo
 |---|---|---|---|---|---|---|---|---|
 | Goblin predone | 2 | 12 | 13 | +2 | pugnale 1d4 + 1 | 3: Lama sporca (2), se colpisce TS Vigore CD 11 → Avvelenato | 75 | 7% al livello 2 |
 | Orco razziatore | 3 | 18 | 11 | +4 | ascia 1d8 | 4: Fendente (2), se colpisce TS Vigore CD 12 → Sanguinamento · Ruggito (2), TS Spirito CD 12 → Impaurito | 100 | 14% al livello 3 (senza il Ruggito nella simulazione) |
-| Banda di goblin | 4 | 18 | 12 | +2 | 2 attacchi, 1d4 | 4: Lama sporca (2), TS Vigore CD 12 → Avvelenato | 125 | 11% al livello 4 (Arcanista, pessimista; le altre classi sotto il 2%) |
-| Banda di orchi | 4 | 26 | 10 | +3 | 2 attacchi, 1d6 | 5: Ruggito (2) e Fendente (2), CD 12 | 150 | 12% al livello 4 (Arcanista, pessimista; le altre sotto il 4%) |
+| Banda di goblin | 4 | 20 | 12 | +2 | 2 attacchi, 1d4 | 4: Lama sporca (2), TS Vigore CD 12 → Avvelenato | 125 | 13,5% al livello 4 (Arcanista, pessimista; le altre classi sotto il 2%) |
+| Banda di orchi | 4 | 28 | 10 | +3 | 2 attacchi, 1d6 | 5: Ruggito (2) e Fendente (2), CD 12 | 150 | 15% al livello 4 (Arcanista, pessimista; le altre sotto il 5%) |
 
-**Gruppi (29 ottobre, regole già scritte):** come le prede di grado 3, la banda è una creatura sola: salute e PA condivisi, più attacchi per turno, danni bassi. Compaiono dal livello 4. PE pieni fino al livello di riferimento (orco e goblin 3, bande 4), metà al successivo, poi niente.
+**Gruppi (29 ottobre, regole già scritte):** come le prede di grado 3, la banda è una creatura sola: salute e PA condivisi, più attacchi per turno, danni bassi. Compaiono dal livello 4. **Alzate leggermente (Francesco, 29 sera)** e con una scena di gruppo prima degli attacchi di ogni turno («l'orco con la cicatrice si fa avanti; gli altri due guardano divertiti»): si capisce che è un piccolo gruppo. PE pieni fino al livello di riferimento (orco e goblin 3, bande 4), metà al successivo, poi niente.
 
 **Frasi di orchi e goblin (Claude, approvate da Francesco):** due agguati a caso per ciascuno e una frase di sconfitta; per le bande due agguati e una sconfitta scritti sullo stesso tono.
 
-**Nel codice (29 sera):** tutto. Incontro fuori casa dopo il bronzo 50:25:25; 1 agguato su 5 è uno dei cinque ancora in gioco (non uccisi; i risparmiati solo dopo un riposo). Statistiche dei cinque calcolate a ogni scontro dal livello del personaggio. Resa a un terzo della salute dopo la tua azione; Tobia prova a scappare (Atletica o Acrobazia, la migliore, contro CD 10 + il suo livello per afferrarlo). Fra' Anselmo usa la Preghiera sotto metà salute. Vulnerabili all'Ombra anche con gli incantesimi. Bottino: il pezzo dei cinque con il bonus del livello (Ascia da battaglia di Mezzaluna, solo Guerriero come le altre armi «da battaglia»; Scudo di Vallerossa +1; Pugnale della Biscia; Bastone di Anselmo; piede di porco e corda di Tobia); orchi e goblin un'arma, un'armatura o uno scudo permessi alla classe, il 15% delle volte con il bonus. **Armi «+livello»:** il bonus ora conta davvero nel danno (attacchi e tecniche); prima era solo nel nome.
+**Nel codice (29 sera):** tutto. Incontro fuori casa dopo il bronzo 50:25:25; 1 agguato su 5 è uno dei cinque ancora in gioco (non uccisi; i risparmiati solo dopo un riposo). Statistiche dei cinque calcolate a ogni scontro dal livello del personaggio. Resa a un terzo della salute dopo la tua azione; Tobia prova a scappare (Atletica o Acrobazia, la migliore, contro CD 10 + il suo livello per afferrarlo). Fra' Anselmo usa la Preghiera sotto metà salute. Vulnerabili all'Ombra anche con gli incantesimi. Bottino: il pezzo dei cinque con il bonus del livello (Ascia da battaglia di Mezzaluna, solo Guerriero come le altre armi «da battaglia»; Scudo di Vallerossa +1; Pugnale della Biscia, ora un'arma 1d4 + livello, una mano (Francesco, 29 sera); Bastone di Anselmo; piede di porco e corda di Tobia); orchi e goblin un'arma, un'armatura o uno scudo permessi alla classe, il 15% delle volte con il bonus. **Armi «+livello»:** il bonus ora conta davvero nel danno (attacchi e tecniche); prima era solo nel nome. Dal 29 sera anche le armi delle rastrelliere di Aldo (comuni e speciali) prendono il livello del personaggio al momento della scelta.
 
 ---
 

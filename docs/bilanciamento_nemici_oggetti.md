@@ -230,11 +230,11 @@ Tre stati che oggi infligge solo il giocatore tornano contro di lui in versione 
 |---|---|---|---|
 | Esposto | Gli attacchi contro il bersaglio fanno critico con un numero in meno, mai sotto 18 | **Preda segnata** | Dafne |
 | Sigillo | Marchio dell'Arcanista, fino a 3; esplode con la Detonazione | **Sigilli di zaffiro** | Atena |
-| Incrinatura | −1 CA per carica, fino a 3, per tutto lo scontro | Da definire | Enea (o il sovrano, con l'alabarda) |
+| Incrinatura | −1 CA per carica, fino a 3, per tutto lo scontro | Da definire | Enea, solo con il maglio (o il sovrano, con l'alabarda) |
 
 - **Preda segnata** (Dafne, 3 PA): per 2 turni Dafne fa critico con 19-20 contro di te, e ogni suo critico ti infligge **Avvelenato potenziato** (1d6). Il fiele bevuto prima protegge dal veleno, non dal critico.
 - **Sigilli di zaffiro** (Atena): le sue abilità incidono sigilli sul personaggio, al massimo 2. Con 2 sigilli usa **«La lacrima chiama»** (4 PA, una volta): consuma i sigilli, TS Spirito → **Bloccato 1** e 1d4 danni mentali per sigillo, non letali (i guardiani non uccidono). **I sigilli si spezzano se colpisci Atena con un critico.** È il controllo forte di Atena legato alla lacrima; lo zaffiro gela come quello di Adele.
-- **Incrinatura corrotta:** da scrivere con il carattere di Enea.
+- **Incrinatura corrotta:** carattere di Enea deciso il 29 ottobre (storia_casa_vespera.md, sezione 10b). Da scrivere al prossimo passo: arriva solo quando Enea impugna il maglio, e serve un modo per spezzarla, come i sigilli di Atena (al livello 3 un −CA che dura tutto lo scontro, sommato alla risurrezione, rischia di essere troppo).
 
 ---
 
@@ -324,7 +324,7 @@ Il lupo normale è stato abbassato: con 11 di salute e 1d6 + 1 dava il 15% di sc
 | Guardiano | Stato firma | Note |
 |---|---|---|
 | Ettore | Sanguinamento (coltello), Ustionato (braci) | Sezione 5 |
-| Enea | Da definire | Serve prima il carattere; candidato per l'Incrinatura corrotta |
+| Enea | Da definire (Incrinatura corrotta, solo con il maglio) | Carattere deciso (storia, sezione 10b). Mani nude o maglio secondo il fermaglio di bronzo e la spada del Retaggio; maglio sotto il 50% se scopre il fermaglio. Risurrezione una volta (1d4 + livello), niente cura al 50%. Sdegno del cavaliere con la spada: +1 per colpire e +5 salute, tolto da una prova di Socialità. Numeri da fare |
 | Dafne | Avvelenato | Primo turno: tiro d'arco con vantaggio (gratis, senza stato). Poi lancia: Lancia avvelenata (2): TS Vigore → Avvelenato. Preda segnata (3, sezione 3b). Trappola (4, una volta): TS Agilità → Bloccato 1. Oggetto di recupero: Sorso di resina (+3 PA) |
 | Atena | Impaurito | Presenza (2): TS Spirito → Impaurito. Sigilli di zaffiro e «La lacrima chiama» (4, una volta): sezione 3b |
 | Sovrano | Indebolito, Accecato, Impaurito (fuoco freddo) | Sezione 5b |
@@ -473,7 +473,7 @@ Il set Vespera copre mantello, guanti, elmo, arma e corazza. Il bottino magico v
 | Guardiano | Se ucciso | Oggetto magico |
 |---|---|---|
 | Ettore | Spada sbreccata di Valdombra (una mano, 1d6 + 2, sul critico Sanguinamento, 1 punto); Coltello delle tacche (Dotazione, 1d4 perforante, senza poteri) | 60%, tabella bronzo |
-| Enea | Da definire | 70%, argento |
+| Enea | Da definire (il maglio, solo se lo ha impugnato) | 70%, argento |
 | Dafne | Lancia da caccia (due mani, 1d8 + 4, potere da definire); l'arco resta descrittivo (il giocatore non usa archi). Se vince la gara: lascia comunque corno, fermaglio e i suoi averi | 80%, oro |
 | Atena | Da definire | 90%, platino |
 
@@ -507,13 +507,20 @@ Il set Vespera copre mantello, guanti, elmo, arma e corazza. Il bottino magico v
 - **Testi:** tre frasi per ciascuno (l'agguato, la resa, il ritorno con rancore), scritte da Claude e corrette da Francesco. Bottino garantito se ucciso: il loro pezzo d'equipaggiamento, al livello delle cacce comuni, senza poteri. Vulnerabili all'Ombra.
 - **Stati:** gli umani e gli altri popoli feriscono il corpo (Sanguinamento, Avvelenato, Indebolito); gli orchi anche Impaurito (il ruggito).
 
+### Il fermaglio indossato o nascosto (DECISO il 29 ottobre, numeri PROPOSTA)
+Il fermaglio ha un suo slot e si può togliere, solo fuori dal combattimento (storia, sezione 10b). Dentro la mente, fuori il corpo:
+- **Indossato:** +2 alla Furtività del pedinamento (i mastini riconoscono l'odore di Aldo); fuori casa più agguati, perché sei una preda di valore. Proposta: **45% animale normale, 20% infernale, 35% agguato**.
+- **Nascosto:** nessun bonus al pedinamento; fuori casa **55% animale normale, 30% infernale, 15% agguato**.
+- Il 20% di incontro a ogni ingresso non cambia. Prima del bronzo il fermaglio non c'è e resta il 67:33.
+- **Da controllare:** con il fermaglio sempre indossato, gli agguati del percorso atteso salgono di poco (da 3 a circa 4 su 5). Va bene, ma va visto nella simulazione.
+
 ### Statistiche dei cinque (crescono con il personaggio)
 Livello = livello del personaggio (minimo 2), +1 al ritorno. **Salute 15 + 3 per livello oltre il 2**, attacco **+3**, arma magica **dado + livello** (Vigore 10), **6 PA**, CD 8 + livello + mod. Simulazione al livello 2-3 (pessimista sugli incantatori): sconfitta peggiore 25-31% per l'Arcanista, sotto il 20% per gli altri. Sono i nemici comuni più pericolosi: si può fuggire e prepararsi con gli elisir.
 
 | Avventuriero | Chi è | Combatte | Abilità (PA) | Bottino se ucciso | Frase |
 |---|---|---|---|---|---|
 | **Brunilde Mezzaluna** | Nana, minatrice: entrata dal pozzo di una galleria crollata. Brusca, conta i giorni in monete di rame | Ascia a due mani 1d8 + liv; salute −2; CA 13 | Squarcio (2): se colpisce, TS Vigore → Sanguinamento | Ascia di Mezzaluna (due mani) | «Tu hai avuto una porta. Io un pozzo.» |
-| **Corrado Vallerossa** | Umano, soldato disertore: crede ancora negli ordini, ora li prende dal vecchio | Spada e scudo 1d6 + liv; CA 14 | Colpo di scudo (2): TS Vigore → Indebolito | Scudo di Vallerossa (+1 CA) | «Anche qui qualcuno dà ordini. Io li eseguo.» |
+| **Corrado Vallerossa** | Umano, soldato disertore: crede ancora negli ordini, ora li prende dal vecchio. **È il bronzo di un tempo, battuto e risparmiato da Enea** (storia, sezione 10b): battuta in più se lo incontri prima di Enea, variante dopo | Spada e scudo 1d6 + liv; CA 14 | Colpo di scudo (2): TS Vigore → Indebolito | Scudo di Vallerossa (+1 CA) | «Anche qui qualcuno dà ordini. Io li eseguo.» |
 | **Isotta la Biscia** | Elfa, sicaria: seguiva un contratto fin dentro la grotta | Due pugnali, 2 attacchi da **1d4 + metà del livello** (con il livello pieno era troppo forte: Arcanista 37-46% di sconfitta); salute −3; CA 13 | Lama intinta (2): se colpisce, TS Vigore → Avvelenato | Pugnale della Biscia (arma 1d4 + livello, una mano) | «Il vecchio dice che hai la chiave. Fammela vedere.» |
 | **Fra' Anselmo** | Umano, monaco itinerante: ha smesso di pregare per uscire | Bastone 1d6 + liv; CA 12 | Anatema (2): TS Spirito → Indebolito · Preghiera (2, una volta): si cura 1d6 + liv | Bastone di Anselmo (due mani) | «Ho pregato per uscire. Mi hanno risposto i cani.» |
 | **Tobia Spillo** | Gnomo, trappolaio: ruba più che combattere | Pugnale 1d4 + liv; salute −3; CA 13 | Tagliola (2): al posto dell'attacco, TS Agilità → Sanguinamento · **Sotto un terzo di salute prova a fuggire**: se ci riesce torna più avanti, come se l'avessi risparmiato | Borsa degli attrezzi: piede di porco e corda (Dotazione) | «Non è niente di personale. È che la porta l'hai trovata tu.» |

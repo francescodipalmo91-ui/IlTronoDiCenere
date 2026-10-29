@@ -180,6 +180,20 @@ caso("Zone: fuori casa ratto, corvo, lupo e i doppi infernali; foresta lupo, cin
   eq(await page.evaluate(() => INFERNALI_IDS("foresta").sort()), ["cervo_cenere", "cinghiale", "lupo", "vipera_brace"]);
   eq(errori, [], "errori"); await chiudi();
 });
+caso("29/10: foresta con immagine e testo nuovi; cripta con Ettore e senza", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA());
+  eq(await page.evaluate(() => [vista("pineta").img.src, TX.stanze.pineta.intro.length]), ["immagini/house/foresta_pini.webp", 3]);
+  eq(await page.evaluate(() => { usate.ettore = "scontro"; const a = vista("cripta").img.src; usate.ettore = "morto"; return [a, vista("cripta").img.src]; }), ["immagini/house/cripta_ettore.webp", "immagini/house/cripta.webp"]);
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("29/10: la vulnerabilità alla forza vale anche per la Spinta (senza tiro), solo sul dado base", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA());
+  const r = await page.evaluate(() => { const C = window.MagiaCombattimento, inc = MAGIA.INCANTESIMI.find(i => i.id === "spinta"), s = { pv: 50, pvMax: 50, eff: {}, effMax: {} };
+    const q = [4, 5, 20]; const ctx = { tira: (d) => q.shift() || 1, liv: 1, modAtt: 3, modDanno: 3, boss: true, cd: 12, modTs: 0, ca: () => 10, piuDadiVuln: 1, manaPiu: () => 0, dannoMente: (n) => n };
+    C.lancia(inc, s, ctx); return s.pv; });
+  eq(r, 50 - 4 - 5, "2d6 invece di 1d6");
+  eq(errori, [], "errori"); await chiudi();
+});
 
 (async () => {
   const browser = await chromium.launch();

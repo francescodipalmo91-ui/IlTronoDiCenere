@@ -209,7 +209,7 @@ d20 + mod attributo contro **CD = 8 + mod del nemico + livello del nemico**, la 
 ### Elisir (DECISO il 28 ottobre)
 - Ogni elisir riguarda **uno stato**: lo **cura** se è già attivo, oppure, bevuto prima, **protegge** da quello stato per lo scontro successivo.
 - **Un solo elisir di protezione attivo per volta:** prepararsi è una scelta (contro Dafne il fiele, contro il re l'infuso o il collirio).
-- **Borsa degli elisir:** al massimo **2 per tipo** (scelta di Claude, da confermare: senza tetto la foresta permette di accumularne a decine).
+- **Borsa degli elisir:** al massimo **2 per stato**, concentrati compresi (confermato il 29 ottobre).
 - **Fonti:** Guendalina li prepara con gli ingredienti (fonte principale); Aldo li dà con una **nuova rastrelliera «Elisir»**: a ogni caccia completata, «scegli due» tra tutti gli elisir sbloccati, oltre alla scelta consueta.
 - Il giocatore deve girare per la casa preparato al meglio: gli elisir diventano parte della strategia, non un rimedio dopo il danno.
 
@@ -274,7 +274,7 @@ Niente più attributi tirati a caso a ogni incontro (oggi 10 + 1d6 su Vigore e A
 
 Il lupo normale è stato abbassato: con 11 di salute e 1d6 + 1 dava il 15% di sconfitta all'Arcanista.
 
-### Parti infernali e concentrati (DECISO l'idea il 28 ottobre, PROPOSTA il modo)
+### Parti infernali e concentrati (DECISO il 29 ottobre)
 - Anche gli infernali lasciano una parte. Ognuna si abbina alla ricetta del suo doppio normale (per ratto e corvo, alle erbe legate allo stato che il normale infligge) e dà il **concentrato** di quell'elisir:
 
 | Parte infernale | Concentrato |
@@ -289,9 +289,12 @@ Il lupo normale è stato abbassato: con 11 di salute e 1d6 + 1 dava il 15% di sc
 - **Ricetta:** ingrediente base + parte infernale. **Effetto:** bevuto durante lo scontro cura lo stato e rende immuni per il resto dello scontro; bevuto prima protegge **fino al prossimo riposo** invece che per uno scontro. Conta come l'unico elisir di protezione attivo.
 - **Borsa:** i concentrati rientrano nel tetto del loro stato (2 in tutto per stato). Aldo, nella rastrelliera Elisir, dà solo quelli base.
 - Come per le altre parti, la prima portata a Guendalina sblocca una domanda e la ricetta.
+- **Alternativa di Francesco (29 ottobre, da decidere):** chiamarli elisir **comuni** e **rari**. I comuni, con risorse accessibili, *interrompono* lo stato già applicato; i rari, con risorse scarse, *proteggono* per tutto l'incontro. Differenza con il modello attuale: i comuni non proteggerebbero più se bevuti prima (vedi punto della situazione).
 - Senso: dal livello 3-4, quando gli animali non danno più PE, gli infernali restano utili per i concentrati, e prepararsi a Dafne, Atena e al sovrano ha una forma vera.
 
 ### Infernali delle cacce di Aldo
+
+**Cacce contro altri avventurieri (29 ottobre, da progettare):** le cacce di Aldo comprenderanno anche avventurieri entrati da altri ingressi, quindi servono nemici nuovi: orchi, goblin e le razze già nel gioco (umani, elfi, nani, gnomi). Da decidere se si aggiungono alle sei cacce comuni (e allora cambiano PE e percorso atteso) o ne sostituiscono una parte. Non vanno confusi con i cinque avventurieri degli agguati, che sono personaggi scritti.
 
 | Preda | Grado | PA | Abilità |
 |---|---|---|---|
@@ -416,6 +419,9 @@ Gli incantesimi che fanno un attacco magico aggiungono al danno il **modificator
 - **Spada del Retaggio:** 1d10 + livello. La differenza con l'arma Vespera sta nei poteri.
 - **Runa sull'Arma:** se il dado è già 1d12, +2 al danno.
 
+### Vulnerabilità e danni senza tiro (DECISO il 29 ottobre)
+La vulnerabilità (+1 dado) vale anche per i danni senza tiro (Spinta, Onda d'Urto), **solo sul dado base**: non sui dadi dei Sigilli (Detonazione, Implosione, Singolarità). Nel codice dal 29 ottobre.
+
 ### Poteri (DECISO il 28 ottobre, esempi PROPOSTA)
 - **Costo (DECISO):** anche i poteri d'arma consumano la risorsa del personaggio, **al 50% dell'abilità equivalente**. Uno stato base (2) costa **1 punto**. Il potere scatta da solo; senza punti non scatta.
 - **Bottino dei guardiani:** poteri che scattano **sul critico o una volta per scontro**, legati al tipo d'arma. Esempi: taglio, Sanguinamento sul critico; contundente, Incrinatura 1; perforante, Esposto 1; bastone degli incantatori, 1 Sigillo in più o la Bilancia spostata di 1.
@@ -423,7 +429,7 @@ Gli incantesimi che fanno un attacco magico aggiungono al danno il **modificator
 - **Spada del Retaggio:** potere **fisso** legato alla storia, più forte contro guardiani e sovrano che contro il resto. Così la scelta servo/erede ha anche un senso meccanico: l'arma di Aldo rende di più ovunque, quella del re nello scontro che conta.
 - Da verificare: le classi che oggi non possono usare una spada. Se l'Arcanista non può impugnarla, la spada del Retaggio per lui è solo una reliquia nello zaino.
 
-### Armature e scudi (PROPOSTA)
+### Armature e scudi (DECISO il 29 ottobre)
 "+livello" sulla CA sarebbe troppo (+5 CA al livello 5). Propongo:
 - Cacce comuni: armature +1 CA (gradi 1-2), +2 (grado 3); scudi +1.
 - Bottino dei guardiani: +1 o +2 con un potere.
@@ -497,11 +503,13 @@ Restano valide le regole di ottobre: 5 PNG scritti da Francesco, che partono dal
 1. ~~Sanguinamento e Accecato come stati nuovi del personaggio~~ → deciso, sezione 3.
 2. ~~Statistiche e abilità di Ettore al livello 2~~ → deciso, sezione 5.
 3. ~~PA dei nemici e tabella degli stati per nemico~~ → deciso, sezioni 2 e 4.
-4. Armature e scudi: +1/+2 invece di "+livello".
+4. ~~Armature e scudi~~ → deciso: +1/+2.
 5. Esempi di bottino per grado e poteri concreti delle armi (il costo è deciso: 50%).
 6. Abilità del set Vespera, compresa quella dell'arma; «Passo Silenzioso» era pensata per gli stivali, va spostata o tolta. Resta da definire anche il prezzo del set (mente massima ridotta o follia più vicina).
 7. Enea: carattere, stato firma, Incrinatura corrotta e bottino.
-8. Borsa degli elisir: confermare il tetto di 2 per tipo.
+8. ~~Borsa degli elisir~~ → confermato: 2 per stato.
+9. Elisir comuni e rari (alternativa di Francesco ai concentrati).
+10. Cacce contro altri avventurieri: nemici nuovi e posto nel percorso atteso.
 
 ## 10. Cosa manca (verifica del 28 ottobre)
 

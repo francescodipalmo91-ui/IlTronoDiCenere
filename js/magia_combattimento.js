@@ -97,6 +97,7 @@
       return conTS(mappa);
     };
     const diretto = (n, dado, extra) => { /* danno senza tiro per colpire */
+      n += ctx.piuDadiVuln || 0; /* 29/10: la vulnerabilità alla forza vale anche senza tiro, solo sul dado base (non sui Sigilli) */
       const tiri = tiraDadi(ctx, n, dado), danno = Math.max(1, somma(tiri) + (extra || 0));
       s.pv -= danno; E.push({ k: "diretto", n, dado, tiri, mm: extra || 0, danno }); return danno;
     };

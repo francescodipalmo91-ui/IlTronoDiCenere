@@ -4,8 +4,13 @@
 name: Verifiche
 on:
   push:
+    branches: [main]   # su main a ogni push; sugli altri rami bastano le pull request (niente doppioni)
   pull_request:
   workflow_dispatch:   # pulsante «Run workflow» per lanciarle a mano
+
+concurrency:           # un nuovo push annulla il giro ancora in corso sullo stesso ramo
+  group: verifiche-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   regole-e-coerenza:
@@ -23,6 +28,7 @@ jobs:
   browser:
     name: Browser (fumo, bilanciamento, Sciamano, combattimento)
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

@@ -134,17 +134,21 @@
     /* ---------- Scelta della lingua (in fondo, al centro) ---------- */
     .lingue {
       position: fixed; left: 50%; bottom: 1.1rem; transform: translateX(-50%); z-index: 2;
-      display: flex; gap: 0.65rem;
+      display: flex; gap: 0.15rem; /* 29/10: le aree di tocco più grandi tengono le bandiere alla stessa distanza */
     }
+    /* 29/10: il pulsante è un'area di tocco da 44px; la bandiera dentro resta di 36×24 */
     .lingue .bandiera {
-      min-width: 0; width: 2.25rem; height: 1.5rem; padding: 0; overflow: hidden;
-      border-radius: 0.25rem; border: 1px solid rgba(180,180,180,0.45); background: none;
-      opacity: 0.5; box-shadow: 0 2px 8px rgba(0,0,0,0.65);
+      min-width: 0; width: 2.75rem; height: 2.75rem; padding: 0; border: 0; background: none;
+      display: grid; place-items: center; opacity: 0.5;
     }
-    .lingue .bandiera svg { display: block; width: 100%; height: 100%; }
+    .lingue .bandiera svg {
+      display: block; width: 2.25rem; height: 1.5rem; border-radius: 0.25rem;
+      border: 1px solid rgba(180,180,180,0.45); box-shadow: 0 2px 8px rgba(0,0,0,0.65);
+    }
     .lingue .bandiera:hover { opacity: 0.85; transform: translateY(-1px); }
-    .lingue .bandiera[aria-pressed="true"] {
-      opacity: 1; border-color: rgba(232,237,243,0.9);
+    .lingue .bandiera[aria-pressed="true"] { opacity: 1; }
+    .lingue .bandiera[aria-pressed="true"] svg {
+      border-color: rgba(232,237,243,0.9);
       box-shadow: 0 0 0 1px rgba(232,237,243,0.35), 0 2px 8px rgba(0,0,0,0.65);
     }
 

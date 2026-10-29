@@ -1,0 +1,23 @@
+{
+  "name": "il-trono-di-cenere",
+  "private": true,
+  "description": "Strumenti di verifica del gioco (non servono per giocare: il gioco resta statico)",
+  "scripts": {
+    "test": "npm run test:regole && npm run lint && npm run coerenza",
+    "test:regole": "node tests/combattimento.test.js && node tests/magia_combattimento.test.js && node tests/sciamano.test.js && node tests/cloud.test.js",
+    "test:browser": "node tests/fumo.browser.js && node tests/bilanciamento.browser.js && node tests/sciamano.browser.js && node tests/combattimento.browser.js",
+    "lint": "node strumenti/lint_pagine.mjs && html-validate \"*.html\"",
+    "coerenza": "node strumenti/coerenza_docs.mjs",
+    "test:firestore": "firebase emulators:exec --only firestore --project demo-trono \"node tests/firestore.rules.test.mjs\""
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.2",
+    "axe-core": "^4.14.0",
+    "eslint": "^9.39.5",
+    "firebase": "^12.19.0",
+    "firebase-tools": "^15.34.2",
+    "globals": "^17.13.0",
+    "html-validate": "^11.17.0",
+    "playwright": "^1.63.0"
+  }
+}

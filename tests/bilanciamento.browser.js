@@ -108,12 +108,14 @@ caso("Morte in modalità difficile: il personaggio e il salvataggio si cancellan
   vero(/permanente/.test(await diario(page)), "manca l'avviso della morte permanente");
   eq(errori, [], "errori"); await chiudi();
 });
-caso("Elisir: senza lo stato protegge per lo scontro successivo; il nemico spreca il primo tentativo", async (b) => {
+caso("Elisir comuni e rari (29/10): il comune cura soltanto; il raro, bevuto prima, rende immuni per tutto lo scontro; il nemico spreca il primo tentativo", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA());
-  await page.evaluate(() => { zaino.push({ id: "balsamo", nome: "Balsamo", tipo: "consumabile", usi: 1, effetto: "cura_ustione" }); });
-  const r = await page.evaluate(() => effettoBevanda(zaino.find(x => x.id === "balsamo")));
+  await page.evaluate(() => { zaino.push({ id: "balsamo", nome: "Balsamo", tipo: "consumabile", usi: 1, effetto: "cura_ustione" }, { id: "balsamo_conc", nome: "Balsamo di brace", tipo: "consumabile", usi: 1, effetto: "conc_ustione" }); });
+  const c = await page.evaluate(() => effettoBevanda(zaino.find(x => x.id === "balsamo")));
+  vero(c.no, "il comune senza lo stato non serve");
+  const r = await page.evaluate(() => effettoBevanda(zaino.find(x => x.id === "balsamo_conc")));
   vero(r.ok && /prossimo scontro/.test(r.ok), "testo della protezione");
-  eq(await page.evaluate(() => usate.protezione), { stato: "ustione", conc: false });
+  eq(await page.evaluate(() => usate.protezione), { stato: "ustione" });
   await page.evaluate(() => avviaScontro("mastino", { primo: "nem" }));
   eq(await page.evaluate(() => { const r = []; return applicaStatoPg("ustione", r); }), false, "non attecchisce");
   eq(await page.evaluate(() => [statoInutile("ustione"), haStato("ustione")]), [true, false]);
@@ -121,12 +123,13 @@ caso("Elisir: senza lo stato protegge per lo scontro successivo; il nemico sprec
   eq(await page.evaluate(() => usate.protezione), null, "consumata a fine scontro");
   eq(errori, [], "errori"); await chiudi();
 });
-caso("Elisir: un concentrato cura e rende immuni per il resto dello scontro; la borsa ne tiene 2 per stato", async (b) => {
+caso("Elisir raro durante lo scontro: cura e rende immuni per tutto lo scontro; ricetta con la sola parte infernale; borsa a 2 per stato", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA());
   await page.evaluate(() => avviaScontro("mastino", { primo: "nem" }));
-  await page.evaluate(() => { const r = []; applicaStatoPg("ustione", r); zaino.push({ id: "balsamo_conc", nome: "Conc", tipo: "consumabile", usi: 1, effetto: "conc_ustione" }); });
+  await page.evaluate(() => { const r = []; applicaStatoPg("ustione", r); zaino.push({ id: "balsamo_conc", nome: "Raro", tipo: "consumabile", usi: 1, effetto: "conc_ustione" }); });
   await page.evaluate(() => effettoBevanda(zaino.find(x => x.id === "balsamo_conc")));
   eq(await page.evaluate(() => [haStato("ustione"), protettoDa("ustione")]), [false, true]);
+  eq(await page.evaluate(() => RICETTE_ANIMALI.find(r => r.id === "balsamo_conc").richiede), { grasso_brace: 1 });
   await page.evaluate(() => { zaino.push({ id: "balsamo", nome: "B", tipo: "consumabile", usi: 2, effetto: "cura_ustione" }); });
   eq(await page.evaluate(() => borsaPienaPer(RICETTE_ANIMALI.find(r => r.id === "balsamo"))), true, "2 per stato");
   eq(errori, [], "errori"); await chiudi();

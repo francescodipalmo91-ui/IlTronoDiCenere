@@ -67,7 +67,7 @@ Gli animali restano sempre allo stesso livello: col tempo diventano facili e ser
 | 4 | Nessuno | Metà |
 | 5 | Nessuno | Nessuno |
 
-Incontro al **40%** a ogni ingresso nella foresta e al **20%** fuori casa (giardino, cimitero, cappella), **senza limite per riposo**. Il limite vero è l'esperienza: oltre il livello 3 nessuna delle due zone fa più crescere. Zone e fauna nella sezione 4.
+Incontro al **40%** a ogni ingresso nella foresta (60:40 tra normali e infernali) e al **20%** fuori casa (giardino, cimitero, cappella; 67:33, dopo il bronzo 50:25:25 con gli agguati), **senza limite per riposo**. Il limite vero è l'esperienza: oltre il livello 3 nessuna delle due zone fa più crescere. Zone e fauna nella sezione 4.
 
 ### Cacce comuni
 Aldo ne affida **due dopo ogni fermaglio** (bronzo, argento, oro): sei in tutto, una per preda. La caccia al guardiano successivo arriva solo dopo averle completate. Gli oggetti speciali (2, 4, 6 cacce) si sbloccano alla fine di ogni intervallo.
@@ -274,7 +274,13 @@ Niente più attributi tirati a caso a ogni incontro (oggi 10 + 1d6 su Vigore e A
 
 Il lupo normale è stato abbassato: con 11 di salute e 1d6 + 1 dava il 15% di sconfitta all'Arcanista.
 
-### Parti infernali e concentrati (DECISO il 29 ottobre)
+### Elisir comuni e rari (DECISO il 29 ottobre, sostituisce i concentrati)
+- **Comuni** (parti degli animali normali ed erbe): curano lo stato attivo, niente protezione.
+- **Rari** (la sola parte infernale): bevuti prima o durante uno scontro, rendono immuni a quello stato per tutto lo scontro (e curano, se lo stato è attivo). La protezione «fino al riposo» è tolta.
+- Restano: 2 per stato nella borsa, rari compresi; Aldo concede solo i comuni; un solo raro di protezione attivo fuori dallo scontro.
+- Nomi dei rari: Balsamo di brace, Tintura di brace, Infuso di cenere, Sale di cenere, Impiastro di brace, Collirio di cenere. Nel codice dal 29 ottobre.
+
+#### Il modello precedente (concentrati), per memoria
 - Anche gli infernali lasciano una parte. Ognuna si abbina alla ricetta del suo doppio normale (per ratto e corvo, alle erbe legate allo stato che il normale infligge) e dà il **concentrato** di quell'elisir:
 
 | Parte infernale | Concentrato |
@@ -486,18 +492,36 @@ Il set Vespera copre mantello, guanti, elmo, arma e corazza. Il bottino magico v
 
 ---
 
-## 8b. Agguati degli avventurieri — il riscatto del disperato (DECISO il 28 ottobre)
+## 8b. Agguati — orchi, goblin e i cinque avventurieri (DECISO le regole il 29 ottobre, PROPOSTA i personaggi)
 
-Restano valide le regole di ottobre: 5 PNG scritti da Francesco, che partono dal livello 1 e crescono con il personaggio; 20% di agguato, al massimo uno per ciclo di riposo, solo dopo il bronzo, mai dove il fuoco è caldo né nelle stanze dei PNG.
+### Regole
+- **Solo fuori casa** (giardino, cimitero, cappella), mai in cripta né nella foresta (terreno di Dafne), **solo dopo il bronzo**.
+- **Un solo tiro per ingresso** fuori casa: 20% di incontro; se c'è, **50% animale normale, 25% infernale, 25% agguato**. Prima del bronzo 67:33 tra normali e infernali. Nella foresta 60:40.
+- **Due livelli di agguato:** su un agguato, **1 volta su 5** uno dei cinque avventurieri (tra quelli ancora in gioco), altrimenti orchi o goblin (livello 2: goblin; dal livello 3 metà goblin e metà orchi).
+- **Perché attaccano:** sono entrati da altri ingressi della grotta. Aldo ha sussurrato a ognuno che chi è entrato dalla porta principale è la chiave per uscire: è l'anomalia che legge nel personaggio, usata come esca.
+- **Orchi e goblin:** ripetibili, PE come gli infernali (goblin 75, orco 100) a scalare con il livello (pieni fino al 3, metà al 4, niente al 5). **Bottino:** un'arma o un'armatura comune; il **15%** delle volte con il bonus delle cacce comuni (+livello sulle armi, +1/+2 sulle armature).
+- **I cinque avventurieri:** 100 PE solo la prima volta; **chi uccidi non torna, chi risparmi torna** con rancore, +1 livello a ogni ritorno (al massimo +2), senza PE. Bottino garantito se ucciso: il loro pezzo d'equipaggiamento, al livello delle cacce comuni, senza poteri. Vulnerabili all'Ombra.
+- **Stati:** gli umani e gli altri popoli feriscono il corpo (Sanguinamento, Avvelenato, Indebolito); gli orchi anche Impaurito (il ruggito).
 
-- **Dove (DECISO il 28 ottobre, passo 4):** solo **fuori casa** (giardino, cimitero, cappella), mai in cripta. È Aldo a controllare ingressi e uscite della casa: gli avventurieri arrivano dagli altri ingressi della grotta e vagano nelle terre dei Vespera. Il personaggio è l'unico entrato direttamente, ed è l'anomalia che Aldo legge come un segnale. **Niente agguati nella foresta:** è il terreno di caccia di Dafne, e chi ci è entrato non è tornato (si lega all'intruso che lei abbatte all'arrivo del personaggio).
-- **Un solo tiro per ingresso:** l'agguato prende il posto dell'incontro con un animale.
+### Statistiche dei cinque (crescono con il personaggio)
+Livello = livello del personaggio (minimo 2), +1 per ogni ritorno. **Salute 15 + 3 per livello oltre il 2**, attacco **+3**, arma magica **dado + livello** (Vigore 10), **6 PA**, CD 8 + livello + mod. Simulazione al livello 2-3 (pessimista sugli incantatori): sconfitta peggiore 25-31% per l'Arcanista, sotto il 20% per gli altri. Sono i nemici comuni più pericolosi: si può fuggire e prepararsi con gli elisir.
 
-- **PE:** 100, **solo la prima volta** che si sconfigge ciascuno. Dalla seconda volta, niente PE.
-- **Chi uccidi non torna, chi risparmi sì.** Il risparmiato ritorna con rancore, più forte, senza dare PE: il riscatto del disperato. Proposta per «più forte»: +1 livello a ogni ritorno (+5 salute, +1 per colpire, +1 PA), al massimo +2.
-- **Stati:** sono umani, quindi feriscono il corpo (Sanguinamento, Avvelenato, Indebolito), nella versione base. **6 PA**, uno stato firma ciascuno, legato al carattere. Vulnerabili all'Ombra (già deciso).
-- **Bottino:** armi del livello delle cacce comuni (magiche, senza poteri). Un oggetto garantito se ucciso, nessun oggetto magico: restano sotto i guardiani.
-- Così uccidere o risparmiare ha un costo anche con gli avventurieri, come con i guardiani reietti.
+| Avventuriero | Chi è | Combatte | Abilità (PA) | Bottino se ucciso | Frase |
+|---|---|---|---|---|---|
+| **Brunilde Mezzaluna** | Nana, minatrice: entrata dal pozzo di una galleria crollata. Brusca, conta i giorni in monete di rame | Ascia a due mani 1d8 + liv; salute −2; CA 13 | Squarcio (2): se colpisce, TS Vigore → Sanguinamento | Ascia di Mezzaluna (due mani) | «Tu hai avuto una porta. Io un pozzo.» |
+| **Corrado Vallerossa** | Umano, soldato disertore: crede ancora negli ordini, ora li prende dal vecchio | Spada e scudo 1d6 + liv; CA 14 | Colpo di scudo (2): TS Vigore → Indebolito | Scudo di Vallerossa (+1 CA) | «Anche qui qualcuno dà ordini. Io li eseguo.» |
+| **Isotta la Biscia** | Elfa, sicaria: seguiva un contratto fin dentro la grotta | Due pugnali, 2 attacchi da 1d4 + liv; salute −3; CA 13 | Lama intinta (2): se colpisce, TS Vigore → Avvelenato | Pugnale della Biscia (Dotazione) | «Il vecchio dice che hai la chiave. Fammela vedere.» |
+| **Fra' Anselmo** | Umano, monaco itinerante: ha smesso di pregare per uscire | Bastone 1d6 + liv; CA 12 | Anatema (2): TS Spirito → Indebolito · Preghiera (2, una volta): si cura 1d6 + liv | Bastone di Anselmo (due mani) | «Ho pregato per uscire. Mi hanno risposto i cani.» |
+| **Tobia Spillo** | Gnomo, trappolaio: ruba più che combattere | Pugnale 1d4 + liv; salute −3; CA 13 | Tagliola (2): al posto dell'attacco, TS Agilità → Sanguinamento · **Sotto un terzo di salute prova a fuggire**: se ci riesce torna più avanti, come se l'avessi risparmiato | Borsa degli attrezzi: piede di porco e corda (Dotazione) | «Non è niente di personale. È che la porta l'hai trovata tu.» |
+
+### Orchi e goblin (ripetibili)
+
+| Nemico | Livello | Salute | CA | Attacco | Danno | PA e abilità | PE | Sconfitta peggiore |
+|---|---|---|---|---|---|---|---|---|
+| Goblin predone | 2 | 12 | 13 | +2 | pugnale 1d4 + 1 | 3: Lama sporca (2), se colpisce TS Vigore CD 11 → Avvelenato | 75 | 7% al livello 2 |
+| Orco razziatore | 3 | 18 | 11 | +4 | ascia 1d8 | 4: Fendente (2), se colpisce TS Vigore CD 12 → Sanguinamento · Ruggito (2), TS Spirito CD 12 → Impaurito | 100 | 14% al livello 3 (senza il Ruggito nella simulazione) |
+
+**Nel codice:** non ancora. Si porta dopo la conferma dei cinque personaggi (nomi, caratteri, frasi sono proposte di Claude, da riscrivere a piacere).
 
 ---
 

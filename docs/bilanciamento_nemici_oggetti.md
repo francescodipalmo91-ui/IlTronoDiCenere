@@ -182,7 +182,7 @@ d20 + mod attributo contro **CD = 8 + mod del nemico + livello del nemico**, la 
 | Avvelenato | **1d4** a inizio turno (potenziato, Tossina: 1d6). Prima era −2 a prove e TS | 3 turni | Vipera, Dafne | Tintura di fiele di vipera |
 | Indebolito | −2 per colpire | 2 turni | Cinghiale | Infuso di velluto di cervo |
 | Impaurito | −2 CA | 2 turni | Ululati, Atena | Sale di zanna di lupo (prima zampa di coniglio) |
-| Accecato | 2d20 per colpire, tieni il peggiore; svantaggio a Percezione | 2 turni | Cenere degli infernali | **Collirio di eufrasia** (erba) |
+| Accecato | 2d20 per colpire, tieni il peggiore (solo in combattimento, 29 ottobre) | 2 turni | Cenere degli infernali | **Collirio di eufrasia** (erba) |
 
 **Chi può infliggere la versione potenziata (1d6):** le abilità del giocatore, i guardiani e i mastini boss. I nemici comuni mai.
 
@@ -345,7 +345,9 @@ Il lupo normale è stato abbassato: con 11 di salute e 1d6 + 1 dava il 15% di sc
 - **La gamba**: un tuo critico gli fa perdere il turno successivo (vale anche se è un boss).
 - **Il dodicesimo colpo** non scatta quasi mai (lo scontro dura 5-7 turni): resta, perché punisce chi temporeggia ed è il cuore del personaggio.
 
-Vulnerabilità: nel codice contundente e forza, +1 dado (il documento diceva Luce e contundente: vale il codice, salvo ripensamenti).
+Vulnerabilità (DECISO il 29 ottobre): **luce e contundente**, +1 dado. Nel codice: armi contundenti (anche la torcia e il bastone) e incantesimi di Luce. Effetto rispetto a forza: Arcanista con il consiglio di Aldo da circa 61% a 54% di vittorie (il bastone resta contundente), Monaco in su.
+
+**Inizio dello scontro (29 ottobre):** Ettore è seduto con la schiena contro un sarcofago, la spada appoggiata accanto al giaciglio. Se il personaggio scende in silenzio e **lo attacca**, Ettore perde il primo turno a recuperare l'arma (oltre a lasciare al personaggio la prima mossa). Se il personaggio **parla**, Ettore scatta in piedi allarmato e va a prendere la spada prima del dialogo. Ritratto da nemico: `immagini/nemici/Ettore.webp`.
 
 **Simulazione al livello 2** (12.000 scontri per caso; salute nuova, stati nuovi, incantatori senza Scudo; percentuale di vittorie):
 

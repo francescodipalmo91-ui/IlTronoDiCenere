@@ -37,11 +37,18 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - name: Server locale
         run: python3 -m http.server 8765 --bind 127.0.0.1 &
-      - run: node tests/fumo.browser.js
-      - run: node tests/bilanciamento.browser.js
-      - run: node tests/sciamano.browser.js
-      - run: |
-          for p in 1/3 2/3 3/3; do PARTE=$p node tests/combattimento.browser.js; done
+      # ogni caso fallito diventa un'annotazione rossa nella pagina del giro (si legge senza aprire il registro)
+      - name: Test nel browser
+        run: |
+          esito=0
+          prova() { "$@" 2>&1 | tee out.txt; r=${PIPESTATUS[0]}
+            awk '/^(ERRORE|KO) /{n=$0; getline m; gsub(/^ +/, "", m); print "::error title=" FILENAME_T "::" n " " m}' FILENAME_T="$*" out.txt
+            [ $r -eq 0 ] || esito=1; }
+          prova node tests/fumo.browser.js
+          prova node tests/bilanciamento.browser.js
+          prova node tests/sciamano.browser.js
+          for p in 1/3 2/3 3/3; do PARTE=$p prova node tests/combattimento.browser.js; done
+          exit $esito
       - uses: actions/upload-artifact@v4
         if: always()
         with: { name: report-fumo, path: tests/fumo_report.json }

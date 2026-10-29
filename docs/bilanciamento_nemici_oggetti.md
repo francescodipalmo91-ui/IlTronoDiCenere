@@ -500,11 +500,15 @@ Il set Vespera copre mantello, guanti, elmo, arma e corazza. Il bottino magico v
 - **Due livelli di agguato:** su un agguato, **1 volta su 5** uno dei cinque avventurieri (tra quelli ancora in gioco), altrimenti orchi o goblin (livello 2: goblin; dal livello 3 metà goblin e metà orchi).
 - **Perché attaccano:** sono entrati da altri ingressi della grotta. Aldo ha sussurrato a ognuno che chi è entrato dalla porta principale è la chiave per uscire: è l'anomalia che legge nel personaggio, usata come esca.
 - **Orchi e goblin:** ripetibili, PE come gli infernali (goblin 75, orco 100) a scalare con il livello (pieni fino al 3, metà al 4, niente al 5). **Bottino:** un'arma o un'armatura comune; il **15%** delle volte con il bonus delle cacce comuni (+livello sulle armi, +1/+2 sulle armature).
-- **I cinque avventurieri:** 100 PE solo la prima volta; **chi uccidi non torna, chi risparmi torna** con rancore, +1 livello a ogni ritorno (al massimo +2), senza PE. Bottino garantito se ucciso: il loro pezzo d'equipaggiamento, al livello delle cacce comuni, senza poteri. Vulnerabili all'Ombra.
+- **I cinque avventurieri:** 100 PE solo la prima volta che li sconfiggi, che tu li uccida o li risparmi.
+- **La resa (DECISO il 29 ottobre):** a un terzo della salute l'avventuriero si arrende e scegli tu: ucciderlo o risparmiarlo. Tobia invece prova a fuggire; se la fuga fallisce, scegli lo stesso.
+- **Si risparmia una volta sola:** chi risparmi torna una volta, con rancore, **+1 livello**, senza PE, e quella volta combatte fino alla fine. Torna solo dopo un riposo, attraverso il solito «1 agguato su 5».
+- **Uccidere chi chiede pietà o tenta di fuggire costa 1 punto mentale, letale:** è la casa che ti cambia e ti reclama. A un punto di mente, finirlo vuol dire diventare parte di Casa Vespera.
+- **Testi:** tre frasi per ciascuno (l'agguato, la resa, il ritorno con rancore), scritte da Claude e corrette da Francesco. Bottino garantito se ucciso: il loro pezzo d'equipaggiamento, al livello delle cacce comuni, senza poteri. Vulnerabili all'Ombra.
 - **Stati:** gli umani e gli altri popoli feriscono il corpo (Sanguinamento, Avvelenato, Indebolito); gli orchi anche Impaurito (il ruggito).
 
 ### Statistiche dei cinque (crescono con il personaggio)
-Livello = livello del personaggio (minimo 2), +1 per ogni ritorno. **Salute 15 + 3 per livello oltre il 2**, attacco **+3**, arma magica **dado + livello** (Vigore 10), **6 PA**, CD 8 + livello + mod. Simulazione al livello 2-3 (pessimista sugli incantatori): sconfitta peggiore 25-31% per l'Arcanista, sotto il 20% per gli altri. Sono i nemici comuni più pericolosi: si può fuggire e prepararsi con gli elisir.
+Livello = livello del personaggio (minimo 2), +1 al ritorno. **Salute 15 + 3 per livello oltre il 2**, attacco **+3**, arma magica **dado + livello** (Vigore 10), **6 PA**, CD 8 + livello + mod. Simulazione al livello 2-3 (pessimista sugli incantatori): sconfitta peggiore 25-31% per l'Arcanista, sotto il 20% per gli altri. Sono i nemici comuni più pericolosi: si può fuggire e prepararsi con gli elisir.
 
 | Avventuriero | Chi è | Combatte | Abilità (PA) | Bottino se ucciso | Frase |
 |---|---|---|---|---|---|
@@ -514,6 +518,34 @@ Livello = livello del personaggio (minimo 2), +1 per ogni ritorno. **Salute 15 +
 | **Fra' Anselmo** | Umano, monaco itinerante: ha smesso di pregare per uscire | Bastone 1d6 + liv; CA 12 | Anatema (2): TS Spirito → Indebolito · Preghiera (2, una volta): si cura 1d6 + liv | Bastone di Anselmo (due mani) | «Ho pregato per uscire. Mi hanno risposto i cani.» |
 | **Tobia Spillo** | Gnomo, trappolaio: ruba più che combattere | Pugnale 1d4 + liv; salute −3; CA 13 | Tagliola (2): al posto dell'attacco, TS Agilità → Sanguinamento · **Sotto un terzo di salute prova a fuggire**: se ci riesce torna più avanti, come se l'avessi risparmiato | Borsa degli attrezzi: piede di porco e corda (Dotazione) | «Non è niente di personale. È che la porta l'hai trovata tu.» |
 
+### Frasi dei cinque (Francesco, 29 ottobre)
+Le indicazioni di scena (tra parentesi) diventano narrazione, le battute dialogo.
+
+**Brunilde Mezzaluna**
+- *Agguato:* «Fermo lì. Sei quello della porta, no? Il vecchio ha detto che la chiave sei tu. Io è una vita che scavo: ora si apre.»
+- *Resa:* «Cedo il passo. Tanto è solo questione di tempo prima che sia io a stare davanti.»
+- *Ritorno:* «Mi hai lasciata indietro, ma ho recuperato strada. C'è posto solo per uno di noi qui... e hai finito il tuo turno.»
+
+**Corrado Vallerossa**
+- *Agguato:* «Alt. Il vecchio vuole che resti qui. E io ubbidisco, è l'unico modo che conosco per campare.»
+- *Resa:* (Pianta la spada e si copre dietro lo scudo) «Mi arrendo. Ho già scelto la vita una volta, non cambio idea adesso.»
+- *Ritorno:* (Scuote la testa, con lo sguardo basso) «Ci ho pensato a quello che hai fatto per me. Davvero. Ma gli ordini sono catene più pesanti delle tue. Ricominciamo.»
+
+**Isotta la Biscia**
+- *Agguato:* (Una voce fredda e vicinissima alle tue spalle) «Non voltarti. Il vecchio dice che hai la chiave. Fammela vedere, e forse ti lascio le mani attaccate ai polsi.»
+- *Resa:* (Alza le mani con finta noia, facendo tintinnare le lame prima di mollarle) «D'accordo, hai vinto. Oggi l'aria di questo posto non mi piaceva comunque.»
+- *Ritorno:* (Si ricompone con una grazia letale, afferrando di nuovo le lame) «Mi hai lasciata andare. Che errore da principiante. Io i conti non li lascio mai a metà.»
+
+**Fra' Anselmo**
+- *Agguato:* «Pace a te, peccatore. Ho passato giorni a pregare per una via d'uscita, e il padrone di questo posto mi ha risposto... indicandomi la tua gola.»
+- *Resa:* (Inchina il capo, stringendo il medaglione sacro tra le dita nodose) «La carne è debole. E la mia preghiera di oggi è solo di restare intero.»
+- *Ritorno:* (Congiunge le mani in una preghiera silenziosa) «Ho pregato per la tua anima dopo che mi hai risparmiato. Ma il vecchio mi ha ordinato di correggere il mio errore di clemenza.»
+
+**Tobia Spillo**
+- *Agguato:* «Ehi, ehi, non guardarmi così, non è personale! È che la porta l'hai trovata tu, e io ne ho trovate solo di chiuse.»
+- *Fuga:* «Oh, merda, no! Questo non era nei patti!» (E sparisce di corsa tra le lapidi, facendo scattare un fruscio di ingranaggi)
+- *Ritorno:* «Eccomi di nuovo! Ti ho portato un regalino: ho oliato le molle alla tagliola nuova. Questa sì che morde sul serio.»
+
 ### Orchi e goblin (ripetibili)
 
 | Nemico | Livello | Salute | CA | Attacco | Danno | PA e abilità | PE | Sconfitta peggiore |
@@ -521,7 +553,7 @@ Livello = livello del personaggio (minimo 2), +1 per ogni ritorno. **Salute 15 +
 | Goblin predone | 2 | 12 | 13 | +2 | pugnale 1d4 + 1 | 3: Lama sporca (2), se colpisce TS Vigore CD 11 → Avvelenato | 75 | 7% al livello 2 |
 | Orco razziatore | 3 | 18 | 11 | +4 | ascia 1d8 | 4: Fendente (2), se colpisce TS Vigore CD 12 → Sanguinamento · Ruggito (2), TS Spirito CD 12 → Impaurito | 100 | 14% al livello 3 (senza il Ruggito nella simulazione) |
 
-**Nel codice:** non ancora. Si porta dopo la conferma dei cinque personaggi (nomi, caratteri, frasi sono proposte di Claude, da riscrivere a piacere).
+**Nel codice:** non ancora. Personaggi e frasi confermati il 29 ottobre; manca il passo 3 (frasi di orchi e goblin), poi il codice.
 
 ---
 

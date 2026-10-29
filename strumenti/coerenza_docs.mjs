@@ -26,8 +26,8 @@ function voci(inizio) {
   const teste = [...blocco.matchAll(/^\s{6}(\w+): \{/gm)];
   teste.forEach((m, i) => { /* il corpo di una voce arriva fino all'inizio della successiva */
     const corpo = blocco.slice(m.index, i + 1 < teste.length ? teste[i + 1].index : undefined);
-    const g = /\bgrado: (\d+)/.exec(corpo), x = /\bxp: (\d+)/.exec(corpo);
-    if (x) out[m[1]] = { grado: g ? +g[1] : null, xp: +x[1] };
+    const g = /\bgrado: (\d+)/.exec(corpo), x = /\bxp: (\d+)/.exec(corpo), z = /\bzone: \[([^\]]*)\]/.exec(corpo);
+    if (x) out[m[1]] = { grado: g ? +g[1] : null, xp: +x[1], fuori: !!z && !z[1].trim() }; /* zone: [] = non compare mai da solo */
   });
   return out;
 }
@@ -51,7 +51,7 @@ for (const [nome, doc, cod] of CONTROLLI) {
 /* animali normali: il documento dice 50-75 PE */
 const rng = numDoc(/Animali normali[^|]*\| (\d+)-(\d+)/);
 const rigaAnimali = (/Animali normali[^\n]*/.exec(DOC) || [""])[0]; /* un animale nominato nella riga con il suo valore è un'eccezione voluta */
-if (rng) for (const [id, a] of Object.entries(ANIMALI)) if ((a.xp < rng[0] || a.xp > rng[1]) && !new RegExp(`\\b${id}\\s+${a.xp}\\b`).test(rigaAnimali)) avviso(`Animale «${id}»: ${a.xp} PE, fuori dall'intervallo ${rng[0]}-${rng[1]} del documento (voluto?)`);
+if (rng) for (const [id, a] of Object.entries(ANIMALI)) if (!a.fuori && (a.xp < rng[0] || a.xp > rng[1]) && !new RegExp(`\\b${id}\\s+${a.xp}\\b`).test(rigaAnimali)) avviso(`Animale «${id}»: ${a.xp} PE, fuori dall'intervallo ${rng[0]}-${rng[1]} del documento (voluto?)`);
 
 /* costanti dichiarate ma mai usate che contengono numeri di bilanciamento: si leggono e confondono */
 for (const m of GIOCO.matchAll(/const (\w*PE\w*|\w*XP\w*) = \{[^}]*\}/g)) {

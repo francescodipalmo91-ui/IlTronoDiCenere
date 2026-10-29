@@ -1,0 +1,35 @@
+rules_version = '2';
+// REGOLE DI SICUREZZA FIRESTORE — salvataggi di Il Trono di Cenere.
+// Versione PROPOSTA (29/10/2026), più stretta di quella oggi pubblicata (scritta nel commento di js/cloud.js):
+// ognuno legge e scrive solo i propri dati, come prima, ma in più:
+//  - i posti sono solo 1, 2 e 3; il profilo ha solo «tutorial_completato»;
+//  - un posto ha esattamente i 4 campi che scrive cloud.js, con i tipi giusti;
+//  - niente cancellazioni dal client (cloud.js segna «eliminato: true», non cancella).
+// Si verificano con: npm run test:firestore  (emulatore, nessun dato vero toccato).
+// Si pubblicano copiandole nella scheda «Regole» della console Firebase, oppure: npx firebase deploy --only firestore:rules
+service cloud.firestore {
+  match /databases/{db}/documents {
+    function proprietario(uid) { return request.auth != null && request.auth.uid == uid; }
+
+    match /utenti/{uid} {
+      allow read: if proprietario(uid);
+      allow create, update: if proprietario(uid)
+        && request.resource.data.keys().hasOnly(["tutorial_completato"])
+        && request.resource.data.tutorial_completato is bool;
+
+      match /posti/{n} {
+        allow read: if proprietario(uid);
+        allow create, update: if proprietario(uid)
+          && n in ["1", "2", "3"]
+          && request.resource.data.keys().hasOnly(["aggiornato", "dati", "dispositivo", "eliminato"])
+          && request.resource.data.keys().hasAll(["aggiornato", "dati", "dispositivo", "eliminato"])
+          && request.resource.data.aggiornato is number
+          && request.resource.data.eliminato is bool
+          && request.resource.data.dispositivo in ["computer", "telefono"]
+          && (request.resource.data.eliminato == true
+                ? request.resource.data.dati == null
+                : request.resource.data.dati is string && request.resource.data.dati.size() < 1000000);
+      }
+    }
+  }
+}

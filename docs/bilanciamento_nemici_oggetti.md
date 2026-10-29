@@ -45,7 +45,7 @@ Il livello massimo del personaggio resta 5. **Il sovrano è di livello 6**: supe
 
 | Nemico | PE |
 |---|---|
-| Animali normali (fuori casa e foresta) | 50-75 (cinghiale 75) |
+| Animali normali (fuori casa e foresta) | 50-75 (cinghiale 75; eccezione: coniglio 20, preda passiva che fugge) |
 | Animali infernali (fuori casa e foresta) | 75-100 (cinghiale 100) |
 | Mastini comuni | 150 |
 | Mastini boss (a due teste, della soglia di Adele) | 300 |

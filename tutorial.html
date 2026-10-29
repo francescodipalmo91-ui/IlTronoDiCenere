@@ -175,7 +175,8 @@
       .scheda { padding: 1rem 1.25rem; max-height: 40vh; }
       .pg { flex-direction: row; text-align: left; gap: 1rem; }
       .ritratto { width: 5rem; }
-      .completa > summary { display: block; cursor: pointer; color: var(--muted); margin-top: 0.75rem; }
+      .completa > summary { display: block; cursor: pointer; color: var(--muted); margin-top: 0.75rem; padding: 0.5rem 0; }
+      .scheda .nome-btn { padding: 0.45rem 0; } /* 29/10: oggetti della scheda più facili da toccare */
       .scheda .vitali { margin-top: 0.75rem; }
     }
     @media (max-width: 560px) {
@@ -261,7 +262,7 @@
           <a id="home" href="index.html"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 21V11.5a6.5 6.5 0 0 1 13 0V21" fill="currentColor" fill-opacity="0.15"/><path d="M3.5 21h17"/><path d="M12 5v16"/><circle cx="10.2" cy="14" r="0.7" fill="currentColor"/><circle cx="13.8" cy="14" r="0.7" fill="currentColor"/></svg></a>
         </div>
       </div>
-      <section id="diario" aria-live="polite"></section>
+      <section id="diario" aria-live="polite" tabindex="0" aria-label="Diario"></section>
       <div class="comandi">
         <div id="azioni" hidden></div>
         <form id="form" autocomplete="off">
@@ -597,7 +598,7 @@
         descTorcia: "Un bastone di legno avvolto in stracci imbevuti di pece. Fa luce e, all'occorrenza, colpisce: 1d4 + mod. Vigore, contundente.",
         descPresa: "Una volta per scontro, dopo un attacco andato a segno, la belva afferra il bersaglio tra le fauci: prova contrapposta di Vigore. Se vince la belva, 1d4 danni aggiuntivi.",
         esci: "Esci dall'addestramento", completa: "Scheda completa", zaino: "Zaino", invia: "Invia",
-        arma: "Arma", armaturaL: "Armatura", manoSec: "Mano secondaria", vuota: "libera", zainoVuoto: "Vuoto.",
+        arma: "Arma", armaturaL: "Armatura", manoSec: "Mano secondaria", vuota: "libera",
         manuale: "Manuale di combattimento", ignoto: "???", nemSottoVelato: "Belva · livello sconosciuto",
         nemVelataStat: "Non conosci ancora questa belva. La sua scheda si svelerà quando sarà a terra.",
         collare: "Collare del mastino", collareTit: "Collare del mastino infernale",
@@ -694,7 +695,7 @@
         descTorcia: "A wooden stick wrapped in pitch-soaked rags. It gives light and, if need be, strikes: 1d4 + Vigour mod., bludgeoning.",
         descPresa: "Once per fight, after an attack that lands, the beast seizes its target in its jaws: opposed Vigour check. If the beast wins, 1d4 extra damage.",
         esci: "Leave the training", completa: "Full sheet", zaino: "Backpack", invia: "Send",
-        arma: "Weapon", armaturaL: "Armor", manoSec: "Off hand", vuota: "free", zainoVuoto: "Empty.",
+        arma: "Weapon", armaturaL: "Armor", manoSec: "Off hand", vuota: "free",
         manuale: "Combat manual", ignoto: "???", nemSottoVelato: "Beast · unknown level",
         nemVelataStat: "You do not know this beast yet. Its sheet will be revealed once it is down.",
         collare: "Hound's collar", collareTit: "Hellhound's collar",
@@ -856,6 +857,7 @@
     $("invia").textContent = t.invia;
     $("testo").setAttribute("aria-label", t.placeholder);
     document.querySelectorAll("[data-t]").forEach(e => { e.textContent = t[e.dataset.t]; });
+    document.getElementById("diario").setAttribute("aria-label", LINGUA === "en" ? "Log" : "Diario"); /* 29/10 */
 
     /* ritratto del guerriero di prova (facoltativo) */
     (function () {

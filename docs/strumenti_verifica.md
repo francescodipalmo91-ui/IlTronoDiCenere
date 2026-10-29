@@ -37,6 +37,6 @@ Controllo rapido dopo ogni modifica: `npm test` (regole + lint + coerenza).
 
 ## Esito del 29/10/2026
 
-- Regole 236/236, browser 105/105 combattimento + 18/18 bilanciamento + 20/20 Sciamano.
-- Problemi da approvare: (1) manca `immagini/Trono_di_Cenere.webp` (poster del video in index.html); (2) chiave `zainoVuoto` duplicata nei testi del tutorial; (3) `PE_NEMICI` in gioco.html non usata e con valori vecchi; (4) bersagli piccoli sul telefono; (5) diario del tutorial non raggiungibile da tastiera, `#vitali` con elenco di definizioni non valido; (6) coniglio 20 PE contro 50-75 del documento.
+- Regole 236/236, browser 105/105 combattimento + 18/18 bilanciamento + 20/20 Sciamano; fumo 0 problemi e 0 avvisi; lint 0 errori; coerenza tutto allineato.
+- Corretti lo stesso giorno: (1) creata `immagini/Trono_di_Cenere.webp` dal primo fotogramma del video (poster della pagina iniziale); (2) tolta la chiave `zainoVuoto` duplicata nei testi del tutorial; (3) cancellata `PE_NEMICI` (non usata, valori vecchi); (4) bersagli di tocco sul telefono (bandiere 44 px, link del regolamento, scelta facile/difficile, tendine del diario e del tutorial); (5) diario del tutorial raggiungibile da tastiera, separatori delle barre vitali decorativi (elenco `#vitali` valido); (6) coniglio a 20 PE scritto nel documento di bilanciamento come eccezione voluta.
 - Non verificato qui: regole Firestore sull'emulatore (download bloccato in questo ambiente), sincronizzazione reale PC ↔ Pixel.

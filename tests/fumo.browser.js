@@ -71,7 +71,8 @@ const PAGINE = [
       /* bersagli di tocco: Google consiglia 48dp, sotto i 32px si sbaglia spesso il tocco */
       if (vista === "telefono") {
         r.piccoli = await page.evaluate(() => [...document.querySelectorAll("button, a[href], input, select, summary, [role=button]")]
-          .filter(e => { const b = e.getBoundingClientRect(), s = getComputedStyle(e); return b.width >= 4 && b.height >= 4 && /* sotto i 4px è un input nascosto, si tocca la sua etichetta */ s.visibility !== "hidden" && (b.height < 32 || b.width < 32); })
+          .filter(e => { const lab = e.matches("input") && e.closest("label"); /* un input dentro un'etichetta si tocca su tutta l'etichetta */
+            const b = (lab || e).getBoundingClientRect(), s = getComputedStyle(e); return b.width >= 4 && b.height >= 4 && /* sotto i 4px è un input nascosto, si tocca la sua etichetta */ s.visibility !== "hidden" && (b.height < 32 || b.width < 32); })
           .slice(0, 15).map(e => { const b = e.getBoundingClientRect(); return `${e.tagName.toLowerCase()}${e.id ? "#" + e.id : ""}${e.className && typeof e.className === "string" ? "." + e.className.split(" ")[0] : ""} «${(e.textContent || e.value || e.getAttribute("aria-label") || "").trim().slice(0, 20)}» ${Math.round(b.width)}×${Math.round(b.height)}`; }));
       }
 

@@ -532,7 +532,7 @@
       .voce .cornice { margin-bottom: 1rem; }
       .voce img.scena { width: auto; max-width: 100%; max-height: 36vh; max-height: 36dvh; }
       details.voce.giocatore { padding: 0.6rem 0.75rem; }
-      details.voce.giocatore > summary { font-size: 1.02rem; line-height: 1.5; padding-left: 0.7rem; }
+      details.voce.giocatore > summary { font-size: 1.02rem; line-height: 1.5; padding: 0.4rem 0 0.4rem 0.7rem; } /* 29/10: almeno 32px da toccare */
       details.voce.giocatore > .corpo { margin-top: 0.9rem; }
       .voce.riquadro { padding: 0.9rem 1rem; }
       .voce.prova { padding: 0.8rem 0.9rem; }
@@ -6173,7 +6173,6 @@
     const R_ = window.Regole; /* tutti i numeri delle regole stanno in regole.js */
     const LIVELLO_MAX = R_.LIVELLO_MAX;
     const SOGLIE_PE = R_.SOGLIE_PE; /* PE totali per raggiungere il livello 2, 3, 4, 5 (indice = livello attuale) */
-    const PE_NEMICI = { mastino: 150, mastinoSpecifico: 350, custode: 500 };
     const RISORSA_CLASSE = R_.RISORSA_MARZIALE, ATTR_RISORSA_MAGIA = R_.ATTR_MAGIA, DADO_VITA = R_.DADO_VITA;
     const RAZIONI_MAX = R_.RAZIONI_MAX, RAZIONI_AL_GIORNO = R_.RAZIONI_AL_GIORNO;
     let crescita = { salute: 0, mente: 0, risorsa: 0 };
@@ -6463,7 +6462,7 @@
         document.body.classList.toggle("salute-bassa", r <= 0.5 && r > 0.2);
         document.body.classList.toggle("salute-critica", r <= 0.2);
       }
-      const sep = (c) => { const d = document.createElement("div"); d.className = c; if (c === "sep-linea") d.setAttribute("role", "separator"); vit.append(d); };
+      const sep = (c) => { const d = document.createElement("div"); d.className = c; d.setAttribute("aria-hidden", "true"); vit.append(d); }; /* solo decorativo: dentro un <dl> un div non può avere un ruolo (29/10) */
       riga(vit, RG.giorno, String(Number(usate.giorno) || 1), "giorno"); /* i giorni passano a ogni riposo */
       riga(vit, CB.esperienza, testoPE(), "xp");
       sep("sep-linea");

@@ -50,7 +50,8 @@ for (const [nome, doc, cod] of CONTROLLI) {
 
 /* animali normali: il documento dice 50-75 PE */
 const rng = numDoc(/Animali normali[^|]*\| (\d+)-(\d+)/);
-if (rng) for (const [id, a] of Object.entries(ANIMALI)) if (a.xp < rng[0] || a.xp > rng[1]) avviso(`Animale «${id}»: ${a.xp} PE, fuori dall'intervallo ${rng[0]}-${rng[1]} del documento (voluto?)`);
+const rigaAnimali = (/Animali normali[^\n]*/.exec(DOC) || [""])[0]; /* un animale nominato nella riga con il suo valore è un'eccezione voluta */
+if (rng) for (const [id, a] of Object.entries(ANIMALI)) if ((a.xp < rng[0] || a.xp > rng[1]) && !new RegExp(`\\b${id}\\s+${a.xp}\\b`).test(rigaAnimali)) avviso(`Animale «${id}»: ${a.xp} PE, fuori dall'intervallo ${rng[0]}-${rng[1]} del documento (voluto?)`);
 
 /* costanti dichiarate ma mai usate che contengono numeri di bilanciamento: si leggono e confondono */
 for (const m of GIOCO.matchAll(/const (\w*PE\w*|\w*XP\w*) = \{[^}]*\}/g)) {

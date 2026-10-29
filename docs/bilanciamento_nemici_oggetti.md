@@ -507,9 +507,9 @@ Il set Vespera copre mantello, guanti, elmo, arma e corazza. Il bottino magico v
 - **Testi:** tre frasi per ciascuno (l'agguato, la resa, il ritorno con rancore), scritte da Claude e corrette da Francesco. Bottino garantito se ucciso: il loro pezzo d'equipaggiamento, al livello delle cacce comuni, senza poteri. Vulnerabili all'Ombra.
 - **Stati:** gli umani e gli altri popoli feriscono il corpo (Sanguinamento, Avvelenato, Indebolito); gli orchi anche Impaurito (il ruggito).
 
-### Il fermaglio indossato o nascosto (DECISO il 29 ottobre, numeri PROPOSTA)
+### Il fermaglio indossato o nascosto (DECISO il 29 ottobre, numeri compresi)
 Il fermaglio ha un suo slot e si può togliere, solo fuori dal combattimento (storia, sezione 10b). Dentro la mente, fuori il corpo:
-- **Indossato:** +2 alla Furtività del pedinamento (i mastini riconoscono l'odore di Aldo); fuori casa più agguati, perché sei una preda di valore. Proposta: **45% animale normale, 20% infernale, 35% agguato**.
+- **Indossato:** +2 alla Furtività del pedinamento (i mastini riconoscono l'odore di Aldo); fuori casa più agguati, perché sei una preda di valore: **45% animale normale, 20% infernale, 35% agguato**.
 - **Nascosto:** nessun bonus al pedinamento; fuori casa **55% animale normale, 30% infernale, 15% agguato**.
 - Il 20% di incontro a ogni ingresso non cambia. Prima del bronzo il fermaglio non c'è e resta il 67:33.
 - **Da controllare:** con il fermaglio sempre indossato, gli agguati del percorso atteso salgono di poco (da 3 a circa 4 su 5). Va bene, ma va visto nella simulazione.
@@ -522,7 +522,7 @@ Livello = livello del personaggio (minimo 2), +1 al ritorno. **Salute 15 + 3 per
 | **Brunilde Mezzaluna** | Nana, minatrice: entrata dal pozzo di una galleria crollata. Brusca, conta i giorni in monete di rame | Ascia a due mani 1d8 + liv; salute −2; CA 13 | Squarcio (2): se colpisce, TS Vigore → Sanguinamento | Ascia di Mezzaluna (due mani) | «Tu hai avuto una porta. Io un pozzo.» |
 | **Corrado Vallerossa** | Umano, soldato disertore: crede ancora negli ordini, ora li prende dal vecchio. **È il bronzo di un tempo, battuto e risparmiato da Enea** (storia, sezione 10b): battuta in più se lo incontri prima di Enea, variante dopo | Spada e scudo 1d6 + liv; CA 14 | Colpo di scudo (2): TS Vigore → Indebolito | Scudo di Vallerossa (+1 CA) | «Anche qui qualcuno dà ordini. Io li eseguo.» |
 | **Isotta la Biscia** | Elfa, sicaria: seguiva un contratto fin dentro la grotta | Due pugnali, 2 attacchi da **1d4 + metà del livello** (con il livello pieno era troppo forte: Arcanista 37-46% di sconfitta); salute −3; CA 13 | Lama intinta (2): se colpisce, TS Vigore → Avvelenato | Pugnale della Biscia (arma 1d4 + livello, una mano) | «Il vecchio dice che hai la chiave. Fammela vedere.» |
-| **Fra' Anselmo** | Umano, monaco itinerante: ha smesso di pregare per uscire | Bastone 1d6 + liv; CA 12 | Anatema (2): TS Spirito → Indebolito · Preghiera (2, una volta): si cura 1d6 + liv | Bastone di Anselmo (due mani) | «Ho pregato per uscire. Mi hanno risposto i cani.» |
+| **Fra' Anselmo** | Umano, monaco itinerante: ha smesso di pregare per uscire. La sua frase fa eco alla fede perduta di Enea (voluto: nei secoli la casa ha tradito molti uomini di fede) | Bastone 1d6 + liv; CA 12 | Anatema (2): TS Spirito → Indebolito · Preghiera (2, una volta): si cura 1d6 + liv | Bastone di Anselmo (due mani) | «Ho pregato per uscire. Mi hanno risposto i cani.» |
 | **Tobia Spillo** | Gnomo, trappolaio: ruba più che combattere | Pugnale 1d4 + liv; salute −3; CA 13 | Tagliola (2): al posto dell'attacco, TS Agilità → Sanguinamento · **Sotto un terzo di salute prova a fuggire**: se ci riesce torna più avanti, come se l'avessi risparmiato | Borsa degli attrezzi: piede di porco e corda (Dotazione) | «Non è niente di personale. È che la porta l'hai trovata tu.» |
 
 ### Frasi dei cinque (Francesco, 29 ottobre)

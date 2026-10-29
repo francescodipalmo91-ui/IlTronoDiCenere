@@ -6404,7 +6404,7 @@
     const testoDanno = (o) => {
       if (!o || !o.danno) return null;
       const m = mod(Number(pg.statistiche && pg.statistiche.Lotta) || 10);
-      return `${o.danno} + ${U.modLotta} (${m < 0 ? "−" : "+"}${Math.abs(m)})`;
+      return `${o.danno}${Number(o.bonus) ? " + " + o.bonus : ""} + ${U.modLotta} (${m < 0 ? "−" : "+"}${Math.abs(m)})`;
     };
     const infoScudo = (s) => [U.caBonus(Number(s.ca) || 0), Number(s.malus) ? U.malusAg(Number(s.malus)) : U.noMalus].join(" · ");
 
@@ -7962,7 +7962,7 @@
        - fuori casa (giardino, cimitero, cappella): 20% a ogni ingresso; ratto, corvo, lupo e i loro doppi infernali. Mai alla prima visita,
          e in giardino con una caccia aperta si fa avanti la preda di Aldo. In cripta niente: lì c'è il braciere (ed Ettore).
        In caso di incontro: 70% animale, 30% infernale; livello 1 solo infernali di grado 1, poi anche il grado 2. */
-    const PROB_ZONA = { foresta: 0.4, fuori: 0.2 }, PROB_ANIMALE_ZONA = { foresta: 0.6, fuori: 0.67 }, LUOGHI_FUORI = ["giardino", "cimitero", "cappella"]; /* 29/10: foresta 60:40; fuori casa 67:33 (dopo il bronzo 50:25:25 con gli agguati, quando ci saranno) */
+    const PROB_ZONA = { foresta: 0.4, fuori: 0.2 }, PROB_ANIMALE_ZONA = { foresta: 0.6, fuori: 0.67 }, LUOGHI_FUORI = ["giardino", "cimitero", "cappella"]; /* 29/10: foresta 60:40; fuori casa 67:33, dopo il bronzo 50:25:25 con gli agguati */
     const zonaDi = (l) => l === "pineta" ? "foresta" : LUOGHI_FUORI.includes(l) ? "fuori" : null;
     const inZona = (k, z) => (PREDE[k].zone || []).includes(z);
     const ANIMALI_IDS = (z) => Object.keys(PREDE).filter(k => PREDE[k].grado === 0 && inZona(k, z || "foresta"));
@@ -7977,7 +7977,9 @@
       if (nuovi.length) { id = aCaso(nuovi); usate.pineta_nuovo = giorno; }
       else {
         if (Math.random() >= PROB_ZONA[z]) return;
-        if (Math.random() < PROB_ANIMALE_ZONA[z]) id = aCaso(ANIMALI_IDS(z));
+        const r = Math.random(), agg = z === "fuori" && dopoBronzo(); /* 29/10: dopo il bronzo, fuori casa 50:25:25 con gli agguati */
+        if (agg && r >= 0.75) { salvaUsate(); return avviaAgguato(scegliAgguato()); }
+        if (agg ? r < 0.5 : r < PROB_ANIMALE_ZONA[z]) id = aCaso(ANIMALI_IDS(z));
         else { const gMax = livelloPg() <= 1 ? 1 : 2; id = aCaso(INFERNALI_IDS(z).filter(k => PREDE[k].grado <= gMax)); }
       }
       if (!id) return;
@@ -7991,6 +7993,157 @@
       avviaScontro(id, { ctx: z === "foresta" ? "pineta" : "fuori", testi: animale || z === "fuori" ? id : "p_" + id });
     }
     const incontroPineta = () => incontroZona(false);
+    /* ---------- agguati (29/10): fuori casa, dopo il bronzo; 1 su 5 uno dei cinque avventurieri ancora in gioco ----------
+       usate.avv[id] = { stato: "incontrato" | "risparmiato" | "morto", giorno, pe }: «risparmiato» torna una volta, dopo un riposo, con +1 livello. */
+    const AGT = () => Lingua.t({
+      it: { finisci: (n) => `Finisci ${n}`, risparmia: (n) => `Risparmi ${n}`,
+        uccidePieta: "Abbassi l'arma su chi ti chiedeva pietà. Mentre lo fai, qualcosa dentro di te cede come un'asse marcia: la casa ti sta cambiando, e ti reclama.",
+        uccideFuga: "Abbassi l'arma su chi cercava solo di scappare. Mentre lo fai, qualcosa dentro di te cede come un'asse marcia: la casa ti sta cambiando, e ti reclama.",
+        risparmiato: (n) => `${n} raccoglie le sue cose senza voltarti le spalle e sparisce nell'ombra. Non hai l'impressione che sia finita qui.`,
+        ritornoNota: "Stavolta non chiederà pietà: combatterà fino alla fine.",
+        presoTit: "Lo afferri", presoRegola: (ab, cd) => `Tobia scatta verso le lapidi: prova di ${ab} contro CD ${cd} per afferrarlo.`,
+        preso: "Scatta verso le lapidi, ma sei più svelto: lo afferri per il colletto e lo inchiodi a terra.",
+        bottino: (n) => `Tra le sue cose trovi: ${n}.`, preghiera: "Preghiera", preghieraLog: (c, da, a) => `Fra' Anselmo stringe il simbolo sacro e mormora un salmo: le ferite si richiudono un poco. Recupera ${c} salute (${da} → ${a}).` },
+      en: { finisci: (n) => `Finish ${n}`, risparmia: (n) => `Spare ${n}`,
+        uccidePieta: "You bring your weapon down on someone begging for mercy. As you do, something inside you gives way like a rotten plank: the house is changing you, and claiming you.",
+        uccideFuga: "You bring your weapon down on someone who was only trying to run. As you do, something inside you gives way like a rotten plank: the house is changing you, and claiming you.",
+        risparmiato: (n) => `${n} gathers their things without turning their back on you and disappears into the shadows. You do not feel this is over.`,
+        ritornoNota: "This time there will be no plea for mercy: it is a fight to the end.",
+        presoTit: "You grab him", presoRegola: (ab, cd) => `Tobia darts towards the gravestones: ${ab} check against DC ${cd} to grab him.`,
+        preso: "He darts towards the gravestones, but you are quicker: you grab him by the collar and pin him to the ground.",
+        bottino: (n) => `Among their things you find: ${n}.`, preghiera: "Prayer", preghieraLog: (c, da, a) => `Brother Anselmo clutches the holy symbol and murmurs a psalm: his wounds close a little. He recovers ${c} health (${da} → ${a}).` }
+    });
+    const dopoBronzo = () => gradoFermaglio() >= 0;
+    const statoAvv = (id) => (usate.avv && usate.avv[id]) || {};
+    const segnaAvv = (id, v) => { usate.avv = { ...(usate.avv || {}), [id]: { ...statoAvv(id), ...v } }; salvaUsate(); };
+    function avvDisponibile(id) {
+      const s = statoAvv(id);
+      if (s.stato === "morto") return false;
+      if (s.stato === "risparmiato") return (Number(usate.giorno) || 1) > (Number(s.giorno) || 0); /* torna solo dopo un riposo */
+      return true;
+    }
+    function scegliAgguato() {
+      const l = livelloPg(), nominati = AVVENTURIERI.filter(avvDisponibile);
+      if (nominati.length && Math.random() < 0.2) return aCaso(nominati);
+      if (l <= 2) return "goblin";
+      if (l === 3) return Math.random() < 0.5 ? "goblin" : "orco";
+      return Math.random() < 0.5 ? "banda_goblin" : (Math.random() < 0.5 ? "orco" : "banda_orchi"); /* dal livello 4 anche i gruppi */
+    }
+    /* statistiche dei cinque al livello del personaggio (minimo 2), +1 al ritorno */
+    function preparaAvventuriero(id, ritorno) {
+      const P = PREDE[id], D = NEMICI[id], L = Math.max(2, livelloPg()) + (ritorno ? 1 : 0);
+      D.livello = L; D.pvFissi = 15 + 3 * (L - 2) + (Number(P.avv.pvMod) || 0);
+      D.dannoBonus = P.avv.mezzo ? Math.floor(L / 2) : L; /* Isotta: due pugnali da 1d4 + metà del livello */
+      D.abilita = P.abilita.map(a => ({ ...a, cd: 8 + L }));
+      return L;
+    }
+    /* le frasi: la scena è narrazione, la battuta è dialogo */
+    function fraseAvv(id, k) {
+      const T = PREDE[id][LINGUA === "en" ? "en" : "it"], f = T.frasi[k];
+      if (!f) return;
+      fuoriDallaTendina(() => {
+        if (f.scena && k !== "fuga") aggiungi({ tipo: "narra", box: "nem", righe: [f.scena] });
+        aggiungi({ tipo: "dialogo", fuori: true, tuttoBox: true, chi: T.nome, righe: [f.dice] });
+      });
+    }
+    function avviaAgguato(id) {
+      const P = PREDE[id], T = P[LINGUA === "en" ? "en" : "it"];
+      ultimaImmagineNemico = null;
+      if (!P.avv) {
+        fuoriDallaTendina(() => aggiungi({ tipo: "narra", box: "nem", righe: [aCaso(T.agguati)] }));
+        return avviaScontro(id, { ctx: "agguato", testi: id });
+      }
+      const s = statoAvv(id), ritorno = s.stato === "risparmiato", L = preparaAvventuriero(id, ritorno);
+      if (!s.stato) segnaAvv(id, { stato: "incontrato" });
+      fraseAvv(id, ritorno ? "ritorno" : "agguato");
+      if (ritorno) sist(AGT().ritornoNota);
+      avviaScontro(id, { ctx: "agguato", testi: id });
+      if (scontro) scontro.avv = { ritorno, L };
+    }
+    /* a un terzo della salute: si arrende (Tobia scappa). Mai al ritorno */
+    const resaPossibile = () => !!(scontro && scontro.ctx === "agguato" && NEMICI[scontro.id].avv && scontro.avv && !scontro.avv.ritorno && !scontro.resa && scontro.pv > 0 && scontro.pv <= Math.ceil(scontro.pvMax / 3));
+    function resaAvventuriero() {
+      if (!scontro) return;
+      scontro.tuoTurno = false;
+      const id = scontro.id;
+      if (NEMICI[id].scappa) return fugaTobia();
+      fraseAvv(id, "resa");
+      sceltaResa(id, false);
+    }
+    function sceltaResa(id, fuga) {
+      const n = PREDE[id][LINGUA === "en" ? "en" : "it"].nome, X = AGT();
+      scrittura.then(() => scelte([
+        { testo: X.finisci(n), fn: () => {
+          chiudiScelte(); if (!scontro) return;
+          const [da, a] = dannoMenteSubito(1); /* 1 punto mentale, letale */
+          aggiungi({ tipo: "narra", box: "ko", righe: [fuga ? X.uccideFuga : X.uccidePieta, U.dannoMentale(da, a)] });
+          scontro.pv = 0; vittoriaScontro();
+        } },
+        { testo: X.risparmia(n), fn: () => { chiudiScelte(); risparmiaAvventuriero(id, false); } }
+      ]));
+    }
+    function risparmiaAvventuriero(id, scappato) {
+      if (!scontro) return;
+      const n = PREDE[id][LINGUA === "en" ? "en" : "it"].nome, s = statoAvv(id);
+      chiudiScontro(scappato ? "fuggito" : "resa");
+      scontro = null; ultimoNemico = null; MusicaScontro.ferma(); barraScontro(); stato(false);
+      if (!scappato) fuoriDallaTendina(() => aggiungi({ tipo: "narra", righe: [AGT().risparmiato(n)] }));
+      segnaAvv(id, { stato: "risparmiato", giorno: Number(usate.giorno) || 1, pe: true });
+      if (!s.pe) { const xp = NEMICI[id].xp; guadagnaPE(xp); fuoriDallaTendina(() => aggiungi({ tipo: "narra", box: "ok", righe: [RG.pe(xp, pg.esperienza)] })); controllaLivello(); }
+      disegnaVitali();
+    }
+    /* Tobia: prova a fuggire; Atletica o Acrobazia (la migliore) contro CD 10 + il suo livello per afferrarlo */
+    function fugaTobia() {
+      const id = scontro.id, f = PREDE[id][LINGUA === "en" ? "en" : "it"].frasi.fuga, X = AGT(), L = (scontro.avv && scontro.avv.L) || 2;
+      fraseAvv(id, "fuga");
+      scrittura.then(() => {
+        if (!scontro) return;
+        const ab = valoreAbilita("Atletica") >= valoreAbilita("Acrobazia") ? "Atletica" : "Acrobazia", cd = 10 + L, m = valoreAbilita(ab), d = tira(20), tot = d + m, ok = tot >= cd;
+        aggiungi({ tipo: "prova", titolo: X.presoTit, dati: [`CD ${cd}`, "d20", `${N("abilita", ab)} ${fmtN(m)}`], righe: [X.presoRegola(N("abilita", ab), cd), `d20 ${d} ${fmtN(m)} = ${tot}`] });
+        if (ok) { aggiungi({ tipo: "narra", box: "mia", righe: [X.preso] }); return sceltaResa(id, true); }
+        fuoriDallaTendina(() => aggiungi({ tipo: "narra", box: "nem", righe: [f.scena] }));
+        risparmiaAvventuriero(id, true); /* come se l'avessi risparmiato */
+      });
+    }
+    /* Fra' Anselmo: Preghiera (2 PA, una volta) sotto metà salute, si cura 1d6 + livello */
+    function preghieraNem() {
+      const D = NEMICI[scontro.id], X = AGT(), da = scontro.pv;
+      spendiPaNem(2); scontro.preghieraUsata = true;
+      const c = Math.min(scontro.pvMax - scontro.pv, tira(6) + (Number(D.livello) || 2));
+      scontro.pv += c;
+      aggiungi({ tipo: "narra", box: "nem", esito: X.preghiera, righe: [X.preghieraLog(c, da, scontro.pv)] });
+      segnaTurno(X.preghiera); barraScontro();
+      fineTurnoNem();
+    }
+    /* bottino: i cinque lasciano il loro pezzo (al livello delle cacce comuni, senza poteri); orchi e goblin un'arma, un'armatura o uno scudo comune,
+       il 15% delle volte con il bonus delle cacce comuni (+livello sulle armi, +1 su armature e scudi) */
+    const BOTTINO_AVV = {
+      brunilde: (L) => [{ nome: "Ascia da battaglia di Mezzaluna", tipo: "arma", danno: "1d8", tipoDanno: "Tagliente", mani: 2, bonus: L, alias: ["ascia", "axe"] }],
+      corrado: () => [{ nome: "Scudo di Vallerossa", tipo: "scudo", ca: 2, malus: 1, bonus: 1, alias: ["scudo", "shield"] }],
+      isotta: () => [{ nome: "Pugnale della Biscia", tipo: "dotazione", usi: null, alias: ["pugnale", "dagger"] }],
+      anselmo: (L) => [{ nome: "Bastone di Anselmo", tipo: "arma", danno: "1d6", tipoDanno: "Contundente", mani: 2, bonus: L, alias: ["bastone", "staff"] }],
+      tobia: () => [{ nome: "Piede di porco", tipo: "dotazione", usi: null }, { nome: "Corda e rampino", tipo: "dotazione", usi: null }]
+    };
+    function oggettoComune(conBonus) {
+      const vari = ARMERIA.filter(o => ["armi", "armature", "scudi"].includes(o.cat) && permessoArmeria(o));
+      const o = aCaso(vari.length ? vari : ARMERIA.filter(o => o.cat === "armi")), l = livelloPg();
+      if (o.tipo === "arma") return { nome: o.nome, tipo: "arma", danno: o.danno, tipoDanno: o.tipoDanno, mani: o.mani, alias: [], ...(conBonus ? { bonus: l } : {}) };
+      if (o.tipo === "armatura") return { nome: o.nome, tipo: "armatura", ca: o.ca + (conBonus ? 1 : 0), malus: o.malus, ...(conBonus ? { bonus: 1 } : {}) };
+      return { nome: "Scudo", tipo: "scudo", ca: o.ca + (conBonus ? 1 : 0), malus: o.malus, ...(conBonus ? { bonus: 1 } : {}) };
+    }
+    function bottinoAgguato(id, avv) {
+      const P = PREDE[id];
+      const lista = P.avv ? BOTTINO_AVV[id]((avv && avv.L) || Math.max(2, livelloPg())) : [oggettoComune(Math.random() < 0.15)];
+      lista.forEach(o => { const it = { id: nuovoId(), ...o }; if (it.tipo === "dotazione") it.testo = Lingua.desc(it.nome); zaino.push(it); });
+      aggiornaZaino(); modificato();
+      fuoriDallaTendina(() => aggiungi({ tipo: "sistema", box: "cap", fuori: true, righe: [AGT().bottino(lista.map(o => nomeOg(o)).join(", "))] }));
+    }
+    /* PE degli agguati: i cinque 100 solo la prima volta (mai al ritorno); orchi e goblin pieni fino al loro livello di riferimento, metà al successivo, poi niente */
+    function xpAgguato(D, avv) {
+      if (D.avv) return avv && !avv.ritorno ? D.xp : 0;
+      const l = livelloPg(), fino = Number(D.peFino) || 3;
+      return Math.ceil(D.xp * (l <= fino ? 1 : l === fino + 1 ? 0.5 : 0));
+    }
     /* PE degli animali a scalare con il livello del personaggio: gli animali normali fino al 2, poi metà al 3, poi niente; gli infernali un livello dopo */
     function xpScontro(D, ctx) {
       if (ctx !== "pineta" && ctx !== "fuori") return D.xp;
@@ -10458,8 +10611,182 @@
           vittoria: "The wolf whimpers, falls on its side and stops breathing. A real animal, warm, dead.", fuga: "", vede: "" } }
     };
     Object.assign(PREDE, ANIMALI);
+    /* =====================================================================
+       AGGUATI (29/10): solo fuori casa e solo dopo il bronzo. Orchi e goblin ripetibili (da soli o in gruppo, il gruppo è una creatura sola)
+       e i cinque avventurieri, che crescono con il personaggio (statistiche in preparaAvventuriero).
+       Frasi dei cinque scritte da Francesco: «scena» è la narrazione, «dice» la battuta.
+       ===================================================================== */
+    const AGGUATI = {
+      goblin: { agguato: true, umano: true, livello: 2, peFino: 3, zone: [], ca: 13, pvFissi: 12, dannoDado: 4, dannoBonus: 1, attacco: 2, attacchi: 1, xp: 75, xpZona: 75, pa: 3,
+        abilita: [{ id: "lama_sporca", costo: 2, tipo: "colpo", stato: "veleno", ts: "Vigore", cd: 11 }],
+        it: { nome: "Goblin predone", il: "il goblin", Il: "Il goblin", al: "al goblin", del: "del goblin", att1: "Coltellata", att2: "Graffio", sotto: "Goblin · agguato",
+          cond: ["Saltella sul posto, ghignando: sembra ancora del tutto integro.", "È ferito: perde sangue scuro e ringhia tra i denti storti.", "Barcolla, ansimando: il ghigno è sparito.", "Giace a terra, immobile."],
+          ok1: ["Il coltello arrugginito del goblin ti si pianta nella coscia: lo sfila con una risatina.", "Il goblin ti scivola sotto la guardia e ti punge al fianco."],
+          ok2: ["Le unghie nere del goblin ti graffiano il polso.", "Il goblin ti salta addosso e ti rastrella il braccio con le unghie."],
+          crit: "Il goblin ti si arrampica addosso come una scimmia e ti affonda il coltello tra le costole, strillando di gioia.",
+          agguati: ["Una risatina stridula dietro una lapide. Poi un'altra, più vicina. Un goblin salta fuori con un coltello arrugginito, gli occhi gialli fissi sulle tue tasche.", "Un sasso ti sfiora l'orecchio. «Roba! Roba lucida!» Il goblin carica, troppo veloce per la sua taglia."],
+          vittoria: "Il goblin crolla con un guaito e il coltello gli scivola di mano. Nelle tasche stracciate, tra ossa di topo, c'è qualcosa che non gli apparteneva." },
+        en: { nome: "Goblin Raider", the: "the goblin", The: "The goblin", att1: "Stab", att2: "Scratch", sotto: "Goblin · ambush",
+          cond: ["It hops on the spot, grinning: it still looks wholly unhurt.", "It is wounded: it bleeds dark blood and snarls through crooked teeth.", "It staggers, panting: the grin is gone.", "It lies on the ground, motionless."],
+          ok1: ["The goblin's rusty knife sinks into your thigh: it pulls it out with a giggle.", "The goblin slips under your guard and pricks your side."],
+          ok2: ["The goblin's black nails rake your wrist.", "The goblin leaps on you and claws your arm."],
+          crit: "The goblin climbs you like a monkey and drives its knife between your ribs, shrieking with joy.",
+          agguati: ["A shrill giggle behind a gravestone. Then another, closer. A goblin jumps out with a rusty knife, its yellow eyes fixed on your pockets.", "A stone grazes your ear. “Stuff! Shiny stuff!” The goblin charges, far too quick for its size."],
+          vittoria: "The goblin collapses with a yelp and the knife slips from its hand. In its ragged pockets, among rat bones, there is something that did not belong to it." } },
+      orco: { agguato: true, umano: true, livello: 3, peFino: 3, zone: [], ca: 11, pvFissi: 18, dannoDado: 8, dannoBonus: 0, attacco: 4, attacchi: 1, xp: 100, xpZona: 100, pa: 4,
+        abilita: [{ id: "ruggito", costo: 2, tipo: "ts", stato: "paura", ts: "Spirito", cd: 12 }, { id: "fendente_orco", costo: 2, tipo: "colpo", stato: "sangue", ts: "Vigore", cd: 12 }],
+        it: { nome: "Orco razziatore", il: "l'orco", Il: "L'orco", al: "all'orco", del: "dell'orco", att1: "Ascia", att2: "Pugno", sotto: "Orco · agguato",
+          cond: ["Grugnisce, le zanne scoperte: sembra ancora del tutto integro.", "È ferito: il sangue gli cola lungo il braccio, ma non rallenta.", "Respira a fatica, le spalle curve: l'ascia gli pesa.", "Giace a terra, immobile."],
+          ok1: ["L'ascia dell'orco ti cala sulla spalla: senti l'osso gemere sotto il cuoio.", "Un fendente largo dell'orco ti apre il fianco."],
+          ok2: ["Il pugno dell'orco ti centra lo stomaco e ti piega in due.", "L'orco ti afferra e ti scaglia contro la pietra."],
+          crit: "L'orco alza l'ascia con tutte e due le mani e la abbatte su di te con un ruggito: il colpo ti strappa il fiato e quasi la coscienza.",
+          agguati: ["Il terreno trema sotto passi pesanti. Un orco sbuca dall'ombra di un muro e ti sbarra la strada. Ha l'ascia già alzata.", "Fiuti l'odore prima di vederlo: sudore, sangue vecchio, fumo. L'orco grugnisce una parola che non capisci, poi carica."],
+          vittoria: "L'orco cade in ginocchio, poi a faccia in giù. Il colpo sordo fa volare via i corvi dal cimitero." },
+        en: { nome: "Orc Marauder", the: "the orc", The: "The orc", att1: "Axe", att2: "Fist", sotto: "Orc · ambush",
+          cond: ["It grunts, tusks bared: it still looks wholly unhurt.", "It is wounded: blood runs down its arm, but it does not slow.", "It breathes hard, shoulders hunched: the axe weighs on it.", "It lies on the ground, motionless."],
+          ok1: ["The orc's axe comes down on your shoulder: you feel the bone groan under the leather.", "A wide swing of the orc's axe opens your side."],
+          ok2: ["The orc's fist hits your stomach and doubles you over.", "The orc grabs you and hurls you against the stone."],
+          crit: "The orc raises its axe in both hands and brings it down on you with a roar: the blow tears the breath and nearly the senses out of you.",
+          agguati: ["The ground shakes under heavy steps. An orc bursts from the shadow of a wall and bars your way. Its axe is already raised.", "You smell it before you see it: sweat, old blood, smoke. The orc grunts a word you do not understand, then charges."],
+          vittoria: "The orc falls to its knees, then face down. The dull thud sends the crows flying from the cemetery." } },
+      banda_goblin: { agguato: true, umano: true, gruppo: true, livello: 4, peFino: 4, zone: [], ca: 12, pvFissi: 18, dannoDado: 4, dannoBonus: 0, attacco: 2, attacchi: 2, xp: 125, xpZona: 125, pa: 4,
+        abilita: [{ id: "lama_sporca", costo: 2, tipo: "colpo", stato: "veleno", ts: "Vigore", cd: 12 }],
+        it: { nome: "Banda di goblin", il: "la banda", Il: "La banda", al: "alla banda", del: "della banda", att1: "Coltellate", att2: "Sassate", sotto: "Gruppo di goblin · agguato",
+          cond: ["La banda ti gira attorno, strillando: sembra ancora del tutto integra.", "La banda è ferita: un goblin zoppica, un altro si tiene il braccio.", "La banda si sfalda: i pochi goblin in piedi si guardano alle spalle.", "La banda è a terra, dispersa."],
+          ok1: ["Due goblin ti si buttano alle gambe insieme: un coltello trova la carne.", "Mentre ne scacci uno, un altro ti punge alla schiena."],
+          ok2: ["Un sasso ti centra la tempia e per un istante vedi bianco.", "Una pioggia di sassi ti tempesta le spalle: uno fa male davvero."],
+          crit: "La banda ti salta addosso tutta insieme: mani, unghie e coltelli dappertutto, e per un istante non riesci nemmeno a respirare.",
+          agguati: ["Risatine stridule da ogni lato. Da dietro le lapidi e i cespugli spuntano teste verdi, una, tre, cinque: una banda di goblin, coltelli in mano, che ti chiude il cerchio attorno.", "«Roba! Tanta roba!» Una voce stridula, poi un coro. I goblin escono allo scoperto tutti insieme e caricano senza ordine, spingendosi a vicenda."],
+          vittoria: "L'ultimo goblin in piedi lascia cadere il coltello e scappa strillando. Gli altri restano a terra. Tra stracci e ossa di topo c'è qualcosa che vale la pena raccogliere." },
+        en: { nome: "Goblin Gang", the: "the gang", The: "The gang", att1: "Stabs", att2: "Stones", sotto: "Group of goblins · ambush",
+          cond: ["The gang circles you, shrieking: it still looks wholly unhurt.", "The gang is wounded: one goblin limps, another clutches its arm.", "The gang is falling apart: the few goblins still standing glance over their shoulders.", "The gang lies on the ground, scattered."],
+          ok1: ["Two goblins throw themselves at your legs together: a knife finds flesh.", "As you drive one off, another pricks your back."],
+          ok2: ["A stone hits your temple and for an instant you see white.", "A hail of stones pelts your shoulders: one really hurts."],
+          crit: "The whole gang leaps on you at once: hands, nails and knives everywhere, and for an instant you cannot even breathe.",
+          agguati: ["Shrill giggles from every side. From behind the gravestones and bushes green heads pop up, one, three, five: a gang of goblins, knives in hand, closing the circle around you.", "“Stuff! Lots of stuff!” A shrill voice, then a chorus. The goblins break cover all together and charge with no order at all, shoving one another."],
+          vittoria: "The last goblin standing drops its knife and runs off shrieking. The others stay on the ground. Among rags and rat bones there is something worth picking up." } },
+      banda_orchi: { agguato: true, umano: true, gruppo: true, livello: 4, peFino: 4, zone: [], ca: 10, pvFissi: 26, dannoDado: 6, dannoBonus: 0, attacco: 3, attacchi: 2, xp: 150, xpZona: 150, pa: 5,
+        abilita: [{ id: "ruggito", costo: 2, tipo: "ts", stato: "paura", ts: "Spirito", cd: 12 }, { id: "fendente_orco", costo: 2, tipo: "colpo", stato: "sangue", ts: "Vigore", cd: 12 }],
+        it: { nome: "Banda di orchi", il: "la banda", Il: "La banda", al: "alla banda", del: "della banda", att1: "Asce", att2: "Mazze", sotto: "Gruppo di orchi · agguato",
+          cond: ["Gli orchi avanzano spalla a spalla: la banda sembra ancora del tutto integra.", "La banda è ferita: uno degli orchi sanguina e impreca nella sua lingua.", "La banda vacilla: gli orchi rimasti arretrano di un passo.", "La banda è a terra."],
+          ok1: ["Un'ascia ti cala sulla spalla mentre pari quella dell'altro orco.", "Due orchi ti stringono da lati opposti: una lama trova il fianco."],
+          ok2: ["Una mazza ti spazza le gambe e finisci in ginocchio.", "Il manico di una mazza ti centra lo sterno."],
+          crit: "Gli orchi colpiscono insieme, con un ruggito solo: due colpi, uno sopra l'altro, e il mondo ti si rovescia attorno.",
+          agguati: ["Il terreno trema sotto passi pesanti, e non sono di uno solo. Due orchi sbucano dall'ombra del muro, poi un terzo. Ti sbarrano la strada senza fretta: sanno di essere di più.", "L'odore arriva prima di loro: sudore, sangue vecchio, fumo. Poi le voci, gutturali, e la banda di orchi esce allo scoperto con le armi già alzate."],
+          vittoria: "L'ultimo orco crolla sopra gli altri con un tonfo che fa volare via i corvi dal cimitero. Il silenzio torna, pesante." },
+        en: { nome: "Orc Warband", the: "the warband", The: "The warband", att1: "Axes", att2: "Maces", sotto: "Group of orcs · ambush",
+          cond: ["The orcs advance shoulder to shoulder: the warband still looks wholly unhurt.", "The warband is wounded: one of the orcs bleeds and curses in its own tongue.", "The warband wavers: the orcs left standing step back.", "The warband lies on the ground."],
+          ok1: ["An axe comes down on your shoulder while you parry the other orc's.", "Two orcs close in from opposite sides: a blade finds your flank."],
+          ok2: ["A mace sweeps your legs and you drop to your knees.", "The haft of a mace hits your breastbone."],
+          crit: "The orcs strike together, with a single roar: two blows, one on top of the other, and the world turns over around you.",
+          agguati: ["The ground shakes under heavy steps, and not just one pair. Two orcs burst from the shadow of the wall, then a third. They bar your way unhurried: they know they outnumber you.", "The smell arrives before they do: sweat, old blood, smoke. Then the voices, guttural, and the orc warband breaks cover with weapons already raised."],
+          vittoria: "The last orc collapses on top of the others with a thud that sends the crows flying from the cemetery. Silence returns, heavy." } },
+      /* i cinque: livello = personaggio (minimo 2), +1 al ritorno; salute 15 + 3 per livello oltre il 2 (+ pvMod); +3 per colpire; arma magica dado + livello; 6 PA; CD 8 + livello */
+      brunilde: { agguato: true, umano: true, avv: { pvMod: -2 }, livello: 2, zone: [], ca: 13, pvFissi: 13, dannoDado: 8, dannoBonus: 2, attacco: 3, attacchi: 1, xp: 100, pa: 6, vulnerabile: ["Ombra"],
+        abilita: [{ id: "squarcio", costo: 2, tipo: "colpo", stato: "sangue", ts: "Vigore", cd: 10 }],
+        it: { nome: "Brunilde Mezzaluna", il: "Brunilde", Il: "Brunilde", al: "a Brunilde", del: "di Brunilde", att1: "Ascia", att2: "Spallata", sotto: "Nana, minatrice · agguato",
+          cond: ["Stringe l'ascia e sputa per terra: sembra ancora del tutto integra.", "È ferita: si tiene il fianco, ma non molla la presa sull'ascia.", "Ansima, piegata sul manico dell'ascia: le gambe le tremano.", "Giace a terra, immobile."],
+          ok1: ["L'ascia di Brunilde ti cala addosso come su una vena di roccia: il ferro ti apre la spalla.", "Brunilde ruota l'ascia bassa e ti morde il polpaccio."],
+          ok2: ["Brunilde ti carica di spalla e ti manda a sbattere contro la pietra.", "Una spallata della nana ti toglie il fiato."],
+          crit: "Brunilde pianta i piedi, solleva l'ascia sopra la testa e la abbatte con un grugnito da cava: il colpo ti spacca la guardia e la carne.",
+          frasi: { agguato: { dice: "«Fermo lì. Sei quello della porta, no? Il vecchio ha detto che la chiave sei tu. Io è una vita che scavo: ora si apre.»" },
+            resa: { dice: "«Cedo il passo. Tanto è solo questione di tempo prima che sia io a stare davanti.»" },
+            ritorno: { dice: "«Mi hai lasciata indietro, ma ho recuperato strada. C'è posto solo per uno di noi qui... e hai finito il tuo turno.»" } },
+          vittoria: "Brunilde cade in ginocchio, poi su un fianco. L'ascia le scivola dalle dita callose. Nella tasca del giubbetto tintinnano monete di rame: i giorni che ha contato, fino a oggi." },
+        en: { nome: "Brunilde Mezzaluna", the: "Brunilde", The: "Brunilde", att1: "Axe", att2: "Shoulder-barge", sotto: "Dwarf, miner · ambush",
+          cond: ["She grips her axe and spits on the ground: she still looks wholly unhurt.", "She is wounded: she holds her side, but never loosens her grip on the axe.", "She pants, bent over the axe haft: her legs are shaking.", "She lies on the ground, motionless."],
+          ok1: ["Brunilde's axe comes down on you as on a seam of rock: the iron opens your shoulder.", "Brunilde swings her axe low and bites into your calf."],
+          ok2: ["Brunilde charges you shoulder first and slams you against the stone.", "A shoulder-barge from the dwarf knocks the wind out of you."],
+          crit: "Brunilde plants her feet, raises the axe over her head and brings it down with a quarryman's grunt: the blow splits your guard and your flesh.",
+          frasi: { agguato: { dice: "“Stop right there. You're the one from the door, aren't you? The old man said you're the key. I've been digging my whole life: now it opens.”" },
+            resa: { dice: "“I give way. It's only a matter of time before I'm the one in front anyway.”" },
+            ritorno: { dice: "“You left me behind, but I've made up the ground. There's room for only one of us here... and your turn is over.”" } },
+          vittoria: "Brunilde falls to her knees, then onto her side. The axe slips from her calloused fingers. In her jerkin pocket copper coins clink: the days she counted, up to today." } },
+      corrado: { agguato: true, umano: true, avv: { pvMod: 0 }, livello: 2, zone: [], ca: 14, pvFissi: 15, dannoDado: 6, dannoBonus: 2, attacco: 3, attacchi: 1, xp: 100, pa: 6, vulnerabile: ["Ombra"],
+        abilita: [{ id: "colpo_scudo", costo: 2, tipo: "colpo", stato: "debole", ts: "Vigore", cd: 10 }],
+        it: { nome: "Corrado Vallerossa", il: "Corrado", Il: "Corrado", al: "a Corrado", del: "di Corrado", att1: "Spada", att2: "Scudo", sotto: "Umano, soldato disertore · agguato",
+          cond: ["Si copre dietro lo scudo, lo sguardo fermo: sembra ancora del tutto integro.", "È ferito: lo scudo gli pesa, ma tiene la posizione.", "Respira a fatica, la spada bassa: la disciplina comincia a cedere.", "Giace a terra, immobile."],
+          ok1: ["La spada di Corrado entra da sotto lo scudo, precisa come in piazza d'armi.", "Corrado finta in alto e ti colpisce al fianco."],
+          ok2: ["Il bordo dello scudo ti centra il mento.", "Corrado ti spinge con lo scudo e ti fa perdere l'equilibrio."],
+          crit: "Corrado ti blocca l'arma con lo scudo e nello stesso istante affonda la spada: un colpo da manuale, freddo, che ti trova tra le costole.",
+          frasi: { agguato: { dice: "«Alt. Il vecchio vuole che resti qui. E io ubbidisco, è l'unico modo che conosco per campare.»" },
+            resa: { scena: "Pianta la spada e si copre dietro lo scudo.", dice: "«Mi arrendo. Ho già scelto la vita una volta, non cambio idea adesso.»" },
+            ritorno: { scena: "Scuote la testa, con lo sguardo basso.", dice: "«Ci ho pensato a quello che hai fatto per me. Davvero. Ma gli ordini sono catene più pesanti delle tue. Ricominciamo.»" } },
+          vittoria: "Corrado si accascia sullo scudo, come un soldato che finalmente può smettere di stare sull'attenti. Gli occhi restano aperti, rivolti verso la casa." },
+        en: { nome: "Corrado Vallerossa", the: "Corrado", The: "Corrado", att1: "Sword", att2: "Shield", sotto: "Human, deserter · ambush",
+          cond: ["He covers himself behind his shield, gaze steady: he still looks wholly unhurt.", "He is wounded: the shield weighs on him, but he holds his ground.", "He breathes hard, sword low: his discipline is starting to give.", "He lies on the ground, motionless."],
+          ok1: ["Corrado's sword comes in under the shield, precise as on the parade ground.", "Corrado feints high and strikes your side."],
+          ok2: ["The rim of the shield catches your chin.", "Corrado shoves you with his shield and knocks you off balance."],
+          crit: "Corrado blocks your weapon with his shield and in the same instant thrusts his sword: a textbook blow, cold, that finds you between the ribs.",
+          frasi: { agguato: { dice: "“Halt. The old man wants you to stay here. And I obey: it's the only way I know to get by.”" },
+            resa: { scena: "He plants his sword and covers himself behind his shield.", dice: "“I surrender. I chose life once already, I'm not changing my mind now.”" },
+            ritorno: { scena: "He shakes his head, eyes lowered.", dice: "“I've thought about what you did for me. Truly. But orders are chains heavier than yours. Let's start again.”" } },
+          vittoria: "Corrado slumps over his shield, like a soldier who can finally stop standing at attention. His eyes stay open, turned towards the house." } },
+      isotta: { agguato: true, umano: true, avv: { pvMod: -3, mezzo: true }, livello: 2, zone: [], ca: 13, pvFissi: 12, dannoDado: 4, dannoBonus: 1, attacco: 3, attacchi: 2, xp: 100, pa: 6, vulnerabile: ["Ombra"],
+        abilita: [{ id: "lama_intinta", costo: 2, tipo: "colpo", stato: "veleno", ts: "Vigore", cd: 10 }],
+        it: { nome: "Isotta la Biscia", il: "Isotta", Il: "Isotta", al: "a Isotta", del: "di Isotta", att1: "Pugnale destro", att2: "Pugnale sinistro", sotto: "Elfa, sicaria · agguato",
+          cond: ["Si muove senza rumore, le lame basse: sembra ancora del tutto integra.", "È ferita: una macchia scura le si allarga sul fianco, ma sorride ancora.", "È lenta, adesso: le lame tremano appena.", "Giace a terra, immobile."],
+          ok1: ["Il pugnale di Isotta ti scivola tra le costole e se ne va prima che tu lo veda.", "Una lama ti incide l'avambraccio, sottile come un'idea."],
+          ok2: ["L'altro pugnale ti apre la guancia.", "Isotta ti gira attorno e ti punge alla schiena."],
+          crit: "Isotta sparisce dalla tua vista e ricompare alle tue spalle: due lame insieme, nel punto esatto in cui l'armatura non c'è.",
+          frasi: { agguato: { scena: "Una voce fredda e vicinissima alle tue spalle.", dice: "«Non voltarti. Il vecchio dice che hai la chiave. Fammela vedere, e forse ti lascio le mani attaccate ai polsi.»" },
+            resa: { scena: "Alza le mani con finta noia, facendo tintinnare le lame prima di mollarle.", dice: "«D'accordo, hai vinto. Oggi l'aria di questo posto non mi piaceva comunque.»" },
+            ritorno: { scena: "Si ricompone con una grazia letale, afferrando di nuovo le lame.", dice: "«Mi hai lasciata andare. Che errore da principiante. Io i conti non li lascio mai a metà.»" } },
+          vittoria: "Isotta cade senza un suono, come ha sempre vissuto. Le lame le restano strette in pugno. Il contratto, chiunque l'abbia firmato, resta a metà." },
+        en: { nome: "Isotta the Viper", the: "Isotta", The: "Isotta", att1: "Right dagger", att2: "Left dagger", sotto: "Elf, assassin · ambush",
+          cond: ["She moves without a sound, blades low: she still looks wholly unhurt.", "She is wounded: a dark stain spreads on her side, but she is still smiling.", "She is slow now: the blades barely tremble.", "She lies on the ground, motionless."],
+          ok1: ["Isotta's dagger slips between your ribs and is gone before you see it.", "A blade scores your forearm, thin as a thought."],
+          ok2: ["The other dagger opens your cheek.", "Isotta circles you and pricks your back."],
+          crit: "Isotta vanishes from sight and reappears behind you: two blades together, exactly where the armor is not.",
+          frasi: { agguato: { scena: "A cold voice, very close behind you.", dice: "“Don't turn around. The old man says you have the key. Show it to me, and maybe I'll leave your hands attached to your wrists.”" },
+            resa: { scena: "She raises her hands in mock boredom, letting the blades clink before she drops them.", dice: "“All right, you win. I didn't like the air in this place today anyway.”" },
+            ritorno: { scena: "She composes herself with deadly grace, taking up her blades again.", dice: "“You let me go. What a beginner's mistake. I never leave a score half settled.”" } },
+          vittoria: "Isotta falls without a sound, as she always lived. The blades stay clenched in her fists. The contract, whoever signed it, stays half done." } },
+      anselmo: { agguato: true, umano: true, avv: { pvMod: 0 }, preghiera: true, livello: 2, zone: [], ca: 12, pvFissi: 15, dannoDado: 6, dannoBonus: 2, attacco: 3, attacchi: 1, xp: 100, pa: 6, vulnerabile: ["Ombra"],
+        abilita: [{ id: "anatema", costo: 2, tipo: "ts", stato: "debole", ts: "Spirito", cd: 10 }],
+        it: { nome: "Fra' Anselmo", il: "Fra' Anselmo", Il: "Fra' Anselmo", al: "a Fra' Anselmo", del: "di Fra' Anselmo", att1: "Bastone", att2: "Puntale", sotto: "Umano, monaco itinerante · agguato",
+          cond: ["Mormora una preghiera tra i denti: sembra ancora del tutto integro.", "È ferito: il saio è strappato e macchiato, ma il bastone non trema.", "Si appoggia al bastone, il fiato corto: la preghiera gli muore in gola.", "Giace a terra, immobile."],
+          ok1: ["Il bastone di Fra' Anselmo ti cala sulla spalla con il peso di una penitenza.", "Il frate ti colpisce al ginocchio con una mossa che non ha imparato in convento."],
+          ok2: ["Il puntale ferrato del bastone ti centra lo stomaco.", "Fra' Anselmo ti sferza il polso con l'estremità del bastone."],
+          crit: "Fra' Anselmo fa roteare il bastone sopra la testa e lo abbatte su di te invocando un santo che non conosci: il colpo ti fa crollare in ginocchio.",
+          frasi: { agguato: { dice: "«Pace a te, peccatore. Ho passato giorni a pregare per una via d'uscita, e il padrone di questo posto mi ha risposto... indicandomi la tua gola.»" },
+            resa: { scena: "Inchina il capo, stringendo il simbolo sacro tra le dita nodose.", dice: "«La carne è debole. E la mia preghiera di oggi è solo di restare intero.»" },
+            ritorno: { scena: "Congiunge le mani in una preghiera silenziosa.", dice: "«Ho pregato per la tua anima dopo che mi hai risparmiato. Ma il vecchio mi ha ordinato di correggere il mio errore di clemenza.»" } },
+          vittoria: "Fra' Anselmo cade all'indietro, le mani ancora strette sul simbolo sacro. Le labbra si muovono un istante ancora, poi nemmeno quelle." },
+        en: { nome: "Brother Anselmo", the: "Brother Anselmo", The: "Brother Anselmo", att1: "Staff", att2: "Ferrule", sotto: "Human, wandering monk · ambush",
+          cond: ["He murmurs a prayer through his teeth: he still looks wholly unhurt.", "He is wounded: his habit is torn and stained, but the staff does not waver.", "He leans on his staff, short of breath: the prayer dies in his throat.", "He lies on the ground, motionless."],
+          ok1: ["Brother Anselmo's staff comes down on your shoulder with the weight of a penance.", "The friar strikes your knee with a move he did not learn in the cloister."],
+          ok2: ["The iron ferrule of the staff hits your stomach.", "Brother Anselmo lashes your wrist with the end of his staff."],
+          crit: "Brother Anselmo whirls his staff over his head and brings it down on you calling on a saint you have never heard of: the blow drops you to your knees.",
+          frasi: { agguato: { dice: "“Peace be with you, sinner. I spent days praying for a way out, and the master of this place answered me... pointing at your throat.”" },
+            resa: { scena: "He bows his head, clutching the holy symbol in his gnarled fingers.", dice: "“The flesh is weak. And today my only prayer is to stay in one piece.”" },
+            ritorno: { scena: "He joins his hands in silent prayer.", dice: "“I prayed for your soul after you spared me. But the old man ordered me to correct my error of mercy.”" } },
+          vittoria: "Brother Anselmo falls backwards, his hands still clutching the holy symbol. His lips move for one more instant, then not even they do." } },
+      tobia: { agguato: true, umano: true, avv: { pvMod: -3 }, scappa: true, livello: 2, zone: [], ca: 13, pvFissi: 12, dannoDado: 4, dannoBonus: 2, attacco: 3, attacchi: 1, xp: 100, pa: 6, vulnerabile: ["Ombra"],
+        abilita: [{ id: "tagliola", costo: 2, tipo: "ts", stato: "sangue", ts: "Agilità", cd: 10 }],
+        it: { nome: "Tobia Spillo", il: "Tobia", Il: "Tobia", al: "a Tobia", del: "di Tobia", att1: "Pugnale", att2: "Sgambetto", sotto: "Gnomo, trappolaio · agguato",
+          cond: ["Saltella sul posto, con un ghigno nervoso: sembra ancora del tutto integro.", "È ferito: si guarda attorno in cerca di una via di fuga.", "Trema e indietreggia: non pensa più a combattere, solo a scappare.", "Giace a terra, immobile."],
+          ok1: ["Il pugnaletto di Tobia ti punge la coscia, più a fondo di quanto pensassi.", "Tobia ti sguscia tra le gambe e ti taglia dietro il ginocchio."],
+          ok2: ["Uno sgambetto di Tobia ti fa finire con la faccia nella ghiaia.", "Tobia ti lancia una manciata di chiodi tra i piedi e uno ti si pianta nella suola."],
+          crit: "Tobia ti salta sulla schiena come uno scoiattolo e ti pianta il pugnale nella spalla, ridendo per il nervoso.",
+          frasi: { agguato: { dice: "«Ehi, ehi, non guardarmi così, non è personale! È che la porta l'hai trovata tu, e io ne ho trovate solo di chiuse.»" },
+            fuga: { dice: "«Oh, merda, no! Questo non era nei patti!»", scena: "E sparisce di corsa tra le lapidi, facendo scattare un fruscio di ingranaggi." },
+            ritorno: { dice: "«Eccomi di nuovo! Ti ho portato un regalino: ho oliato le molle alla tagliola nuova. Questa sì che morde sul serio.»" } },
+          vittoria: "Tobia si affloscia tra gli attrezzi che gli cadono dalla borsa: molle, chiodi, una tagliola mezza montata. Non scapperà più da niente." },
+        en: { nome: "Tobia Spillo", the: "Tobia", The: "Tobia", att1: "Dagger", att2: "Trip", sotto: "Gnome, trapper · ambush",
+          cond: ["He hops on the spot with a nervous grin: he still looks wholly unhurt.", "He is wounded: he looks around for a way out.", "He trembles and backs away: he no longer thinks of fighting, only of running.", "He lies on the ground, motionless."],
+          ok1: ["Tobia's little dagger pricks your thigh, deeper than you expected.", "Tobia slips between your legs and cuts behind your knee."],
+          ok2: ["A trip from Tobia sends you face first into the gravel.", "Tobia throws a handful of nails at your feet and one sinks into your sole."],
+          crit: "Tobia jumps on your back like a squirrel and plants his dagger in your shoulder, laughing out of sheer nerves.",
+          frasi: { agguato: { dice: "“Hey, hey, don't look at me like that, it's not personal! It's just that you found the door, and all I found were locked ones.”" },
+            fuga: { dice: "“Oh, shit, no! This wasn't part of the deal!”", scena: "And he vanishes at a run among the gravestones, setting off a rustle of gears." },
+            ritorno: { dice: "“Here I am again! I brought you a little present: I oiled the springs on the new trap. This one really bites.”" } },
+          vittoria: "Tobia goes limp among the tools spilling from his bag: springs, nails, a half-assembled trap. He will never run from anything again." } }
+    };
+    const AVVENTURIERI = ["brunilde", "corrado", "isotta", "anselmo", "tobia"];
+    Object.assign(PREDE, AGGUATI);
     const PRESE_INFERNALI = () => Object.keys(PREDE).filter(k => PREDE[k].grado >= 1);
-    for (const [id, p] of Object.entries(PREDE)) NEMICI[id] = { ca: p.ca, dadoVita: p.dadoVita, pvBase: p.pvBase, pvFissi: p.pvFissi, dannoDado: p.dannoDado, dannoBonus: p.dannoBonus, xp: p.xp, xpZona: p.xpZona, boss: false, attacco: p.attacco, attacchi: p.attacchi, probPresa: 0, probSoffio: 0, soffio: null, ritratto: null, comune: true, fugge: p.fugge, passivo: p.passivo, parte: p.parte, qta: p.qta, animale: p.grado === 0, grado: p.grado, livello: p.livello, pa: p.pa, abilita: p.abilita, immune: p.immune, zone: p.zone, statFisse: p.pvFissi != null ? { Vigore: 10, "Agilità": 10 } : undefined } /* 28/10: statistiche fisse; il bonus vero sta in attacco e dannoBonus */;
+    for (const [id, p] of Object.entries(PREDE)) NEMICI[id] = { ca: p.ca, dadoVita: p.dadoVita, pvBase: p.pvBase, pvFissi: p.pvFissi, dannoDado: p.dannoDado, dannoBonus: p.dannoBonus, xp: p.xp, xpZona: p.xpZona, boss: false, attacco: p.attacco, attacchi: p.attacchi, probPresa: 0, probSoffio: 0, soffio: null, ritratto: null, comune: true, fugge: p.fugge, passivo: p.passivo, parte: p.parte, qta: p.qta, animale: p.grado === 0, grado: p.grado, livello: p.livello, pa: p.pa, abilita: p.abilita, immune: p.immune, zone: p.zone, vulnerabile: p.vulnerabile, agguato: p.agguato, avv: p.avv, gruppo: p.gruppo, preghiera: p.preghiera, scappa: p.scappa, peFino: p.peFino, statFisse: p.pvFissi != null ? { Vigore: 10, "Agilità": 10 } : undefined } /* 28/10: statistiche fisse; il bonus vero sta in attacco e dannoBonus */;
     /* testi dello scontro di una preda: derivano da quelli del mastino, con il nome della preda al posto di «la belva» */
     function testiPreda(L, id) {
       const p = PREDE[id], t = p[L], B = CB_BASE, n = p.attacchi; /* CB_BASE è già nella lingua corrente */
@@ -10520,13 +10847,31 @@
         tsRegola: (cd) => rim(B.tsRegola(cd)), tsTiro: (...a) => rim(B.tsTiro(...a)), tsEffetto: rimO(B.tsEffetto), resistito: rim(B.resistito),
         vittoria: [t.vittoria],
         sconfitta: it ? [`Le gambe ti cedono e crolli sul sentiero. L'ultima cosa che vedi è ${t.il} sopra di te, poi il buio.`] : [`Your legs give way and you collapse on the path. The last thing you see is ${t.the} above you, then darkness.`],
-        sistRisveglio: it ? `${t.Il} ti aspetta ancora in giardino, di nuovo in piene forze.` : `${t.The} is still waiting for you in the garden, back at full strength.`
+        sistRisveglio: it ? `${t.Il} ti aspetta ancora in giardino, di nuovo in piene forze.` : `${t.The} is still waiting for you in the garden, back at full strength.`,
+        ...(p.umano ? testiUmani(L, t) : {}) /* 29/10: negli agguati niente cenere né braci */
+      };
+    }
+    function testiUmani(L, t) {
+      const it = L === "it";
+      return {
+        sottoVelato: it ? "Avversario · ???" : "Opponent · ???",
+        velato: it ? "Non sai ancora nulla di questo avversario: la sua scheda resterà coperta finché non l'avrai battuto." : "You know nothing about this opponent yet: their sheet will stay hidden until you beat them.",
+        colpArma: it ? [`Il tuo colpo raggiunge ${t.il}: il sangue schizza sulla ghiaia.`, `Apri un varco nella guardia ${t.del} e affondi il colpo.`, `Pari un affondo e rispondi di taglio: ${t.il} arretra con un grugnito di dolore.`]
+          : [`Your blow reaches ${t.the}: blood spatters the gravel.`, `You open a gap in ${t.the}'s guard and drive the blow home.`, `You parry a thrust and answer with a cut: ${t.the} falls back with a grunt of pain.`],
+        colpTorcia: it ? [`Abbatti la torcia su ${t.il}, tra scintille e odore di pelle bruciata.`, `Il legno ardente della torcia si schianta su ${t.il}.`]
+          : [`You bring the torch down on ${t.the}, in sparks and the smell of burnt skin.`, `The burning wood of the torch crashes into ${t.the}.`],
+        critPg: it ? [`Vedi l'apertura un istante prima che si chiuda e ci affondi con tutto il peso: ${t.il} barcolla, il fiato spezzato.`, `Ti abbassi sotto l'attacco e colpisci dal basso, dove la guardia è scoperta: ${t.il} finisce a terra e si rialza a fatica.`]
+          : [`You see the gap an instant before it closes and drive into it with your whole weight: ${t.the} staggers, breath broken.`, `You duck under the attack and strike from below, where the guard is open: ${t.the} goes down and struggles back up.`],
+        manca: it ? [`${t.Il} scarta di lato e il tuo colpo trova solo aria.`, `Il tuo colpo sfiora ${t.il} senza ferire.`, `${t.Il} arretra di un balzo: il tuo colpo cade a vuoto.`]
+          : [`${t.The} sidesteps and your blow finds only air.`, `Your blow grazes ${t.the} without wounding.`, `${t.The} springs back: your strike falls short.`],
+        sconfitta: it ? [`Le gambe ti cedono e crolli a terra. L'ultima cosa che vedi è ${t.il} sopra di te, poi il buio.`] : [`Your legs give way and you collapse. The last thing you see is ${t.the} above you, then darkness.`]
       };
     }
     { const L = LINGUA === "en" ? "en" : "it"; for (const id of Object.keys(PREDE)) CACCIA[L].nemici[id] = testiPreda(L, id); }
     { /* le stesse prede nella foresta dei pini: descrizioni del bosco, risveglio in cucina */
       const L = LINGUA === "en" ? "en" : "it";
       for (const id of Object.keys(PREDE)) { const b = CACCIA[L].nemici[id];
+        if (PREDE[id].agguato) continue; /* gli agguati sono solo fuori casa */
         if (PREDE[id].grado === 0) { b.risveglio = ESTERNI[L].risveglio; b.attesaPassivo = L === "en" ? `${PREDE[id].en.The} watches you, ready to bolt.` : `${PREDE[id].it.Il} ti osserva, pronto a scappare.`; continue; }
         CACCIA[L].nemici["p_" + id] = { ...b, sotto: String(b.sotto).replace(/giardino/, "foresta dei pini").replace(/garden/, "pine forest"), vittoria: [ESTERNI[L].prede[id].vittoria], risveglio: ESTERNI[L].risveglio }; }
     }
@@ -10550,6 +10895,7 @@
       else { const m = /d(\d+)/.exec((arma && arma.nome !== "—" && arma.danno) || ""); if (m) d = Number(m[1]); }
       return (eff("armaPiu") || eff("runa")) ? passoDado(d) : d; /* Arma Migliorata e Runa sull'Arma */
     };
+    const bonusArmaPg = () => (arma && arma.nome !== "—" && Number(arma.bonus)) || 0; /* 29/10: armi del bottino «+livello», fissato al ritrovamento */
     const torciaInMano = () => !!(mano && mano.nome === "Torcia" && Number(mano.usi) > 0);
     const pozioneCura = () => zaino.find(it => effettoDi(it) === "pozCura" && Number(it.usi) > 0);
     const bevandaDa = (t) => { /* «bevo l'olio», «bevo il distillato», «bevo la pozione di mana»; altrimenti una cura */
@@ -10695,6 +11041,7 @@
       barraScontro();
       if (scontro.pv <= 0) return setTimeout(vittoriaScontro, PAUSA_SCONTRO / 2);
       if (scontro.ctx === "ettore" && !scontro.resa && !(Number(usate.ettore_sconfitte) > 0) && scontro.pv <= Math.ceil(scontro.pvMax / 3)) { /* si arrende solo al primo incontro */ scontro.resa = true; return setTimeout(resaEttore, PAUSA_SCONTRO / 2); } /* Ettore si arrende */
+      if (resaPossibile()) { scontro.resa = true; return setTimeout(resaAvventuriero, PAUSA_SCONTRO / 2); } /* 29/10: i cinque si arrendono (Tobia scappa) */
       stato(true, CB.attesa);
       setTimeout(turnoNemScontro, PAUSA_SCONTRO);
     }
@@ -10725,10 +11072,10 @@
       if (crit) guadagnaIra(2);
       if (ok) {
         const vuln = dadiVuln(conTorcia ? "Contundente" : tipoArmaInMano()); /* la torcia colpisce come un'arma contundente */
-        const dado = dadoArmaPg(conTorcia), nd = (crit ? 2 : 1) * (1 + (pre.piuDadi || 0) + vuln), tiri = tiraDadi(nd, dado), base = Math.max(1, somma(tiri) + m);
+        const dado = dadoArmaPg(conTorcia), nd = (crit ? 2 : 1) * (1 + (pre.piuDadi || 0) + vuln), tiri = tiraDadi(nd, dado), bA = conTorcia ? 0 : bonusArmaPg(), base = Math.max(1, somma(tiri) + m + bA);
         const marc = CMB.marchiato(scontro) ? tira(4) : 0, sig = scontro.sigillo && CMB.crepePiene(scontro, { boss: bossNem() }) ? tira(4) : 0, seg = CMB.segnato(scontro) ? tira(4) : 0, danno = base + marc + sig + seg; /* Marchio del Guardiano, Sigillo del Demolitore e Segno del Cacciatore: +1d4 agli attacchi normali */
         scontro.pv -= danno;
-        righe.push(pesca(crit ? CB.critPg : conTorcia ? CB.colpTorcia : CB.colpArma), crit ? CB.tiroAttCrit(mA, tot, d) : CB.tiroAtt(d, mA, tot, ca), CB.tiroDanno(nd, dado, tiri, m, base));
+        righe.push(pesca(crit ? CB.critPg : conTorcia ? CB.colpTorcia : CB.colpArma), crit ? CB.tiroAttCrit(mA, tot, d) : CB.tiroAtt(d, mA, tot, ca), CB.tiroDanno(nd, dado, tiri, m + bA, base));
         if (vuln) righe.push(ET.scontro.vulnColpo);
         if (crit) gambaEttore(righe); /* Ettore: un critico gli fa perdere il turno */
         if (marc) righe.push(RT.marchioDanno(marc));
@@ -10777,7 +11124,7 @@
     }
     function lanciaMagia(inc) {
       const MC = window.MagiaCombattimento, ctx = ctxIncantesimo();
-      ctx.piuDadiVuln = dadiVuln(inc.scuola === "forza" ? "Forza" : inc.scuola === "luce" ? "Luce" : null); /* gli incantesimi non usano la vulnerabilità all'arma; Forza e Luce sì (29/10) */
+      ctx.piuDadiVuln = dadiVuln(inc.scuola === "forza" ? "Forza" : inc.scuola === "luce" ? "Luce" : inc.scuola === "ombra" ? "Ombra" : null); /* gli incantesimi non usano la vulnerabilità all'arma; Forza, Luce e Ombra sì (29/10) */
       const disp = MC.disponibile(inc, scontro, ctx); if (!disp.ok) return sist(MC.testo({ k: disp.motivo }));
       const costo = MC.costo(inc, scontro);
       if (manaAttuale() < costo) return sist(CB.pocoMana(costo, manaAttuale()));
@@ -10908,7 +11255,7 @@
     function ctxTecnica() {
       const nem = scontro || ultimoNemico;
       return {
-        tira, liv: livelloPg(), modAtt: modLottaPg() + malusStatoAtt(), modDanno: modLottaPg(), dado: dadoArmaPg(false), ca: caNem, boss: bossNem(),
+        tira, liv: livelloPg(), modAtt: modLottaPg() + malusStatoAtt(), modDanno: modLottaPg() + bonusArmaPg(), dado: dadoArmaPg(false), ca: caNem, boss: bossNem(),
         svantaggio: svantaggioPg(), /* Accecato (28/10) */
         immuni: ((nem && NEMICI[nem.id] && NEMICI[nem.id].immune) || []).map(x => x === "sangue" ? "sanguina" : x === "veleno" ? "avvelenato" : x), /* immunità della creatura agli stati */
         piuDadiVuln: dadiVuln(tipoArmaInMano()), /* vulnerabilità del nemico al tipo d'arma */
@@ -11092,6 +11439,7 @@
       if (D.ettore && abilitaEttorePrimaDiAttaccare()) return; /* la gamba, le braci, il colpo basso */
       if (fratturaPrimaDiAttaccare()) return;
       if (D.soffio && scontro.soffioPronto && !eff("silenzio") && paNem() >= 2 && !statoInutile("ustione") && Math.random() < D.probSoffio) return soffioScontro(); /* 28/10: il Soffio costa 2 punti */
+      if (D.preghiera && !scontro.preghieraUsata && !eff("silenzio") && paNem() >= 2 && scontro.pv <= scontro.pvMax / 2) return preghieraNem(); /* Fra' Anselmo */
       { const a = abilitaNem(D, "ts"); if (a) return abilitaTsNemScontro(a); }
       scontro.attRest = Math.max(0, (Number(D.attacchi) || 1) - 1);
       attaccoNemScontro();
@@ -11108,6 +11456,10 @@
         morso_velenoso: ["Morso velenoso", "Si raccoglie su se stessa, pronta a scattare."], morso_sporco: ["Morso sporco", "Scopre i denti gialli e sporchi."],
         becco: ["Becco", "Punta il becco dritto al tuo viso."], morso_lupo: ["Morso", "Si abbassa sulle zampe e punta alla carne."],
         morso_ardente: ["Morso ardente", "Le squame crepitano: la bocca è un tizzone."], scrollata: ["Scrollata di cenere", "Scuote il palco: una pioggia di cenere ti cade negli occhi."],
+        lama_sporca: ["Lama sporca", "Passa la lama in una boccetta lurida prima di colpire."], ruggito: ["Ruggito", "Un ruggito di guerra, così forte che lo senti nello stomaco."],
+        fendente_orco: ["Fendente", "Carica il colpo da lontano, con tutto il peso."], squarcio: ["Squarcio", "Ruota l'ascia per prendere slancio, mirando dove la carne è scoperta."],
+        colpo_scudo: ["Colpo di scudo", "Abbassa la spalla e ti viene addosso con il bordo dello scudo."], lama_intinta: ["Lama intinta", "Una delle due lame luccica di un verde malato."],
+        anatema: ["Anatema", "Ti punta contro il simbolo sacro e pronuncia parole che ti pesano sulle braccia."], tagliola: ["Tagliola", "Lancia qualcosa ai tuoi piedi: un morso di ferro si chiude con uno scatto."],
         ts: (n, d, m, tot, cd) => `Tiro salvezza su ${n}: ${d} ${fmtN(m)} = ${tot} contro CD ${cd}.`, resisti: "Resisti.", cedi: "Non resisti.",
         desc: (a, st) => `${a.tipo === "ts" ? "Al posto dell'attacco" : "Se colpisce"}: tiro salvezza su ${a.ts} CD ${a.cd} o ${st}${a.critStato ? "; sul critico anche " + BT.stati[a.critStato].nome : ""}.` },
       en: { nube: ["Ash Cloud", "It shakes its fur and blasts you with a cloud of hot ash, straight into your eyes."], becco_ardente: ["Searing Beak", "Its beak glows red like a poker."],
@@ -11118,6 +11470,10 @@
         morso_velenoso: ["Venomous Bite", "It coils up, ready to strike."], morso_sporco: ["Filthy Bite", "It bares its yellow, filthy teeth."],
         becco: ["Beak", "It aims its beak straight at your face."], morso_lupo: ["Bite", "It drops low on its legs and goes for the flesh."],
         morso_ardente: ["Searing Bite", "Its scales crackle: its mouth is a live coal."], scrollata: ["Ash Shake", "It shakes its antlers: a rain of ash falls into your eyes."],
+        lama_sporca: ["Filthy Blade", "It dips its blade in a grimy little bottle before striking."], ruggito: ["Roar", "A war roar so loud you feel it in your stomach."],
+        fendente_orco: ["Cleave", "It winds up the blow from far back, with all its weight."], squarcio: ["Rend", "She swings the axe round for momentum, aiming where the flesh is bare."],
+        colpo_scudo: ["Shield Bash", "He lowers his shoulder and comes at you with the rim of his shield."], lama_intinta: ["Dipped Blade", "One of the two blades glints a sickly green."],
+        anatema: ["Anathema", "He points the holy symbol at you and speaks words that weigh on your arms."], tagliola: ["Snare", "He throws something at your feet: an iron jaw snaps shut."],
         ts: (n, d, m, tot, cd) => `${n} saving throw: ${d} ${fmtN(m)} = ${tot} against DC ${cd}.`, resisti: "You resist.", cedi: "You do not resist.",
         desc: (a, st) => `${a.tipo === "ts" ? "Instead of attacking" : "On a hit"}: ${a.ts} saving throw DC ${a.cd} or ${st}${a.critStato ? "; on a critical also " + BT.stati[a.critStato].nome : ""}.` }
     };
@@ -11293,7 +11649,8 @@
     }
 
     function vittoriaScontro() {
-      const D = NEMICI[scontro.id], ctx = scontro.ctx, idNem = scontro.id;
+      const D = NEMICI[scontro.id], ctx = scontro.ctx, idNem = scontro.id, avv = scontro.avv;
+      if (ctx === "agguato" && D.avv) segnaAvv(idNem, { stato: "morto", pe: true });
       if (sciamano() && viaPg() === "aldo" && SCI.fame(scontro)) { /* Fame del Parassita */
         const preso = guadagnaNatura(SCI.FAME);
         aggiungi({ tipo: "narra", box: "ok", righe: [SCI.testo({ k: "fame", preso })] });
@@ -11311,12 +11668,13 @@
         if (c) { c.classList.add("dissolto"); setTimeout(() => { const v = c.closest(".voce"); c.remove(); if (v && !v.textContent.trim()) v.remove(); }, 3100); }
       }
       aggiungi({ tipo: "narra", fuori: true, righe: CB.vittoria });
-      const xpVinti = xpScontro(D, ctx); /* 28/10: PE a scalare per gli animali delle due zone */
+      const xpVinti = ctx === "agguato" ? xpAgguato(D, avv) : xpScontro(D, ctx); /* 28/10: PE a scalare per gli animali delle due zone; 29/10: agguati */
       guadagnaPE(xpVinti);
       aggiungi({ tipo: "narra", box: "ok", fuori: true, righe: [CB.bannerVinto, CB.xp(xpVinti, pg.esperienza)] });
       controllaLivello();
       if (D.parte) { const n = Number(D.qta) || 1; aggiungiMateriale(D.parte, n); aggiungi({ tipo: "sistema", box: "cap", fuori: true, righe: [BT.parte(n, Q.oggetti[D.parte].nome)] }); }
       if (ctx === "pineta") { const b = borsaVeleni(); if (b && Number(b.usi) < DOSI_BORSA && Math.random() < 0.5) { b.usi = Number(b.usi) + 1; aggiornaEquip(); sist(EST2.dose(b.usi)); } }
+      if (ctx === "agguato") bottinoAgguato(idNem, avv);
       if (ctx === "caccia") { usate.cc_stato = "trofeo"; salvaUsate(); trofeoCaccia(idNem); sist(CCT().preso); }
       if (ctx === "ettore" && !usate.q2_diario) { /* Ettore morto: il diario del figlio maggiore è tra le sue cose */
         consegnaDiarioFiglio();

@@ -208,6 +208,96 @@ caso("29/10: Ettore attaccato a sorpresa perde il primo turno a recuperare la sp
   eq(errori, [], "errori"); await chiudi();
 });
 
+/* ---------- 29/10: agguati ---------- */
+const BRONZO = (o) => PARTITA(Object.assign({ luogo: "cimitero", usate: { riposo: "sbloccato", fermaglio: "bronzo", giorno: 1 } }, o || {}));
+const clicca = async (page, re) => { await page.waitForSelector("#azioni button", { state: "visible", timeout: 10000 }); const bs = await page.$$("#azioni button"); for (const x of bs) if (re.test(await x.textContent())) return x.click(); throw new Error("manca il pulsante " + re); };
+caso("Agguati: fuori casa dopo il bronzo 50:25:25 (prima del bronzo mai); al livello 2 il goblin", async (b) => {
+  let { page, errori, chiudi } = await apri(b, "gioco.html", PG({ livello: 2 }), PARTITA({ livello: 2, luogo: "cimitero", usate: { riposo: "sbloccato" } }));
+  await accoda(page, [], [0.1, 0.9, 0.5, 0]); await page.evaluate(() => { luogo = "cimitero"; incontroZona(false); });
+  eq(await page.evaluate(() => [!!scontro, !!(scontro && NEMICI[scontro.id].agguato)]), [true, false], "prima del bronzo: un infernale");
+  await chiudi();
+  ({ page, errori, chiudi } = await apri(b, "gioco.html", PG({ livello: 2 }), BRONZO({ livello: 2 })));
+  await accoda(page, [], [0.1, 0.9, 0.5, 0]); await page.evaluate(() => { luogo = "cimitero"; incontroZona(false); });
+  eq(await page.evaluate(() => [scontro.id, scontro.ctx]), ["goblin", "agguato"]);
+  eq(await page.evaluate(() => [scegliAgguato.length, NEMICI.banda_goblin.attacchi, NEMICI.banda_orchi.attacchi]), [0, 2, 2]);
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Agguati: i cinque crescono con il personaggio (salute 15 + 3 per livello oltre il 2, danno + livello, CD 8 + livello, 6 PA)", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ livello: 3 }), BRONZO({ livello: 3, esperienza: 1000 }));
+  await page.evaluate(() => avviaAgguato("brunilde")); await page.waitForFunction(() => scontro);
+  eq(await page.evaluate(() => [livelloPg(), scontro.pvMax, scontro.paMax, NEMICI.brunilde.dannoBonus, NEMICI.brunilde.abilita[0].cd, NEMICI.brunilde.livello, dadiVuln("Ombra")]), [3, 16, 6, 3, 11, 3, 1]);
+  await page.evaluate(() => { chiudiScontro("fuggito"); scontro = null; avviaAgguato("isotta"); }); await page.waitForFunction(() => scontro);
+  eq(await page.evaluate(() => [scontro.pvMax, NEMICI.isotta.dannoBonus, NEMICI.isotta.attacchi]), [15, 1, 2], "Isotta: due pugnali da 1d4 + metà del livello");
+  vero(/Fammela vedere/.test(await diario(page)), "manca la frase dell'agguato");
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Agguati: la resa; finirlo costa 1 punto mentale e lascia il suo pezzo (+livello) e 100 PE", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ livello: 2 }), BRONZO({ livello: 2, esperienza: 300 }));
+  await page.evaluate(() => avviaAgguato("brunilde")); await page.waitForFunction(() => scontro);
+  const m0 = await page.evaluate(() => mentaliAttuali());
+  await page.evaluate(() => { scontro.pv = 5; scontro.tuoTurno = true; fineAzionePgScontro(); });
+  await clicca(page, /Finisci Brunilde/);
+  await page.waitForFunction(() => !scontro);
+  eq(await page.evaluate(() => [mentaliAttuali(), usate.avv.brunilde.stato, pg.esperienza]), [m0 - 1, "morto", 400]);
+  const ascia = await page.evaluate(() => zaino.find(x => /Mezzaluna/.test(x.nome)));
+  eq([ascia.bonus, ascia.danno, ascia.mani], [2, "1d8", 2]);
+  vero(/cede come un'asse marcia/.test(await diario(page)), "manca il testo della casa che reclama");
+  eq(await page.evaluate(() => avvDisponibile("brunilde")), false, "morto: non torna");
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Agguati: risparmiato una volta; torna solo dopo un riposo, +1 livello, combatte fino alla fine e non dà PE", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ livello: 2 }), BRONZO({ livello: 2, esperienza: 300 }));
+  await page.evaluate(() => avviaAgguato("corrado")); await page.waitForFunction(() => scontro);
+  await page.evaluate(() => { scontro.pv = 5; scontro.tuoTurno = true; fineAzionePgScontro(); });
+  await clicca(page, /Risparmi Corrado/);
+  await page.waitForFunction(() => !scontro);
+  eq(await page.evaluate(() => [usate.avv.corrado.stato, pg.esperienza, avvDisponibile("corrado")]), ["risparmiato", 400, false]);
+  await page.evaluate(() => { usate.giorno = 2; });
+  eq(await page.evaluate(() => avvDisponibile("corrado")), true, "dopo un riposo torna");
+  await page.evaluate(() => avviaAgguato("corrado")); await page.waitForFunction(() => scontro);
+  eq(await page.evaluate(() => [scontro.avv.ritorno, NEMICI.corrado.livello, scontro.pvMax]), [true, 3, 18]);
+  vero(/catene più pesanti/.test(await diario(page)), "manca la frase del ritorno");
+  await page.evaluate(() => { scontro.pv = 3; });
+  eq(await page.evaluate(() => resaPossibile()), false, "al ritorno non si arrende");
+  await page.evaluate(() => { scontro.pv = 0; vittoriaScontro(); });
+  eq(await page.evaluate(() => [usate.avv.corrado.stato, pg.esperienza, !!zaino.find(x => x.nome === "Scudo di Vallerossa" && x.ca === 2)]), ["morto", 400, true]);
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Agguati: Tobia scappa invece di arrendersi; se scappa conta come risparmiato, se lo afferri scegli tu", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ livello: 2 }), BRONZO({ livello: 2, esperienza: 300 }));
+  await page.evaluate(() => avviaAgguato("tobia")); await page.waitForFunction(() => scontro);
+  await accoda(page, [R(1, 20)]); await page.evaluate(() => { scontro.pv = 4; scontro.tuoTurno = true; fineAzionePgScontro(); });
+  await page.waitForFunction(() => !scontro);
+  eq(await page.evaluate(() => [usate.avv.tobia.stato, pg.esperienza]), ["risparmiato", 400]);
+  vero(/fruscio di ingranaggi/.test(await diario(page)), "manca la fuga di Tobia");
+  await page.evaluate(() => { usate.avv = {}; avviaAgguato("tobia"); }); await page.waitForFunction(() => scontro);
+  await accoda(page, [R(20, 20)]); await page.evaluate(() => { scontro.pv = 4; scontro.tuoTurno = true; fineAzionePgScontro(); });
+  await clicca(page, /Finisci Tobia/);
+  await page.waitForFunction(() => !scontro);
+  vero(/cercava solo di scappare/.test(await diario(page)), "finire chi scappa costa la mente");
+  eq(await page.evaluate(() => ["Piede di porco", "Corda e rampino"].every(n => zaino.some(x => x.nome === n))), true, "la borsa degli attrezzi");
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Agguati: Fra' Anselmo si cura una volta sotto metà salute (Preghiera, 2 PA)", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ livello: 2 }), BRONZO({ livello: 2 }));
+  await page.evaluate(() => avviaAgguato("anselmo")); await page.waitForFunction(() => scontro);
+  await accoda(page, [R(4, 6)]); await page.evaluate(() => { scontro.pv = 6; scontro.tuoTurno = false; turnoNemScontro(); });
+  await aspettaTurnoPg(page);
+  eq(await page.evaluate(() => [scontro.pv, scontro.pa, scontro.preghieraUsata]), [12, 4, true]);
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Agguati: orchi e goblin lasciano un oggetto comune; PE a scalare (gruppi pieni fino al 4); arma del bottino +livello al danno", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ livello: 4 }), BRONZO({ livello: 4, esperienza: 2400 }));
+  eq(await page.evaluate(() => [xpAgguato(NEMICI.goblin), xpAgguato(NEMICI.orco), xpAgguato(NEMICI.banda_goblin), xpAgguato(NEMICI.banda_orchi)]), [38, 50, 125, 150]);
+  const n = await page.evaluate(() => zaino.length);
+  await page.evaluate(() => avviaAgguato("orco")); await page.waitForFunction(() => scontro);
+  await page.evaluate(() => { scontro.pv = 0; vittoriaScontro(); });
+  eq(await page.evaluate(() => zaino.length), n + 1, "un oggetto");
+  const m = await page.evaluate(() => { arma = { nome: "Spada corta", danno: "1d6", tipoDanno: "Tagliente", mani: 1, bonus: 4 }; return [ctxTecnica().modDanno, modLottaPg()]; });
+  eq(m[0], m[1] + 4, "+livello al danno");
+  eq(errori, [], "errori"); await chiudi();
+});
+
 (async () => {
   const browser = await chromium.launch();
   let ok = 0;

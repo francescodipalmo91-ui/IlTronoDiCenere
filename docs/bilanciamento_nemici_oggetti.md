@@ -492,12 +492,12 @@ Il set Vespera copre mantello, guanti, elmo, arma e corazza. Il bottino magico v
 
 ---
 
-## 8b. Agguati — orchi, goblin e i cinque avventurieri (DECISO le regole il 29 ottobre, PROPOSTA i personaggi)
+## 8b. Agguati — orchi, goblin e i cinque avventurieri (DECISO il 29 ottobre, nel gioco dal 29 sera)
 
 ### Regole
 - **Solo fuori casa** (giardino, cimitero, cappella), mai in cripta né nella foresta (terreno di Dafne), **solo dopo il bronzo**.
 - **Un solo tiro per ingresso** fuori casa: 20% di incontro; se c'è, **50% animale normale, 25% infernale, 25% agguato**. Prima del bronzo 67:33 tra normali e infernali. Nella foresta 60:40.
-- **Due livelli di agguato:** su un agguato, **1 volta su 5** uno dei cinque avventurieri (tra quelli ancora in gioco), altrimenti orchi o goblin (livello 2: goblin; dal livello 3 metà goblin e metà orchi).
+- **Due livelli di agguato:** su un agguato, **1 volta su 5** uno dei cinque avventurieri (tra quelli ancora in gioco), altrimenti orchi o goblin (livello 2: goblin; livello 3: metà goblin e metà orchi; **dal livello 4 anche in banda**: metà banda di goblin, un quarto orco, un quarto banda di orchi).
 - **Perché attaccano:** sono entrati da altri ingressi della grotta. Aldo ha sussurrato a ognuno che chi è entrato dalla porta principale è la chiave per uscire: è l'anomalia che legge nel personaggio, usata come esca.
 - **Orchi e goblin:** ripetibili, PE come gli infernali (goblin 75, orco 100) a scalare con il livello (pieni fino al 3, metà al 4, niente al 5). **Bottino:** un'arma o un'armatura comune; il **15%** delle volte con il bonus delle cacce comuni (+livello sulle armi, +1/+2 sulle armature).
 - **I cinque avventurieri:** 100 PE solo la prima volta che li sconfiggi, che tu li uccida o li risparmi.
@@ -519,7 +519,7 @@ Livello = livello del personaggio (minimo 2), +1 al ritorno. **Salute 15 + 3 per
 | **Tobia Spillo** | Gnomo, trappolaio: ruba più che combattere | Pugnale 1d4 + liv; salute −3; CA 13 | Tagliola (2): al posto dell'attacco, TS Agilità → Sanguinamento · **Sotto un terzo di salute prova a fuggire**: se ci riesce torna più avanti, come se l'avessi risparmiato | Borsa degli attrezzi: piede di porco e corda (Dotazione) | «Non è niente di personale. È che la porta l'hai trovata tu.» |
 
 ### Frasi dei cinque (Francesco, 29 ottobre)
-Le indicazioni di scena (tra parentesi) diventano narrazione, le battute dialogo.
+Le indicazioni di scena (tra parentesi) diventano narrazione, le battute dialogo. «Medaglione sacro» → «simbolo sacro» (il medaglione è la reliquia del Retaggio); la parolaccia di Tobia resta.
 
 **Brunilde Mezzaluna**
 - *Agguato:* «Fermo lì. Sei quello della porta, no? Il vecchio ha detto che la chiave sei tu. Io è una vita che scavo: ora si apre.»
@@ -538,7 +538,7 @@ Le indicazioni di scena (tra parentesi) diventano narrazione, le battute dialogo
 
 **Fra' Anselmo**
 - *Agguato:* «Pace a te, peccatore. Ho passato giorni a pregare per una via d'uscita, e il padrone di questo posto mi ha risposto... indicandomi la tua gola.»
-- *Resa:* (Inchina il capo, stringendo il medaglione sacro tra le dita nodose) «La carne è debole. E la mia preghiera di oggi è solo di restare intero.»
+- *Resa:* (Inchina il capo, stringendo il simbolo sacro tra le dita nodose) «La carne è debole. E la mia preghiera di oggi è solo di restare intero.»
 - *Ritorno:* (Congiunge le mani in una preghiera silenziosa) «Ho pregato per la tua anima dopo che mi hai risparmiato. Ma il vecchio mi ha ordinato di correggere il mio errore di clemenza.»
 
 **Tobia Spillo**
@@ -552,8 +552,14 @@ Le indicazioni di scena (tra parentesi) diventano narrazione, le battute dialogo
 |---|---|---|---|---|---|---|---|---|
 | Goblin predone | 2 | 12 | 13 | +2 | pugnale 1d4 + 1 | 3: Lama sporca (2), se colpisce TS Vigore CD 11 → Avvelenato | 75 | 7% al livello 2 |
 | Orco razziatore | 3 | 18 | 11 | +4 | ascia 1d8 | 4: Fendente (2), se colpisce TS Vigore CD 12 → Sanguinamento · Ruggito (2), TS Spirito CD 12 → Impaurito | 100 | 14% al livello 3 (senza il Ruggito nella simulazione) |
+| Banda di goblin | 4 | 18 | 12 | +2 | 2 attacchi, 1d4 | 4: Lama sporca (2), TS Vigore CD 12 → Avvelenato | 125 | 11% al livello 4 (Arcanista, pessimista; le altre classi sotto il 2%) |
+| Banda di orchi | 4 | 26 | 10 | +3 | 2 attacchi, 1d6 | 5: Ruggito (2) e Fendente (2), CD 12 | 150 | 12% al livello 4 (Arcanista, pessimista; le altre sotto il 4%) |
 
-**Nel codice:** non ancora. Personaggi e frasi confermati il 29 ottobre; manca il passo 3 (frasi di orchi e goblin), poi il codice.
+**Gruppi (29 ottobre, regole già scritte):** come le prede di grado 3, la banda è una creatura sola: salute e PA condivisi, più attacchi per turno, danni bassi. Compaiono dal livello 4. PE pieni fino al livello di riferimento (orco e goblin 3, bande 4), metà al successivo, poi niente.
+
+**Frasi di orchi e goblin (Claude, approvate da Francesco):** due agguati a caso per ciascuno e una frase di sconfitta; per le bande due agguati e una sconfitta scritti sullo stesso tono.
+
+**Nel codice (29 sera):** tutto. Incontro fuori casa dopo il bronzo 50:25:25; 1 agguato su 5 è uno dei cinque ancora in gioco (non uccisi; i risparmiati solo dopo un riposo). Statistiche dei cinque calcolate a ogni scontro dal livello del personaggio. Resa a un terzo della salute dopo la tua azione; Tobia prova a scappare (Atletica o Acrobazia, la migliore, contro CD 10 + il suo livello per afferrarlo). Fra' Anselmo usa la Preghiera sotto metà salute. Vulnerabili all'Ombra anche con gli incantesimi. Bottino: il pezzo dei cinque con il bonus del livello (Ascia da battaglia di Mezzaluna, solo Guerriero come le altre armi «da battaglia»; Scudo di Vallerossa +1; Pugnale della Biscia; Bastone di Anselmo; piede di porco e corda di Tobia); orchi e goblin un'arma, un'armatura o uno scudo permessi alla classe, il 15% delle volte con il bonus. **Armi «+livello»:** il bonus ora conta davvero nel danno (attacchi e tecniche); prima era solo nel nome.
 
 ---
 

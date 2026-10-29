@@ -230,11 +230,11 @@ Tre stati che oggi infligge solo il giocatore tornano contro di lui in versione 
 |---|---|---|---|
 | Esposto | Gli attacchi contro il bersaglio fanno critico con un numero in meno, mai sotto 18 | **Preda segnata** | Dafne |
 | Sigillo | Marchio dell'Arcanista, fino a 3; esplode con la Detonazione | **Sigilli di zaffiro** | Atena |
-| Incrinatura | −1 CA per carica, fino a 3, per tutto lo scontro | Da definire | Enea, solo con il maglio (o il sovrano, con l'alabarda) |
+| Incrinatura | −1 CA per carica, fino a 3, per tutto lo scontro | Da definire | Libera (forse il sovrano, con l'alabarda). Enea non la usa |
 
 - **Preda segnata** (Dafne, 3 PA): per 2 turni Dafne fa critico con 19-20 contro di te, e ogni suo critico ti infligge **Avvelenato potenziato** (1d6). Il fiele bevuto prima protegge dal veleno, non dal critico.
 - **Sigilli di zaffiro** (Atena): le sue abilità incidono sigilli sul personaggio, al massimo 2. Con 2 sigilli usa **«La lacrima chiama»** (4 PA, una volta): consuma i sigilli, TS Spirito → **Bloccato 1** e 1d4 danni mentali per sigillo, non letali (i guardiani non uccidono). **I sigilli si spezzano se colpisci Atena con un critico.** È il controllo forte di Atena legato alla lacrima; lo zaffiro gela come quello di Adele.
-- **Incrinatura corrotta:** carattere di Enea deciso il 29 ottobre (storia_casa_vespera.md, sezione 10b). Da scrivere al prossimo passo: arriva solo quando Enea impugna il maglio, e serve un modo per spezzarla, come i sigilli di Atena (al livello 3 un −CA che dura tutto lo scontro, sommato alla risurrezione, rischia di essere troppo).
+- **Incrinatura corrotta:** non più per Enea (29 ottobre, notte): lui combatte con il ritmo, senza stato firma. Resta disponibile, eventualmente per il sovrano. Atena, essendo l'ultima, può essere rivista in seguito.
 
 ---
 
@@ -324,7 +324,7 @@ Il lupo normale è stato abbassato: con 11 di salute e 1d6 + 1 dava il 15% di sc
 | Guardiano | Stato firma | Note |
 |---|---|---|
 | Ettore | Sanguinamento (coltello), Ustionato (braci) | Sezione 5 |
-| Enea | Da definire (Incrinatura corrotta, solo con il maglio) | Carattere deciso (storia, sezione 10b). Mani nude o maglio secondo il fermaglio di bronzo e la spada del Retaggio; maglio sotto il 50% se scopre il fermaglio. Risurrezione una volta (1d4 + livello), niente cura al 50%. Sdegno del cavaliere con la spada: +1 per colpire e +5 salute, tolto da una prova di Socialità. Numeri da fare |
+| Enea | Nessuno: combatte con il ritmo | 9 PA. **Mani nude:** 2 colpi da 1d4 + Vigore; Spinta (1): il tuo prossimo attacco ha svantaggio. **Maglio:** 1 colpo da 1d10 + Vigore; Colpo caricato (3): annunciato, danno doppio il turno dopo, mai due cariche di fila (difendersi dimezza, colpirlo durante la carica lo fa andare a vuoto); dopo la prima interruzione carica in guardia (+2 CA); Finta (2): annuncia la carica e colpisce subito ignorando la difesa, Intuizione gratuita per smascherarla. Mani nude o maglio secondo fermaglio di bronzo e spada del Retaggio; maglio sotto il 50% se scopre il fermaglio. Risurrezione una volta (1d4 + livello, senza PA), niente cura al 50%. Sdegno del cavaliere con la spada: +1 per colpire e +5 salute, tolto da Socialità. Salute, CA e attacco da fare. **Verifica nel codice (29 notte):** non esiste un'azione di difesa comune a tutti; le difese sono tecniche o incantesimi scelti (Parata, scudo, Specchio di Rune, Barriera Cinetica, Respingere, Santuario). Proposta: azione contestuale «Mi difendo» solo durante la carica di Enea; interrompere vale con qualsiasi attacco o incantesimo d'attacco che colpisce |
 | Dafne | Avvelenato | Primo turno: tiro d'arco con vantaggio (gratis, senza stato). Poi lancia: Lancia avvelenata (2): TS Vigore → Avvelenato. Preda segnata (3, sezione 3b). Trappola (4, una volta): TS Agilità → Bloccato 1. Oggetto di recupero: Sorso di resina (+3 PA) |
 | Atena | Impaurito | Presenza (2): TS Spirito → Impaurito. Sigilli di zaffiro e «La lacrima chiama» (4, una volta): sezione 3b |
 | Sovrano | Indebolito, Accecato, Impaurito (fuoco freddo) | Sezione 5b |

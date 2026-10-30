@@ -496,6 +496,19 @@ Il set Vespera copre mantello, guanti, elmo, arma e corazza. Il bottino magico v
 ### Scala del potere
 **rastrelliere < speciali di Aldo < bottino dei guardiani < set Vespera e spada del Retaggio**
 
+### Lo scudo degli uomini di Enea (PROPOSTA, numeri da simulare)
+
+Tutte le classi possono usare lo scudo. Il potere cambia con la classe di chi lo imbraccia, una volta per scontro, sempre sotto il Set Vespera. Va oltre il +1 delle rastrelliere.
+
+| Classe | Potere (bozza) | Perché |
+|---|---|---|
+| Guerriero | Quando un colpo viene parato o annullato, recupera 1d6 + livello | La cura è sempre utile, anche al Guerriero (Francesco). Non deve duplicare le tecniche dello scudo |
+| Monaco | Luce che cura 1d6 + livello | Coerente con la sua luce |
+| Arcanista | Dimezza un danno di forza | Atena farà danni di forza |
+| Sciamano | Ignora un Avvelenato appena subito | Dafne farà danni da veleno |
+
+Da decidere: il potere del martello a una mano e del terzo oggetto. Le cose dei tre uomini prendono il posto dell'oggetto magico al 70% (PROPOSTA di Claude, non si sommano).
+
 ### Esempi per grado (da rivedere)
 
 | Grado | Esempi |
@@ -510,7 +523,7 @@ Il set Vespera copre mantello, guanti, elmo, arma e corazza. Il bottino magico v
 | Guardiano | Se ucciso | Oggetto magico |
 |---|---|---|
 | Ettore | Spada sbreccata di Valdombra (una mano, 1d6 + 2, sul critico Sanguinamento, 1 punto); Coltello delle tacche (Dotazione, 1d4 perforante, senza poteri) | 60%, tabella bronzo |
-| Enea | Da definire (il maglio, solo se lo ha impugnato) | 70%, argento |
+| Enea | Il maglio (due mani, potere da definire), solo se lo ha impugnato | **Al posto del 70% (PROPOSTA):** le cose dei suoi tre uomini, una per settore della foresta, solo se degno e rispettoso (storia, 10b). Nord: scudo con potere per classe; est: martello a una mano; ovest: terzo oggetto (ciondolo o stivali, da scegliere). Chi non è degno le perde |
 | Dafne | Lancia da caccia (due mani, 1d8 + 4, potere da definire); l'arco resta descrittivo (il giocatore non usa archi). Se vince la gara: lascia comunque corno, fermaglio e i suoi averi | 80%, oro |
 | Atena | Da definire | 90%, platino |
 

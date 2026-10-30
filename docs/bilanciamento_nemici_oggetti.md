@@ -384,7 +384,7 @@ Gli incantesimi che fanno un attacco magico aggiungono al danno il **modificator
 | Maglio | **1d8 + 1 + 3** (arma magica: dado + Vigore + livello). Colpo caricato: doppi dadi, 2d8 + 4 |
 | PA | 9 |
 | CD dei suoi effetti | 12 (8 + 1 + 3) |
-| Vulnerabilità | **forza e luce** (la luce del dio che l'ha abbandonato) |
+| Vulnerabilità | **forza, luce e veleno** (DECISO il 30 ottobre): la luce del dio che l'ha abbandonato; il veleno perché un cavaliere in armatura pesante si prepara alle lame, non al veleno. Veleno = un dado in più a ogni turno di Avvelenato. Niente perforante: il Guerriero passava dall'75% all'87%, e solo il ramo delle perforanti |
 | Sdegno del cavaliere | solo **+1 per colpire** (con anche +5 salute toglieva 14 punti di vittorie) |
 
 **Simulazione** (modello semplificato, 12.000 scontri per caso, senza tecniche né Santuario: circa 5 punti più pessimista del gioco; tarato su Ettore, che nel modello dà G 87, S 68, A 51, M 69):
@@ -403,6 +403,11 @@ Gli incantesimi che fanno un attacco magico aggiungono al danno il **modificator
 - Con i pugni a 1d4 + Vigore nascondere il fermaglio non cambiava nulla (74 contro 73): ora vale circa 7 punti, e la scelta conta.
 - La **risurrezione** è la meccanica che pesa di più (circa 12-17 punti). Se lo scontro risulta troppo duro, si toglie da lì (1d4 invece di 1d4 + 3).
 - **Finta e adattamento** pesano 1-3 punti: sono tattica e lettura del nemico, non un muro di numeri.
+- **Correzione (30 ottobre):** il modello non contava i veleni dello Sciamano. Con il veleno che ha già, lo Sciamano è intorno al **64%** (non 47%); con la vulnerabilità al veleno 66-69%.
+- **Risurrezione più morbida (1d4 invece di 1d4 + 3):** non cambia quasi nulla (Monaco 43 → 44%). Pesa il fatto che si rialzi e impugni il maglio, non quanta salute riprende.
+- **Monaco (44% nel modello):** il modello è grezzo (niente cure, niente Santuario). Non si corregge su questi numeri: **si prova nella sala di prova** con le classi vere.
+
+**Nella sala di prova dal 30 ottobre** (`tutorial.html?prova`, nemico «Enea»): tutto quanto sopra, con le caselle «fermaglio indossato», «spada impugnata», «Socialità riuscita», la mossa forzabile (casuale, carica, finta, Spinta) e il bonus di Intuizione del personaggio. Nella sala anche Ettore ha le sue vulnerabilità (contundente e luce). Non ancora nel gioco: manca la scena del cimitero. La Percezione di Enea per scoprire il fermaglio nascosto non è nella sala (lo scopre solo sotto il 50%).
 
 ## 5b. Il sovrano (DECISO il 28 ottobre, numeri da provare)
 

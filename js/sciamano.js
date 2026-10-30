@@ -193,8 +193,8 @@
     s.eff = s.eff || {}; s.naturaPresa = false; /* da qui riparte il «massimo uno per turno» */
     const E = [], add = (e) => { if (e) E.push(e); };
     if (attivo(s, "avvelenato")) {
-      const dado = Number(s.velenoDado) || 4, d = ctx.tira(dado), danno = dimezza(ctx, d);
-      s.pv -= danno; E.push({ k: "velenoTick", d, dado, danno, dimezzato: !!ctx.resisteVeleno });
+      const dado = Number(s.velenoDado) || 4, nd = ctx.vulnVeleno ? 2 : 1, tiri = tiraDadi(ctx, nd, dado), d = somma(tiri), danno = dimezza(ctx, d); /* 30/10: vulnerabile al veleno (Enea) → un dado in più */
+      s.pv -= danno; E.push({ k: "velenoTick", d, dado, danno, dimezzato: !!ctx.resisteVeleno, ...(nd > 1 ? { vuln: true, tiri } : {}) });
       if (danno > 0) add(natura(s, ctx, "veleno"));
     }
     if (attivo(s, "bulbo") && s.pv > 0) {
@@ -288,7 +288,7 @@
     switch (e.k) {
       case "veleno": return (e.dado === 6 ? T(`Tossina: 1d6 danni per ${turni(e.turni)}.`, `Toxin: 1d6 damage for ${turni(e.turni)}.`) : T(`Il nemico è Avvelenato: 1d4 danni per ${turni(e.turni)}.`, `The enemy is Poisoned: 1d4 damage for ${turni(e.turni)}.`))
         + (e.ridotto ? " " + T("Contro un avversario di questo calibro dura al massimo 2 turni.", "Against a foe of this calibre it lasts at most 2 turns.") : "");
-      case "velenoTick": return e.dimezzato ? T(`Il veleno brucia, ma il nemico gli resiste: ${e.d} → ${e.danno} danni.`, `The poison burns, but the enemy resists it: ${e.d} → ${e.danno} damage.`) : T(`Il veleno brucia: ${e.danno} danni.`, `The poison burns: ${e.danno} damage.`);
+      case "velenoTick": return e.dimezzato ? T(`Il veleno brucia, ma il nemico gli resiste: ${e.d} → ${e.danno} danni.`, `The poison burns, but the enemy resists it: ${e.d} → ${e.danno} damage.`) : e.vuln ? T(`Il veleno brucia, e il nemico non sa difendersene: ${e.tiri.join(" + ")} = ${e.danno} danni.`, `The poison burns, and the enemy has no defence against it: ${e.tiri.join(" + ")} = ${e.danno} damage.`) : T(`Il veleno brucia: ${e.danno} danni.`, `The poison burns: ${e.danno} damage.`);
       case "natura": return e.preso > 0 ? T(`Forza della natura: +${e.preso} punti natura${e.doppio ? " (doppio: Tossina)" : ""}.`, `Force of nature: +${e.preso} nature points${e.doppio ? " (doubled: Toxin)" : ""}.`) : T("Forza della natura: i tuoi punti natura sono già al massimo.", "Force of nature: your nature points are already full.");
       case "rivestimento": return T(`L'arma è rivestita (${nomeTec(e.id)}) per ${turni(e.turni)}: ogni colpo a segno ne porta l'effetto.`, `Your weapon is coated (${nomeTec(e.id)}) for ${turni(e.turni)}: every hit carries its effect.`);
       case "rivestFine": return T(`Il rivestimento si esaurisce (${nomeTec(e.id)}).`, `The coating wears off (${nomeTec(e.id)}).`);

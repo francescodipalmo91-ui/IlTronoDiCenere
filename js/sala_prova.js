@@ -3,7 +3,9 @@
    Strumento di sviluppo (solo italiano): prova tecniche, stati, ira, posti, vie e boss
    con le stesse regole della partita (js/combattimento.js), senza entrare in gioco.
    - Personaggio: livello, Vigore, Agilità, CA, arma, scudo, via e serie della via (arma o scudo).
-   - Nemico: mastino comune, Ettore (boss) o manichino; boss forzabile; PV e CA modificabili.
+   - Nemico: mastino comune, Ettore (boss), Enea (boss, argento) o manichino; boss forzabile; PV e CA modificabili.
+   - Enea (30/10): mani nude veloci o maglio lento, colpo caricato con «Mi difendo» e interruzione, carica in guardia,
+     finta con Intuizione, Spinta, risurrezione, vulnerabile a forza, luce e veleno, sdegno del cavaliere.
    - Dadi truccati: una coda di valori usati dai prossimi tiri (qualsiasi dado), per risultati certi.
    - «Esegui i test»: gli stessi test di tests/combattimento.test.js, tests/magia_combattimento.test.js e tests/sciamano.test.js, nel browser.
    - Sciamano: tecniche della natura (js/sciamano.js), punti natura dallo Spirito, veleno, trappole, Scudo di Corteccia.
@@ -30,7 +32,9 @@
   /* gli stessi valori di NEMICI in gioco.html */
   const NEMICI = {
     mastino: { nome: "Mastino infernale (comune)", ca: 10, dadoVita: 6, dannoDado: 4, attacco: 1, boss: false, probPresa: 0.6, probSoffio: 0.4, soffio: { cd: 12, dadi: 2, dado: 6, ricarica: 5 }, arma: false },
-    ettore: { nome: "Ettore (boss)", ca: 13, dadoVita: 8, dannoDado: 6, attacco: 1, boss: true, probPresa: 0, probSoffio: 0, soffio: null, arma: true, resa: true },
+    ettore: { nome: "Ettore (boss)", ca: 13, dadoVita: 8, dannoDado: 6, attacco: 1, boss: true, probPresa: 0, probSoffio: 0, soffio: null, arma: true, resa: true, vuln: ["Contundente", "Luce"] },
+    /* 30/10, PROPOSTA: bilanciamento_nemici_oggetti.md, sezione 5c */
+    enea: { nome: "Enea (boss, argento)", ca: 13, pv: 36, vigore: 12, attaccoFisso: 4, pa: 9, boss: true, enea: true, arma: true, vuln: ["Forza", "Luce", "Veleno"] },
     manichino: { nome: "Manichino (non attacca)", ca: 12, pv: 60, boss: false, passivo: true, arma: false }
   };
   const NOMI_EFF = { sanguina: "Sanguinamento", frattura: "Frattura", intontito: "Intontito", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Inibito", frastornato: "Frastornato", bloccato: "Stordito", guardia: "Guardia alzata", furore: "Furore inarrestabile", esposto: "Esposto", precisione: "Mille Soli", baluardo: "Baluardo d'Acciaio", fortezza: "Fortezza Eterna", runa: "Runa sull'arma", occhio: "Occhio del Tomo", tomo: "Tomo Proibito", quiete: "Quiete Assoluta", muro: "Muro di forza", scudo: "Scudo", invuln: "Invulnerabilità", pressione: "Pressione", parola: "Parola Vera", santuario: "Santuario", voto: "Voto di Luce", gemella: "Ombra Gemella", cerchio: "Cerchio del Focolare", fiamma: "Fiamma Calda", notte: "Notte Senza Fine", furia: "Furia Cinerea", manto: "Manto d'Ombra", seconda: "Seconda Vita", accecato: "Accecato", avvizzito: "Avvizzito", paura: "Terrore", corona: "Corona di Raggi",
@@ -48,7 +52,7 @@
   const tira = (d) => { if (coda.length) { const v = coda.shift(); mostraCoda(); return Math.max(1, Math.min(d, v)); } return 1 + Math.floor(Math.random() * d); };
 
   /* ---------- stato ---------- */
-  let pg = null, nem = null, s = null, turnoPg = false, finito = true, nTurno = 0;
+  let pg = null, nem = null, s = null, turnoPg = false, finito = true, nTurno = 0, tipoAzione = null; /* tipo del colpo in corso: arma o scuola (vulnerabilità) */
   const preparate = new Set(); let perRiposo = {};
 
   function leggiPg() {
@@ -65,7 +69,7 @@
     return { liv, vig, modV, modAgi: mod(agi), ca: Number($("pCa").value) || 14, arma, scudo: $("pScudo").checked, via: liv >= 3 ? $("pVia").value || null : null, serie: $("pSerie").value === "scudo" ? "scudo" : "arma", pvMax, iraMax: C.iraMax(modV, liv) };
   }
   const caPg = () => pg.ca + (s && C.attivo(s, "guardia") ? Number(s.guardiaVal) || 0 : 0) + (s && C.attivo(s, "scudo") ? 2 : 0) + (s && C.attivo(s, "muro") ? 3 : 0) + (s && C.attivo(s, "cerchio") ? 2 : 0);
-  const caNem = () => nem.ca - (s ? C.malusCA(s) : 0); /* Sbilanciato e Incrinatura */
+  const caNem = () => nem.ca - (s ? C.malusCA(s) : 0) + (s && nem.enea && s.carica && s.inGuardia ? 2 : 0); /* Sbilanciato e Incrinatura; Enea carica in guardia dopo la prima interruzione */
   const tipoOk = (t) => t.tipo === "Utilita" || t.tipo === "Natura" || (t.tipo === "Scudo" ? pg.scudo : t.tipo === pg.arma.tipo);
   const opzioni = () => sciamano() ? TEC.filter(t => t.classe === "Forestiero" && !t.via && t.liv <= pg.liv) : TEC.filter(t => t.tipo !== "Utilita" && !t.via && t.liv <= pg.liv && (t.tipo === pg.arma.tipo || (t.tipo === "Scudo" && pg.scudo)));
   const utilita = () => (sciamano() ? [] : TEC.filter(t => t.tipo === "Utilita" && t.liv <= pg.liv));
@@ -92,6 +96,8 @@
   function ctxBase() {
     return {
       tira, liv: pg.liv, modAtt: pg.modV, modDanno: pg.modV, dado: pg.arma.dado, ca: caNem, boss: nem.boss,
+      piuDadiVuln: nem.vuln && tipoAzione && nem.vuln.includes(tipoAzione) ? 1 : 0, vulnVeleno: !!(nem.vuln && nem.vuln.includes("Veleno")),
+      svantaggio: !!(s && s.spinta && turnoPg), /* Spinta di Enea: il tuo prossimo attacco ha svantaggio */
       cd: 8 + pg.modV + pg.liv, modTs: mod(nem.vigore),
       curaPg: (n) => { pg.pv = Math.min(pg.pvMax, pg.pv + n); },
       iraPiu: (n) => { pg.ira = Math.min(pg.iraMax, pg.ira + n); },
@@ -172,18 +178,19 @@
   function nuovoScontro() {
     pg = leggiPg(); pg.pv = pg.pvMax; pg.ira = pg.iraMax;
     const D = NEMICI[$("nTipo").value];
-    const vigore = 10 + tira(6), agilita = 10 + tira(6);
+    const vigore = D.vigore || 10 + tira(6), agilita = 10 + tira(6);
     const pvMax = Number($("nPv").value) || D.pv || (10 + tira(D.dadoVita) + mod(vigore));
     nem = { ...D, id: $("nTipo").value, vigore, agilita, pvMax, ca: Number($("nCa").value) || D.ca, boss: $("nBoss").checked || D.boss };
     s = { pv: pvMax, pvMax, eff: {}, effMax: {}, soffioPronto: true, presaUsata: false };
-    finito = false; nTurno = 0;
+    finito = false; nTurno = 0; tipoAzione = null;
     $("svLog").replaceChildren();
+    if (nem.enea) iniziaEnea();
     log(`Nuovo scontro: livello ${pg.liv}, ${pg.arma.nome} (1d${pg.arma.dado} ${pg.arma.tipo.toLowerCase()})${pg.scudo ? " e scudo" : ""}, Vigore ${fmt(pg.modV)}, ira ${pg.ira}/${pg.iraMax}. Contro: ${nem.nome}${nem.boss ? " — BOSS" : ""}, PV ${pvMax}, CA ${nem.ca}, Vigore ${fmt(mod(vigore))}.`, "sis");
     log("Agisci per primo (nella sala di prova l'iniziativa è sempre tua).", "sis");
     inizioTurno();
   }
   function inizioTurno() {
-    nTurno++; turnoPg = true;
+    nTurno++; turnoPg = true; if (s) s.pvInizioTurno = s.pv;
     const ril = C.inizioTurnoPg(s, ctx()); /* Mare Profondo ed Egida rilasciano l'onda */
     if (ril.length) { blocco("Inizio del tuo turno", testoEventi(ril), "mia"); if (controllaFine()) { turnoPg = false; return disegna(); } }
     disegna();
@@ -197,7 +204,8 @@
     return sv.danno;
   }
   function dopoAzione() {
-    turnoPg = false;
+    turnoPg = false; tipoAzione = null;
+    if (nem.enea) dopoAzioneEnea();
     if (controllaFine()) return disegna();
     turnoNemico();
     if (controllaFine()) return disegna();
@@ -205,6 +213,8 @@
   }
   function controllaFine() {
     if (finito) return true;
+    if (s.pv <= 0 && nem.enea && !s.risorto) { risurrezione(); return false; }
+    if (s.pv <= 0 && nem.enea) { finito = true; log("Enea cade per la seconda volta. In gioco, qui scegli se risparmiarlo o ucciderlo.", "ok"); return true; }
     if (s.pv <= 0) { finito = true; log(`${nem.nome} è sconfitto.`, "ok"); return true; }
     if (nem.resa && s.pv <= Math.ceil(s.pvMax / 3)) { finito = true; log("Ettore si arrende (in gioco succede a un terzo della salute).", "ok"); return true; }
     if (pg.pv <= 0) { finito = true; log("Sei a terra: sconfitta.", "ko"); return true; }
@@ -213,6 +223,7 @@
   function attaccoNormale() {
     if (!turnoPg || finito) return;
     const pre = s.prossimo || {}; s.prossimo = null;
+    tipoAzione = pg.arma.tipo;
     const c = ctx(), e = C.colpo(s, c, { base: true, bonus: pre.bonus || 0, piuDadi: pre.piuDadi || 0 });
     if (e.crit && !arcanista() && !sciamano()) c.iraPiu(2);
     const runa = e.ok && arcanista() && C.attivo(s, "runa") ? testoEventi([C.incidi(s, c, 1)]) : [];
@@ -229,8 +240,8 @@
     if (t.passiva) return log(`${t.nome.it}: è una passiva, sempre attiva.`, "ko");
     const costo = sciamano() ? t.costo : C.costo(t, s);
     if (pg.ira < costo) return log(`${t.nome.it}: servono ${costo} ${risorsa()}, ne hai ${pg.ira}.`, "ko");
-    pg.ira -= costo;
-    const r = sciamano() ? S.usa(t, s, c) : C.usa(t, s, c);
+    pg.ira -= costo; tipoAzione = pg.arma.tipo;
+    const r = sciamano() ? S.usa(t, s, ctx()) : C.usa(t, s, ctx());
     const crit = sciamano() ? 0 : r.eventi.filter(e => e.k === "colpo" && e.crit).length;
     for (let i = 0; i < crit; i++) c.iraPiu(2);
     blocco(`${t.nome.it} (−${costo} ${risorsa()})`, [...testoEventi(r.eventi), crit ? `Tuo critico: +${2 * crit} ira.` : "", `${sciamano() ? "Natura" : "Ira"}: ${pg.ira}/${pg.iraMax}.`], "mia");
@@ -243,12 +254,13 @@
     const disp = M.disponibile(inc, s, c); if (!disp.ok) return log(`${inc.nome.it}: ${M.testo({ k: disp.motivo })}`, "ko");
     const costo = M.costo(inc, s);
     if (pg.ira < costo) return log(`${inc.nome.it}: servono ${costo} mana, ne hai ${pg.ira}.`, "ko");
-    pg.ira -= costo;
-    const r = M.lancia(inc, s, c);
+    pg.ira -= costo; tipoAzione = { forza: "Forza", luce: "Luce", ombra: "Ombra" }[inc.scuola] || null; /* le armi non contano negli incantesimi */
+    const r = M.lancia(inc, s, ctx());
     blocco(`${inc.nome.it} (−${costo} ${monaco() ? "fede" : "mana"})`, [...testoEventi(r.eventi), `${monaco() ? "Fede" : "Mana"}: ${pg.ira}/${pg.iraMax}.`], "mia");
     dopoAzione();
   }
   function turnoNemico() {
+    tipoAzione = null;
     const c = ctx(), righe = [];
     const t = C.tickSangue(s, c); if (t) righe.push(`Sanguinamento: ${t.d} danni (d${t.dado}).`);
     if (M && M.haTick(s)) M.inizioTurnoNemico(s, c).forEach(e => righe.push(M.testo(e)));
@@ -259,8 +271,9 @@
     /* Frattura: 1d4 prima di ogni attacco del nemico (anche Presa e Soffio) */
     const frattura = () => { const f = C.frattura(s, c); if (f) righe.push(`Frattura: ${f.d} danni prima di attaccare.`); return s.pv <= 0; };
     if (nem.passivo) righe.push("Il manichino non attacca.");
-    else if (C.attivo(s, "bloccato")) righe.push("Stordito: salta il turno.");
+    else if (C.attivo(s, "bloccato")) { righe.push("Stordito: salta il turno."); if (nem.enea && s.carica) { s.carica = null; s.dopoCarica = true; righe.push("Il maglio gli ricade a terra: la carica è persa."); } }
     else if (frattura()) { blocco("Turno del nemico", righe, "nem"); return; }
+    else if (nem.enea) turnoEnea(c, righe, difesa);
     else {
       let fatto = false;
       if (nem.soffio && !s.soffioPronto) { const x = tira(6); s.soffioPronto = x >= nem.soffio.ricarica; righe.push(`Ricarica del soffio: d6 ${x} → ${s.soffioPronto ? "carico" : "scarico"}.`); }
@@ -321,6 +334,105 @@
     if (scaduti.length) righe.push("Svaniscono: " + scaduti.map(k => NOMI_EFF[k] || k).join(", ") + ".");
     blocco("Turno del nemico", righe, "nem");
   }
+
+  /* ---------- Enea, guardiano d'argento (30/10, PROPOSTA: numeri in bilanciamento 5c) ----------
+     Mani nude: 2 pugni da 1d4 (senza Vigore), Spinta (1 PA). Maglio: 1d8 + 1 + 3; Colpo caricato (3 PA): annunciato,
+     2d8 + 4 il turno dopo, mai due cariche di fila; «Mi difendo» dimezza; colpirlo mentre carica lo fa andare a vuoto;
+     dopo la prima interruzione carica in guardia (+2 CA); Finta (2 PA): annuncia la carica e colpisce di lato
+     ignorando la difesa; Intuizione gratuita per smascherarla. Risurrezione una volta: 1d4 + 3. */
+  const eneaOpz = () => ({ fermaglio: $("nFermaglio").checked, spada: $("nSpada").checked, socialita: $("nSocialita").checked, mossa: $("nEneaMossa").value });
+  const sdegno = () => (eneaOpz().spada && !eneaOpz().socialita ? 1 : 0);
+  function iniziaEnea() {
+    const o = eneaOpz();
+    s.pa = nem.pa; s.maglio = o.fermaglio || o.spada; s.carica = null; s.dopoCarica = false; s.inGuardia = false; s.risorto = false; s.spinta = false;
+    log(s.maglio ? (o.spada ? "Enea vede la spada del Signore nelle tue mani e impugna il maglio." : "Enea vede il fermaglio di bronzo sul tuo petto e impugna il maglio: sei venuto a prendere il suo posto.") : "Il fermaglio è nascosto: Enea ti prende per l'ennesimo sperduto e si fa avanti a mani nude.", "sis");
+    if (o.spada) log(o.socialita ? "Gli spieghi che ti sei inginocchiato e che la spada ti ha scelto: lo sdegno svanisce, Enea è turbato." : "Sdegno del cavaliere: un estraneo ha osato toccare la spada del suo re (+1 per colpire).", "sis");
+  }
+  function risurrezione() {
+    const x = tira(4), pv = x + 3;
+    s.risorto = true; s.pv = pv; s.carica = null; s.dopoCarica = false;
+    const prima = s.maglio; s.maglio = true;
+    blocco("Enea cade… e si rialza", ["Le tombe dei suoi uomini lo rimettono in piedi.", `Risurrezione: 1d4 ${x} + 3 = ${pv} salute.`, prima ? "" : "Ora impugna il maglio."], "nem");
+  }
+  /* dopo la tua azione: se Enea stava caricando e lo hai colpito, la carica va a vuoto */
+  function dopoAzioneEnea() {
+    if (s.carica === "vera" && s.pv < s.pvInizioTurno && !s.caricaRotta) {
+      s.caricaRotta = true;
+      log(`Lo colpisci mentre solleva il maglio: perde l'equilibrio, il colpo andrà a vuoto.${s.inGuardia ? "" : " Da ora in poi caricherà in guardia (+2 CA durante la carica)."}`, "ok");
+      s.inGuardiaDopo = true;
+    }
+    s.spinta = false;
+  }
+  function difendoEnea() {
+    if (!turnoPg || finito || !nem || !nem.enea || !s.carica) return;
+    s.difeso = true;
+    blocco("Mi difendo", ["Ti pianti sui piedi e alzi la guardia: il colpo caricato ti arriverà dimezzato."], "mia");
+    dopoAzione();
+  }
+  function osservaEnea() {
+    if (!turnoPg || finito || !nem || !nem.enea || !s.carica || s.osservato) return;
+    s.osservato = true;
+    const b = Number($("pInt").value) || 0, d = tira(20), tot = d + b, ok = tot >= 12;
+    blocco("Osservi Enea (Intuizione, gratuita)", [`d20 ${d} ${fmt(b)} = ${tot} contro CD 12 → ${ok ? "riuscita" : "fallita"}.`, ok ? (s.carica === "vera" ? "Il peso è tutto sul maglio: la carica è vera." : "Il peso resta sui piedi: è una finta, colpirà di lato.") : "Non riesci a capire se la carica è vera."], ok ? "mia" : "");
+    disegna();
+  }
+  /* un colpo di Enea: tiro, Parata, scudo, difese dello Sciamano, ira; o.dimezza: «Mi difendo»; o.ignora: la finta aggira la difesa */
+  function colpoEnea(c, righe, difesa, nome, nd0, dado, bonus, o) {
+    o = o || {};
+    if (o.ignora) { if (s.parata || s.assorbe || s.difeso) righe.push("La finta aggira la tua difesa."); s.parata = false; s.parataCrepe = false; s.parataPunta = false; s.assorbe = null; }
+    const ira = !arcanista() && !sciamano();
+    const m = nem.attaccoFisso + sdegno() + C.modAttaccoNem(s), at = C.tiroAttaccoNem(s, c), d = at.d, tot = d + m, ca = caPg(), crit = d === 20 && C.critNemPossibile(s), ok = crit || tot > ca;
+    if (at.tiri) righe.push(`Due d20, tiene il peggiore: ${at.tiri[0]} e ${at.tiri[1]}.`);
+    if (!ok) { righe.push(`${nome}: mancato (d20 ${d} ${fmt(m)} = ${tot} contro la tua CA ${ca}).`); righe.push(...testoEventi(C.colpoMancato(s, c))); return false; }
+    const n = (crit ? 2 : 1) * nd0, tiri = Array.from({ length: n }, () => tira(dado)), pieno0 = Math.max(1, tiri.reduce((a, b) => a + b, 0) + bonus), pieno = o.dimezza ? Math.max(1, Math.floor(pieno0 / 2)) : pieno0;
+    const testa = `${nome}: ${crit ? "CRITICO" : "colpito"} (d20 ${d} ${fmt(m)} = ${tot} contro CA ${ca}), ${pieno0} danni [${tiri.join("+")}${bonus ? ` ${fmt(bonus)}` : ""}]${o.dimezza ? ` → dimezzati dalla tua guardia: ${pieno}` : ""}.`;
+    if (!s.parata) {
+      const sub = C.colpoSubito(s, c, crit, pieno);
+      righe.push(testa, ...testoEventi(sub.eventi));
+      const dd = difesa(sub.danno), fatto = dd > 0 ? ferisci(dd, righe) : 0;
+      if (ira) pg.ira = Math.min(pg.iraMax, pg.ira + sub.ira);
+      righe.push(`Subisci ${fatto} danni.${ira ? ` +${sub.ira} ira.` : ""}`);
+    } else {
+      const sub = C.colpoSubito(s, c, crit);
+      if (sub.annullato) righe.push(`${nome}: colpirebbe (d20 ${d} ${fmt(m)} = ${tot} contro CA ${ca}), ma la Parata lo annulla: 0 danni.`, ...sub.eventi.filter(e => e.k === "contrattacco").map(e => `Contrattacco: ${e.tiri.length}d${e.dado} [${e.tiri.join("+")}] ${fmt(e.mm)} = ${e.danno} danni.`));
+      else { pg.pv -= pieno; if (ira) pg.ira = Math.min(pg.iraMax, pg.ira + sub.ira); righe.push(testa, `Subisci ${pieno} danni.`); }
+    }
+    return true;
+  }
+  function turnoEnea(c, righe, difesa) {
+    const o = eneaOpz();
+    if (!s.maglio && s.pv <= Math.floor(s.pvMax / 2)) { s.maglio = true; righe.push("Il fermaglio di bronzo ti scivola dal mantello. Enea lo riconosce, e impugna il maglio."); }
+    if (s.carica) { /* risolve la carica annunciata nel turno prima */
+      const tipo = s.carica, difeso = !!s.difeso;
+      if (tipo === "vera") {
+        if (s.caricaRotta) righe.push("Il maglio ricade fuori misura: la carica va a vuoto.");
+        else colpoEnea(c, righe, difesa, "Colpo caricato", 2, 8, 1 + 3, { dimezza: difeso });
+      } else colpoEnea(c, righe, difesa, "Finta: colpo di lato", 1, 8, 1 + 3, { ignora: true });
+      if (s.inGuardiaDopo) s.inGuardia = true;
+      s.carica = null; s.caricaRotta = false; s.difeso = false; s.osservato = false; s.dopoCarica = true;
+      return;
+    }
+    if (s.maglio) {
+      const puo = !s.dopoCarica, vuole = o.mossa === "carica" || o.mossa === "finta" || (o.mossa === "casuale" && Math.random() < 0.55);
+      const finta = o.mossa === "finta" || (o.mossa === "casuale" && s.inGuardia && Math.random() < 0.4);
+      s.dopoCarica = false;
+      if (puo && vuole && finta && s.pa >= 2) { s.pa -= 2; s.carica = "finta"; righe.push("Enea solleva il maglio sopra la testa (−2 PA). Il prossimo colpo sarà devastante… o forse no."); return; }
+      if (puo && vuole && s.pa >= 3) { s.pa -= 3; s.carica = "vera"; righe.push(`Enea solleva il maglio sopra la testa (−3 PA)${s.inGuardia ? ", in guardia (+2 CA)" : ""}. Il prossimo colpo sarà devastante.`); return; }
+      colpoEnea(c, righe, difesa, "Maglio", 1, 8, 1 + 3);
+      return;
+    }
+    /* mani nude: due pugni, oppure Spinta e un pugno */
+    if (s.pa >= 1 && (o.mossa === "spinta" || (o.mossa === "casuale" && Math.random() < 0.35))) {
+      s.pa -= 1;
+      const m = nem.attaccoFisso + sdegno() + C.modAttaccoNem(s), d = tira(20), tot = d + m, ok = d === 20 || tot > caPg();
+      righe.push(`Spinta (−1 PA): d20 ${d} ${fmt(m)} = ${tot} contro la tua CA ${caPg()} → ${ok ? "ti sbilancia, il tuo prossimo attacco ha svantaggio" : "resti in piedi"}.`);
+      if (ok) s.spinta = true;
+      colpoEnea(c, righe, difesa, "Pugno", 1, 4, 0);
+      return;
+    }
+    colpoEnea(c, righe, difesa, "Pugno", 1, 4, 0);
+    if (pg.pv > 0) colpoEnea(c, righe, difesa, "Secondo pugno", 1, 4, 0);
+  }
   function riposa() {
     if (!pg) pg = leggiPg();
     perRiposo = {}; pg.ira = pg.iraMax; pg.pv = pg.pvMax;
@@ -339,8 +451,8 @@
   function disegna() {
     if (!pg) pg = leggiPg();
     const st = pg.pv != null ? pg : { ...pg, pv: pg.pvMax, ira: pg.iraMax };
-    scheda($("svPg"), [["Salute", `${st.pv} / ${pg.pvMax}`], [arcanista() ? (monaco() ? "Punti fede" : "Mana") : sciamano() ? "Punti natura" : "Ira", `${st.ira} / ${pg.iraMax}`], ["CA", String(s ? caPg() : pg.ca)], ["CD dei tuoi effetti", String(8 + (arcanista() ? pg.modM : pg.modV) + pg.liv)], ...(sciamano() ? [["Natura per evento", `${S.recupero({ liv: pg.liv }, false)} (doppio con la Tossina), uno per turno del nemico`], ...(s && s.corteccia ? [["Scudo di Corteccia", `${s.corteccia}/${S.scudoMax({ liv: pg.liv })}`]] : []), ...(s && s.trappola ? [["Trappola", s.trappola]] : [])] : arcanista() ? (monaco() ? [["Fede per Crepuscolo", `${M.recupero(pg.liv)} (doppio da Nadir)`], ["Bilancia", bilanciaTesto()]] : [["Mana per Detonazione", `${M.recupero(pg.liv)} (doppio con i Sigilli al massimo)`]]) : [["Ira per colpo subito", `${C.iraPerColpo(pg.liv, false)} (critico ${C.iraPerColpo(pg.liv, true)})`]]), ...effetti(EFF_PG), ...(s && s.parata ? [["Parata", "pronta"]] : []), ...(s && C.cariche(s) ? [["Carica Cinetica", `${C.cariche(s)}/${C.CARICHE_MAX}${s.elastica && C.cariche(s) >= 2 ? " · elastica" : ""}`]] : []), ...(s && s.assorbe ? [["Scudo", `pronto (${s.assorbe.tipo})`]] : []), ...(s && s.difesaBloccata ? [["Difesa dello scudo", "non questo turno"]] : []), ...(s && s.sconto ? [["Sconto", `−${s.sconto} ira`]] : [])]);
-    if (nem) scheda($("svNem"), [["Nemico", nem.nome + (nem.boss ? " — BOSS" : "")], ["Salute", `${Math.max(0, s.pv)} / ${s.pvMax}`], ["CA", String(caNem())], ...(nem.soffio ? [["Soffio", s.soffioPronto ? "carico" : "scarico"]] : []), ...crepeNem(), ...sigilliNem(), ...(s && s.caMeno ? [["Spezzato", `CA −${s.caMeno} per tutto lo scontro`]] : []), ...(s && s.filo ? [["Filo di Rune", C.sigilli(s) >= 2 ? "attivo: −2 a colpirti" : "in attesa di 2 Sigilli"]] : []), ...(s && s.demolitore ? [["Demolitore", "ogni Detonazione fa Sbilanciato 1"]] : []), ...(s && s.morbo ? [["Morbo", `${s.morbo}/3`]] : []), ...effetti(["sanguina", "frattura", "esposto", "debole", "sbilanciato", "silenzio", "frastornato", "intontito", "bloccato", "pressione", "parola", "accecato", "avvizzito", "paura", "corona", "avvelenato", "marea"])]);
+    scheda($("svPg"), [["Salute", `${st.pv} / ${pg.pvMax}`], [arcanista() ? (monaco() ? "Punti fede" : "Mana") : sciamano() ? "Punti natura" : "Ira", `${st.ira} / ${pg.iraMax}`], ["CA", String(s ? caPg() : pg.ca)], ["CD dei tuoi effetti", String(8 + (arcanista() ? pg.modM : pg.modV) + pg.liv)], ...(sciamano() ? [["Natura per evento", `${S.recupero({ liv: pg.liv }, false)} (doppio con la Tossina), uno per turno del nemico`], ...(s && s.corteccia ? [["Scudo di Corteccia", `${s.corteccia}/${S.scudoMax({ liv: pg.liv })}`]] : []), ...(s && s.trappola ? [["Trappola", s.trappola]] : [])] : arcanista() ? (monaco() ? [["Fede per Crepuscolo", `${M.recupero(pg.liv)} (doppio da Nadir)`], ["Bilancia", bilanciaTesto()]] : [["Mana per Detonazione", `${M.recupero(pg.liv)} (doppio con i Sigilli al massimo)`]]) : [["Ira per colpo subito", `${C.iraPerColpo(pg.liv, false)} (critico ${C.iraPerColpo(pg.liv, true)})`]]), ...effetti(EFF_PG), ...(s && s.parata ? [["Parata", "pronta"]] : []), ...(s && C.cariche(s) ? [["Carica Cinetica", `${C.cariche(s)}/${C.CARICHE_MAX}${s.elastica && C.cariche(s) >= 2 ? " · elastica" : ""}`]] : []), ...(s && s.assorbe ? [["Scudo", `pronto (${s.assorbe.tipo})`]] : []), ...(s && s.difesaBloccata ? [["Difesa dello scudo", "non questo turno"]] : []), ...(s && s.sconto ? [["Sconto", `−${s.sconto} ira`]] : []), ...(s && s.spinta ? [["Spinta di Enea", "il tuo prossimo attacco ha svantaggio"]] : []), ...(s && s.difeso ? [["Guardia", "il colpo caricato ti arriverà dimezzato"]] : [])]);
+    if (nem) scheda($("svNem"), [["Nemico", nem.nome + (nem.boss ? " — BOSS" : "")], ["Salute", `${Math.max(0, s.pv)} / ${s.pvMax}`], ["CA", String(caNem())], ...(nem.soffio ? [["Soffio", s.soffioPronto ? "carico" : "scarico"]] : []), ...(nem.enea ? [["Arma", s.maglio ? "maglio (1d8 + 4)" : "mani nude (2 × 1d4)"], ["Punti abilità", `${s.pa} / ${nem.pa}`], ["Carica", s.carica ? (s.caricaRotta ? "spezzata: andrà a vuoto" : "annunciata" + (s.inGuardia ? " · in guardia" : "")) : s.inGuardia ? "nessuna · ora carica in guardia" : "nessuna"], ["Risurrezione", s.risorto ? "usata" : "pronta"], ["Vulnerabile a", "forza, luce, veleno"], ...(sdegno() ? [["Sdegno del cavaliere", "+1 per colpire"]] : [])] : []), ...crepeNem(), ...sigilliNem(), ...(s && s.caMeno ? [["Spezzato", `CA −${s.caMeno} per tutto lo scontro`]] : []), ...(s && s.filo ? [["Filo di Rune", C.sigilli(s) >= 2 ? "attivo: −2 a colpirti" : "in attesa di 2 Sigilli"]] : []), ...(s && s.demolitore ? [["Demolitore", "ogni Detonazione fa Sbilanciato 1"]] : []), ...(s && s.morbo ? [["Morbo", `${s.morbo}/3`]] : []), ...effetti(["sanguina", "frattura", "esposto", "debole", "sbilanciato", "silenzio", "frastornato", "intontito", "bloccato", "pressione", "parola", "accecato", "avvizzito", "paura", "corona", "avvelenato", "marea"])]);
     else scheda($("svNem"), [["Nemico", "—"]]);
     /* posti e tecniche */
     const prep = prepT().filter(t => sciamano() === (t.classe === "Forestiero")), max = C.slotTecniche(pg.liv, scudoPosti());
@@ -380,6 +492,9 @@
       }
     }
     $("svAttacca").disabled = finito || !turnoPg;
+    const caricaOra = !finito && turnoPg && nem && nem.enea && s && s.carica;
+    $("svDifendo").hidden = !caricaOra; $("svDifendo").disabled = !caricaOra;
+    $("svOsserva").hidden = !caricaOra; $("svOsserva").disabled = !caricaOra || !!s.osservato;
     $("pVia").disabled = Number($("pLiv").value) < 3; $("pSerie").disabled = Number($("pLiv").value) < 3;
   }
   function mostraCoda() { const c = $("svCodaVis"); if (c) c.textContent = coda.length ? `In coda: ${coda.join(", ")}` : "Coda vuota: i dadi tirano a caso."; }
@@ -402,7 +517,7 @@
       el("section", { class: "pannello" }, el("h2", { text: "Personaggio" }),
         campo("Classe", sel("pClasse", [["guerriero", "Guerriero (tecniche e ira)"], ["arcanista", "Arcanista (incantesimi, Sigilli e mana)"], ["monaco", "Monaco (Luce e Ombra, Bilancia e punti fede)"], ["sciamano", "Sciamano (natura, veleni e trappole)"]], "guerriero")), campo("Mente (Arcanista) o Spirito (Monaco, Sciamano)", num("pMen", 16, 8, 20)),
         campo("Livello", sel("pLiv", [1, 2, 3, 4, 5].map(n => [n, n]), 1)), campo("Vigore", num("pVig", 16, 8, 20)), campo("Agilità", num("pAgi", 12, 8, 20)),
-        campo("Classe armatura", num("pCa", 14, 8, 25)), campo("Salute (vuoto = calcolata)", num("pPv", "", 1, 200)),
+        campo("Classe armatura", num("pCa", 14, 8, 25)), campo("Salute (vuoto = calcolata)", num("pPv", "", 1, 200)), campo("Intuizione (bonus, per smascherare la finta di Enea)", num("pInt", 0, -5, 15)),
         campo("Arma", sel("pArma", ARMI.map((a, i) => [i, `${a.nome} · 1d${a.dado} ${a.tipo.toLowerCase()}`]), 0)), chk("pScudo", "Scudo imbracciato"),
         campo("Via di prestigio (dal livello 3)", sel("pVia", [["", "nessuna"], ["aldo", "Aldo — Lama del Guardiano (Arcanista: Frattura · Monaco: Cenere)"], ["guendalina", "Guendalina — Veglia (Arcanista: Sutura · Monaco: Brace)"]], "")),
         campo("Serie della via (si sceglie al riposo)", sel("pSerie", [["arma", "dell'arma"], ["scudo", "dello scudo"]], "arma")),
@@ -410,6 +525,8 @@
         el("h2", { text: "Nemico" }),
         campo("Tipo", sel("nTipo", Object.entries(NEMICI).map(([k, d]) => [k, d.nome]), "mastino")), chk("nBoss", "Trattalo come boss"),
         campo("Salute (vuoto = tirata)", num("nPv", "", 1, 300)), campo("Classe armatura (vuoto = sua)", num("nCa", "", 5, 25)),
+        chk("nFermaglio", "Enea: fermaglio di bronzo indossato (maglio da subito)", true), chk("nSpada", "Enea: spada del Retaggio impugnata (sdegno, maglio da subito)"), chk("nSocialita", "Enea: Socialità riuscita con la spada (niente sdegno)"),
+        campo("Enea: mossa", sel("nEneaMossa", [["casuale", "casuale"], ["carica", "carica sempre quando può"], ["finta", "finta sempre quando può"], ["spinta", "Spinta sempre a mani nude"]], "casuale")),
         chk("nResiste", "Resiste al veleno (come Dafne e il sovrano)"), chk("nSoffio", "Forza il Soffio quando è carico"), chk("nMorso", "Il mastino morde sempre"), chk("nPresa", "Forza la Presa dopo un morso"),
         el("div", { class: "azioni" }, el("button", { type: "button", id: "svNuovo", class: "primario", onclick: nuovoScontro }, "Nuovo scontro"), el("button", { type: "button", id: "svRiposa", onclick: riposa }, "Riposa")),
         el("h2", { text: "Dadi truccati" }),
@@ -417,7 +534,7 @@
         el("div", { class: "azioni" }, el("input", { id: "svCoda", type: "text", placeholder: "es. 20, 6, 3" }), el("button", { type: "button", id: "svAccoda", onclick: () => { $("svCoda").value.split(/[ ,;]+/).map(Number).filter(n => n > 0).forEach(n => coda.push(n)); $("svCoda").value = ""; mostraCoda(); } }, "Accoda"), el("button", { type: "button", onclick: () => { coda.length = 0; mostraCoda(); } }, "Svuota")),
         el("p", { class: "nota", id: "svCodaVis" })),
       el("section", { class: "centro" },
-        el("div", { class: "azioni" }, el("button", { type: "button", id: "svAttacca", class: "primario", onclick: attaccoNormale }, "Attacco normale")),
+        el("div", { class: "azioni" }, el("button", { type: "button", id: "svAttacca", class: "primario", onclick: attaccoNormale }, "Attacco normale"), el("button", { type: "button", id: "svDifendo", onclick: difendoEnea, hidden: true }, "Mi difendo"), el("button", { type: "button", id: "svOsserva", onclick: osservaEnea, hidden: true }, "Osservo Enea (Intuizione)")),
         el("div", { id: "svLog", class: "log", "aria-live": "polite" }),
         el("h2", { text: "Test automatici" }), el("div", { class: "azioni" }, el("button", { type: "button", id: "svTestBtn", onclick: eseguiTest }, "Esegui i test")), el("div", { id: "svTest" })),
       el("section", { class: "pannello" }, el("h2", { text: "Tu" }), el("dl", { id: "svPg" }), el("h2", { text: "Nemico" }), el("dl", { id: "svNem" }),
@@ -432,6 +549,6 @@
     mostraCoda(); pg = leggiPg(); disegna();
   }
   /* comandi per i test automatici del browser (Playwright): window.SalaProva */
-  window.SalaProva = { accoda: (...v) => { coda.push(...v); mostraCoda(); }, stato: () => ({ pg, nem, s, turnoPg, finito, preparate: [...preparate], perRiposo }), nuovoScontro, attaccoNormale, usa: (id) => usaTecnica(TEC.find(t => t.id === id)), incanta: (id) => usaIncantesimo(MG.INCANTESIMI.concat(MG.VIE).find(i => i.id === id)), riposa, eseguiTest };
+  window.SalaProva = { accoda: (...v) => { coda.push(...v); mostraCoda(); }, stato: () => ({ pg, nem, s, turnoPg, finito, preparate: [...preparate], perRiposo }), nuovoScontro, attaccoNormale, difendo: () => difendoEnea(), osserva: () => osservaEnea(), usa: (id) => usaTecnica(TEC.find(t => t.id === id)), incanta: (id) => usaIncantesimo(MG.INCANTESIMI.concat(MG.VIE).find(i => i.id === id)), riposa, eseguiTest };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", costruisci); else costruisci();
 })();

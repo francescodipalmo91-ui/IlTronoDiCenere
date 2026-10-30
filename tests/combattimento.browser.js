@@ -1159,6 +1159,69 @@ caso("Ettore: fendente sporco e Sanguinamento, braci sotto metà salute, colpo b
   eq(errori, [], "errori"); await chiudi();
 });
 
+/* ---------- Enea nella sala di prova (30/10) ---------- */
+const eneaSala = async (b, mossa, o) => {
+  o = o || {};
+  const x = await apri(b, "tutorial.html?prova");
+  await x.page.selectOption("#pLiv", "3"); await x.page.selectOption("#nTipo", "enea"); await x.page.selectOption("#nEneaMossa", mossa);
+  if (o.nascosto) await x.page.uncheck("#nFermaglio");
+  if (o.pv) await x.page.fill("#nPv", String(o.pv));
+  await x.page.click("#svNuovo");
+  return x;
+};
+const statoSala = (page) => page.evaluate(() => { const t = SalaProva.stato(); return { pv: t.pg.pv, epv: t.s.pv, carica: t.s.carica, guardia: t.s.inGuardia, maglio: t.s.maglio, risorto: t.s.risorto, pa: t.s.pa, spinta: t.s.spinta, finito: t.finito }; });
+caso("Sala di prova, Enea: col fermaglio impugna il maglio, la carica si annuncia e «Mi difendo» la dimezza", async (b) => {
+  const { page, errori, chiudi } = await eneaSala(b, "carica");
+  eq((await statoSala(page)).maglio, true, "maglio da subito col fermaglio");
+  await page.evaluate(() => SalaProva.accoda(1)); await page.click("#svAttacca");
+  let st = await statoSala(page); eq([st.carica, st.pa], ["vera", 6], "carica annunciata, 3 PA");
+  vero(await page.isVisible("#svDifendo"), "manca «Mi difendo» durante la carica");
+  const prima = st.pv;
+  await page.evaluate(() => SalaProva.accoda(15, 8, 8)); await page.click("#svDifendo");
+  st = await statoSala(page); eq(prima - st.pv, 10, "2d8 + 4 = 20, dimezzato 10"); eq(st.carica, null);
+  vero(!(await page.isVisible("#svDifendo")), "«Mi difendo» solo durante la carica");
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Sala di prova, Enea: colpito mentre carica va a vuoto; poi un turno normale e la carica successiva è in guardia (+2 CA)", async (b) => {
+  const { page, errori, chiudi } = await eneaSala(b, "carica");
+  await page.evaluate(() => SalaProva.accoda(1)); await page.click("#svAttacca");
+  const prima = (await statoSala(page)).pv;
+  await page.evaluate(() => SalaProva.accoda(19, 3)); await page.click("#svAttacca");
+  let st = await statoSala(page); eq(st.pv, prima, "la carica va a vuoto"); eq(st.guardia, true, "ora carica in guardia");
+  vero(/va a vuoto/.test(await page.innerText("#svLog")), "manca il testo della carica a vuoto");
+  await page.evaluate(() => SalaProva.accoda(1, /* Enea, maglio normale: */ 1)); await page.click("#svAttacca");
+  eq((await statoSala(page)).carica, null, "mai due cariche di fila");
+  await page.evaluate(() => SalaProva.accoda(1)); await page.click("#svAttacca");
+  st = await statoSala(page); eq(st.carica, "vera");
+  vero(/CA\s*15/.test(await page.innerText("#svNem")), "CA 13 + 2 in guardia");
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Sala di prova, Enea: la finta si smaschera con Intuizione e aggira «Mi difendo»", async (b) => {
+  const { page, errori, chiudi } = await eneaSala(b, "finta");
+  await page.evaluate(() => SalaProva.accoda(1)); await page.click("#svAttacca");
+  let st = await statoSala(page); eq([st.carica, st.pa], ["finta", 7], "finta, 2 PA");
+  await page.evaluate(() => SalaProva.accoda(15)); await page.click("#svOsserva");
+  vero(/è una finta/.test(await page.innerText("#svLog")), "Intuizione riuscita: deve dire che è una finta");
+  vero(await page.isDisabled("#svOsserva"), "Intuizione una volta per carica");
+  const prima = st.pv;
+  await page.evaluate(() => SalaProva.accoda(15, 5)); await page.click("#svDifendo");
+  st = await statoSala(page); eq(prima - st.pv, 9, "1d8 5 + 4, non dimezzato"); vero(/aggira la tua difesa/.test(await page.innerText("#svLog")));
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Sala di prova, Enea: fermaglio nascosto, Spinta dà svantaggio; alla prima caduta si rialza col maglio, alla seconda cade", async (b) => {
+  const { page, errori, chiudi } = await eneaSala(b, "spinta", { nascosto: true, pv: 30 });
+  eq((await statoSala(page)).maglio, false, "mani nude col fermaglio nascosto");
+  await page.evaluate(() => SalaProva.accoda(1, /* Spinta */ 15, /* pugno */ 1)); await page.click("#svAttacca");
+  let st = await statoSala(page); eq([st.spinta, st.pa], [true, 8], "Spinta a segno, 1 PA");
+  await page.evaluate(() => SalaProva.accoda(20, 2, /* Enea */ 1, 1)); await page.click("#svAttacca"); /* svantaggio: 20 e 2 → 2, mancato */
+  st = await statoSala(page); eq(st.epv, 30, "lo svantaggio ha tenuto il 2"); eq(st.spinta, false, "la Spinta vale un turno");
+  await page.evaluate(() => { SalaProva.stato().s.pv = 3; SalaProva.accoda(19, 6, /* risurrezione */ 2, /* Enea, maglio */ 1); }); await page.click("#svAttacca");
+  st = await statoSala(page); eq([st.risorto, st.maglio, st.epv, st.finito], [true, true, 5, false], "1d4 2 + 3 = 5, impugna il maglio");
+  await page.evaluate(() => SalaProva.accoda(19, 6)); await page.click("#svAttacca");
+  st = await statoSala(page); eq(st.finito, true); vero(/seconda volta/.test(await page.innerText("#svLog")));
+  eq(errori, [], "errori"); await chiudi();
+});
+
 (async () => {
   const browser = await chromium.launch();
   let ko = 0;

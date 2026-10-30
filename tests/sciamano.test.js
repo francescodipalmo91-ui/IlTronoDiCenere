@@ -109,6 +109,10 @@
     let E = S.tickNemico(s, c); eq(s.pv, 39); eq(ev(E, "velenoTick")[0].dimezzato, true); eq(c.natura, 1, "il veleno dimezzato fa danno: dà natura");
     nuovi(c, [1]); E = S.tickNemico(s, c); eq(s.pv, 39, "1 → 0"); eq(c.natura, 1, "nessun danno, nessun recupero");
   });
+  caso("2e-bis. Vulnerabile al veleno (Enea, 30/10): un dado in più a ogni turno avvelenato", () => {
+    const s = scontro({ eff: { avvelenato: 3 }, velenoDado: 4 }), c = ctx({ vulnVeleno: true, dadi: [3, 2] });
+    const E = S.tickNemico(s, c); eq(s.pv, 35, "3 + 2"); const t = ev(E, "velenoTick")[0]; eq(t.vuln, true); eq(t.tiri, [3, 2]);
+  });
   caso("2f. Sui boss Avvelenato e Tossina durano 3 turni come per tutti (28/10: niente tetto)", () => {
     const s = scontro({ eff: { avvelenato: 1 }, velenoDado: 4 }), c = ctx({ liv: 5, boss: true, dadi: [15, 3, 3] });
     const r = prova(s, c, "cuore_tossina"); eq(s.eff.avvelenato, 3); vero(!ev(r, "veleno")[0].ridotto, "non ridotto"); eq(s.eff.debole, 2);

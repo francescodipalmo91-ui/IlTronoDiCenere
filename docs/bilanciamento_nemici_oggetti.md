@@ -324,7 +324,7 @@ Il lupo normale è stato abbassato: con 11 di salute e 1d6 + 1 dava il 15% di sc
 | Guardiano | Stato firma | Note |
 |---|---|---|
 | Ettore | Sanguinamento (coltello), Ustionato (braci) | Sezione 5 |
-| Enea | Nessuno: combatte con il ritmo | 9 PA. **Mani nude:** 2 colpi da 1d4 + Vigore; Spinta (1): il tuo prossimo attacco ha svantaggio. **Maglio:** 1 colpo da 1d10 + Vigore; Colpo caricato (3): annunciato, danno doppio il turno dopo, mai due cariche di fila (difendersi dimezza, colpirlo durante la carica lo fa andare a vuoto); dopo la prima interruzione carica in guardia (+2 CA); Finta (2): annuncia la carica e colpisce subito ignorando la difesa, Intuizione gratuita per smascherarla. Mani nude o maglio secondo fermaglio di bronzo e spada del Retaggio; maglio sotto il 50% se scopre il fermaglio. Risurrezione una volta (1d4 + livello, senza PA), niente cura al 50%. Sdegno del cavaliere con la spada: +1 per colpire e +5 salute, tolto da Socialità. Salute, CA e attacco da fare. **Verifica nel codice (29 notte):** non esiste un'azione di difesa comune a tutti; le difese sono tecniche o incantesimi scelti (Parata, scudo, Specchio di Rune, Barriera Cinetica, Respingere, Santuario). Proposta: azione contestuale «Mi difendo» solo durante la carica di Enea; interrompere vale con qualsiasi attacco o incantesimo d'attacco che colpisce |
+| Enea | Nessuno: combatte con il ritmo | 9 PA. **Mani nude:** 2 colpi da 1d4 + Vigore; Spinta (1): il tuo prossimo attacco ha svantaggio. **Maglio:** 1 colpo da 1d10 + Vigore; Colpo caricato (3): annunciato, danno doppio il turno dopo, mai due cariche di fila (difendersi dimezza, colpirlo durante la carica lo fa andare a vuoto); dopo la prima interruzione carica in guardia (+2 CA); Finta (2): annuncia la carica e colpisce subito ignorando la difesa, Intuizione gratuita per smascherarla. Mani nude o maglio secondo fermaglio di bronzo e spada del Retaggio; maglio sotto il 50% se scopre il fermaglio. Risurrezione una volta (1d4 + livello, senza PA), niente cura al 50%. Sdegno del cavaliere con la spada: +1 per colpire e +5 salute, tolto da Socialità. Salute, CA e attacco da fare. **Verifica nel codice (29 notte):** non esiste un'azione di difesa comune a tutti; le difese sono tecniche o incantesimi scelti (Parata, scudo, Specchio di Rune, Barriera Cinetica, Respingere, Santuario). **Deciso (30 ottobre):** azione contestuale **«Mi difendo»**, solo durante la carica di Enea: consuma l'azione e dimezza il colpo. Non è un'azione generale (cambierebbe gli altri scontri, Ettore compreso). Interrompere vale con qualsiasi colpo a segno, incantesimi d'attacco compresi. Chi ha una difesa vera (Parata, scudo, Barriera…) la usa al posto di «Mi difendo» con il suo beneficio pieno. Numeri proposti in sezione 5c |
 | Dafne | Avvelenato | Primo turno: tiro d'arco con vantaggio (gratis, senza stato). Poi lancia: Lancia avvelenata (2): TS Vigore → Avvelenato. Preda segnata (3, sezione 3b). Trappola (4, una volta): TS Agilità → Bloccato 1. Oggetto di recupero: Sorso di resina (+3 PA) |
 | Atena | Impaurito | Presenza (2): TS Spirito → Impaurito. Sigilli di zaffiro e «La lacrima chiama» (4, una volta): sezione 3b |
 | Sovrano | Indebolito, Accecato, Impaurito (fuoco freddo) | Sezione 5b |
@@ -371,6 +371,38 @@ Prima (Vigore 14, +4, 1d6 + 4) l'Arcanista vinceva il 34% con il consiglio. Abba
 Gli incantesimi che fanno un attacco magico aggiungono al danno il **modificatore dell'attributo** (Mente per l'Arcanista, Spirito per il Monaco), come le armi aggiungono il Vigore. Il dado vita degli incantatori resta d6. La simulazione degli incantatori è grezza (niente Bilancia, Crepuscolo, Stasi): i numeri reali saranno un po' più alti.
 
 ---
+
+## 5c. Enea, livello 3 (PROPOSTA del 30 ottobre, da confermare)
+
+| Voce | Valore |
+|---|---|
+| Attributi | Vigore 12 (+1), Agilità 10 (0), Mente 12 (+1), Spirito 14 (+2) |
+| Salute | 36 fissa; risurrezione una volta con 1d4 + 3 |
+| CA | 13 (armatura pesante consunta) |
+| Attacco | +4 |
+| Mani nude | 2 colpi da **1d4**, senza Vigore: combatte per misurarti, non per ucciderti |
+| Maglio | **1d8 + 1 + 3** (arma magica: dado + Vigore + livello). Colpo caricato: doppi dadi, 2d8 + 4 |
+| PA | 9 |
+| CD dei suoi effetti | 12 (8 + 1 + 3) |
+| Vulnerabilità | **forza e luce** (la luce del dio che l'ha abbandonato) |
+| Sdegno del cavaliere | solo **+1 per colpire** (con anche +5 salute toglieva 14 punti di vittorie) |
+
+**Simulazione** (modello semplificato, 12.000 scontri per caso, senza tecniche né Santuario: circa 5 punti più pessimista del gioco; tarato su Ettore, che nel modello dà G 87, S 68, A 51, M 69):
+
+| Caso | Guerriero | Sciamano | Arcanista | Monaco |
+|---|---|---|---|---|
+| Maglio da subito | 75% | 47% | 51% | 44% |
+| Fermaglio nascosto (pugni fino al 50%) | 81% | 55% | 60% | 53% |
+| Sdegno (spada, Socialità fallita) | 69% | 40% | 46% | 37% |
+| Senza la luce tra le vulnerabilità | 72% | 43% | 48% | **15%** |
+| Senza risurrezione (salute 38) | 84% | 59% | 68% | 60% |
+
+**Cosa dice la simulazione:**
+- Maglio 1d10 + 2 + 3 era ingestibile (Monaco 5-10%): sceso a 1d8 + 4.
+- Senza luce il Monaco crolla (15%): Ettore lo aiutava con la luce, Enea no.
+- Con i pugni a 1d4 + Vigore nascondere il fermaglio non cambiava nulla (74 contro 73): ora vale circa 7 punti, e la scelta conta.
+- La **risurrezione** è la meccanica che pesa di più (circa 12-17 punti). Se lo scontro risulta troppo duro, si toglie da lì (1d4 invece di 1d4 + 3).
+- **Finta e adattamento** pesano 1-3 punti: sono tattica e lettura del nemico, non un muro di numeri.
 
 ## 5b. Il sovrano (DECISO il 28 ottobre, numeri da provare)
 

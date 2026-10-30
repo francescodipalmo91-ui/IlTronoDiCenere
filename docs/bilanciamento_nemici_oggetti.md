@@ -476,7 +476,7 @@ La vulnerabilità (+1 dado) vale anche per i danni senza tiro (Spinta, Onda d'Ur
 
 ### Armature e scudi (DECISO il 29 ottobre)
 "+livello" sulla CA sarebbe troppo (+5 CA al livello 5). Propongo:
-- Cacce comuni: armature +1 CA (gradi 1-2), +2 (grado 3); scudi +1.
+- Cacce comuni: armature +1 CA (gradi 1-2), +2 (grado 3); scudi +1. **Nel codice dal 30 ottobre:** nelle rastrelliere l'armatura scelta prende +1 (già dalla scelta del bronzo, come le armi prendono il «+livello») e +2 dalla quinta caccia comune (grado 3); lo scudo +1. Il bonus è fissato alla scelta.
 - Bottino dei guardiani: +1 o +2 con un potere.
 - Set Vespera: abilità al posto dei bonus (già deciso).
 
@@ -544,11 +544,12 @@ Il set Vespera copre mantello, guanti, elmo, arma e corazza. Il bottino magico v
 - **Testi:** tre frasi per ciascuno (l'agguato, la resa, il ritorno con rancore), scritte da Claude e corrette da Francesco. Bottino garantito se ucciso: il loro pezzo d'equipaggiamento, al livello delle cacce comuni, senza poteri. Vulnerabili all'Ombra.
 - **Stati:** gli umani e gli altri popoli feriscono il corpo (Sanguinamento, Avvelenato, Indebolito); gli orchi anche Impaurito (il ruggito).
 
-### Il fermaglio indossato o nascosto (DECISO il 29 ottobre, numeri compresi)
+### Il fermaglio indossato o nascosto (DECISO il 29 ottobre, numeri compresi; nel codice dal 30 ottobre)
 Il fermaglio ha un suo slot e si può togliere, solo fuori dal combattimento (storia, sezione 10b). Dentro la mente, fuori il corpo:
 - **Indossato:** +2 alla Furtività del pedinamento (i mastini riconoscono l'odore di Aldo); fuori casa più agguati, perché sei una preda di valore: **45% animale normale, 20% infernale, 35% agguato**.
 - **Nascosto:** nessun bonus al pedinamento; fuori casa **55% animale normale, 30% infernale, 15% agguato**.
 - Il 20% di incontro a ogni ingresso non cambia. Prima del bronzo il fermaglio non c'è e resta il 67:33.
+- **Nel codice (30 ottobre):** posto «Fermaglio» nell'equipaggiamento con il pulsante per nasconderlo o appuntarlo (anche a parole: «nascondo il fermaglio», «appunto il fermaglio»), mai durante uno scontro; il titolo sotto il ritratto c'è solo se è appuntato; Aldo nota il fermaglio nascosto quando gli parli, una volta al giorno (testi PROVVISORI); agguati 45:20:35 o 55:30:15. Il +2 alla Furtività è pronto (`bonusFurtivitaPedinamento()`) ma il pedinamento dei mastini del secondo piano non esiste ancora. Regolamento aggiornato.
 - **Da controllare:** con il fermaglio sempre indossato, gli agguati del percorso atteso salgono di poco (da 3 a circa 4 su 5). Va bene, ma va visto nella simulazione.
 
 ### Statistiche dei cinque (crescono con il personaggio)

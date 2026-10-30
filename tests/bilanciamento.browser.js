@@ -211,7 +211,7 @@ caso("29/10: Ettore attaccato a sorpresa perde il primo turno a recuperare la sp
 /* ---------- 29/10: agguati ---------- */
 const BRONZO = (o) => PARTITA(Object.assign({ luogo: "cimitero", usate: { riposo: "sbloccato", fermaglio: "bronzo", giorno: 1 } }, o || {}));
 const clicca = async (page, re) => { await page.waitForSelector("#azioni button", { state: "visible", timeout: 10000 }); const bs = await page.$$("#azioni button"); for (const x of bs) if (re.test(await x.textContent())) return x.click(); throw new Error("manca il pulsante " + re); };
-caso("Agguati: fuori casa dopo il bronzo 50:25:25 (prima del bronzo mai); al livello 2 il goblin", async (b) => {
+caso("Agguati: fuori casa dopo il bronzo (fermaglio indossato 45:20:35; prima del bronzo mai); al livello 2 il goblin", async (b) => {
   let { page, errori, chiudi } = await apri(b, "gioco.html", PG({ livello: 2 }), PARTITA({ livello: 2, luogo: "cimitero", usate: { riposo: "sbloccato" } }));
   await accoda(page, [], [0.1, 0.9, 0.5, 0]); await page.evaluate(() => { luogo = "cimitero"; incontroZona(false); });
   eq(await page.evaluate(() => [!!scontro, !!(scontro && NEMICI[scontro.id].agguato)]), [true, false], "prima del bronzo: un infernale");
@@ -220,6 +220,39 @@ caso("Agguati: fuori casa dopo il bronzo 50:25:25 (prima del bronzo mai); al liv
   await accoda(page, [], [0.1, 0.9, 0.5, 0]); await page.evaluate(() => { luogo = "cimitero"; incontroZona(false); });
   eq(await page.evaluate(() => [scontro.id, scontro.ctx]), ["goblin", "agguato"]);
   eq(await page.evaluate(() => [scegliAgguato.length, NEMICI.banda_goblin.attacchi, NEMICI.banda_orchi.attacchi]), [0, 2, 2]);
+  eq(errori, [], "errori"); await chiudi();
+});
+/* ---------- 30/10: fermaglio e armature delle rastrelliere ---------- */
+caso("Fermaglio: nascosto, gli agguati scendono (55:30:15: 0,7 è un infernale, indossato sarebbe un agguato)", async (b) => {
+  let { page, errori, chiudi } = await apri(b, "gioco.html", PG({ livello: 2 }), BRONZO({ livello: 2 }));
+  await accoda(page, [], [0.1, 0.7, 0.5, 0]); await page.evaluate(() => { luogo = "cimitero"; incontroZona(false); });
+  eq(await page.evaluate(() => scontro && scontro.ctx), "agguato", "indossato: 0,7 ≥ 0,65");
+  await chiudi();
+  ({ page, errori, chiudi } = await apri(b, "gioco.html", PG({ livello: 2 }), BRONZO({ livello: 2, usate: { riposo: "sbloccato", fermaglio: "bronzo", fermaglio_nascosto: true, giorno: 1 } })));
+  await accoda(page, [], [0.1, 0.7, 0.5, 0]); await page.evaluate(() => { luogo = "cimitero"; incontroZona(false); });
+  eq(await page.evaluate(() => [!!scontro, !!(scontro && NEMICI[scontro.id].agguato)]), [true, false], "nascosto: 0,7 < 0,85, un infernale");
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Fermaglio: si nasconde e si appunta (comando e pulsante); il titolo sotto il ritratto segue; +2 Furtività solo indossato", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ livello: 2 }), BRONZO({ livello: 2, luogo: "atrio" }));
+  eq(await page.evaluate(() => [!document.getElementById("fermaglio").hidden, bonusFurtivitaPedinamento()]), [true, 2], "indossato");
+  vero(/Fermaglio di bronzo/.test(await page.evaluate(() => document.getElementById("equip").textContent)), "manca il fermaglio nell'equipaggiamento");
+  await page.fill("#testo", "nascondo il fermaglio"); await page.press("#testo", "Enter"); await page.waitForTimeout(400);
+  eq(await page.evaluate(() => [usate.fermaglio_nascosto, document.getElementById("fermaglio").hidden, bonusFurtivitaPedinamento()]), [true, true, 0], "nascosto");
+  vero(/nascosto/.test(await page.evaluate(() => document.getElementById("equip").textContent)), "l'equipaggiamento deve dire che è nascosto");
+  await page.evaluate(() => { [...document.querySelectorAll("#equipAzioni button")].find(x => /Appunta/.test(x.textContent)).click(); });
+  eq(await page.evaluate(() => [usate.fermaglio_nascosto, document.getElementById("fermaglio").hidden]), [false, false], "appuntato col pulsante");
+  await page.evaluate(() => { scontro = { finto: true }; nascondiFermaglio(); scontro = null; });
+  eq(await page.evaluate(() => usate.fermaglio_nascosto), false, "in combattimento non si tocca");
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Rastrelliere: armature +1 (+2 dalla quinta caccia comune), scudi +1, fissati alla scelta", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ livello: 2 }), BRONZO({ livello: 2, luogo: "sala_caccia" }));
+  const prendi = (nome, fatte) => page.evaluate(([n, f]) => { usate.armeria_scelte = 1; usate.cc_fatte_lista = Array.from({ length: f }, (_, i) => "c" + i); prendiDallaRastrelliera(ARMERIA.find(o => o.nome === n && !o.sp)); const it = zaino[zaino.length - 1]; return [it.nome, it.ca, it.bonus || 0]; }, [nome, fatte]);
+  eq(await prendi("Armatura media", 0), ["Armatura media", 4, 1], "dal bronzo +1");
+  eq(await prendi("Armatura pesante", 4), ["Armatura pesante", 5, 1], "gradi 1-2: +1");
+  eq(await prendi("Armatura leggera", 5), ["Armatura leggera", 4, 2], "grado 3: +2");
+  eq(await prendi("Scudo", 5), ["Scudo", 2, 1], "scudo +1");
   eq(errori, [], "errori"); await chiudi();
 });
 caso("Agguati: i cinque crescono con il personaggio (salute 15 + 3 per livello oltre il 2, danno + livello, CD 8 + livello, 6 PA)", async (b) => {

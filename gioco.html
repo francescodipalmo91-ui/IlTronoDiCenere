@@ -7691,6 +7691,10 @@
       if (luogo === "sala_caccia" && usate.q4 === "completata") { /* dopo il bronzo Aldo si lascia interrogare (prima l'udienza) */
         if (usate.cc_stato === "trofeo") return consegnaCaccia();
         if (!udienzaFatta("bronzo")) return proponiUdienza();
+        if (usate.fermaglio_nascosto && Number(usate.aldo_fermaglio_giorno) !== (Number(usate.giorno) || 1)) { /* 30/10: Aldo nota il fermaglio nascosto, una volta al giorno */
+          usate.aldo_fermaglio_giorno = Number(usate.giorno) || 1; salvaUsate();
+          aggiungi({ tipo: "dialogo", fuori: true, tuttoBox: true, chi: "Aldo", righe: [aCaso(FM().aldo)] });
+        }
         usate.aldo_rispetto = usate.aldo_esito === "vinto" ? "si" : "no"; /* ha battuto i suoi mastini: risponde un po' meno sprezzante */
         usate.fermaglio_oro = gradoFermaglio() >= 2 ? "si" : "no";
         tendinaDialogo();
@@ -7977,9 +7981,10 @@
       if (nuovi.length) { id = aCaso(nuovi); usate.pineta_nuovo = giorno; }
       else {
         if (Math.random() >= PROB_ZONA[z]) return;
-        const r = Math.random(), agg = z === "fuori" && dopoBronzo(); /* 29/10: dopo il bronzo, fuori casa 50:25:25 con gli agguati */
-        if (agg && r >= 0.75) { salvaUsate(); return avviaAgguato(scegliAgguato()); }
-        if (agg ? r < 0.5 : r < PROB_ANIMALE_ZONA[z]) id = aCaso(ANIMALI_IDS(z));
+        const r = Math.random(), agg = z === "fuori" && dopoBronzo(); /* 29/10: dopo il bronzo, fuori casa con gli agguati; 30/10: col fermaglio indossato 45:20:35, nascosto 55:30:15 */
+        const [pAn, pAgg] = fermaglioIndossato() ? [0.45, 0.35] : [0.55, 0.15];
+        if (agg && r >= 1 - pAgg) { salvaUsate(); return avviaAgguato(scegliAgguato()); }
+        if (agg ? r < pAn : r < PROB_ANIMALE_ZONA[z]) id = aCaso(ANIMALI_IDS(z));
         else { const gMax = livelloPg() <= 1 ? 1 : 2; id = aCaso(INFERNALI_IDS(z).filter(k => PREDE[k].grado <= gMax)); }
       }
       if (!id) return;
@@ -8214,12 +8219,47 @@
     Object.assign(FINE_DIALOGO, {
       aldo_bacheca() { bachecaCacce(); }
     });
+    /* 30/10: il fermaglio ha un suo posto nell'equipaggiamento e si può nascondere (solo fuori dal combattimento).
+       Indossato: titolo sotto il ritratto, +2 Furtività nel pedinamento dei mastini (riconoscono l'odore di Aldo), più agguati fuori casa (45:20:35).
+       Nascosto: niente titolo né bonus, meno agguati (55:30:15). Aldo lo nota. Enea impugna il maglio solo se lo vede. TESTI PROVVISORI */
+    const fermaglioIndossato = () => !!usate.fermaglio && !usate.fermaglio_nascosto;
+    const bonusFurtivitaPedinamento = () => (fermaglioIndossato() ? 2 : 0); /* per il pedinamento dei mastini del secondo piano (da fare) */
+    const FM = () => Lingua.t({
+      it: { etichetta: "Fermaglio", nascosto: (n) => `${n} (nascosto)`, nascondiBtn: "Nascondi il fermaglio", appuntaBtn: "Appunta il fermaglio",
+        indossato: ["Titolo visibile sotto il ritratto", "Pedinamento dei mastini: +2 Furtività", "Fuori casa sei una preda di valore: più agguati"],
+        celato: ["Nessun titolo, nessun bonus", "Fuori casa meno agguati"],
+        nascondi: "Sganci il fermaglio e lo fai sparire sotto il mantello. Senza il marchio di Aldo torni a essere un viandante qualunque: i mastini non sentiranno più il suo odore su di te, ma nemmeno chi caccia fuori dalle mura vedrà in te una preda di valore.",
+        appunta: "Appunti di nuovo il fermaglio sul petto, ben in vista. I mastini riconosceranno l'odore di Aldo; chi caccia fuori dalle mura, il valore della preda.",
+        gia: "È già dove deve stare.", nessuno: "Non porti nessun fermaglio.", scontro: "Non è il momento di armeggiare con il fermaglio.",
+        aldo: ["Aldo non alza lo sguardo dalla teca. «Il fermaglio, viandante. Lo portate nascosto come un ladro porta la refurtiva. Chi lo nasconde se ne vergogna… o ha qualcosa da temere.»", "Lo sguardo di Aldo si posa sul tuo petto, dove il fermaglio dovrebbe essere. «Interessante», dice soltanto."] },
+      en: { etichetta: "Clasp", nascosto: (n) => `${n} (hidden)`, nascondiBtn: "Hide the clasp", appuntaBtn: "Pin the clasp",
+        indossato: ["Title shown under the portrait", "Stalking hounds: +2 Stealth", "Outside the house you are valuable prey: more ambushes"],
+        celato: ["No title, no bonus", "Outside the house: fewer ambushes"],
+        nascondi: "You unpin the clasp and slip it under your cloak. Without Aldo's mark you are just another wanderer again: the hounds will no longer smell him on you, but neither will those who hunt beyond the walls see you as valuable prey.",
+        appunta: "You pin the clasp back on your chest, in plain sight. The hounds will know Aldo's scent; those who hunt beyond the walls, the value of the prey.",
+        gia: "It is already where it belongs.", nessuno: "You wear no clasp.", scontro: "This is no time to fiddle with the clasp.",
+        aldo: ["Aldo does not look up from the case. “The clasp, wanderer. You carry it hidden, like a thief carries his loot. Whoever hides it is ashamed of it… or has something to fear.”", "Aldo's gaze settles on your chest, where the clasp should be. “Interesting,” is all he says."] }
+    });
+    function nascondiFermaglio() {
+      if (!usate.fermaglio) return sist(FM().nessuno);
+      if (scontro) return sist(FM().scontro);
+      if (usate.fermaglio_nascosto) return sist(FM().gia);
+      usate.fermaglio_nascosto = true; salvaUsate(); disegnaFermaglio(); aggiornaEquip();
+      aggiungi({ tipo: "narra", righe: [FM().nascondi] });
+    }
+    function appuntaFermaglio() {
+      if (!usate.fermaglio) return sist(FM().nessuno);
+      if (scontro) return sist(FM().scontro);
+      if (!usate.fermaglio_nascosto) return sist(FM().gia);
+      usate.fermaglio_nascosto = false; salvaUsate(); disegnaFermaglio(); aggiornaEquip();
+      aggiungi({ tipo: "narra", righe: [FM().appunta] });
+    }
     function disegnaFermaglio() {
       const nome = document.getElementById("nome"); if (!nome) return;
       let el = document.getElementById("fermaglio");
       if (!el) { el = document.createElement("div"); el.id = "fermaglio"; nome.parentElement.append(el); }
       const g = usate.fermaglio;
-      el.hidden = !g; if (!g) return;
+      el.hidden = !fermaglioIndossato(); if (!g || el.hidden) return;
       el.className = "fermaglio " + g; el.textContent = AL.fermaglioNome(g);
     }
     /* ---------- La consegna del fermaglio, nella sala della caccia ---------- */
@@ -8338,9 +8378,12 @@
     const permessoArmeria = (o) => o.tipo === "arma" ? armaPermessa(o.nome) : o.tipo === "armatura" ? armaturaPermessa(o.nome) : true;
     const nomeArmeria = (o) => o.id && Q.oggetti[o.id] ? Q.oggetti[o.id].nome : N("oggetti", o.nome);
     const infoArmatura = (o) => [U.caBonus(Number(o.ca) || 0), Number(o.malus) ? U.malusAg(Number(o.malus)) : U.noMalus].join(" · ");
+    /* 30/10: armature delle cacce comuni +1 CA (gradi 1-2), +2 (grado 3, dalla quinta caccia comune); scudi +1. Fissato alla scelta, come il «+livello» delle armi */
+    const bonusArmeria = (o) => o.sp ? 0 : o.tipo === "armatura" ? (ccFatte() >= 5 ? 2 : 1) : o.tipo === "scudo" ? 1 : 0;
+    const conBonusArmeria = (o) => { const b = bonusArmeria(o); return b ? { ...o, ca: (Number(o.ca) || 0) + b, bonus: b } : o; };
     const dettaglioArmeria = (o) => o.id ? Q.oggetti[o.id].testo
       : o.tipo === "arma" ? [o.danno + " + " + livelloPg() + " + " + U.modLotta, N("danni", o.tipoDanno), U.mani(o.mani)].join(" · ")
-      : (o.tipo === "armatura" || o.tipo === "scudo") ? infoArmatura(o)
+      : (o.tipo === "armatura" || o.tipo === "scudo") ? infoArmatura(conBonusArmeria(o))
       : (Lingua.desc(o.nome) || "") + (o.usi ? ` (×${o.usi})` : "");
     function mostraArmeria() { aggiungi({ tipo: "armeria", fuori: true }); }
     function riempiArmeria(el) {
@@ -8364,7 +8407,7 @@
           const det = document.createElement("details"); det.className = "proposta"; det.open = aperti.has(key);
           det.addEventListener("toggle", () => { if (det.open) aperti.add(key); else aperti.delete(key); });
           const sm = document.createElement("summary");
-          const nm = document.createElement("span"); nm.className = "p-nome"; nm.textContent = chiuso ? nomeArmeria(o) + " 🔒" : nomeArmeria(o); sm.append(nm);
+          const nm = document.createElement("span"); nm.className = "p-nome"; nm.textContent = chiuso ? nomeArmeria(o) + " 🔒" : nomeArmeria(o) + (bonusArmeria(o) ? ` (+${bonusArmeria(o)})` : ""); sm.append(nm);
           const badge = document.createElement("span"); badge.className = "p-badge" + (libero ? "" : " deciso");
           badge.textContent = chiuso ? K.bloccoCorto : !perm ? R.classe : n > 0 ? R.disponibile : R.esaurito; sm.append(badge);
           const corpo = document.createElement("div"); corpo.className = "p-corpo";
@@ -8414,8 +8457,8 @@
       else if (o.sp === "armatura") it = { id: nuovoId(), nome: Q.oggetti[o.id].nome, tipo: "armatura", ca: o.ca, malus: o.malus, testo: Q.oggetti[o.id].testo };
       else if (o.sp === "reperto") it = { id: o.id, nome: Q.oggetti[o.id].nome, tipo: "reperto", testo: Q.oggetti[o.id].testo, alias: [] };
       else if (o.tipo === "arma") it = { id: nuovoId(), nome: o.nome, tipo: "arma", danno: o.danno, tipoDanno: o.tipoDanno, mani: o.mani, bonus: livelloPg(), alias: [] };
-      else if (o.tipo === "armatura") it = { id: nuovoId(), nome: o.nome, tipo: "armatura", ca: o.ca, malus: o.malus };
-      else if (o.tipo === "scudo") it = { id: nuovoId(), nome: "Scudo", tipo: "scudo", ca: o.ca, malus: o.malus };
+      else if (o.tipo === "armatura") { const b = bonusArmeria(o); it = { id: nuovoId(), nome: o.nome, tipo: "armatura", ca: o.ca + b, malus: o.malus, ...(b ? { bonus: b } : {}) }; }
+      else if (o.tipo === "scudo") { const b = bonusArmeria(o); it = { id: nuovoId(), nome: "Scudo", tipo: "scudo", ca: o.ca + b, malus: o.malus, ...(b ? { bonus: b } : {}) }; }
       else it = { id: nuovoId(), nome: o.nome, tipo: "dotazione", usi: o.usi != null ? o.usi : null, testo: Lingua.desc(o.nome), impugnabile: !!o.impugnabile };
       zaino.push(it); aggiornaZaino(); modificato();
       sist(A.armeria.preso(nomeArmeria(o)));
@@ -8974,6 +9017,7 @@
       voceEquip(dl, U.armatura, eq.armatura ? N("oggetti", eq.armatura) : "—",
         eq.armatura ? [eq.armaturaCA != null ? U.caBonus(Number(eq.armaturaCA)) : null, malus > 0 ? U.malusAg(malus) : U.noMalus].filter(Boolean) : [], "armatura");
       if (anelloAlDito()) voceEquip(dl, A2.anello.etichetta, nomeOg({ id: "anello_vespera" }), [A2.anello.ca, A2.anello.bonus], "anello");
+      if (usate.fermaglio) voceEquip(dl, FM().etichetta, fermaglioIndossato() ? AL.fermaglioNome(usate.fermaglio) : FM().nascosto(AL.fermaglioNome(usate.fermaglio)), fermaglioIndossato() ? FM().indossato : FM().celato, "fermaglio");
       const az = document.getElementById("equipAzioni");
       az.replaceChildren();
       const bott = (etichetta, fn) => { const b = document.createElement("button"); b.type = "button"; b.className = "mini"; b.textContent = etichetta; b.addEventListener("click", clic(fn)); az.append(b); };
@@ -8982,6 +9026,7 @@
       if (mano && mano.usi != null) bott(U.usaBtn(nomeOg(mano)), () => usa(mano.id));
       if (mano) bott(U.riponiBtn(nomeOg(mano)), riponi);
       if (anelloAlDito()) bott(A2.anello.togliBtn + " " + nomeOg({ id: "anello_vespera" }), togliAnello);
+      if (usate.fermaglio && !scontro) bott(fermaglioIndossato() ? FM().nascondiBtn : FM().appuntaBtn, fermaglioIndossato() ? nascondiFermaglio : appuntaFermaglio);
     }
 
     function aggiornaZaino() {
@@ -9985,6 +10030,11 @@
       /* riposo accanto a un fuoco caldo */
       if (/\bripos[oai]\w*|\bdorm\w*|\bmi (stendo|sdraio|addormento)|\brest\b|\bresting\b|\bsleep\w*|\bnap\b/.test(t)) return riposa();
 
+      /* 30/10: nascondere o appuntare il fermaglio */
+      if (usate.fermaglio && /\bfermagli\w*|\bclasp\b|\bspill[ae]\b|\bbrooch\b/.test(t)) {
+        if (/\b(nascond|togl|tolg|sgancio|sganci|levo|lev[ai]|ripong|ripon|cel[oia])\w*|\b(hide|remove|unpin|take off|conceal|stow)\b/.test(t)) return nascondiFermaglio();
+        if (/\b(appunt|indoss|metto|mett[ie]|rimett|mostr|esib|sfoggi)\w*|\b(pin|wear|put on|show|display)\b/.test(t)) return appuntaFermaglio();
+      }
       /* 1. riporre qualcosa (torcia, scudo, arma) */
       if (ha(t, "riponi")) {
         if (mano && citato(mano, t)) return riponi();

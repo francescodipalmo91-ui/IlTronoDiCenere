@@ -14,7 +14,13 @@
   <style>
     * { box-sizing: border-box; }
     html { background: var(--bg); }
-    body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--f-testo); line-height: 1.55; padding: 2rem 16px 3rem; }
+    body { margin: 0; background: transparent; color: var(--text); font-family: var(--f-testo); line-height: 1.55; padding: 2rem 16px 3rem; }
+    /* 30/10: immagine statica a contorno; sfuma nel fondo dietro la colonna di testo, così la lettura non ne risente */
+    body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background:
+        linear-gradient(to right, color-mix(in srgb, var(--bg) 35%, transparent) 0%, var(--bg) 30%, var(--bg) 70%, color-mix(in srgb, var(--bg) 35%, transparent) 100%),
+        url("immagini/regolamento_sfondo.webp") center / cover no-repeat; }
+    @media (max-width: 900px) { body::before { background: linear-gradient(color-mix(in srgb, var(--bg) 70%, transparent), color-mix(in srgb, var(--bg) 88%, transparent)), url("immagini/regolamento_sfondo_mobile.webp") center / cover no-repeat; } } /* telefono: immagine ruotata di 90° antiorario, in verticale */
     main { max-width: 46rem; margin: 0 auto; }
     .torna { color: var(--muted); text-decoration: none; font-size: 0.95rem; display: inline-block; padding: 0.6rem 0; } /* 29/10: più facile da toccare sul telefono */
     .torna:hover { color: var(--accent); }

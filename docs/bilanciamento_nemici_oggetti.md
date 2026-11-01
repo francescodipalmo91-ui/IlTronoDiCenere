@@ -496,25 +496,25 @@ Il set Vespera copre mantello, guanti, elmo, arma e corazza. Il bottino magico v
 ### Scala del potere
 **rastrelliere < speciali di Aldo < bottino dei guardiani < set Vespera e spada del Retaggio**
 
-### Lo scudo degli uomini di Enea (PROPOSTA, numeri da simulare)
+### Le cose degli uomini di Enea (DECISO il 1 novembre)
 
-Tutte le classi possono usare lo scudo. Il potere cambia con la classe di chi lo imbraccia, una volta per scontro, sempre sotto il Set Vespera. Va oltre il +1 delle rastrelliere.
+Al posto dell'oggetto magico al 70%, solo per chi è degno e rispettoso (storia, 10b). Tutti sotto il Set Vespera.
 
-| Classe | Potere (bozza) | Perché |
-|---|---|---|
-| Guerriero | Quando un colpo viene parato o annullato, recupera 1d6 + livello | La cura è sempre utile, anche al Guerriero (Francesco). Non deve duplicare le tecniche dello scudo |
-| Monaco | Luce che cura 1d6 + livello | Coerente con la sua luce |
-| Arcanista | Dimezza un danno di forza | Atena farà danni di forza |
-| Sciamano | Ignora un Avvelenato appena subito | Dafne farà danni da veleno |
+| Oggetto | Dove | Statistiche | Poteri |
+|---|---|---|---|
+| Scudo di Darius | foresta nord | +1 CA | Calore del Focolare: +1 punto mentale recuperato al riposo. La risata di Darius (1/giorno, azione): il nemico perde il prossimo attacco, un boss perde 2 PA |
+| Spaccatoro di Caius | foresta est | una mano, 1d6 + livello, contundente | «Caius, colpisci!» (1/scontro): dopo un attacco mancato del nemico, il colpo successivo ha +1 dado e Inibito 1 turno. Istinto della Prima Linea: +1 per colpire e ai danni contro i nemici singoli (non le bande) |
+| Calzari del Pellegrino | foresta ovest | stivali | Passo di Casa: +2 TS contro Presa e Bloccato. Eco del Traguardo (1/giorno): ritirata fuori casa fino alla cripta (mai contro guardiani o mastini), senza PE né bottino |
+| Il Giuramento del Rettore (maglio di Enea) | bottino garantito se Enea muore impugnandolo | due mani, 1d8 + livello | Fiducia Condivisa: +2 TS contro Impaurito e il danno mentale delle prove fallite. Primo Passo nel Buio: +2 CA nel primo turno di ogni scontro |
 
-Da decidere: il potere del martello a una mano e degli stivali. Le cose dei tre uomini prendono il posto dell'oggetto magico al 70% (DECISO, non si sommano).
+Da provare nella sala di prova: «Caius, colpisci!» e la risata contro i boss (mastino del trono, sovrano).
 
 ### Esempi per grado (da rivedere)
 
 | Grado | Esempi |
 |---|---|
 | Bronzo | Talismano di ferro freddo (+2 ai TS contro Ustionato); Fascia del cacciatore (+1 a Percezione e Sopravvivenza); Fiala di brace (consumabile: cura 2d4) |
-| Argento | Stivali del passo felpato (+2 Furtività); Amuleto della veglia (+1 CA contro il primo attacco di ogni scontro) |
+| Argento | Amuleto della veglia (+1 CA contro il primo attacco di ogni scontro) |
 | Oro | Cintura del segugio (+2 risorsa massima); Anello della resina (una volta per scontro, ignora uno stato appena subito) |
 | Platino | Amuleto della quiete (+2 salute mentale massima); Stivali della lunga caccia (+1 CA e immunità a Bloccato) |
 
@@ -523,7 +523,7 @@ Da decidere: il potere del martello a una mano e degli stivali. Le cose dei tre 
 | Guardiano | Se ucciso | Oggetto magico |
 |---|---|---|
 | Ettore | Spada sbreccata di Valdombra (una mano, 1d6 + 2, sul critico Sanguinamento, 1 punto); Coltello delle tacche (Dotazione, 1d4 perforante, senza poteri) | 60%, tabella bronzo |
-| Enea | Il maglio (due mani, potere da definire), solo se lo ha impugnato | **Al posto del 70% (DECISO):** le cose dei suoi tre uomini, una per settore della foresta, solo se degno e rispettoso (storia, 10b). Nord: scudo con potere per classe; est: martello a una mano; ovest: stivali. Chi non è degno le perde |
+| Enea | Il Giuramento del Rettore (maglio, due mani, 1d8 + livello, poteri sopra), solo se lo ha impugnato | **Al posto del 70% (DECISO):** le cose dei suoi tre uomini, una per settore della foresta, solo se degno e rispettoso (storia, 10b). Nord: Scudo di Darius; est: Spaccatoro di Caius; ovest: Calzari del Pellegrino. Chi non è degno le perde |
 | Dafne | Lancia da caccia (due mani, 1d8 + 4, potere da definire); l'arco resta descrittivo (il giocatore non usa archi). Se vince la gara: lascia comunque corno, fermaglio e i suoi averi | 80%, oro |
 | Atena | Da definire | 90%, platino |
 
@@ -628,7 +628,7 @@ Le indicazioni di scena (tra parentesi) diventano narrazione, le battute dialogo
 4. ~~Armature e scudi~~ → deciso: +1/+2.
 5. Esempi di bottino per grado e poteri concreti delle armi (il costo è deciso: 50%).
 6. Abilità del set Vespera, compresa quella dell'arma; «Passo Silenzioso» era pensata per gli stivali, va spostata o tolta. Resta da definire anche il prezzo del set (mente massima ridotta o follia più vicina).
-7. Enea: ~~carattere e stato firma~~ → decisi (storia 10b: nessuno stato firma, Incrinatura libera). Restano: conferma dei numeri dalla sala di prova (sezione 5c), dialogo con i rami Signore/Signora, bottino, scena del cimitero e collana nel gioco.
+7. Enea: ~~carattere e stato firma~~ → decisi (storia 10b: nessuno stato firma, Incrinatura libera). Restano: conferma dei numeri dalla sala di prova (sezione 5c), dialogo con i rami Signore/Signora, scena del cimitero e collana nel gioco.
 8. ~~Borsa degli elisir~~ → confermato: 2 per stato.
 9. Elisir comuni e rari (alternativa di Francesco ai concentrati).
 10. Cacce contro altri avventurieri: nemici nuovi e posto nel percorso atteso.

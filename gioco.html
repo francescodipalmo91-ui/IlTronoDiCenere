@@ -1804,7 +1804,7 @@
             accetta: { /* PROVVISORIO */
               testo: [
                 "Il volto di Guendalina si illumina di una gratitudine quasi incredula. Poi, con un cenno del capo, vi indica una piccola porta scura in un angolo della cucina.",
-                "«Grazie... La cantina è laggiù, oltre quella porta. Che il fuoco vi protegga.»"
+                "«Grazie... La cantina è laggiù, oltre quella porta. Laggiù è buio come la pece: portate con voi una luce. Che il fuoco vi protegga.»"
               ],
             },
             rimanda: { /* PROVVISORIO */
@@ -2062,7 +2062,7 @@
             accetta: {
               testo: [
                 "Guendalina's face lights up with an almost disbelieving gratitude. Then, with a nod, she points you to a small dark door in a corner of the kitchen.",
-                "«Thank you... The cellar is down there, beyond that door. May the fire protect you.»"
+                "«Thank you... The cellar is down there, beyond that door. It is pitch dark down there: take a light with you. May the fire protect you.»"
               ],
             },
             rimanda: {
@@ -6157,7 +6157,7 @@
     }
 
     /* Foresta, fuori dal dungeon */
-    const RE_TORCIA = /\btorc\w*|\btorch\w*|\bfiaccol\w*/;
+    const RE_TORCIA = /\btorc\w*|\btorch\w*|\bfiaccol\w*|\blantern\w*/;
     const RE_NOME_LUCE = /\bluce\b|\blight\b|\blume\b|\bglow\b/; /* Luce (Accolito) e Lume Arcano / Arcane Glow (Sapiente) */
     const RE_ACCENDI = /\baccend\w*|\bappicc\w*|\bincendi\w*|\blight\w*|\bkindl\w*|\bignit\w*|\buso\b|\busa\b|\busare\b|utilizz\w*|\buse\b|\buses\b|\busing\b/;
     const RE_GROTTA = /dungeon|grott|cavern|\bcaves?\b|soglia|ingress|entrata|abisso|\bdentro\b|oscurita|\binside\b|threshold|entrance|\bmouth\b|\bgo in\b|\bwalk in\b|\bstep in\b/;
@@ -7434,6 +7434,7 @@
       usate[id] = accetta ? "accettata" : "rifiutata"; salvaUsate();
       if (id === "q1") {
         if (luogo === "cucina" && usate.portaCucina === "aperta") nodoDialogo("quest1", accetta ? "accetta" : "rimanda"); /* risponde Guendalina */
+        if (accetta) scrittura.then(() => offriLanterna());
       }
       disegnaMissioni();
       if (accetta && id === "q2") { /* ciò che hai già trovato prima di accettare viene registrato subito */
@@ -9247,6 +9248,7 @@
       Object.entries(r.richiede).forEach(([k, n]) => togliMateriale(k, n));
       aggiungiPreparato(r);
       sist(Q.lab.fatto(Q.oggetti[r.id].nome));
+      olioDiScarto(); /* 01/11 */
     }
     function aggiungiPreparato(r) {
       const c = zaino.find(x => x.id === r.id);
@@ -9360,7 +9362,7 @@
     const EFFETTI_BEVANDA = ["pozCura", "pozMana", "serenita", "razione", "borsa", "cura_ustione", "cura_debole", "cura_veleno", "cura_paura", "cura_sangue", "cura_cieco", "conc_ustione", "conc_debole", "conc_veleno", "conc_paura", "conc_sangue", "conc_cieco"]; /* consumabili con un effetto immediato (in combattimento sono l'azione del turno) */
     /* Borsa dei veleni (Sciamano): 3 dosi; vuota resta nello zaino e si riempie con gli ingredienti della foresta dei pini */
     const DOSI_BORSA = 3;
-    const ricaricabile = (it) => effettoDi(it) === "borsa";
+    const ricaricabile = (it) => effettoDi(it) === "borsa" || (it && it.id === "lanterna"); /* 01/11: la lanterna vuota resta, si riempie d'olio */
     function riempiBorse() { [...zaino, mano].filter(it => it && ricaricabile(it)).forEach(it => { it.usi = DOSI_BORSA; }); }
     /* applica l'effetto di una bevanda; restituisce il testo, oppure null se è inutile (in quel caso non si consuma) */
     function effettoBevanda(it) {
@@ -9457,7 +9459,7 @@
         sist(Q.oggetti.cura(d, prima, Math.max(0, max - pg.dannoFisico)));
       }
       let msg = pre + U.usi(nomeOg(it), it.usi);
-      if (it.usi <= 0) {
+      if (it.usi <= 0 && !ricaricabile(it)) {
         if (inMano) mano = null; else zaino = zaino.filter(x => x !== it);
         msg = pre + U.esaurito(nomeOg(it), inMano);
       }
@@ -9661,7 +9663,8 @@
        e prepararsi una torcia improvvisata (un solo utilizzo, una sola volta per partita).
        ===================================================================== */
     const EST = TX.esterno;
-    const torciaUtile = () => [...(mano ? [mano] : []), ...zaino].find(it => it.nome === "Torcia" && Number(it.usi) > 0) || null;
+    const torciaUtile = () => [...(mano ? [mano] : []), ...zaino].find(it => (it.nome === "Torcia" || it.id === "lanterna") && Number(it.usi) > 0) || null; /* 01/11: anche la lanterna di Guendalina */
+    const lanterna = () => [...(mano ? [mano] : []), ...zaino].find(it => it.id === "lanterna") || null;
     /* incantesimi scelti in creazione (Sapiente e Accolito): si cerca «Luce» / «Light», per nome o come stringa */
     const incantesimoLuce = () => listaIncantesimi().find(s => s.id === "luce" || nomiInc(s).some(n => /^(luce|light)$/.test(norm(n).trim()))) || null;
     const notaBuio = () => (torciaUtile() || incantesimoLuce()) ? undefined : EST.notaEsci;
@@ -9675,6 +9678,29 @@
       mostraStanza("buio");
       Suono.aggiorna();
       aggiungi({ tipo: "narra", ...vista("buio"), righe: tornato ? STANZE.buio.ritorno : STANZE.buio.intro, nota: notaBuio() });
+    }
+
+    /* 01/11: chi accetta la scaletta senza poter fare luce riceve da Guendalina una lanterna con un utilizzo d'olio;
+       se l'olio finisce prima della cantina, tornando in cucina ne riceve un'altra goccia (la missione resta sempre fattibile) */
+    const LANT = () => Lingua.t({
+      it: { nome: "Lanterna", dono: ["Guendalina vi squadra da capo a piedi e aggrotta la fronte.", "«Non avete né torcia né incantesimi, vero? Laggiù non vedreste a un palmo dal naso.» Si allunga verso una mensola e vi porge una vecchia lanterna d'ottone annerito. «Tenete. C'è olio per una sola discesa: non sprecatelo.»"],
+            ricarica: ["Guendalina nota la lanterna vuota appesa alla vostra cintura e sospira.", "«Già finito? Datemi qua.» Versa qualche goccia d'olio da un'ampolla scura. «Basta per una discesa. Questa volta arrivate in fondo.»"],
+            preso: "Zaino aggiornato: Lanterna (1 utilizzo d'olio).", ricaricata: (n) => `Lanterna: +1 utilizzo d'olio (ora ${n}).`, scarto: (n) => `Lo scarto d'olio del preparato riempie la lanterna: +1 utilizzo (ora ${n}).` },
+      en: { nome: "Lantern", dono: ["Guendalina looks you up and down and frowns.", "«You have neither torch nor spell, do you? Down there you would not see past your nose.» She reaches for a shelf and hands you an old, blackened brass lantern. «Take it. There is oil for a single descent: do not waste it.»"],
+            ricarica: ["Guendalina notices the empty lantern hanging from your belt and sighs.", "«Finished already? Give it here.» She pours a few drops of oil from a dark flask. «Enough for one descent. This time, reach the bottom.»"],
+            preso: "Backpack updated: Lantern (1 use of oil).", ricaricata: (n) => `Lantern: +1 use of oil (now ${n}).`, scarto: (n) => `The leftover oil from the brew refills the lantern: +1 use (now ${n}).` }
+    });
+    function offriLanterna() {
+      if (luogo !== "cucina" || usate.q1 !== "accettata" || usate.cantina_luce || torciaUtile() || incantesimoLuce()) return;
+      const T = LANT(), l = lanterna();
+      if (l) { l.usi = (Number(l.usi) || 0) + 1; aggiungi({ tipo: "dialogo", fuori: true, tuttoBox: true, chi: "Guendalina", macchina: true, righe: T.ricarica }); aggiornaZaino(); aggiornaEquip(); modificato(); return scrittura.then(() => sist(T.ricaricata(l.usi))); }
+      aggiungi({ tipo: "dialogo", fuori: true, tuttoBox: true, chi: "Guendalina", macchina: true, righe: T.dono });
+      aggiungiZaino({ id: "lanterna", nome: T.nome, tipo: "dotazione", usi: 1, impugnabile: true });
+      scrittura.then(() => sist(T.preso));
+    }
+    function olioDiScarto() { /* ogni preparato del laboratorio lascia olio per la lanterna */
+      const l = lanterna(); if (!l) return;
+      l.usi = (Number(l.usi) || 0) + 1; aggiornaZaino(); aggiornaEquip(); modificato(); sist(LANT().scarto(l.usi));
     }
 
     function prendiTorcia() {
@@ -9999,6 +10025,7 @@
       if (zonaDi(id)) { const primaVisita = !tornato; setTimeout(() => incontroZona(primaVisita), 900); } /* 28/10: foresta e fuori casa */
       if (id === "giardino" && usate.cc_stato === "attiva") setTimeout(imboscataGiardino, 900);
       if (id === "sala_caccia" && usate.cc_stato === "trofeo") setTimeout(() => fuoriDallaTendina(consegnaCaccia), 900);
+      if (id === "cucina" && tornato && usate.q1 === "accettata") setTimeout(() => fuoriDallaTendina(offriLanterna), 900); /* 01/11: olio finito prima della cantina */
       if (id === "sala_caccia" && usate.q4 === "completata" && udienzaFatta("bronzo")) aggiungi({ tipo: "narra", righe: [AL.presente] }); /* Aldo resta nella sala della caccia */
       if (id === "sala_caccia" && usate.q4 === "prova" && (!usate.dialogo_aldo_caccia || usate.dialogo_aldo_caccia === "fine")) setTimeout(() => { if (luogo === "sala_caccia" && usate.q4 === "prova") fuoriDallaTendina(consegnaAldo); }, 900);
       if (id === "atrio" && usate.q4 === "prova" && !usate.avviso_porta_sx) { usate.avviso_porta_sx = true; salvaUsate(); sist(A.ui.avvisoPortaSx); }

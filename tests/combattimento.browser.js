@@ -1222,6 +1222,32 @@ caso("Sala di prova, Enea: fermaglio nascosto, Spinta dà svantaggio; alla prima
   eq(errori, [], "errori"); await chiudi();
 });
 
+/* ======================= 01/11: lanterna di Guendalina ======================= */
+caso("Lanterna: senza luce Guendalina la dà accettando la scaletta; illumina la cantina; vuota resta e il laboratorio la riempie", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ usate: { riposo: "sbloccato", portaCucina: "aperta", dialogo_guendalina: "fine", q1: "proposta", torcia_campo: "presa" } }));
+  await page.evaluate(() => vai("cucina")); await page.waitForTimeout(500);
+  await page.evaluate(() => { saltaScrittura = true; decidiMissione("q1", true); });
+  await page.waitForFunction(() => zaino.some(x => x.id === "lanterna"), null, { timeout: 15000 });
+  eq(await page.evaluate(() => zaino.find(x => x.id === "lanterna").usi), 1, "un utilizzo d'olio");
+  vero(/buio come la pece/.test(await diario(page)), "Guendalina deve avvertire del buio");
+  await page.evaluate(() => { vai("cantina"); }); await page.waitForTimeout(400);
+  await page.evaluate(() => luceCantina(false)); await page.waitForTimeout(300);
+  eq(await page.evaluate(() => usate.cantina_luce), "ok", "la lanterna illumina la cantina");
+  eq(await page.evaluate(() => { const l = [mano, ...zaino].find(x => x && x.id === "lanterna"); return l ? l.usi : "sparita"; }), 0, "la lanterna vuota resta");
+  await page.evaluate(() => { usate.laboratorio = "sbloccato"; olioDiScarto(); });
+  eq(await page.evaluate(() => [mano, ...zaino].find(x => x && x.id === "lanterna").usi), 1, "lo scarto del preparato la riempie");
+  eq(errori, [], "errori"); await chiudi();
+});
+caso("Lanterna: chi ha già una luce (torcia) non la riceve", async (b) => {
+  const pg = PG(); pg.equipaggiamento = { ...pg.equipaggiamento, dotazione: [{ nome: "Torcia", usi: 5, impugnabile: true }] };
+  const { page, errori, chiudi } = await apri(b, "gioco.html", pg, PARTITA({ usate: { riposo: "sbloccato", portaCucina: "aperta", dialogo_guendalina: "fine", q1: "proposta" } }));
+  await page.evaluate(() => vai("cucina")); await page.waitForTimeout(500);
+  const haTorcia = await page.evaluate(() => !!torciaUtile());
+  await page.evaluate(() => { saltaScrittura = true; decidiMissione("q1", true); }); await page.waitForTimeout(1500);
+  vero(haTorcia, "il personaggio di prova deve avere la torcia"); eq(await page.evaluate(() => zaino.some(x => x.id === "lanterna")), false, "non serve la lanterna");
+  eq(errori, [], "errori"); await chiudi();
+});
+
 (async () => {
   const browser = await chromium.launch();
   let ko = 0;

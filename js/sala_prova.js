@@ -62,7 +62,9 @@
   function leggiPg() {
     const p = leggiPgBase();
     p.classe = $("pClasse") ? $("pClasse").value : "guerriero";
-    if (p.classe === "arcanista" || p.classe === "monaco") { p.mente = Number($("pMen").value); p.modM = mod(p.mente); p.furiaMax = C.furiaMax(p.modM, p.liv); } /* il mana cresce come la furia: 10 + Mente, poi Mente + livello a ogni salita */
+    /* test.html ha Mente e Spirito separati: Arcanista usa Mente, Monaco lo Spirito */
+    const valMen = () => ($("pMente") ? Number(p.classe === "arcanista" ? $("pMente").value : $("pSpi").value) : Number($("pMen").value));
+    if (p.classe === "arcanista" || p.classe === "monaco") { p.mente = valMen(); p.modM = mod(p.mente); p.furiaMax = C.furiaMax(p.modM, p.liv); } /* il mana cresce come la furia: 10 + Mente, poi Mente + livello a ogni salita */
     if (p.classe === "sciamano") { p.modS = mod(Number($("pAgi").value)); p.furiaMax = C.furiaMax(p.modS, p.liv); } /* 01/11: punti natura, attacchi e tecniche su Agilità */
     return p;
   }
@@ -187,9 +189,10 @@
   function nuovoScontro() {
     pg = leggiPg(); pg.pv = pg.pvMax; pg.furia = pg.furiaMax;
     const D = NEMICI[$("nTipo").value];
-    const vigore = D.vigore || 10 + tira(6), agilita = 10 + tira(6);
+    const nVal = (id) => ($(id) && Number($(id).value)) || 0; /* test.html: statistiche fisse del nemico */
+    const vigore = nVal("nVig") || D.vigore || 10 + tira(6), agilita = nVal("nAgi") || 10 + tira(6);
     const pvMax = Number($("nPv").value) || D.pv || (10 + tira(D.dadoVita) + mod(vigore));
-    nem = { ...D, id: $("nTipo").value, vigore, agilita, pvMax, ca: Number($("nCa").value) || D.ca, boss: $("nBoss").checked || D.boss };
+    nem = { ...D, id: $("nTipo").value, vigore, agilita, pvMax, ca: (Number($("nCa").value) || D.ca) + ($("nScudo") && $("nScudo").checked ? 1 : 0), boss: $("nBoss").checked || D.boss };
     s = { pv: pvMax, pvMax, eff: {}, effMax: {}, soffioPronto: true, presaUsata: false };
     finito = false; nTurno = 0; tipoAzione = null;
     $("svLog").replaceChildren();
@@ -489,6 +492,7 @@
     else scheda($("svNem"), [["Nemico", "—"]]);
     /* posti e tecniche */
     const prep = prepT().filter(t => sciamano() === (t.classe === "Forestiero")), max = C.slotTecniche(pg.liv, scudoPosti());
+    if (window.LAYOUT_TEST) barreTest();
     $("svPosti").textContent = `Posti: ${prep.filter(tipoOk).length} / ${max} (quote: 2 di livello 1, 2 di livello 2, 1 per i livelli 3, 4, 5${scudoPosti() ? "; +1 di qualsiasi livello con lo scudo" : ""}).`;
     const lista = $("svTec"); lista.replaceChildren();
     const riga = (t, gruppo) => {
@@ -539,6 +543,7 @@
   }
 
   function costruisci() {
+    if (window.LAYOUT_TEST) return costruisciTest();
     document.title = "Sala di prova — combattimento";
     document.body.classList.add("prova");
     const sel = (id, opz, val) => { const x = el("select", { id }); opz.forEach(([v, t]) => x.append(el("option", { value: v, text: t }))); x.value = String(val); return x; };
@@ -580,6 +585,144 @@
       [...preparate].forEach(id => { const t = TEC.find(x => x.id === id); if (!t || t.liv > pg.liv) preparate.delete(id); });
       disegna();
     }));
+    mostraCoda(); pg = leggiPg(); disegna();
+  }
+  /* ---------- test.html: metà alta Personaggio | Nemico, metà bassa azioni e diario ---------- */
+  const NOME_RIS = { furia: "Punti furia", natura: "Punti natura", mana: "Mana", fede: "Punti fede" };
+  function barra(id, v, max) {
+    const b = $(id); if (!b) return;
+    const pc = max > 0 ? Math.max(0, Math.min(100, Math.round(v / max * 100))) : 0;
+    b.querySelector(".riemp").style.width = pc + "%";
+    b.querySelector(".val").textContent = max > 0 ? `${v} / ${max}` : "—";
+    b.dataset.livello = pc > 50 ? "alta" : pc > 25 ? "media" : "bassa";
+  }
+  function barreTest() {
+    const st = pg.pv != null ? pg : { ...pg, pv: pg.pvMax, furia: pg.furiaMax };
+    barra("bPgPv", st.pv, pg.pvMax);
+    const r = risorsa(); barra("bPgRis", st.furia, pg.furiaMax); $("bPgRis").dataset.risorsa = r; $("lPgRis").textContent = NOME_RIS[r];
+    if (nem && s) { barra("bNemPv", Math.max(0, s.pv), s.pvMax); } else barra("bNemPv", 0, 0);
+    const pa = nem && s && nem.enea; $("rNemPa").hidden = !pa; if (pa) barra("bNemPa", s.pa, nem.pa);
+    [["pVig", "mVig"], ["pAgi", "mAgi"], ["pMente", "mMente"], ["pSpi", "mSpi"], ["nVig", "mnVig"], ["nAgi", "mnAgi"], ["nMen", "mnMen"], ["nSpi", "mnSpi"]].forEach(([i, m]) => { if ($(i) && $(m)) $(m).textContent = fmt(mod($(i).value)); });
+    const t = $("tTurno");
+    t.textContent = !nem ? "Nessuno scontro: premi «Nuovo scontro»" : finito ? "Scontro finito" : turnoPg ? `Turno ${nTurno} · tocca a te` : "Turno del nemico";
+    t.dataset.stato = !nem || finito ? "fermo" : turnoPg ? "mio" : "nem";
+  }
+  function costruisciTest() {
+    const P = window.PresetTest;
+    document.title = "Pagina di test — Il Trono di Cenere";
+    document.body.classList.add("test");
+    const sel = (id, opz, val) => { const x = el("select", { id }); opz.forEach(([v, t]) => x.append(el("option", { value: v, text: t }))); x.value = String(val); return x; };
+    const num = (id, val, min, max) => el("input", { id, type: "number", value: val, min, max });
+    const campo = (et, c, cls) => el("label", { class: "campo" + (cls ? " " + cls : "") }, el("span", { text: et }), c);
+    const chk = (id, et, on) => { const c = el("input", { id, type: "checkbox" }); c.checked = !!on; return el("label", { class: "campo chk" }, c, el("span", { text: et })); };
+    const attr = (id, et, val, idMod, nota) => el("div", { class: "attr" }, el("span", { class: "nome-attr", text: et }), num(id, val, 1, 30), el("span", { class: "mod", id: idMod }), nota ? el("small", { text: nota }) : null);
+    const gruppo = (titolo, ...figli) => el("div", { class: "gruppo" }, el("h3", { text: titolo }), ...figli);
+    const barraEl = (id, et, idEt) => el("div", { class: "riga-barra", id: "r" + id.slice(1) }, el("span", { class: "et", id: idEt || null, text: et }), el("div", { class: "barra", id }, el("span", { class: "riemp" }), el("span", { class: "val" })));
+
+    const lato = (cls, titolo, sotto, preset, ...figli) => el("section", { class: "lato " + cls },
+      el("div", { class: "testa" }, el("h2", { text: titolo }), el("span", { class: "sotto", id: sotto }), el("button", { type: "button", class: "mini", onclick: preset, title: "Rimette i valori di default" }, "Ripristina preset")),
+      ...figli);
+
+    const cardPg = lato("pg", "Personaggio", "tPgSotto", () => { applicaPresetPg(true); aggiornaPg(); },
+      el("div", { class: "stato" }, el("h3", { text: "In scontro" }), barraEl("bPgPv", "Salute"), barraEl("bPgRis", "Risorsa", "lPgRis"), el("dl", { id: "svPg" })),
+      el("div", { class: "griglia" },
+        gruppo("Classe e livello",
+          campo("Classe", sel("pClasse", [["guerriero", "Guerriero"], ["sciamano", "Sciamano"], ["arcanista", "Arcanista"], ["monaco", "Monaco"]], "guerriero")),
+          campo("Livello", sel("pLiv", [1, 2, 3, 4, 5].map(n => [n, n]), 1)),
+          campo("Razza", el("span", { class: "fisso", text: "Umano (preset)" }))),
+        gruppo("Statistiche",
+          el("div", { class: "attrs" }, attr("pVig", "Vigore", 16, "mVig"), attr("pAgi", "Agilità", 13, "mAgi"), attr("pMente", "Mente", 10, "mMente"), attr("pSpi", "Spirito", 12, "mSpi"))),
+        gruppo("Arma e difesa",
+          campo("Arma", sel("pArma", ARMI.map((a, i) => [i, `${a.nome} · 1d${a.dado} ${a.tipo.toLowerCase()}`]), 0)),
+          campo("Scudo", el("span", { class: "sino" }, chk("pScudo", "sì, imbracciato", true))),
+          campo("Armatura", sel("pArmatura", Object.entries(P.ARMATURE).map(([k, a]) => [k, a.nome + (a.ca ? ` (+${a.ca})` : "")]), "pesante")),
+          campo("Classe armatura", num("pCa", 15, 5, 30)),
+          campo("Salute massima", num("pPv", 23, 1, 300))),
+        gruppo("Opzioni di prova",
+          campo("Intuizione (bonus)", num("pInt", 1, -5, 15)),
+          campo("Via di prestigio (liv. 3+)", sel("pVia", [["", "nessuna"], ["aldo", "Aldo"], ["guendalina", "Guendalina"]], "")),
+          campo("Serie della via", sel("pSerie", [["arma", "dell'arma"], ["scudo", "dello scudo"]], "arma")),
+          chk("pIgnora", "Ignora i posti (tutte le tecniche sbloccate)", true))));
+
+    const cardNem = lato("nem", "Nemico", "tNemSotto", () => { applicaPresetNem(); aggiornaPg(); },
+      el("div", { class: "stato" }, el("h3", { text: "In scontro" }), barraEl("bNemPv", "Salute"), barraEl("bNemPa", "Punti abilità"), el("dl", { id: "svNem" })),
+      el("div", { class: "griglia" },
+        gruppo("Tipo e livello",
+          campo("Tipo", sel("nTipo", Object.entries(NEMICI).map(([k, d]) => [k, d.nome]), "mastino")),
+          campo("Livello", num("nLiv", 1, 1, 10)),
+          campo("Classe", el("span", { class: "fisso", id: "tNemClasse" })),
+          chk("nBoss", "Trattalo come boss")),
+        gruppo("Statistiche",
+          el("div", { class: "attrs" }, attr("nVig", "Vigore", 12, "mnVig"), attr("nAgi", "Agilità", 12, "mnAgi"), attr("nMen", "Mente", 6, "mnMen", "solo scheda"), attr("nSpi", "Spirito", 10, "mnSpi", "solo scheda"))),
+        gruppo("Arma e difesa",
+          campo("Arma", el("span", { class: "fisso", id: "tNemArma" }), "lungo"),
+          campo("Scudo", el("span", { class: "sino" }, chk("nScudo", "sì (+1 CA)", false))),
+          campo("Classe armatura", num("nCa", 10, 5, 30)),
+          campo("Salute massima", num("nPv", 13, 1, 300))),
+        gruppo("Opzioni di prova",
+          el("div", { id: "oEnea" }, chk("nFermaglio", "Fermaglio di bronzo indossato (maglio da subito)", true), chk("nSpada", "Spada del Retaggio impugnata (sdegno)"), chk("nSocialita", "Socialità riuscita con la spada"),
+            campo("Mossa", sel("nEneaMossa", [["casuale", "casuale"], ["carica", "carica sempre"], ["finta", "finta sempre"], ["spinta", "Spinta sempre (mani nude)"]], "casuale"))),
+          el("div", { id: "oMastino" }, chk("nSoffio", "Forza il Soffio quando è carico"), chk("nMorso", "Morde sempre"), chk("nPresa", "Forza la Presa dopo un morso")),
+          chk("nResiste", "Resiste al veleno"))));
+
+    const basso = el("div", { class: "basso" },
+      el("section", { class: "comandi" },
+        el("div", { class: "turno", id: "tTurno" }),
+        el("div", { class: "azioni" },
+          el("button", { type: "button", id: "svNuovo", class: "primario", onclick: nuovoScontro }, "Nuovo scontro"),
+          el("button", { type: "button", id: "svRiposa", onclick: riposa }, "Riposa"),
+          el("button", { type: "button", id: "svAttacca", class: "attacco", onclick: attaccoNormale }, "Attacco normale"),
+          el("button", { type: "button", id: "svDifendo", onclick: difendoEnea, hidden: true }, "Mi difendo"),
+          el("button", { type: "button", id: "svOsserva", onclick: osservaEnea, hidden: true }, "Osservo Enea (Intuizione)")),
+        el("h3", { text: "Tecniche e incantesimi" }), el("p", { class: "nota", id: "svPosti" }), el("div", { id: "svTec" })),
+      el("section", { class: "diario" },
+        el("div", { class: "testa-diario" }, el("h3", { text: "Diario dello scontro" }),
+          el("span", { class: "legenda" }, el("i", { class: "l-mia", text: "tu" }), el("i", { class: "l-nem", text: "nemico" }), el("i", { class: "l-ok", text: "esito buono" }), el("i", { class: "l-ko", text: "esito cattivo" }), el("i", { class: "l-sis", text: "sistema" }))),
+        el("div", { id: "svLog", class: "log", "aria-live": "polite" }),
+        el("details", {}, el("summary", { text: "Dadi truccati" }),
+          el("p", { class: "nota", text: "Valori separati da virgole, usati in ordine dai prossimi tiri (d20, danni, tiri salvezza, ricarica…)." }),
+          el("div", { class: "azioni" }, el("input", { id: "svCoda", type: "text", placeholder: "es. 20, 6, 3" }), el("button", { type: "button", id: "svAccoda", onclick: () => { $("svCoda").value.split(/[ ,;]+/).map(Number).filter(n => n > 0).forEach(n => coda.push(n)); $("svCoda").value = ""; mostraCoda(); } }, "Accoda"), el("button", { type: "button", onclick: () => { coda.length = 0; mostraCoda(); } }, "Svuota")),
+          el("p", { class: "nota", id: "svCodaVis" })),
+        el("details", {}, el("summary", { text: "Test automatici" }), el("div", { class: "azioni" }, el("button", { type: "button", id: "svTestBtn", onclick: eseguiTest }, "Esegui i test")), el("div", { id: "svTest" }))));
+
+    const app = el("div", { class: "pagina-test" },
+      el("header", {}, el("h1", { text: "Pagina di test" }), el("span", { class: "nota", text: "Preset fissi per classe e livello (js/preset_test.js) · non tocca i salvataggi" }), el("a", { href: "index.html", text: "Torna alla home" })),
+      el("div", { class: "alto" }, cardPg, cardNem), basso);
+    document.body.replaceChildren(app);
+
+    /* preset: classe → tutto; livello o Vigore → salute; armatura, Agilità o scudo → CA */
+    function applicaPresetPg(tutto) {
+      const x = P.pg($("pClasse").value, Number($("pLiv").value));
+      if (tutto) { $("pVig").value = x.vig; $("pAgi").value = x.agi; $("pMente").value = x.men; $("pSpi").value = x.spi; $("pArma").value = x.arma; $("pScudo").checked = x.scudo; $("pArmatura").value = x.armatura; $("pInt").value = x.intuizione; }
+      ricalcolaPv(); ricalcolaCa();
+    }
+    const ricalcolaPv = () => {
+      const b = P.PG[$("pClasse").value], liv = Number($("pLiv").value);
+      $("pPv").value = P.salute(b.dado, $("pVig").value, liv);
+      $("tPgSotto").textContent = `Umano ${b.nome} · livello ${liv} · d${b.dado} · ${b.risorsa}`;
+    };
+    const ricalcolaCa = () => { $("pCa").value = P.ca($("pArmatura").value, $("pAgi").value, $("pScudo").checked); };
+    function applicaPresetNem() {
+      const k = $("nTipo").value, x = P.NEMICI[k];
+      $("nLiv").value = x.liv; $("nVig").value = x.vig; $("nAgi").value = x.agi; $("nMen").value = x.men; $("nSpi").value = x.spi; $("nCa").value = x.ca; $("nPv").value = x.pv; $("nScudo").checked = x.scudo;
+      $("nBoss").checked = !!NEMICI[k].boss; $("tNemClasse").textContent = x.classe; $("tNemArma").textContent = x.arma;
+      $("oEnea").hidden = k !== "enea"; $("oMastino").hidden = k !== "mastino";
+      $("tNemSotto").textContent = `${NEMICI[k].nome.replace(/ \(.*\)/, "")} · livello ${x.liv}${NEMICI[k].vuln ? " · vulnerabile a " + NEMICI[k].vuln.join(", ").toLowerCase() : ""}`;
+    }
+    function aggiornaPg() {
+      const vecchio = pg; pg = leggiPg();
+      if (vecchio && s && !finito) { pg.pv = Math.min(vecchio.pv, pg.pvMax); pg.furia = Math.min(vecchio.furia, pg.furiaMax); log("Personaggio cambiato a scontro in corso: valido dal prossimo tiro.", "sis"); }
+      [...preparate].forEach(id => { const t = TEC.find(x => x.id === id); if (!t || t.liv > pg.liv) preparate.delete(id); });
+      disegna();
+    }
+    const su = (ids, prima) => ids.forEach(id => $(id).addEventListener("change", () => { if (prima) prima(); aggiornaPg(); }));
+    su(["pClasse"], () => applicaPresetPg(true));
+    su(["pLiv", "pVig"], ricalcolaPv);
+    su(["pArmatura", "pAgi", "pScudo"], ricalcolaCa);
+    su(["pMente", "pSpi", "pCa", "pPv", "pArma", "pVia", "pSerie", "pIgnora", "pInt"]);
+    su(["nTipo"], applicaPresetNem);
+    su(["nVig", "nAgi", "nMen", "nSpi", "nLiv", "nCa", "nPv", "nScudo"]);
+    applicaPresetPg(true); applicaPresetNem();
     mostraCoda(); pg = leggiPg(); disegna();
   }
   /* comandi per i test automatici del browser (Playwright): window.SalaProva */

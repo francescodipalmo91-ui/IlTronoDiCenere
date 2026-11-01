@@ -57,6 +57,8 @@ caso("Regole: soglie 300/1000/2400/4400 e crescita fissa (metà del dado + 1 + m
   eq(await page.evaluate(() => [Regole.CRESCITA_FISSA(10, 3), Regole.CRESCITA_FISSA(8, 1), Regole.CRESCITA_FISSA(6, 0)]), [9, 6, 4]);
   const prima = await page.evaluate(() => saluteMaxPg());
   await page.evaluate(() => { guadagnaPE(300); controllaLivello(); });
+  eq(await page.evaluate(() => [livelloPg(), livelliPronti()]), [1, 1], "01/11: il livello si applica solo al riposo");
+  await page.evaluate(() => saliDiLivello()); /* la crescita che avviene al riposo, senza punti attributo */
   eq(await page.evaluate(() => [livelloPg(), saluteMaxPg()]), [2, prima + 9], "Guerriero Vigore 16: +6 + 3");
   eq(errori, [], "errori"); await chiudi();
 });

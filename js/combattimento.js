@@ -140,14 +140,15 @@
     const pre = o.base ? {} : (s.prossimo || {}); if (!o.base) s.prossimo = null;
     const mA = ctx.modAtt + (o.bonus || 0) + (pre.bonus || 0), ca = ctx.ca(), d = ctx.svantaggio ? Math.min(ctx.tira(20), ctx.tira(20)) : ctx.tira(20), tot = d + mA; /* 28/10: chi attacca Accecato tira 2d20 e tiene il peggiore */
     const soglia = sogliaCrit(s, o.critDa);
-    let crit = d >= soglia, ok = crit || tot > ca;
-    if (ok && o.sempreCrit) crit = true;
+    let crit = !ctx.noCrit && d >= soglia, ok = (d >= soglia) || tot > ca; /* 01/11: Frastornato (ctx.noCrit): il 20 colpisce ma non è critico */
+    if (ok && o.sempreCrit && !ctx.noCrit) crit = true;
     const ev = { k: "colpo", d, mA, tot, ca, crit, ok, danno: 0 };
     if (soglia < 20) ev.critDa = soglia;
     if (ok) {
       const dado = o.dado || ctx.dado, nd = (crit ? 2 : 1) * (1 + (o.piuDadi || 0) + (pre.piuDadi || 0) + (ctx.piuDadiVuln || 0)), tiri = tiraDadi(ctx, nd, dado), mm = o.conMod === false ? 0 : ctx.modDanno;
       let danno = Math.max(1, somma(tiri) + mm);
       Object.assign(ev, { nd, dado, tiri, mm });
+      if (ctx.dimezza) { ev.pieno = danno; danno = Math.max(1, Math.floor(danno / 2)); ev.dimezzato = true; } /* 01/11: il nemico resiste a questo tipo di danno */
       if (o.base && marchiato(s)) { const x = ctx.tira(4); danno += x; ev.marchio = x; }
       if (o.base && s.sigillo && crepePiene(s, ctx)) { const x = ctx.tira(4); danno += x; ev.sigillo = x; } /* Sigillo del Demolitore */
       if (o.base && segnato(s)) { const x = ctx.tira(4); danno += x; ev.segno = x; } /* Segno del Cacciatore */
@@ -155,8 +156,16 @@
     }
     return ev;
   }
-  /* tiro salvezza del nemico (d20 + suo Vigore contro 8 + Vigore + livello) */
-  function ts(ctx) { const d = ctx.tira(20), tot = d + ctx.modTs; return { k: "ts", cd: ctx.cd, m: ctx.modTs, d, tot, ok: tot >= ctx.cd }; }
+  /* tiro salvezza del nemico (01/11): d20 + modificatore della caratteristica che si oppone + livello del nemico,
+     contro 8 + caratteristica di classe del personaggio + livello. La caratteristica dipende dall'effetto:
+     Agilità contro Sbilanciato e Bloccato, Spirito contro Impaurito; altrimenti quella della fonte (ctx.attrTs:
+     Vigore per armi, scudo e veleni, Mente per gli incantesimi dell'Arcanista, Spirito per quelli del Monaco) */
+  const TS_PER_STATO = { sbilanciato: "Agilità", bloccato: "Agilità", paura: "Spirito" };
+  function ts(ctx, stati) {
+    const a = ((stati || []).map(k => TS_PER_STATO[k]).find(Boolean)) || ctx.attrTs || "Vigore";
+    const m = ctx.modTsDi && a !== (ctx.attrTs || "Vigore") ? ctx.modTsDi(a) : ctx.modTs;
+    const d = ctx.tira(20), tot = d + m; return { k: "ts", a, cd: ctx.cd, m, d, tot, ok: tot >= ctx.cd };
+  }
 
   const vivo = (s) => s.pv > 0;
   const costo = (t, s) => (s && s.sconto ? Math.max(1, t.costo - s.sconto) : t.costo);
@@ -176,7 +185,7 @@
     const conTSn = (mappa, alternativa) => {
       const stati = Object.keys(mappa);
       if (ctx.boss && stati.every(k => CONTROLLI.includes(k))) { stati.forEach(k => E.push({ k: "immune", s: k })); if (alternativa) alternativa(); return false; }
-      const z = ts(ctx); E.push(z);
+      const z = ts(ctx, stati); E.push(z);
       if (z.ok) { E.push({ k: "resiste" }); if (alternativa) alternativa(); return false; }
       stati.forEach(k => fx(k, mappa[k])); return true;
     };

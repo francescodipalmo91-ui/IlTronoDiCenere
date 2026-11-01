@@ -32,9 +32,10 @@
   /* gli stessi valori di NEMICI in gioco.html */
   const NEMICI = {
     mastino: { nome: "Mastino infernale (comune)", ca: 10, dadoVita: 6, dannoDado: 4, attacco: 1, boss: false, probPresa: 0.6, probSoffio: 0.4, soffio: { cd: 12, dadi: 2, dado: 6, ricarica: 5 }, arma: false },
-    ettore: { nome: "Ettore (boss)", ca: 13, dadoVita: 8, dannoDado: 6, attacco: 1, boss: true, probPresa: 0, probSoffio: 0, soffio: null, arma: true, resa: true, vuln: ["Contundente", "Luce"] },
+    /* 01/11: caratteristica primaria dei guardiani (attacco): Ettore Mente con Spirito volutamente basso, Enea Spirito */
+    ettore: { nome: "Ettore (boss)", ca: 13, pv: 30, vigore: 12, stat: { Vigore: 12, "Agilità": 13, Mente: 12, Spirito: 8 }, primaria: "Mente", dadoVita: 8, dannoDado: 6, attacco: 2, boss: true, probPresa: 0, probSoffio: 0, soffio: null, arma: true, resa: true, vuln: ["Contundente", "Luce"] },
     /* 30/10, PROPOSTA: bilanciamento_nemici_oggetti.md, sezione 5c */
-    enea: { nome: "Enea (boss, argento)", ca: 13, pv: 36, vigore: 12, attaccoFisso: 4, pa: 9, boss: true, enea: true, arma: true, vuln: ["Forza", "Luce", "Veleno"] },
+    enea: { nome: "Enea (boss, argento)", ca: 13, pv: 36, vigore: 12, stat: { Vigore: 12, "Agilità": 10, Mente: 12, Spirito: 14 }, primaria: "Spirito", attaccoFisso: 4 /* Spirito 14 (+2) + 2 */, pa: 9, boss: true, enea: true, arma: true, vuln: ["Forza", "Luce", "Veleno"] },
     manichino: { nome: "Manichino (non attacca)", ca: 12, pv: 60, boss: false, passivo: true, arma: false }
   };
   const NOMI_EFF = { sanguina: "Sanguinamento", frattura: "Frattura", intontito: "Intontito", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Inibito", frastornato: "Frastornato", bloccato: "Stordito", guardia: "Guardia alzata", furore: "Furore inarrestabile", esposto: "Esposto", precisione: "Mille Soli", baluardo: "Baluardo d'Acciaio", fortezza: "Fortezza Eterna", runa: "Runa sull'arma", occhio: "Occhio del Tomo", tomo: "Tomo Proibito", quiete: "Quiete Assoluta", muro: "Muro di forza", scudo: "Scudo", invuln: "Invulnerabilità", pressione: "Pressione", parola: "Parola Vera", santuario: "Santuario", voto: "Voto di Luce", gemella: "Ombra Gemella", cerchio: "Cerchio del Focolare", fiamma: "Fiamma Calda", notte: "Notte Senza Fine", furiaCinerea: "Furia Cinerea", manto: "Manto d'Ombra", seconda: "Seconda Vita", accecato: "Accecato", avvizzito: "Avvizzito", paura: "Terrore", corona: "Corona di Raggi",
@@ -69,6 +70,9 @@
     return { liv, vig, modV, modAgi: mod(agi), ca: Number($("pCa").value) || 14, arma, scudo: $("pScudo").checked, via: liv >= 3 ? $("pVia").value || null : null, serie: $("pSerie").value === "scudo" ? "scudo" : "arma", pvMax, furiaMax: C.furiaMax(modV, liv) };
   }
   const caPg = () => pg.ca + (s && C.attivo(s, "guardia") ? Number(s.guardiaVal) || 0 : 0) + (s && C.attivo(s, "scudo") ? 2 : 0) + (s && C.attivo(s, "muro") ? 3 : 0) + (s && C.attivo(s, "cerchio") ? 2 : 0);
+  /* 01/11: caratteristiche del nemico della sala di prova; chi non le ha usa il Vigore tirato e 10 per il resto */
+  const statNem = (a) => (nem && nem.stat && nem.stat[a]) || (a === "Vigore" ? nem.vigore : a === "Agilità" ? nem.agilita : 10);
+  const modTsSala = (a) => mod(statNem(a)) + pg.liv;
   const caNem = () => nem.ca - (s ? C.malusCA(s) : 0) + (s && nem.enea && s.carica && s.inGuardia ? 2 : 0); /* Sbilanciato e Incrinatura; Enea carica in guardia dopo la prima interruzione */
   const tipoOk = (t) => t.tipo === "Utilita" || t.tipo === "Natura" || (t.tipo === "Scudo" ? pg.scudo : t.tipo === pg.arma.tipo);
   const opzioni = () => sciamano() ? TEC.filter(t => t.classe === "Forestiero" && !t.via && t.liv <= pg.liv) : TEC.filter(t => t.tipo !== "Utilita" && !t.via && t.liv <= pg.liv && (t.tipo === pg.arma.tipo || (t.tipo === "Scudo" && pg.scudo)));
@@ -83,7 +87,7 @@
   function ctx() {
     const c = ctxBase();
     if (arcanista()) Object.assign(c, {
-      modAtt: pg.modM, modDanno: pg.modM, cd: 8 + pg.modM + pg.liv, dado: s && C.attivo(s, "runa") ? passoDado(pg.arma.dado) : pg.arma.dado,
+      modAtt: pg.modM, modDanno: pg.modM, cd: 8 + pg.modM + pg.liv, attrTs: monaco() ? "Spirito" : "Mente", modTs: modTsSala(monaco() ? "Spirito" : "Mente"), /* 01/11: TS contro Mente (Arcanista) o Spirito (Monaco) */ dado: s && C.attivo(s, "runa") ? passoDado(pg.arma.dado) : pg.arma.dado,
       manaPiu: (n) => { const r = Math.min(n, pg.furiaMax - pg.furia); pg.furia += r; return r; }, dannoMente: (n) => n,
       cura: (n) => { const f = Math.min(n, pg.pvMax - pg.pv); pg.pv += f; return f; }, pvMancanti: () => pg.pvMax - pg.pv, dannoCorpo: (n) => { const f = Math.min(n, pg.pv - 1); pg.pv -= f; return f; }
     });
@@ -99,7 +103,7 @@
       tira, liv: pg.liv, modAtt: pg.modV, modDanno: pg.modV, dado: pg.arma.dado, ca: caNem, boss: nem.boss,
       piuDadiVuln: nem.vuln && tipoAzione && nem.vuln.includes(tipoAzione) ? 1 : 0, vulnVeleno: !!(nem.vuln && nem.vuln.includes("Veleno")),
       svantaggio: !!(s && s.spinta && turnoPg), /* Spinta di Enea: il tuo prossimo attacco ha svantaggio */
-      cd: 8 + pg.modV + pg.liv, modTs: mod(nem.vigore),
+      cd: 8 + pg.modV + pg.liv, attrTs: "Vigore", modTs: modTsSala("Vigore"), modTsDi: modTsSala, /* 01/11: d20 + caratteristica che si oppone + livello (il nemico della sala di prova ha il livello del personaggio) */
       curaPg: (n) => { pg.pv = Math.min(pg.pvMax, pg.pv + n); },
       furiaPiu: (n) => { pg.furia = Math.min(pg.furiaMax, pg.furia + n); },
       usataPerRiposo: (id) => !!perRiposo[id], segnaPerRiposo: (id) => { perRiposo[id] = true; }
@@ -292,7 +296,7 @@
       }
       if (!fatto) {
         const morso = nem.arma ? false : Math.random() < 0.5 || $("nMorso").checked, nome = nem.arma ? "Spada" : morso ? "Morso" : "Zampata";
-        const m = mod(nem.vigore) + (nem.attacco || 0) + C.modAttaccoNem(s), at = C.tiroAttaccoNem(s, c), d = at.d, tot = d + m, ca = caPg(), crit = d === 20 && C.critNemPossibile(s), ok = crit || tot > ca;
+        const m = mod(statNem(nem.primaria || "Vigore")) + (nem.attacco || 0) + C.modAttaccoNem(s), /* 01/11: caratteristica primaria */ at = C.tiroAttaccoNem(s, c), d = at.d, tot = d + m, ca = caPg(), crit = d === 20 && C.critNemPossibile(s), ok = crit || tot > ca;
         if (at.tiri) righe.push(`Due d20, tiene il peggiore: ${at.tiri[0]} e ${at.tiri[1]}.`);
         if (!ok) { righe.push(`${nome}: mancato (d20 ${d} ${fmt(m)} = ${tot} contro la tua CA ${ca}). Nessuna furia.`); righe.push(...testoEventi(C.colpoMancato(s, c))); }
         else if (!s.parata) { /* scudo, Baluardo, Marea Elastica: il danno si tira prima */

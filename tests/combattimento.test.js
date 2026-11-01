@@ -595,6 +595,29 @@
     T.filter(t => ["Tagliente", "Contundente", "Perforante", "Scudo"].includes(t.tipo)).forEach(t => { const [lo, hi] = [[2, 3], [4, 5], [5, 6], [7, 8], [9, 10]][t.liv - 1]; vero(t.costo >= lo && t.costo <= hi, `${t.id}: ${t.costo} fuori da ${lo}-${hi}`); });
   });
 
+  /* 01/11: il tiro salvezza del nemico usa la caratteristica che si oppone all'effetto, più il suo livello */
+  caso("Tiro salvezza (01/11): di base la caratteristica della fonte, Agilità contro Sbilanciato, Spirito contro Impaurito", () => {
+    const di = { Vigore: 1, "Agilità": 5, Spirito: -1, Mente: 3 };
+    const c = ctx({ dadi: [10, 10, 10, 10], attrTs: "Vigore", modTs: 1, modTsDi: (a) => di[a] });
+    let z = C.ts(c); eq([z.a, z.m, z.tot], ["Vigore", 1, 11], "senza stati: Vigore");
+    z = C.ts(c, ["sbilanciato"]); eq([z.a, z.m, z.tot, z.ok], ["Agilità", 5, 15, true], "Sbilanciato: Agilità");
+    z = C.ts(c, ["paura"]); eq([z.a, z.m, z.ok], ["Spirito", -1, false], "Impaurito: Spirito");
+    const cm = ctx({ dadi: [10], attrTs: "Mente", modTs: 3, modTsDi: (a) => di[a] });
+    z = C.ts(cm, ["silenzio"]); eq([z.a, z.m], ["Mente", 3], "incantesimo dell'Arcanista: Mente");
+  });
+
+  /* 01/11: resistenza al tipo di danno (cacce comuni) e Frastornato sul personaggio */
+  caso("Resistenza (01/11): ctx.dimezza dimezza il danno per difetto, minimo 1", () => {
+    const s = scontro(), c = ctx({ dadi: [15, 5], dimezza: true });
+    const b = C.colpo(s, c, { base: true }); eq([b.pieno, b.danno, b.dimezzato], [8, 4, true]); eq(s.pv, 36);
+    const s2 = scontro(), c2 = ctx({ dadi: [15, 1], dimezza: true, modDanno: -3 });
+    eq(C.colpo(s2, c2, { base: true }).danno, 1, "mai meno di 1");
+  });
+  caso("Frastornato (01/11): ctx.noCrit, il 20 colpisce ma non raddoppia i dadi", () => {
+    const s = scontro(), c = ctx({ dadi: [20, 4], noCrit: true, caBase: 30 });
+    const b = C.colpo(s, c, { base: true }); eq([b.ok, b.crit, b.nd], [true, false, 1]);
+  });
+
   /* ---------- esecuzione ---------- */
   function esegui() {
     const esiti = casi.map(({ nome, fn }) => { try { fn(); return { nome, ok: true }; } catch (e) { return { nome, ok: false, errore: e.message }; } });

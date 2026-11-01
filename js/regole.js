@@ -71,6 +71,8 @@ window.Regole = (() => {
   /* livelli */
   LIVELLO_MAX: 5,
   SOGLIE_PE: [0, 300, 1000, 2400, 4400], /* PE totali per raggiungere il livello 2, 3, 4, 5 (28/10) */
+  PUNTI_PER_LIVELLO: 2,        /* punti attributo liberi ai livelli 2, 3, 4 e 5, assegnati al primo riposo utile (01/11) */
+  CD_PER_LIVELLO: 1,           /* le CD delle prove salgono di 1 per ogni livello sopra il primo (01/11) */
   CRESCITA_FISSA: (dado, modAttr) => Math.max(1, Math.floor(dado / 2) + 1 + modAttr) /* salute e mente a ogni livello: metà del dado + 1 + mod (28/10, niente tiro) */
 });
 })();

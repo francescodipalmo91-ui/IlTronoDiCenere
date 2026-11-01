@@ -296,7 +296,7 @@ caso("Gioco: contro Ettore (boss) Eco del Metallo non stordisce e Fendente della
 caso("Gioco: salita al livello 3 — furia + mod Vigore + livello e avviso della via", async (b) => {
   const { page, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ livello: 2, crescita: { salute: 5, mente: 5, risorsa: 5 }, usate: { riposo: "sbloccato" } }));
   const prima = await page.evaluate(() => risorsaPg().max); eq(prima, 18, "13 + 5");
-  await page.evaluate(() => { guadagnaPE(5000); controllaLivello(); });
+  await page.evaluate(() => { guadagnaPE(5000); controllaLivello(); while (livelliPronti()) saliDiLivello(); }); /* 01/11: la crescita avviene al riposo; qui senza punti attributo */
   eq(await page.evaluate(() => livelloPg()), 5, "fino al livello 5");
   eq(await page.evaluate(() => risorsaPg().max), 39, "13, 18, 24, 31, 39");
   const d = await diario(page); vero(/mod\. Vigore \+3 \+ livello 3 → \+6/.test(d), "manca la riga della furia"); vero(/scegliere una via di prestigio/.test(d), "manca l'avviso della via"); await chiudi();
@@ -307,7 +307,7 @@ const ARC = (o) => PG(Object.assign({ classe: "Sapiente", scuola: "arcano", stat
   equipaggiamento: { arma: "Bastone", armaDanno: "1d6", armaTipoDanno: "Contundente", armaMani: 2, armatura: "Armatura leggera", armaturaCA: 2, malusAgilita: 0, scudo: null, dotazione: [] } }, o || {}));
 caso("Gioco: anche il mana dell'Arcanista cresce di mod Mente + livello, senza dado", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", ARC(), PARTITA());
-  await page.evaluate(() => { guadagnaPE(5000); controllaLivello(); });
+  await page.evaluate(() => { guadagnaPE(5000); controllaLivello(); while (livelliPronti()) saliDiLivello(); }); /* 01/11: la crescita avviene al riposo; qui senza punti attributo */
   eq(await page.evaluate(() => livelloPg()), 5, "fino al livello 5");
   eq(await page.evaluate(() => manaMax()), 39, "13, 18, 24, 31, 39 come la furia");
   vero(/mod\. Mente \+3 \+ livello 3 → \+6/.test(await diario(page)), "manca la riga del mana"); eq(errori, [], "errori"); await chiudi();
@@ -882,11 +882,10 @@ caso("Cacce: le rastrelliere sono una tendina con 8 sotto-tendine (Elisir compre
 caso("Cacce: accetto, la preda mi aspetta in giardino, la abbatto e consegno il trofeo ad Aldo", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "sala_caccia", usate: USATE_CC() }));
   await page.evaluate(() => vai("sala_caccia")); await page.waitForTimeout(300);
-  await page.evaluate(() => { accettaCaccia(1); }); await page.waitForTimeout(200);
+  await page.evaluate(() => { accettaCaccia("bruto"); }); await page.waitForTimeout(200); /* 01/11: le cacce si scelgono per nome (js/cacce.js) */
   eq(await page.evaluate(() => [usate.cc_stato, usate.cc_grado, usate.caccia_n]), ["attiva", 1, 1]);
-  vero(["ratto", "corvo"].includes(await page.evaluate(() => usate.cc_preda)), "preda di grado 1");
-  await page.evaluate(() => { usate.cc_preda = "ratto"; accettaCaccia(2); }); /* una sola caccia alla volta */
-  eq(await page.evaluate(() => usate.cc_grado), 1);
+  await page.evaluate(() => { usate.cc_preda = "ratto"; accettaCaccia("ladra"); }); /* una sola caccia alla volta; una vecchia preda in corso resta valida */
+  eq(await page.evaluate(() => usate.cc_preda), "ratto");
   await page.evaluate(() => vai("giardino")); await aspettaTurnoPg(page).catch(() => {});
   await page.waitForFunction(() => typeof scontro !== "undefined" && scontro && scontro.id === "ratto", null, { timeout: 8000 });
   eq(await page.evaluate(() => scontro.ctx), "caccia");

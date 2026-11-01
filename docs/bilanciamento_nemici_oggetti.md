@@ -677,3 +677,58 @@ Le indicazioni di scena (tra parentesi) diventano narrazione, le battute dialogo
 - **Peso dei giorni:** ogni 10 giorni −1 alla salute mentale massima (avviso nel riposo); fontana del giardino (un sorso per caccia) e ogni Lacrima della Regina ne restituiscono 1, solo tra quelli persi così (`usate.logorio`, `recuperaLogorio()`: le lacrime 2 e 3, quando esisteranno, devono chiamarla).
 - **Lanterna di Guendalina** per chi accetta la scaletta senza luce; olio di scarto da ogni preparato del laboratorio.
 - **Furtività contro i guardiani** (solo guardiani, non animali): d20 + Furtività contro d20 + Percezione del guardiano (mod Mente + livello); il guardiano ti scopre solo se fa più di te. Riuscita: agisci per primo e il guardiano ha −2 CA nel primo turno; fallita: agisce lui per primo e tu hai −2 CA nel primo turno. Dafne tira con vantaggio (`vantaggioFurtivita: true` quando avrà la sua voce in NEMICI). Funzione `percezioneGuardiano(id, extra)`; Ettore: tracce trovate −2, fallite +2. Con Ettore resta anche il disarmo del 29/10 se lo colpisci di sorpresa.
+- **Crescita degli attributi:** **+2 punti attributo** liberi ai livelli 2, 3, 4 e 5 (8 in tutto), anche entrambi sullo stesso, tetto 20 (`Regole.PUNTI_PER_LIVELLO`). Distribuzione libera anche in creazione: chi mette tutto su un attributo paga in prove fallite.
+- **Il livello si applica al primo riposo utile:** con i PE arriva l'annuncio («Hai raggiunto il livello N»), ma salute, risorse, attributi e CD seguono il livello applicato (`pg.livello`). Al riposo si apre la finestra dei 2 punti, poi la crescita; più livelli in attesa = più finestre di fila. Con un livello in attesa si può riposare anche al pieno. Funzioni `livelloMaturato()`, `livelliPronti()`, `crescitaAlRiposo()`, `apriCrescita()`.
+- **Niente ricalcolo all'indietro:** i punti contano dal livello in cui si prendono (la crescita di quel livello usa già il modificatore nuovo); salute e risorse maturate prima non cambiano.
+- **CD delle prove:** CD base + 1 per ogni livello applicato sopra il primo (`Regole.CD_PER_LIVELLO`, `cdProva()`), sia nelle prove dei luoghi sia in quelle dei dialoghi. Restano fisse le prove contrapposte (Furtività contro Percezione) e i 20 naturali.
+- **Tiro salvezza dei nemici:** d20 + caratteristica che si oppone + **livello del nemico**, contro 8 + caratteristica di classe + livello del personaggio. Caratteristica: Vigore contro veleno, sanguinamento ed effetti fisici; Agilità contro Sbilanciato e Bloccato (effetti ad area e immobilizzazioni, quando esisteranno); Mente contro gli incantesimi di forza e arcano (Arcanista), Furtività e finte; Spirito contro luce e oscurità (Monaco), Impaurito e Socialità. In `Combattimento.ts(ctx, stati)`: `ctx.attrTs` è la caratteristica della fonte, `ctx.modTsDi(a)` dà il modificatore di un'altra; `TS_PER_STATO` sceglie Agilità o Spirito per stato. Livello del nemico: `livello` della sua voce (1 se manca) più la crescita dei guardiani.
+- **Percezione dei nemici:** una regola sola, d20 + Mente + livello per tutti (non più solo per i boss).
+- **Primaria dei guardiani** (attacco e danno, come la caratteristica di classe del giocatore): Ettore **Mente** (pazzia lucida: il conteggio, il calcolo del cacciatore di taglie) con **Spirito volutamente basso**; Enea **Spirito**; Dafne **Agilità**; Atena **Vigore**; il sovrano da decidere. **Applicato:** campo `primaria` in NEMICI (tiro per colpire = mod. primaria + `attacco`). Ettore Mente 12, Spirito 8: tiro per colpire invariato (+3), danno invariato (1d6 + 3). Nella sala di prova Ettore ed Enea hanno le loro caratteristiche (Enea Spirito 14: `attaccoFisso` 4 = +2 + 2) e i tiri salvezza per caratteristica come in gioco.
+
+### Le otto cacce comuni (DECISO il 1° novembre, nomi e caratteri da scrivere)
+Due cacce per caratteristica primaria, due per finestra tra un fermaglio e l'altro: sostituiscono le sei prede attuali (ratto, corvo, cinghiale, lupo, branco, sciame), che restano come incontri casuali. Ogni classe ha due cacce favorevoli, una per metà gioco. Cade la regola «cacce comuni → ombra» del 25/10. Nomi e tipi sono segnaposto: personaggi e caratteri li scrive Francesco.
+
+| Finestra | Caccia | Primaria | Stelle | Danno | Stato inflitto | Vulnerabile | Resistente |
+|---|---|---|---|---|---|---|---|
+| Dopo il bronzo | Bruto delle cave (orco) | Vigore | ★ | Contundente | Stordito | Arcano | Contundente |
+| | Ladra dei portali (umana) | Agilità | ★ | Perforante | Sanguinante | Contundente | Veleno |
+| Dopo l'argento | Cartografo rinnegato (mago) | Mente | ★★ | Forza | Sbilanciato | Veleno | Arcano |
+| | Penitente flagellante (fanatico) | Spirito | ★★ | Taglio | Impaurito | Ombra | Luce |
+| Dopo l'oro | Troll delle radici | Vigore | ★★★ | Contundente | Frastornato | Taglio | Perforante |
+| | Strega della torbiera | Mente | ★★★ | Veleno | Inibito | Luce | Veleno |
+| Dopo il platino | Lama gemella (duellante) | Agilità | ★★★ | Taglio | Indebolito | Forza | Taglio |
+| | Profeta della cenere | Spirito | ★★★ | Fuoco | lo stato da fuoco già esistente (Ustione) | Veleno | Fuoco |
+
+Classi favorite: Guerriero (Ladra, Troll), Arcanista (Bruto, Lama), Sciamano (Cartografo, Profeta), Monaco (Penitente, Strega).
+
+- **Nota di Aldo (★ e ★★):** finché c'è Dafne a tenere puliti i confini, Aldo ha studiato la preda. Nella descrizione della caccia, quando la affida, una riga a parte «Studio di Aldo: vulnerabile a…, resistente a…»; la si ritrova nella tendina Missioni.
+- **★★★: Aldo è «cieco».** Dopo l'oro Dafne non c'è più: nemici appena entrati nei confini, di cui Aldo non sa niente. Lo studio lo fa il giocatore, prima dello scontro, con tre azioni:
+
+| Azione | Abilità | Cosa può rivelare |
+|---|---|---|
+| Guardare (a distanza) | Percezione | Ciò che si vede: armi, armatura, primaria, tipo di danno |
+| Studiare (a distanza) | Sapienza | Ciò che si sa: vulnerabilità, resistenze, stato alterato |
+| Avvicinarsi (facoltativo) | Furtività | Riuscita: la prova successiva ha vantaggio e il 20 naturale rivela la scheda intera. Fallita: il nemico ti scopre (agisce per primo, tu −2 CA nel primo turno, come con i guardiani) |
+
+Fasce del risultato (d20 + abilità, CD 12 + crescita col livello): sotto la CD nulla (1 punto mentale, come ogni prova fallita); CD → la prima voce del proprio ambito; CD + 5 → la seconda; CD + 10 → la terza; **20 naturale dopo un avvicinamento riuscito** → scheda intera, esclusi i tesori. Chi ha Mente bassa e niente Furtività combatte alla cieca: è il prezzo della build.
+
+### Cacce comuni: numeri e regole nel codice (1° novembre, PROVVISORI da provare nella sala di prova)
+Dati e testi in `js/cacce.js` (`CacceComuni`), uniti alle PREDE di `gioco.html`. Tiro per colpire = mod. primaria + `attacco`; danno = dado + `dannoBonus`.
+
+| Caccia | Liv. | CA | Salute | Per colpire | Danno | Abilità (PA) | TS |
+|---|---|---|---|---|---|---|---|
+| Bruto delle cave | 2 | 12 | 22 | +4 | 1d8 + 3 contundente | Maglio da cava: Stordito (4 di 4) | Vigore CD 12 |
+| Ladra dei portali | 2 | 14 | 16 | +4 | 1d6 + 2 perforante | Stiletto: Sanguinamento (2 di 4) | Vigore CD 12 |
+| Cartografo rinnegato | 3 | 12 | 22 | +5 | 1d6 + 3 forza | Spinta di forza: Sbilanciato (2 di 5) | Agilità CD 13 |
+| Penitente flagellante | 3 | 13 | 26 | +5 | 1d6 + 3 taglio | Litania: Impaurito (2 di 5) | Spirito CD 13 |
+| Troll delle radici | 4 | 13 | 38 | +6 | 1d8 + 4 contundente | Pugno di radice: Frastornato (3 di 6) | Vigore CD 14 |
+| Strega della torbiera | 4 | 12 | 28 | +6 | 1d6 + 4 veleno | Parola muta: Inibito (3 di 6) | Mente CD 14 |
+| Lama gemella | 5 | 15 | 30 | +6, 2 attacchi | 1d6 + 2 taglio | Taglio ai tendini: Indebolito (2 di 6) | Vigore CD 15 |
+| Profeta della cenere | 5 | 13 | 40 | +7 | 1d8 + 4 fuoco | Parola di brace: Ustionato (2 di 6) | Vigore CD 15 |
+
+- **Stati nuovi sul personaggio:** Stordito (salti il prossimo turno), Sbilanciato (−2 CA, 2 turni, scende dopo il turno del nemico), Frastornato (−4 per colpire e niente critici, 2 turni), Inibito (niente tecniche né incantesimi, 2 turni). Si sommano agli altri sei; finiscono con lo scontro; nessun elisir li cura (per ora).
+- **Resistenze:** `resiste: [tipo]` dimezza il danno di quel tipo (per difetto, minimo 1), su armi, tecniche, incantesimi (per scuola, ora anche Arcano) e veleno dello Sciamano. La vulnerabilità al veleno ora vale anche in gioco (`vulnVeleno`, prima solo nella sala di prova).
+- **Luoghi:** ★ e ★★ in giardino, ★★★ nella foresta dei pini (in ogni settore). Dove c'è la preda di Aldo non ci sono incontri casuali.
+- **Finestre:** la prima si apre dopo l'udienza del bronzo, le altre con il fermaglio corrispondente. Vecchie prede in corso nei salvataggi: restano valide e si consegnano come prima.
+- **Studio ★★★:** CD 12 + crescita col livello; l'avvicinamento è Furtività contro d20 + Mente + livello della preda (come con i guardiani), riuscito dà vantaggio alla prova successiva e, allo scontro, primo turno al giocatore e −2 CA alla preda; fallito fa partire subito lo scontro con la preda per prima e −2 CA al giocatore. Le voci scoperte stanno in `usate.cc_info` e compaiono in Missioni.
+- **Test:** `tests/cacce.browser.js`; casi su resistenza e Frastornato in `tests/combattimento.test.js`.

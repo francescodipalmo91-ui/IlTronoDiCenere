@@ -181,6 +181,7 @@
       stati.forEach(k => fx(k, mappa[k])); return true;
     };
     const crp = (n) => E.push(incrina(s, ctx, n));
+    const inib = (n) => (ctx.boss ? fx("debole", n) : fx("silenzio", n)); /* 01/11: taglio — Inibito, sui boss Indebolito */
     /* lo scudo si prepara ad assorbire: il primo colpo a segno prima del tuo turno (o tutti, con «tutti») */
     const assorbi = (a) => { s.assorbe = { ...a, n: 0 }; E.push({ k: "assorbePronto", tipo: a.tipo, cariche: a.cariche || 0, onda: a.onda || null }); };
     /* controllo con tiro salvezza che sui boss ha un ripiego proprio (non quando il comune resiste) */
@@ -197,17 +198,17 @@
       /* ---- taglio: livello 1 ---- */
       case "polso": r = hit(); if (r.ok) fx("debole", 2); break;
       case "morso_acciaio": r = hit(); if (r.ok) sang(4, 2); break;
-      case "pomolo": r = hit(); if (r.ok) fx("sbilanciato", 1); break;
+      case "pomolo": r = hit(); if (r.ok) inib(1); break; /* 01/11: Punta Rapida */
       /* ---- taglio: livello 2 ---- */
-      case "vipera": r = hit(); if (r.ok && vivo(s)) conTSn({ frastornato: 1 }); break;
-      case "tendini": r = hit(); if (r.ok) { sang(4, 2); fx("sbilanciato", 1); } break;
+      case "vipera": r = hit(); if (r.ok && vivo(s)) controlloORipiego({ silenzio: 2 }, () => fx("debole", 2)); break;
+      case "tendini": r = hit(); if (r.ok) { sang(4, 2); fx("debole", 1); } break;
       case "cremisi": r = hit({ piuDadi: 1 }); if (r.ok && giaSanguina) { s.eff.sanguina = 0; sang(Number(s.sangueDado) || 4, 2); fx("debole", 2); } break;
       /* ---- taglio: livello 3 ---- */
-      case "eco": r = hit(); if (r.ok && vivo(s)) conTSn({ bloccato: 1 }, () => fx("sbilanciato", 1)); break;
+      case "eco": r = hit(); if (r.ok && vivo(s)) conTSn({ silenzio: 2 }, () => fx("debole", 1)); break;
       case "arterie": r = hit(); if (r.ok) { sang(6, 3); const n = ctx.tira(4); if (ctx.curaPg) ctx.curaPg(n); E.push({ k: "cura", n }); } break;
-      case "spezzaguardia": r = hit(); if (r.ok) { fx("sbilanciato", 2); s.prossimo = { bonus: 2 }; E.push({ k: "prossimo", bonus: 2 }); } break;
+      case "spezzaguardia": r = hit(); if (r.ok) { inib(1); s.prossimo = { bonus: 2 }; E.push({ k: "prossimo", bonus: 2 }); } break;
       /* ---- taglio: livello 4 ---- */
-      case "squarcia": r = hit({ piuDadi: 1 }); if (r.ok && vivo(s)) conTSn({ frastornato: 2, silenzio: 2 }); break;
+      case "squarcia": r = hit({ piuDadi: 1 }); if (r.ok && vivo(s)) conTSn({ debole: 2, silenzio: 2 }); break;
       case "mutilazione":
         r = hit({ piuDadi: 1 });
         if (r.ok) {
@@ -220,14 +221,14 @@
       case "cateratta": {
         let aSegno = 0;
         for (let i = 0; i < 3 && vivo(s); i++) { const z = hit({ conMod: false }); if (z.ok) { aSegno++; if (vivo(s)) sang(Math.max(4, Number(s.sangueDado) || 4), 2); } }
-        if (aSegno === 3 && vivo(s)) conTSn({ bloccato: 1 });
+        if (aSegno === 3 && vivo(s)) controlloORipiego({ silenzio: 2 }, () => fx("debole", 2));
         break;
       }
       case "diluvio": r = hit({ piuDadi: 1 }); if (r.ok) { sang(6, 3); fx("debole", 3); } break;
       case "cataclisma":
         if (ctx.segnaPerRiposo) ctx.segnaPerRiposo(t.id);
         r = hit({ piuDadi: 1 });
-        if (r.ok && vivo(s)) { fx("frastornato", 3); fx("sbilanciato", 3); }
+        if (r.ok && vivo(s)) { fx("debole", 3); if (!ctx.boss) fx("silenzio", 3); }
         if (vivo(s)) { E.push({ k: "attaccoGratuito" }); hit({ base: true }); }
         break;
 
@@ -242,10 +243,10 @@
         break;
       case "sentenza": hit({ sempreCrit: giaSanguina }); break;
       /* ---- via di Guendalina ---- */
-      case "veglia_ferro": r = hit(); if (r.ok) { fx("debole", 2); fx("sbilanciato", 2); } E.push(guardia(s, 2, 1)); break;
-      case "ritmo": r = hit({ piuDadi: 1 }); if (r.ok) { fx("debole", 3); if (vivo(s)) conTSn({ frastornato: 1 }); } s.sconto = 2; E.push({ k: "sconto", n: 2 }); break;
+      case "veglia_ferro": r = hit(); if (r.ok) { fx("debole", 2); if (!ctx.boss) fx("silenzio", 1); } E.push(guardia(s, 2, 1)); break;
+      case "ritmo": r = hit({ piuDadi: 1 }); if (r.ok) { fx("debole", 3); if (vivo(s) && !ctx.boss) conTSn({ silenzio: 1 }); } s.sconto = 2; E.push({ k: "sconto", n: 2 }); break;
       case "veglia_inflessibile":
-        r = hit({ piuDadi: 1 }); if (r.ok) { fx("debole", 3); fx("sbilanciato", 3); }
+        r = hit({ piuDadi: 1 }); if (r.ok) { fx("debole", 3); if (!ctx.boss) fx("silenzio", 2); }
         E.push(guardia(s, 2, 3)); s.eff.furore = Math.max(s.eff.furore || 0, 3); s.effMax.furore = Math.max(s.effMax.furore || 0, 3); E.push({ k: "furore", turni: 3 }); /* +4 ai tiri salvezza e alle prove contrapposte */
         break;
 

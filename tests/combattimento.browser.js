@@ -76,11 +76,11 @@ caso("Sala di prova: Squarcia-Articolazioni su un mastino comune blocca Presa e 
   await page.evaluate(() => SalaProva.accoda(15, 3, 4, 2, /* nemico: */ 2));
   await page.click('[data-tec="squarcia"]');
   const st = await page.evaluate(() => SalaProva.stato().s.eff);
-  eq(st.silenzio, 1, "silenzio dopo un turno nemico"); eq(st.frastornato, 1);
+  eq(st.silenzio, 1, "silenzio dopo un turno nemico"); eq(st.debole, 1, "01/11: Indebolito al posto di Frastornato");
   const log = await page.innerText("#svLog"); vero(!/Soffio Infuocato|Presa:/.test(log), "il mastino ha usato un attacco speciale"); vero(/Inibito/.test(await page.innerText("#svNem")), "scheda nemico senza lo stato");
   eq(errori, [], "errori"); await chiudi();
 });
-caso("Sala di prova: un boss ignora lo stordimento di Eco del Metallo e resta Sbilanciato", async (b) => {
+caso("Sala di prova: un boss ignora l'Inibito di Eco del Metallo e resta Indebolito (01/11)", async (b) => {
   const { page, chiudi } = await apri(b, "tutorial.html?prova");
   await page.selectOption("#pLiv", "3"); await page.selectOption("#nTipo", "manichino"); await page.check("#nBoss"); await page.click("#svNuovo");
   await page.evaluate(() => SalaProva.accoda(15, 3)); await page.click('[data-tec="eco"]');

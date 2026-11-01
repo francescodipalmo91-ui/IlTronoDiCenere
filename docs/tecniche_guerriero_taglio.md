@@ -47,19 +47,19 @@ Versione finale, ora nel codice. Le regole stanno in `js/combattimento.js`; le t
 |---|---|---|---|
 | 1 | Fendente al Polso | 2 | Indebolito 2 |
 | 1 | Morso dell'Acciaio | 3 | Sanguinamento 1d4 per 2 |
-| 1 | Pomolo Sbalorditivo | 3 | Sbilanciato 1 |
-| 2 | Fendente della Vipera | 5 | Tiro salvezza → Frastornato 1 |
-| 2 | Recisione dei Tendini | 5 | Sanguinamento 2 + Sbilanciato 1 |
+| 1 | Punta Rapida (ex Pomolo Sbalorditivo) | 3 | Inibito 1 (boss: Indebolito) |
+| 2 | Fendente della Vipera | 5 | Tiro salvezza → Inibito 2 (boss: Indebolito senza tiro) |
+| 2 | Recisione dei Tendini | 5 | Sanguinamento + Indebolito |
 | 2 | Stoccata Cremisi | 4 | +1 dado; se sanguina: sanguinamento da 2 turni + Indebolito 2 |
-| 3 | Eco del Metallo Stridente | 6 | Tiro salvezza → Stordito 1; se resiste (o è un boss) Sbilanciato 1 |
+| 3 | Eco del Metallo Stridente | 6 | Tiro salvezza → Inibito 2; se resiste (o è un boss) Indebolito |
 | 3 | Lacerazione delle Arterie | 6 | Emorragia 1d6 per 3, recuperi 1d4 salute |
-| 3 | Spezza-Guardia | 5 | Sbilanciato 2, +2 per colpire al prossimo attacco |
-| 4 | Squarcia-Articolazioni | 8 | +1 dado; tiro salvezza → Frastornato 2 + Inibito 2 |
+| 3 | Spezza-Guardia | 5 | Inibito 1 (boss: Indebolito), +2 per colpire al prossimo attacco |
+| 4 | Squarcia-Articolazioni | 8 | +1 dado; tiro salvezza → Indebolito 2 + Inibito 2 |
 | 4 | Mutilazione del Carnefice | 8 | +1 dado; Indebolito 3 + Sanguinamento 2; esecuzione sotto 1/4 (comuni) |
 | 4 | Parata Mutilante | 7 | Consuma l'azione; il primo colpo fa 0 danni, contrattacco + Sanguinamento 2 |
-| 5 | Cateratta delle Cento Lacerazioni | 10 | 3 attacchi col solo dado, rinnovano il sanguinamento; 3 su 3 + tiro salvezza → Stordito 1 |
+| 5 | Cateratta delle Cento Lacerazioni | 10 | 3 attacchi col solo dado, rinnovano il sanguinamento; 3 su 3 + tiro salvezza → Inibito 2 (boss: Indebolito) |
 | 5 | Diluvio Rosso | 9 | +1 dado; Emorragia 3 + Indebolito 3 |
-| 5 | Cataclisma del Filo Rovinato | 10 | Una volta per riposo; dadi doppi, Frastornato + Sbilanciato 3, poi un attacco normale gratuito |
+| 5 | Cataclisma del Filo Rovinato | 10 | Una volta per riposo; dadi doppi, Indebolito + Inibito 3 (boss: solo Indebolito), poi un attacco normale gratuito |
 
 Le sei tecniche del taglio di prima (Squarcio della Belva, Taglio Arterioso…) sono state tolte. Contundenti, perforanti e scudo restano come prima.
 
@@ -70,9 +70,9 @@ Le sei tecniche del taglio di prima (Squarcio della Belva, Taglio Arterioso…) 
 | Aldo | 3 | Marchio del Guardiano | 6 | Sanguinamento 3; finché sanguina, +1d4 agli attacchi normali |
 | Aldo | 4 | Ferita Riaperta | 8 | Se sanguina: tutti i danni rimasti subito; altrimenti Sanguinamento 2 |
 | Aldo | 5 | Sentenza del Boia | 10 | Se sanguina e colpisci: sempre critico |
-| Guendalina | 3 | Veglia di Ferro | 5 | Indebolito + Sbilanciato 2; +2 CA fino al tuo turno |
-| Guendalina | 4 | Ritmo del Duello | 8 | +1 dado; Indebolito 3 (tiro salvezza → Frastornato 1); prossima tecnica −2 furia |
-| Guendalina | 5 | Veglia Inflessibile | 10 | +1 dado; Indebolito + Sbilanciato 3; per 3 turni +2 CA e +4 ai tiri salvezza e alle prove contrapposte (come Furore) |
+| Guendalina | 3 | Veglia di Ferro | 5 | Indebolito 2 + Inibito 1; +2 CA fino al tuo turno |
+| Guendalina | 4 | Ritmo del Duello | 8 | +1 dado; Indebolito (tiro salvezza → Inibito 1); prossima tecnica −2 furia |
+| Guendalina | 5 | Veglia Inflessibile | 10 | +1 dado; Indebolito + Inibito 2; per 3 turni +2 CA e +4 ai tiri salvezza e alle prove contrapposte (come Furore) |
 
 La scelta della via è **provvisoria**: al livello 3 compare un pulsante «Scegli» nella sezione Tecniche. Quando scriverai i dialoghi con Aldo e Guendalina, basterà chiamare `sceglieVia("aldo")` o `sceglieVia("guendalina")`. La scelta è definitiva.
 
@@ -92,3 +92,6 @@ Decise il 24/10/2026:
 Da ricordare:
 - **Scelta della via nei dialoghi:** quando si scrivono i dialoghi con Aldo e Guendalina, collegarli a `sceglieVia("aldo")` / `sceglieVia("guendalina")` e togliere il pulsante provvisorio nella sezione Tecniche.
 - **Salvataggi esistenti:** la furia già cresciuta con la vecchia regola (dado vita) resta com'è; le vecchie tecniche del taglio diventano posti vuoti da riempire.
+
+## Revisione del 1° novembre 2026: il taglio logora
+Stati del ramo: Sanguinamento (Emorragia), Indebolito, Inibito. Sui boss Inibito diventa Indebolito. Tolti Sbilanciato, Frastornato e Stordito (sono di contundente e perforante). Pomolo Sbalorditivo diventa Punta Rapida (disarmante, resta tagliente). Indebolito ha sempre la durata comune di 2 turni.

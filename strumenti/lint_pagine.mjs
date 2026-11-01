@@ -12,7 +12,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const RADICE = join(dirname(fileURLToPath(import.meta.url)), "..");
-const PAGINE = ["index.html", "creazione.html", "gioco.html", "tutorial.html", "regolamento.html"];
+const PAGINE = ["index.html", "creazione.html", "gioco.html", "tutorial.html", "regolamento.html", "test.html"];
 const TUTTO = process.argv.includes("--tutto");
 
 /* globali che arrivano da librerie esterne o da Firebase caricato al volo */

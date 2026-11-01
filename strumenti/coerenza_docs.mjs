@@ -60,7 +60,7 @@ for (const m of GIOCO.matchAll(/const (\w*PE\w*|\w*XP\w*) = \{[^}]*\}/g)) {
 }
 
 /* immagini e audio citati nel codice */
-const sorgenti = ["index.html", "creazione.html", "gioco.html", "tutorial.html", "regolamento.html", "tema.css",
+const sorgenti = ["index.html", "creazione.html", "gioco.html", "tutorial.html", "regolamento.html", "test.html", "tema.css",
   ...readdirSync(join(R, "js")).map(f => "js/" + f)];
 const mancanti = new Map();
 for (const f of sorgenti) {

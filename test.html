@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pagina di test — Il Trono di Cenere</title>
+  <link rel="stylesheet" href="tema.css">
+  <!-- Pagina di test del combattimento: stesso motore della sala di prova (js/sala_prova.js), layout a metà e preset fissi (js/preset_test.js) -->
+  <script>window.MODALITA_PROVA = true; window.LAYOUT_TEST = true;</script>
+  <script src="js/regole.js"></script>
+  <script src="js/tecniche.js"></script>
+  <script src="js/magia.js"></script>
+  <script src="js/combattimento.js"></script>
+  <script src="js/magia_combattimento.js"></script>
+  <script src="js/sciamano.js"></script>
+  <script src="js/preset_test.js"></script>
+  <script src="tests/combattimento.test.js"></script>
+  <script src="tests/magia_combattimento.test.js"></script>
+  <script src="tests/sciamano.test.js"></script>
+  <script src="js/sala_prova.js"></script>
+  <style>
+    /* Colori della pagina di test (solo strumento di sviluppo): blu = personaggio, rosso = nemico,
+       verde = esito buono, rosso chiaro = esito cattivo, oro = titoli, grigio = sistema */
+    body.test {
+      --c-pg: #6aa9e9; --c-pg-bg: #14202c; --c-pg-line: #2f4d6b;
+      --c-nem: #e5766a; --c-nem-bg: #2a1716; --c-nem-line: #6e3029;
+      --c-ok: #8fc47a; --c-ok-bg: #17221a; --c-ko: #ef8a7c; --c-ko-bg: #2b1715;
+      --c-oro: #e3c27a; --c-sis: #8f8f8f;
+      --c-furia: #e8914a; --c-natura: #7cc46a; --c-mana: #8fa2f0; --c-fede: #e9cf6d;
+      margin: 0; overflow: auto; font-family: var(--f-testo); background: var(--bg); color: var(--text);
+    }
+    .pagina-test { display: flex; flex-direction: column; height: 100vh; }
+    .pagina-test header { display: flex; align-items: baseline; gap: 16px; padding: 8px 16px; border-bottom: 1px solid var(--line); flex: none; }
+    .pagina-test header h1 { margin: 0; font-family: var(--f-titoli); font-size: 1.15rem; color: var(--c-oro); }
+    .pagina-test header a { margin-left: auto; color: var(--c-pg); }
+    .pagina-test h2 { margin: 0; font-family: var(--f-titoli); font-size: 1.1rem; letter-spacing: .06em; text-transform: uppercase; }
+    .pagina-test h3 { margin: 0 0 6px; font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; color: var(--c-oro); }
+    .pagina-test .nota { color: var(--muted); font-size: .82rem; margin: 2px 0; }
+
+    /* metà alta: personaggio a sinistra, nemico a destra */
+    .alto { flex: 1 1 50%; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 16px; border-bottom: 2px solid var(--line); }
+    .lato { min-height: 0; overflow-y: auto; border: 2px solid var(--lc); border-radius: 8px; background: var(--lb); padding: 10px 12px; }
+    .lato.pg { --lc: var(--c-pg-line); --lb: var(--c-pg-bg); --lt: var(--c-pg); }
+    .lato.nem { --lc: var(--c-nem-line); --lb: var(--c-nem-bg); --lt: var(--c-nem); }
+    .lato .testa { display: flex; align-items: center; gap: 10px; padding-bottom: 6px; margin-bottom: 8px; border-bottom: 1px solid var(--lc); position: sticky; top: -10px; background: var(--lb); z-index: 1; padding-top: 2px; }
+    .lato .testa h2 { color: var(--lt); }
+    .lato .sotto { color: var(--text); font-size: .85rem; opacity: .85; }
+    .lato .testa button { margin-left: auto; }
+    .griglia { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 14px; }
+    .gruppo { border: 1px solid var(--lc); border-radius: 6px; padding: 6px 8px; background: rgba(0,0,0,.18); min-width: 0; }
+    .campo { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 4px 0; font-size: .88rem; }
+    .campo > span:first-child { color: var(--muted); }
+    .campo.chk { justify-content: flex-start; color: var(--text); }
+    .campo.chk > span:first-child { color: var(--text); }
+    .campo.lungo { align-items: flex-start; }
+    .campo select { max-width: 64%; min-width: 0; }
+    .fisso { color: var(--text); text-align: right; font-size: .85rem; }
+    .sino .campo { margin: 0; }
+    .attrs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+    .attr { display: flex; flex-direction: column; align-items: center; gap: 2px; border: 1px solid var(--lc); border-radius: 6px; padding: 4px 2px; }
+    .attr .nome-attr { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+    .attr input { width: 3.6em; text-align: center; font-size: 1rem; font-weight: 600; }
+    .attr .mod { font-size: .85rem; color: var(--lt); font-weight: 600; }
+    .attr small { font-size: .65rem; color: var(--muted); }
+    .pagina-test input, .pagina-test select, .pagina-test button { font: inherit; font-size: .88rem; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 3px 7px; }
+    .pagina-test input[type=number] { width: 5em; }
+    .pagina-test input[type=checkbox] { accent-color: var(--lt, var(--c-pg)); }
+    .pagina-test button { cursor: pointer; }
+    .pagina-test button:hover:not(:disabled) { border-color: var(--text); }
+    .pagina-test button:disabled { opacity: .35; cursor: default; }
+    .pagina-test .mini { padding: 1px 9px; font-size: .8rem; }
+    [hidden] { display: none !important; }
+
+    /* stato in scontro */
+    .stato { margin-bottom: 10px; border: 1px solid var(--lc); border-radius: 6px; padding: 6px 8px; background: rgba(0,0,0,.25); }
+    .riga-barra { display: grid; grid-template-columns: 8.5em 1fr; align-items: center; gap: 8px; margin: 4px 0; font-size: .85rem; }
+    .riga-barra .et { color: var(--muted); }
+    .barra { position: relative; height: 18px; border-radius: 9px; background: rgba(255,255,255,.07); overflow: hidden; border: 1px solid var(--line); }
+    .barra .riemp { position: absolute; inset: 0 auto 0 0; width: 0; transition: width .25s; background: var(--c-ok); }
+    .barra[data-livello=media] .riemp { background: #d9b45a; }
+    .barra[data-livello=bassa] .riemp { background: var(--c-ko); }
+    .barra[data-risorsa] .riemp { background: var(--c-furia); }
+    .barra[data-risorsa=natura] .riemp { background: var(--c-natura); }
+    .barra[data-risorsa=mana] .riemp { background: var(--c-mana); }
+    .barra[data-risorsa=fede] .riemp { background: var(--c-fede); }
+    #bNemPa .riemp { background: var(--c-oro); }
+    .barra .val { position: relative; display: block; text-align: center; font-size: .78rem; line-height: 16px; color: #fff; text-shadow: 0 0 3px #000, 0 0 2px #000; font-weight: 600; }
+    .stato dl { display: grid; grid-template-columns: auto 1fr auto 1fr; gap: 2px 12px; margin: 6px 0 0; font-size: .85rem; }
+    .stato dt { color: var(--muted); } .stato dd { margin: 0; color: var(--text); }
+
+    /* metà bassa: comandi e tecniche a sinistra, diario a destra */
+    .basso { flex: 1 1 50%; min-height: 0; display: grid; grid-template-columns: minmax(300px, 1fr) minmax(360px, 1.4fr); gap: 12px; padding: 12px 16px; }
+    .comandi, .diario { min-height: 0; overflow-y: auto; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+    .diario { display: flex; flex-direction: column; }
+    .turno { font-weight: 600; padding: 6px 10px; border-radius: 6px; margin-bottom: 8px; border: 1px solid var(--line); color: var(--c-sis); }
+    .turno[data-stato=mio] { color: var(--c-pg); border-color: var(--c-pg-line); background: var(--c-pg-bg); }
+    .turno[data-stato=nem] { color: var(--c-nem); border-color: var(--c-nem-line); background: var(--c-nem-bg); }
+    .azioni { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 12px; }
+    .pagina-test button.primario { border-color: var(--c-oro); color: var(--c-oro); }
+    .pagina-test button.attacco { border-color: var(--c-pg); color: var(--c-pg); font-weight: 600; }
+    #svDifendo, #svOsserva { border-color: var(--c-pg-line); }
+    .comandi h4 { margin: 12px 0 4px; font-size: .8rem; color: var(--c-oro); }
+    .tec { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+    .tec.spenta { opacity: .45; }
+    .tec .sx { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+    .tec b { color: var(--c-pg); }
+    .tec small { color: var(--muted); }
+    .tec .eff { grid-column: 1 / -1; margin: 0; font-size: .8rem; color: var(--muted); }
+    .testa-diario { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 6px; }
+    .legenda { display: flex; gap: 6px; flex-wrap: wrap; }
+    .legenda i { font-style: normal; font-size: .72rem; padding: 0 7px; border-radius: 3px; border-left: 4px solid; background: rgba(255,255,255,.04); }
+    .l-mia { border-color: var(--c-pg) !important; color: var(--c-pg); } .l-nem { border-color: var(--c-nem) !important; color: var(--c-nem); }
+    .l-ok { border-color: var(--c-ok) !important; color: var(--c-ok); } .l-ko { border-color: var(--c-ko) !important; color: var(--c-ko); } .l-sis { border-color: var(--c-sis) !important; color: var(--c-sis); }
+    .log { flex: 1; min-height: 120px; overflow-y: auto; margin-top: 6px; font-size: .88rem; }
+    .log .voce { margin: 6px 0; padding: 6px 10px; border-left: 4px solid var(--line); border-radius: 0 6px 6px 0; background: rgba(255,255,255,.03); }
+    .log .voce.mia { border-color: var(--c-pg); background: var(--c-pg-bg); }
+    .log .voce.mia > b { color: var(--c-pg); }
+    .log .voce.nem { border-color: var(--c-nem); background: var(--c-nem-bg); }
+    .log .voce.nem > b { color: var(--c-nem); }
+    .log .voce.ok { border-color: var(--c-ok); background: var(--c-ok-bg); color: var(--c-ok); font-weight: 600; }
+    .log .voce.ko { border-color: var(--c-ko); background: var(--c-ko-bg); color: var(--c-ko); }
+    .log .voce.sis { border-color: var(--c-sis); color: var(--c-sis); font-style: italic; background: none; }
+    .log .riquadro b { display: block; margin-bottom: 2px; }
+    .log .riga { display: block; }
+    details { margin-top: 8px; border-top: 1px solid var(--line); padding-top: 6px; }
+    summary { cursor: pointer; color: var(--c-oro); font-size: .85rem; }
+    #svTest ul { list-style: none; padding: 0; margin: 6px 0; font-size: .8rem; max-height: 24vh; overflow-y: auto; }
+    #svTest .ok { color: var(--c-ok); } #svTest .ko { color: var(--c-ko); }
+
+    @media (max-width: 1100px) { .griglia { grid-template-columns: 1fr; } }
+    @media (max-width: 800px) {
+      .pagina-test { height: auto; }
+      .alto, .basso { grid-template-columns: 1fr; }
+      .lato, .comandi, .diario { overflow: visible; }
+      .log { max-height: 60vh; }
+    }
+  </style>
+</head>
+<body class="test">
+  <noscript>Serve JavaScript.</noscript>
+</body>
+</html>

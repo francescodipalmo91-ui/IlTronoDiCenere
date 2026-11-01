@@ -319,13 +319,13 @@
       /* ---- perforanti: livello 2 ---- */
       case "giuntura": r = hit(); if (r.ok) { s.prossimo = { piuDadi: 1 }; E.push({ k: "prossimo", piuDadi: 1 }); } break;
       case "trafittura": hit({ bonus: 3, piuDadi: 1 }); break;
-      case "fianco": r = hit({ critDa: 18 }); if (r.ok && r.crit && vivo(s)) fx("debole", 2); break;
+      case "fianco": r = hit({ critDa: 18 }); if (r.ok && r.crit && vivo(s)) fx("esposto", 2); break; /* 01/11: perforante punta al critico */
       /* ---- perforanti: livello 3 ---- */
       case "doppia_punta": for (let i = 0; i < 2 && vivo(s); i++) hit({ conMod: false, critDa: 19 }); break;
       case "perforazione": r = hit({ bonus: 3, piuDadi: 1 }); if (r.ok && vivo(s)) fx("esposto", 2); break;
       case "mirato": hit({ sempreCrit: true }); break;
       /* ---- perforanti: livello 4 ---- */
-      case "ferita_profonda": r = hit({ piuDadi: 1 }); if (r.ok && vivo(s)) { fx("esposto", 3); fx("debole", 2); } break;
+      case "ferita_profonda": r = hit({ piuDadi: 1 }); if (r.ok && vivo(s)) { fx("esposto", 3); fx("sbilanciato", 2); } break;
       case "guardia_punta": s.parata = true; s.parataPunta = true; E.push({ k: "parata" }); break;
       case "grazia":
         r = hit({ piuDadi: 1, critDa: 19 });
@@ -335,7 +335,7 @@
       case "tempesta": {
         let aSegno = 0;
         for (let i = 0; i < 3 && vivo(s); i++) { const z = hit({ conMod: false, critDa: 18 }); if (z.ok) { aSegno++; if (z.crit && vivo(s)) fx("esposto", 2); } }
-        if (aSegno === 3 && vivo(s)) controlloORipiego({ bloccato: 1 }, () => fx("debole", 2));
+        if (aSegno === 3 && vivo(s)) fx(ctx.boss ? "esposto" : "sbilanciato", 2);
         break;
       }
       case "celeste": r = hit({ bonus: 5, piuDadi: 1 }); if (r.ok && vivo(s)) { fx("esposto", 3); fx("sbilanciato", 3); } break;
@@ -361,9 +361,9 @@
       }
       /* ---- via di Guendalina (perforanti): Precisione ---- */
       case "occhio_vigile": hit({ critDa: 19 }); E.push(guardia(s, 2, 1)); break;
-      case "specchio": r = hit({ piuDadi: 1, critDa: 18 }); if (r.ok && r.crit && vivo(s)) controlloORipiego({ frastornato: 1 }, () => fx("debole", 2)); s.sconto = 2; E.push({ k: "sconto", n: 2 }); break;
+      case "specchio": r = hit({ piuDadi: 1, critDa: 18 }); if (r.ok && r.crit && vivo(s)) fx(ctx.boss ? "esposto" : "sbilanciato", 2); s.sconto = 2; E.push({ k: "sconto", n: 2 }); break;
       case "mille_soli":
-        r = hit({ piuDadi: 1 }); if (r.ok && vivo(s)) { fx("esposto", 3); fx("debole", 3); }
+        r = hit({ piuDadi: 1 }); if (r.ok && vivo(s)) { fx("esposto", 2); fx("sbilanciato", 2); } /* 01/11: come dice il testo, 2 turni */
         E.push(guardia(s, 2, 3)); s.eff.precisione = Math.max(s.eff.precisione || 0, 3); s.effMax.precisione = Math.max(s.effMax.precisione || 0, 3); E.push({ k: "precisione", turni: 3 });
         break;
       /* ---- scudo: colpo di scudo 1d4 (o il dado indicato) + Vigore ---- */

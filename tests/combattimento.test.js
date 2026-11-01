@@ -383,7 +383,7 @@
   });
   caso("Esposto sui boss: al massimo 2 turni", () => {
     const b = scontro(), r = prova(b, ctx({ liv: 4, boss: true, dadi: [15, 1, 1] }), "ferita_profonda");
-    eq([b.eff.esposto, b.eff.debole], [2, 2]); vero(ev(r, "stato").find(e => e.s === "esposto").ridotto);
+    eq([b.eff.esposto, b.eff.sbilanciato], [2, 2]); vero(ev(r, "stato").find(e => e.s === "esposto").ridotto);
   });
   caso("Mirare al Varco: Esposto 2 se colpisce, niente se manca", () => {
     const s = scontro(); prova(s, ctx({ dadi: [15, 2] }), "varco"); eq([s.eff.esposto, s.pv], [2, 35]);
@@ -393,9 +393,9 @@
     const s = scontro(), r = ev(prova(s, ctx({ liv: 2, dadi: [8, 1, 1] }), "trafittura"), "colpo")[0]; eq([r.ok, r.mA, r.nd], [true, 6, 2]);
     const p = scontro(), rp = ev(prova(p, ctx({ liv: 3, dadi: [10, 1, 1] }), "perforazione"), "colpo")[0]; eq([rp.mA, rp.nd, p.eff.esposto], [6, 2, 2]);
   });
-  caso("Punta nel Fianco: critico da 18, Indebolito solo sul critico", () => {
-    const s = scontro(), r = ev(prova(s, ctx({ liv: 2, dadi: [18, 1, 1] }), "fianco"), "colpo")[0]; eq([r.crit, r.nd, s.eff.debole], [true, 2, 2]);
-    const n = scontro(); prova(n, ctx({ liv: 2, dadi: [17, 1] }), "fianco"); eq(n.eff.debole || 0, 0);
+  caso("Punta nel Fianco (01/11): critico da 18, Esposto solo sul critico", () => {
+    const s = scontro(), r = ev(prova(s, ctx({ liv: 2, dadi: [18, 1, 1] }), "fianco"), "colpo")[0]; eq([r.crit, r.nd, s.eff.esposto], [true, 2, 2]);
+    const n = scontro(); prova(n, ctx({ liv: 2, dadi: [17, 1] }), "fianco"); eq(n.eff.esposto || 0, 0);
   });
   caso("Doppia Punta: due attacchi col solo dado, critico da 19", () => {
     const s = scontro(), r = ev(prova(s, ctx({ liv: 3, dadi: [19, 1, 1, 2] }), "doppia_punta"), "colpo");
@@ -416,10 +416,10 @@
     const b = scontro({ pv: 14 }); prova(b, ctx({ liv: 4, boss: true, dadi: [15, 1, 1] }), "grazia"); eq(b.pv, 9);
     const g = scontro({ pv: 40 }); prova(g, ctx({ liv: 4, dadi: [19, 1, 1, 1, 1] }), "grazia"); eq(g.pv, 33, "critico da 19: 4 dadi");
   });
-  caso("Tempesta di Punte: ogni critico dà Esposto; 3 su 3 → Stordito (boss: Indebolito 2)", () => {
-    const s = scontro(), r = prova(s, ctx({ liv: 5, dadi: [18, 1, 1, 15, 1, 15, 1, 2] }), "tempesta");
-    eq(ev(r, "colpo").map(e => e.crit), [true, false, false]); eq([s.eff.esposto, s.eff.bloccato], [2, 1]);
-    const b = scontro(), rb = prova(b, ctx({ liv: 5, boss: true, dadi: [15, 1, 15, 1, 15, 1] }), "tempesta"); eq([b.eff.bloccato || 0, b.eff.debole], [0, 2]); eq(ev(rb, "ts").length, 0);
+  caso("Tempesta di Punte (01/11): ogni critico dà Esposto; 3 su 3 → Sbilanciato 2 (boss: Esposto 2), senza tiro salvezza", () => {
+    const s = scontro(), r = prova(s, ctx({ liv: 5, dadi: [18, 1, 1, 15, 1, 15, 1] }), "tempesta");
+    eq(ev(r, "colpo").map(e => e.crit), [true, false, false]); eq([s.eff.esposto, s.eff.sbilanciato], [2, 2]); eq(ev(r, "ts").length, 0);
+    const b = scontro(), rb = prova(b, ctx({ liv: 5, boss: true, dadi: [15, 1, 15, 1, 15, 1] }), "tempesta"); eq([b.eff.sbilanciato || 0, b.eff.esposto], [0, 2]); eq(ev(rb, "ts").length, 0);
   });
   caso("Trafittura Celeste: +5 per colpire, Esposto e Sbilanciato 3", () => {
     const s = scontro(), r = ev(prova(s, ctx({ liv: 5, dadi: [7, 1, 1] }), "celeste"), "colpo")[0]; eq([r.ok, r.mA, s.eff.esposto, s.eff.sbilanciato], [true, 8, 3, 3]);
@@ -448,14 +448,14 @@
   caso("Occhio Vigile: critico da 19 e +2 CA fino al tuo turno", () => {
     const s = scontro(), r = prova(s, ctx({ liv: 3, dadi: [19, 1, 1] }), "occhio_vigile"); eq([ev(r, "colpo")[0].crit, s.eff.guardia, s.guardiaVal], [true, 1, 2]);
   });
-  caso("Stoccata a Specchio: critico da 18 → Frastornato (boss: Indebolito 2), prossima tecnica −2", () => {
-    const s = scontro(); prova(s, ctx({ liv: 4, dadi: [18, 1, 1, 1, 1, 2] }), "specchio"); eq([s.eff.frastornato, s.sconto], [1, 2]);
-    const b = scontro(); prova(b, ctx({ liv: 4, boss: true, dadi: [18, 1, 1, 1, 1] }), "specchio"); eq([b.eff.frastornato || 0, b.eff.debole], [0, 2]);
-    const n = scontro(); prova(n, ctx({ liv: 4, dadi: [15, 1, 1] }), "specchio"); eq([n.eff.frastornato || 0, n.sconto], [0, 2]);
+  caso("Stoccata a Specchio (01/11): critico da 18 → Sbilanciato 2 (boss: Esposto 2), prossima tecnica −2", () => {
+    const s = scontro(); prova(s, ctx({ liv: 4, dadi: [18, 1, 1, 1, 1] }), "specchio"); eq([s.eff.sbilanciato, s.sconto], [2, 2]);
+    const b = scontro(); prova(b, ctx({ liv: 4, boss: true, dadi: [18, 1, 1, 1, 1] }), "specchio"); eq([b.eff.sbilanciato || 0, b.eff.esposto], [0, 2]);
+    const n = scontro(); prova(n, ctx({ liv: 4, dadi: [15, 1, 1] }), "specchio"); eq([n.eff.sbilanciato || 0, n.sconto], [0, 2]);
   });
-  caso("Affondo dei Mille Soli: Esposto e Indebolito 3, +2 CA e critico da 18 per 3 turni", () => {
+  caso("Affondo dei Mille Soli (01/11): Esposto e Sbilanciato 2, +2 CA e critico da 18 per 3 turni", () => {
     const s = scontro(), c = ctx({ liv: 5, dadi: [15, 1, 1, 18, 1, 1] }); c.s = s;
-    prova(s, c, "mille_soli"); eq([s.eff.esposto, s.eff.debole, s.eff.guardia, s.eff.precisione], [3, 2, 3, 3]);
+    prova(s, c, "mille_soli"); eq([s.eff.esposto, s.eff.sbilanciato, s.eff.guardia, s.eff.precisione], [2, 2, 3, 3]);
     eq(C.colpo(s, c, { base: true }).crit, true, "18 è critico");
   });
 

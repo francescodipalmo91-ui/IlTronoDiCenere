@@ -42,14 +42,14 @@ Le tre perforanti attuali più in tema restano (Affondo al Cuore, Puntura di Spi
 | 1 | Mirare al Varco | 3 | Attacco normale; se colpisce, Esposto 2 |
 | 2 | Colpo alla Giuntura *(esistente)* | 4 | Attacco normale; se colpisce, prossimo attacco +1 dado |
 | 2 | Trafittura | 5 | +3 per colpire, +1 dado |
-| 2 | Punta nel Fianco | 4 | Critico 18-20; se è critico, Indebolito 2 |
+| 2 | Punta nel Fianco | 4 | Critico 18-20; se è critico, Esposto 2 |
 | 3 | Doppia Punta | 5 | 2 attacchi col solo dado, ciascuno critico 19-20 |
 | 3 | Perforazione Profonda | 6 | +3 per colpire, +1 dado; se colpisce, Esposto 2 |
 | 3 | Colpo Mirato | 6 | Se colpisce, è sempre critico |
-| 4 | Ferita Profonda | 8 | +1 dado; Esposto 3 + Indebolito 2 |
+| 4 | Ferita Profonda | 8 | +1 dado; Esposto 3 + Sbilanciato 2 |
 | 4 | Guardia di Punta | 7 | Consuma l'azione; il primo colpo subito fa 0 danni, contrattacco con critico 18-20 + Esposto 2 |
 | 4 | Colpo di Grazia | 8 | +1 dado, critico 19-20; esecuzione sotto 1/4 della salute (comuni) |
-| 5 | Tempesta di Punte | 10 | 3 attacchi col solo dado, critico 18-20; ogni critico rinnova Esposto 2; 3 su 3 + tiro salvezza → Stordito 1 (boss: Indebolito 2) |
+| 5 | Tempesta di Punte | 10 | 3 attacchi col solo dado, critico 18-20; ogni critico rinnova Esposto 2; 3 su 3 → Sbilanciato 2 (boss: Esposto 2), senza tiro salvezza |
 | 5 | Trafittura Celeste | 9 | +5 per colpire, +1 dado; Esposto 3 + Sbilanciato 3 |
 | 5 | Il Colpo Perfetto | 10 | Una volta per riposo; +1 dado e sempre critico se colpisce (4 dadi), poi un attacco normale gratuito |
 
@@ -68,8 +68,8 @@ Stessa scelta degli altri rami (`sceglieVia`). Proposta: **Aldo = Penetrazione**
 | Aldo | 4 | Trapasso | 8 | +5 per colpire, +1 dado; se il nemico è Esposto, +1 dado in più e l'Esposto si consuma |
 | Aldo | 5 | Il Foro Eterno | 10 | Se il nemico è Esposto e colpisci: sempre critico + Esposto per tutto lo scontro (boss: 2 turni) |
 | Guendalina | 3 | Occhio Vigile | 5 | Attacco normale, critico 19-20; +2 CA fino al tuo turno |
-| Guendalina | 4 | Stoccata a Specchio | 8 | +1 dado, critico 18-20; se è critico, tiro salvezza → Frastornato 1 (boss: Indebolito 2); prossima tecnica −2 furia |
-| Guendalina | 5 | Affondo dei Mille Soli | 10 | +1 dado; Esposto + Indebolito 3; per 3 turni +2 CA e i tuoi attacchi fanno critico con 18-20 |
+| Guendalina | 4 | Stoccata a Specchio | 8 | +1 dado, critico 18-20; se è critico, Sbilanciato 2 (boss: Esposto 2), senza tiro salvezza; prossima tecnica −2 furia |
+| Guendalina | 5 | Affondo dei Mille Soli | 10 | +1 dado; Esposto + Sbilanciato 2; per 3 turni +2 CA e i tuoi attacchi fanno critico con 18-20 |
 
 ## 5. Decisioni (24/10/2026)
 
@@ -102,3 +102,6 @@ Note di implementazione:
 
 - Il codice è già coerente: il 20 colpisce sempre e tira il doppio dei dadi (`nd = 2 × dadi`), anche quelli extra delle tecniche. Il regolamento lo dice uguale. Nessuna percentuale nei due rami.
 - **Unica ambiguità:** Cataclisma del Filo Rovinato e Sentenza del Maglio Titanico sono descritti come "il doppio dei dadi di danno", ma nel codice sono "+1 dado". Con armi a un dado il risultato è identico; con un 20 naturale diventano 4 dadi. È coerente con la regola, ma la descrizione fa sembrare quelle tecniche un critico già garantito. Proposta: riscriverle come "+1 dado di danno" (non ancora decisa, il testo resta com'è).
+
+## Revisione del 1° novembre 2026: il perforante punta al critico
+Stati del ramo: Esposto e Sbilanciato; la meccanica propria è il critico allargato (mai oltre 18-20). Sui boss il ripiego è Esposto. Tolti Indebolito, Frastornato e Stordito da 5 tecniche; Tempesta e Stoccata a Specchio non chiedono più il tiro salvezza (Sbilanciato ed Esposto non sono controlli). Affondo dei Mille Soli: Esposto 2 come dice il testo (il codice dava 3).

@@ -21,7 +21,7 @@ Il livello massimo del personaggio resta 5. **Il sovrano è di livello 6**: supe
 
 ### Salute del personaggio (DECISO il 28 ottobre)
 - **Livello 1:** salute = **10 + massimo del dado vita + mod Vigore**; mente = **10 + massimo del dado vita + mod Spirito**. Il dado non si tira più in creazione.
-- **Crescita a ogni livello: valore fisso**, metà del dado + 1 + mod (Guerriero d10 +6, Sciamano d8 +5, Arcanista e Monaco d6 +4, più il modificatore). Niente tiro: un 1 al livello 2 non deve rovinare la partita.
+- **Crescita a ogni livello: valore fisso**, metà del dado + 1 + mod (Guerriero d10 +6, Sciamano e Monaco d8 +5, Arcanista d6 +4, più il modificatore; Monaco da d6 a d8 il 01/11). Niente tiro: un 1 al livello 2 non deve rovinare la partita.
 - **Personaggi di prova (livello 1):**
 
 | Prova | Salute | Mente | CA |

@@ -8,7 +8,7 @@ window.Regole = (() => {
     Soldato: { dado: 10, risorsa: "furia", attrRisorsa: "Vigore" },
     Forestiero: { dado: 8, risorsa: "natura", attrRisorsa: "Spirito" },
     Sapiente: { dado: 6, risorsa: "mana", attrRisorsa: "Mente" },
-    Accolito: { dado: 6, risorsa: "fede", attrRisorsa: "Spirito" }
+    Accolito: { dado: 8, risorsa: "fede", attrRisorsa: "Spirito" } /* 01/11: da d6 a d8, accompagna le brigate */
   };
   const perClasse = (filtro, valore) => Object.fromEntries(Object.entries(CLASSI).filter(([, c]) => filtro(c)).map(([k, c]) => [k, valore(c)]));
   const marziale = (c) => c.risorsa === "furia" || c.risorsa === "natura";

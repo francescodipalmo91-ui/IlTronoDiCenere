@@ -521,19 +521,19 @@
     const a = C.colpoSubito(s, c, false, 6), b = C.colpoSubito(s, c, false, 5); eq([a.danno, a.furia, b.danno, s.cariche, s.assorbiti], [0, 0, 0, 2, 2]);
     const r = C.inizioTurnoPg(s, ctx({ liv: 4, dadi: [5, 6] })); eq(s.pv, 23); eq(r.filter(e => e.k === "onda").length, 2); eq(s.assorbe, null);
   });
-  caso("S13. Frantumazione della Riserva: 2d6; tiro salvezza → niente attacchi speciali + Indebolito 2; boss Indebolito + Sbilanciato 2 senza tiro", () => {
-    const s = scontro(); prova(s, ctx({ liv: 4, dadi: [15, 1, 1, 5] }), "frantumazione"); eq([s.eff.silenzio, s.eff.debole, s.pv], [2, 2, 35]);
+  caso("S13. Frantumazione della Riserva (01/11): 2d6; tiro salvezza → Stordito 1 + Sbilanciato 2; boss Sbilanciato 2 senza tiro", () => {
+    const s = scontro(); prova(s, ctx({ liv: 4, dadi: [15, 1, 1, 5] }), "frantumazione"); eq([s.eff.bloccato, s.eff.sbilanciato, s.pv], [1, 2, 35]);
     const b = scontro(), cb = ctx({ liv: 4, boss: true, dadi: [15, 1, 1] }); const r = prova(b, cb, "frantumazione");
-    eq([b.eff.silenzio || 0, b.eff.debole, b.eff.sbilanciato], [0, 2, 2]); eq(ev(r, "ts").length, 0); eq(cb.tira.resto(), 0);
+    eq([b.eff.bloccato || 0, b.eff.debole || 0, b.eff.sbilanciato], [0, 0, 2]); eq(ev(r, "ts").length, 0); eq(cb.tira.resto(), 0);
   });
   caso("S14. Tempesta di Risacca: 3 colpi col solo dado, 1 Carica per colpo; 3 su 3 → Stordito (boss: Sbilanciato 2)", () => {
     const s = scontro(), c = ctx({ liv: 5, dadi: [15, 2, 15, 3, 15, 4, 5] }); prova(s, c, "tempesta_risacca"); eq([s.pv, s.cariche, s.eff.bloccato], [31, 3, 1]);
     const b = scontro(), cb = ctx({ liv: 5, boss: true, dadi: [15, 2, 15, 3, 15, 4] }); prova(b, cb, "tempesta_risacca"); eq([b.eff.bloccato || 0, b.eff.sbilanciato], [0, 2]);
     const m = scontro(); prova(m, ctx({ liv: 5, dadi: [15, 2, 2, 15, 4] }), "tempesta_risacca"); eq([m.cariche, m.eff.bloccato || 0], [2, 0], "2 su 3: niente controllo");
   });
-  caso("S15. Ancoraggio del Cosmo: 0 danni al primo colpo, Cariche al massimo, niente attacchi speciali 3 (boss: Indebolito 2)", () => {
-    const s = scontro(), c = ctx({ liv: 5, dadi: [4] }); prova(s, c, "ancoraggio"); eq([s.cariche, s.eff.silenzio], [3, 3]); eq(C.colpoSubito(s, c, false, 8).danno, 0);
-    const b = scontro(), cb = ctx({ liv: 5, boss: true }); prova(b, cb, "ancoraggio"); eq([b.eff.silenzio || 0, b.eff.debole, b.cariche], [0, 2, 3]);
+  caso("S15. Ancoraggio del Cosmo (01/11): 0 danni al primo colpo, Cariche al massimo, Stordito 1 (boss: Sbilanciato 2)", () => {
+    const s = scontro(), c = ctx({ liv: 5, dadi: [4] }); prova(s, c, "ancoraggio"); eq([s.cariche, s.eff.bloccato], [3, 1]); eq(C.colpoSubito(s, c, false, 8).danno, 0);
+    const b = scontro(), cb = ctx({ liv: 5, boss: true }); prova(b, cb, "ancoraggio"); eq([b.eff.bloccato || 0, b.eff.sbilanciato, b.cariche], [0, 2, 3]);
   });
   caso("S16. Egida del Vuoto: una volta per riposo; ogni colpo 0 danni e 1 Carica; al tuo turno 2d6 per Carica + Vigore, Cariche a zero", () => {
     const s = scontro({ cariche: 1 }), c = ctx({ liv: 5 }); prova(s, c, "egida"); eq(c.usate.egida, true);
@@ -543,10 +543,10 @@
     const v = scontro(); prova(v, ctx({ liv: 5 }), "egida"); const w = C.inizioTurnoPg(v, ctx({ liv: 5 })); eq(w[0].k, "ondaVuota"); eq(v.pv, 40);
   });
   caso("S17. Fortezza Eterna (via di Guendalina): una volta per scontro il colpo mortale ti lascia a 1 e dà 3 Cariche", () => {
-    const s = scontro(), c = ctx({ liv: 5, dadi: [15, 1, 1] }); prova(s, c, "fortezza_eterna"); eq([s.eff.silenzio, s.eff.debole, s.eff.guardia, s.eff.fortezza], [3, 2, 3, 3]);
+    const s = scontro(), c = ctx({ liv: 5, dadi: [15, 1, 1, 5] }); prova(s, c, "fortezza_eterna"); eq([s.eff.bloccato, s.eff.sbilanciato, s.eff.guardia, s.eff.fortezza], [1, 2, 3, 3]);
     const f = C.fortezza(s, 10, 6); eq([f.danno, s.cariche, s.fortezzaUsata], [5, 3, true]); eq(C.fortezza(s, 10, 1).danno, 10, "una sola volta");
     eq(C.fortezza(scontro(), 10, 6).danno, 10, "senza Fortezza nulla cambia");
-    const b = scontro(); prova(b, ctx({ liv: 5, boss: true, dadi: [15, 1, 1] }), "fortezza_eterna"); eq([b.eff.silenzio || 0, b.eff.debole, b.eff.sbilanciato], [0, 2, 2]);
+    const b = scontro(); prova(b, ctx({ liv: 5, boss: true, dadi: [15, 1, 1] }), "fortezza_eterna"); eq([b.eff.bloccato || 0, b.eff.debole || 0, b.eff.sbilanciato], [0, 0, 2]);
   });
   caso("S18. Marea Elastica (via di Aldo): metà danni e 2 Cariche; con almeno 2 Cariche ogni colpo subito restituisce 1d4", () => {
     const s = scontro(), c = ctx({ liv: 3, dadi: [15, 2] }); prova(s, c, "marea_elastica"); eq([s.pv, s.elastica], [35, true]);
@@ -563,12 +563,12 @@
     const s = scontro({ cariche: 2, assorbiti: 5 }), c = ctx({ liv: 5, dadi: [6, 6, 4, 4, 4] }); prova(s, c, "tsunami"); eq([s.pv, s.cariche], [13, 1]);
     eq(C.disponibile(tec("tsunami"), scontro()).ok, false, "senza Cariche non si usa");
   });
-  caso("S21. Drenaggio d'Urto e Sigillo del Monolito (via di Guendalina)", () => {
-    const s = scontro(), c = ctx({ liv: 3, dadi: [15, 2, 5] }); prova(s, c, "drenaggio"); eq([s.eff.silenzio, s.eff.guardia], [1, 1]);
+  caso("S21. Drenaggio d'Urto e Sigillo del Monolito (via di Guendalina, 01/11: Sbilanciato e Stordito)", () => {
+    const s = scontro(), c = ctx({ liv: 3, dadi: [15, 2] }); prova(s, c, "drenaggio"); eq([s.eff.sbilanciato, s.eff.guardia], [2, 1]);
     C.colpoMancato(s, c); eq([c.furia, s.cariche], [1, 1]);
-    const b = scontro(); prova(b, ctx({ liv: 3, boss: true, dadi: [15, 2] }), "drenaggio"); eq(b.eff.debole, 2);
-    const g = scontro(); prova(g, ctx({ liv: 4, dadi: [15, 1, 1, 5] }), "sigillo_monolito"); eq([g.eff.silenzio, g.eff.guardia, g.sconto], [2, 2, 2]);
-    const gb = scontro(); prova(gb, ctx({ liv: 4, boss: true, dadi: [15, 1, 1] }), "sigillo_monolito"); eq([gb.eff.debole, gb.eff.sbilanciato], [2, 2]);
+    const b = scontro(); prova(b, ctx({ liv: 3, boss: true, dadi: [15, 2] }), "drenaggio"); eq(b.eff.sbilanciato, 2);
+    const g = scontro(); prova(g, ctx({ liv: 4, dadi: [15, 1, 1, 5] }), "sigillo_monolito"); eq([g.eff.bloccato, g.eff.guardia, g.sconto], [1, 2, 2]);
+    const gb = scontro(); prova(gb, ctx({ liv: 4, boss: true, dadi: [15, 1, 1] }), "sigillo_monolito"); eq([gb.eff.debole || 0, gb.eff.sbilanciato], [0, 2]);
   });
   caso("S22. Le vecchie tecniche di scudo sono tolte e tutte le nuove sono riconosciute", () => {
     ["carica", "schiaffo", "frontale", "balzo", "scagliata", "guardia"].forEach(id => vero(!T.some(t => t.id === id), id + " ancora presente"));

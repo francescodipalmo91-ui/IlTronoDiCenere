@@ -392,7 +392,7 @@
       case "mare_profondo": assorbi({ tipo: "tutti", onda: "mare" }); break;
       case "frantumazione":
         r = hit({ dado: 6, piuDadi: 1 });
-        if (r.ok && vivo(s)) { if (ctx.boss) { E.push({ k: "immune", s: "silenzio" }); fx("debole", 2); fx("sbilanciato", 2); } else conTSn({ silenzio: 2, debole: 2 }); }
+        if (r.ok && vivo(s)) { if (ctx.boss) { E.push({ k: "immune", s: "bloccato" }); fx("sbilanciato", 2); } else conTSn({ bloccato: 1, sbilanciato: 2 }); } /* 01/11: lo scudo controlla */
         break;
       /* livello 5 */
       case "tempesta_risacca": {
@@ -403,7 +403,7 @@
       }
       case "ancoraggio":
         assorbi({ tipo: "zero", cariche: 0 }); E.push(carica(s, CARICHE_MAX));
-        controlloORipiego({ silenzio: 3 }, () => fx("debole", 2));
+        controlloORipiego({ bloccato: 1 }, () => fx("sbilanciato", 2));
         break;
       case "egida":
         if (ctx.segnaPerRiposo) ctx.segnaPerRiposo(t.id);
@@ -426,16 +426,16 @@
       }
       /* ---- via di Guendalina (scudo): Postura ---- */
       case "drenaggio":
-        r = hit({ dado: 4 }); if (r.ok && vivo(s)) controlloORipiego({ silenzio: 1 }, () => fx("debole", 2));
+        r = hit({ dado: 4 }); if (r.ok && vivo(s)) fx("sbilanciato", 2);
         E.push(guardia(s, 2, 1)); s.drenaggio = true; E.push({ k: "drenaggio" });
         break;
       case "sigillo_monolito":
-        r = hit({ dado: 6, piuDadi: 1 }); if (r.ok && vivo(s)) controlloORipiego({ silenzio: 2 }, () => { fx("debole", 2); fx("sbilanciato", 2); });
+        r = hit({ dado: 6, piuDadi: 1 }); if (r.ok && vivo(s)) controlloORipiego({ bloccato: 1 }, () => fx("sbilanciato", 2));
         E.push(guardia(s, 2, 2)); s.sconto = 2; E.push({ k: "sconto", n: 2 });
         break;
       case "fortezza_eterna":
         r = hit({ dado: 6, piuDadi: 1 });
-        if (r.ok && vivo(s)) { if (ctx.boss) { E.push({ k: "immune", s: "silenzio" }); fx("debole", 2); fx("sbilanciato", 2); } else { fx("silenzio", 3); fx("debole", 3); } }
+        if (r.ok && vivo(s)) { fx("sbilanciato", 2); if (vivo(s)) controlloORipiego({ bloccato: 1 }, () => {}); }
         E.push(guardia(s, 2, 3));
         if (!s.fortezzaUsata) { s.eff.fortezza = Math.max(s.eff.fortezza || 0, 3); s.effMax.fortezza = Math.max(s.effMax.fortezza || 0, 3); E.push({ k: "fortezzaPronta", turni: 3 }); }
         else E.push({ k: "fortezzaUsata" });

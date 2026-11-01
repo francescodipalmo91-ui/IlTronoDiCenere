@@ -52,9 +52,9 @@ Lo scudo non è un'arma: le sue tecniche si usano con **qualsiasi arma a una man
 | 3 | Baluardo d'Acciaio | 6 | Consuma l'azione; per 2 turni +2 CA, ogni colpo subito ti dà il doppio della furia e 1 Carica |
 | 4 | Risucchio della Voragine | 7 | Colpo di scudo 1d6, +1 dado; se colpisce, 1 Carica e recuperi 1d4 furia |
 | 4 | Postura del Mare Profondo | 8 | Consuma l'azione; fino al tuo turno ogni colpo subito fa 0 danni e ti dà 1 Carica; all'inizio del tuo turno l'onda colpisce senza tiro per 1d6 + mod Vigore per ogni colpo assorbito |
-| 4 | Frantumazione della Riserva | 8 | Colpo di scudo 1d6, +1 dado; tiro salvezza → Inibito 2 + Indebolito 2 (boss: Indebolito + Sbilanciato 2) |
+| 4 | Frantumazione della Riserva | 8 | Colpo di scudo 1d6, +1 dado; tiro salvezza → Stordito 1 + Sbilanciato 2 (boss: Sbilanciato 2, senza tiro) |
 | 5 | Tempesta di Risacca | 10 | 3 colpi di scudo col solo dado, ognuno a segno dà 1 Carica; 3 su 3 + tiro salvezza → Stordito 1 (boss: Sbilanciato 2) |
-| 5 | Ancoraggio del Cosmo | 9 | Consuma l'azione; il primo colpo subito fa 0 danni; Cariche al massimo; tiro salvezza → Inibito 3 (boss: Indebolito 2) |
+| 5 | Ancoraggio del Cosmo | 9 | Consuma l'azione; il primo colpo subito fa 0 danni; Cariche al massimo; tiro salvezza → Stordito 1 (boss: Sbilanciato 2) |
 | 5 | Egida del Vuoto Assoluto | 10 | Una volta per riposo; consuma l'azione; fino al tuo turno ogni colpo fa 0 danni e ti dà 1 Carica; all'inizio del tuo turno, senza spendere l'azione, rilasci 2d6 per Carica + mod Vigore senza tiro, e le Cariche si azzerano |
 
 Note:
@@ -95,9 +95,9 @@ Stessa scelta degli altri rami (Aldo o Guendalina, `sceglieVia`) e stessa strutt
 
 | Liv | Abilità | Costo | Effetto |
 |---|---|---|---|
-| 3 | Drenaggio d'Urto | 5 | Colpo di scudo; tiro salvezza → Inibito 1 (boss: Indebolito 2); +2 CA fino al tuo turno; se il nemico ti manca, +1 furia e 1 Carica |
-| 4 | Sigillo del Monolito | 8 | Colpo di scudo 1d6, +1 dado; tiro salvezza → Inibito 2 (boss: Indebolito + Sbilanciato 2); +2 CA per 2 turni; prossima tecnica −2 furia |
-| 5 | Fortezza Eterna | 10 | Colpo di scudo 1d6, +1 dado; Inibito 3 + Indebolito 3 (boss: Indebolito + Sbilanciato 2); per 3 turni +2 CA e, una volta per scontro, il primo colpo che ti porterebbe a 0 salute ti lascia a 1 e ti dà 3 Cariche |
+| 3 | Drenaggio d'Urto | 5 | Colpo di scudo; Sbilanciato 2, senza tiro; +2 CA fino al tuo turno; se il nemico ti manca, +1 furia e 1 Carica |
+| 4 | Sigillo del Monolito | 8 | Colpo di scudo 1d6, +1 dado; tiro salvezza → Stordito 1 (boss: Sbilanciato 2); +2 CA per 2 turni; prossima tecnica −2 furia |
+| 5 | Fortezza Eterna | 10 | Colpo di scudo 1d6, +1 dado; Sbilanciato 2 + tiro salvezza → Stordito 1 (boss: solo Sbilanciato 2); per 3 turni +2 CA e, una volta per scontro, il primo colpo che ti porterebbe a 0 salute ti lascia a 1 e ti dà 3 Cariche |
 
 - **Drenaggio d'Urto** riunisce Drenaggio d'Urto e Parassita Posturale (il nemico che ti manca ti "regala" furia).
 - **Sigillo del Monolito** riunisce Sigillo e Postura di Marmo (+2 CA), con lo sconto sulla tecnica successiva come Ritmo del Duello e Cadenza della Campana.
@@ -132,3 +132,6 @@ Stessa scelta degli altri rami (Aldo o Guendalina, `sceglieVia`) e stessa strutt
 - `node tests/combattimento.test.js`: 103 test delle regole (22 nuovi per lo scudo e le sue vie).
 - `node tests/combattimento.browser.js`: 60 test nel browser (12 nuovi: sala di prova con lo scudo, Muro, Egida, partita con Assorbimento, regola dei due turni, Postura Salda e Presa, Fortezza Eterna, serie della via al riposo, finestra della via, salvataggi, creazione, regolamento, inglese). Con `SOLO="testo"` se ne lanciano solo alcuni.
 - **Sala di prova:** `tutorial.html?prova`, spunta «Scudo imbracciato» e scegli la «Serie della via».
+
+## Revisione del 1° novembre 2026: lo scudo difende e controlla
+Stati: Stordito e Sbilanciato, più la Carica Cinetica. Sui boss Stordito diventa Sbilanciato. Tolti Inibito e Indebolito (sono del taglio) da 5 tecniche; Drenaggio d'Urto dà Sbilanciato senza tiro per non diventare più forte di prima.

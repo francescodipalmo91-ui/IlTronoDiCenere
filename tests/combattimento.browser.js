@@ -606,7 +606,7 @@ caso("Gioco: Fortezza Eterna — il colpo mortale ti lascia a 1 di salute e dà 
   eq(await page.evaluate(() => tecnicheDelPg().filter(x => x.via).map(x => x.t.id)), ["drenaggio", "sigillo_monolito", "fortezza_eterna"]);
   await page.evaluate(() => avviaScontro("mastino", { primo: "pg", soffioScarico: true })); await aspettaTurnoPg(page);
   await page.evaluate(() => { scontro.pv = 100; scontro.pvMax = 100; pg.dannoFisico = saluteMaxPg() - 2; disegnaVitali(); }); /* 2 di salute */
-  await accoda(page, [R(19, 20), R(1, 6), R(1, 6), R(1, 6), R(19, 20), R(4, 4)], [0.1, 0.99]);
+  await accoda(page, [R(19, 20), R(1, 6), R(1, 6), R(20, 20) /* 01/11: tiro salvezza contro lo Stordito, superato */, R(1, 6), R(19, 20), R(4, 4)], [0.1, 0.99]);
   await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "fortezza_eterna"))); await aspettaTurnoPg(page);
   eq(await page.evaluate(() => pvPg()), 1, "resta a 1"); eq(await page.evaluate(() => [scontro.cariche, scontro.fortezzaUsata]), [3, true]);
   vero(/Fortezza Eterna regge/.test(await diario(page)), "manca il testo"); eq(errori, [], "errori"); await chiudi();

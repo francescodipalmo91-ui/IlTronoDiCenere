@@ -305,7 +305,7 @@
         tipoDanno: "Tipo di danno", mani: "Mani", testoMani: (n) => `${n} ${n === 1 ? "mano" : "mani"}`, dannoTit: (t) => `Danno ${t}`,
         notaDueMani: "Un'arma a due mani occupa entrambe le mani: per usare altri oggetti, come la torcia, dovrai prima riporla. Non si può usare insieme allo scudo.",
         notaScudo: "Occupa una mano: non si può usare con un'arma a due mani, e per tenere la torcia dovrai prima riporlo.",
-        modLotta: "modificatore Vigore", malusAgilita: "Malus Agilità", bonusAgilita: "Bonus Agilità max", infoScudo: "+1 classe armatura · malus Agilità −1",
+        modLotta: "modificatore di classe", attrClasse: "Caratteristica", attrClasseNota: "Vale per tiro per colpire e danno di tutti i tuoi attacchi (arma, tecniche, incantesimi) e per la tua risorsa.", malusAgilita: "Malus Agilità", bonusAgilita: "Bonus Agilità max", infoScudo: "+1 classe armatura · malus Agilità −1",
         utilizzi: (n) => (n > 1 ? `${n} utilizzi` : "1 utilizzo"), riutilizzabile: "Riutilizzabile",
         manca: { razza: "la razza", classe: "la classe", tiro: "il tiro dei punti vita", punti: (n) => `${n} punti attributo da distribuire`, abilita: (n) => `${n} abilità`, arma: "un'arma", armatura: "un'armatura", ritratto: "il ritratto", dot: (n) => `${n} ${n === 1 ? "oggetto" : "oggetti"} di dotazione` },
         ancora: "Ancora da fare: ", pronto: (n) => `${n} è pronto a entrare nel dungeon.`,
@@ -336,7 +336,7 @@
         tipoDanno: "Damage type", mani: "Hands", testoMani: (n) => `${n} ${n === 1 ? "hand" : "hands"}`, dannoTit: (t) => `${t} damage`,
         notaDueMani: "A two-handed weapon takes up both hands: to use other items, such as the torch, you will first have to put it away. It cannot be used together with the shield.",
         notaScudo: "Takes up one hand: it cannot be used with a two-handed weapon, and to hold the torch you will first have to put it away.",
-        modLotta: "Vigour modifier", malusAgilita: "Agility penalty", bonusAgilita: "Max Agility bonus", infoScudo: "+1 armor class · Agility penalty −1",
+        modLotta: "class modifier", attrClasse: "Class attribute", attrClasseNota: "Used for the attack and damage rolls of all your attacks (weapon, techniques, spells) and for your resource.", malusAgilita: "Agility penalty", bonusAgilita: "Max Agility bonus", infoScudo: "+1 armor class · Agility penalty −1",
         utilizzi: (n) => (n > 1 ? `${n} uses` : "1 use"), riutilizzabile: "Reusable",
         manca: { razza: "the race", classe: "the class", tiro: "the hit point roll", punti: (n) => `${n} attribute points to assign`, abilita: (n) => `${n} ${n === 1 ? "skill" : "skills"}`, arma: "a weapon", armatura: "an armor", ritratto: "the portrait", dot: (n) => `${n} gear ${n === 1 ? "item" : "items"}` },
         ancora: "Still to do: ", pronto: (n) => `${n} is ready to enter the dungeon.`,
@@ -580,7 +580,15 @@
       Soldato: { it: "Mente incrollabile: dopo una prova fallita puoi spendere 1 punto furia per un tiro salvezza (d20 + mod Vigore + livello, CD 10); se lo superi non perdi salute mentale.", en: "Unshakeable Mind: after a failed check you may spend 1 fury point on a saving throw (d20 + Vigour mod + level, DC 10); on a success you lose no mental health." },
       Forestiero: { it: "Mente incrollabile: dopo una prova fallita puoi spendere 1 punto natura per un tiro salvezza (d20 + mod Spirito + livello, CD 10); se lo superi non perdi salute mentale.", en: "Unshakeable Mind: after a failed check you may spend 1 nature point on a saving throw (d20 + Spirit mod + level, DC 10); on a success you lose no mental health." }
     };
-    const riepilogoClasse = (nome) => `<i><b>${t.dadoVita}</b><b>d${CLASSI[nome]}</b></i>` + (CAPACITA_CLASSE[nome] ? `<i class="cap-classe">${L(CAPACITA_CLASSE[nome])}</i>` : "");
+    /* 01/11: caratteristica di classe con la sua motivazione */
+    const MOTIVO_CLASSE = {
+      Soldato: { it: "Temprato da mille battaglie: è un combattente addestrato e mette tutta la sua forza in ogni colpo.", en: "Tempered by a thousand battles: a trained fighter who puts all his strength into every blow." },
+      Forestiero: { it: "Una vita da eremita gli ha insegnato che a volte è meglio essere agili e scaltri che forti.", en: "A hermit's life taught him that being quick and cunning is sometimes better than being strong." },
+      Sapiente: { it: "Studia l'avversario e colpisce i punti vulnerabili, dove l'armatura non arriva.", en: "He studies his foe and strikes the weak points the armour does not cover." },
+      Accolito: { it: "La sua fede e il suo dio lo guidano e rendono più potenti i suoi colpi.", en: "His faith and his god guide him and make his blows mightier." }
+    };
+    const riepilogoClasse = (nome) => `<i><b>${t.dadoVita}</b><b>d${CLASSI[nome]}</b></i>` + `<i><b>${t.attrClasse}</b><b>${N("attributi", R_.ATTR_CLASSE[nome])}</b></i>` +
+      `<i class="cap-classe">${L(MOTIVO_CLASSE[nome])} ${t.attrClasseNota}</i>` + (CAPACITA_CLASSE[nome] ? `<i class="cap-classe">${L(CAPACITA_CLASSE[nome])}</i>` : "");
     const riepilogoRazza = (nome) => PUNTI_RAZZA[nome] ? t.punti4 : NOMI.filter(n => RAZZE[nome][n]).map(n => `<i><b>${N("attributi", n)}</b><b>+${RAZZE[nome][n]}</b></i>`).join("");
     Object.keys(CLASSI).forEach(nome => {
       const l = document.createElement("label");

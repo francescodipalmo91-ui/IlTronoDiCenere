@@ -215,10 +215,17 @@
             <span class="formula">Modificatore = (valore − 10) ÷ 2, arrotondato per difetto</span>
             <p class="esempio">Esempio: 12 → +1, 14 → +2, 17 → +3.</p>
             <ul>
-              <li><b>Vigore</b>: forza in combattimento, salute fisica, Atletica e Sopravvivenza, risorsa del Guerriero.</li>
-              <li><b>Agilità</b>: iniziativa, difesa (Classe armatura), Furtività e Acrobazia.</li>
-              <li><b>Mente</b>: sensi e logica, Indagare, Percezione e Sapienza, magia dell'Arcanista.</li>
-              <li><b>Spirito</b>: salute mentale e volontà, Socialità e Intuizione, magia del Monaco e risorsa dello Sciamano.</li>
+              <li><b>Vigore</b>: salute fisica, Atletica e Sopravvivenza; caratteristica di classe del Guerriero.</li>
+              <li><b>Agilità</b>: iniziativa, difesa (Classe armatura), Furtività e Acrobazia; caratteristica di classe dello Sciamano.</li>
+              <li><b>Mente</b>: sensi e logica, Indagare, Percezione e Sapienza; caratteristica di classe dell'Arcanista.</li>
+              <li><b>Spirito</b>: salute mentale e volontà, Socialità e Intuizione; caratteristica di classe del Monaco.</li>
+            </ul>
+            <p><b>Caratteristica di classe.</b> Ogni classe combatte con la sua caratteristica: la usa per il tiro per colpire e per il danno di <b>tutti</b> i suoi attacchi (arma, tecniche e incantesimi), per la difficoltà dei tiri salvezza che impone e per la sua risorsa.</p>
+            <ul>
+              <li><b>Guerriero, Vigore</b>: temprato da mille battaglie, è un combattente addestrato.</li>
+              <li><b>Sciamano, Agilità</b>: una vita da eremita gli ha insegnato che a volte è meglio essere agili e scaltri che forti.</li>
+              <li><b>Arcanista, Mente</b>: studia l'avversario e colpisce i punti vulnerabili, dove l'armatura non arriva.</li>
+              <li><b>Monaco, Spirito</b>: la sua fede e il suo dio lo guidano e rendono più potenti i suoi colpi.</li>
             </ul>
             <h3>Razze</h3><div class="scroll"><table><tr><th>Razza</th><th>Bonus</th></tr>${righeRazze}</table></div>
             <h3>Classi</h3><div class="scroll"><table><tr><th>Classe</th><th>Dado vita</th><th>Risorsa</th><th>Armature</th></tr>${righeClassi}</table></div>
@@ -259,10 +266,9 @@
           ["Combattimento", `
             <p><b>Iniziativa</b>: agisce per primo chi ha più Agilità (a parità, un d20 a testa).</p>
             <p>A ogni turno hai un'azione: attaccare, usare una tecnica, lanciare un incantesimo o usare un oggetto. Prendere in mano la torcia o imbracciare lo scudo non consuma l'azione. L'attacco con l'arma è sempre gratuito.</p>
-            <span class="formula">Attacco con l'arma: d20 + mod. Vigore, colpisce se supera la Classe armatura del bersaglio</span>
-            <span class="formula">Attacco magico: d20 + mod. Mente (Arcanista) o Spirito (Monaco), colpisce se supera la Classe armatura</span>
-            <span class="formula">Danno dell'attacco magico = dadi dell'incantesimo + mod. Mente o Spirito, come le armi aggiungono il Vigore</span>
-            <span class="formula">Danno dell'arma: dado dell'arma + mod. Vigore (torcia 1d4, a mani nude 1d2)</span>
+            <span class="formula">Attacco (arma, tecnica o incantesimo): d20 + mod. della caratteristica di classe, colpisce se supera la Classe armatura del bersaglio</span>
+            <span class="formula">Danno dell'arma: dado dell'arma + mod. della caratteristica di classe (torcia 1d4, a mani nude 1d2)</span>
+            <span class="formula">Danno dell'attacco magico: dadi dell'incantesimo + mod. della caratteristica di classe</span>
             <p><b>Colpo critico</b>: un 20 sul dado colpisce sempre e tira il doppio dei dadi di danno. Vale anche per i nemici. Alcuni effetti allargano il critico a 19-20 o 18-20 (mai oltre).</p>
             <p><b>Tiro salvezza del nemico</b>: quando un effetto gli concede di resistere, il nemico tira d20 + il suo modificatore contro la tua difficoltà.</p>
             <span class="formula">CD = 8 + modificatore dell'attributo della tua classe + livello</span>
@@ -325,8 +331,8 @@
             <p>Combatte con l'arma e la forza della natura: veleni, trappole, radici e spore. Le tecniche costano <b>punti natura</b>.</p>
             <h3>Regole della classe</h3>
             <ul>
-              <li><b>Punti natura</b>: partono da ${R.RISORSA_BASE} + mod. Spirito e a ogni livello aumentano di mod. Spirito + il nuovo livello. Una tecnica che manca il bersaglio costa comunque.</li>
-              <li><b>Attacco</b>: d20 + mod. Vigore, come il Guerriero. <b>Tiro salvezza del nemico</b>: sempre sul corpo, d20 + il suo Vigore contro 8 + il tuo Vigore + livello.</li>
+              <li><b>Punti natura</b>: partono da ${R.RISORSA_BASE} + mod. Agilità e a ogni livello aumentano di mod. Agilità + il nuovo livello. Una tecnica che manca il bersaglio costa comunque.</li>
+              <li><b>Attacco</b>: d20 + mod. Agilità, sia con l'arma sia con le tecniche. <b>Tiro salvezza del nemico</b>: sempre sul corpo, d20 + il suo Vigore contro 8 + la tua Agilità + livello.</li>
               <li><b>Recupero</b>: la natura torna quando la natura colpisce, non l'arma. Danni da veleno, Tossina, acido e bulbo, un tiro salvezza fallito contro una tua tecnica, una trappola che scatta e lo Scudo di Corteccia (quando lo crei o quando assorbe) ti danno ${recupero()}, al massimo una volta per turno del nemico; il doppio se il nemico ha la Tossina.</li>
               <li><b>Posti</b>: ${posti()}. Le tecniche della natura funzionano con qualsiasi arma. Si scelgono in creazione e si cambiano riposando.</li>
               <li><b>Rivestimento</b>: un attacco che riveste l'arma per 3 turni; ogni colpo a segno (anche gli attacchi normali) ne porta l'effetto. Uno solo alla volta.</li>
@@ -413,7 +419,7 @@
             <div class="scroll"><table><tr><th>Livello</th><th>PE necessari</th><th>PE totali</th></tr>${soglie}</table></div>
             <p>A ogni livello:</p>
             <ul>
-              <li>salute fisica + (metà del dado vita + 1 + mod. Vigore), un valore fisso: Guerriero 6, Sciamano 5, Arcanista e Monaco 4, più il modificatore;</li>
+              <li>salute fisica + (metà del dado vita + 1 + mod. Vigore), un valore fisso: Guerriero 6, Sciamano e Monaco 5, Arcanista 4, più il modificatore;</li>
               <li>salute mentale + (metà del dado vita + 1 + mod. Spirito);</li>
               <li>risorsa della classe + (modificatore del suo attributo + nuovo livello), senza dado;</li>
               <li>le abilità scelte crescono di 1 e si sbloccano nuove tecniche o incantesimi.</li>
@@ -443,10 +449,17 @@
             <span class="formula">Modifier = (score − 10) ÷ 2, rounded down</span>
             <p class="esempio">Example: 12 → +1, 14 → +2, 17 → +3.</p>
             <ul>
-              <li><b>Vigour</b>: fighting strength, physical health, Athletics and Survival, the Warrior's resource.</li>
-              <li><b>Agility</b>: initiative, defence (Armor class), Stealth and Acrobatics.</li>
-              <li><b>Mind</b>: senses and logic, Investigation, Perception and Lore, the Arcanist's magic.</li>
-              <li><b>Spirit</b>: mental health and willpower, Influence and Insight, the Monk's magic and the Shaman's resource.</li>
+              <li><b>Vigour</b>: physical health, Athletics and Survival; the Warrior's class attribute.</li>
+              <li><b>Agility</b>: initiative, defence (Armor class), Stealth and Acrobatics; the Shaman's class attribute.</li>
+              <li><b>Mind</b>: senses and logic, Investigation, Perception and Lore; the Arcanist's class attribute.</li>
+              <li><b>Spirit</b>: mental health and willpower, Influence and Insight; the Monk's class attribute.</li>
+            </ul>
+            <p><b>Class attribute.</b> Each class fights with its own attribute: it is used for the attack and damage rolls of <b>all</b> its attacks (weapon, techniques and spells), for the difficulty of the saving throws it imposes and for its resource.</p>
+            <ul>
+              <li><b>Warrior, Vigour</b>: tempered by a thousand battles, a trained fighter.</li>
+              <li><b>Shaman, Agility</b>: a hermit's life taught him that being quick and cunning is sometimes better than being strong.</li>
+              <li><b>Arcanist, Mind</b>: he studies his foe and strikes the weak points the armour does not cover.</li>
+              <li><b>Monk, Spirit</b>: his faith and his god guide him and make his blows mightier.</li>
             </ul>
             <h3>Races</h3><div class="scroll"><table><tr><th>Race</th><th>Bonus</th></tr>${righeRazze}</table></div>
             <h3>Classes</h3><div class="scroll"><table><tr><th>Class</th><th>Hit die</th><th>Resource</th><th>Armor</th></tr>${righeClassi}</table></div>
@@ -487,10 +500,9 @@
           ["Combat", `
             <p><b>Initiative</b>: whoever has more Agility acts first (on a tie, a d20 each).</p>
             <p>Each turn you have one action: attack, use a technique, cast a spell or use an item. Taking up the torch or the shield does not use your action. A weapon attack is always free.</p>
-            <span class="formula">Weapon attack: d20 + Vigour mod., hits if it beats the target's Armor class</span>
-            <span class="formula">Spell attack: d20 + Mind (Arcanist) or Spirit (Monk) mod., hits if it beats the Armor class</span>
-            <span class="formula">Spell attack damage = the spell's dice + Mind or Spirit mod., just as weapons add Vigour</span>
-            <span class="formula">Weapon damage: weapon die + Vigour mod. (torch 1d4, bare hands 1d2)</span>
+            <span class="formula">Attack (weapon, technique or spell): d20 + class attribute mod., hits if it beats the target's Armor class</span>
+            <span class="formula">Weapon damage: weapon die + class attribute mod. (torch 1d4, bare hands 1d2)</span>
+            <span class="formula">Spell attack damage: the spell's dice + class attribute mod.</span>
             <p><b>Critical hit</b>: a 20 on the die always hits and rolls double the damage dice. Enemies too. Some effects widen the critical to 19-20 or 18-20 (never further).</p>
             <p><b>Enemy saving throw</b>: when an effect lets the enemy resist, it rolls d20 + its modifier against your difficulty.</p>
             <span class="formula">DC = 8 + your class attribute modifier + level</span>
@@ -553,8 +565,8 @@
             <p>Fights with the weapon and the strength of nature: poisons, traps, roots and spores. Techniques cost <b>nature points</b>.</p>
             <h3>Class rules</h3>
             <ul>
-              <li><b>Nature points</b>: start at ${R.RISORSA_BASE} + Spirit mod. and at each level grow by Spirit mod. + the new level. A technique that misses still costs.</li>
-              <li><b>Attack</b>: d20 + Vigour mod., like the Warrior. <b>Enemy saving throw</b>: always on the body, d20 + its Vigour against 8 + your Vigour + level.</li>
+              <li><b>Nature points</b>: start at ${R.RISORSA_BASE} + Agility mod. and at each level grow by Agility mod. + the new level. A technique that misses still costs.</li>
+              <li><b>Attack</b>: d20 + Agility mod., with the weapon and with techniques. <b>Enemy saving throw</b>: always on the body, d20 + its Vigour against 8 + your Agility + level.</li>
               <li><b>Recovery</b>: nature returns when nature strikes, not the weapon. Poison, Toxin, acid and bulb damage, a failed saving throw against one of your techniques, a trap springing and the Bark Shield (when you create it or when it absorbs) give you ${recupero()}, at most once per enemy turn; double if the enemy has Toxin.</li>
               <li><b>Slots</b>: ${posti()}. Nature techniques work with any weapon. They are chosen at creation and changed when you rest.</li>
               <li><b>Coating</b>: an attack that coats your weapon for 3 turns; every hit (normal attacks too) carries its effect. Only one at a time.</li>
@@ -641,7 +653,7 @@
             <div class="scroll"><table><tr><th>Level</th><th>XP needed</th><th>Total XP</th></tr>${soglie}</table></div>
             <p>At each level:</p>
             <ul>
-              <li>physical health + (half the hit die + 1 + Vigour mod.), a fixed amount: Warrior 6, Shaman 5, Arcanist and Monk 4, plus the modifier;</li>
+              <li>physical health + (half the hit die + 1 + Vigour mod.), a fixed amount: Warrior 6, Shaman and Monk 5, Arcanist 4, plus the modifier;</li>
               <li>mental health + (half the hit die + 1 + Spirit mod.);</li>
               <li>class resource + (its attribute modifier + the new level), no die;</li>
               <li>your chosen skills grow by 1 and new techniques or spells unlock.</li>

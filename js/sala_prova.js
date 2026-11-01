@@ -59,7 +59,7 @@
     const p = leggiPgBase();
     p.classe = $("pClasse") ? $("pClasse").value : "guerriero";
     if (p.classe === "arcanista" || p.classe === "monaco") { p.mente = Number($("pMen").value); p.modM = mod(p.mente); p.furiaMax = C.furiaMax(p.modM, p.liv); } /* il mana cresce come la furia: 10 + Mente, poi Mente + livello a ogni salita */
-    if (p.classe === "sciamano") { p.modS = mod(Number($("pMen").value)); p.furiaMax = C.furiaMax(p.modS, p.liv); } /* punti natura: 10 + Spirito, poi Spirito + livello */
+    if (p.classe === "sciamano") { p.modS = mod(Number($("pAgi").value)); p.furiaMax = C.furiaMax(p.modS, p.liv); } /* 01/11: punti natura, attacchi e tecniche su Agilità */
     return p;
   }
   function leggiPgBase() {
@@ -88,6 +88,7 @@
       cura: (n) => { const f = Math.min(n, pg.pvMax - pg.pv); pg.pv += f; return f; }, pvMancanti: () => pg.pvMax - pg.pv, dannoCorpo: (n) => { const f = Math.min(n, pg.pv - 1); pg.pv -= f; return f; }
     });
     if (sciamano()) Object.assign(c, {
+      modAtt: pg.modS, modDanno: pg.modS, cd: 8 + pg.modS + pg.liv, /* 01/11: caratteristica di classe = Agilità */
       modSpirito: pg.modS, resisteVeleno: !!($("nResiste") && $("nResiste").checked), linfaRigeneratrice: pg.via === "guendalina",
       naturaPiu: (n) => { const r = Math.min(n, pg.furiaMax - pg.furia); pg.furia += r; return r; }, dannoPg: (n) => { pg.pv -= n; }
     });

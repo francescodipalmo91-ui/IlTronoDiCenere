@@ -3050,7 +3050,7 @@
             pari: (x, y) => `Agilità pari: si tira un d20 a testa. Tu ${x}, Ettore ${y}.`,
             iniziaNem: "Ettore è più rapido: agisce per primo.",
             manuale: (m, dado, inc) => [
-              `Per colpire tiri un d20 e aggiungi il modificatore di Vigore (${fmtN(m)}): se il totale supera la Classe armatura di Ettore, lo colpisci e infliggi ${dado} ${fmtN(m)} danni.`,
+              `Per colpire tiri un d20 e aggiungi il modificatore di ${nomeAttrClasse()} (${fmtN(m)}): se il totale supera la Classe armatura di Ettore, lo colpisci e infliggi ${dado} ${fmtN(m)} danni.`,
               "Se sul d20 esce 20 è un colpo critico: colpisci sempre e tiri il doppio dei dadi di danno. Vale anche per Ettore.",
               "A ogni turno puoi compiere un'azione: «attacco Ettore», «colpisco con la torcia» oppure «bevo la pozione»." + (inc ? " Puoi anche lanciare un incantesimo, per esempio «lancio " + inc + "»." : ""),
               "Ettore attacca con fendenti e affondi di spada. È un combattente esperto, ma stanco: se lo metti alle strette, potrebbe arrendersi."
@@ -3584,7 +3584,7 @@
             pari: (x, y) => `Agility tied: each side rolls a d20. You ${x}, Ettore ${y}.`,
             iniziaNem: "Ettore is quicker: he acts first.",
             manuale: (m, dado, inc) => [
-              `To hit, roll a d20 and add your Might modifier (${fmtN(m)}): if the total beats Ettore's Armor Class, you hit him and deal ${dado} ${fmtN(m)} damage.`,
+              `To hit, roll a d20 and add your ${nomeAttrClasse()} modifier (${fmtN(m)}): if the total beats Ettore's Armor Class, you hit him and deal ${dado} ${fmtN(m)} damage.`,
               "If the d20 shows a 20 it is a critical hit: it always hits and you roll twice the damage dice. The same goes for Ettore.",
               "Each turn you can take one action: “I attack Ettore”, “I strike with the torch” or “I drink the potion”." + (inc ? " You can also cast a spell, for example “I cast " + inc + "”." : ""),
               "Ettore attacks with sword slashes and thrusts. He is a seasoned fighter, but weary: if you corner him, he may surrender."
@@ -4845,7 +4845,7 @@
         effetti: { accecato: "Accecato: tira 2d20 per colpire e tiene il peggiore.", debole: "Indebolito: −2 per colpire.", frattura: "Frattura: 1d4 danni ogni volta che attacca.", intontito: "Intontito: niente colpi critici.", sbilanciato: "Sbilanciato: −2 alla Classe armatura.", silenzio: "Inibito: niente attacchi speciali.", frastornato: "Frastornato: −4 per colpire e niente critici.", bloccato: "Stordito: salta il prossimo turno.", carica: "L'attacco speciale pronto va perso.", esposto: "Esposto: i tuoi attacchi fanno critico con un numero in meno." },
         prossimoBonus: "Il tuo prossimo attacco avrà +2 per colpire.", prossimoDado: "Il tuo prossimo attacco infligge un dado di danno in più.",
         guardia: (n) => `+${n} alla Classe armatura fino al tuo prossimo turno.`, furore: "+4 ai tiri salvezza e alle prove contrapposte per 2 turni.",
-        tsTitolo: (nome) => `Tiro salvezza: ${nome}`, tsRegola: (nome, cd) => `${nome} prova a resistere: d20 + modificatore di Vigore contro ${cd} (8 + il tuo Vigore + livello).`,
+        tsTitolo: (nome) => `Tiro salvezza: ${nome}`, tsRegola: (nome, cd) => `${nome} prova a resistere: d20 + modificatore di Vigore contro ${cd} (8 + il tuo ${nomeAttrClasse()} + livello).`,
         tsTiro: (d, m, tot, cd) => `Tiro: d20 ${d} ${m < 0 ? "−" : "+"} ${Math.abs(m)} = ${tot} contro difficoltà ${cd}`, tsOk: "Resiste", tsKo: "Non resiste", resiste: "Il nemico resiste all'effetto.",
         mancato: "mancato", colpito: "colpito", critico: "critico",
         nuovoPosto: (l) => `Hai sbloccato le tecniche di livello ${l}: puoi prepararle riposando.`,
@@ -4930,7 +4930,7 @@
         effetti: { accecato: "Blinded: rolls 2d20 to hit and keeps the worse.", debole: "Weakened: −2 to hit.", frattura: "Fractured: 1d4 damage every time it attacks.", intontito: "Dazzled: no critical hits.", sbilanciato: "Off-balance: −2 Armor class.", silenzio: "Inhibited: no special attacks.", frastornato: "Dazed: −4 to hit and no criticals.", bloccato: "Stunned: skips its next turn.", carica: "Its readied special attack is lost.", esposto: "Exposed: your attacks crit on one number lower." },
         prossimoBonus: "Your next attack gets +2 to hit.", prossimoDado: "Your next attack deals one extra damage die.",
         guardia: (n) => `+${n} Armor class until your next turn.`, furore: "+4 to saving throws and opposed checks for 2 turns.",
-        tsTitolo: (nome) => `Saving throw: ${nome}`, tsRegola: (nome, cd) => `${nome} tries to resist: d20 + Vigour modifier against ${cd} (8 + your Vigour + level).`,
+        tsTitolo: (nome) => `Saving throw: ${nome}`, tsRegola: (nome, cd) => `${nome} tries to resist: d20 + Vigour modifier against ${cd} (8 + your ${nomeAttrClasse()} + level).`,
         tsTiro: (d, m, tot, cd) => `Roll: d20 ${d} ${m < 0 ? "−" : "+"} ${Math.abs(m)} = ${tot} against difficulty ${cd}`, tsOk: "Resists", tsKo: "Fails", resiste: "The enemy resists the effect.",
         mancato: "missed", colpito: "hit", critico: "critical",
         nuovoPosto: (l) => `You have unlocked level ${l} techniques: you can prepare them when you rest.`,
@@ -10464,7 +10464,7 @@
         iniziaPg: "Sei più rapido: agisci per primo.", iniziaNem: "La belva è più rapida: agisce per prima.",
         manualeTit: "Combattimento",
         manuale: (m, dado, inc) => [
-          `Per colpire tiri un d20 e aggiungi il modificatore di Vigore (${fmtN(m)}): se il totale supera la Classe armatura del Mastino, lo colpisci e infliggi ${dado} ${fmtN(m)} danni.`,
+          `Per colpire tiri un d20 e aggiungi il modificatore di ${nomeAttrClasse()} (${fmtN(m)}): se il totale supera la Classe armatura del Mastino, lo colpisci e infliggi ${dado} ${fmtN(m)} danni.`,
           "Se sul d20 esce 20 è un colpo critico: colpisci sempre e tiri il doppio dei dadi di danno. Vale anche per il Mastino.",
           "A ogni turno puoi compiere un'azione: «attacca il mastino», «colpisci con la torcia» oppure «bevi la pozione». Prendere in mano la torcia o lo scudo non consuma l'azione (una volta per turno)." +
             (inc ? " Puoi anche lanciare un incantesimo, per esempio «lancio " + inc + "», oppure con il pulsante «Lancia» nella scheda." : ""),
@@ -10578,7 +10578,7 @@
         iniziaPg: "You are quicker: you act first.", iniziaNem: "The beast is quicker: it acts first.",
         manualeTit: "Combat",
         manuale: (m, dado, inc) => [
-          `To hit, roll a d20 and add your Might modifier (${fmtN(m)}): if the total beats the Mastiff's Armor Class, you hit it and deal ${dado} ${fmtN(m)} damage.`,
+          `To hit, roll a d20 and add your ${nomeAttrClasse()} modifier (${fmtN(m)}): if the total beats the Mastiff's Armor Class, you hit it and deal ${dado} ${fmtN(m)} damage.`,
           "If the d20 shows a 20 it is a critical hit: it always hits and you roll twice the damage dice. The same goes for the Mastiff.",
           "Each turn you can take one action: “attack the mastiff”, “strike with the torch” or “drink the potion”. Taking the torch or the shield in hand does not use up your action (once per turn)." +
             (inc ? " You can also cast a spell, for example “I cast " + inc + "”, or with the “Cast” button on your sheet." : ""),
@@ -11098,12 +11098,12 @@
         pari: it ? (x, y) => `Agilità pari: si tira un d20 a testa. Tu ${x}, ${t.il} ${y}.` : (x, y) => `Agility tied: each side rolls a d20. You ${x}, ${t.the} ${y}.`,
         iniziaNem: it ? `${t.Il} è più rapido: agisce per primo.` : `${t.The} is quicker: it acts first.`,
         manuale: it ? (m, dado, inc) => [
-          `Per colpire tiri un d20 e aggiungi il modificatore di Vigore (${fmtN(m)}): se il totale supera la Classe armatura ${t.del}, lo colpisci e infliggi ${dado} ${fmtN(m)} danni.`,
+          `Per colpire tiri un d20 e aggiungi il modificatore di ${nomeAttrClasse()} (${fmtN(m)}): se il totale supera la Classe armatura ${t.del}, lo colpisci e infliggi ${dado} ${fmtN(m)} danni.`,
           "Se sul d20 esce 20 è un colpo critico: colpisci sempre e tiri il doppio dei dadi di danno. Vale anche per il nemico.",
           `A ogni turno puoi compiere un'azione: «attacco ${t.il}», «colpisco con la torcia» oppure «bevo la pozione». Prendere in mano la torcia o lo scudo non consuma l'azione (una volta per turno).` + (inc ? " Puoi anche lanciare un incantesimo, per esempio «lancio " + inc + "», oppure con il pulsante «Lancia» nella scheda." : ""),
           n > 1 ? `${t.Il} attacca ${n} volte per turno, ma ogni colpo è debole.` : `${t.Il} attacca a ogni turno.`
         ] : (m, dado, inc) => [
-          `To hit, roll a d20 and add your Might modifier (${fmtN(m)}): if the total beats ${t.the}'s Armor Class, you hit it and deal ${dado} ${fmtN(m)} damage.`,
+          `To hit, roll a d20 and add your ${nomeAttrClasse()} modifier (${fmtN(m)}): if the total beats ${t.the}'s Armor Class, you hit it and deal ${dado} ${fmtN(m)} damage.`,
           "If the d20 shows a 20 it is a critical hit: it always hits and you roll twice the damage dice. The same goes for the enemy.",
           `Each turn you can take one action: “attack ${t.the}”, “strike with the torch” or “drink the potion”. Taking the torch or the shield in hand does not use up your action (once per turn).` + (inc ? " You can also cast a spell, for example “I cast " + inc + "”, or use the “Cast” button on the sheet." : ""),
           n > 1 ? `${t.The} attacks ${n} times per turn, but each blow is weak.` : `${t.The} attacks every turn.`
@@ -11173,7 +11173,10 @@
     const pvMaxPg = () => saluteMaxPg();
     const pvPg = () => Math.max(0, pvMaxPg() - (pg.dannoFisico || 0));
     const statPg = (a) => (Number(pg.statistiche && pg.statistiche[a]) || 10) + (eff("potenza") ? 2 : 0);
-    const modLottaPg = () => mod(statPg("Lotta"));
+    const modLottaPg = () => mod(statPg("Lotta")); /* forza pura: Presa e prove di forza */
+    const attrClassePg = () => (pg && window.Regole && Regole.ATTR_CLASSE[pg.classe]) || "Vigore";
+    const modAttaccoPg = () => mod(statPg(attrClassePg())); /* 01/11: tiro per colpire e danno di tutti gli attacchi */
+    function nomeAttrClasse() { return Lingua.nome("attributi", attrClassePg()); }
     const modAgiPg = () => mod(statPg("Agilità"));
     const caScontro = () => (Number(caAttuale()) || 10) + malusStatoCA() + (eff("scudo") ? 2 : 0) + (eff("muro") ? 3 : 0) + (eff("cerchio") ? 2 : 0) + (eff("guardia") ? (Number(scontro.guardiaVal) || 2) : 0);
     const passoDado = (d) => (d >= 12 ? 12 : d + 2); /* Arma Migliorata: 1d6→1d8, 1d8→1d10, 1d10→1d12 */
@@ -11291,7 +11294,7 @@
       else { let x, y; do { x = tira(20); y = tira(20); } while (x === y); testo += CB.pari(x, y) + " "; scontro.primo = x > y ? "pg" : "nem"; }
       if (opz.primo) scontro.primo = opz.primo; /* sorpresa: chi sorprende agisce per primo */
       const inc = listaIncantesimi().find(i => i.id !== "luce");
-      aggiungi({ tipo: "prova", titolo: CB.manualeTit, dati: [], righe: CB.manuale(modLottaPg(), "1d" + dadoArmaPg(false), inc ? nomeInc(inc) : "") });
+      aggiungi({ tipo: "prova", titolo: CB.manualeTit, dati: [], righe: CB.manuale(modAttaccoPg(), "1d" + dadoArmaPg(false), inc ? nomeInc(inc) : "") });
       sist(opz.primo ? (opz.sorpresa || "").trim() : testo + (scontro.primo === "pg" ? CB.iniziaPg : CB.iniziaNem)); /* sorpresa: niente tiro d'iniziativa */
       if (scontro.primo === "pg") turnoPgScontro();
       else { barraScontro(); stato(true, CB.attesa); setTimeout(turnoNemScontro, pausaScontro()); }
@@ -11354,7 +11357,7 @@
       const coraggio = anelloAlDito() && pvPg() <= Math.floor(pvMaxPg() / 4) ? 1 : 0; /* coraggio dei Vespera: +1 al tiro per colpire a salute bassa */
       if (coraggio && !scontro.coraggio) { scontro.coraggio = true; sist(A2.anello.coraggio); }
       const pre = scontro.prossimo || {}; scontro.prossimo = null; /* Puntura di Spillo, Colpo alla Giuntura */
-      const ca = caNem(), m = modLottaPg(), mA = m + coraggio + (pre.bonus || 0) + malusStatoAtt(), tAtt = tiroAttPg(), d = tAtt.d, tot = d + mA, crit = d >= CMB.sogliaCrit(scontro, 20), ok = crit || tot > ca; /* Esposto e Mille Soli allargano il critico */
+      const ca = caNem(), m = modAttaccoPg(), mA = m + coraggio + (pre.bonus || 0) + malusStatoAtt(), tAtt = tiroAttPg(), d = tAtt.d, tot = d + mA, crit = d >= CMB.sogliaCrit(scontro, 20), ok = crit || tot > ca; /* Esposto e Mille Soli allargano il critico */
       const righe = [];
       if (tAtt.tiri) righe.push(BT.svantaggio(tAtt.tiri[0], tAtt.tiri[1])); /* Accecato */
       if (crit) guadagnaFuria(2);
@@ -11531,7 +11534,7 @@
       pg.risorsaUsata = Math.max(0, pg.risorsaUsata - n); disegnaVitali(); modificato();
       return RT.furia(n, risorsaAttuale(), r.max);
     }
-    const cdTecniche = () => 8 + mod(statPg("Vigore")) + livelloPg(); /* anche lo Sciamano: i veleni agiscono sul corpo */
+    const cdTecniche = () => 8 + modAttaccoPg() + livelloPg(); /* 01/11: caratteristica di classe (Sciamano: Agilità) */
     /* punti natura dello Sciamano: recupera fino al massimo, restituisce quanti ne ha ripresi */
     function guadagnaNatura(n) {
       const r = risorsaPg(); if (!r || r.id !== "natura" || !(n > 0)) return 0;
@@ -11543,12 +11546,12 @@
     function ctxTecnica() {
       const nem = scontro || ultimoNemico;
       return {
-        tira, liv: livelloPg(), modAtt: modLottaPg() + malusStatoAtt(), modDanno: modLottaPg() + bonusArmaPg(), dado: dadoArmaPg(false), ca: caNem, boss: bossNem(),
+        tira, liv: livelloPg(), modAtt: modAttaccoPg() + malusStatoAtt(), modDanno: modAttaccoPg() + bonusArmaPg(), dado: dadoArmaPg(false), ca: caNem, boss: bossNem(),
         svantaggio: svantaggioPg(), /* Accecato (28/10) */
         immuni: ((nem && NEMICI[nem.id] && NEMICI[nem.id].immune) || []).map(x => x === "sangue" ? "sanguina" : x === "veleno" ? "avvelenato" : x), /* immunità della creatura agli stati */
         piuDadiVuln: dadiVuln(tipoArmaInMano()), /* vulnerabilità del nemico al tipo d'arma */
         cd: cdTecniche(), modTs: modNem("Vigore"),
-        modSpirito: mod(statPg("Spirito")),
+        modSpirito: modAttaccoPg(), /* 01/11: esplosione del Bulbo e simili con la caratteristica di classe (Sciamano: Agilità) */
         resisteVeleno: !!(nem && NEMICI[nem.id] && (NEMICI[nem.id].resiste || []).includes("veleno")), /* Dafne e il sovrano */
         linfaRigeneratrice: sciamano() && viaPg() === "guendalina",
         naturaPiu: (n) => guadagnaNatura(n),

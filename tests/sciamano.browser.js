@@ -83,7 +83,7 @@ caso("Sciamano: Punta di Mandragora avvelena; il veleno al turno del nemico rest
   await usaTec(page, "mandragora");
   eq(await page.evaluate(() => pg.risorsaUsata), 2, "natura spesa"); vero(/Avvelenato/.test(await page.innerText("#schedaNem")), "scheda nemico senza Avvelenato");
   await aspettaTurnoPg(page);
-  eq(await page.evaluate(() => [pg.risorsaUsata, scontro.eff.avvelenato, scontro.pv]), [1, 2, 60 - 7 - 2], "recupero, durata (28/10: 3 → 2), danni");
+  eq(await page.evaluate(() => [pg.risorsaUsata, scontro.eff.avvelenato, scontro.pv]), [1, 2, 60 - 5 - 2], "recupero, durata (28/10: 3 → 2), danni (01/11: 4 + Agilità 1)");
   const d = await diario(page); vero(/Il veleno brucia: 2 danni/.test(d), "manca il tick"); vero(/Forza della natura: \+1 punti natura/.test(d), "manca il recupero");
   vero(/Arma rivestita/.test(await page.innerText("#schedaPg, body")), "manca l'arma rivestita nella scheda");
   eq(errori, [], "errori"); await chiudi();
@@ -114,7 +114,7 @@ caso("Sciamano: Pelle di Corteccia — il morso fa metà danni e l'acido brucia 
   await usaTec(page, "corteccia"); await aspettaTurnoPg(page);
   const d = await diario(page), m = d.match(/La corteccia attutisce il colpo \((\d+) → (\d+) danni\)/);
   vero(m, "manca la Pelle di Corteccia"); eq(Number(m[2]), Math.floor(Number(m[1]) / 2), "metà danni");
-  eq(await page.evaluate(() => [pg.dannoFisico, scontro.pv, pg.risorsaUsata]), [Number(m[2]), 60 - 4 - 3, 4], "danni, acido, natura");
+  eq(await page.evaluate(() => [pg.dannoFisico, scontro.pv, pg.risorsaUsata]), [Number(m[2]), 60 - 2 - 3, 4], "danni, acido, natura (01/11: 1 + Agilità 1)");
   eq(errori, [], "errori"); await chiudi();
 });
 caso("Sciamano: Linfa Furiosa — attacco in più e alla fine 1d6 di danni", async (b) => {
@@ -291,11 +291,11 @@ caso("Sala di prova: lo Sciamano vede le tecniche della natura; Mandragora avvel
   await page.selectOption("#pClasse", "sciamano"); await page.fill("#pMen", "12"); await page.dispatchEvent("#pMen", "change");
   await page.selectOption("#nTipo", "manichino"); await page.click("#svNuovo");
   const ids = await page.$$eval("#svTec [data-tec]", bs => bs.map(x => x.dataset.tec)); eq(ids, ["mandragora", "micelio", "infuso"]);
-  eq(await page.evaluate(() => SalaProva.stato().pg.furiaMax), 11, "10 + Spirito 1");
+  eq(await page.evaluate(() => SalaProva.stato().pg.furiaMax), 11, "10 + Agilità 1 (01/11)");
   await page.evaluate(() => SalaProva.accoda(15, 4, /* veleno */ 2));
   await page.click('[data-tec="mandragora"]');
   const st = await page.evaluate(() => ({ nat: SalaProva.stato().pg.furia, av: SalaProva.stato().s.eff.avvelenato, pv: SalaProva.stato().s.pv }));
-  eq([st.nat, st.av, st.pv], [10, 2, 60 - 7 - 2], "11 − 2 + 1, veleno 3 → 2");
+  eq([st.nat, st.av, st.pv], [10, 2, 60 - 5 - 2], "11 − 2 + 1, veleno 3 → 2 (01/11: 4 + Agilità 1)");
   vero(/Forza della natura/.test(await page.innerText("#svLog")), "manca il recupero"); vero(/Avvelenato 1d4/.test(await page.innerText("#svNem")), "scheda nemico");
   eq(errori, [], "errori"); await chiudi();
 });

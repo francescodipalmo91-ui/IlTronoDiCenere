@@ -21,7 +21,7 @@ Adattamento della lista originale (13 poteri in tempo reale) alle regole del gio
 
 ## 2. Regole della classe
 
-- **Punti natura:** 10 + mod Spirito; a ogni livello + mod Spirito + nuovo livello. Riposo: 1d4 + livello.
+- **Punti natura:** 10 + mod Agilità; a ogni livello + mod Agilità + nuovo livello (01/11: caratteristica di classe = Agilità, prima Spirito). Riposo: 1d4 + livello.
 - **Recupero in combattimento (DECISO): sulla forza della natura.** La natura torna quando la natura colpisce, non l'arma. Stessa tabella del Guerriero: +1 ai livelli 1-2, +2 ai livelli 3-4, +3 al livello 5.
   - **Cosa conta:**
     - danni da veleno (Avvelenato) e da Tossina;
@@ -33,8 +33,8 @@ Adattamento della lista originale (13 poteri in tempo reale) alle regole del gio
   - **Doppio se nel turno c'è Tossina**: il premio per chi investe nel veleno.
   - **Non contano** i danni dell'arma, nemmeno sul critico, né gli attacchi in più di Linfa Furiosa.
   - **Contro Dafne e il sovrano** (resistenti) il veleno dimezzato fa comunque danno, quindi dà natura normalmente.
-- **Attacco:** d20 + mod Vigore contro CA, danno dell'arma + mod Vigore. Una tecnica che manca costa comunque.
-- **Tiro salvezza del nemico (DECISO): sempre sul corpo.** I veleni agiscono sul corpo: d20 + mod Vigore del nemico (il vecchio Corpo è confluito in Vigore) contro CD = 8 + mod Vigore + livello, come il Guerriero.
+- **Attacco:** d20 + mod Agilità contro CA, danno dell'arma + mod Agilità, sia con l'arma sia con le tecniche (01/11, prima Vigore). Una tecnica che manca costa comunque.
+- **Tiro salvezza del nemico (DECISO): sempre sul corpo.** I veleni agiscono sul corpo: d20 + mod Vigore del nemico (il vecchio Corpo è confluito in Vigore) contro CD = 8 + mod Agilità + livello (01/11: caratteristica di classe).
 - **Armi:** tutte tranne quelle «da battaglia». Le tecniche non dipendono dal tipo d'arma (niente rami): il veleno funziona su lama, mazza o bastone.
 - **Capacità di classe:** Mente incrollabile (esistente).
 
@@ -82,7 +82,7 @@ Nel codice: `resiste: ["veleno"]` per Dafne e il sovrano (danno dimezzato), in `
 | 4 | Miasma Corrosivo | Rivestimento | 8 | Attacco con +1 dado; per 3 turni ogni colpo a segno dà Avvelenato 2 e Sbilanciato 2 |
 | 4 | Botola di Spore | Trappola | 7 | Attacco normale; al prossimo attacco del nemico: tiro salvezza → Frastornato 2; se resiste (o è un boss), Accecato 2 |
 | 4 | Linfa Furiosa | Potenziamento | 8 | Attacco normale; per 3 turni fai un attacco in più a ogni turno (solo il dado dell'arma). Alla fine subisci 1d6 danni |
-| 5 | Fioritura del Parassita Colossale | Spora | 10 | Una volta per riposo. Consuma l'azione. Il bulbo vive 3 turni: all'inizio di ogni turno del nemico gli fa 1d6 veleno e rinnova Avvelenato e Sbilanciato; tu recuperi 1d4 salute a ogni tuo turno. Al terzo turno esplode: 2d6 + mod Spirito, tiro salvezza → Stordito 1 (boss: Indebolito 2) |
+| 5 | Fioritura del Parassita Colossale | Spora | 10 | Una volta per riposo. Consuma l'azione. Il bulbo vive 3 turni: all'inizio di ogni turno del nemico gli fa 1d6 veleno e rinnova Avvelenato e Sbilanciato; tu recuperi 1d4 salute a ogni tuo turno. Al terzo turno esplode: 2d6 + mod Agilità, tiro salvezza → Stordito 1 (boss: Indebolito 2) |
 | 5 | Cuore di Tossina *(nuova)* | Spora | 9 | Attacco con +1 dado; se il nemico è Avvelenato, il veleno diventa Tossina per 3 turni + Indebolito 3; altrimenti Avvelenato 2 |
 | 5 | Abbraccio della Foresta *(nuova)* | Radice | 10 | Attacco con +1 dado; tiro salvezza → Inibito 3 + Sbilanciato 3 (boss: Sbilanciato + Indebolito 2); per 3 turni +2 CA |
 

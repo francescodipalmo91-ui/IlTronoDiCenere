@@ -4,11 +4,13 @@
    Contiene solo meccaniche visibili al giocatore, niente dinamiche di trama.
    ===================================================================== */
 window.Regole = (() => {
+  /* 01/11: attrClasse = caratteristica di classe: tiro per colpire e danno di TUTTI gli attacchi (arma, tecniche, incantesimi),
+     CD delle tecniche e degli incantesimi, risorsa. Guerriero Vigore, Sciamano Agilità, Arcanista Mente, Monaco Spirito */
   const CLASSI = { /* chiavi interne: Soldato = Guerriero, Forestiero = Sciamano, Sapiente = Arcanista, Accolito = Monaco */
-    Soldato: { dado: 10, risorsa: "furia", attrRisorsa: "Vigore" },
-    Forestiero: { dado: 8, risorsa: "natura", attrRisorsa: "Spirito" },
-    Sapiente: { dado: 6, risorsa: "mana", attrRisorsa: "Mente" },
-    Accolito: { dado: 8, risorsa: "fede", attrRisorsa: "Spirito" } /* 01/11: da d6 a d8, accompagna le brigate */
+    Soldato: { dado: 10, risorsa: "furia", attrRisorsa: "Vigore", attrClasse: "Vigore" },
+    Forestiero: { dado: 8, risorsa: "natura", attrRisorsa: "Agilità", attrClasse: "Agilità" },
+    Sapiente: { dado: 6, risorsa: "mana", attrRisorsa: "Mente", attrClasse: "Mente" },
+    Accolito: { dado: 8, risorsa: "fede", attrRisorsa: "Spirito", attrClasse: "Spirito" } /* 01/11: da d6 a d8, accompagna le brigate */
   };
   const perClasse = (filtro, valore) => Object.fromEntries(Object.entries(CLASSI).filter(([, c]) => filtro(c)).map(([k, c]) => [k, valore(c)]));
   const marziale = (c) => c.risorsa === "furia" || c.risorsa === "natura";
@@ -44,6 +46,7 @@ window.Regole = (() => {
   CLASSI,
   /* ricavati da CLASSI, così creazione e gioco non li ricopiano */
   DADO_VITA: perClasse(() => true, c => c.dado),
+  ATTR_CLASSE: perClasse(() => true, c => c.attrClasse),
   RISORSA_MARZIALE: perClasse(marziale, c => ({ id: c.risorsa, attr: c.attrRisorsa })), /* punti furia (Guerriero), punti natura (Sciamano) */
   ATTR_MAGIA: perClasse(c => !marziale(c), c => c.attrRisorsa),                         /* attributo del mana (Arcanista) e della fede (Monaco) */
   ARMATURE_CLASSI: { Forestiero: ["Armatura leggera", "Armatura media"], Sapiente: ["Armatura leggera"], Accolito: ["Armatura leggera", "Armatura media"] },

@@ -290,7 +290,7 @@ caso("Gioco: contro Ettore (boss) Eco del Metallo non stordisce e Fendente della
   await page.evaluate(() => { scontro.pv = 90; scontro.pvMax = 90; });
   await accoda(page, [R(19, 20), R(1, 6)]);
   await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "eco")));
-  eq(await page.evaluate(() => [scontro.eff.bloccato || 0, scontro.eff.sbilanciato]), [0, 1]);
+  eq(await page.evaluate(() => [scontro.eff.silenzio || 0, scontro.eff.debole]), [0, 2], "01/11: boss → Indebolito");
   vero(/troppo potente/.test(await diario(page)), "manca il messaggio dei boss"); eq(errori, [], "errori"); await chiudi();
 });
 caso("Gioco: salita al livello 3 — furia + mod Vigore + livello e avviso della via", async (b) => {
@@ -470,7 +470,7 @@ caso("Gioco: Percossa al Mento — il 20 del mastino non è critico nel turno su
   await accoda(page, [R(18, 20), R(2, 8), /* nemico: ricarica 1, zampata 20, danno 1 */ R(1, 6), R(20, 20), R(1, 4)], [0.9]);
   await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "mento"))); await aspettaTurnoPg(page);
   const d = await diario(page);
-  vero(/Intontito/.test(d), "manca lo stato"); vero(/Zampata: Colpito/.test(d), "il 20 doveva colpire senza critico"); vero(!/Zampata: COLPO CRITICO/.test(d), "il colpo non deve essere critico");
+  vero(/Frastornato/.test(d), "manca lo stato (01/11: Frastornato)"); vero(/Zampata: Colpito/.test(d), "il 20 doveva colpire senza critico"); vero(!/Zampata: COLPO CRITICO/.test(d), "il colpo non deve essere critico");
   eq(errori, [], "errori"); await chiudi();
 });
 caso("Gioco: via di Aldo col martello — Sigillo e Crollo al livello 4, il sigillo aggiunge 1d4 con le cariche piene", async (b) => {
@@ -549,7 +549,7 @@ caso("Gioco: contro Ettore (boss) Ferita Profonda lascia l'Esposto a 2 turni", a
   await page.evaluate(() => { scontro.pv = 90; scontro.pvMax = 90; });
   await accoda(page, [R(15, 20), R(1, 6), R(1, 6)]);
   await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "ferita_profonda")));
-  eq(await page.evaluate(() => [scontro.eff.esposto, scontro.eff.debole]), [2, 2]);
+  eq(await page.evaluate(() => [scontro.eff.esposto, scontro.eff.sbilanciato]), [2, 2], "01/11: Sbilanciato al posto di Indebolito");
   vero(/dura al massimo 2 turni/.test(await diario(page)), "manca il messaggio dei boss"); eq(errori, [], "errori"); await chiudi();
 });
 caso("Gioco: scelta della via con la mazza mostra le abilità perforanti", async (b) => {
@@ -701,8 +701,8 @@ caso("Gioco in inglese: una tecnica nuova si usa senza errori e con i testi ingl
   await page.evaluate(() => localStorage.setItem("lingua", "en")); await page.reload(); await page.waitForTimeout(500);
   await page.evaluate(() => avviaScontro("esploratore", { ctx: "ettore", testi: "esploratore", primo: "pg" })); await aspettaTurnoPg(page);
   await page.evaluate(() => { scontro.pv = 90; scontro.pvMax = 90; });
-  await accoda(page, [R(19, 20), R(1, 6), R(1, 6)]);
-  await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "squarcia")));
+  await accoda(page, [R(19, 20), R(1, 6)]);
+  await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "eco"))); /* 01/11: Eco ha solo controllo, il boss lo ignora senza tiro */
   vero(/too powerful/.test(await diario(page)), "manca il testo inglese dei boss"); eq(errori, [], "errori"); await chiudi();
 });
 

@@ -670,3 +670,9 @@ Le indicazioni di scena (tra parentesi) diventano narrazione, le battute dialogo
 
 **Altro che tocca gli stati**
 17. **Tecniche dello Sciamano:** ancora da scrivere; con i veleni e la foresta è la classe che più usa gli stati. L'Avvelenato del giocatore e quello dei nemici ora coincidono.
+
+## Decisioni del 1° novembre 2026
+- **Caratteristica di classe** per tiro per colpire e danno di tutti gli attacchi (arma, tecniche, incantesimi), per la CD e per la risorsa: Guerriero Vigore, Sciamano Agilità, Arcanista Mente, Monaco Spirito. Mente incrollabile dello Sciamano resta su Spirito.
+- **Monaco d8** (prima d6), senza compensi.
+- **Peso dei giorni:** ogni 10 giorni −1 alla salute mentale massima (avviso nel riposo); fontana del giardino (un sorso per caccia) e ogni Lacrima della Regina ne restituiscono 1, solo tra quelli persi così (`usate.logorio`, `recuperaLogorio()`: le lacrime 2 e 3, quando esisteranno, devono chiamarla).
+- **Lanterna di Guendalina** per chi accetta la scaletta senza luce; olio di scarto da ogni preparato del laboratorio.

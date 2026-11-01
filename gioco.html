@@ -4718,6 +4718,7 @@
           recupero: (d, liv, tot) => `Recupero: 1d4 + livello = ${d} + ${liv} = ${tot}`,
           digiuno: "Nessuna razione di Adele: a stomaco vuoto recuperi soltanto 1 punto.",
           riga: (nome, da, a) => `${nome}: ${da} → ${a}`,
+          logorio: (n, max) => `Sono passati altri dieci giorni tra queste mura. La casa ti scava dentro: perdi 1 punto di salute mentale massima (ora ${max}). La fontana del giardino e certi reperti della casa possono restituirlo.`, logorioTit: "Il peso dei giorni",
           cucinate: (n, tot) => `Guendalina ha preparato ${n} ${n === 1 ? "razione" : "razioni"} di Adele · scorta ${tot}/${RAZIONI_MAX}`,
           scortaPiena: () => `Guendalina ha cucinato, ma la scorta di razioni di Adele è già piena (${RAZIONI_MAX}).`,
           fame: ["Il fuoco è caldo e il sonno ti chiama, ma lo stomaco vuoto ti tiene sveglio. Senza le razioni di Adele non riesci a riposare lontano dalla cucina."],
@@ -4786,6 +4787,7 @@
           recupero: (d, liv, tot) => `Recovery: 1d4 + level = ${d} + ${liv} = ${tot}`,
           digiuno: "No rations of Adele's: on an empty stomach you recover only 1 point.",
           riga: (nome, da, a) => `${nome}: ${da} → ${a}`,
+          logorio: (n, max) => `Ten more days have passed within these walls. The house hollows you out: you lose 1 point of maximum mental health (now ${max}). The garden fountain and certain relics of the house can give it back.`, logorioTit: "The weight of the days",
           cucinate: (n, tot) => `Guendalina has prepared ${n} ${n === 1 ? "ration" : "rations"} of Adele's · store ${tot}/${RAZIONI_MAX}`,
           scortaPiena: () => `Guendalina has cooked, but the store of Adele's rations is already full (${RAZIONI_MAX}).`,
           fame: ["The fire is warm and sleep is calling, but your empty stomach keeps you awake. Without Adele's rations you cannot rest away from the kitchen."],
@@ -6274,7 +6276,10 @@
        si recupera sconfiggendo o risparmiando quel guardiano. usate.ferite_mente = { ettore: 1, ... } */
     const FERITE_MAX = 3;
     const feriteMente = () => { try { return Object.values((usate && usate.ferite_mente) || {}).reduce((a, n) => a + (Number(n) || 0), 0); } catch (e) { return 0; } };
-    const maxMentali = () => (pg.saluteMentale != null ? Number(pg.saluteMentale) : 10 + mod(spirito())) + crescitaPg().mente - feriteMente();
+    const maxMentali = () => (pg.saluteMentale != null ? Number(pg.saluteMentale) : 10 + mod(spirito())) + crescitaPg().mente - feriteMente() - logorio();
+    /* 01/11: logorio dei giorni: ogni 10 giorni passati in casa −1 alla salute mentale massima; fontana e lacrime della Regina ne restituiscono 1 */
+    const GIORNI_LOGORIO = 10;
+    const logorio = () => { try { return Math.max(0, Number(usate && usate.logorio) || 0); } catch (e) { return 0; } };
     /* mana (Sapiente e Accolito): il massimo viene dalla creazione (più la crescita di livello), quello speso fa parte della partita */
     const manaMax = () => (pg.mana != null ? Number(pg.mana) + crescitaPg().risorsa : null);
     /* ---------- Incantesimi (Arcanista e Monaco): le scuole di js/magia.js ----------
@@ -6479,6 +6484,13 @@
       pg.dannoMentale = Math.min(maxMentali(), pg.dannoMentale || 0);
       disegnaVitali(); aggiornaMentali(); modificato();
       return RG.morte.ferita(nome, maxMentali());
+    }
+    /* 01/11: fontana e lacrime della Regina restituiscono 1 punto di massimo perso col logorio dei giorni; restituisce la riga o null */
+    function recuperaLogorio() {
+      if (!(logorio() > 0)) return null;
+      usate.logorio = logorio() - 1; salvaUsate();
+      disegnaVitali(); aggiornaMentali(); modificato();
+      return LINGUA === "en" ? `You feel lighter: 1 point of maximum mental health returns (now ${maxMentali()}).` : `Ti senti più leggero: torna 1 punto di salute mentale massima (ora ${maxMentali()}).`;
     }
     /* il guardiano è stato sconfitto o risparmiato: la paura se ne va e il massimo torna */
     /* 27/10 sera: tornano anche i punti di salute mentale attuale persi nelle sconfitte contro quel guardiano (usate.paura_danno) */
@@ -7567,6 +7579,7 @@
       aggiungiZaino({ id: "lacrima", nome: "La Lacrima della Regina", tipo: "reperto" });
       usate.q3 = "completata"; salvaUsate();
       aggiungi({ tipo: "narra", righe: Q.q3.inserisci });
+      { const ml = recuperaLogorio(); if (ml) sist(ml); } /* 01/11: ogni lacrima trovata (le altre due chiameranno recuperaLogorio) */
       sblocco(Q.sblocco.completata3, "mis"); disegnaMissioni();
       avvisaChiamata();
     }
@@ -7607,6 +7620,11 @@
       if (manaMax() != null) { const da = manaAttuale(); pg.manaUsato = Math.max(0, (pg.manaUsato || 0) - rec); righe.push(R.riga(U.mana, da, manaAttuale())); }
       if (ris) { const da = risorsaAttuale(); pg.risorsaUsata = Math.max(0, (pg.risorsaUsata || 0) - rec); righe.push(R.riga(nomeRisorsa(), da, risorsaAttuale())); }
       usate.giorno = (Number(usate.giorno) || 1) + 1;
+      if (usate.giorno % GIORNI_LOGORIO === 0) { /* 01/11: il peso dei giorni */
+        usate.logorio = logorio() + 1;
+        pg.dannoMentale = Math.min(maxMentali(), pg.dannoMentale || 0);
+        righe.push(R.logorio(usate.logorio, maxMentali()));
+      }
       if (Object.keys(statiPg()).filter(haStato).length) { righe.push(BT.riposoCura(Object.keys(statiPg()).filter(haStato).map(k => BT.stati[k].nome).join(", "))); } usate.stati_pg = {}; usate.stati_dado = {}; usate.protezione = null; /* il riposo scaccia gli stati e la protezione dei concentrati */
       for (const id in LUOGHI) if (usate[id] === "ko" && provaRipetibileDopoRiposo(id, LUOGHI[id])) delete usate[id]; /* il riposo sblocca le prove fallite */
       if (!usate.guendalinaAssente) { /* Guendalina cucina per il nuovo giorno */
@@ -8660,10 +8678,12 @@
       if (luogo !== "giardino") return;
       if (Number(usate.fontana_sorso) === cacciaCorrente()) return aggiungi({ tipo: "narra", righe: A2.fontana.esaurita });
       const max = pvMaxPg(), prima = pvPg();
-      if (prima >= max) return aggiungi({ tipo: "narra", righe: A2.fontana.inutile });
+      if (prima >= max && !(logorio() > 0)) return aggiungi({ tipo: "narra", righe: A2.fontana.inutile });
       pg.dannoFisico = 0; disegnaVitali(); modificato();
       usate.fontana_sorso = cacciaCorrente(); salvaUsate();
+      const ml = recuperaLogorio(); /* 01/11: anche 1 punto di mente massima perso coi giorni */
       aggiungi({ tipo: "narra", box: "ok", esito: A2.fontana.esito(prima, max), righe: usate.giardino_fontana === "ok" ? A2.fontana.beviSapendo : A2.fontana.bevi });
+      if (ml) sist(ml);
     }
     /* la fontana si studia con una di tre abilità, a scelta: ognuna arriva alla stessa verità per una strada diversa */
     const FONTANA_PROVE = {

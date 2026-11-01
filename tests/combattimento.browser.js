@@ -1248,6 +1248,24 @@ caso("Lanterna: chi ha già una luce (torcia) non la riceve", async (b) => {
   eq(errori, [], "errori"); await chiudi();
 });
 
+/* ======================= 01/11: il peso dei giorni ======================= */
+caso("Peso dei giorni: al 10° giorno −1 alla salute mentale massima con avviso; fontana e lacrima la restituiscono", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ usate: { riposo: "sbloccato", portaCucina: "aperta", dialogo_guendalina: "fine", giorno: 9 } }));
+  await page.evaluate(() => vai("cucina")); await page.waitForTimeout(400);
+  const max0 = await page.evaluate(() => maxMentali());
+  await page.evaluate(() => { pg.dannoFisico = 3; const r = curaRiposo(true); window.__r = r; });
+  eq(await page.evaluate(() => [usate.giorno, usate.logorio, maxMentali()]), [10, 1, max0 - 1], "giorno 10: −1 al massimo");
+  vero(await page.evaluate(() => window.__r.esitoRighe.some(t => /dieci giorni/.test(t))), "manca l'avviso");
+  await page.evaluate(() => { pg.dannoFisico = 3; curaRiposo(true); });
+  eq(await page.evaluate(() => [usate.giorno, usate.logorio]), [11, 1], "al giorno 11 niente di nuovo");
+  await page.evaluate(() => { usate.fontana_sorso = -1; vai("giardino"); }); await page.waitForTimeout(400);
+  await page.evaluate(() => beviFontana()); await page.waitForTimeout(200);
+  eq(await page.evaluate(() => [usate.logorio, maxMentali()]), [0, max0], "la fontana restituisce il punto");
+  await page.evaluate(() => { usate.logorio = 1; zaino.push({ id: "blasone", nome: "Blasone", tipo: "missione" }); inserisciBlasone(); });
+  eq(await page.evaluate(() => usate.logorio), 0, "la lacrima restituisce il punto");
+  eq(errori, [], "errori"); await chiudi();
+});
+
 (async () => {
   const browser = await chromium.launch();
   let ko = 0;

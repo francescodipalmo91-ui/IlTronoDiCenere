@@ -27,7 +27,7 @@ async function apri(browser, url, pg, partita) {
   page.on("dialog", d => d.accept());
   await page.addInitScript(([pg, partita]) => {
     if (!sessionStorage.getItem("inizializzato")) {
-      sessionStorage.setItem("inizializzato", "1"); localStorage.clear();
+      sessionStorage.setItem("inizializzato", "1"); localStorage.clear(); localStorage.setItem("trono_ritmo", "veloce");
       if (pg) localStorage.setItem("personaggio", JSON.stringify(pg));
       if (partita) localStorage.setItem("partita", JSON.stringify(partita));
     }

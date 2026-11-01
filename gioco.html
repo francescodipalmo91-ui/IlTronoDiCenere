@@ -192,6 +192,9 @@
       background: transparent; color: var(--text); border: 2px solid var(--line); display: inline-flex; align-items: center; justify-content: center;
     }
     #regole:hover { border-color: var(--accent); }
+    /* 01/11: ritmo dello scontro (Lento / Normale / Veloce) */
+    #ritmo { font: inherit; font-size: 0.85rem; line-height: 1; padding: 0.5rem 0.6rem; border-radius: 0.5rem; cursor: pointer; background: transparent; color: var(--text); border: 2px solid var(--line); display: inline-flex; align-items: center; gap: 0.3rem; white-space: nowrap; }
+    #ritmo:hover { border-color: var(--accent); }
     /* regolamento aperto sopra la partita, senza lasciare la pagina */
     #finestraRegole { position: fixed; inset: 0; z-index: 60; background: rgba(0, 0, 0, 0.55); display: flex; align-items: center; justify-content: center; padding: 1rem; }
     #finestraRegole[hidden] { display: none; }
@@ -486,7 +489,7 @@
       .barra { gap: 0.5rem; padding: calc(env(safe-area-inset-top, 0px) + 0.45rem) 0.75rem 0.45rem; }
       #statoSalvataggio, #statoCloud { display: none; }
       .barra-dx { gap: 0.4rem; }
-      #salva, #audio, #home, #regole { min-width: 2.75rem; min-height: 2.75rem; padding: 0 0.6rem; justify-content: center; }
+      #salva, #audio, #home, #regole, #ritmo { min-width: 2.75rem; min-height: 2.75rem; padding: 0 0.6rem; justify-content: center; }
       #salva { display: inline-flex; align-items: center; position: relative; background: transparent; color: var(--text); border-color: var(--line); }
       #salva .ico { display: block; }
       #salva .txt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -599,6 +602,7 @@
         <div class="barra-dx">
           <button type="button" id="salva"><svg class="ico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11l3 3v13H5z" fill="currentColor" fill-opacity="0.12"/><path d="M8 4v5h7V4"/><rect x="8" y="13" width="8" height="5"/></svg><span class="txt" data-t="salva">Salva partita</span></button>
           <button type="button" id="regole" data-t-aria="regole" aria-haspopup="dialog">?</button>
+          <button type="button" id="ritmo" data-t-aria="ritmo">⏱ <span id="ritmoTxt"></span></button>
           <button type="button" id="audio" aria-pressed="true">🔊</button>
           <a id="home" href="index.html" data-t-aria="home"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 21V11.5a6.5 6.5 0 0 1 13 0V21" fill="currentColor" fill-opacity="0.15"/><path d="M3.5 21h17"/><path d="M12 5v16"/><circle cx="10.2" cy="14" r="0.7" fill="currentColor"/><circle cx="13.8" cy="14" r="0.7" fill="currentColor"/></svg></a>
         </div>
@@ -1046,7 +1050,7 @@
         ui: {
           titoloPagina: "Il dungeon", schedaPg: "Scheda del personaggio", completa: "Scheda completa",
           caratteristiche: "Caratteristiche", abilita: "Abilità", equipaggiamento: "Equipaggiamento", zaino: "Zaino", incantesimi: "Incantesimi", mana: "Punti arcano", lanciaInc: "Lancia",
-          home: "Torna alla pagina iniziale", regole: "Regolamento", audioOn: "Suoni attivi: clicca per disattivarli", audioOff: "Suoni disattivati: clicca per attivarli", salva: "Salva partita", diario: "Diario dell'avventura", ariaTesto: "Cosa fa il tuo personaggio?", invia: "Invia",
+          home: "Torna alla pagina iniziale", regole: "Regolamento", ritmo: "Ritmo dello scontro: clicca per cambiarlo", ritmoNomi: { lento: "Lento", normale: "Normale", veloce: "Veloce" }, ritmoMsg: (n) => `Ritmo dello scontro: ${n}.`, audioOn: "Suoni attivi: clicca per disattivarli", audioOff: "Suoni disattivati: clicca per attivarli", salva: "Salva partita", diario: "Diario dell'avventura", ariaTesto: "Cosa fa il tuo personaggio?", invia: "Invia",
           placeholder: "Cosa fai? Per esempio: esamino l'arazzo sulla sinistra", scegliAzione: "Scegli un'azione qui sopra",
           scrive: "Il narratore sta scrivendo…", notaInizio: "Scrivi qui sotto cosa fa il tuo personaggio.",
           nonSalvate: "Modifiche non salvate", salvataAlle: (h) => `Partita salvata alle ${h}`, nessunSalvataggio: "Nessun salvataggio",
@@ -1488,7 +1492,7 @@
         ui: {
           titoloPagina: "The dungeon", schedaPg: "Character sheet", completa: "Full sheet",
           caratteristiche: "Attributes", abilita: "Skills", equipaggiamento: "Equipment", zaino: "Pack", incantesimi: "Spells", mana: "Arcane points", lanciaInc: "Cast",
-          home: "Back to the home page", regole: "Rules", audioOn: "Sound on: click to turn it off", audioOff: "Sound off: click to turn it on", salva: "Save game", diario: "Adventure journal", ariaTesto: "What does your character do?", invia: "Send",
+          home: "Back to the home page", regole: "Rules", ritmo: "Combat pace: click to change it", ritmoNomi: { lento: "Slow", normale: "Normal", veloce: "Fast" }, ritmoMsg: (n) => `Combat pace: ${n}.`, audioOn: "Sound on: click to turn it off", audioOff: "Sound off: click to turn it on", salva: "Save game", diario: "Adventure journal", ariaTesto: "What does your character do?", invia: "Send",
           placeholder: "What do you do? For example: I examine the tapestry on the left", scegliAzione: "Choose an action above",
           scrive: "The narrator is writing…", notaInizio: "Write below what your character does.",
           nonSalvate: "Unsaved changes", salvataAlle: (h) => `Game saved at ${h}`, nessunSalvataggio: "No save yet",
@@ -10394,7 +10398,20 @@
     };
     const nomeRisorsaInc = () => (pg && pg.classe === "Accolito" ? (Lingua.t({ it: "punti fede", en: "faith" })) : "mana");
     const cdIncantesimi = () => { const a = pg && ATTR_INC[pg.classe]; return a ? 8 + mod(statPg(a)) + (Number(pg.livello) || 1) : null; };
-    const SCARTO_AGILE = 4, PAUSA_SCONTRO = 2200; /* 27/10: da 900 a 2200 ms, per avere il tempo di leggere ogni colpo */
+    const SCARTO_AGILE = 4;
+    /* 01/11: ritmo dello scontro scelto dal giocatore (barra in alto, ⏱). Pausa tra un turno e l'altro e prima dell'esito finale */
+    const RITMI = { lento: 4500, normale: 3000, veloce: 1600 }, ORDINE_RITMI = ["lento", "normale", "veloce"];
+    let ritmo = "lento";
+    try { const r = localStorage.getItem("trono_ritmo"); if (RITMI[r]) ritmo = r; } catch (e) {}
+    const pausaScontro = () => RITMI[ritmo];
+    function mostraRitmo() { const t = document.getElementById("ritmoTxt"); if (t) t.textContent = TX.ui.ritmoNomi[ritmo]; }
+    function cambiaRitmo() {
+      ritmo = ORDINE_RITMI[(ORDINE_RITMI.indexOf(ritmo) + 1) % ORDINE_RITMI.length];
+      try { localStorage.setItem("trono_ritmo", ritmo); } catch (e) {}
+      mostraRitmo(); sist(TX.ui.ritmoMsg(TX.ui.ritmoNomi[ritmo]));
+    }
+    document.getElementById("ritmo").addEventListener("click", cambiaRitmo);
+    mostraRitmo();
     const MUSICHE_SCONTRO = ["audio/combat1.mp3", "audio/combat2.mp3", "audio/sala_addestramento.mp3"]; /* una a caso a ogni scontro */
 
     const CB_BASE = ({
@@ -11250,7 +11267,7 @@
       aggiungi({ tipo: "prova", titolo: CB.manualeTit, dati: [], righe: CB.manuale(modLottaPg(), "1d" + dadoArmaPg(false), inc ? nomeInc(inc) : "") });
       sist(opz.primo ? (opz.sorpresa || "").trim() : testo + (scontro.primo === "pg" ? CB.iniziaPg : CB.iniziaNem)); /* sorpresa: niente tiro d'iniziativa */
       if (scontro.primo === "pg") turnoPgScontro();
-      else { barraScontro(); stato(true, CB.attesa); setTimeout(turnoNemScontro, PAUSA_SCONTRO); }
+      else { barraScontro(); stato(true, CB.attesa); setTimeout(turnoNemScontro, pausaScontro()); }
     }
     /* ogni turno è una tendina: «1° turno: Attacco: colpito – Morso: mancato» */
     function apriTurno() {
@@ -11271,11 +11288,11 @@
       if (scontro.primo === "pg") apriTurno();
       scontro.tuoTurno = true; scontro.cambio = false; scontro.frontaleUsato = false; scontro.difesaUltima = false;
       tickStatiPg(); /* Ustionato, Sanguinamento, Avvelenato: 1d4 a inizio turno, letali (28/10) */
-      if (pvPg() <= 0) { scontro.tuoTurno = false; barraScontro(); return setTimeout(sconfittaScontro, PAUSA_SCONTRO / 2); }
+      if (pvPg() <= 0) { scontro.tuoTurno = false; barraScontro(); return setTimeout(sconfittaScontro, pausaScontro() / 2); }
       const rilascio = CMB.inizioTurnoPg(scontro, ctxTecnica()); /* la Parata scade; Mare Profondo ed Egida rilasciano l'onda */
       if (rilascio.length) {
         aggiungi({ tipo: "narra", box: "mia", righe: rilascio.map(rigaScudo).filter(Boolean) }); scuotiNemico();
-        if (scontro.pv <= 0) { scontro.tuoTurno = false; barraScontro(); return setTimeout(vittoriaScontro, PAUSA_SCONTRO / 2); }
+        if (scontro.pv <= 0) { scontro.tuoTurno = false; barraScontro(); return setTimeout(vittoriaScontro, pausaScontro() / 2); }
       }
       barraScontro(); stato(false, CB.placeholder);
     }
@@ -11283,11 +11300,11 @@
       scontro.tuoTurno = false;
       fineTurnoPgStati(); /* Indebolito e Accecato scendono dopo la tua azione */
       barraScontro();
-      if (scontro.pv <= 0) return setTimeout(vittoriaScontro, PAUSA_SCONTRO / 2);
-      if (scontro.ctx === "ettore" && !scontro.resa && !(Number(usate.ettore_sconfitte) > 0) && scontro.pv <= Math.ceil(scontro.pvMax / 3)) { /* si arrende solo al primo incontro */ scontro.resa = true; return setTimeout(resaEttore, PAUSA_SCONTRO / 2); } /* Ettore si arrende */
-      if (resaPossibile()) { scontro.resa = true; return setTimeout(resaAvventuriero, PAUSA_SCONTRO / 2); } /* 29/10: i cinque si arrendono (Tobia scappa) */
+      if (scontro.pv <= 0) return setTimeout(vittoriaScontro, pausaScontro() / 2);
+      if (scontro.ctx === "ettore" && !scontro.resa && !(Number(usate.ettore_sconfitte) > 0) && scontro.pv <= Math.ceil(scontro.pvMax / 3)) { /* si arrende solo al primo incontro */ scontro.resa = true; return setTimeout(resaEttore, pausaScontro() / 2); } /* Ettore si arrende */
+      if (resaPossibile()) { scontro.resa = true; return setTimeout(resaAvventuriero, pausaScontro() / 2); } /* 29/10: i cinque si arrendono (Tobia scappa) */
       stato(true, CB.attesa);
-      setTimeout(turnoNemScontro, PAUSA_SCONTRO);
+      setTimeout(turnoNemScontro, pausaScontro());
     }
     function ferisciPg(d) {
       const prima = pvPg();
@@ -11657,17 +11674,17 @@
       if (eff("sanguina")) { /* Sanguinamento: danni all'inizio del turno del nemico */
         const d = tira(Number(scontro.sangueDado) || 4); scontro.pv -= d;
         aggiungi({ tipo: "narra", box: "mia", righe: [RT.sangueTick(d)] }); scuotiNemico(); barraScontro();
-        if (scontro.pv <= 0) return setTimeout(vittoriaScontro, PAUSA_SCONTRO / 2);
+        if (scontro.pv <= 0) return setTimeout(vittoriaScontro, pausaScontro() / 2);
       }
       if (window.MagiaCombattimento.haTick(scontro)) { /* Pressione, Corona di Raggi, Avvizzito: danni all'inizio del turno del nemico */
         const ev = window.MagiaCombattimento.inizioTurnoNemico(scontro, { tira });
         aggiungi({ tipo: "narra", box: "mia", righe: ev.map(e => window.MagiaCombattimento.testo(e)) }); scuotiNemico(); barraScontro();
-        if (scontro.pv <= 0) return setTimeout(vittoriaScontro, PAUSA_SCONTRO / 2);
+        if (scontro.pv <= 0) return setTimeout(vittoriaScontro, pausaScontro() / 2);
       }
       if (sciamano()) { /* Sciamano: veleno, bulbo della Fioritura, Marea di Putrefazione; da qui riparte il recupero di natura del turno */
         const ev = SCI.tickNemico(scontro, ctxTecnica());
         if (ev.length) { mostraNatura(ev); scuotiNemico(); barraScontro(); disegnaVitali(); }
-        if (scontro.pv <= 0) return setTimeout(vittoriaScontro, PAUSA_SCONTRO / 2);
+        if (scontro.pv <= 0) return setTimeout(vittoriaScontro, pausaScontro() / 2);
       }
       if (eff("bloccato")) { aggiungi({ tipo: "narra", box: "mia", righe: [CB.bloccatoTxt] }); segnaTurno(CB.lblBloccato); return fineTurnoNem(); }
       const D = NEMICI[scontro.id];
@@ -11752,7 +11769,7 @@
       const f = CMB.frattura(scontro, { tira });
       if (!f) return false;
       aggiungi({ tipo: "narra", box: "mia", righe: [RT.fratturaTick(f.d)] }); scuotiNemico(); barraScontro();
-      if (scontro.pv <= 0) { setTimeout(vittoriaScontro, PAUSA_SCONTRO / 2); return true; }
+      if (scontro.pv <= 0) { setTimeout(vittoriaScontro, pausaScontro() / 2); return true; }
       return false;
     }
     /* fine del turno del nemico: gli effetti scalano di un turno */
@@ -11771,15 +11788,15 @@
       }
       if (!(scontro.eff.sanguina > 0)) scontro.marchio = false; /* il marchio dura finché il nemico sanguina */
       if (sciamano() && finiti.length) { mostraNatura(SCI.scaduti(scontro, finiti, ctxTecnica()), "nem"); disegnaVitali(); } /* Linfa Furiosa presenta il conto */
-      if (scontro.pv <= 0) return setTimeout(vittoriaScontro, PAUSA_SCONTRO / 2); /* ucciso dal contrattacco della Parata */
+      if (scontro.pv <= 0) return setTimeout(vittoriaScontro, pausaScontro() / 2); /* ucciso dal contrattacco della Parata */
       barraScontro();
-      if (scontro.ctx === "aldo" && pvPg() <= (usate.aldo_soglia != null ? Number(usate.aldo_soglia) : Math.floor(pvMaxPg() / 2))) return setTimeout(interrompiAldo, PAUSA_SCONTRO / 2); /* Aldo ferma la danza */
-      if (pvPg() <= 0) return setTimeout(sconfittaScontro, PAUSA_SCONTRO / 2);
-      setTimeout(turnoPgScontro, PAUSA_SCONTRO * 0.7);
+      if (scontro.ctx === "aldo" && pvPg() <= (usate.aldo_soglia != null ? Number(usate.aldo_soglia) : Math.floor(pvMaxPg() / 2))) return setTimeout(interrompiAldo, pausaScontro() / 2); /* Aldo ferma la danza */
+      if (pvPg() <= 0) return setTimeout(sconfittaScontro, pausaScontro() / 2);
+      setTimeout(turnoPgScontro, pausaScontro() * 0.7);
     }
     /* più attacchi per turno (gruppi): finché ce ne sono e nessuno è a terra, il nemico attacca ancora */
     function fineAttaccoNem() {
-      if (scontro && scontro.attRest > 0 && scontro.pv > 0 && pvPg() > 0) { scontro.attRest--; return setTimeout(attaccoNemScontro, PAUSA_SCONTRO * 0.8); }
+      if (scontro && scontro.attRest > 0 && scontro.pv > 0 && pvPg() > 0) { scontro.attRest--; return setTimeout(attaccoNemScontro, pausaScontro() * 0.8); }
       fineTurnoNem();
     }
     function attaccoNemScontro() {
@@ -11844,7 +11861,7 @@
       segnaTurno(`${nomeAtt}: ${esitoBreve(esitoN)}`);
       barraScontro(); disegnaVitali();
       if (pvPg() <= 0 || scontro.pv <= 0) return fineAttaccoNem();
-      if (ok && !parato && !assorbito && morso && !scontro.presaUsata && !eff("silenzio") && !CMB.presaBloccata(scontro) && !eff("muro") && paNem() >= 1 && Math.random() < D.probPresa) return setTimeout(presaScontro, PAUSA_SCONTRO * 0.7); /* la presa segue solo un morso a segno; Postura Salda la blocca */
+      if (ok && !parato && !assorbito && morso && !scontro.presaUsata && !eff("silenzio") && !CMB.presaBloccata(scontro) && !eff("muro") && paNem() >= 1 && Math.random() < D.probPresa) return setTimeout(presaScontro, pausaScontro() * 0.7); /* la presa segue solo un morso a segno; Postura Salda la blocca */
       fineAttaccoNem();
     }
     /* Presa: una volta per scontro, dopo un colpo a segno. Prova contrapposta di Vigore; se vince il mastino, +1d4 danni */

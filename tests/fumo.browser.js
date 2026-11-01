@@ -47,7 +47,7 @@ const PAGINE = [
       page.on("response", res => { if (res.url().startsWith(BASE) && res.status() >= 400) r.mancanti.push(`${res.status()} ${res.url().slice(BASE.length)}`); });
       await page.addInitScript((pg) => {
         if (sessionStorage.getItem("fumo")) return;
-        sessionStorage.setItem("fumo", "1"); localStorage.clear();
+        sessionStorage.setItem("fumo", "1"); localStorage.clear(); localStorage.setItem("trono_ritmo", "veloce");
         if (pg) localStorage.setItem("personaggio", JSON.stringify(pg));
       }, p.pg || null);
       await page.goto(BASE + p.url);

@@ -29,7 +29,7 @@ async function apri(browser, url, pg, partita) {
   await ctx.route(/^(?!http:\/\/127\.0\.0\.1)/, r => r.abort()); /* niente rete esterna (Firebase) */
   await page.addInitScript(([pg, partita]) => {
     if (!sessionStorage.getItem("inizializzato")) { /* solo al primo caricamento: un reload tiene lingua e salvataggi */
-      sessionStorage.setItem("inizializzato", "1"); localStorage.clear();
+      sessionStorage.setItem("inizializzato", "1"); localStorage.clear(); localStorage.setItem("trono_ritmo", "veloce");
       if (pg) localStorage.setItem("personaggio", JSON.stringify(pg));
       if (partita) localStorage.setItem("partita", JSON.stringify(partita));
     }

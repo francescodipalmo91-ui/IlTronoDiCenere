@@ -7,17 +7,17 @@
      s   = stato dello scontro: { pv, pvMax, eff: {}, effMax: {}, sangueDado, prossimo, marchio, sconto, parata, parataCrepe, parataPunta, guardiaVal, crepe, sigillo, segno,
              scudo: cariche, assorbiti, assorbe, elastica, postura, drenaggio, fortezzaUsata, difesaUsata, difesaBloccata, colpitoOra, colpitoUltimo }
      ctx = ambiente: { tira(d), liv, modAtt, modDanno, dado, ca(), boss, haArma, cd, modTs,
-                       curaPg(n), iraPiu(n), usataPerRiposo(id), segnaPerRiposo(id) }
+                       curaPg(n), furiaPiu(n), usataPerRiposo(id), segnaPerRiposo(id) }
    Turno del nemico (chi gestisce lo scontro): colpoSubito(s, ctx, crit, danno) per ogni attacco a segno, colpoMancato(s, ctx) per
    ogni attacco mancato, presaBloccata(s) prima della Presa, fortezza(s, danno, pvPg) prima di applicare qualsiasi danno al personaggio,
    inizioTurnoPg(s, ctx) all'inizio del tuo turno (può rilasciare l'onda del Mare Profondo e dell'Egida).
    Gli eventi sono dati ({ k: "colpo", … }): i testi li scrive chi li mostra.
    ===================================================================== */
 (function (root) {
-  /* ---------- Ira, slot, recupero ---------- */
+  /* ---------- Furia, slot, recupero ---------- */
   const R = root.Regole || {};
   const SCELTE_PER_LIVELLO = R.TECNICHE_PER_LIVELLO || [2, 2, 1, 1, 1]; /* tecniche da scegliere a ogni livello (1..5) */
-  const IRA_PER_COLPO = R.IRA_PER_COLPO || [1, 1, 2, 2, 3];              /* ira per colpo subito, per livello */
+  const IRA_PER_COLPO = R.IRA_PER_COLPO || [1, 1, 2, 2, 3];              /* furia per colpo subito, per livello */
   const CONTROLLI = ["frastornato", "bloccato", "silenzio"]; /* i boss non li subiscono mai */
   const TETTO_BOSS = { debole: 2, sbilanciato: 2, esposto: 2, accecato: 2, avvizzito: 3 }; /* durata massima sui boss */
   /* 28/10: i sei stati comuni a giocatore e PNG hanno una durata fissa, qualunque cosa dica la tecnica: 3 turni quelli che tolgono salute, 2 i malus */
@@ -28,9 +28,9 @@
   const CARICHE_MAX = 3;                               /* Carica Cinetica dello scudo: massimo 3, anche contro i boss */
   const ASSORBITI_TSUNAMI = 3;                         /* Ritorno dello Tsunami: colpi assorbiti contati al massimo */
 
-  const crescitaIra = (modV, nuovoLiv) => Math.max(1, modV + nuovoLiv);       /* a ogni salita: mod Vigore + livello raggiunto */
-  const iraMax = (modV, liv) => { let m = 10 + modV; for (let l = 2; l <= liv; l++) m += crescitaIra(modV, l); return m; };
-  const iraPerColpo = (liv, crit) => IRA_PER_COLPO[Math.max(1, Math.min(5, liv)) - 1] * (crit ? 2 : 1); /* colpo subito a segno, doppia sul critico */
+  const crescitaFuria = (modV, nuovoLiv) => Math.max(1, modV + nuovoLiv);       /* a ogni salita: mod Vigore + livello raggiunto */
+  const furiaMax = (modV, liv) => { let m = 10 + modV; for (let l = 2; l <= liv; l++) m += crescitaFuria(modV, l); return m; };
+  const furiaPerColpo = (liv, crit) => IRA_PER_COLPO[Math.max(1, Math.min(5, liv)) - 1] * (crit ? 2 : 1); /* colpo subito a segno, doppia sul critico */
   const slotTecniche = (liv, scudo) => SCELTE_PER_LIVELLO.slice(0, Math.max(1, Math.min(5, liv))).reduce((a, b) => a + b, 0) + (scudo ? 1 : 0);
 
   /* una scelta di tecniche è valida se ogni livello resta nella sua quota; lo scudo dà un posto in più, di qualsiasi livello */
@@ -110,7 +110,7 @@
   }
   /* tecniche di scudo che consumano l'azione: mai due turni di fila */
   const difesaDiFila = (t, s) => !!(t && t.difesa && s && s.difesaBloccata);
-  /* una tecnica si può usare adesso? (prima di spendere l'ira) */
+  /* una tecnica si può usare adesso? (prima di spendere la furia) */
   function disponibile(t, s) {
     if (difesaDiFila(t, s)) return { ok: false, motivo: "difesaDiFila" };
     if (t && t.servonoCariche && cariche(s) < 1) return { ok: false, motivo: "senzaCariche" };
@@ -371,7 +371,7 @@
       case "postura_salda": E.push(guardia(s, 3, 1)); s.postura = true; E.push({ k: "postura" }); break;
       case "rimbalzo_marea": assorbi({ tipo: "rimbalzo", cariche: 1 }); break;
       /* livello 2 */
-      case "batteria": assorbi({ tipo: "zeroIra", cariche: 1 }); break;
+      case "batteria": assorbi({ tipo: "zeroFuria", cariche: 1 }); break;
       case "spinta":
         r = hit({ dado: 6 });
         if (r.ok && vivo(s) && conTSn({ silenzio: 1 }, () => fx("sbilanciato", 1))) { s.soffioPronto = false; E.push({ k: "soffioPerso" }); }
@@ -387,7 +387,7 @@
       case "onda_ritorno": { const n = cariche(s); s.cariche = 0; E.push({ k: "caricheSpese", n }); E.push(onda(s, ctx, n, 6)); break; }
       case "baluardo": E.push(guardia(s, 2, 2)); s.eff.baluardo = Math.max(s.eff.baluardo || 0, 2); s.effMax.baluardo = Math.max(s.effMax.baluardo || 0, 2); E.push({ k: "baluardo", turni: 2 }); break;
       /* livello 4 */
-      case "risucchio": r = hit({ dado: 6, piuDadi: 1 }); if (r.ok) { E.push(carica(s, 1)); const n = ctx.tira(4); if (ctx.iraPiu) ctx.iraPiu(n); E.push({ k: "ira", n }); } break;
+      case "risucchio": r = hit({ dado: 6, piuDadi: 1 }); if (r.ok) { E.push(carica(s, 1)); const n = ctx.tira(4); if (ctx.furiaPiu) ctx.furiaPiu(n); E.push({ k: "furia", n }); } break;
       case "mare_profondo": assorbi({ tipo: "tutti", onda: "mare" }); break;
       case "frantumazione":
         r = hit({ dado: 6, piuDadi: 1 });
@@ -444,15 +444,15 @@
     return { eventi: E, costo: c };
   }
 
-  /* ---------- Turno del nemico: modificatori, parata, ira ---------- */
+  /* ---------- Turno del nemico: modificatori, parata, furia ---------- */
   const modAttaccoNem = (s) => (attivo(s, "debole") ? -2 : 0) + (attivo(s, "frastornato") ? -4 : 0) + (s.filo && sigilli(s) >= 2 ? -2 : 0); /* Filo di Rune: con 2+ Sigilli sul nemico, −2 a colpirti */
   const critNemPossibile = (s) => !attivo(s, "frastornato") && !attivo(s, "intontito"); /* Intontito: Percossa al Mento */
   /* un attacco del nemico che va a segno.
-     - Parata (Mutilante, Contro-Schiacciamento, Guardia di Punta): lo annulla e contrattacca, niente ira.
-     - Scudo: metà danni (ira normale), Rimbalzo (metà torna al nemico), 0 danni (niente ira; Batteria sì), tutti i colpi (Mare Profondo, Egida).
-     - Baluardo: ira doppia e 1 Carica. Marea Elastica: con almeno 2 Cariche, 1d4 torna al nemico.
-     danno = danno pieno già tirato (se manca, si lavora solo su Parata e ira, come prima).
-     → { annullato, danno, ira, eventi }: annullato = il colpo non ti fa nulla */
+     - Parata (Mutilante, Contro-Schiacciamento, Guardia di Punta): lo annulla e contrattacca, niente furia.
+     - Scudo: metà danni (furia normale), Rimbalzo (metà torna al nemico), 0 danni (niente furia; Batteria sì), tutti i colpi (Mare Profondo, Egida).
+     - Baluardo: furia doppia e 1 Carica. Marea Elastica: con almeno 2 Cariche, 1d4 torna al nemico.
+     danno = danno pieno già tirato (se manca, si lavora solo su Parata e furia, come prima).
+     → { annullato, danno, furia, eventi }: annullato = il colpo non ti fa nulla */
   function colpoSubito(s, ctx, crit, danno) {
     s.eff = s.eff || {};
     s.colpitoOra = true; /* Inversione della Marea: il nemico ti ha colpito in questo suo turno */
@@ -469,10 +469,10 @@
       const tiri = tiraDadi(ctx, crit ? 2 : 1, dado), danno = Math.max(1, somma(tiri) + ctx.modDanno);
       s.pv -= danno; E.push({ k: "contrattacco", dado, tiri, mm: ctx.modDanno, danno, ...(conPunta ? { dCrit, crit } : {}) });
       if (vivo(s)) E.push(conPunta ? metti(s, ctx, "esposto", 2) : conCrepe ? incrina(s, ctx, 1) : sanguina(s, ctx, 4, 2));
-      return { annullato: true, danno: 0, ira: 0, eventi: E };
+      return { annullato: true, danno: 0, furia: 0, eventi: E };
     }
     const E = [...EM], pieno = Number(danno) || 0;
-    let ira = iraPerColpo(ctx.liv, crit), finale = pieno;
+    let furia = furiaPerColpo(ctx.liv, crit), finale = pieno;
     const a = s.assorbe;
     if (a) {
       if (a.tipo !== "tutti" && a.tipo !== "respingere") s.assorbe = null; /* vale per il primo colpo; «tutti» e Respingere durano fino al tuo turno */
@@ -482,24 +482,24 @@
         finale = Math.floor(pieno / 2); const torna = pieno - finale;
         E.push({ k: "assorbito", tipo: a.tipo, prima: pieno, dopo: finale });
         if (torna > 0) { s.pv -= torna; E.push({ k: "rimbalzo", danno: torna }); }
-      } else if (a.tipo === "zero") { finale = 0; ira = 0; E.push({ k: "assorbito", tipo: a.tipo, prima: pieno, dopo: 0 }); }
-      else if (a.tipo === "zeroIra") { finale = 0; E.push({ k: "assorbito", tipo: a.tipo, prima: pieno, dopo: 0 }); }
-      else if (a.tipo === "tutti") { finale = 0; ira = 0; a.n = (a.n || 0) + 1; E.push({ k: "assorbito", tipo: a.tipo, prima: pieno, dopo: 0 }); }
+      } else if (a.tipo === "zero") { finale = 0; furia = 0; E.push({ k: "assorbito", tipo: a.tipo, prima: pieno, dopo: 0 }); }
+      else if (a.tipo === "zeroFuria") { finale = 0; E.push({ k: "assorbito", tipo: a.tipo, prima: pieno, dopo: 0 }); }
+      else if (a.tipo === "tutti") { finale = 0; furia = 0; a.n = (a.n || 0) + 1; E.push({ k: "assorbito", tipo: a.tipo, prima: pieno, dopo: 0 }); }
       /* difese degli incantesimi: Specchio di Rune (metà e 1 Sigillo), Barriera Cinetica (0 e 1d6 forza), Respingere (tutti i colpi: 0 e 1d6 forza) */
-      else if (a.tipo === "specchio") { finale = Math.floor(pieno / 2); ira = 0; E.push({ k: "assorbito", tipo: "meta", prima: pieno, dopo: finale }, incidi(s, ctx, 1)); }
+      else if (a.tipo === "specchio") { finale = Math.floor(pieno / 2); furia = 0; E.push({ k: "assorbito", tipo: "meta", prima: pieno, dopo: finale }, incidi(s, ctx, 1)); }
       else if (a.tipo === "barriera" || a.tipo === "respingere") {
-        finale = 0; ira = 0; E.push({ k: "assorbito", tipo: "zero", prima: pieno, dopo: 0 });
+        finale = 0; furia = 0; E.push({ k: "assorbito", tipo: "zero", prima: pieno, dopo: 0 });
         const d = ctx.tira(6); s.pv -= d; E.push({ k: "riflesso", d });
       }
       const nc = a.tipo === "tutti" ? 1 : (a.cariche || 0);
       if (nc) E.push(carica(s, nc));
     }
     if (attivo(s, "santuario") && !s.santColpo && finale > 0) { s.santColpo = true; const prima = finale; finale = Math.floor(finale / 2); E.push({ k: "assorbito", tipo: "meta", prima, dopo: finale }); } /* Santuario: il primo colpo di ogni turno fa metà */
-    if (attivo(s, "baluardo")) { ira *= 2; E.push({ k: "baluardoColpo" }); E.push(carica(s, 1)); }
+    if (attivo(s, "baluardo")) { furia *= 2; E.push({ k: "baluardoColpo" }); E.push(carica(s, 1)); }
     if (s.elastica && cariche(s) >= 2 && vivo(s)) { const d = ctx.tira(4); s.pv -= d; E.push({ k: "elasticaColpo", d }); }
-    return { annullato: !!a && finale === 0 && pieno > 0, danno: finale, ira, eventi: E };
+    return { annullato: !!a && finale === 0 && pieno > 0, danno: finale, furia, eventi: E };
   }
-  /* un attacco del nemico che manca: Postura Salda dà 1 Carica, Drenaggio d'Urto +1 ira e 1 Carica */
+  /* un attacco del nemico che manca: Postura Salda dà 1 Carica, Drenaggio d'Urto +1 furia e 1 Carica */
   /* d20 d'attacco del nemico: Accecato e Manto d'Ombra fanno tirare 2d20 e tenere il peggiore (il manto vale per un solo attacco) */
   function tiroAttaccoNem(s, ctx) {
     s.eff = s.eff || {};
@@ -511,7 +511,7 @@
   function colpoMancato(s, ctx) {
     const E = [];
     if (s.postura) E.push({ k: "posturaRegge" }, carica(s, 1));
-    if (s.drenaggio) { if (ctx && ctx.iraPiu) ctx.iraPiu(1); E.push({ k: "ira", n: 1 }, carica(s, 1)); }
+    if (s.drenaggio) { if (ctx && ctx.furiaPiu) ctx.furiaPiu(1); E.push({ k: "furia", n: 1 }, carica(s, 1)); }
     return E;
   }
   /* inizio del tuo turno: Parata e difese dello scudo scadono; il Mare Profondo e l'Egida rilasciano l'onda */
@@ -545,7 +545,7 @@
 
   const API = {
     SCELTE_PER_LIVELLO, CONTROLLI, TETTO_BOSS, CREPE_MAX, CREPE_MAX_BOSS, PER_SCONTRO, CRIT_MIN, CARICHE_MAX, ASSORBITI_TSUNAMI,
-    crescitaIra, iraMax, iraPerColpo, slotTecniche, sceltaValida, sceltaPredefinita,
+    crescitaFuria, furiaMax, furiaPerColpo, slotTecniche, sceltaValida, sceltaPredefinita,
     attivo, marchiato, segnato, sogliaCrit, metti, sanguina, guardia, colpo, ts, costo, usa,
     crepe, crepeMax, crepePiene, incrina, malusCA, frattura, perScontro,
     SIGILLI_MAX, SIGILLI_MAX_BOSS, sigilliMax, sigilli, incidi,

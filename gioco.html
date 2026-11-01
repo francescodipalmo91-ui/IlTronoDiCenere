@@ -2099,7 +2099,7 @@
         sblocco: {
           riposo: ["Nuova capacità sbloccata: Riposo",
             "Puoi riposare accanto a un fuoco caldo, dalle fiamme arancioni: per ora qui in cucina e nella sala da conversazione. Scrivi «riposo» oppure usa il pulsante «Riposa» nella scheda, alla voce «Capacità».",
-            "Ogni riposo dura un giorno: consumi fino a 1d4 razioni di Adele e recuperi 1d4 + livello su tutte le risorse (salute fisica, salute mentale e punti arcano, fede, ira o natura). Guendalina cucina 2 razioni al giorno (scorta massima 10). Il focolare della cucina non si spegne mai: qui puoi riposare quante volte vuoi, anche senza razioni (recuperi solo 1 punto). Gli altri fuochi invece si consumano: dopo il riposo le fiamme diventano azzurre e fredde."],
+            "Ogni riposo dura un giorno: consumi fino a 1d4 razioni di Adele e recuperi 1d4 + livello su tutte le risorse (salute fisica, salute mentale e punti arcano, fede, furia o natura). Guendalina cucina 2 razioni al giorno (scorta massima 10). Il focolare della cucina non si spegne mai: qui puoi riposare quante volte vuoi, anche senza razioni (recuperi solo 1 punto). Gli altri fuochi invece si consumano: dopo il riposo le fiamme diventano azzurre e fredde."],
           missione: ["Missione accettata: «Ciò che giace nell'Alto»",
             "Scendi in cantina, recupera la vecchia scaletta di legno e riportala a Guendalina, qui in cucina.",
             "La cantina si raggiunge dalla stanza di servizio, oltre la porta a sinistra della cucina: scrivi ad esempio «vado nella stanza di servizio» e poi «scendo in cantina». Laggiù è buio e girano i guardiani del Signore: muoviti in silenzio e non correre.",
@@ -2325,7 +2325,7 @@
         sblocco: {
           riposo: ["New ability unlocked: Rest",
             "You can rest by a warm fire, one with orange flames: for now here in the kitchen and in the drawing room. Write “rest” or use the “Rest” button on your sheet, under “Abilities”.",
-            "Each rest lasts a day: you eat up to 1d4 of Adele's rations and recover 1d4 + level on all your resources (physical health, mental health and arcane, faith, rage or nature points). Guendalina cooks 2 rations a day (up to 10 in store). The kitchen hearth never goes out: here you can rest as many times as you like, even without rations (you only recover 1 point). Other fires are spent instead: after you rest, their flames turn blue and cold."],
+            "Each rest lasts a day: you eat up to 1d4 of Adele's rations and recover 1d4 + level on all your resources (physical health, mental health and arcane, faith, fury or nature points). Guendalina cooks 2 rations a day (up to 10 in store). The kitchen hearth never goes out: here you can rest as many times as you like, even without rations (you only recover 1 point). Other fires are spent instead: after you rest, their flames turn blue and cold."],
           missione: ["Quest accepted: “What Lies Up High”",
             "Go down to the cellar, retrieve the old wooden step-ladder and bring it back to Guendalina, here in the kitchen.",
             "The cellar is reached from the service room, beyond the door on the left of the kitchen: write for example “I go to the service room” and then “I go down to the cellar”. It is dark down there and the Master's guardians roam: move silently and do not run.",
@@ -4686,13 +4686,13 @@
     /* testi delle regole nuove: livelli, risorse, riposo, morte, mente spezzata */
     const RG_TUTTI = ({
       it: {
-        ira: "Punti ira", natura: "Punti natura", livelloMax: "livello massimo", giorno: "Giorno",
+        furia: "Punti furia", natura: "Punti natura", livelloMax: "livello massimo", giorno: "Giorno",
         livello: {
           titolo: (n) => `Livello ${n}!`,
           salute: (dv, t, da, a) => `Salute fisica: metà del d${dv} + 1 = ${t.d} ${fmtN(t.m)} (mod. Vigore) → +${t.v} · massimo ${da} → ${a}`,
           mente: (dv, t, da, a) => `Salute mentale: metà del d${dv} + 1 = ${t.d} ${fmtN(t.m)} (mod. Spirito) → +${t.v} · massimo ${da} → ${a}`,
           risorsa: (nome, dv, t, da, a) => `${nome}: 1d${dv} = ${t.d} ${fmtN(t.m)} → +${t.v} · massimo ${da} → ${a}`,
-          risorsaIra: (nome, m, l, v, da, a, att) => `${nome}: mod. ${att || "Vigore"} ${fmtN(m)} + livello ${l} → +${v} · massimo ${da} → ${a}`,
+          risorsaFuria: (nome, m, l, v, da, a, att) => `${nome}: mod. ${att || "Vigore"} ${fmtN(m)} + livello ${l} → +${v} · massimo ${da} → ${a}`,
           abilita: (n) => `Le abilità addestrate ora aggiungono +${n}.`,
           massimo: "Hai raggiunto il livello massimo."
         },
@@ -4754,13 +4754,13 @@
         ]
       },
       en: {
-        ira: "Rage points", natura: "Nature points", livelloMax: "max level", giorno: "Day",
+        furia: "Fury points", natura: "Nature points", livelloMax: "max level", giorno: "Day",
         livello: {
           titolo: (n) => `Level ${n}!`,
           salute: (dv, t, da, a) => `Physical health: half of d${dv} + 1 = ${t.d} ${fmtN(t.m)} (Vigour mod.) → +${t.v} · maximum ${da} → ${a}`,
           mente: (dv, t, da, a) => `Mental health: half of d${dv} + 1 = ${t.d} ${fmtN(t.m)} (Spirit mod.) → +${t.v} · maximum ${da} → ${a}`,
           risorsa: (nome, dv, t, da, a) => `${nome}: 1d${dv} = ${t.d} ${fmtN(t.m)} → +${t.v} · maximum ${da} → ${a}`,
-          risorsaIra: (nome, m, l, v, da, a, att) => `${nome}: ${att || "Vigour"} mod. ${fmtN(m)} + level ${l} → +${v} · maximum ${da} → ${a}`,
+          risorsaFuria: (nome, m, l, v, da, a, att) => `${nome}: ${att || "Vigour"} mod. ${fmtN(m)} + level ${l} → +${v} · maximum ${da} → ${a}`,
           abilita: (n) => `Trained skills now add +${n}.`,
           massimo: "You have reached the maximum level."
         },
@@ -4827,9 +4827,9 @@
     /* testi delle tecniche del Guerriero e della preparazione al riposo */
     const RT_TUTTI = {
       it: {
-        tecniche: "Tecniche", passiva: "Passiva", usa: "Usa", costo: (n) => `${n} ira`, gratuita: "non consuma l'azione",
+        tecniche: "Tecniche", passiva: "Passiva", usa: "Usa", costo: (n) => `${n} furia`, gratuita: "non consuma l'azione",
         soloScontro: "Le tecniche si usano in combattimento.", giaUsata: "Hai già usato questa tecnica in questo turno.",
-        pocaIra: (c, a) => `Non hai abbastanza punti ira: servono ${c}, te ne restano ${a}.`,
+        pocaFuria: (c, a) => `Non hai abbastanza punti furia: servono ${c}, te ne restano ${a}.`,
         tipoSbagliato: (n, tipo) => `${n} richiede ${tipo}: con ciò che impugni adesso non puoi usarla.`,
         richiede: { Tagliente: "un'arma da taglio", Contundente: "un'arma contundente", Perforante: "un'arma perforante", Scudo: "lo scudo imbracciato" },
         nonPreparata: "Questa tecnica non è preparata: puoi cambiarla riposando.",
@@ -4838,8 +4838,8 @@
         costoRigaNatura: (a, max) => `Punti natura: ${a} / ${max}`, passivaNonUsa: "È una capacità passiva: è sempre attiva, non si usa.",
         menteDescNatura: "Dopo una prova fallita puoi spendere 1 punto natura per un tiro salvezza: se lo superi non perdi salute mentale.",
         guidaTecNatura: (n) => `Scegli ${n} tecniche della natura tra quelle sbloccate: due di livello 1, due di livello 2 e una per ciascun livello successivo. Funzionano con qualsiasi arma.`,
-        menteIncrollabile: "Mente incrollabile", menteDesc: "Dopo una prova fallita puoi spendere 1 punto ira per un tiro salvezza: se lo superi non perdi salute mentale.",
-        costoRiga: (a, max) => `Punti ira: ${a} / ${max}`, ira: (n, a, max) => `Furia: +${n} punti ira (${a} / ${max}).`,
+        menteIncrollabile: "Mente incrollabile", menteDesc: "Dopo una prova fallita puoi spendere 1 punto furia per un tiro salvezza: se lo superi non perdi salute mentale.",
+        costoRiga: (a, max) => `Punti furia: ${a} / ${max}`, furia: (n, a, max) => `Furia: +${n} punti furia (${a} / ${max}).`,
         sanguina: (d, t) => `Il nemico sanguina: 1d${d} danni per ${t} turni.`, sangueTick: (d) => `Il sangue scorre: ${d} danni.`,
         sangueTutto: (n, tiri, tot) => `La ferita si apre del tutto: ${n} × dado = ${tiri.join(" + ")} = ${tot} danni.`,
         effetti: { accecato: "Accecato: tira 2d20 per colpire e tiene il peggiore.", debole: "Indebolito: −2 per colpire.", frattura: "Frattura: 1d4 danni ogni volta che attacca.", intontito: "Intontito: niente colpi critici.", sbilanciato: "Sbilanciato: −2 alla Classe armatura.", silenzio: "Inibito: niente attacchi speciali.", frastornato: "Frastornato: −4 per colpire e niente critici.", bloccato: "Stordito: salta il prossimo turno.", carica: "L'attacco speciale pronto va perso.", esposto: "Esposto: i tuoi attacchi fanno critico con un numero in meno." },
@@ -4860,7 +4860,7 @@
         fratturaTick: (d) => `La frattura cede mentre attacca: ${d} danni.`, perScontro: " (per tutto lo scontro)",
         sigillo: "Il sigillo è impresso: finché l'Incrinatura è al massimo, i tuoi attacchi normali gli fanno 1d4 danni in più.", sigilloDanno: (x) => `Sigillo: +${x} danni.`,
         crollo: (n) => `L'armatura crolla: ${n === 1 ? "1 carica consumata" : n + " cariche consumate"}.`,
-        sconto: (n) => `La tua prossima tecnica costerà ${n} punti ira in meno.`, scontoUsato: (n) => `Sconto: −${n} punti ira.`,
+        sconto: (n) => `La tua prossima tecnica costerà ${n} punti furia in meno.`, scontoUsato: (n) => `Sconto: −${n} punti furia.`,
         segno: "La preda è segnata: finché resta Esposta, i tuoi attacchi normali le fanno 1d4 danni in più.", segnoDanno: (x) => `Segno: +${x} danni.`,
         espostoConsumato: "Il varco si richiude: il nemico non è più Esposto.", precisione: (n) => `Per ${n} turni i tuoi attacchi fanno critico da 18 a 20.`,
         gratuito: "E subito un altro colpo, senza fermarti:", furoreTurni: (n) => `+4 ai tiri salvezza e alle prove contrapposte per ${n} turni.`,
@@ -4869,16 +4869,16 @@
         scudo: {
           difesaDiFila: "Hai appena usato una difesa dello scudo: non puoi chiuderti di nuovo in guardia due turni di fila.",
           senzaCariche: "Lo scudo non ha Cariche Cinetiche da liberare: prima devi assorbire qualche colpo.",
-          pronto: { meta: "Lo scudo è pronto ad attutire il primo colpo: farà metà danni.", rimbalzo: "Lo scudo è pronto a rimandare indietro metà del primo colpo.", zero: "Lo scudo è pronto a inghiottire il primo colpo: non ti farà nulla.", zeroIra: "Lo scudo è pronto a inghiottire il primo colpo e a trattenerne la furia.", tutti: "Fino al tuo turno lo scudo inghiottirà ogni colpo." },
+          pronto: { meta: "Lo scudo è pronto ad attutire il primo colpo: farà metà danni.", rimbalzo: "Lo scudo è pronto a rimandare indietro metà del primo colpo.", zero: "Lo scudo è pronto a inghiottire il primo colpo: non ti farà nulla.", zeroFuria: "Lo scudo è pronto a inghiottire il primo colpo e a trattenerne la furia.", tutti: "Fino al tuo turno lo scudo inghiottirà ogni colpo." },
           caricheGuadagno: (n) => n === 1 ? "1 Carica Cinetica" : `${n} Cariche Cinetiche`,
           cariche: (n, tot, max, perse) => (n > 0 ? `Lo scudo trattiene la forza: +${n === 1 ? "1 Carica Cinetica" : n + " Cariche Cinetiche"} (${tot}/${max}).` : `Lo scudo è già carico al massimo (${tot}/${max}).`) + (n > 0 && perse > 0 ? ` Oltre il massimo non va: ${perse === 1 ? "1 carica persa" : perse + " cariche perse"}.` : ""),
           spese: (n) => `Liberi ${n === 1 ? "1 Carica Cinetica" : n + " Cariche Cinetiche"}.`, resta: "Nello scudo resta 1 Carica Cinetica.",
           onda: (n, dado, tiri, extra, mm, danno) => `Onda d'urto, senza tiro per colpire: ${n}d${dado} [${tiri.join(" + ")}]${extra ? ` + ${extra.n}d${extra.dado} [${extra.tiri.join(" + ")}]` : ""} ${mm < 0 ? "−" : "+"} ${Math.abs(mm)} = ${danno} danni.`,
           postura: "Ti radichi al suolo: la Presa non può afferrarti fino al tuo turno.", posturaRegge: "La tua postura regge l'urto.",
           vendetta: "Il colpo che hai appena subito torna indietro con più forza.",
-          baluardo: (n) => `Baluardo d'Acciaio per ${n} turni: ogni colpo che ti raggiunge ti dà il doppio dell'ira e 1 Carica Cinetica.`, baluardoColpo: "Il baluardo trasforma il colpo in forza: ira doppia.",
+          baluardo: (n) => `Baluardo d'Acciaio per ${n} turni: ogni colpo che ti raggiunge ti dà il doppio della furia e 1 Carica Cinetica.`, baluardoColpo: "Il baluardo trasforma il colpo in forza: furia doppia.",
           elastica: "Marea Elastica: finché hai almeno 2 Cariche, ogni colpo che ti raggiunge restituisce 1d4 al nemico.", elasticaColpo: (d) => `La marea elastica rimanda il colpo: ${d} danni al nemico.`,
-          drenaggio: "Se il nemico ti manca prima del tuo turno, guadagni 1 punto ira e 1 Carica Cinetica.",
+          drenaggio: "Se il nemico ti manca prima del tuo turno, guadagni 1 punto furia e 1 Carica Cinetica.",
           fortezzaPronta: (n) => `Fortezza Eterna per ${n} turni: il primo colpo che ti porterebbe a 0 salute ti lascerà a 1.`, fortezzaUsata: "La Fortezza Eterna ti ha già salvato in questo scontro.",
           fortezza: (x) => `La Fortezza Eterna regge: invece di cadere resti in piedi con 1 punto di salute (${x} danni evitati).`,
           assorbito: (tipo, prima, dopo) => tipo === "meta" || tipo === "rimbalzo" ? `Lo scudo assorbe metà del colpo: ${prima} → ${dopo} danni.` : `Lo scudo inghiotte il colpo: ${prima} danni → 0.`,
@@ -4892,9 +4892,9 @@
           nomi: { aldo: "Lama del Guardiano — via di Aldo", guendalina: "Veglia — via di Guendalina" },
           nomiNatura: { aldo: "Signore delle Spore Putride — via di Aldo", guendalina: "Custode dei Boschi Sacri — via di Guendalina" },
           descNatura: { aldo: "Offesa: veleno che logora, trappole e acido. Passiva: Fame del Parassita.", guendalina: "Difesa: cure, Scudo di Corteccia e purificazione. Passiva: Linfa Rigeneratrice." },
-          desc: { aldo: "La ferita è l'arma: sanguinamento, marchio e colpi critici.", guendalina: "Controllo e resistenza: indebolire il nemico, difendersi e risparmiare ira." },
-          descContundente: { aldo: "Spezzare: incrinare l'armatura, farla crollare e colpi critici.", guendalina: "Controllo e resistenza: stordire il nemico, difendersi e risparmiare ira." },
-          descPerforante: { aldo: "Penetrazione: lasciare il nemico Esposto, sfondare la difesa e colpi critici sicuri.", guendalina: "Precisione: critici più frequenti, difendersi e risparmiare ira." },
+          desc: { aldo: "La ferita è l'arma: sanguinamento, marchio e colpi critici.", guendalina: "Controllo e resistenza: indebolire il nemico, difendersi e risparmiare furia." },
+          descContundente: { aldo: "Spezzare: incrinare l'armatura, farla crollare e colpi critici.", guendalina: "Controllo e resistenza: stordire il nemico, difendersi e risparmiare furia." },
+          descPerforante: { aldo: "Penetrazione: lasciare il nemico Esposto, sfondare la difesa e colpi critici sicuri.", guendalina: "Precisione: critici più frequenti, difendersi e risparmiare furia." },
           descScudo: { aldo: "con lo scudo, Risacca: accumulare Cariche e restituire i colpi", guendalina: "con lo scudo, Postura: togliere gli attacchi speciali e resistere a tutto" },
           serieTit: "Abilità della via", serieGuida: "Scegli quale serie della tua via preparare fino al prossimo riposo. Quelle dello scudo si usano solo con lo scudo imbracciato.",
           serie: { arma: (tipo) => `Dell'arma (${tipo})`, scudo: "Dello scudo" }, tipoArma: { Tagliente: "taglio", Contundente: "contundente", Perforante: "perforante" },
@@ -4912,9 +4912,9 @@
           soloRiposo: "Le tecniche e gli incantesimi si cambiano riposando.", nessuna: "Nessuna tecnica disponibile con ciò che impugni." }
       },
       en: {
-        tecniche: "Techniques", passiva: "Passive", usa: "Use", costo: (n) => `${n} rage`, gratuita: "does not use your action",
+        tecniche: "Techniques", passiva: "Passive", usa: "Use", costo: (n) => `${n} fury`, gratuita: "does not use your action",
         soloScontro: "Techniques are used in combat.", giaUsata: "You have already used this technique this turn.",
-        pocaIra: (c, a) => `Not enough rage points: you need ${c}, you have ${a}.`,
+        pocaFuria: (c, a) => `Not enough fury points: you need ${c}, you have ${a}.`,
         tipoSbagliato: (n, tipo) => `${n} needs ${tipo}: you cannot use it with what you are holding now.`,
         richiede: { Tagliente: "a slashing weapon", Contundente: "a bludgeoning weapon", Perforante: "a piercing weapon", Scudo: "the shield on your arm" },
         nonPreparata: "This technique is not prepared: you can change it when you rest.",
@@ -4923,8 +4923,8 @@
         costoRigaNatura: (a, max) => `Nature points: ${a} / ${max}`, passivaNonUsa: "It is a passive ability: always active, it is not used.",
         menteDescNatura: "After a failed check you may spend 1 nature point on a saving throw: on a success you lose no mental health.",
         guidaTecNatura: (n) => `Choose ${n} nature techniques among the unlocked ones: two of level 1, two of level 2 and one for each level after that. They work with any weapon.`,
-        menteIncrollabile: "Unshakeable Mind", menteDesc: "After a failed check you may spend 1 rage point on a saving throw: on a success you lose no mental health.",
-        costoRiga: (a, max) => `Rage points: ${a} / ${max}`, ira: (n, a, max) => `Fury: +${n} rage points (${a} / ${max}).`,
+        menteIncrollabile: "Unshakeable Mind", menteDesc: "After a failed check you may spend 1 fury point on a saving throw: on a success you lose no mental health.",
+        costoRiga: (a, max) => `Fury points: ${a} / ${max}`, furia: (n, a, max) => `Fury: +${n} fury points (${a} / ${max}).`,
         sanguina: (d, t) => `The enemy bleeds: 1d${d} damage for ${t} turns.`, sangueTick: (d) => `Blood flows: ${d} damage.`,
         sangueTutto: (n, tiri, tot) => `The wound tears wide open: ${n} × die = ${tiri.join(" + ")} = ${tot} damage.`,
         effetti: { accecato: "Blinded: rolls 2d20 to hit and keeps the worse.", debole: "Weakened: −2 to hit.", frattura: "Fractured: 1d4 damage every time it attacks.", intontito: "Dazzled: no critical hits.", sbilanciato: "Off-balance: −2 Armor class.", silenzio: "Inhibited: no special attacks.", frastornato: "Dazed: −4 to hit and no criticals.", bloccato: "Stunned: skips its next turn.", carica: "Its readied special attack is lost.", esposto: "Exposed: your attacks crit on one number lower." },
@@ -4945,7 +4945,7 @@
         fratturaTick: (d) => `The fracture gives way as it attacks: ${d} damage.`, perScontro: " (for the whole fight)",
         sigillo: "The seal is set: while Cracked is at its maximum, your normal attacks deal it 1d4 extra damage.", sigilloDanno: (x) => `Seal: +${x} damage.`,
         crollo: (n) => `The armour collapses: ${n === 1 ? "1 charge spent" : n + " charges spent"}.`,
-        sconto: (n) => `Your next technique will cost ${n} rage points less.`, scontoUsato: (n) => `Discount: −${n} rage points.`,
+        sconto: (n) => `Your next technique will cost ${n} fury points less.`, scontoUsato: (n) => `Discount: −${n} fury points.`,
         segno: "The prey is marked: while it stays Exposed, your normal attacks deal it 1d4 extra damage.", segnoDanno: (x) => `Mark: +${x} damage.`,
         espostoConsumato: "The gap closes: the enemy is no longer Exposed.", precisione: (n) => `For ${n} turns your attacks crit on 18 to 20.`,
         gratuito: "And at once another blow, without stopping:", furoreTurni: (n) => `+4 to saving throws and opposed checks for ${n} turns.`,
@@ -4954,16 +4954,16 @@
         scudo: {
           difesaDiFila: "You have just used a shield defence: you cannot lock into your guard two turns in a row.",
           senzaCariche: "The shield holds no Kinetic Charges to release: first you must absorb some blows.",
-          pronto: { meta: "The shield is ready to cushion the first blow: it will deal half damage.", rimbalzo: "The shield is ready to send back half of the first blow.", zero: "The shield is ready to swallow the first blow: it will do you no harm.", zeroIra: "The shield is ready to swallow the first blow and hold on to its fury.", tutti: "Until your turn the shield will swallow every blow." },
+          pronto: { meta: "The shield is ready to cushion the first blow: it will deal half damage.", rimbalzo: "The shield is ready to send back half of the first blow.", zero: "The shield is ready to swallow the first blow: it will do you no harm.", zeroFuria: "The shield is ready to swallow the first blow and hold on to its fury.", tutti: "Until your turn the shield will swallow every blow." },
           caricheGuadagno: (n) => n === 1 ? "1 Kinetic Charge" : `${n} Kinetic Charges`,
           cariche: (n, tot, max, perse) => (n > 0 ? `The shield holds the force: +${n === 1 ? "1 Kinetic Charge" : n + " Kinetic Charges"} (${tot}/${max}).` : `The shield is already fully charged (${tot}/${max}).`) + (n > 0 && perse > 0 ? ` It goes no further: ${perse === 1 ? "1 charge lost" : perse + " charges lost"}.` : ""),
           spese: (n) => `You release ${n === 1 ? "1 Kinetic Charge" : n + " Kinetic Charges"}.`, resta: "1 Kinetic Charge stays in the shield.",
           onda: (n, dado, tiri, extra, mm, danno) => `Shockwave, no attack roll: ${n}d${dado} [${tiri.join(" + ")}]${extra ? ` + ${extra.n}d${extra.dado} [${extra.tiri.join(" + ")}]` : ""} ${mm < 0 ? "−" : "+"} ${Math.abs(mm)} = ${danno} damage.`,
           postura: "You root yourself to the ground: the Grab cannot seize you until your turn.", posturaRegge: "Your stance holds against the blow.",
           vendetta: "The blow you just took comes back harder.",
-          baluardo: (n) => `Steel Bulwark for ${n} turns: every blow that reaches you gives you double rage and 1 Kinetic Charge.`, baluardoColpo: "The bulwark turns the blow into strength: double rage.",
+          baluardo: (n) => `Steel Bulwark for ${n} turns: every blow that reaches you gives you double fury and 1 Kinetic Charge.`, baluardoColpo: "The bulwark turns the blow into strength: double fury.",
           elastica: "Elastic Tide: while you have at least 2 Charges, every blow that reaches you returns 1d4 to the enemy.", elasticaColpo: (d) => `The elastic tide sends the blow back: ${d} damage to the enemy.`,
-          drenaggio: "If the enemy misses you before your turn, you gain 1 rage point and 1 Kinetic Charge.",
+          drenaggio: "If the enemy misses you before your turn, you gain 1 fury point and 1 Kinetic Charge.",
           fortezzaPronta: (n) => `Eternal Fortress for ${n} turns: the first blow that would drop you to 0 health will leave you at 1.`, fortezzaUsata: "The Eternal Fortress has already saved you this fight.",
           fortezza: (x) => `The Eternal Fortress holds: instead of falling you stay on your feet with 1 health (${x} damage avoided).`,
           assorbito: (tipo, prima, dopo) => tipo === "meta" || tipo === "rimbalzo" ? `The shield absorbs half the blow: ${prima} → ${dopo} damage.` : `The shield swallows the blow: ${prima} damage → 0.`,
@@ -4977,9 +4977,9 @@
           nomi: { aldo: "Warden's Blade — Aldo's path", guendalina: "Vigil — Guendalina's path" },
           nomiNatura: { aldo: "Lord of the Rotting Spores — Aldo's path", guendalina: "Keeper of the Sacred Woods — Guendalina's path" },
           descNatura: { aldo: "Offence: wearing poison, traps and acid. Passive: Parasite's Hunger.", guendalina: "Defence: healing, Bark Shield and purification. Passive: Regenerating Sap." },
-          desc: { aldo: "The wound is the weapon: bleeding, brand and critical hits.", guendalina: "Control and endurance: weaken the enemy, defend yourself and save rage." },
-          descContundente: { aldo: "Breaking: crack the armour, bring it down and land critical hits.", guendalina: "Control and endurance: stun the enemy, defend yourself and save rage." },
-          descPerforante: { aldo: "Penetration: leave the enemy Exposed, break through its guard and land sure critical hits.", guendalina: "Precision: more frequent criticals, defend yourself and save rage." },
+          desc: { aldo: "The wound is the weapon: bleeding, brand and critical hits.", guendalina: "Control and endurance: weaken the enemy, defend yourself and save fury." },
+          descContundente: { aldo: "Breaking: crack the armour, bring it down and land critical hits.", guendalina: "Control and endurance: stun the enemy, defend yourself and save fury." },
+          descPerforante: { aldo: "Penetration: leave the enemy Exposed, break through its guard and land sure critical hits.", guendalina: "Precision: more frequent criticals, defend yourself and save fury." },
           descScudo: { aldo: "with the shield, Undertow: store Charges and return the blows", guendalina: "with the shield, Stance: take away special attacks and withstand everything" },
           serieTit: "Path abilities", serieGuida: "Choose which set of your path to prepare until your next rest. The shield's work only with the shield on your arm.",
           serie: { arma: (tipo) => `Weapon (${tipo})`, scudo: "Shield" }, tipoArma: { Tagliente: "slashing", Contundente: "bludgeoning", Perforante: "piercing" },
@@ -6224,7 +6224,7 @@
       p.modificatori = Object.fromEntries(Object.entries(p.statistiche).map(([k, v]) => [k, Math.floor((v - 10) / 2)]));
       const viste = new Set();
       p.abilita = (p.abilita || []).map(a => ({ ...a, nome: abNuova(a.nome), attributo: MAPPA_ATTR[a.attributo] || a.attributo })).filter(a => !viste.has(a.nome) && viste.add(a.nome));
-      const ris = { Soldato: ["ira", "Vigore"], Forestiero: ["natura", "Spirito"] }[p.classe];
+      const ris = { Soldato: ["furia", "Vigore"], Forestiero: ["natura", "Spirito"] }[p.classe];
       if (ris) p.risorsa = { id: ris[0], max: 10 + Math.floor((p.statistiche[ris[1]] - 10) / 2) };
       return true;
     }
@@ -6304,8 +6304,8 @@
        - Ricompense: 150 PE mastini generici, 350 mastini specifici, 500 nemici che custodiscono ricompense o segreti
          (la stessa se il nemico viene risparmiato).
        - A ogni livello: salute fisica + (dado vita + mod Vigore), salute mentale + (dado vita + mod Spirito),
-         mana / fede / ira / natura + (mod dell'attributo della risorsa + nuovo livello), senza dado. Minimo +1 ciascuno.
-       - Guerriero: punti ira (10 + mod Lotta); Sciamano: punti natura (10 + mod Spirito). Tutte le risorse si ricaricano solo riposando.
+         mana / fede / furia / natura + (mod dell'attributo della risorsa + nuovo livello), senza dado. Minimo +1 ciascuno.
+       - Guerriero: punti furia (10 + mod Lotta); Sciamano: punti natura (10 + mod Spirito). Tutte le risorse si ricaricano solo riposando.
        - Livello e crescita fanno parte della partita (salvataggio), il personaggio di partenza resta quello della creazione.
        ===================================================================== */
     const R_ = window.Regole; /* tutti i numeri delle regole stanno in regole.js */
@@ -6320,7 +6320,7 @@
     function crescitaPg() { return crescita; }
     function livelloPg() { return Number(pg && pg.livello) || 1; }
     function saluteMaxPg() { return (Number(pg.puntiVita ?? pg.saluteFisica) || 0) + crescita.salute; }
-    /* punti ira / punti natura: { id, max } oppure null (anche per i personaggi creati prima di questa regola) */
+    /* punti furia / punti natura: { id, max } oppure null (anche per i personaggi creati prima di questa regola) */
     function risorsaPg() {
       const c = RISORSA_CLASSE[pg && pg.classe]; if (!c) return null;
       const base = (pg.risorsa && Number(pg.risorsa.max)) || (10 + mod(Number(pg.statistiche && pg.statistiche[c.attr]) || 10));
@@ -6348,10 +6348,10 @@
       crescita.salute += ts.v; crescita.mente += tm.v;
       const righe = [RG.livello.salute(dv, ts, prima.s, saluteMaxPg()), RG.livello.mente(dv, tm, prima.m, maxMentali())];
       const attrR = (RISORSA_CLASSE[pg.classe] || {}).attr || ATTR_RISORSA_MAGIA[pg.classe];
-      if (prima.r != null && attrR) { /* tutte le risorse (ira, natura, mana, fede): + mod dell'attributo + nuovo livello, senza dado */
-        const mA = st(attrR), nl = livelloPg() + 1, v = Combattimento.crescitaIra(mA, nl); crescita.risorsa += v;
+      if (prima.r != null && attrR) { /* tutte le risorse (furia, natura, mana, fede): + mod dell'attributo + nuovo livello, senza dado */
+        const mA = st(attrR), nl = livelloPg() + 1, v = Combattimento.crescitaFuria(mA, nl); crescita.risorsa += v;
         const ora = manaMax() != null ? manaMax() : risorsaPg().max;
-        righe.push(RG.livello.risorsaIra(nomeRisorsa(), mA, nl, v, prima.r, ora, Lingua.nome("attributi", attrR)));
+        righe.push(RG.livello.risorsaFuria(nomeRisorsa(), mA, nl, v, prima.r, ora, Lingua.nome("attributi", attrR)));
       }
       pg.livello = livelloPg() + 1;
       righe.push(RG.livello.abilita(pg.livello));
@@ -6440,7 +6440,7 @@
     }
 
     /* ---------- Mente incrollabile (Guerriero e Sciamano) ----------
-       dopo una prova fallita si può spendere 1 punto ira / natura per un tiro salvezza:
+       dopo una prova fallita si può spendere 1 punto furia / natura per un tiro salvezza:
        d20 + mod Vigore (Guerriero) o Spirito (Sciamano) + livello, CD 10; se riesce, il punto mentale perso torna */
     const CD_INCROLLABILE = R_.CD_INCROLLABILE;
     let offertaIncrollabile = false;
@@ -6612,7 +6612,7 @@
       const magia = manaMax() != null || cdIncantesimi() != null || risorsaPg() != null;
       if (magia) sep("sep-spazio");
       if (manaMax() != null) riga(vit, U.mana, `${manaAttuale()} / ${manaMax()}`, "mana");
-      if (risorsaPg()) riga(vit, nomeRisorsa(), `${risorsaAttuale()} / ${risorsaPg().max}`, "risorsa"); /* punti ira o punti natura */
+      if (risorsaPg()) riga(vit, nomeRisorsa(), `${risorsaAttuale()} / ${risorsaPg().max}`, "risorsa"); /* punti furia o punti natura */
       if (cdIncantesimi() != null) riga(vit, CB.cdInc, String(cdIncantesimi()), "cdinc");
       if (scontro && pg.classe === "Accolito") riga(vit, Lingua.t({ it: "Bilancia", en: "Balance" }), nomeBilancia(Number(scontro.bilancia) || 0), "cdinc");
       const sc = (() => { try { return scontro; } catch (e) { return null; } })();
@@ -6622,7 +6622,7 @@
     }
 
     /* Effetti a durata: medaglione con simbolo, nome e turni rimasti (rombi pieni = turni ancora attivi) */
-    const EFF_PG = ["scudo", "invuln", "pietra", "armaPiu", "potenza", "guardia", "baluardo", "fortezza", "furore", "precisione", "runa", "occhio", "tomo", "quiete", "muro", "santuario", "voto", "gemella", "cerchio", "fiamma", "notte", "furia", "manto", "seconda", "rivest", "linfaFuria", "pelle", "infuso", "aura", "rinascita", "bulbo"], EFF_NEM = ["bloccato", "cieco", "sanguina", "frattura", "esposto", "debole", "sbilanciato", "silenzio", "frastornato", "intontito", "pressione", "parola", "accecato", "avvizzito", "paura", "corona", "avvelenato", "marea"];
+    const EFF_PG = ["scudo", "invuln", "pietra", "armaPiu", "potenza", "guardia", "baluardo", "fortezza", "furore", "precisione", "runa", "occhio", "tomo", "quiete", "muro", "santuario", "voto", "gemella", "cerchio", "fiamma", "notte", "furiaCinerea", "manto", "seconda", "rivest", "linfaFuria", "pelle", "infuso", "aura", "rinascita", "bulbo"], EFF_NEM = ["bloccato", "cieco", "sanguina", "frattura", "esposto", "debole", "sbilanciato", "silenzio", "frastornato", "intontito", "pressione", "parola", "accecato", "avvizzito", "paura", "corona", "avvelenato", "marea"];
     const SHIELD = "M12 2.8l7 2.7v5.3c0 4.6-3 8.1-7 10.4-4-2.3-7-5.8-7-10.4V5.5z";
     const ICONE_EFF = { /* tratti a 24×24, colore dal tema dell'effetto */
       scudo: { tono: "dif", d: `<path d="${SHIELD}"/><path d="M12 6.5v11M8.2 10.5h7.6" opacity=".7"/>` },
@@ -6660,7 +6660,7 @@
       cerchio: { tono: "dif", d: `<circle cx="12" cy="12" r="8.5"/><path d="M12 7c1 2.2 3 3 3 5.2a3 3 0 0 1-6 0C9 10 11 9.4 12 7z" opacity=".85"/>` },
       fiamma: { tono: "dif", d: `<path d="M12 3c1 3.5 4.5 5 4.5 9a4.5 4.5 0 0 1-9 0c0-2 1-3.2 2-4.2.3 1.6 1 2.4 2 2.7-.6-2.5-.2-5.2.5-7.5z"/>` },
       notte: { tono: "off", d: `<path d="M18 14.5A7 7 0 0 1 9.5 6a7 7 0 1 0 8.5 8.5z"/>` },
-      furia: { tono: "off", d: `<path d="M12 3l2.5 6 6 .5-4.6 4 1.5 6L12 16.5 6.6 19.5l1.5-6L3.5 9.5l6-.5z"/>` },
+      furiaCinerea: { tono: "off", d: `<path d="M12 3l2.5 6 6 .5-4.6 4 1.5 6L12 16.5 6.6 19.5l1.5-6L3.5 9.5l6-.5z"/>` },
       manto: { tono: "dif", d: `<path d="M5 20c0-8 3-14 7-16 4 2 7 8 7 16z"/><path d="M12 8v12" opacity=".6"/>` },
       seconda: { tono: "dif", d: `<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.600-7 10-7 10z"/>` },
       accecato: { tono: "mal", d: `<path d="M2.5 12s3.6-6 9.5-6 9.5 6 9.5 6-3.6 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.6"/><path d="M4.5 19.5l15-15"/>` },
@@ -7582,7 +7582,7 @@
 
     /* Riposo (regola decisa): ogni riposo è un giorno.
        - con almeno una razione: si consumano fino a 1d4 razioni di Adele e si recupera 1d4 + livello su TUTTE le risorse
-         (salute fisica, salute mentale, mana o punti ira / natura);
+         (salute fisica, salute mentale, mana o punti furia / natura);
        - senza razioni si riposa solo in cucina, recuperando 1 punto per risorsa; altrove la fame tiene svegli;
        - al risveglio Guendalina ha cucinato 2 razioni (scorta massima 10);
        - i nemici sconfitti ricompaiono: un nuovo mastino aspetta in cantina (al massimo uno per riposo).
@@ -9372,7 +9372,7 @@
         const d = tira(6) + liv; pg.dannoFisico = Math.max(0, (pg.dannoFisico || 0) - d);
         return { ok: B.pozCura(nome, d, prima, liv, Math.max(0, max - pg.dannoFisico)) };
       }
-      if (ef === "pozMana") { /* «essenza»: punti arcano, fede, ira o natura, secondo la classe */
+      if (ef === "pozMana") { /* «essenza»: punti arcano, fede, furia o natura, secondo la classe */
         if (manaMax() != null) {
           const prima = manaAttuale();
           if (prima >= manaMax()) return { no: Q.oggetti.inutile.pozMana };
@@ -10430,7 +10430,7 @@
         effetti: "Effetti", effettiTit: "Effetti attivi", turniRim: (n) => n === 1 ? "1 turno" : `${n} turni`,
         turnoTit: (n) => `${n}° turno`, lblAttacco: "Attacco", lblTorcia: "Attacco con la torcia", lblPozione: "Pozione", lblBloccato: "Mastino bloccato",
         emorragia: "Emorragia", marchiato: "marchiato", sigillato: "sigillo", segnato: "segnato", cariche: (n, max) => `${n}/${max} cariche`, tuttoScontro: "tutto lo scontro",
-        effNomi: { sanguina: "Sanguinamento", crepe: "Incrinatura", frattura: "Frattura", intontito: "Intontito", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Inibito", frastornato: "Frastornato", guardia: "Guardia alzata", furore: "Furore inarrestabile", esposto: "Esposto", precisione: "Mille Soli", baluardo: "Baluardo d'Acciaio", fortezza: "Fortezza Eterna", cariche: "Carica Cinetica", scudo: "Scudo", bloccato: "Nemico bloccato", invuln: "Invulnerabilità", armaPiu: "Arma migliorata", pietra: "Pelle di pietra", cieco: "Nemico accecato", potenza: "Aumento di potenza", impaurito: "Impaurito", runa: "Runa sull'arma", occhio: "Occhio del Tomo", tomo: "Tomo Proibito", quiete: "Quiete Assoluta", muro: "Muro di forza", pressione: "Pressione", parola: "Parola Vera", sigilli: "Sigilli", santuario: "Santuario", voto: "Voto di Luce", gemella: "Ombra Gemella", cerchio: "Cerchio del Focolare", fiamma: "Fiamma Calda", notte: "Notte Senza Fine", furia: "Furia Cinerea", manto: "Manto d'Ombra", seconda: "Seconda Vita", accecato: "Accecato", avvizzito: "Avvizzito", paura: "Terrore", corona: "Corona di Raggi", avvelenato: "Avvelenato", tossina: "Tossina", marea: "Marea di Putrefazione", rivest: "Arma rivestita", linfaFuria: "Linfa Furiosa", pelle: "Pelle di Corteccia", infuso: "Infuso di Linfa Vitale", aura: "Aura di Purificazione", rinascita: "Rinascita del Sottobosco", bulbo: "Bulbo primordiale", morbo: "Morbo", corteccia: "Scudo di Corteccia", trappola: "Trappola pronta" },
+        effNomi: { sanguina: "Sanguinamento", crepe: "Incrinatura", frattura: "Frattura", intontito: "Intontito", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Inibito", frastornato: "Frastornato", guardia: "Guardia alzata", furore: "Furore inarrestabile", esposto: "Esposto", precisione: "Mille Soli", baluardo: "Baluardo d'Acciaio", fortezza: "Fortezza Eterna", cariche: "Carica Cinetica", scudo: "Scudo", bloccato: "Nemico bloccato", invuln: "Invulnerabilità", armaPiu: "Arma migliorata", pietra: "Pelle di pietra", cieco: "Nemico accecato", potenza: "Aumento di potenza", impaurito: "Impaurito", runa: "Runa sull'arma", occhio: "Occhio del Tomo", tomo: "Tomo Proibito", quiete: "Quiete Assoluta", muro: "Muro di forza", pressione: "Pressione", parola: "Parola Vera", sigilli: "Sigilli", santuario: "Santuario", voto: "Voto di Luce", gemella: "Ombra Gemella", cerchio: "Cerchio del Focolare", fiamma: "Fiamma Calda", notte: "Notte Senza Fine", furiaCinerea: "Furia Cinerea", manto: "Manto d'Ombra", seconda: "Seconda Vita", accecato: "Accecato", avvizzito: "Avvizzito", paura: "Terrore", corona: "Corona di Raggi", avvelenato: "Avvelenato", tossina: "Tossina", marea: "Marea di Putrefazione", rivest: "Arma rivestita", linfaFuria: "Linfa Furiosa", pelle: "Pelle di Corteccia", infuso: "Infuso di Linfa Vitale", aura: "Aura di Purificazione", rinascita: "Rinascita del Sottobosco", bulbo: "Bulbo primordiale", morbo: "Morbo", corteccia: "Scudo di Corteccia", trappola: "Trappola pronta" },
         effFinito: (n) => `L'effetto «${n}» svanisce.`, resisteBreve: "resiste", effettoBreve: "a segno",
         iniziativa: (a, b) => `Iniziativa: la tua Agilità (${a}) contro quella del Mastino (${b}).`,
         pari: (x, y) => `Agilità pari: si tira un d20 a testa. Tu ${x}, il Mastino ${y}.`,
@@ -10544,7 +10544,7 @@
         effetti: "Effects", effettiTit: "Active effects", turniRim: (n) => n === 1 ? "1 round" : `${n} rounds`,
         turnoTit: (n) => `Round ${n}`, lblAttacco: "Attack", lblTorcia: "Torch attack", lblPozione: "Potion", lblBloccato: "Mastiff held",
         emorragia: "Haemorrhage", marchiato: "branded", sigillato: "seal", segnato: "marked", cariche: (n, max) => `${n}/${max} charges`, tuttoScontro: "whole fight",
-        effNomi: { sanguina: "Bleeding", crepe: "Cracked", frattura: "Fractured", intontito: "Dazzled", debole: "Weakened", sbilanciato: "Off-balance", silenzio: "Inhibited", frastornato: "Dazed", guardia: "Guard up", furore: "Unstoppable Fury", esposto: "Exposed", precisione: "Thousand Suns", baluardo: "Steel Bulwark", fortezza: "Eternal Fortress", cariche: "Kinetic Charge", scudo: "Shield", bloccato: "Enemy held", invuln: "Invulnerability", armaPiu: "Empowered weapon", pietra: "Stoneskin", cieco: "Enemy blinded", potenza: "Surge of power", impaurito: "Frightened", runa: "Weapon rune", occhio: "Eye of the Tome", tomo: "Forbidden Tome", quiete: "Absolute Stillness", muro: "Wall of force", pressione: "Pressure", parola: "True Word", sigilli: "Seals", santuario: "Sanctuary", voto: "Vow of Light", gemella: "Twin Shadow", cerchio: "Hearth Circle", fiamma: "Warm Flame", notte: "Endless Night", furia: "Ashen Fury", manto: "Shadow Cloak", seconda: "Second Life", accecato: "Blinded", avvizzito: "Withered", paura: "Terror", corona: "Crown of Rays", avvelenato: "Poisoned", tossina: "Toxin", marea: "Tide of Rot", rivest: "Coated weapon", linfaFuria: "Furious Sap", pelle: "Bark Skin", infuso: "Lifesap Infusion", aura: "Purifying Aura", rinascita: "Rebirth of the Undergrowth", bulbo: "Primordial bulb", morbo: "Blight", corteccia: "Bark Shield", trappola: "Trap set" },
+        effNomi: { sanguina: "Bleeding", crepe: "Cracked", frattura: "Fractured", intontito: "Dazzled", debole: "Weakened", sbilanciato: "Off-balance", silenzio: "Inhibited", frastornato: "Dazed", guardia: "Guard up", furore: "Unstoppable Fury", esposto: "Exposed", precisione: "Thousand Suns", baluardo: "Steel Bulwark", fortezza: "Eternal Fortress", cariche: "Kinetic Charge", scudo: "Shield", bloccato: "Enemy held", invuln: "Invulnerability", armaPiu: "Empowered weapon", pietra: "Stoneskin", cieco: "Enemy blinded", potenza: "Surge of power", impaurito: "Frightened", runa: "Weapon rune", occhio: "Eye of the Tome", tomo: "Forbidden Tome", quiete: "Absolute Stillness", muro: "Wall of force", pressione: "Pressure", parola: "True Word", sigilli: "Seals", santuario: "Sanctuary", voto: "Vow of Light", gemella: "Twin Shadow", cerchio: "Hearth Circle", fiamma: "Warm Flame", notte: "Endless Night", furiaCinerea: "Ashen Fury", manto: "Shadow Cloak", seconda: "Second Life", accecato: "Blinded", avvizzito: "Withered", paura: "Terror", corona: "Crown of Rays", avvelenato: "Poisoned", tossina: "Toxin", marea: "Tide of Rot", rivest: "Coated weapon", linfaFuria: "Furious Sap", pelle: "Bark Skin", infuso: "Lifesap Infusion", aura: "Purifying Aura", rinascita: "Rebirth of the Undergrowth", bulbo: "Primordial bulb", morbo: "Blight", corteccia: "Bark Shield", trappola: "Trap set" },
         effFinito: (n) => `The “${n}” effect fades.`, resisteBreve: "resisted", effettoBreve: "takes hold",
         iniziativa: (a, b) => `Initiative: your Agility (${a}) against the Mastiff's (${b}).`,
         pari: (x, y) => `Agility tied: each side rolls a d20. You ${x}, the Mastiff ${y}.`,
@@ -11330,7 +11330,7 @@
       const ca = caNem(), m = modLottaPg(), mA = m + coraggio + (pre.bonus || 0) + malusStatoAtt(), tAtt = tiroAttPg(), d = tAtt.d, tot = d + mA, crit = d >= CMB.sogliaCrit(scontro, 20), ok = crit || tot > ca; /* Esposto e Mille Soli allargano il critico */
       const righe = [];
       if (tAtt.tiri) righe.push(BT.svantaggio(tAtt.tiri[0], tAtt.tiri[1])); /* Accecato */
-      if (crit) guadagnaIra(2);
+      if (crit) guadagnaFuria(2);
       if (ok) {
         const vuln = dadiVuln(conTorcia ? "Contundente" : tipoArmaInMano()); /* la torcia colpisce come un'arma contundente */
         const dado = dadoArmaPg(conTorcia), nd = (crit ? 2 : 1) * (1 + (pre.piuDadi || 0) + vuln), tiri = tiraDadi(nd, dado), bA = conTorcia ? 0 : bonusArmaPg(), base = Math.max(1, somma(tiri) + m + bA);
@@ -11454,7 +11454,7 @@
        TECNICHE DEL GUERRIERO (tecniche.js) — le regole stanno in js/combattimento.js
        Posti: 2 scelte ai livelli 1 e 2, poi 1 per livello (+1 con lo scudo imbracciato); si cambiano riposando.
        Vie di prestigio (dal livello 3, usate.via = "aldo" | "guendalina"): un'abilità per livello, fuori dai posti.
-       Ira: 10 + mod Vigore, poi + mod Vigore + livello a ogni salita; cresce con i colpi subiti (1/2/3 punti per livello, doppia sui critici).
+       Furia: 10 + mod Vigore, poi + mod Vigore + livello a ogni salita; cresce con i colpi subiti (1/2/3 punti per livello, doppia sui critici).
        Tiro salvezza del nemico: d20 + mod Vigore del nemico contro 8 + mod Vigore + livello. I boss non subiscono effetti di controllo.
        ===================================================================== */
     const TEC = window.TECNICHE || [], CMB = window.Combattimento, SCI = window.Sciamano;
@@ -11499,10 +11499,10 @@
       tecnicheVia().forEach(t => out.push({ t, attiva: tipoOk(t), motivo: motivo(t), via: true }));
       return out;
     }
-    function guadagnaIra(n) {
-      const r = risorsaPg(); if (!r || r.id !== "ira" || !(pg.risorsaUsata > 0) || !(n > 0)) return null;
+    function guadagnaFuria(n) {
+      const r = risorsaPg(); if (!r || r.id !== "furia" || !(pg.risorsaUsata > 0) || !(n > 0)) return null;
       pg.risorsaUsata = Math.max(0, pg.risorsaUsata - n); disegnaVitali(); modificato();
-      return RT.ira(n, risorsaAttuale(), r.max);
+      return RT.furia(n, risorsaAttuale(), r.max);
     }
     const cdTecniche = () => 8 + mod(statPg("Vigore")) + livelloPg(); /* anche lo Sciamano: i veleni agiscono sul corpo */
     /* punti natura dello Sciamano: recupera fino al massimo, restituisce quanti ne ha ripresi */
@@ -11527,7 +11527,7 @@
         naturaPiu: (n) => guadagnaNatura(n),
         dannoPg: (n) => { pg.dannoFisico = Math.min(pvMaxPg(), (pg.dannoFisico || 0) + n); disegnaVitali(); scuotiScheda(); modificato(); },
         curaPg: (n) => { pg.dannoFisico = Math.max(0, (pg.dannoFisico || 0) - n); disegnaVitali(); modificato(); },
-        iraPiu: (n) => guadagnaIra(n),
+        furiaPiu: (n) => guadagnaFuria(n),
         usataPerRiposo: (id) => !!(usate.perRiposo && usate.perRiposo[id]),
         segnaPerRiposo: (id) => { usate.perRiposo = { ...(usate.perRiposo || {}), [id]: true }; salvaUsate(); }
       };
@@ -11570,7 +11570,7 @@
           case "sconto": righe.push(RT.sconto(e.n)); break;
           case "scontoUsato": righe.push(RT.scontoUsato(e.n)); break;
           case "furore": righe.push(RT.furoreTurni(e.turni)); break;
-          case "ira": { const r = risorsaPg(); if (r) righe.push(RT.ira(e.n, risorsaAttuale(), r.max)); break; }
+          case "furia": { const r = risorsaPg(); if (r) righe.push(RT.furia(e.n, risorsaAttuale(), r.max)); break; }
           default: { const x = rigaScudo(e); if (x) { righe.push(x); if (e.k === "onda") { colpito = true; esiti.push(RT.colpito); } } }
         }
       });
@@ -11601,7 +11601,7 @@
         case "ondaMare": return S.ondaMare;
         case "ondaEgida": return S.ondaEgida(e.cariche);
         case "ondaVuota": return S.ondaVuota;
-        case "ira": { const r = risorsaPg(); return r ? RT.ira(e.n, risorsaAttuale(), r.max) : null; }
+        case "furia": { const r = risorsaPg(); return r ? RT.furia(e.n, risorsaAttuale(), r.max) : null; }
         case "stato": return (RT.effetti[e.s] || CB.effNomi[e.s] || e.s) + RT.durata(e.turni) + (e.ridotto ? " " + RT.ridotto(CB.effNomi[e.s], e.turni) : "");
         default: return (SCI && SCI.testo(e)) || (window.MagiaCombattimento ? window.MagiaCombattimento.testo(e) : null); /* Sciamano; Sigilli, Detonazione, difese degli incantesimi */
       }
@@ -11621,12 +11621,12 @@
       if (t.unaPerRiposo && ctx.usataPerRiposo(t.id)) return sist(RT.giaUsataRiposo);
       const disp = CMB.disponibile(t, scontro); if (!disp.ok) return sist(RT.scudo[disp.motivo]); /* difese dello scudo di fila, Cariche mancanti */
       const costo = sciamano() ? t.costo : CMB.costo(t, scontro);
-      if ((risorsaAttuale() || 0) < costo) return sist(sciamano() ? RT.pocaNatura(costo, risorsaAttuale() || 0) : RT.pocaIra(costo, risorsaAttuale() || 0));
-      pg.risorsaUsata = (pg.risorsaUsata || 0) + costo; /* l'ira (o la natura) si spende anche se la tecnica manca */
+      if ((risorsaAttuale() || 0) < costo) return sist(sciamano() ? RT.pocaNatura(costo, risorsaAttuale() || 0) : RT.pocaFuria(costo, risorsaAttuale() || 0));
+      pg.risorsaUsata = (pg.risorsaUsata || 0) + costo; /* la furia (o la natura) si spende anche se la tecnica manca */
       const r = sciamano() ? SCI.usa(t, scontro, ctx) : CMB.usa(t, scontro, ctx);
       const { righe, esiti, crit, ts, colpito } = righeEventi(r.eventi, t);
       righe.unshift(Lingua.t(t.desc));
-      for (let i = 0; i < crit; i++) { const ira = guadagnaIra(2); if (ira) righe.push(ira); } /* un tuo colpo critico: +2 ira, come per gli attacchi normali */
+      for (let i = 0; i < crit; i++) { const furia = guadagnaFuria(2); if (furia) righe.push(furia); } /* un tuo colpo critico: +2 furia, come per gli attacchi normali */
       if (crit) gambaEttore(righe);
       notaAzioneEttore(r.eventi, t.difesa || t.id === "parata" || t.famiglia === "difesa");
       if (colpito) scuotiNemico();
@@ -11829,7 +11829,7 @@
       if (ok) {
         const parataPronta = !!scontro.parata;
         const bd = D.dannoBonus != null ? D.dannoBonus : m, nd = crit ? 2 : 1, tiri = parataPronta ? [] : tiraDadi(nd, D.dannoDado), extra = conto && conto.dodici && !parataPronta ? tira(8) : 0, danno = parataPronta ? 0 : Math.max(1, somma(tiri) + bd) + extra; /* 28/10: danno = dado + dannoBonus */ /* con la Parata il danno non si tira; il dodicesimo colpo +1d8 */
-        const sub = CMB.colpoSubito(scontro, ctxTecnica(), crit, danno); /* Parata, assorbimento dello scudo, ira: 1/2/3 per livello, doppia sui critici */
+        const sub = CMB.colpoSubito(scontro, ctxTecnica(), crit, danno); /* Parata, assorbimento dello scudo, furia: 1/2/3 per livello, doppia sui critici */
         if (sub.annullato && parataPronta) {
           parato = true;
           righe.push(RT.parataOk, CB.tiroAttNem(d, m, tot, ca));
@@ -11849,7 +11849,7 @@
           if (dannoFin > 0) dannoAlPg(dannoFin, morso ? "Perforante" : "Tagliente", righe);
           if (dannoFin > 0 && abC) tsAbilitaNem(abC, righe, crit); /* lo stato dell'abilità a punti */
           if (dannoFin > 0 && fendente) salvezzaSangue(righe); /* Fendente sporco: Vigore CD 12 o Sanguinamento */
-          const ira = guadagnaIra(sub.ira); if (ira) righe.push(ira); /* l'ira cresce con i colpi subiti (non con quelli inghiottiti dallo scudo, salvo Batteria e Baluardo) */
+          const furia = guadagnaFuria(sub.furia); if (furia) righe.push(furia); /* la furia cresce con i colpi subiti (non con quelli inghiottiti dallo scudo, salvo Batteria e Baluardo) */
         }
       } else {
         righe.push(pesca(scudo ? CB.parata : (ca - tot >= SCARTO_AGILE ? CB.schivataAgile : CB.schivata)), CB.tiroAttNem(d, m, tot, ca));
@@ -11902,7 +11902,7 @@
         else {
           const tiri = tiraDadi(S.dadi, S.dado), pieno = somma(tiri), danno = eff("cerchio") ? Math.floor(pieno / 2) : pieno, righe = [CB.soffioPresoTxt, CB.soffioTiro(d, m, tot), CB.tiroDanno(S.dadi, S.dado, tiri, 0, danno)];
           const ds = difesaNatura(danno, righe); if (ds > 0) { dannoAlPg(ds, "Fuoco", righe); applicaStatoPg("ustione", righe); }
-          const ira = guadagnaIra(CMB.iraPerColpo(livelloPg(), false)); if (ira) righe.push(ira); /* il soffio a segno conta come un colpo subito */
+          const furia = guadagnaFuria(CMB.furiaPerColpo(livelloPg(), false)); if (furia) righe.push(furia); /* il soffio a segno conta come un colpo subito */
           aggiungi({ tipo: "narra", box: "nem", esito: CB.soffioPreso, righe });
         }
         stato(true, CB.attesa);
@@ -12150,10 +12150,10 @@
       const $ = (id) => document.getElementById(id);
       const en = () => window.Lingua && Lingua.get() === "en";
       const L = () => en()
-        ? { salute: "Health", mentali: "Mind", mana: "Arcane", fede: "Faith", ira: "Rage", natura: "Nature", apriPg: "Open character sheet", apriNem: "Open enemy sheet", chiudi: "Close",
+        ? { salute: "Health", mentali: "Mind", mana: "Arcane", fede: "Faith", furia: "Fury", natura: "Nature", apriPg: "Open character sheet", apriNem: "Open enemy sheet", chiudi: "Close",
             invio: "☁ syncing…", ok: "☁ synced", locale: "", errore: "☁ cloud unreachable: saved on this device only",
             conflitto: "☁ another device saved later: choose from the home page", troppo: "☁ save too large for the cloud" }
-        : { salute: "Salute", mentali: "Mente", mana: "Arcano", fede: "Fede", ira: "Ira", natura: "Natura", apriPg: "Apri la scheda del personaggio", apriNem: "Apri la scheda del nemico", chiudi: "Chiudi",
+        : { salute: "Salute", mentali: "Mente", mana: "Arcano", fede: "Fede", furia: "Furia", natura: "Natura", apriPg: "Apri la scheda del personaggio", apriNem: "Apri la scheda del nemico", chiudi: "Chiudi",
             invio: "☁ sincronizzo…", ok: "☁ sincronizzata", locale: "", errore: "☁ cloud non raggiungibile: salvata solo qui",
             conflitto: "☁ un altro dispositivo ha salvato dopo: scegli dalla pagina iniziale", troppo: "☁ salvataggio troppo grande per il cloud" };
 
@@ -12217,7 +12217,7 @@
           const v = parti(k), riga = btnPg.querySelectorAll(`.r-${k}-l, .r-${k}, .r-${k}-n`);
           riga.forEach(e => e.hidden = !v);
           if (!v) return;
-          btnPg.querySelector(`.r-${k}-l`).textContent = k === "risorsa" ? t[{ Soldato: "ira", Forestiero: "natura" }[pgClasse()]] || "" : k === "mana" && pgClasse() === "Accolito" ? t.fede : t[k];
+          btnPg.querySelector(`.r-${k}-l`).textContent = k === "risorsa" ? t[{ Soldato: "furia", Forestiero: "natura" }[pgClasse()]] || "" : k === "mana" && pgClasse() === "Accolito" ? t.fede : t[k];
           btnPg.querySelector(`.r-${k}-n`).textContent = `${Math.max(0, v[0])}/${v[1]}`;
           btnPg.querySelector(`.r-${k} i`).style.width = (v[1] ? Math.max(0, Math.min(100, v[0] / v[1] * 100)) : 0) + "%";
         });

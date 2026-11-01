@@ -101,7 +101,7 @@ Per ogni livello del personaggio oltre quello atteso, il guardiano prende **+5 s
 - La riserva torna piena a ogni nuovo scontro.
 - **Ogni abilità che infligge uno stato costa PA**, per tutti i nemici: niente più stati gratuiti (sparisce l'Indebolito gratis sul critico del cinghiale).
 - **Oggetti di recupero:** un nemico può avere un oggetto che gli restituisce PA. Se lo usa, l'oggetto non compare più tra i tesori.
-- **Nella scheda del nemico:** una barra dei PA, come l'ira del personaggio. Svuotarla diventa una strategia: quando uno stato scade, il nemico lo rimette, ma ogni volta paga.
+- **Nella scheda del nemico:** una barra dei PA, come la furia del personaggio. Svuotarla diventa una strategia: quando uno stato scade, il nemico lo rimette, ma ogni volta paga.
 - **Quando usa le abilità:** se ha i PA e lo stato non è già attivo sul personaggio; altrimenti attacca. Così non spreca punti.
 - **Elisir di protezione:** il nemico non lo «vede». Il primo tentativo va sprecato (paga i PA, lo stato non attecchisce), poi smette di provarci per quello stato. Prepararsi ripaga due volte.
 

@@ -22,7 +22,7 @@
 (function (root) {
   const C = root.Combattimento || (typeof require === "function" ? require("./combattimento.js") : null);
   const R = root.Regole || {};
-  const RECUPERO = R.IRA_PER_COLPO || [1, 1, 2, 2, 3]; /* stessa tabella dell'ira, per evento della natura */
+  const RECUPERO = R.IRA_PER_COLPO || [1, 1, 2, 2, 3]; /* stessa tabella della furia, per evento della natura */
   const SCUDO_BASE = 5;        /* Scudo di Corteccia: massimo 5 + livello */
   const FAME = 3;              /* Fame del Parassita: punti natura */
   const RIVESTIMENTO = 3;      /* turni di un rivestimento */
@@ -150,7 +150,7 @@
       /* ---- livello 4 ---- */
       case "miasma": rivesti(t.id); hit({ piuDadi: 1 }); break;
       case "botola": hit(); trappola(t.id); break;
-      case "linfa_furiosa": hit(); mio("linfaFuria", 3); E.push({ k: "furia", turni: 3 }); break;
+      case "linfa_furiosa": hit(); mio("linfaFuria", 3); E.push({ k: "furiaLinfa", turni: 3 }); break;
       /* ---- livello 5 ---- */
       case "fioritura": mio("bulbo", 3); E.push({ k: "bulbo", turni: 3 }); break;
       case "cuore_tossina": {
@@ -306,7 +306,7 @@
       case "purifica": return T("Ogni stato che ti affliggeva svanisce.", "Every condition afflicting you fades away.");
       case "curaTurno": { const f = FONTI[e.fonte] || ["", ""]; return T(`${f[0]}: recuperi ${e.n} punti di salute.`, `${f[1]}: you recover ${e.n} health.`); }
       case "naturaRinascita": return T(`Il sottobosco ti restituisce ${e.preso} punto natura.`, `The undergrowth gives you back ${e.preso} nature point.`);
-      case "furia": return T(`La linfa furiosa ti accende per ${turni(e.turni)}: dopo ogni attacco ne fai un altro.`, `The furious sap fires you up for ${turni(e.turni)}: after each attack you make another.`);
+      case "furiaLinfa": return T(`La linfa furiosa ti accende per ${turni(e.turni)}: dopo ogni attacco ne fai un altro.`, `The furious sap fires you up for ${turni(e.turni)}: after each attack you make another.`);
       case "furiaAttacco": return T("La linfa furiosa ti spinge a colpire ancora:", "The furious sap drives you to strike again:");
       case "furiaFine": return T(`La linfa furiosa si spegne e ti lascia svuotato: ${e.d} danni.`, `The furious sap burns out and leaves you drained: ${e.d} damage.`);
       case "bulbo": return T(`Il bulbo primordiale affonda le radici: vivrà ${turni(e.turni)}.`, `The primordial bulb sinks its roots: it will live ${turni(e.turni)}.`);

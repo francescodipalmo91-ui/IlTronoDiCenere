@@ -19,12 +19,12 @@
   }
   function ctx(o) {
     o = o || {};
-    const c = { liv: 1, modAtt: 3, modDanno: 3, dado: 6, caBase: 12, boss: false, cd: 12, modTs: 0, cura: 0, ira: 0, usate: {} };
+    const c = { liv: 1, modAtt: 3, modDanno: 3, dado: 6, caBase: 12, boss: false, cd: 12, modTs: 0, cura: 0, furia: 0, usate: {} };
     Object.assign(c, o);
     c.tira = dadi(o.dadi || []);
     c.ca = () => c.caBase - (c.s ? C.malusCA(c.s) : 0); /* Sbilanciato e Incrinatura, come in partita */
     c.curaPg = (n) => { c.cura += n; };
-    c.iraPiu = (n) => { c.ira += n; };
+    c.furiaPiu = (n) => { c.furia += n; };
     c.usataPerRiposo = (id) => !!c.usate[id];
     c.segnaPerRiposo = (id) => { c.usate[id] = true; };
     return c;
@@ -38,7 +38,7 @@
   const eq = (a, b, msg) => { if (JSON.stringify(a) !== JSON.stringify(b)) throw new Error(`${msg || "atteso"}: ${JSON.stringify(b)}, ottenuto ${JSON.stringify(a)}`); };
   const vero = (x, msg) => { if (!x) throw new Error(msg || "atteso vero"); };
 
-  /* ================= 1. Una tecnica che manca spende comunque l'ira ================= */
+  /* ================= 1. Una tecnica che manca spende comunque la furia ================= */
   caso("1. Tecnica mancata: il costo resta dovuto e non succede nulla", () => {
     const s = scontro(), c = ctx({ dadi: [2] }); /* 2 + 3 = 5 contro CA 12 */
     const r = prova(s, c, "morso_acciaio");
@@ -111,29 +111,29 @@
   });
 
   /* ================= 6. Parata Mutilante ================= */
-  caso("6a. Parata Mutilante: il primo colpo fa 0 danni, non dà ira, contrattacco e sanguinamento", () => {
+  caso("6a. Parata Mutilante: il primo colpo fa 0 danni, non dà furia, contrattacco e sanguinamento", () => {
     const s = scontro(), c = ctx({ liv: 4, dadi: [] });
     const r = prova(s, c, "parata"); eq(ev(r, "colpo").length, 0, "nessun tiro: consuma l'azione"); eq(s.parata, true);
     const c2 = ctx({ liv: 4, dadi: [5] }); c2.s = s;
     const sub = C.colpoSubito(s, c2, false);
-    eq(sub.annullato, true); eq(sub.ira, 0); eq(s.pv, 32, "5 + 3 di contrattacco"); eq(s.eff.sanguina, 3); eq(s.parata, false);
+    eq(sub.annullato, true); eq(sub.furia, 0); eq(s.pv, 32, "5 + 3 di contrattacco"); eq(s.eff.sanguina, 3); eq(s.parata, false);
     eq(C.colpoSubito(s, c2, false).annullato, false, "solo il primo colpo");
   });
   caso("6b. Parata Mutilante: finisce all'inizio del tuo turno se nessuno ti colpisce", () => {
     const s = scontro(); prova(s, ctx(), "parata"); C.inizioTurnoPg(s); eq(s.parata, false);
   });
 
-  /* ================= 7. Recupero dell'ira ================= */
-  caso("7. Ira per colpo subito: 1/2 ai livelli 1-2, 2/4 ai livelli 3-4, 3/6 al livello 5", () => {
+  /* ================= 7. Recupero della furia ================= */
+  caso("7. Furia per colpo subito: 1/2 ai livelli 1-2, 2/4 ai livelli 3-4, 3/6 al livello 5", () => {
     const att = [[1, 1, 2], [2, 1, 2], [3, 2, 4], [4, 2, 4], [5, 3, 6]];
-    att.forEach(([l, n, cr]) => { eq(C.iraPerColpo(l, false), n, "livello " + l); eq(C.iraPerColpo(l, true), cr, "critico livello " + l); });
-    eq(C.colpoSubito(scontro(), ctx({ liv: 3 }), true).ira, 4);
+    att.forEach(([l, n, cr]) => { eq(C.furiaPerColpo(l, false), n, "livello " + l); eq(C.furiaPerColpo(l, true), cr, "critico livello " + l); });
+    eq(C.colpoSubito(scontro(), ctx({ liv: 3 }), true).furia, 4);
   });
 
-  /* ================= 8. Punti ira massimi ================= */
-  caso("8. Ira massima con Vigore +3: 13, 18, 24, 31, 39", () => {
-    eq([1, 2, 3, 4, 5].map(l => C.iraMax(3, l)), [13, 18, 24, 31, 39]);
-    eq(C.crescitaIra(-1, 2), 1, "almeno 1 punto a livello");
+  /* ================= 8. Punti furia massimi ================= */
+  caso("8. Furia massima con Vigore +3: 13, 18, 24, 31, 39", () => {
+    eq([1, 2, 3, 4, 5].map(l => C.furiaMax(3, l)), [13, 18, 24, 31, 39]);
+    eq(C.crescitaFuria(-1, 2), 1, "almeno 1 punto a livello");
   });
 
   /* ================= 9. Posti delle tecniche ================= */
@@ -322,10 +322,10 @@
     const m = scontro(); prova(m, ctx({ liv: 4, dadi: [15, 2, 1] }), "demolizione"); eq(m.crepe || 0, 0, "uno mancato: niente");
     const z = scontro(); prova(z, ctx({ liv: 4, dadi: [15, 2, 15, 3, 18] }), "demolizione"); eq([z.crepe, z.eff.sbilanciato || 0], [2, 0], "il comune che resiste non ha ripiego");
   });
-  caso("Contro-Schiacciamento: 0 danni, nessuna ira, contrattacco e 1 carica di Incrinatura", () => {
+  caso("Contro-Schiacciamento: 0 danni, nessuna furia, contrattacco e 1 carica di Incrinatura", () => {
     const s = scontro(), r = prova(s, ctx({ liv: 4 }), "controschiaccio"); eq(ev(r, "colpo").length, 0); eq(s.parata, true);
     const c2 = ctx({ liv: 4, dadi: [5] }); c2.s = s;
-    const sub = C.colpoSubito(s, c2, false); eq(sub.annullato, true); eq(sub.ira, 0); eq(s.pv, 32); eq(s.crepe, 1); eq(s.eff.sanguina || 0, 0, "niente sanguinamento");
+    const sub = C.colpoSubito(s, c2, false); eq(sub.annullato, true); eq(sub.furia, 0); eq(s.pv, 32); eq(s.crepe, 1); eq(s.eff.sanguina || 0, 0, "niente sanguinamento");
     const p = scontro(); prova(p, ctx({ liv: 4 }), "controschiaccio"); C.inizioTurnoPg(p); eq([p.parata, p.parataCrepe], [false, false]);
     const q = scontro(); prova(q, ctx({ liv: 4 }), "controschiaccio"); C.inizioTurnoPg(q); prova(q, ctx({ liv: 4 }), "parata");
     C.colpoSubito(q, ctx({ liv: 4, dadi: [1, 1] }), false); eq([q.crepe || 0, q.eff.sanguina], [0, 3], "la Parata di dopo resta da taglio");
@@ -405,10 +405,10 @@
     const s = scontro(), r = ev(prova(s, ctx({ liv: 3, dadi: [15, 1, 1] }), "mirato"), "colpo")[0]; eq([r.crit, r.nd], [true, 2]);
     const m = scontro(), rm = ev(prova(m, ctx({ liv: 3, dadi: [2] }), "mirato"), "colpo")[0]; eq([rm.ok, rm.crit], [false, false]);
   });
-  caso("Guardia di Punta: 0 danni, contrattacco critico con 18-20 ed Esposto 2, niente ira", () => {
+  caso("Guardia di Punta: 0 danni, contrattacco critico con 18-20 ed Esposto 2, niente furia", () => {
     const s = scontro(), c = ctx({ liv: 4 }); prova(s, c, "guardia_punta"); eq([s.parata, s.parataPunta], [true, true]);
     const sub = C.colpoSubito(s, ctx({ liv: 4, dadi: [18, 2, 3] }), false), k = sub.eventi.find(e => e.k === "contrattacco");
-    eq([sub.annullato, sub.ira, k.crit, k.tiri, k.danno, s.eff.esposto, s.parata], [true, 0, true, [2, 3], 8, 2, false]);
+    eq([sub.annullato, sub.furia, k.crit, k.tiri, k.danno, s.eff.esposto, s.parata], [true, 0, true, [2, 3], 8, 2, false]);
     const n = scontro(); prova(n, ctx({ liv: 4 }), "guardia_punta"); const k2 = C.colpoSubito(n, ctx({ liv: 4, dadi: [10, 4] }), false).eventi.find(e => e.k === "contrattacco"); eq([k2.crit, k2.danno], [false, 7]);
   });
   caso("Colpo di Grazia: esecuzione dei comuni sotto un quarto, mai sui boss", () => {
@@ -465,10 +465,10 @@
     const s = scontro(); eq(C.carica(s, 2).tot, 2); const e = C.carica(s, 2); eq([e.n, e.perse, e.tot, s.cariche], [1, 1, 3, 3]);
     const b = scontro(), c = ctx({ boss: true, liv: 2 }); prova(b, c, "muro"); C.colpoSubito(b, c, false, 6); eq(b.cariche, 3, "boss: 3 come per tutti");
   });
-  caso("S2. Assorbimento Minimale: colpo di scudo 1d4; il primo colpo subito fa metà danni (ira normale) e dà 1 Carica", () => {
+  caso("S2. Assorbimento Minimale: colpo di scudo 1d4; il primo colpo subito fa metà danni (furia normale) e dà 1 Carica", () => {
     const s = scontro(), c = ctx({ dadi: [15, 2] });
     const r = prova(s, c, "assorbimento"); eq(ev(r, "colpo")[0].dado, 4); eq(s.pv, 35);
-    const sub = C.colpoSubito(s, c, false, 7); eq([sub.danno, sub.ira, sub.annullato, s.cariche, s.assorbiti], [3, 1, false, 1, 1]);
+    const sub = C.colpoSubito(s, c, false, 7); eq([sub.danno, sub.furia, sub.annullato, s.cariche, s.assorbiti], [3, 1, false, 1, 1]);
     eq(C.colpoSubito(s, c, false, 7).danno, 7, "solo il primo colpo");
   });
   caso("S3. Postura Salda: consuma l'azione, +3 CA fino al tuo turno, niente Presa; se il nemico manca, 1 Carica", () => {
@@ -481,10 +481,10 @@
     const s = scontro(), c = ctx(); prova(s, c, "rimbalzo_marea");
     const sub = C.colpoSubito(s, c, false, 7); eq([sub.danno, s.pv, s.cariche], [3, 36, 1]); eq(ev(sub, "rimbalzo")[0].danno, 4);
   });
-  caso("S5. Batteria Cinetica: 0 danni ma l'ira resta; Muro di Assorbimento: 0 danni, niente ira, 3 Cariche", () => {
+  caso("S5. Batteria Cinetica: 0 danni ma la furia resta; Muro di Assorbimento: 0 danni, niente furia, 3 Cariche", () => {
     const s = scontro(), c = ctx({ liv: 2 }); prova(s, c, "batteria");
-    const a = C.colpoSubito(s, c, true, 9); eq([a.danno, a.annullato, a.ira, s.cariche], [0, true, 2, 1], "critico: ira doppia");
-    const m = scontro(); prova(m, c, "muro"); const b = C.colpoSubito(m, c, false, 9); eq([b.danno, b.ira, m.cariche], [0, 0, 3]);
+    const a = C.colpoSubito(s, c, true, 9); eq([a.danno, a.annullato, a.furia, s.cariche], [0, true, 2, 1], "critico: furia doppia");
+    const m = scontro(); prova(m, c, "muro"); const b = C.colpoSubito(m, c, false, 9); eq([b.danno, b.furia, m.cariche], [0, 0, 3]);
   });
   caso("S6. Niente difesa dello scudo due turni di fila; un colpo di scudo o un attacco in mezzo la sblocca", () => {
     const s = scontro(), c = ctx({ liv: 2, dadi: [2] }); prova(s, c, "muro"); C.inizioTurnoPg(s, c);
@@ -508,17 +508,17 @@
     s.cariche = 2; const c = ctx({ liv: 3, dadi: [4, 5] }); const r = prova(s, c, "onda_ritorno");
     eq([s.pv, s.cariche, ev(r, "colpo").length], [28, 0, 0]); eq(c.tira.resto(), 0);
   });
-  caso("S10. Baluardo d'Acciaio: +2 CA per 2 turni; ogni colpo subito dà ira doppia e 1 Carica", () => {
+  caso("S10. Baluardo d'Acciaio: +2 CA per 2 turni; ogni colpo subito dà furia doppia e 1 Carica", () => {
     const s = scontro(), c = ctx({ liv: 3 }); prova(s, c, "baluardo"); eq([s.eff.guardia, s.guardiaVal, s.eff.baluardo], [2, 2, 2]);
-    const a = C.colpoSubito(s, c, false, 6); eq([a.danno, a.ira, s.cariche], [6, 4, 1]); C.colpoSubito(s, c, false, 6); eq(s.cariche, 2);
-    C.fineTurnoNemico(s); C.fineTurnoNemico(s); eq(C.colpoSubito(s, c, false, 6).ira, 2, "finito: ira normale");
+    const a = C.colpoSubito(s, c, false, 6); eq([a.danno, a.furia, s.cariche], [6, 4, 1]); C.colpoSubito(s, c, false, 6); eq(s.cariche, 2);
+    C.fineTurnoNemico(s); C.fineTurnoNemico(s); eq(C.colpoSubito(s, c, false, 6).furia, 2, "finito: furia normale");
   });
-  caso("S11. Risucchio della Voragine: 2d6 + Vigore; se colpisce 1 Carica e 1d4 ira", () => {
-    const s = scontro(), c = ctx({ liv: 4, dadi: [15, 3, 4, 2] }); prova(s, c, "risucchio"); eq([s.pv, s.cariche, c.ira], [30, 1, 2]);
+  caso("S11. Risucchio della Voragine: 2d6 + Vigore; se colpisce 1 Carica e 1d4 furia", () => {
+    const s = scontro(), c = ctx({ liv: 4, dadi: [15, 3, 4, 2] }); prova(s, c, "risucchio"); eq([s.pv, s.cariche, c.furia], [30, 1, 2]);
   });
   caso("S12. Postura del Mare Profondo: ogni colpo fa 0 danni e dà 1 Carica; al tuo turno 1d6 + Vigore per colpo assorbito", () => {
     const s = scontro(), c = ctx({ liv: 4 }); prova(s, c, "mare_profondo");
-    const a = C.colpoSubito(s, c, false, 6), b = C.colpoSubito(s, c, false, 5); eq([a.danno, a.ira, b.danno, s.cariche, s.assorbiti], [0, 0, 0, 2, 2]);
+    const a = C.colpoSubito(s, c, false, 6), b = C.colpoSubito(s, c, false, 5); eq([a.danno, a.furia, b.danno, s.cariche, s.assorbiti], [0, 0, 0, 2, 2]);
     const r = C.inizioTurnoPg(s, ctx({ liv: 4, dadi: [5, 6] })); eq(s.pv, 23); eq(r.filter(e => e.k === "onda").length, 2); eq(s.assorbe, null);
   });
   caso("S13. Frantumazione della Riserva: 2d6; tiro salvezza → niente attacchi speciali + Indebolito 2; boss Indebolito + Sbilanciato 2 senza tiro", () => {
@@ -565,7 +565,7 @@
   });
   caso("S21. Drenaggio d'Urto e Sigillo del Monolito (via di Guendalina)", () => {
     const s = scontro(), c = ctx({ liv: 3, dadi: [15, 2, 5] }); prova(s, c, "drenaggio"); eq([s.eff.silenzio, s.eff.guardia], [1, 1]);
-    C.colpoMancato(s, c); eq([c.ira, s.cariche], [1, 1]);
+    C.colpoMancato(s, c); eq([c.furia, s.cariche], [1, 1]);
     const b = scontro(); prova(b, ctx({ liv: 3, boss: true, dadi: [15, 2] }), "drenaggio"); eq(b.eff.debole, 2);
     const g = scontro(); prova(g, ctx({ liv: 4, dadi: [15, 1, 1, 5] }), "sigillo_monolito"); eq([g.eff.silenzio, g.eff.guardia, g.sconto], [2, 2, 2]);
     const gb = scontro(); prova(gb, ctx({ liv: 4, boss: true, dadi: [15, 1, 1] }), "sigillo_monolito"); eq([gb.eff.debole, gb.eff.sbilanciato], [2, 2]);

@@ -92,12 +92,12 @@
   /* Risorsa di ogni classe (i nomi interni delle classi restano quelli vecchi). Serve alle descrizioni che dipendono dalla classe:
      pozione di essenza, olio della falena. Le pagine registrano con setRisorsa() una funzione che dice quale classe è in uso. */
   const RISORSE = {
-    Soldato: { it: "punti ira", en: "rage points" }, Forestiero: { it: "punti natura", en: "nature points" },
+    Soldato: { it: "punti furia", en: "fury points" }, Forestiero: { it: "punti natura", en: "nature points" },
     Sapiente: { it: "punti arcano", en: "arcane points" }, Accolito: { it: "punti fede", en: "faith points" }
   };
   let classeFn = () => null;
   const risorsaDi = (classe) => (RISORSE[classe] ? RISORSE[classe][corrente] : null);
-  const FALLBACK_RIS = { it: "punti ira, natura, arcano o fede (secondo la tua classe)", en: "rage, nature, arcane or faith points (depending on your class)" };
+  const FALLBACK_RIS = { it: "punti furia, natura, arcano o fede (secondo la tua classe)", en: "fury, nature, arcane or faith points (depending on your class)" };
   const conRisorsa = (t) => (typeof t === "string" ? t.replace(/\{risorsa\}/g, risorsaDi(classeFn()) || FALLBACK_RIS[corrente]) : t);
 
   window.Lingua = {

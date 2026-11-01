@@ -17,7 +17,7 @@ Bozza da leggere, **niente codice ancora**. Segue le regole del Guerriero: d20 c
 | Scelta | Liberi tra **le due scuole** della classe: 3 incantesimi per scuola per livello, quindi 6 opzioni per livello |
 | Cambio | Al riposo, come già deciso |
 | Costi | L1 1-2, L2 3-4, L3 4-6, L4 6-7, L5 8-9 (un po' sotto il Guerriero, perché gli incantatori recuperano meno risorsa durante lo scontro) |
-| Recupero in combattimento | Niente ira dai colpi subiti; ogni classe ha la sua meccanica (Detonazione per l'Arcanista, Crepuscolo per il Monaco) |
+| Recupero in combattimento | Niente furia dai colpi subiti; ogni classe ha la sua meccanica (Detonazione per l'Arcanista, Crepuscolo per il Monaco) |
 | Arma | L'attacco con l'arma resta gratuito: quando il mana finisce si combatte con il bastone |
 
 **Luce resta una capacità di classe** per entrambi, **fuori dai posti** (costo 1), come Mente incrollabile per i marziali: serve nel dungeon al posto della torcia e nessuno deve rinunciare a un incantesimo per vedere. Per l'Arcanista si chiama **Lume Arcano** (stessa id `luce`).
@@ -222,7 +222,7 @@ Nei salvataggi, quelli tolti diventano posti vuoti, come per il Guerriero.
 5. **Vie:** Aldo = Forza/Ombra e Guendalina = Arcano/Luce ti convince? I nomi (Demolizione, Trama, Eclissi, Focolare) sono provvisori.
 6. **Vulnerabilità:** quali nemici sono vulnerabili a luce, ombra o forza? Per esempio: i mastini (fuoco) vulnerabili alla Forza? I guardiani legati al Signore vulnerabili alla Luce?
 7. **Fuori dallo scontro:** ho messo pochi usi (Lume Arcano, Scopri Carte, Manto d'Ombra). Ne vuoi di più, collegati alle prove (es. Spinta per aprire una porta incastrata)?
-8. **Crescita del mana:** oggi sale di dado vita + mod a ogni livello (circa 4-5). Con questi costi basta; se vuoi la stessa formula dell'ira (mod + livello), i costi vanno rivisti.
+8. **Crescita del mana:** oggi sale di dado vita + mod a ogni livello (circa 4-5). Con questi costi basta; se vuoi la stessa formula della furia (mod + livello), i costi vanno rivisti.
 
 ---
 
@@ -375,7 +375,7 @@ Da cambiare anche i nomi delle abilità che citano personaggi: «Filo della Gove
 - **Regolamento:** sezioni per classe (Guerriero, Sciamano, Arcanista, Monaco) con tutte le tecniche e gli incantesimi, stati, avversari temibili, debolezze, enigmi ed esempi di combattimento. Le sezioni degli incantatori hanno l'avviso «in arrivo», quella dello Sciamano «in preparazione». Nessun PNG nominato nelle vie.
 - **Abilità delle vie rinominate** (prima citavano personaggi): Pugno della Casa → Colpo Demolitore, Filo della Governante → Filo di Rune, Concentrazione di Adele → Quiete Assoluta, Rabbia del Sovrano → Furia Cinerea.
 - **Attacco magico:** d20 + mod attributo, senza livello, come l'attacco con l'arma.
-- **Crescita delle risorse nel codice:** tutte (ira, natura, mana, fede) + mod attributo + nuovo livello, senza dado (`saliDiLivello` in gioco.html).
+- **Crescita delle risorse nel codice:** tutte (furia, natura, mana, fede) + mod attributo + nuovo livello, senza dado (`saliDiLivello` in gioco.html).
 
 ---
 

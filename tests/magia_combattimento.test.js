@@ -401,7 +401,7 @@
   caso("Vie del Monaco: Rancore (+1d6 per colpo subito, max 3), Lutto, Furia Cinerea", () => {
     let s = scontro({ colpiSubiti: 5 }), c = ctx({ liv: 3, dadi: [15, 1, 1, 2, 2, 3, 3] }); lancia("rancore", s, c); eq(s.pv, 80 - 9, "2d6 + 3d6: i primi cinque dadi");
     s = scontro(); c = ctx({ liv: 4, dadi: [3] }); lancia("lutto", s, c); eq(s.eff.avvizzito, 3); eq(s.avvizzitoDado, 6); eq(s.eff.debole, 2); eq(s.lutto, true);
-    s = scontro({ bilancia: 1 }); c = ctx({ liv: 5 }); lancia("furia_cinerea", s, c); eq(s.bilancia, -3); eq(s.eff.furia, 3);
+    s = scontro({ bilancia: 1 }); c = ctx({ liv: 5 }); lancia("furia_cinerea", s, c); eq(s.bilancia, -3); eq(s.eff.furiaCinerea, 3);
     const c2 = ctx({ liv: 5, dadi: [15, 3, 4, 1] }); lancia("tocco_avvizzente", s, c2); eq(s.bilancia, -3, "bloccata"); eq(s.pv, 80 - 8, "3d6: Velo e Furia aggiungono un dado ciascuno"); eq(c2.curato, 4);
     const c3 = ctx({ liv: 5, dadi: [15, 3] }); lancia("dardo_luce", s, c3); eq(s.bilancia, -3); eq(c3.mana, 0, "niente Crepuscolo mentre è bloccata");
   });

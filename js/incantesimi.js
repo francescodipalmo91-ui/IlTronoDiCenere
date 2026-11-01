@@ -45,7 +45,7 @@ window.INCANTESIMI = {
                   en: "You invoke the blessing of the Heavens. A transparent shield, pure white and blessed, comes between you and the looming evil." },
           effetto: { it: "+2 Classe Armatura per 2 turni", en: "+2 Armor Class for 2 turns" } },
         { id: "folgorazione", costo: 2, nome: { it: "Folgorazione", en: "Smite" },
-          desc: { it: "Scateni l'ira divina. Un fulmine d'argento trafigge la carne dell'avversario, paralizzandolo in un getto di fumo e spasmi involontari.",
+          desc: { it: "Scateni la furia divina. Un fulmine d'argento trafigge la carne dell'avversario, paralizzandolo in un getto di fumo e spasmi involontari.",
                   en: "You unleash divine wrath. A silver lightning bolt pierces the enemy's flesh, paralysing it in a burst of smoke and involuntary spasms." },
           effetto: { it: "Paralisi per 2 turni", en: "Paralysis for 2 turns" } },
         { id: "pelle_pietra", costo: 2, nome: { it: "Pelle di Pietra", en: "Stoneskin" },

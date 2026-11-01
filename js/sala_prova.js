@@ -1,6 +1,6 @@
 /* =====================================================================
    SALA DI PROVA DEL COMBATTIMENTO — tutorial.html?prova
-   Strumento di sviluppo (solo italiano): prova tecniche, stati, ira, posti, vie e boss
+   Strumento di sviluppo (solo italiano): prova tecniche, stati, furia, posti, vie e boss
    con le stesse regole della partita (js/combattimento.js), senza entrare in gioco.
    - Personaggio: livello, Vigore, Agilità, CA, arma, scudo, via e serie della via (arma o scudo).
    - Nemico: mastino comune, Ettore (boss), Enea (boss, argento) o manichino; boss forzabile; PV e CA modificabili.
@@ -37,14 +37,14 @@
     enea: { nome: "Enea (boss, argento)", ca: 13, pv: 36, vigore: 12, attaccoFisso: 4, pa: 9, boss: true, enea: true, arma: true, vuln: ["Forza", "Luce", "Veleno"] },
     manichino: { nome: "Manichino (non attacca)", ca: 12, pv: 60, boss: false, passivo: true, arma: false }
   };
-  const NOMI_EFF = { sanguina: "Sanguinamento", frattura: "Frattura", intontito: "Intontito", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Inibito", frastornato: "Frastornato", bloccato: "Stordito", guardia: "Guardia alzata", furore: "Furore inarrestabile", esposto: "Esposto", precisione: "Mille Soli", baluardo: "Baluardo d'Acciaio", fortezza: "Fortezza Eterna", runa: "Runa sull'arma", occhio: "Occhio del Tomo", tomo: "Tomo Proibito", quiete: "Quiete Assoluta", muro: "Muro di forza", scudo: "Scudo", invuln: "Invulnerabilità", pressione: "Pressione", parola: "Parola Vera", santuario: "Santuario", voto: "Voto di Luce", gemella: "Ombra Gemella", cerchio: "Cerchio del Focolare", fiamma: "Fiamma Calda", notte: "Notte Senza Fine", furia: "Furia Cinerea", manto: "Manto d'Ombra", seconda: "Seconda Vita", accecato: "Accecato", avvizzito: "Avvizzito", paura: "Terrore", corona: "Corona di Raggi",
+  const NOMI_EFF = { sanguina: "Sanguinamento", frattura: "Frattura", intontito: "Intontito", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Inibito", frastornato: "Frastornato", bloccato: "Stordito", guardia: "Guardia alzata", furore: "Furore inarrestabile", esposto: "Esposto", precisione: "Mille Soli", baluardo: "Baluardo d'Acciaio", fortezza: "Fortezza Eterna", runa: "Runa sull'arma", occhio: "Occhio del Tomo", tomo: "Tomo Proibito", quiete: "Quiete Assoluta", muro: "Muro di forza", scudo: "Scudo", invuln: "Invulnerabilità", pressione: "Pressione", parola: "Parola Vera", santuario: "Santuario", voto: "Voto di Luce", gemella: "Ombra Gemella", cerchio: "Cerchio del Focolare", fiamma: "Fiamma Calda", notte: "Notte Senza Fine", furiaCinerea: "Furia Cinerea", manto: "Manto d'Ombra", seconda: "Seconda Vita", accecato: "Accecato", avvizzito: "Avvizzito", paura: "Terrore", corona: "Corona di Raggi",
     avvelenato: "Avvelenato", marea: "Marea di Putrefazione", rivest: "Arma rivestita", linfaFuria: "Linfa Furiosa", pelle: "Pelle di Corteccia", infuso: "Infuso di Linfa Vitale", aura: "Aura di Purificazione", rinascita: "Rinascita del Sottobosco", bulbo: "Bulbo primordiale" };
   const DESC_EFF = { frattura: "1d4 danni a ogni suo attacco", intontito: "niente critici", debole: "−2 per colpire", sbilanciato: "−2 alla Classe armatura", silenzio: "niente Presa né Soffio", frastornato: "−4 per colpire, niente critici", bloccato: "salta il prossimo turno", furore: "+4 ai tiri salvezza e alle prove contrapposte", esposto: "i tuoi attacchi fanno critico con un numero in meno, mai sotto 18", precisione: "i tuoi attacchi fanno critico da 18 a 20" };
-  const EFF_PG = ["guardia", "baluardo", "fortezza", "furore", "precisione", "scudo", "muro", "invuln", "runa", "occhio", "tomo", "quiete", "santuario", "voto", "gemella", "cerchio", "fiamma", "notte", "furia", "manto", "seconda", "rivest", "linfaFuria", "pelle", "infuso", "aura", "rinascita", "bulbo"];
+  const EFF_PG = ["guardia", "baluardo", "fortezza", "furore", "precisione", "scudo", "muro", "invuln", "runa", "occhio", "tomo", "quiete", "santuario", "voto", "gemella", "cerchio", "fiamma", "notte", "furiaCinerea", "manto", "seconda", "rivest", "linfaFuria", "pelle", "infuso", "aura", "rinascita", "bulbo"];
   const arcanista = () => !!pg && (pg.classe === "arcanista" || pg.classe === "monaco"); /* incantatori: mana o punti fede */
   const monaco = () => !!pg && pg.classe === "monaco";
   const sciamano = () => !!pg && pg.classe === "sciamano" && !!S; /* tecniche della natura e punti natura */
-  const risorsa = () => (arcanista() ? (monaco() ? "fede" : "mana") : sciamano() ? "natura" : "ira");
+  const risorsa = () => (arcanista() ? (monaco() ? "fede" : "mana") : sciamano() ? "natura" : "furia");
   const SCUOLE = () => (monaco() ? ["luce", "ombra"] : ["arcano", "forza"]);
 
   /* ---------- dadi: coda truccata, poi caso ---------- */
@@ -58,15 +58,15 @@
   function leggiPg() {
     const p = leggiPgBase();
     p.classe = $("pClasse") ? $("pClasse").value : "guerriero";
-    if (p.classe === "arcanista" || p.classe === "monaco") { p.mente = Number($("pMen").value); p.modM = mod(p.mente); p.iraMax = C.iraMax(p.modM, p.liv); } /* il mana cresce come l'ira: 10 + Mente, poi Mente + livello a ogni salita */
-    if (p.classe === "sciamano") { p.modS = mod(Number($("pMen").value)); p.iraMax = C.iraMax(p.modS, p.liv); } /* punti natura: 10 + Spirito, poi Spirito + livello */
+    if (p.classe === "arcanista" || p.classe === "monaco") { p.mente = Number($("pMen").value); p.modM = mod(p.mente); p.furiaMax = C.furiaMax(p.modM, p.liv); } /* il mana cresce come la furia: 10 + Mente, poi Mente + livello a ogni salita */
+    if (p.classe === "sciamano") { p.modS = mod(Number($("pMen").value)); p.furiaMax = C.furiaMax(p.modS, p.liv); } /* punti natura: 10 + Spirito, poi Spirito + livello */
     return p;
   }
   function leggiPgBase() {
     const liv = Number($("pLiv").value), vig = Number($("pVig").value), agi = Number($("pAgi").value), arma = ARMI[Number($("pArma").value)];
     const modV = mod(vig);
     const pvMax = Number($("pPv").value) || (20 + modV + (liv - 1) * Math.max(1, 6 + modV));
-    return { liv, vig, modV, modAgi: mod(agi), ca: Number($("pCa").value) || 14, arma, scudo: $("pScudo").checked, via: liv >= 3 ? $("pVia").value || null : null, serie: $("pSerie").value === "scudo" ? "scudo" : "arma", pvMax, iraMax: C.iraMax(modV, liv) };
+    return { liv, vig, modV, modAgi: mod(agi), ca: Number($("pCa").value) || 14, arma, scudo: $("pScudo").checked, via: liv >= 3 ? $("pVia").value || null : null, serie: $("pSerie").value === "scudo" ? "scudo" : "arma", pvMax, furiaMax: C.furiaMax(modV, liv) };
   }
   const caPg = () => pg.ca + (s && C.attivo(s, "guardia") ? Number(s.guardiaVal) || 0 : 0) + (s && C.attivo(s, "scudo") ? 2 : 0) + (s && C.attivo(s, "muro") ? 3 : 0) + (s && C.attivo(s, "cerchio") ? 2 : 0);
   const caNem = () => nem.ca - (s ? C.malusCA(s) : 0) + (s && nem.enea && s.carica && s.inGuardia ? 2 : 0); /* Sbilanciato e Incrinatura; Enea carica in guardia dopo la prima interruzione */
@@ -84,12 +84,12 @@
     const c = ctxBase();
     if (arcanista()) Object.assign(c, {
       modAtt: pg.modM, modDanno: pg.modM, cd: 8 + pg.modM + pg.liv, dado: s && C.attivo(s, "runa") ? passoDado(pg.arma.dado) : pg.arma.dado,
-      manaPiu: (n) => { const r = Math.min(n, pg.iraMax - pg.ira); pg.ira += r; return r; }, dannoMente: (n) => n,
+      manaPiu: (n) => { const r = Math.min(n, pg.furiaMax - pg.furia); pg.furia += r; return r; }, dannoMente: (n) => n,
       cura: (n) => { const f = Math.min(n, pg.pvMax - pg.pv); pg.pv += f; return f; }, pvMancanti: () => pg.pvMax - pg.pv, dannoCorpo: (n) => { const f = Math.min(n, pg.pv - 1); pg.pv -= f; return f; }
     });
     if (sciamano()) Object.assign(c, {
       modSpirito: pg.modS, resisteVeleno: !!($("nResiste") && $("nResiste").checked), linfaRigeneratrice: pg.via === "guendalina",
-      naturaPiu: (n) => { const r = Math.min(n, pg.iraMax - pg.ira); pg.ira += r; return r; }, dannoPg: (n) => { pg.pv -= n; }
+      naturaPiu: (n) => { const r = Math.min(n, pg.furiaMax - pg.furia); pg.furia += r; return r; }, dannoPg: (n) => { pg.pv -= n; }
     });
     return c;
   }
@@ -100,7 +100,7 @@
       svantaggio: !!(s && s.spinta && turnoPg), /* Spinta di Enea: il tuo prossimo attacco ha svantaggio */
       cd: 8 + pg.modV + pg.liv, modTs: mod(nem.vigore),
       curaPg: (n) => { pg.pv = Math.min(pg.pvMax, pg.pv + n); },
-      iraPiu: (n) => { pg.ira = Math.min(pg.iraMax, pg.ira + n); },
+      furiaPiu: (n) => { pg.furia = Math.min(pg.furiaMax, pg.furia + n); },
       usataPerRiposo: (id) => !!perRiposo[id], segnaPerRiposo: (id) => { perRiposo[id] = true; }
     };
   }
@@ -139,13 +139,13 @@
         case "parata": r.push("Parata pronta: il primo colpo che ti raggiungerebbe fa 0 danni."); break;
         case "attaccoGratuito": r.push("Attacco normale gratuito:"); break;
         case "soffioPerso": r.push("Il soffio pronto va perso."); break;
-        case "sconto": r.push(`La prossima tecnica costa ${e.n} ira in meno.`); break;
-        case "scontoUsato": r.push(`Sconto: −${e.n} ira.`); break;
+        case "sconto": r.push(`La prossima tecnica costa ${e.n} furia in meno.`); break;
+        case "scontoUsato": r.push(`Sconto: −${e.n} furia.`); break;
         case "furore": r.push(`+4 ai tiri salvezza e alle prove contrapposte per ${durata(e.turni)}.`); break;
-        case "ira": r.push(`+${e.n} ira.`); break;
+        case "furia": r.push(`+${e.n} furia.`); break;
         case "giaUsataRiposo": r.push("Già usata in questo riposo."); break;
         /* scudo */
-        case "assorbePronto": r.push({ meta: "Scudo pronto: il primo colpo fa metà danni", rimbalzo: "Scudo pronto: metà del primo colpo torna al nemico", zero: "Scudo pronto: il primo colpo fa 0 danni", zeroIra: "Scudo pronto: il primo colpo fa 0 danni ma dà l'ira", tutti: "Scudo pronto: ogni colpo fino al tuo turno fa 0 danni" }[e.tipo] + (e.cariche ? ` (+${e.cariche} Cariche)` : "") + (e.onda ? `, poi onda (${e.onda === "mare" ? "1d6 + Vigore per colpo" : "2d6 per Carica + Vigore"})` : "") + "."); break;
+        case "assorbePronto": r.push({ meta: "Scudo pronto: il primo colpo fa metà danni", rimbalzo: "Scudo pronto: metà del primo colpo torna al nemico", zero: "Scudo pronto: il primo colpo fa 0 danni", zeroFuria: "Scudo pronto: il primo colpo fa 0 danni ma dà la furia", tutti: "Scudo pronto: ogni colpo fino al tuo turno fa 0 danni" }[e.tipo] + (e.cariche ? ` (+${e.cariche} Cariche)` : "") + (e.onda ? `, poi onda (${e.onda === "mare" ? "1d6 + Vigore per colpo" : "2d6 per Carica + Vigore"})` : "") + "."); break;
         case "cariche": r.push(e.n > 0 ? `Carica Cinetica +${e.n} (${e.tot}/${e.max})${e.perse ? `, ${e.perse} oltre il massimo perse` : ""}.` : `Cariche già al massimo (${e.tot}/${e.max}).`); break;
         case "caricheSpese": r.push(`Cariche spese: ${e.n}.`); break;
         case "caricaResta": r.push("Resta 1 Carica."); break;
@@ -153,11 +153,11 @@
         case "postura": r.push("Postura: la Presa non ti afferra; se ti manca, 1 Carica."); break;
         case "posturaRegge": r.push("La postura regge."); break;
         case "vendetta": r.push("Vendetta: il nemico ti ha colpito nel suo ultimo turno."); break;
-        case "baluardo": r.push(`Baluardo per ${durata(e.turni)}: ira doppia e 1 Carica per colpo subito.`); break;
-        case "baluardoColpo": r.push("Baluardo: ira doppia."); break;
+        case "baluardo": r.push(`Baluardo per ${durata(e.turni)}: furia doppia e 1 Carica per colpo subito.`); break;
+        case "baluardoColpo": r.push("Baluardo: furia doppia."); break;
         case "elastica": r.push("Marea Elastica attiva: con almeno 2 Cariche, ogni colpo subito restituisce 1d4."); break;
         case "elasticaColpo": r.push(`Marea Elastica: ${e.d} danni al nemico.`); break;
-        case "drenaggio": r.push("Drenaggio: se ti manca, +1 ira e 1 Carica."); break;
+        case "drenaggio": r.push("Drenaggio: se ti manca, +1 furia e 1 Carica."); break;
         case "fortezzaPronta": r.push(`Fortezza pronta per ${durata(e.turni)} (una volta per scontro).`); break;
         case "fortezzaUsata": r.push("Fortezza già usata in questo scontro."); break;
         case "fortezza": r.push(`Fortezza Eterna: resti a 1 salute (${e.evitato} danni evitati).`); break;
@@ -176,7 +176,7 @@
 
   /* ---------- scontro ---------- */
   function nuovoScontro() {
-    pg = leggiPg(); pg.pv = pg.pvMax; pg.ira = pg.iraMax;
+    pg = leggiPg(); pg.pv = pg.pvMax; pg.furia = pg.furiaMax;
     const D = NEMICI[$("nTipo").value];
     const vigore = D.vigore || 10 + tira(6), agilita = 10 + tira(6);
     const pvMax = Number($("nPv").value) || D.pv || (10 + tira(D.dadoVita) + mod(vigore));
@@ -185,7 +185,7 @@
     finito = false; nTurno = 0; tipoAzione = null;
     $("svLog").replaceChildren();
     if (nem.enea) iniziaEnea();
-    log(`Nuovo scontro: livello ${pg.liv}, ${pg.arma.nome} (1d${pg.arma.dado} ${pg.arma.tipo.toLowerCase()})${pg.scudo ? " e scudo" : ""}, Vigore ${fmt(pg.modV)}, ira ${pg.ira}/${pg.iraMax}. Contro: ${nem.nome}${nem.boss ? " — BOSS" : ""}, PV ${pvMax}, CA ${nem.ca}, Vigore ${fmt(mod(vigore))}.`, "sis");
+    log(`Nuovo scontro: livello ${pg.liv}, ${pg.arma.nome} (1d${pg.arma.dado} ${pg.arma.tipo.toLowerCase()})${pg.scudo ? " e scudo" : ""}, Vigore ${fmt(pg.modV)}, furia ${pg.furia}/${pg.furiaMax}. Contro: ${nem.nome}${nem.boss ? " — BOSS" : ""}, PV ${pvMax}, CA ${nem.ca}, Vigore ${fmt(mod(vigore))}.`, "sis");
     log("Agisci per primo (nella sala di prova l'iniziativa è sempre tua).", "sis");
     inizioTurno();
   }
@@ -225,11 +225,11 @@
     const pre = s.prossimo || {}; s.prossimo = null;
     tipoAzione = pg.arma.tipo;
     const c = ctx(), e = C.colpo(s, c, { base: true, bonus: pre.bonus || 0, piuDadi: pre.piuDadi || 0 });
-    if (e.crit && !arcanista() && !sciamano()) c.iraPiu(2);
+    if (e.crit && !arcanista() && !sciamano()) c.furiaPiu(2);
     const runa = e.ok && arcanista() && C.attivo(s, "runa") ? testoEventi([C.incidi(s, c, 1)]) : [];
     if (sciamano()) { if (e.ok) runa.push(...testoEventi(S.suColpo(s, c, e))); runa.push(...testoEventi(S.attaccoFuria(s, c))); } /* rivestimento e Linfa Furiosa */
     if (e.ok && arcanista() && C.attivo(s, "voto")) { const x = tira(4); s.pv -= x; pg.pv = Math.min(pg.pvMax, pg.pv + 1); runa.push(M.testo({ k: "votoColpo", d: x, cura: 1 })); }
-    blocco("Attacco normale", [...testoEventi([e]), ...runa, e.crit && !arcanista() && !sciamano() ? "Tuo critico: +2 ira." : ""], e.ok ? "mia" : "");
+    blocco("Attacco normale", [...testoEventi([e]), ...runa, e.crit && !arcanista() && !sciamano() ? "Tuo critico: +2 furia." : ""], e.ok ? "mia" : "");
     dopoAzione();
   }
   function usaTecnica(t) {
@@ -239,12 +239,12 @@
     const disp = C.disponibile(t, s); if (!disp.ok) return log(`${t.nome.it}: ${testoEventi([{ k: disp.motivo }])[0]}`, "ko");
     if (t.passiva) return log(`${t.nome.it}: è una passiva, sempre attiva.`, "ko");
     const costo = sciamano() ? t.costo : C.costo(t, s);
-    if (pg.ira < costo) return log(`${t.nome.it}: servono ${costo} ${risorsa()}, ne hai ${pg.ira}.`, "ko");
-    pg.ira -= costo; tipoAzione = pg.arma.tipo;
+    if (pg.furia < costo) return log(`${t.nome.it}: servono ${costo} ${risorsa()}, ne hai ${pg.furia}.`, "ko");
+    pg.furia -= costo; tipoAzione = pg.arma.tipo;
     const r = sciamano() ? S.usa(t, s, ctx()) : C.usa(t, s, ctx());
     const crit = sciamano() ? 0 : r.eventi.filter(e => e.k === "colpo" && e.crit).length;
-    for (let i = 0; i < crit; i++) c.iraPiu(2);
-    blocco(`${t.nome.it} (−${costo} ${risorsa()})`, [...testoEventi(r.eventi), crit ? `Tuo critico: +${2 * crit} ira.` : "", `${sciamano() ? "Natura" : "Ira"}: ${pg.ira}/${pg.iraMax}.`], "mia");
+    for (let i = 0; i < crit; i++) c.furiaPiu(2);
+    blocco(`${t.nome.it} (−${costo} ${risorsa()})`, [...testoEventi(r.eventi), crit ? `Tuo critico: +${2 * crit} furia.` : "", `${sciamano() ? "Natura" : "Furia"}: ${pg.furia}/${pg.furiaMax}.`], "mia");
     if (t.gratuita) return disegna(); /* Rinascita: non consuma l'azione */
     dopoAzione();
   }
@@ -253,10 +253,10 @@
     const c = ctx();
     const disp = M.disponibile(inc, s, c); if (!disp.ok) return log(`${inc.nome.it}: ${M.testo({ k: disp.motivo })}`, "ko");
     const costo = M.costo(inc, s);
-    if (pg.ira < costo) return log(`${inc.nome.it}: servono ${costo} mana, ne hai ${pg.ira}.`, "ko");
-    pg.ira -= costo; tipoAzione = { forza: "Forza", luce: "Luce", ombra: "Ombra" }[inc.scuola] || null; /* le armi non contano negli incantesimi */
+    if (pg.furia < costo) return log(`${inc.nome.it}: servono ${costo} mana, ne hai ${pg.furia}.`, "ko");
+    pg.furia -= costo; tipoAzione = { forza: "Forza", luce: "Luce", ombra: "Ombra" }[inc.scuola] || null; /* le armi non contano negli incantesimi */
     const r = M.lancia(inc, s, ctx());
-    blocco(`${inc.nome.it} (−${costo} ${monaco() ? "fede" : "mana"})`, [...testoEventi(r.eventi), `${monaco() ? "Fede" : "Mana"}: ${pg.ira}/${pg.iraMax}.`], "mia");
+    blocco(`${inc.nome.it} (−${costo} ${monaco() ? "fede" : "mana"})`, [...testoEventi(r.eventi), `${monaco() ? "Fede" : "Mana"}: ${pg.furia}/${pg.furiaMax}.`], "mia");
     dopoAzione();
   }
   function turnoNemico() {
@@ -267,7 +267,7 @@
     if (sciamano()) righe.push(...testoEventi(S.tickNemico(s, c))); /* veleno, bulbo, marea; riparte il recupero del turno */
     if (s.pv <= 0) { blocco("Turno del nemico", righe, "nem"); return; }
     const difesa = (dn) => { if (!sciamano()) return dn; const r = S.difesa(s, c, dn); righe.push(...testoEventi(r.eventi)); return r.danno; }; /* Pelle e Scudo di Corteccia */
-    const ira = () => !arcanista() && !sciamano();
+    const furia = () => !arcanista() && !sciamano();
     /* Frattura: 1d4 prima di ogni attacco del nemico (anche Presa e Soffio) */
     const frattura = () => { const f = C.frattura(s, c); if (f) righe.push(`Frattura: ${f.d} danni prima di attaccare.`); return s.pv <= 0; };
     if (nem.passivo) righe.push("Il manichino non attacca.");
@@ -284,8 +284,8 @@
         if (tot >= nem.soffio.cd) righe.push(`Soffio Infuocato: tiro salvezza d20 ${d} ${fmt(m)} = ${tot} contro CD ${nem.soffio.cd} → schivato.`);
         else {
           const tiri = Array.from({ length: nem.soffio.dadi }, () => tira(nem.soffio.dado)), dn0 = tiri.reduce((a, b) => a + b, 0), dn = C.attivo(s, "cerchio") ? Math.floor(dn0 / 2) : dn0;
-          const g = ira() ? C.iraPerColpo(pg.liv, false) : 0; pg.ira = Math.min(pg.iraMax, pg.ira + g);
-          righe.push(`Soffio Infuocato: tiro salvezza d20 ${d} ${fmt(m)} = ${tot} contro CD ${nem.soffio.cd} → preso, ${dn} danni [${tiri.join("+")}].${g ? ` +${g} ira.` : ""}`);
+          const g = furia() ? C.furiaPerColpo(pg.liv, false) : 0; pg.furia = Math.min(pg.furiaMax, pg.furia + g);
+          righe.push(`Soffio Infuocato: tiro salvezza d20 ${d} ${fmt(m)} = ${tot} contro CD ${nem.soffio.cd} → preso, ${dn} danni [${tiri.join("+")}].${g ? ` +${g} furia.` : ""}`);
           const dd = difesa(dn); if (dd > 0) ferisci(dd, righe);
         }
       }
@@ -293,14 +293,14 @@
         const morso = nem.arma ? false : Math.random() < 0.5 || $("nMorso").checked, nome = nem.arma ? "Spada" : morso ? "Morso" : "Zampata";
         const m = mod(nem.vigore) + (nem.attacco || 0) + C.modAttaccoNem(s), at = C.tiroAttaccoNem(s, c), d = at.d, tot = d + m, ca = caPg(), crit = d === 20 && C.critNemPossibile(s), ok = crit || tot > ca;
         if (at.tiri) righe.push(`Due d20, tiene il peggiore: ${at.tiri[0]} e ${at.tiri[1]}.`);
-        if (!ok) { righe.push(`${nome}: mancato (d20 ${d} ${fmt(m)} = ${tot} contro la tua CA ${ca}). Nessuna ira.`); righe.push(...testoEventi(C.colpoMancato(s, c))); }
+        if (!ok) { righe.push(`${nome}: mancato (d20 ${d} ${fmt(m)} = ${tot} contro la tua CA ${ca}). Nessuna furia.`); righe.push(...testoEventi(C.colpoMancato(s, c))); }
         else if (!s.parata) { /* scudo, Baluardo, Marea Elastica: il danno si tira prima */
           const nd = crit ? 2 : 1, tiri = Array.from({ length: nd }, () => tira(nem.dannoDado)), pieno = Math.max(1, tiri.reduce((a, b) => a + b, 0) + m);
           const sub = C.colpoSubito(s, c, crit, pieno);
           righe.push(`${nome}: ${crit ? "CRITICO" : "colpito"} (d20 ${d} ${fmt(m)} = ${tot} contro CA ${ca}), ${pieno} danni [${tiri.join("+")}].`, ...testoEventi(sub.eventi));
           const dd = difesa(sub.danno), fatto = dd > 0 ? ferisci(dd, righe) : 0;
-          if (ira()) pg.ira = Math.min(pg.iraMax, pg.ira + sub.ira);
-          righe.push(`Subisci ${fatto} danni.${ira() ? ` +${sub.ira} ira.` : ""}`);
+          if (furia()) pg.furia = Math.min(pg.furiaMax, pg.furia + sub.furia);
+          righe.push(`Subisci ${fatto} danni.${furia() ? ` +${sub.furia} furia.` : ""}`);
           if (morso && !sub.annullato && !s.presaUsata && !C.attivo(s, "silenzio") && !C.presaBloccata(s) && !C.attivo(s, "muro") && (Math.random() < nem.probPresa || $("nPresa").checked)) {
             s.presaUsata = true;
             if (frattura()) { blocco("Turno del nemico", righe, "nem"); return; }
@@ -311,11 +311,11 @@
         }
         else {
           const sub = C.colpoSubito(s, c, crit);
-          if (sub.annullato) righe.push(`${nome}: colpirebbe (d20 ${d} ${fmt(m)} = ${tot} contro CA ${ca}), ma la Parata lo annulla: 0 danni, nessuna ira.`, ...testoEventi(sub.eventi.filter(e => e.k === "stato" || e.k === "crepe")), ...sub.eventi.filter(e => e.k === "contrattacco").map(e => `Contrattacco${e.dCrit ? ` (critico 18-20: d20 ${e.dCrit} → ${e.crit ? "CRITICO" : "no"})` : ""}: ${e.tiri.length}d${e.dado} [${e.tiri.join("+")}] ${fmt(e.mm)} = ${e.danno} danni.`));
+          if (sub.annullato) righe.push(`${nome}: colpirebbe (d20 ${d} ${fmt(m)} = ${tot} contro CA ${ca}), ma la Parata lo annulla: 0 danni, nessuna furia.`, ...testoEventi(sub.eventi.filter(e => e.k === "stato" || e.k === "crepe")), ...sub.eventi.filter(e => e.k === "contrattacco").map(e => `Contrattacco${e.dCrit ? ` (critico 18-20: d20 ${e.dCrit} → ${e.crit ? "CRITICO" : "no"})` : ""}: ${e.tiri.length}d${e.dado} [${e.tiri.join("+")}] ${fmt(e.mm)} = ${e.danno} danni.`));
           else {
             const nd = crit ? 2 : 1, tiri = Array.from({ length: nd }, () => tira(nem.dannoDado)), dn = Math.max(1, tiri.reduce((a, b) => a + b, 0) + m);
-            pg.pv -= dn; if (!arcanista()) pg.ira = Math.min(pg.iraMax, pg.ira + sub.ira);
-            righe.push(`${nome}: ${crit ? "CRITICO" : "colpito"} (d20 ${d} ${fmt(m)} = ${tot} contro CA ${ca}), ${dn} danni [${tiri.join("+")}]. +${sub.ira} ira.`);
+            pg.pv -= dn; if (!arcanista()) pg.furia = Math.min(pg.furiaMax, pg.furia + sub.furia);
+            righe.push(`${nome}: ${crit ? "CRITICO" : "colpito"} (d20 ${d} ${fmt(m)} = ${tot} contro CA ${ca}), ${dn} danni [${tiri.join("+")}]. +${sub.furia} furia.`);
             if (morso && !s.presaUsata && !C.attivo(s, "silenzio") && !C.attivo(s, "muro") && (Math.random() < nem.probPresa || $("nPresa").checked)) {
               s.presaUsata = true;
               if (frattura()) { blocco("Turno del nemico", righe, "nem"); return; }
@@ -376,11 +376,11 @@
     blocco("Osservi Enea (Intuizione, gratuita)", [`d20 ${d} ${fmt(b)} = ${tot} contro CD 12 → ${ok ? "riuscita" : "fallita"}.`, ok ? (s.carica === "vera" ? "Il peso è tutto sul maglio: la carica è vera." : "Il peso resta sui piedi: è una finta, colpirà di lato.") : "Non riesci a capire se la carica è vera."], ok ? "mia" : "");
     disegna();
   }
-  /* un colpo di Enea: tiro, Parata, scudo, difese dello Sciamano, ira; o.dimezza: «Mi difendo»; o.ignora: la finta aggira la difesa */
+  /* un colpo di Enea: tiro, Parata, scudo, difese dello Sciamano, furia; o.dimezza: «Mi difendo»; o.ignora: la finta aggira la difesa */
   function colpoEnea(c, righe, difesa, nome, nd0, dado, bonus, o) {
     o = o || {};
     if (o.ignora) { if (s.parata || s.assorbe || s.difeso) righe.push("La finta aggira la tua difesa."); s.parata = false; s.parataCrepe = false; s.parataPunta = false; s.assorbe = null; }
-    const ira = !arcanista() && !sciamano();
+    const furia = !arcanista() && !sciamano();
     const m = nem.attaccoFisso + sdegno() + C.modAttaccoNem(s), at = C.tiroAttaccoNem(s, c), d = at.d, tot = d + m, ca = caPg(), crit = d === 20 && C.critNemPossibile(s), ok = crit || tot > ca;
     if (at.tiri) righe.push(`Due d20, tiene il peggiore: ${at.tiri[0]} e ${at.tiri[1]}.`);
     if (!ok) { righe.push(`${nome}: mancato (d20 ${d} ${fmt(m)} = ${tot} contro la tua CA ${ca}).`); righe.push(...testoEventi(C.colpoMancato(s, c))); return false; }
@@ -390,12 +390,12 @@
       const sub = C.colpoSubito(s, c, crit, pieno);
       righe.push(testa, ...testoEventi(sub.eventi));
       const dd = difesa(sub.danno), fatto = dd > 0 ? ferisci(dd, righe) : 0;
-      if (ira) pg.ira = Math.min(pg.iraMax, pg.ira + sub.ira);
-      righe.push(`Subisci ${fatto} danni.${ira ? ` +${sub.ira} ira.` : ""}`);
+      if (furia) pg.furia = Math.min(pg.furiaMax, pg.furia + sub.furia);
+      righe.push(`Subisci ${fatto} danni.${furia ? ` +${sub.furia} furia.` : ""}`);
     } else {
       const sub = C.colpoSubito(s, c, crit);
       if (sub.annullato) righe.push(`${nome}: colpirebbe (d20 ${d} ${fmt(m)} = ${tot} contro CA ${ca}), ma la Parata lo annulla: 0 danni.`, ...sub.eventi.filter(e => e.k === "contrattacco").map(e => `Contrattacco: ${e.tiri.length}d${e.dado} [${e.tiri.join("+")}] ${fmt(e.mm)} = ${e.danno} danni.`));
-      else { pg.pv -= pieno; if (ira) pg.ira = Math.min(pg.iraMax, pg.ira + sub.ira); righe.push(testa, `Subisci ${pieno} danni.`); }
+      else { pg.pv -= pieno; if (furia) pg.furia = Math.min(pg.furiaMax, pg.furia + sub.furia); righe.push(testa, `Subisci ${pieno} danni.`); }
     }
     return true;
   }
@@ -435,7 +435,7 @@
   }
   function riposa() {
     if (!pg) pg = leggiPg();
-    perRiposo = {}; pg.ira = pg.iraMax; pg.pv = pg.pvMax;
+    perRiposo = {}; pg.furia = pg.furiaMax; pg.pv = pg.pvMax;
     log("Riposo: " + risorsa() + " e salute piene, le tecniche «una volta per riposo» tornano disponibili.", "sis"); disegna();
   }
 
@@ -450,8 +450,8 @@
   const crepeNem = () => { if (!s || !C.crepe(s)) return []; const max = C.crepeMax({ boss: nem.boss }); return [["Incrinatura" + (s.sigillo && C.crepe(s) >= max ? " · sigillo" : ""), `${C.crepe(s)}/${max} cariche (−${C.crepe(s)} CA)`]]; };
   function disegna() {
     if (!pg) pg = leggiPg();
-    const st = pg.pv != null ? pg : { ...pg, pv: pg.pvMax, ira: pg.iraMax };
-    scheda($("svPg"), [["Salute", `${st.pv} / ${pg.pvMax}`], [arcanista() ? (monaco() ? "Punti fede" : "Mana") : sciamano() ? "Punti natura" : "Ira", `${st.ira} / ${pg.iraMax}`], ["CA", String(s ? caPg() : pg.ca)], ["CD dei tuoi effetti", String(8 + (arcanista() ? pg.modM : pg.modV) + pg.liv)], ...(sciamano() ? [["Natura per evento", `${S.recupero({ liv: pg.liv }, false)} (doppio con la Tossina), uno per turno del nemico`], ...(s && s.corteccia ? [["Scudo di Corteccia", `${s.corteccia}/${S.scudoMax({ liv: pg.liv })}`]] : []), ...(s && s.trappola ? [["Trappola", s.trappola]] : [])] : arcanista() ? (monaco() ? [["Fede per Crepuscolo", `${M.recupero(pg.liv)} (doppio da Nadir)`], ["Bilancia", bilanciaTesto()]] : [["Mana per Detonazione", `${M.recupero(pg.liv)} (doppio con i Sigilli al massimo)`]]) : [["Ira per colpo subito", `${C.iraPerColpo(pg.liv, false)} (critico ${C.iraPerColpo(pg.liv, true)})`]]), ...effetti(EFF_PG), ...(s && s.parata ? [["Parata", "pronta"]] : []), ...(s && C.cariche(s) ? [["Carica Cinetica", `${C.cariche(s)}/${C.CARICHE_MAX}${s.elastica && C.cariche(s) >= 2 ? " · elastica" : ""}`]] : []), ...(s && s.assorbe ? [["Scudo", `pronto (${s.assorbe.tipo})`]] : []), ...(s && s.difesaBloccata ? [["Difesa dello scudo", "non questo turno"]] : []), ...(s && s.sconto ? [["Sconto", `−${s.sconto} ira`]] : []), ...(s && s.spinta ? [["Spinta di Enea", "il tuo prossimo attacco ha svantaggio"]] : []), ...(s && s.difeso ? [["Guardia", "il colpo caricato ti arriverà dimezzato"]] : [])]);
+    const st = pg.pv != null ? pg : { ...pg, pv: pg.pvMax, furia: pg.furiaMax };
+    scheda($("svPg"), [["Salute", `${st.pv} / ${pg.pvMax}`], [arcanista() ? (monaco() ? "Punti fede" : "Mana") : sciamano() ? "Punti natura" : "Furia", `${st.furia} / ${pg.furiaMax}`], ["CA", String(s ? caPg() : pg.ca)], ["CD dei tuoi effetti", String(8 + (arcanista() ? pg.modM : pg.modV) + pg.liv)], ...(sciamano() ? [["Natura per evento", `${S.recupero({ liv: pg.liv }, false)} (doppio con la Tossina), uno per turno del nemico`], ...(s && s.corteccia ? [["Scudo di Corteccia", `${s.corteccia}/${S.scudoMax({ liv: pg.liv })}`]] : []), ...(s && s.trappola ? [["Trappola", s.trappola]] : [])] : arcanista() ? (monaco() ? [["Fede per Crepuscolo", `${M.recupero(pg.liv)} (doppio da Nadir)`], ["Bilancia", bilanciaTesto()]] : [["Mana per Detonazione", `${M.recupero(pg.liv)} (doppio con i Sigilli al massimo)`]]) : [["Furia per colpo subito", `${C.furiaPerColpo(pg.liv, false)} (critico ${C.furiaPerColpo(pg.liv, true)})`]]), ...effetti(EFF_PG), ...(s && s.parata ? [["Parata", "pronta"]] : []), ...(s && C.cariche(s) ? [["Carica Cinetica", `${C.cariche(s)}/${C.CARICHE_MAX}${s.elastica && C.cariche(s) >= 2 ? " · elastica" : ""}`]] : []), ...(s && s.assorbe ? [["Scudo", `pronto (${s.assorbe.tipo})`]] : []), ...(s && s.difesaBloccata ? [["Difesa dello scudo", "non questo turno"]] : []), ...(s && s.sconto ? [["Sconto", `−${s.sconto} furia`]] : []), ...(s && s.spinta ? [["Spinta di Enea", "il tuo prossimo attacco ha svantaggio"]] : []), ...(s && s.difeso ? [["Guardia", "il colpo caricato ti arriverà dimezzato"]] : [])]);
     if (nem) scheda($("svNem"), [["Nemico", nem.nome + (nem.boss ? " — BOSS" : "")], ["Salute", `${Math.max(0, s.pv)} / ${s.pvMax}`], ["CA", String(caNem())], ...(nem.soffio ? [["Soffio", s.soffioPronto ? "carico" : "scarico"]] : []), ...(nem.enea ? [["Arma", s.maglio ? "maglio (1d8 + 4)" : "mani nude (2 × 1d4)"], ["Punti abilità", `${s.pa} / ${nem.pa}`], ["Carica", s.carica ? (s.caricaRotta ? "spezzata: andrà a vuoto" : "annunciata" + (s.inGuardia ? " · in guardia" : "")) : s.inGuardia ? "nessuna · ora carica in guardia" : "nessuna"], ["Risurrezione", s.risorto ? "usata" : "pronta"], ["Vulnerabile a", "forza, luce, veleno"], ...(sdegno() ? [["Sdegno del cavaliere", "+1 per colpire"]] : [])] : []), ...crepeNem(), ...sigilliNem(), ...(s && s.caMeno ? [["Spezzato", `CA −${s.caMeno} per tutto lo scontro`]] : []), ...(s && s.filo ? [["Filo di Rune", C.sigilli(s) >= 2 ? "attivo: −2 a colpirti" : "in attesa di 2 Sigilli"]] : []), ...(s && s.demolitore ? [["Demolitore", "ogni Detonazione fa Sbilanciato 1"]] : []), ...(s && s.morbo ? [["Morbo", `${s.morbo}/3`]] : []), ...effetti(["sanguina", "frattura", "esposto", "debole", "sbilanciato", "silenzio", "frastornato", "intontito", "bloccato", "pressione", "parola", "accecato", "avvizzito", "paura", "corona", "avvelenato", "marea"])]);
     else scheda($("svNem"), [["Nemico", "—"]]);
     /* posti e tecniche */
@@ -460,7 +460,7 @@
     const lista = $("svTec"); lista.replaceChildren();
     const riga = (t, gruppo) => {
       const inPosto = gruppo !== "base" || preparate.has(t.id);
-      const usabile = !t.passiva && !finito && turnoPg && tipoOk(t) && (inPosto || ignoraPosti()) && !(t.unaPerRiposo && perRiposo[t.id]) && pg.ira >= (sciamano() ? t.costo : C.costo(t, s)) && C.disponibile(t, s).ok;
+      const usabile = !t.passiva && !finito && turnoPg && tipoOk(t) && (inPosto || ignoraPosti()) && !(t.unaPerRiposo && perRiposo[t.id]) && pg.furia >= (sciamano() ? t.costo : C.costo(t, s)) && C.disponibile(t, s).ok;
       const chk = gruppo === "base" ? el("input", { type: "checkbox", title: "Prepara", onchange: (e) => { if (e.target.checked) preparate.add(t.id); else preparate.delete(t.id); disegna(); } }) : null;
       if (chk) { chk.checked = preparate.has(t.id); chk.disabled = !chk.checked && (prep.length >= max || !C.sceltaValida([...prep, t], pg.liv, scudoPosti()).ok); }
       const b = el("button", { type: "button", class: "mini", "data-tec": t.id, onclick: () => usaTecnica(t) }, "Usa");
@@ -480,7 +480,7 @@
       const rigaInc = (inc, etichetta) => {
         const costoR = s ? M.costo(inc, s) : inc.costo;
         const usata = M.UNA_PER_RIPOSO.includes(inc.id) && perRiposo[inc.id];
-        const ok = !finito && turnoPg && s && pg.ira >= costoR && !usata && M.disponibile(inc, s, ctx()).ok;
+        const ok = !finito && turnoPg && s && pg.furia >= costoR && !usata && M.disponibile(inc, s, ctx()).ok;
         const b = el("button", { type: "button", class: "mini", "data-inc": inc.id, onclick: () => usaIncantesimo(inc) }, "Lancia");
         b.disabled = !ok;
         lista.append(el("div", { class: "tec" }, el("span", { class: "sx" }, el("b", { text: inc.nome.it }), el("small", { text: ` liv. ${inc.liv} · ${costoR} ${monaco() ? "fede" : "mana"}${M.UNA_PER_RIPOSO.includes(inc.id) ? " · una per riposo" : ""}${etichetta ? " · " + etichetta : ""}` })), b, el("p", { class: "eff", text: inc.effetto.it })));
@@ -515,7 +515,7 @@
     const app = el("div", { class: "sala" },
       el("header", {}, el("h1", { text: "Sala di prova — combattimento" }), el("a", { href: "tutorial.html", text: "Torna al tutorial" })),
       el("section", { class: "pannello" }, el("h2", { text: "Personaggio" }),
-        campo("Classe", sel("pClasse", [["guerriero", "Guerriero (tecniche e ira)"], ["arcanista", "Arcanista (incantesimi, Sigilli e mana)"], ["monaco", "Monaco (Luce e Ombra, Bilancia e punti fede)"], ["sciamano", "Sciamano (natura, veleni e trappole)"]], "guerriero")), campo("Mente (Arcanista) o Spirito (Monaco, Sciamano)", num("pMen", 16, 8, 20)),
+        campo("Classe", sel("pClasse", [["guerriero", "Guerriero (tecniche e furia)"], ["arcanista", "Arcanista (incantesimi, Sigilli e mana)"], ["monaco", "Monaco (Luce e Ombra, Bilancia e punti fede)"], ["sciamano", "Sciamano (natura, veleni e trappole)"]], "guerriero")), campo("Mente (Arcanista) o Spirito (Monaco, Sciamano)", num("pMen", 16, 8, 20)),
         campo("Livello", sel("pLiv", [1, 2, 3, 4, 5].map(n => [n, n]), 1)), campo("Vigore", num("pVig", 16, 8, 20)), campo("Agilità", num("pAgi", 12, 8, 20)),
         campo("Classe armatura", num("pCa", 14, 8, 25)), campo("Salute (vuoto = calcolata)", num("pPv", "", 1, 200)), campo("Intuizione (bonus, per smascherare la finta di Enea)", num("pInt", 0, -5, 15)),
         campo("Arma", sel("pArma", ARMI.map((a, i) => [i, `${a.nome} · 1d${a.dado} ${a.tipo.toLowerCase()}`]), 0)), chk("pScudo", "Scudo imbracciato"),
@@ -542,7 +542,7 @@
     document.body.replaceChildren(app);
     ["pClasse", "pMen", "pLiv", "pVig", "pAgi", "pCa", "pPv", "pArma", "pScudo", "pVia", "pSerie", "pIgnora"].forEach(id => $(id).addEventListener("change", () => {
       const vecchio = pg; pg = leggiPg();
-      if (vecchio && s && !finito) { pg.pv = Math.min(vecchio.pv, pg.pvMax); pg.ira = Math.min(vecchio.ira, pg.iraMax); log("Personaggio cambiato a scontro in corso: valido dal prossimo tiro.", "sis"); }
+      if (vecchio && s && !finito) { pg.pv = Math.min(vecchio.pv, pg.pvMax); pg.furia = Math.min(vecchio.furia, pg.furiaMax); log("Personaggio cambiato a scontro in corso: valido dal prossimo tiro.", "sis"); }
       [...preparate].forEach(id => { const t = TEC.find(x => x.id === id); if (!t || t.liv > pg.liv) preparate.delete(id); });
       disegna();
     }));

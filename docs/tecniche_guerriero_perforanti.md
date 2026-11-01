@@ -15,10 +15,10 @@ Armi perforanti del gioco: **Mazza chiodata** (1d6) e **Piccone da battaglia** (
 | 3 | Moltiplicatori di danno (×1,5, ×2, ×2,5, 200%) | Prestigio B1, C3 | Il critico è il doppio dei dadi: si lavora su "+1 dado" e sull'intervallo del critico |
 | 4 | Critico garantito già al livello 3, "ignora 100%" al livello 2 | 6, 9 | Progressione graduale |
 | 5 | Attacchi a più bersagli ("tutti i nemici", "in linea retta") | 14 | Gli scontri sono uno contro uno: effetto su un solo bersaglio |
-| 6 | "Difesa Fisica", "precisione −20%", "tempo di recupero" | Varie | Non esistono: diventano CA, Indebolito, costo in ira |
+| 6 | "Difesa Fisica", "precisione −20%", "tempo di recupero" | Varie | Non esistono: diventano CA, Indebolito, costo in furia |
 | 7 | "Rimborsa metà dei punti" + "consuma tutte le risorse" | 15 | Contraddittorio: tolto, resta "una volta per riposo" come gli altri livello 5 |
 | 8 | Prestigio con 2 abilità su 3 per livello | Classi di prestigio | Il gioco dà 1 abilità della via per livello (3, 4, 5), legata ad Aldo o Guendalina |
-| 9 | Recupero ira sul critico (Momentum) | Prestigio A2 | Esiste già: un tuo critico dà +2 ira |
+| 9 | Recupero furia sul critico (Momentum) | Prestigio A2 | Esiste già: un tuo critico dà +2 furia |
 | 10 | Stile da scherma (fioretto, cigno, danza) | Nomi | Adattati a mazza chiodata e piccone |
 
 ## 2. Regola e stato nuovi
@@ -33,7 +33,7 @@ Esposto funziona anche sui boss, come Incrinatura per le contundenti: altrimenti
 
 ## 3. Le 15 tecniche perforanti
 
-Le tre perforanti attuali più in tema restano (Affondo al Cuore, Puntura di Spillo, Colpo alla Giuntura). Puntata al Plesso, Zanzara di Ferro e Stoccata Laterale vengono tolte (controllo e sanguinamento sono di altri rami; la Zanzara rigenera troppa ira) e diventano posti vuoti nei salvataggi.
+Le tre perforanti attuali più in tema restano (Affondo al Cuore, Puntura di Spillo, Colpo alla Giuntura). Puntata al Plesso, Zanzara di Ferro e Stoccata Laterale vengono tolte (controllo e sanguinamento sono di altri rami; la Zanzara rigenera troppa furia) e diventano posti vuoti nei salvataggi.
 
 | Liv | Tecnica | Costo | Effetto |
 |---|---|---|---|
@@ -54,7 +54,7 @@ Le tre perforanti attuali più in tema restano (Affondo al Cuore, Puntura di Spi
 | 5 | Il Colpo Perfetto | 10 | Una volta per riposo; +1 dado e sempre critico se colpisce (4 dadi), poi un attacco normale gratuito |
 
 Note:
-- Guardia di Punta segue la Parata Mutilante: il colpo annullato non dà ira.
+- Guardia di Punta segue la Parata Mutilante: il colpo annullato non dà furia.
 - Colpo di Grazia: sui boss niente esecuzione, resta solo il critico 19-20 (come la Mutilazione del Carnefice).
 - Il Colpo Perfetto: stessa struttura del Cataclisma del Filo Rovinato, con il critico al posto degli stati di controllo.
 
@@ -68,17 +68,17 @@ Stessa scelta degli altri rami (`sceglieVia`). Proposta: **Aldo = Penetrazione**
 | Aldo | 4 | Trapasso | 8 | +5 per colpire, +1 dado; se il nemico è Esposto, +1 dado in più e l'Esposto si consuma |
 | Aldo | 5 | Il Foro Eterno | 10 | Se il nemico è Esposto e colpisci: sempre critico + Esposto per tutto lo scontro (boss: 2 turni) |
 | Guendalina | 3 | Occhio Vigile | 5 | Attacco normale, critico 19-20; +2 CA fino al tuo turno |
-| Guendalina | 4 | Stoccata a Specchio | 8 | +1 dado, critico 18-20; se è critico, tiro salvezza → Frastornato 1 (boss: Indebolito 2); prossima tecnica −2 ira |
+| Guendalina | 4 | Stoccata a Specchio | 8 | +1 dado, critico 18-20; se è critico, tiro salvezza → Frastornato 1 (boss: Indebolito 2); prossima tecnica −2 furia |
 | Guendalina | 5 | Affondo dei Mille Soli | 10 | +1 dado; Esposto + Indebolito 3; per 3 turni +2 CA e i tuoi attacchi fanno critico con 18-20 |
 
 ## 5. Decisioni (24/10/2026)
 
-1. **Critici forzati e ira:** restano così, anche i critici sicuri (Colpo Mirato, Il Foro Eterno, Il Colpo Perfetto) danno +2 ira.
+1. **Critici forzati e furia:** restano così, anche i critici sicuri (Colpo Mirato, Il Foro Eterno, Il Colpo Perfetto) danno +2 furia.
 2. **Vie:** confermate, Aldo = Penetrazione e Guendalina = Precisione.
 3. **Esposto sui boss:** massimo 2 turni, come Indebolito e Sbilanciato.
 
 Note di implementazione:
-- Il contrattacco della Guardia di Punta tira un d20 solo per il critico (18-20); come per la Parata, il colpo annullato non dà ira e nemmeno il critico del contrattacco.
+- Il contrattacco della Guardia di Punta tira un d20 solo per il critico (18-20); come per la Parata, il colpo annullato non dà furia e nemmeno il critico del contrattacco.
 - Puntata al Plesso, Zanzara di Ferro e Stoccata Laterale sono tolte: nei salvataggi diventano posti vuoti; Affondo al Cuore, Puntura di Spillo e Colpo alla Giuntura restano preparate.
 - Il testo dello sconto (Ritmo del Duello, Cadenza, Stoccata a Specchio) ora dice solo «Sconto».
 

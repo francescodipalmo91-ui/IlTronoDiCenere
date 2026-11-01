@@ -59,11 +59,11 @@
     const c = costo(inc, s), tomoAttivo = arc && attivo(s, "tomo");
     /* ---- Monaco: la Bilancia (+ Luce, − Ombra) ---- */
     const luce = inc.scuola === "luce", ombra = inc.scuola === "ombra", mon = luce || ombra;
-    const bil = Number(s.bilancia) || 0, bloccata = attivo(s, "furia");
+    const bil = Number(s.bilancia) || 0, bloccata = attivo(s, "furiaCinerea");
     const crep = mon && !bloccata && ((ombra && bil === 3) || (luce && bil === -3));   /* Zenit / Nadir: l'incantesimo opposto è un Crepuscolo */
     const velo = ombra && bil <= -2, nadir = ombra && bil === -3 && !s.lutto, aureola = mon && bil >= 2;
     const piu = crep ? 1 : 0;                                                          /* +1 dado di danno o cura */
-    const piuD = piu + (velo ? 1 : 0) + (ombra && attivo(s, "furia") ? 1 : 0);          /* sul danno: anche Velo e Furia Cinerea */
+    const piuD = piu + (velo ? 1 : 0) + (ombra && attivo(s, "furiaCinerea") ? 1 : 0);          /* sul danno: anche Velo e Furia Cinerea */
     const pv0 = s.pv;
     let segno = false;                                                                  /* l'incantesimo è andato a segno (Ombra Gemella) */
     const occhio = attivo(s, "occhio");
@@ -317,7 +317,7 @@
       case "abbraccio_vuoto": dopoColpo(hit({ dado: 8, piuDadi: 3 + piuD }), () => {}); break;
       case "rancore": { const n = Math.min(3, Number(s.colpiSubiti) || 0); dopoColpo(hit({ dado: 6, piuDadi: 1 + piuD + n }), () => {}); if (n) E.push({ k: "rancore", n }); break; }
       case "lutto": s.lutto = true; if (conTS({ debole: 2 })) { avvizzisci(6, 3); segno = true; } E.push({ k: "lutto" }); break;
-      case "furia_cinerea": s.eff.furia = 3; s.effMax.furia = 3; s.bilancia = -3; E.push({ k: "furia", turni: 3 }); break;
+      case "furia_cinerea": s.eff.furiaCinerea = 3; s.effMax.furiaCinerea = 3; s.bilancia = -3; E.push({ k: "furiaCinerea", turni: 3 }); break;
 
       default: E.push({ k: "sconosciuta" });
     }
@@ -329,7 +329,7 @@
       const drenato = Math.max(0, pv0 - s.pv);
       if (inc.id === "tocco_avvizzente" && drenato > 0) curaFissa(Math.floor(drenato / 2));
       else if (inc.id === "abbraccio_vuoto" && drenato > 0) curaFissa(drenato);
-      else if (ombra && attivo(s, "furia") && drenato > 0 && inc.id !== "furia_cinerea") curaFissa(Math.floor(drenato / 2));
+      else if (ombra && attivo(s, "furiaCinerea") && drenato > 0 && inc.id !== "furia_cinerea") curaFissa(Math.floor(drenato / 2));
       if (nadir) E.push({ k: "nadir", mente: dannoMente(1) });
       else if (inc.id === "eclisse") E.push({ k: "nadir", mente: dannoMente(1) });
       if (crep) { const mana = fede(recupero(ctx.liv) * (luce ? 2 : 1)); E.push({ k: "crepuscolo", da: luce ? "nadir" : "zenit", dadi: piu, mana }); }
@@ -444,7 +444,7 @@
       case "gemella": return T(`Per ${e.turni} turni ogni tuo incantesimo a segno fa +1d6 necrotico.`, `For ${e.turni} turns every spell of yours that lands deals +1d6 necrotic.`);
       case "gemellaDanno": return T(`L'ombra gemella colpisce: +${e.d} necrotici.`, `The twin shadow strikes: +${e.d} necrotic.`);
       case "notte": return T(`Per ${e.turni} turni: nemico Accecato e Avvizzito, gli incantesimi d'Ombra costano 2 in meno. Perdi ${e.mente} salute mentale (non letale).`, `For ${e.turni} turns: enemy Blinded and Withered, Shadow spells cost 2 less. You lose ${e.mente} mental health (non-lethal).`);
-      case "furia": return T(`Per ${e.turni} turni gli incantesimi d'Ombra hanno +1 dado e ti curano della metà dei danni; la Bilancia resta a Ombra 3.`, `For ${e.turni} turns Shadow spells have +1 die and heal you for half the damage; the Balance stays at Shadow 3.`);
+      case "furiaCinerea": return T(`Per ${e.turni} turni gli incantesimi d'Ombra hanno +1 dado e ti curano della metà dei danni; la Bilancia resta a Ombra 3.`, `For ${e.turni} turns Shadow spells have +1 die and heal you for half the damage; the Balance stays at Shadow 3.`);
       case "lutto": return T("Per tutto lo scontro Nadir non ti costa salute mentale.", "For the whole fight Nadir costs you no mental health.");
       case "rancore": return T(`Rancore: +${e.n}d6 per i colpi subiti.`, `Grudge: +${e.n}d6 for the blows taken.`);
       case "seconda": return T("Il prossimo colpo che ti porterebbe a 0 ti lascia a 1 e ti cura.", "The next blow that would take you to 0 leaves you at 1 and heals you.");

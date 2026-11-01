@@ -15,7 +15,7 @@ const PG = {
   nome: "Fumo", razza: "Nano", classe: "Soldato", livello: 1, immagine: null,
   statisticheBase: { Vigore: 15, "Agilità": 12, Mente: 10, Spirito: 13 }, statistiche: { Vigore: 17, "Agilità": 12, Mente: 10, Spirito: 14 },
   modificatori: { Vigore: 3, "Agilità": 1, Mente: 0, Spirito: 2 }, tiroDado: { dado: 10, valore: 10 }, puntiVita: 23, saluteMentale: 22,
-  classeArmatura: 15, mana: null, risorsa: { id: "ira", max: 13 }, incantesimi: [], tecniche: ["polso", "morso_acciaio"],
+  classeArmatura: 15, mana: null, risorsa: { id: "furia", max: 13 }, incantesimi: [], tecniche: ["polso", "morso_acciaio"],
   abilita: [{ nome: "Atletica", attributo: "Vigore", valore: 4 }, { nome: "Percezione", attributo: "Mente", valore: 1 }],
   equipaggiamento: { arma: "Spada corta", armaDanno: "1d6", armaTipoDanno: "Tagliente", armaMani: 1, armatura: "Armatura media", armaturaCA: 4, malusAgilita: 0, scudo: null, dotazione: ["Torcia"] }
 };

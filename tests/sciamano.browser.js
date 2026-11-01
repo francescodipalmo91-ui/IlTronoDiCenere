@@ -14,7 +14,7 @@ const PG = (o) => Object.assign({
   nome: "Prova", razza: "Umano", classe: "Soldato", livello: 1, immagine: null,
   statisticheBase: { Vigore: 16, "Agilità": 12, Mente: 10, Spirito: 12 }, statistiche: { Vigore: 16, "Agilità": 12, Mente: 10, Spirito: 12 },
   modificatori: { Vigore: 3, "Agilità": 1, Mente: 0, Spirito: 1 }, tiroDado: { dado: 10, valore: 6 }, puntiVita: 19, saluteMentale: 17,
-  classeArmatura: 14, mana: null, risorsa: { id: "ira", max: 13 }, incantesimi: [], tecniche: ["polso", "morso_acciaio"],
+  classeArmatura: 14, mana: null, risorsa: { id: "furia", max: 13 }, incantesimi: [], tecniche: ["polso", "morso_acciaio"],
   abilita: [{ nome: "Atletica", attributo: "Vigore", valore: 4 }],
   equipaggiamento: { arma: "Spada corta", armaDanno: "1d6", armaTipoDanno: "Tagliente", armaMani: 1, armatura: "Armatura media", armaturaCA: 4, malusAgilita: 0, scudo: null, dotazione: [] }
 }, o || {});
@@ -67,7 +67,7 @@ caso("Sciamano: la scheda mostra le tecniche della natura in punti natura; il Gu
   const { page, errori, chiudi } = await apri(b, "gioco.html", SC(), PARTITA({ livello: 2, usate: { riposo: "sbloccato", tecPreparate: PREP2 } }));
   eq(await page.evaluate(() => tecnichePreparate().map(t => t.id)), PREP2);
   const t = await page.innerText("#tecnicheBox");
-  vero(/Punta di Mandragora/.test(t) && /Baccello Esplosivo/.test(t), "mancano le tecniche"); vero(/2 natura/.test(t), "costo in natura"); vero(!/ira/.test(t), "non deve parlare di ira");
+  vero(/Punta di Mandragora/.test(t) && /Baccello Esplosivo/.test(t), "mancano le tecniche"); vero(/2 natura/.test(t), "costo in natura"); vero(!/furia/.test(t), "non deve parlare di furia");
   vero(!(await page.evaluate(() => opzioniTecniche().some(t => !t.classe))), "niente tecniche del Guerriero tra le opzioni");
   await chiudi();
   const g = await apri(b, "gioco.html", PG(), PARTITA({ livello: 5, usate: { riposo: "sbloccato" } }));
@@ -291,10 +291,10 @@ caso("Sala di prova: lo Sciamano vede le tecniche della natura; Mandragora avvel
   await page.selectOption("#pClasse", "sciamano"); await page.fill("#pMen", "12"); await page.dispatchEvent("#pMen", "change");
   await page.selectOption("#nTipo", "manichino"); await page.click("#svNuovo");
   const ids = await page.$$eval("#svTec [data-tec]", bs => bs.map(x => x.dataset.tec)); eq(ids, ["mandragora", "micelio", "infuso"]);
-  eq(await page.evaluate(() => SalaProva.stato().pg.iraMax), 11, "10 + Spirito 1");
+  eq(await page.evaluate(() => SalaProva.stato().pg.furiaMax), 11, "10 + Spirito 1");
   await page.evaluate(() => SalaProva.accoda(15, 4, /* veleno */ 2));
   await page.click('[data-tec="mandragora"]');
-  const st = await page.evaluate(() => ({ nat: SalaProva.stato().pg.ira, av: SalaProva.stato().s.eff.avvelenato, pv: SalaProva.stato().s.pv }));
+  const st = await page.evaluate(() => ({ nat: SalaProva.stato().pg.furia, av: SalaProva.stato().s.eff.avvelenato, pv: SalaProva.stato().s.pv }));
   eq([st.nat, st.av, st.pv], [10, 2, 60 - 7 - 2], "11 − 2 + 1, veleno 3 → 2");
   vero(/Forza della natura/.test(await page.innerText("#svLog")), "manca il recupero"); vero(/Avvelenato 1d4/.test(await page.innerText("#svNem")), "scheda nemico");
   eq(errori, [], "errori"); await chiudi();

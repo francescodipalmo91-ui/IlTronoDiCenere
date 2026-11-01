@@ -5,13 +5,13 @@
    ===================================================================== */
 window.Regole = (() => {
   const CLASSI = { /* chiavi interne: Soldato = Guerriero, Forestiero = Sciamano, Sapiente = Arcanista, Accolito = Monaco */
-    Soldato: { dado: 10, risorsa: "ira", attrRisorsa: "Vigore" },
+    Soldato: { dado: 10, risorsa: "furia", attrRisorsa: "Vigore" },
     Forestiero: { dado: 8, risorsa: "natura", attrRisorsa: "Spirito" },
     Sapiente: { dado: 6, risorsa: "mana", attrRisorsa: "Mente" },
     Accolito: { dado: 6, risorsa: "fede", attrRisorsa: "Spirito" }
   };
   const perClasse = (filtro, valore) => Object.fromEntries(Object.entries(CLASSI).filter(([, c]) => filtro(c)).map(([k, c]) => [k, valore(c)]));
-  const marziale = (c) => c.risorsa === "ira" || c.risorsa === "natura";
+  const marziale = (c) => c.risorsa === "furia" || c.risorsa === "natura";
   return Object.freeze({
   /* attributi */
   ATTRIBUTI: ["Vigore", "Agilità", "Mente", "Spirito"],
@@ -44,14 +44,14 @@ window.Regole = (() => {
   CLASSI,
   /* ricavati da CLASSI, così creazione e gioco non li ricopiano */
   DADO_VITA: perClasse(() => true, c => c.dado),
-  RISORSA_MARZIALE: perClasse(marziale, c => ({ id: c.risorsa, attr: c.attrRisorsa })), /* punti ira (Guerriero), punti natura (Sciamano) */
+  RISORSA_MARZIALE: perClasse(marziale, c => ({ id: c.risorsa, attr: c.attrRisorsa })), /* punti furia (Guerriero), punti natura (Sciamano) */
   ATTR_MAGIA: perClasse(c => !marziale(c), c => c.attrRisorsa),                         /* attributo del mana (Arcanista) e della fede (Monaco) */
   ARMATURE_CLASSI: { Forestiero: ["Armatura leggera", "Armatura media"], Sapiente: ["Armatura leggera"], Accolito: ["Armatura leggera", "Armatura media"] },
-  RISORSA_BASE: 10,            /* mana, fede, ira, natura = 10 + modificatore */
+  RISORSA_BASE: 10,            /* mana, fede, furia, natura = 10 + modificatore */
   MAX_INCANTESIMI: 4,
   MAX_TECNICHE: 2,             /* tecniche speciali preparate al livello 1 */
   TECNICHE_PER_LIVELLO: [2, 2, 1, 1, 1], /* scelte nuove a ogni livello: posti 2, 4, 5, 6, 7 */
-  IRA_PER_COLPO: [1, 1, 2, 2, 3], /* ira guadagnata per ogni colpo subito, per livello (doppia sui critici) */
+  IRA_PER_COLPO: [1, 1, 2, 2, 3], /* furia guadagnata per ogni colpo subito, per livello (doppia sui critici) */
   TECNICHE_SCUDO: 1,           /* una tecnica in più con lo scudo imbracciato */
   SALUTE_BASE: 10,             /* salute fisica e mentale = 10 + massimo del dado vita + modificatore (28/10) */
   CA_BASE: 10,

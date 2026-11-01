@@ -14,7 +14,7 @@ const PG = (o) => Object.assign({
   nome: "Prova", razza: "Umano", classe: "Soldato", livello: 1, immagine: null,
   statisticheBase: { Vigore: 16, "Agilità": 12, Mente: 10, Spirito: 12 }, statistiche: { Vigore: 16, "Agilità": 12, Mente: 10, Spirito: 12 },
   modificatori: { Vigore: 3, "Agilità": 1, Mente: 0, Spirito: 1 }, tiroDado: { dado: 10, valore: 6 }, puntiVita: 19, saluteMentale: 17,
-  classeArmatura: 14, mana: null, risorsa: { id: "ira", max: 13 }, incantesimi: [], tecniche: ["polso", "morso_acciaio"],
+  classeArmatura: 14, mana: null, risorsa: { id: "furia", max: 13 }, incantesimi: [], tecniche: ["polso", "morso_acciaio"],
   abilita: [{ nome: "Atletica", attributo: "Vigore", valore: 4 }],
   equipaggiamento: { arma: "Spada corta", armaDanno: "1d6", armaTipoDanno: "Tagliente", armaMani: 1, armatura: "Armatura media", armaturaCA: 4, malusAgilita: 0, scudo: null, dotazione: [] }
 }, o || {});
@@ -87,25 +87,25 @@ caso("Sala di prova: un boss ignora lo stordimento di Eco del Metallo e resta Sb
   const s = await page.evaluate(() => SalaProva.stato().s);
   eq(s.eff.bloccato || 0, 0); vero(/non ha effetto/.test(await page.innerText("#svLog")), "manca il messaggio di immunità"); await chiudi();
 });
-caso("Sala di prova: Parata Mutilante annulla il morso, niente ira, contrattacco e sanguinamento", async (b) => {
+caso("Sala di prova: Parata Mutilante annulla il morso, niente furia, contrattacco e sanguinamento", async (b) => {
   const { page, chiudi } = await apri(b, "tutorial.html?prova");
   await page.selectOption("#pLiv", "4"); await page.check("#nMorso"); await page.evaluate(() => { Math.random = () => 0.99; }); await page.click("#svNuovo");
   await page.evaluate(() => SalaProva.accoda(/* nemico: */ 19, /* contrattacco */ 5));
-  const prima = await page.evaluate(() => ({ pv: SalaProva.stato().pg.pv, ira: SalaProva.stato().pg.ira }));
+  const prima = await page.evaluate(() => ({ pv: SalaProva.stato().pg.pv, furia: SalaProva.stato().pg.furia }));
   await page.click('[data-tec="parata"]');
-  const dopo = await page.evaluate(() => ({ pv: SalaProva.stato().pg.pv, ira: SalaProva.stato().pg.ira, sang: SalaProva.stato().s.eff.sanguina }));
-  eq(dopo.pv, prima.pv, "salute"); eq(dopo.ira, prima.ira - 7, "ira: solo il costo"); eq(dopo.sang, 2, "sanguinamento 3 → 2 dopo il turno (28/10: durata comune 3)"); await chiudi();
+  const dopo = await page.evaluate(() => ({ pv: SalaProva.stato().pg.pv, furia: SalaProva.stato().pg.furia, sang: SalaProva.stato().s.eff.sanguina }));
+  eq(dopo.pv, prima.pv, "salute"); eq(dopo.furia, prima.furia - 7, "furia: solo il costo"); eq(dopo.sang, 2, "sanguinamento 3 → 2 dopo il turno (28/10: durata comune 3)"); await chiudi();
 });
-caso("Sala di prova: colpo subito al livello 3 dà 2 ira, un critico 4; un mancato niente", async (b) => {
+caso("Sala di prova: colpo subito al livello 3 dà 2 furia, un critico 4; un mancato niente", async (b) => {
   const { page, chiudi } = await apri(b, "tutorial.html?prova");
   await page.selectOption("#pLiv", "3"); await page.check("#nMorso"); await page.evaluate(() => { Math.random = () => 0.99; }); await page.click("#svNuovo");
-  const ira0 = await page.evaluate(() => { const st = SalaProva.stato(); st.pg.ira = 5; return 5; });
+  const furia0 = await page.evaluate(() => { const st = SalaProva.stato(); st.pg.furia = 5; return 5; });
   await page.evaluate(() => SalaProva.accoda(1, /* nemico colpisce */ 19, 1)); await page.click("#svAttacca");
-  eq(await page.evaluate(() => SalaProva.stato().pg.ira), ira0 + 2, "colpo normale");
+  eq(await page.evaluate(() => SalaProva.stato().pg.furia), furia0 + 2, "colpo normale");
   await page.evaluate(() => SalaProva.accoda(1, /* critico */ 20, 1, 1)); await page.click("#svAttacca");
-  eq(await page.evaluate(() => SalaProva.stato().pg.ira), ira0 + 6, "critico");
+  eq(await page.evaluate(() => SalaProva.stato().pg.furia), furia0 + 6, "critico");
   await page.evaluate(() => SalaProva.accoda(1, /* mancato */ 1)); await page.click("#svAttacca");
-  eq(await page.evaluate(() => SalaProva.stato().pg.ira), ira0 + 6, "mancato"); await chiudi();
+  eq(await page.evaluate(() => SalaProva.stato().pg.furia), furia0 + 6, "mancato"); await chiudi();
 });
 caso("Sala di prova: Cataclisma una volta per riposo, poi di nuovo dopo il riposo", async (b) => {
   const { page, chiudi } = await apri(b, "tutorial.html?prova");
@@ -136,13 +136,13 @@ caso("Sala di prova: con lo scudo compaiono le 15 tecniche di scudo e, con la se
   vero(via.includes("marea_elastica") && via.includes("onda_rimbalzo") && via.includes("tsunami") && !via.includes("marchio"), "serie dello scudo");
   eq(errori, [], "errori"); await chiudi();
 });
-caso("Sala di prova: Muro di Assorbimento inghiotte il morso (0 danni, niente ira), 3 Cariche; il turno dopo niente Postura Salda", async (b) => {
+caso("Sala di prova: Muro di Assorbimento inghiotte il morso (0 danni, niente furia), 3 Cariche; il turno dopo niente Postura Salda", async (b) => {
   const { page, errori, chiudi } = await apri(b, "tutorial.html?prova");
   await page.selectOption("#pLiv", "2"); await page.check("#pScudo"); await page.check("#nMorso"); await page.evaluate(() => { Math.random = () => 0.99; }); await page.click("#svNuovo");
-  const prima = await page.evaluate(() => ({ pv: SalaProva.stato().pg.pv, ira: SalaProva.stato().pg.ira }));
+  const prima = await page.evaluate(() => ({ pv: SalaProva.stato().pg.pv, furia: SalaProva.stato().pg.furia }));
   await page.evaluate(() => SalaProva.accoda(/* nemico: */ 19, 4)); await page.click('[data-tec="muro"]');
-  const dopo = await page.evaluate(() => ({ pv: SalaProva.stato().pg.pv, ira: SalaProva.stato().pg.ira, c: SalaProva.stato().s.cariche }));
-  eq(dopo.pv, prima.pv, "salute"); eq(dopo.ira, prima.ira - 5, "ira: solo il costo"); eq(dopo.c, 3, "cariche");
+  const dopo = await page.evaluate(() => ({ pv: SalaProva.stato().pg.pv, furia: SalaProva.stato().pg.furia, c: SalaProva.stato().s.cariche }));
+  eq(dopo.pv, prima.pv, "salute"); eq(dopo.furia, prima.furia - 5, "furia: solo il costo"); eq(dopo.c, 3, "cariche");
   vero(/Carica Cinetica/.test(await page.innerText("#svPg")), "scheda senza Cariche");
   vero(await page.$eval('[data-tec="postura_salda"]', x => x.disabled), "difesa due turni di fila");
   vero(!(await page.$eval('[data-tec="assorbimento"]', x => x.disabled)), "un colpo di scudo resta libero");
@@ -184,14 +184,14 @@ caso("Sala di prova: Frattura colpisce il mastino prima del suo attacco", async 
   vero(/Frattura: 3 danni prima di attaccare/.test(await page.innerText("#svLog")), "manca la frattura");
   eq(await page.evaluate(() => SalaProva.stato().s.pv), 60 - 7 - 3); eq(errori, [], "errori"); await chiudi();
 });
-caso("Sala di prova: Contro-Schiacciamento annulla il morso, niente ira, contrattacco e 1 carica di Incrinatura", async (b) => {
+caso("Sala di prova: Contro-Schiacciamento annulla il morso, niente furia, contrattacco e 1 carica di Incrinatura", async (b) => {
   const { page, chiudi } = await apri(b, "tutorial.html?prova");
   await page.selectOption("#pLiv", "4"); await page.selectOption("#pArma", "3"); await page.check("#nMorso"); await page.evaluate(() => { Math.random = () => 0.99; }); await page.click("#svNuovo");
   await page.evaluate(() => SalaProva.accoda(/* nemico: */ 19, /* contrattacco */ 5));
-  const prima = await page.evaluate(() => ({ pv: SalaProva.stato().pg.pv, ira: SalaProva.stato().pg.ira }));
+  const prima = await page.evaluate(() => ({ pv: SalaProva.stato().pg.pv, furia: SalaProva.stato().pg.furia }));
   await page.click('[data-tec="controschiaccio"]');
-  const dopo = await page.evaluate(() => ({ pv: SalaProva.stato().pg.pv, ira: SalaProva.stato().pg.ira, crepe: SalaProva.stato().s.crepe, sang: SalaProva.stato().s.eff.sanguina || 0 }));
-  eq(dopo.pv, prima.pv, "salute"); eq(dopo.ira, prima.ira - 7, "ira: solo il costo"); eq([dopo.crepe, dopo.sang], [1, 0]); await chiudi();
+  const dopo = await page.evaluate(() => ({ pv: SalaProva.stato().pg.pv, furia: SalaProva.stato().pg.furia, crepe: SalaProva.stato().s.crepe, sang: SalaProva.stato().s.eff.sanguina || 0 }));
+  eq(dopo.pv, prima.pv, "salute"); eq(dopo.furia, prima.furia - 7, "furia: solo il costo"); eq([dopo.crepe, dopo.sang], [1, 0]); await chiudi();
 });
 
 /* ---------- Sala di prova: perforanti ---------- */
@@ -210,15 +210,15 @@ caso("Sala di prova: Mirare al Varco rende il nemico Esposto e un 19 dell'attacc
   await page.evaluate(() => SalaProva.accoda(19, 1, 1)); await page.click("#svAttacca");
   vero(/CRITICO: d20 19[^\n]*critico da 19/.test(await page.innerText("#svLog")), "il 19 doveva essere critico"); eq(errori, [], "errori"); await chiudi();
 });
-caso("Sala di prova: Guardia di Punta annulla il morso, niente ira, contrattacco critico con 18 ed Esposto", async (b) => {
+caso("Sala di prova: Guardia di Punta annulla il morso, niente furia, contrattacco critico con 18 ed Esposto", async (b) => {
   const { page, chiudi } = await apri(b, "tutorial.html?prova");
   await page.selectOption("#pLiv", "4"); await page.selectOption("#pArma", "4"); await page.check("#nMorso"); await page.evaluate(() => { Math.random = () => 0.99; });
   await page.fill("#nPv", "60"); await page.dispatchEvent("#nPv", "change"); await page.click("#svNuovo");
   await page.evaluate(() => SalaProva.accoda(/* nemico */ 19, /* critico */ 18, 2, 3));
-  const prima = await page.evaluate(() => ({ pv: SalaProva.stato().pg.pv, ira: SalaProva.stato().pg.ira }));
+  const prima = await page.evaluate(() => ({ pv: SalaProva.stato().pg.pv, furia: SalaProva.stato().pg.furia }));
   await page.click('[data-tec="guardia_punta"]');
-  const dopo = await page.evaluate(() => ({ pv: SalaProva.stato().pg.pv, ira: SalaProva.stato().pg.ira, esp: SalaProva.stato().s.eff.esposto, pvN: SalaProva.stato().s.pv }));
-  eq(dopo.pv, prima.pv, "salute"); eq(dopo.ira, prima.ira - 7, "ira: solo il costo"); eq([dopo.esp, dopo.pvN], [1, 60 - 2 - 3 - 3]);
+  const dopo = await page.evaluate(() => ({ pv: SalaProva.stato().pg.pv, furia: SalaProva.stato().pg.furia, esp: SalaProva.stato().s.eff.esposto, pvN: SalaProva.stato().s.pv }));
+  eq(dopo.pv, prima.pv, "salute"); eq(dopo.furia, prima.furia - 7, "furia: solo il costo"); eq([dopo.esp, dopo.pvN], [1, 60 - 2 - 3 - 3]);
   vero(/critico 18-20: d20 18 → CRITICO/.test(await page.innerText("#svLog")), "manca il critico del contrattacco"); await chiudi();
 });
 caso("Sala di prova: Il Colpo Perfetto una volta per riposo, poi di nuovo dopo il riposo", async (b) => {
@@ -232,37 +232,37 @@ caso("Sala di prova: Il Colpo Perfetto una volta per riposo, poi di nuovo dopo i
 
 /* ======================= Partita vera (gioco.html) ======================= */
 const PREP4 = ["polso", "morso_acciaio", "vipera", "tendini", "eco", "squarcia"];
-caso("Gioco: tecnica a segno (Morso dell'Acciaio), ira spesa, Sanguinamento nella scheda del nemico", async (b) => {
+caso("Gioco: tecnica a segno (Morso dell'Acciaio), furia spesa, Sanguinamento nella scheda del nemico", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ tecniche: PREP4.slice(0, 2) }), PARTITA({ livello: 4, usate: { riposo: "sbloccato", tecPreparate: PREP4 } }));
   await page.evaluate(() => { avviaScontro("mastino", { primo: "pg", soffioScarico: true }); });
   await aspettaTurnoPg(page);
   await accoda(page, [R(18, 20), R(4, 6)]);
   await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "morso_acciaio")));
-  eq(await page.evaluate(() => pg.risorsaUsata), 3, "ira spesa"); eq(await page.evaluate(() => scontro.eff.sanguina), 3, "durata comune");
+  eq(await page.evaluate(() => pg.risorsaUsata), 3, "furia spesa"); eq(await page.evaluate(() => scontro.eff.sanguina), 3, "durata comune");
   vero(/Sanguinamento/.test(await page.innerText("#schedaNem")), "scheda nemico senza Sanguinamento");
   vero(/sanguina: 1d4 danni per 3 turni/i.test(await diario(page)), "manca il testo nel diario");
   eq(errori, [], "errori"); await chiudi();
 });
-caso("Gioco: tecnica mancata spende l'ira e non applica nulla", async (b) => {
+caso("Gioco: tecnica mancata spende la furia e non applica nulla", async (b) => {
   const { page, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ livello: 4, usate: { riposo: "sbloccato", tecPreparate: PREP4 } }));
   await page.evaluate(() => avviaScontro("mastino", { primo: "pg", soffioScarico: true })); await aspettaTurnoPg(page);
   await accoda(page, [R(1, 20)]);
   await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "squarcia")));
   eq(await page.evaluate(() => pg.risorsaUsata), 8); eq(await page.evaluate(() => scontro.eff.silenzio || 0), 0); await chiudi();
 });
-caso("Gioco: Parata Mutilante annulla il morso, niente danni né ira, contrattacco e sanguinamento", async (b) => {
+caso("Gioco: Parata Mutilante annulla il morso, niente danni né furia, contrattacco e sanguinamento", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ livello: 4, usate: { riposo: "sbloccato", tecPreparate: ["polso", "morso_acciaio", "vipera", "tendini", "eco", "parata"] } }));
   await page.evaluate(() => avviaScontro("mastino", { primo: "pg", soffioScarico: true })); await aspettaTurnoPg(page);
-  const prima = await page.evaluate(() => ({ df: pg.dannoFisico || 0, ira: pg.risorsaUsata || 0 }));
+  const prima = await page.evaluate(() => ({ df: pg.dannoFisico || 0, furia: pg.risorsaUsata || 0 }));
   /* nemico: ricarica soffio 1 (resta scarico), morso, d20 19, contrattacco 5 */
   await accoda(page, [R(1, 6), R(19, 20), R(5, 6)], [0.1]);
   await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "parata")));
   await aspettaTurnoPg(page);
-  const dopo = await page.evaluate(() => ({ df: pg.dannoFisico || 0, ira: pg.risorsaUsata || 0, sang: scontro.eff.sanguina, parata: scontro.parata }));
-  eq(dopo.df, prima.df, "danni subiti"); eq(dopo.ira, prima.ira + 7, "ira: solo il costo"); eq(dopo.sang, 2, "sanguinamento 3 → 2"); eq(dopo.parata, false);
+  const dopo = await page.evaluate(() => ({ df: pg.dannoFisico || 0, furia: pg.risorsaUsata || 0, sang: scontro.eff.sanguina, parata: scontro.parata }));
+  eq(dopo.df, prima.df, "danni subiti"); eq(dopo.furia, prima.furia + 7, "furia: solo il costo"); eq(dopo.sang, 2, "sanguinamento 3 → 2"); eq(dopo.parata, false);
   vero(/Pari il colpo/.test(await diario(page)), "manca il testo della parata"); eq(errori, [], "errori"); await chiudi();
 });
-caso("Gioco: un morso subito al livello 4 restituisce 2 ira (scala per livello)", async (b) => {
+caso("Gioco: un morso subito al livello 4 restituisce 2 furia (scala per livello)", async (b) => {
   const { page, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ livello: 4, risorsaUsata: 10, usate: { riposo: "sbloccato", tecPreparate: PREP4 } }));
   await page.evaluate(() => avviaScontro("mastino", { primo: "pg", soffioScarico: true })); await aspettaTurnoPg(page);
   /* attacco normale mancato; nemico: ricarica 1, morso, d20 19, danno 1; presa: no */
@@ -293,13 +293,13 @@ caso("Gioco: contro Ettore (boss) Eco del Metallo non stordisce e Fendente della
   eq(await page.evaluate(() => [scontro.eff.bloccato || 0, scontro.eff.sbilanciato]), [0, 1]);
   vero(/troppo potente/.test(await diario(page)), "manca il messaggio dei boss"); eq(errori, [], "errori"); await chiudi();
 });
-caso("Gioco: salita al livello 3 — ira + mod Vigore + livello e avviso della via", async (b) => {
+caso("Gioco: salita al livello 3 — furia + mod Vigore + livello e avviso della via", async (b) => {
   const { page, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ livello: 2, crescita: { salute: 5, mente: 5, risorsa: 5 }, usate: { riposo: "sbloccato" } }));
   const prima = await page.evaluate(() => risorsaPg().max); eq(prima, 18, "13 + 5");
   await page.evaluate(() => { guadagnaPE(5000); controllaLivello(); });
   eq(await page.evaluate(() => livelloPg()), 5, "fino al livello 5");
   eq(await page.evaluate(() => risorsaPg().max), 39, "13, 18, 24, 31, 39");
-  const d = await diario(page); vero(/mod\. Vigore \+3 \+ livello 3 → \+6/.test(d), "manca la riga dell'ira"); vero(/scegliere una via di prestigio/.test(d), "manca l'avviso della via"); await chiudi();
+  const d = await diario(page); vero(/mod\. Vigore \+3 \+ livello 3 → \+6/.test(d), "manca la riga della furia"); vero(/scegliere una via di prestigio/.test(d), "manca l'avviso della via"); await chiudi();
 });
 /* Arcanista con le scuole di js/magia.js: scuola principale Arcano, un incantesimo di Forza */
 const ARC = (o) => PG(Object.assign({ classe: "Sapiente", scuola: "arcano", statistiche: { Vigore: 10, "Agilità": 12, Mente: 16, Spirito: 12 }, statisticheBase: { Vigore: 10, "Agilità": 12, Mente: 16, Spirito: 12 },
@@ -309,7 +309,7 @@ caso("Gioco: anche il mana dell'Arcanista cresce di mod Mente + livello, senza d
   const { page, errori, chiudi } = await apri(b, "gioco.html", ARC(), PARTITA());
   await page.evaluate(() => { guadagnaPE(5000); controllaLivello(); });
   eq(await page.evaluate(() => livelloPg()), 5, "fino al livello 5");
-  eq(await page.evaluate(() => manaMax()), 39, "13, 18, 24, 31, 39 come l'ira");
+  eq(await page.evaluate(() => manaMax()), 39, "13, 18, 24, 31, 39 come la furia");
   vero(/mod\. Mente \+3 \+ livello 3 → \+6/.test(await diario(page)), "manca la riga del mana"); eq(errori, [], "errori"); await chiudi();
 });
 caso("Gioco: Arcanista — capacità di classe, posti per livello e quote per scuola nella preparazione", async (b) => {
@@ -385,13 +385,13 @@ caso("Gioco: Cataclisma una volta per riposo, il riposo lo rende di nuovo dispon
   await page.evaluate(() => { scontro.pv = 200; scontro.pvMax = 200; });
   await accoda(page, [R(1, 20), R(1, 20), /* nemico */ R(1, 6), R(1, 20)], [0.9]);
   await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "cataclisma"))); await aspettaTurnoPg(page);
-  const ira = await page.evaluate(() => pg.risorsaUsata);
+  const furia = await page.evaluate(() => pg.risorsaUsata);
   await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "cataclisma")));
-  eq(await page.evaluate(() => pg.risorsaUsata), ira, "la seconda non si paga"); vero(/una volta per riposo/.test(await diario(page)), "manca l'avviso");
+  eq(await page.evaluate(() => pg.risorsaUsata), furia, "la seconda non si paga"); vero(/una volta per riposo/.test(await diario(page)), "manca l'avviso");
   await page.evaluate(() => { scontro = null; offriPreparazione(); }); eq(await page.evaluate(() => usate.perRiposo), {}); await chiudi();
 });
 
-caso("Gioco: il Soffio Infuocato a segno conta come colpo subito (+2 ira al livello 4)", async (b) => {
+caso("Gioco: il Soffio Infuocato a segno conta come colpo subito (+2 furia al livello 4)", async (b) => {
   const { page, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ livello: 4, risorsaUsata: 10, usate: { riposo: "sbloccato", tecPreparate: PREP4 } }));
   await page.evaluate(() => avviaScontro("mastino", { primo: "pg" })); await aspettaTurnoPg(page);
   await accoda(page, [R(1, 20)], [0.1]); /* tu manchi; il mastino sceglie il soffio */
@@ -536,11 +536,11 @@ caso("Gioco: Guardia di Punta annulla il morso, contrattacco critico con 18 ed E
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ equipaggiamento: MAZZA }), PARTITA({ livello: 4, usate: { riposo: "sbloccato", tecPreparate: ["cuore", "varco", "giuntura", "trafittura", "perforazione", "guardia_punta"] } }));
   await page.evaluate(() => avviaScontro("mastino", { primo: "pg", soffioScarico: true })); await aspettaTurnoPg(page);
   await page.evaluate(() => { scontro.pv = 60; scontro.pvMax = 60; });
-  const prima = await page.evaluate(() => ({ df: pg.dannoFisico || 0, ira: pg.risorsaUsata || 0 }));
+  const prima = await page.evaluate(() => ({ df: pg.dannoFisico || 0, furia: pg.risorsaUsata || 0 }));
   await accoda(page, [R(1, 6), R(19, 20), R(18, 20), R(2, 6), R(3, 6)], [0.1]);
   await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "guardia_punta"))); await aspettaTurnoPg(page);
-  const dopo = await page.evaluate(() => ({ df: pg.dannoFisico || 0, ira: pg.risorsaUsata || 0, esp: scontro.eff.esposto, pv: scontro.pv }));
-  eq(dopo.df, prima.df, "danni subiti"); eq(dopo.ira, prima.ira + 7, "ira: solo il costo"); eq([dopo.esp, dopo.pv], [1, 60 - 8]);
+  const dopo = await page.evaluate(() => ({ df: pg.dannoFisico || 0, furia: pg.risorsaUsata || 0, esp: scontro.eff.esposto, pv: scontro.pv }));
+  eq(dopo.df, prima.df, "danni subiti"); eq(dopo.furia, prima.furia + 7, "furia: solo il costo"); eq([dopo.esp, dopo.pv], [1, 60 - 8]);
   vero(/Critico \(18-20\): d20 18, critico!/.test(await diario(page)), "manca il critico del contrattacco"); eq(errori, [], "errori"); await chiudi();
 });
 caso("Gioco: contro Ettore (boss) Ferita Profonda lascia l'Esposto a 2 turni", async (b) => {
@@ -579,15 +579,15 @@ caso("Gioco: Assorbimento Minimale — il morso fa metà danni, 1 Carica nella s
   vero(/Carica Cinetica/.test(await page.innerText("#vitali")), "scheda senza la Carica"); vero(/assorbe metà del colpo/.test(await diario(page)), "manca il testo");
   eq(errori, [], "errori"); await chiudi();
 });
-caso("Gioco: dopo il Muro di Assorbimento la Postura Salda è rifiutata senza spendere ira", async (b) => {
+caso("Gioco: dopo il Muro di Assorbimento la Postura Salda è rifiutata senza spendere furia", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ equipaggiamento: SPADA_SCUDO }), PARTITA({ livello: 2, usate: { riposo: "sbloccato", tecPreparate: ["polso", "postura_salda", "vipera", "muro", "batteria"] } }));
   await page.evaluate(() => avviaScontro("mastino", { primo: "pg", soffioScarico: true })); await aspettaTurnoPg(page);
   await accoda(page, [R(1, 6), R(19, 20), R(4, 4)], [0.1, 0.99]);
   await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "muro"))); await aspettaTurnoPg(page);
   eq(await page.evaluate(() => [pg.dannoFisico || 0, scontro.cariche]), [0, 3], "0 danni e 3 Cariche");
-  const ira = await page.evaluate(() => pg.risorsaUsata);
+  const furia = await page.evaluate(() => pg.risorsaUsata);
   await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "postura_salda")));
-  eq(await page.evaluate(() => pg.risorsaUsata), ira, "nessuna ira spesa"); eq(await page.evaluate(() => scontro.tuoTurno), true, "il turno resta tuo");
+  eq(await page.evaluate(() => pg.risorsaUsata), furia, "nessuna furia spesa"); eq(await page.evaluate(() => scontro.tuoTurno), true, "il turno resta tuo");
   vero(/due turni di fila/.test(await diario(page)), "manca l'avviso"); eq(errori, [], "errori"); await chiudi();
 });
 caso("Gioco: Postura Salda — il mastino manca, 1 Carica; se morde la Presa non scatta", async (b) => {
@@ -663,7 +663,7 @@ caso("Creazione: il Guerriero con spada e scudo vede anche le 3 tecniche di scud
   eq(await page.$$eval('#lista-tecniche input[name="tecnica"]:not(:disabled)', cs => cs.map(c => c.value)), ["polso", "morso_acciaio", "pomolo", "assorbimento", "postura_salda", "rimbalzo_marea"]);
   eq(errori, [], "errori"); await chiudi();
 });
-caso("Regolamento: posti, ira per livello, vie e boss in italiano e in inglese", async (b) => {
+caso("Regolamento: posti, furia per livello, vie e boss in italiano e in inglese", async (b) => {
   const { page, errori, chiudi } = await apri(b, "regolamento.html");
   const t = await page.textContent("body");
   ["2 (livello 1), 4 (livello 2), 5 (livello 3), 6 (livello 4), 7 (livello 5)", "+1 ai livelli 1-2, +2 ai livelli 3-4, +3 al livello 5", "via di prestigio", "al massimo 2 turni", "Incrinatura", "Frattura", "Esposto", "18-20", "Carica Cinetica", "due turni di fila", "quale serie preparare"].forEach(x => vero(t.includes(x), "manca: " + x));
@@ -723,9 +723,9 @@ caso("Sala di prova: Arcanista — Dardo Arcano incide un Sigillo, Pugno di Forz
   await page.click("#svNuovo");
   vero(await page.$('[data-inc="dardo_arcano"]'), "manca il pulsante del Dardo"); eq(await page.$('[data-inc="ariete"]'), null, "l'Ariete è di livello 2");
   await page.evaluate(() => SalaProva.accoda(15, 5)); await page.click('[data-inc="dardo_arcano"]');
-  let st = await page.evaluate(() => SalaProva.stato()); eq(st.s.sigilli, 1, "un Sigillo"); eq(st.pg.ira, st.pg.iraMax - 2, "mana −2");
+  let st = await page.evaluate(() => SalaProva.stato()); eq(st.s.sigilli, 1, "un Sigillo"); eq(st.pg.furia, st.pg.furiaMax - 2, "mana −2");
   await page.evaluate(() => SalaProva.accoda(15, 4, 3)); await page.click('[data-inc="pugno_forza"]');
-  st = await page.evaluate(() => SalaProva.stato()); eq(st.s.sigilli, 0, "Sigilli esplosi"); eq(st.pg.ira, st.pg.iraMax - 2 - 2 + 1, "−2 e +1 di Detonazione");
+  st = await page.evaluate(() => SalaProva.stato()); eq(st.s.sigilli, 0, "Sigilli esplosi"); eq(st.pg.furia, st.pg.furiaMax - 2 - 2 + 1, "−2 e +1 di Detonazione");
   vero(/Detonazione/.test(await page.textContent("#svLog")), "manca la Detonazione nel diario"); eq(errori, [], "errori"); await chiudi();
 });
 caso("Sala di prova: Arcanista — Sigilli sul nemico e difese (Specchio di Rune) fino al nemico che attacca", async (b) => {
@@ -812,7 +812,7 @@ caso("Sala di prova: Monaco — la Bilancia si sposta e il Crepuscolo da Zenit r
   let st = await page.evaluate(() => SalaProva.stato()); eq(st.s.bilancia, 3, "Luce 3");
   vero(/Zenit/.test(await page.textContent("#svNem, #svPg")), "la Bilancia deve mostrare Zenit");
   await page.evaluate(() => SalaProva.accoda(15, 3, 4)); await page.click('[data-inc="tocco_avvizzente"]');
-  st = await page.evaluate(() => SalaProva.stato()); eq(st.s.bilancia, 0, "Crepuscolo: torna a 0"); eq(st.pg.ira, st.pg.iraMax - 1 - 1 - 1 - 2 + 1, "−1 −1 −1 e −2 del tocco, +1 di Crepuscolo");
+  st = await page.evaluate(() => SalaProva.stato()); eq(st.s.bilancia, 0, "Crepuscolo: torna a 0"); eq(st.pg.furia, st.pg.furiaMax - 1 - 1 - 1 - 2 + 1, "−1 −1 −1 e −2 del tocco, +1 di Crepuscolo");
   vero(/Crepuscolo/.test(await page.textContent("#svLog")), "manca il Crepuscolo nel diario"); eq(errori, [], "errori"); await chiudi();
 });
 caso("Sala di prova: Monaco — Avvizzire e il suo tic a inizio turno del nemico", async (b) => {

@@ -6,12 +6,12 @@ Versione finale, ora nel codice. Le regole stanno in `js/combattimento.js`; le t
 
 ## 1. Regole
 
-- **Attacco:** d20 + mod Vigore contro la CA del nemico. Se la tecnica manca, l'ira è spesa lo stesso.
+- **Attacco:** d20 + mod Vigore contro la CA del nemico. Se la tecnica manca, la furia è spesa lo stesso.
 - **Danno:** dado dell'arma + mod Vigore, salvo "+1 dado", "solo il dado" o "dadi doppi".
 - **Tiro salvezza del nemico:** d20 + suo mod Vigore contro CD = 8 + tuo mod Vigore + livello.
 - **Durata:** in turni del nemico. Un effetto già attivo si rinnova, non si somma.
 
-### Punti ira
+### Punti furia
 - Livello 1: 10 + mod Vigore. A ogni salita: + mod Vigore + nuovo livello (minimo 1).
 - Esempio con mod +3: 13, 18, 24, 31, 39.
 - Riposo: 1d4 + livello (invariato).
@@ -19,7 +19,7 @@ Versione finale, ora nel codice. Le regole stanno in `js/combattimento.js`; le t
   - Non conta un attacco mancato né uno annullato dalla Parata.
   - Il Soffio conta solo se ti colpisce.
   - La Presa e il sanguinamento non contano.
-  - Resta anche la regola che c'era già: un tuo colpo critico ti dà +2 ira.
+  - Resta anche la regola che c'era già: un tuo colpo critico ti dà +2 furia.
 
 ### Posti
 - Per ogni livello ci sono 3 opzioni: se ne scelgono 2 ai livelli 1-2 e 1 ai livelli 3-5.
@@ -71,7 +71,7 @@ Le sei tecniche del taglio di prima (Squarcio della Belva, Taglio Arterioso…) 
 | Aldo | 4 | Ferita Riaperta | 8 | Se sanguina: tutti i danni rimasti subito; altrimenti Sanguinamento 2 |
 | Aldo | 5 | Sentenza del Boia | 10 | Se sanguina e colpisci: sempre critico |
 | Guendalina | 3 | Veglia di Ferro | 5 | Indebolito + Sbilanciato 2; +2 CA fino al tuo turno |
-| Guendalina | 4 | Ritmo del Duello | 8 | +1 dado; Indebolito 3 (tiro salvezza → Frastornato 1); prossima tecnica −2 ira |
+| Guendalina | 4 | Ritmo del Duello | 8 | +1 dado; Indebolito 3 (tiro salvezza → Frastornato 1); prossima tecnica −2 furia |
 | Guendalina | 5 | Veglia Inflessibile | 10 | +1 dado; Indebolito + Sbilanciato 3; per 3 turni +2 CA e +4 ai tiri salvezza e alle prove contrapposte (come Furore) |
 
 La scelta della via è **provvisoria**: al livello 3 compare un pulsante «Scegli» nella sezione Tecniche. Quando scriverai i dialoghi con Aldo e Guendalina, basterà chiamare `sceglieVia("aldo")` o `sceglieVia("guendalina")`. La scelta è definitiva.
@@ -86,9 +86,9 @@ La scelta della via è **provvisoria**: al livello 3 compare un pulsante «Scegl
 
 Decise il 24/10/2026:
 1. **Veglia Inflessibile:** la parte su Mente incrollabile (inutile in combattimento) è sostituita da +4 ai tiri salvezza e alle prove contrapposte per 3 turni, come Furore.
-2. **Critico del giocatore:** resta il +2 ira.
-3. **Presa:** non dà ira.
+2. **Critico del giocatore:** resta il +2 furia.
+3. **Presa:** non dà furia.
 
 Da ricordare:
 - **Scelta della via nei dialoghi:** quando si scrivono i dialoghi con Aldo e Guendalina, collegarli a `sceglieVia("aldo")` / `sceglieVia("guendalina")` e togliere il pulsante provvisorio nella sezione Tecniche.
-- **Salvataggi esistenti:** l'ira già cresciuta con la vecchia regola (dado vita) resta com'è; le vecchie tecniche del taglio diventano posti vuoti da riempire.
+- **Salvataggi esistenti:** la furia già cresciuta con la vecchia regola (dado vita) resta com'è; le vecchie tecniche del taglio diventano posti vuoti da riempire.

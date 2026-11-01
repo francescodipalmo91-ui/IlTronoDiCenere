@@ -19,7 +19,7 @@ Revisione della lista proposta (mazze, martelli, magli) per adattarla alle regol
 | 7 | Armatura azzerata, −50% Difesa, +50% danni per tutto lo scontro, azione extra, ignora l'armatura | 11, 14, 15 | Troppo forti: ridimensionati |
 | 8 | 4 colpi nella Cateratta (il taglio ne ha 3) | 13 | Portati a 3 |
 | 9 | Contro i boss quasi tutto è inutile (immuni a Stordito e Frastornato) | Ramo intero | Ogni tecnica di controllo ha un ripiego per i boss, e lo Spezzare funziona anche su di loro |
-| 10 | "Consuma tutta l'ira" sulla Sentenza | 15 | Tolto: basta il costo 10 e il limite di una volta per riposo |
+| 10 | "Consuma tutta la furia" sulla Sentenza | 15 | Tolto: basta il costo 10 e il limite di una volta per riposo |
 
 ## 2. Stati nuovi
 
@@ -55,7 +55,7 @@ Incrinatura e Sbilanciato si sommano: la CA può scendere al massimo di 5 (3 + 2
 | 5 | Sentenza del Maglio Titanico | 10 | Una volta per riposo; +5 per colpire, dadi doppi, Frattura per tutto lo scontro; tiro salvezza → Stordito 1 |
 
 Note:
-- Contro-Schiacciamento segue la Parata Mutilante: il colpo annullato non dà ira.
+- Contro-Schiacciamento segue la Parata Mutilante: il colpo annullato non dà furia.
 - I boss hanno Indebolito e Sbilanciato limitati a 2 turni, come oggi.
 - "Spezza-Ginocchia Mutilante" diventa "Spezza-Ginocchia": «mutilare» è lessico del taglio.
 - "Sentenza della Mazza Titani" rinominata per non confondersi con la Sentenza del Boia della via di Aldo.
@@ -70,7 +70,7 @@ Stessa scelta del taglio (Aldo o Guendalina, `sceglieVia`), ma con abilità dive
 | Aldo | 4 | Crollo | 8 | Se ha Incrinatura: +1 dado per carica e le cariche si consumano; altrimenti Incrinatura 2 |
 | Aldo | 5 | Martello del Mastro | 10 | Se ha le cariche massime e colpisci: sempre critico + Frattura per tutto lo scontro |
 | Guendalina | 3 | Rintocco | 5 | Tiro salvezza → Frastornato 1 (boss: Indebolito 2); +2 CA fino al tuo turno |
-| Guendalina | 4 | Cadenza della Campana | 8 | +1 dado; tiro salvezza → Stordito 1 (boss: Indebolito + Sbilanciato 2); prossima tecnica −2 ira |
+| Guendalina | 4 | Cadenza della Campana | 8 | +1 dado; tiro salvezza → Stordito 1 (boss: Indebolito + Sbilanciato 2); prossima tecnica −2 furia |
 | Guendalina | 5 | Silenzio della Casa | 10 | +1 dado; Indebolito + Sbilanciato 3; Inibito 2 (boss: +4 ai tuoi tiri salvezza e prove contrapposte per 3 turni); +2 CA per 3 turni |
 
 ## 5. Decisioni (24/10/2026)
@@ -95,7 +95,7 @@ Confronto con il taglio, tecnica per tecnica, per tenere i due rami allo stesso 
 
 Restano così, dopo verifica:
 - **Incrinatura** permanente già al livello 1: è l'identità del ramo, con tetto di 3 cariche (2 sui boss).
-- **Frattura** equivale a un sanguinamento, ma non scatta se il nemico è stordito: scelta voluta tra stordire e fratturare. Non dà ira.
+- **Frattura** equivale a un sanguinamento, ma non scatta se il nemico è stordito: scelta voluta tra stordire e fratturare. Non dà furia.
 - **Sigillo del Demolitore** ha un bonus permanente, bilanciato da Crollo che consuma le cariche.
 - **Fendente della Vipera** (taglio) resta senza ripiego, a differenza di Mazzata Tremante.
 

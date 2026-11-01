@@ -7,7 +7,7 @@
      oppure, se al riposo si è scelta la serie dello scudo (usate.viaSerie = "scudo"), quelle dello scudo.
    - le regole che le risolvono stanno in js/combattimento.js.
    - Le tecniche di utilità (Mente incrollabile, Furore inarrestabile) sono della classe e non occupano posti.
-   - costo in punti ira. Gli effetti sono tradotti nel sistema a dadi del gioco (un nemico alla volta, un'azione per turno).
+   - costo in punti furia. Gli effetti sono tradotti nel sistema a dadi del gioco (un nemico alla volta, un'azione per turno).
    - nomi e descrizioni dalle tabelle di Francesco; effetti PROVVISORI, da rifinire giocando.
    ===================================================================== */
 window.TECNICHE = [
@@ -99,7 +99,7 @@ window.TECNICHE = [
   { id: "ritmo", liv: 4, tipo: "Tagliente", costo: 8, via: "guendalina",
     nome: { it: "Ritmo del Duello", en: "Rhythm of the Duel" },
     desc: { it: "Detti tu il passo dello scontro.", en: "You set the pace of the fight." },
-    effetto: { it: "Attacco con un dado di danno in più; se colpisce, Indebolito per 2 turni e, se il nemico fallisce il tiro salvezza, Frastornato per 1 turno. La tua prossima tecnica costa 2 punti ira in meno (minimo 1).", en: "Attack with one extra damage die; on a hit, Weakened for 2 turns and, if the enemy fails its saving throw, Dazed for 1 turn. Your next technique costs 2 rage points less (minimum 1)." } },
+    effetto: { it: "Attacco con un dado di danno in più; se colpisce, Indebolito per 2 turni e, se il nemico fallisce il tiro salvezza, Frastornato per 1 turno. La tua prossima tecnica costa 2 punti furia in meno (minimo 1).", en: "Attack with one extra damage die; on a hit, Weakened for 2 turns and, if the enemy fails its saving throw, Dazed for 1 turn. Your next technique costs 2 fury points less (minimum 1)." } },
   { id: "veglia_inflessibile", liv: 5, tipo: "Tagliente", costo: 10, via: "guendalina",
     nome: { it: "Veglia Inflessibile", en: "Unbending Vigil" },
     desc: { it: "La casa non ti piegherà.", en: "The house will not bend you." },
@@ -187,7 +187,7 @@ window.TECNICHE = [
   { id: "cadenza", liv: 4, tipo: "Contundente", costo: 8, via: "guendalina",
     nome: { it: "Cadenza della Campana", en: "Bell's Cadence" },
     desc: { it: "Detti tu il ritmo, colpo dopo colpo.", en: "You set the rhythm, blow after blow." },
-    effetto: { it: "Attacco con un dado di danno in più; se colpisce e il nemico fallisce il tiro salvezza, è Stordito per 1 turno (un avversario potente è invece Indebolito e Sbilanciato per 2 turni). La tua prossima tecnica costa 2 punti ira in meno (minimo 1).", en: "Attack with one extra damage die; on a hit, if the enemy fails its saving throw it is Stunned for 1 turn (a powerful foe is Weakened and Off-balance for 2 turns instead). Your next technique costs 2 rage points less (minimum 1)." } },
+    effetto: { it: "Attacco con un dado di danno in più; se colpisce e il nemico fallisce il tiro salvezza, è Stordito per 1 turno (un avversario potente è invece Indebolito e Sbilanciato per 2 turni). La tua prossima tecnica costa 2 punti furia in meno (minimo 1).", en: "Attack with one extra damage die; on a hit, if the enemy fails its saving throw it is Stunned for 1 turn (a powerful foe is Weakened and Off-balance for 2 turns instead). Your next technique costs 2 fury points less (minimum 1)." } },
   { id: "silenzio_casa", liv: 5, tipo: "Contundente", costo: 10, via: "guendalina",
     nome: { it: "Silenzio della Casa", en: "Silence of the House" },
     desc: { it: "Quando colpisci tu, la casa tace.", en: "When you strike, the house falls silent." },
@@ -277,7 +277,7 @@ window.TECNICHE = [
   { id: "specchio", liv: 4, tipo: "Perforante", costo: 8, via: "guendalina",
     nome: { it: "Stoccata a Specchio", en: "Mirror Thrust" },
     desc: { it: "Leggi il suo movimento e lo anticipi.", en: "You read his movement and get there first." },
-    effetto: { it: "Attacco con un dado di danno in più e critico da 18 a 20; se è un critico e il nemico fallisce il tiro salvezza, è Frastornato per 1 turno (contro un avversario potente, invece, Indebolito per 2 turni). La tua prossima tecnica costa 2 ira in meno.", en: "Attack with one extra damage die and a critical hit on 18 to 20; on a critical, if the enemy fails its saving throw it is Dazed for 1 turn (against a powerful foe, Weakened for 2 turns instead). Your next technique costs 2 less rage." } },
+    effetto: { it: "Attacco con un dado di danno in più e critico da 18 a 20; se è un critico e il nemico fallisce il tiro salvezza, è Frastornato per 1 turno (contro un avversario potente, invece, Indebolito per 2 turni). La tua prossima tecnica costa 2 furia in meno.", en: "Attack with one extra damage die and a critical hit on 18 to 20; on a critical, if the enemy fails its saving throw it is Dazed for 1 turn (against a powerful foe, Weakened for 2 turns instead). Your next technique costs 2 less fury." } },
   { id: "mille_soli", liv: 5, tipo: "Perforante", costo: 10, via: "guendalina",
     nome: { it: "Affondo dei Mille Soli", en: "Thrust of a Thousand Suns" },
     desc: { it: "Per un istante vedi ogni varco del nemico.", en: "For an instant you see every gap in the enemy's guard." },
@@ -301,7 +301,7 @@ window.TECNICHE = [
   { id: "batteria", liv: 2, tipo: "Scudo", costo: 4, difesa: true,
     nome: { it: "Batteria Cinetica", en: "Kinetic Battery" },
     desc: { it: "Lo scudo intercetta il colpo e ne trattiene la forza.", en: "The shield intercepts the blow and holds on to its force." },
-    effetto: { it: "Consuma l'azione. Il primo colpo che ti raggiunge fa 0 danni, ma ti dà l'ira come se fosse andato a segno. 1 Carica Cinetica.", en: "Uses your action. The first blow that reaches you deals 0 damage, but gives you rage as if it had landed. 1 Kinetic Charge." } },
+    effetto: { it: "Consuma l'azione. Il primo colpo che ti raggiunge fa 0 danni, ma ti dà la furia come se fosse andato a segno. 1 Carica Cinetica.", en: "Uses your action. The first blow that reaches you deals 0 damage, but gives you fury as if it had landed. 1 Kinetic Charge." } },
   { id: "spinta", liv: 2, tipo: "Scudo", costo: 4,
     nome: { it: "Spinta della Risacca", en: "Undertow Shove" },
     desc: { it: "Incassi il peso del nemico e lo respingi di colpo.", en: "You take the enemy's weight and throw it back at once." },
@@ -321,11 +321,11 @@ window.TECNICHE = [
   { id: "baluardo", liv: 3, tipo: "Scudo", costo: 6, difesa: true,
     nome: { it: "Baluardo d'Acciaio", en: "Steel Bulwark" },
     desc: { it: "Ti chiudi dietro lo scudo e trasformi ogni colpo in forza.", en: "You close up behind the shield and turn every blow into strength." },
-    effetto: { it: "Consuma l'azione. Per 2 turni +2 alla Classe armatura; ogni colpo che ti raggiunge ti dà il doppio dell'ira e 1 Carica Cinetica.", en: "Uses your action. For 2 turns +2 Armor class; every blow that reaches you gives you double rage and 1 Kinetic Charge." } },
+    effetto: { it: "Consuma l'azione. Per 2 turni +2 alla Classe armatura; ogni colpo che ti raggiunge ti dà il doppio della furia e 1 Carica Cinetica.", en: "Uses your action. For 2 turns +2 Armor class; every blow that reaches you gives you double fury and 1 Kinetic Charge." } },
   { id: "risucchio", liv: 4, tipo: "Scudo", costo: 7,
     nome: { it: "Risucchio della Voragine", en: "Maelstrom Pull" },
     desc: { it: "Un impatto che crea un vuoto d'aria e d'energia.", en: "An impact that opens a void of air and energy." },
-    effetto: { it: "Colpo di scudo con un dado di danno in più (2d6 + Vigore); se colpisce, 1 Carica Cinetica e recuperi 1d4 ira.", en: "Shield strike with one extra damage die (2d6 + Vigour); on a hit, 1 Kinetic Charge and you recover 1d4 rage." } },
+    effetto: { it: "Colpo di scudo con un dado di danno in più (2d6 + Vigore); se colpisce, 1 Carica Cinetica e recuperi 1d4 furia.", en: "Shield strike with one extra damage die (2d6 + Vigour); on a hit, 1 Kinetic Charge and you recover 1d4 fury." } },
   { id: "mare_profondo", liv: 4, tipo: "Scudo", costo: 8, difesa: true,
     nome: { it: "Postura del Mare Profondo", en: "Deep Sea Stance" },
     desc: { it: "Una guardia immobile che inghiotte ogni colpo.", en: "A motionless guard that swallows every blow." },
@@ -363,11 +363,11 @@ window.TECNICHE = [
   { id: "drenaggio", liv: 3, tipo: "Scudo", costo: 5, via: "guendalina",
     nome: { it: "Drenaggio d'Urto", en: "Draining Blow" },
     desc: { it: "Un colpo di scudo che spezza la concentrazione del nemico.", en: "A shield blow that breaks the enemy's focus." },
-    effetto: { it: "Colpo di scudo (1d4 + Vigore); se colpisce e il nemico fallisce il tiro salvezza, è Inibito per 1 turno (boss: Indebolito per 2 turni). +2 alla Classe armatura fino al tuo turno; se il nemico ti manca, +1 ira e 1 Carica Cinetica.", en: "Shield strike (1d4 + Vigour); on a hit, if the enemy fails its saving throw it is Inhibited for 1 turn (boss: Weakened for 2 turns). +2 Armor class until your turn; if the enemy misses you, +1 rage and 1 Kinetic Charge." } },
+    effetto: { it: "Colpo di scudo (1d4 + Vigore); se colpisce e il nemico fallisce il tiro salvezza, è Inibito per 1 turno (boss: Indebolito per 2 turni). +2 alla Classe armatura fino al tuo turno; se il nemico ti manca, +1 furia e 1 Carica Cinetica.", en: "Shield strike (1d4 + Vigour); on a hit, if the enemy fails its saving throw it is Inhibited for 1 turn (boss: Weakened for 2 turns). +2 Armor class until your turn; if the enemy misses you, +1 fury and 1 Kinetic Charge." } },
   { id: "sigillo_monolito", liv: 4, tipo: "Scudo", costo: 8, via: "guendalina",
     nome: { it: "Sigillo del Monolito", en: "Monolith Seal" },
     desc: { it: "Pianti lo scudo come una pietra che nulla smuove.", en: "You plant the shield like a stone nothing can move." },
-    effetto: { it: "Colpo di scudo con un dado di danno in più (2d6 + Vigore); se colpisce e il nemico fallisce il tiro salvezza, è Inibito per 2 turni (boss: Indebolito e Sbilanciato per 2 turni). +2 alla Classe armatura per 2 turni; la tua prossima tecnica costa 2 ira in meno.", en: "Shield strike with one extra damage die (2d6 + Vigour); on a hit, if the enemy fails its saving throw it is Inhibited for 2 turns (boss: Weakened and Off-balance for 2 turns). +2 Armor class for 2 turns; your next technique costs 2 rage less." } },
+    effetto: { it: "Colpo di scudo con un dado di danno in più (2d6 + Vigore); se colpisce e il nemico fallisce il tiro salvezza, è Inibito per 2 turni (boss: Indebolito e Sbilanciato per 2 turni). +2 alla Classe armatura per 2 turni; la tua prossima tecnica costa 2 furia in meno.", en: "Shield strike with one extra damage die (2d6 + Vigour); on a hit, if the enemy fails its saving throw it is Inhibited for 2 turns (boss: Weakened and Off-balance for 2 turns). +2 Armor class for 2 turns; your next technique costs 2 fury less." } },
   { id: "fortezza_eterna", liv: 5, tipo: "Scudo", costo: 10, via: "guendalina",
     nome: { it: "Fortezza Eterna", en: "Eternal Fortress" },
     desc: { it: "Diventi una fortezza che non può cadere.", en: "You become a fortress that cannot fall." },

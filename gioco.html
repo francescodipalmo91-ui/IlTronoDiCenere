@@ -1064,6 +1064,7 @@
           caBonus: (n) => `CA +${n}`, malusAg: (n) => `Malus Agilità −${n}`, noMalus: "Nessun malus Agilità",
           riponiBtn: (n) => `Riponi ${n}`, usaBtn: (n) => `Usa ${n}`, equipaggia: "Equipaggia", usa: "Usa", zainoVuoto: "Lo zaino è vuoto.",
           prova: (n) => `Prova di ${n}`, difficolta: (n) => `Difficoltà ${n}`, modificatore: (m) => `Modificatore ${m}`,
+          controPerc: (n) => `Contro la Percezione di ${n}`, istrContro: (d, n) => `Tira un d${d} e aggiungi il modificatore. ${n} tira un d20 di Percezione: ti scopre solo se fa più di te.`, percNem: (n, d, m, tot, van) => `Percezione di ${n}: ${van ? `due d20 (${van}), tiene il migliore, ` : "d20 "}${d} ${m < 0 ? "−" : "+"} ${Math.abs(m)} = ${tot}.`,
           istruzioni: (d, cd) => `Tira un d${d} e aggiungi il modificatore: serve almeno ${cd}.`,
           nonAddestrata: " Non hai scelto questa abilità: conta solo il modificatore dell'attributo, senza il livello.",
           avvisoRiposo: " Attenzione: se fallisci, non potrai ripetere questa prova finché non avrai riposato.",
@@ -1506,6 +1507,7 @@
           caBonus: (n) => `AC +${n}`, malusAg: (n) => `Agility penalty −${n}`, noMalus: "No Agility penalty",
           riponiBtn: (n) => `Put away ${n}`, usaBtn: (n) => `Use ${n}`, equipaggia: "Equip", usa: "Use", zainoVuoto: "Your pack is empty.",
           prova: (n) => `${n} check`, difficolta: (n) => `Difficulty ${n}`, modificatore: (m) => `Modifier ${m}`,
+          controPerc: (n) => `Against ${n}'s Perception`, istrContro: (d, n) => `Roll a d${d} and add the modifier. ${n} rolls a d20 for Perception: you are spotted only if the roll beats yours.`, percNem: (n, d, m, tot, van) => `${n}'s Perception: ${van ? `two d20 (${van}), keeps the best, ` : "d20 "}${d} ${m < 0 ? "−" : "+"} ${Math.abs(m)} = ${tot}.`,
           istruzioni: (d, cd) => `Roll a d${d} and add the modifier: you need at least ${cd}.`,
           nonAddestrata: " You did not choose this skill: only the attribute modifier counts, without your level.",
           avvisoRiposo: " Warning: if you fail, you cannot repeat this check until you have rested.",
@@ -3820,7 +3822,8 @@
           gia: "Porti già l'anello al dito.",
           coraggio: "L'anello del Primo Vespera arde al tuo dito: un coraggio antico, che non è il tuo, ti sostiene la mano. +1 ai tiri per colpire finché la salute resta così bassa.",
           etichetta: "Reliquia", ca: "CA +1", bonus: "+1 all'attacco a salute bassa", togliBtn: "Togli", dita: (d, da, a) => `Danni fisici: ${d} (1d4) · salute fisica ${da} → ${a}` },
-        sorpresa: " Ettore non ti ha sentito arrivare: agisci per primo.",
+        sorpresa: " Ettore non ti ha sentito arrivare: agisci per primo, e nel primo turno la sua Classe armatura scende di 2.",
+          scoperto: " Ettore ti ha sentito scendere: è lui a muoversi per primo, e nel primo turno la tua Classe armatura scende di 2.",
         furtivo: { avanti: "Mi faccio avanti", colpisci: "Colpisco per primo", attacco: ["Ti stacchi dall'ombra e scatti prima che possa voltarsi. La sua spada è appoggiata accanto al giaciglio, a due passi da lui: troppo lontana."] }, /* discesa furtiva (28/10, rivista il 29/10). PROVVISORIO */
         braciere: { /* il fuoco della cripta (28/10): di Ettore finché è vivo; poi un'ora reale per fascina, fino a 5; il buio solo al rientro. PROVVISORI */
           rifiuto: ["Fai per sederti accanto al braciere, ma la lama di Ettore si alza prima di te, a un palmo dal tuo petto. «No.» La voce è un ringhio basso. «Questo fuoco l'ho nutrito io, asse dopo asse. Quarantadue assi. Quarantatré, con quella di ieri. Il suo calore è mio. Vattene a scaldare altrove.»"],
@@ -4013,7 +4016,8 @@
           gia: "You are already wearing the ring.",
           coraggio: "The Ring of the First Vespera burns on your finger: an ancient courage, not your own, steadies your hand. +1 to attack rolls while your health stays this low.",
           etichetta: "Relic", ca: "AC +1", bonus: "+1 to hit at low health", togliBtn: "Take off", dita: (d, da, a) => `Physical damage: ${d} (1d4) · physical health ${da} → ${a}` },
-        sorpresa: " Ettore did not hear you coming: you act first.",
+        sorpresa: " Ettore did not hear you coming: you act first, and in the first turn his Armor class drops by 2.",
+          scoperto: " Ettore heard you coming down: he moves first, and in the first turn your Armor class drops by 2.",
         furtivo: { avanti: "I step forward", colpisci: "I strike first", attacco: ["You break from the shadow and lunge before he can turn. His sword leans beside the bed, two steps from him: too far."] },
         braciere: {
           rifiuto: ["You make to sit down by the brazier, but Ettore's blade rises before you do, a hand's breadth from your chest. “No.” His voice is a low growl. “I fed this fire, board after board. Forty-two boards. Forty-three, with yesterday's. Its warmth is mine. Go and warm yourself somewhere else.”"],
@@ -5200,7 +5204,7 @@
       giardino_percezione: {},
       cappella_vetrata: { prova: { abilita: "Misticismo", dado: 20, cd: 14 }, poi: (ok) => { if (ok) { usate.adele_viva = true; salvaUsate(); sblocco([A2.vetrataViva], "mis"); } } },
       cappella_libro: { prova: { abilita: "Arcano", dado: 20, cd: 12 }, riprova: true, poi: (ok) => { if (ok) libroPreghiere(); } },
-      cripta_furtiva: { prova: { abilita: "Furtività", dado: 20, cd: 12 }, nessunDanno: true, poi: (ok) => { usate.ettore_sorpreso = ok; salvaUsate(); setTimeout(() => fuoriDallaTendina(() => vai("cripta")), 900); } },
+      cripta_furtiva: { prova: { abilita: "Furtività", dado: 20, cd: 12, contro: () => percezioneGuardiano("esploratore", usate.ettore_tracce === true ? -2 : usate.ettore_tracce ? 2 : 0) }, nessunDanno: true, poi: (ok) => { usate.ettore_sorpreso = ok; usate.ettore_scoperto = !ok; salvaUsate(); setTimeout(() => fuoriDallaTendina(() => vai("cripta")), 900); } },
       cappella_percezione: { prova: { abilita: "Percezione", dado: 20, cd: 11 }, nessunDanno: true },
       cappella_tracce: { prova: { abilita: "Indagare", dado: 20, cd: 12 }, poi: (ok) => { if (ok || usate.ettore_tracce !== true) { usate.ettore_tracce = ok ? true : "ko"; salvaUsate(); applicaTracce(); } } }, /* trovate: Furtività CD 10; fallita: CD 14 */
       cripta_tomba: {},
@@ -5226,6 +5230,11 @@
     PROVE_DICHIARATE.cripta = { Indagare: "cripta_nicchie", Atletica: "cripta_sarcofago" }; /* le nicchie non ci sono più: Indagare sul sarcofago di Rodolfo e Adele (28/10) */
     for (const id in MECCANICA) LUOGHI[id] = { ...MECCANICA[id], ...TX.luoghi[id] };
     /* tracce di Ettore trovate con Sopravvivenza: scendere in silenzio diventa più facile */
+    /* 01/11: Percezione di un guardiano contro la Furtività del personaggio: d20 + mod Mente + livello (boss); Dafne, la cacciatrice, tira con vantaggio (vantaggioFurtivita) */
+    function percezioneGuardiano(id, extra) {
+      const D = NEMICI[id] || {}, st = D.statFisse || {};
+      return { nome: (TX.nemici && TX.nemici[id] && TX.nemici[id].nome) || D.nomeBreve || (id === "esploratore" ? "Ettore" : id), mod: mod(Number(st.Mente) || 10) + (D.boss ? Number(D.livello) || 0 : 0) + (Number(extra) || 0), vantaggio: !!D.vantaggioFurtivita };
+    }
     function applicaTracce() { if (usate.ettore_tracce && LUOGHI.cripta_furtiva && LUOGHI.cripta_furtiva.prova) LUOGHI.cripta_furtiva.prova = { ...LUOGHI.cripta_furtiva.prova, cd: usate.ettore_tracce === true ? 10 : 14 }; }
     /* risposte generiche per le abilità nuove (quando nella stanza non c'è una prova per loro) */
     Object.assign(TESTI.it.prove.generiche, {
@@ -7946,8 +7955,11 @@
       const sorpreso = usate.ettore_sorpreso === true && !usate.ettore_sorpresa_usata; /* sceso in silenzio: la prima volta agisci per primo */
       if (sorpreso) { usate.ettore_sorpresa_usata = true; salvaUsate(); }
       const disarmato = !!usate.ettore_disarmato; if (disarmato) { usate.ettore_disarmato = false; salvaUsate(); } /* 29/10: attaccato a sorpresa, perde il primo turno a recuperare la spada */
-      avviaScontro("esploratore", { ctx: "ettore", testi: "esploratore", caMod: indizio ? -2 : 0, primo: sorpreso ? "pg" : null, sorpresa: A2.sorpresa, conta: Number(usate.ettore_sconfitte) > 0 ? 3 : 0 });
+      const scoperto = !sorpreso && usate.ettore_scoperto === true; if (usate.ettore_scoperto) { usate.ettore_scoperto = false; salvaUsate(); } /* 01/11: discesa furtiva fallita: agisce lui per primo */
+      avviaScontro("esploratore", { ctx: "ettore", testi: "esploratore", caMod: indizio ? -2 : 0, primo: sorpreso ? "pg" : scoperto ? "nem" : null, sorpresa: sorpreso ? A2.sorpresa : A2.scoperto, conta: Number(usate.ettore_sconfitte) > 0 ? 3 : 0 });
       if (disarmato && scontro) scontro.disarmato = true;
+      if (scontro && sorpreso) scontro.sorpreso = true; /* −2 alla sua CA nel primo turno */
+      if (scontro && scoperto) scontro.scoperto = true; /* −2 alla tua CA nel primo turno */
     }
     /* Ettore a terra: finirlo o risparmiarlo */
     function resaEttore() {
@@ -9087,12 +9099,20 @@
         m = valoreAbilita(p.abilita) + malusStatoProva(); /* Avvelenato: −2 */
         nota = addestrata(p.abilita) ? "" : U.nonAddestrata;
       }
+      const contro = p.contro ? p.contro() : null; /* 01/11: prova contrapposta (Furtività contro la Percezione di un guardiano) */
       /* Riquadro che mostra al giocatore cosa sta facendo e come funziona la prova */
-      if (p.naturale) aggiungi({ tipo: "prova", titolo: U.prova(nome), azione: l.azione || "", dati: [U.serveNaturale(p.naturale), `d${p.dado}`], righe: [U.istrNaturale(p.dado, p.naturale)] });
+      if (contro) aggiungi({ tipo: "prova", titolo: U.prova(nome), azione: l.azione || "", dati: [U.controPerc(contro.nome), `d${p.dado}`, U.modificatore(fmtN(m))], righe: [U.istrContro(p.dado, contro.nome) + nota] });
+      else if (p.naturale) aggiungi({ tipo: "prova", titolo: U.prova(nome), azione: l.azione || "", dati: [U.serveNaturale(p.naturale), `d${p.dado}`], righe: [U.istrNaturale(p.dado, p.naturale)] });
       else aggiungi({ tipo: "prova", titolo: U.prova(nome), azione: l.azione || "", dati: [U.difficolta(p.cd), `d${p.dado}`, U.modificatore(fmtN(m))], righe: [U.istruzioni(p.dado, p.cd) + nota + (provaRipetibileDopoRiposo(id, l) ? U.avvisoRiposo : "")] });
       scelte([
         { testo: U.lancia(p.dado), fn: () => { const corpo = () => {
-          const tiro = tira(p.dado), tot = tiro + m, ok = p.naturale ? tiro === p.naturale : tot >= p.cd; /* naturale: conta solo il numero uscito sul dado */
+          const tiro = tira(p.dado), tot = tiro + m;
+          let cd = p.cd, rigaContro = null;
+          if (contro) { /* il guardiano tira Percezione (con vantaggio, due d20: Dafne); ti scopre solo se fa più di te */
+            const a = tira(20), b = contro.vantaggio ? tira(20) : null, dn = b == null ? a : Math.max(a, b);
+            cd = dn + contro.mod; rigaContro = U.percNem(contro.nome, dn, contro.mod, cd, b == null ? "" : `${a}, ${b}`);
+          }
+          const ok = p.naturale ? tiro === p.naturale : tot >= cd; /* naturale: conta solo il numero uscito sul dado */
           const dopoFallimento = usate[id] === "ko";
           usate[id] = ok ? "ok" : "ko"; salvaUsate();
           chiudiScelte();
@@ -9109,7 +9129,7 @@
             if (!l.fittaNelTesto) fitta.push(fitte[Math.floor(Math.random() * fitte.length)]);
             fitta.push(U.dannoMentale(prima, Math.max(0, maxMentali() - pg.dannoMentale)));
           }
-          aggiungi({ tipo: "narra", prova: true, box: ok ? "ok" : "ko", esito: p.naturale ? U.esitoNaturale(tiro, p.naturale, ok) : U.esito(tiro, m, tot, p.cd, ok), righe: [...testoEsito, ...fitta] });
+          aggiungi({ tipo: "narra", prova: true, box: ok ? "ok" : "ko", esito: p.naturale ? U.esitoNaturale(tiro, p.naturale, ok) : U.esito(tiro, m, tot, cd, ok), righe: [...(rigaContro ? [rigaContro] : []), ...testoEsito, ...fitta] });
           if (ok && l.apre) sist(l.apre);
           if (ok && l.zaino) {
             aggiungiZaino({ id: id, nome: l.zaino.nome, tipo: "nota", testo: TX.foglietto });
@@ -10434,7 +10454,7 @@
     /* resistenze: resiste: ["veleno"] dimezza i danni da veleno dello Sciamano (da mettere a Dafne e al sovrano quando avranno la loro voce qui) */
     const bossNem = () => { const n = scontro || ultimoNemico; return !!(n && NEMICI[n.id] && NEMICI[n.id].boss); };
     const dadiVuln = (tipo) => { const n = scontro || ultimoNemico, D = n && NEMICI[n.id]; return D && D.vulnerabile && tipo && D.vulnerabile.includes(tipo) ? 1 : 0; }; /* +1 dado di danno (28/10) */
-    const caNem = () => { const n = scontro || ultimoNemico; return NEMICI[n.id].ca + (Number(n.caMod) || 0) - (n.eff ? CMB.malusCA(n) : 0); }; /* il consiglio di Aldo abbassa la CA di Ettore; Sbilanciato e Incrinatura la abbassano */
+    const caNem = () => { const n = scontro || ultimoNemico; return NEMICI[n.id].ca + (Number(n.caMod) || 0) - (n.eff ? CMB.malusCA(n) : 0) - (n.sorpreso && (Number(n.round) || 0) <= 1 ? 2 : 0); }; /* 01/11: sorpreso dalla Furtività: −2 nel primo turno */ /* il consiglio di Aldo abbassa la CA di Ettore; Sbilanciato e Incrinatura la abbassano */
     /* classe difficoltà degli incantesimi: 8 + modificatore (Mente per il Sapiente, Spirito per l'Accolito) + livello */
     const ATTR_INC = { Sapiente: "Mente", Accolito: "Spirito" };
     const nomeBilancia = (v) => { /* Luce 3 = Zenit, Ombra 3 = Nadir; da 2 Aureola (Luce) e Velo (Ombra) */
@@ -11198,7 +11218,7 @@
     const modAttaccoPg = () => mod(statPg(attrClassePg())); /* 01/11: tiro per colpire e danno di tutti gli attacchi */
     function nomeAttrClasse() { return Lingua.nome("attributi", attrClassePg()); }
     const modAgiPg = () => mod(statPg("Agilità"));
-    const caScontro = () => (Number(caAttuale()) || 10) + malusStatoCA() + (eff("scudo") ? 2 : 0) + (eff("muro") ? 3 : 0) + (eff("cerchio") ? 2 : 0) + (eff("guardia") ? (Number(scontro.guardiaVal) || 2) : 0);
+    const caScontro = () => (Number(caAttuale()) || 10) + malusStatoCA() - (scontro && scontro.scoperto && (Number(scontro.round) || 0) <= 1 ? 2 : 0) /* 01/11: scoperto durante la Furtività */ + (eff("scudo") ? 2 : 0) + (eff("muro") ? 3 : 0) + (eff("cerchio") ? 2 : 0) + (eff("guardia") ? (Number(scontro.guardiaVal) || 2) : 0);
     const passoDado = (d) => (d >= 12 ? 12 : d + 2); /* Arma Migliorata: 1d6→1d8, 1d8→1d10, 1d10→1d12 */
     const dadoArmaPg = (conTorcia) => {
       let d = 2;

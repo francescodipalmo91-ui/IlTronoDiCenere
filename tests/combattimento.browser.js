@@ -1266,6 +1266,30 @@ caso("Peso dei giorni: al 10° giorno −1 alla salute mentale massima con avvis
   eq(errori, [], "errori"); await chiudi();
 });
 
+/* ======================= 01/11: Furtività contro la Percezione dei guardiani ======================= */
+caso("Furtività contro Ettore: prova contrapposta; riuscita → agisci per primo e lui −2 CA nel primo turno; fallita → agisce lui e tu −2 CA", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "cappella", usate: { riposo: "sbloccato", q4: "accettata" } }));
+  eq(await page.evaluate(() => percezioneGuardiano("esploratore", 0).mod), 3, "Ettore: Mente 12 (+1) + livello 2");
+  eq(await page.evaluate(() => percezioneGuardiano("esploratore", -2).mod), 1, "tracce trovate: −2");
+  /* riuscita: tu 15 + Furtività, lui 5 + 3 */
+  await page.evaluate(() => { luogo = "cappella"; esamina("cripta_furtiva"); });
+  await page.waitForSelector("#azioni:not([hidden]) button, #scelte button", { timeout: 5000 });
+  await accoda(page, [R(15, 20), R(5, 20)]);
+  await page.evaluate(() => [...document.querySelectorAll("#azioni button, #scelte button")][0].click());
+  await page.waitForTimeout(400);
+  eq(await page.evaluate(() => [usate.ettore_sorpreso, usate.ettore_scoperto]), [true, false], "riuscita");
+  vero(/Percezione di Ettore/.test(await diario(page)), "manca il tiro di Percezione di Ettore");
+  await page.evaluate(() => { luogo = "cripta"; usate.ettore = "incontrato"; avviaScontroEttore(); }); await aspettaTurnoPg(page);
+  eq(await page.evaluate(() => [scontro.primo, scontro.sorpreso, caNem()]), ["pg", true, 13 - 2], "tu per primo, Ettore −2 CA (CA 13)");
+  await page.evaluate(() => { scontro.round = 2; }); eq(await page.evaluate(() => caNem()), 13, "dal secondo turno CA piena");
+  await page.evaluate(() => { scontro = null; usate.ettore_sorpresa_usata = true; usate.ettore_sorpreso = false; usate.ettore_scoperto = true; luogo = "cripta"; avviaScontroEttore(); });
+  await page.waitForTimeout(200);
+  eq(await page.evaluate(() => [scontro.primo, scontro.scoperto, usate.ettore_scoperto]), ["nem", true, false], "fallita: agisce lui per primo");
+  const ca = await page.evaluate(() => { scontro.round = 1; const a = caScontro(); scontro.round = 2; return [a, caScontro()]; });
+  eq(ca[0], ca[1] - 2, "−2 alla tua CA nel primo turno");
+  eq(errori, [], "errori"); await chiudi();
+});
+
 (async () => {
   const browser = await chromium.launch();
   let ko = 0;

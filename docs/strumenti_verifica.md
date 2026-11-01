@@ -32,14 +32,14 @@ Controllo rapido dopo ogni modifica: `npm test` (regole + lint + coerenza).
 `test.html`: stesso motore della sala di prova (`js/sala_prova.js`), layout più leggibile.
 - **Metà alta:** Personaggio a sinistra (blu), Nemico a destra (rosso), con gli stessi dettagli: classe/tipo, livello, statistiche (Vigore, Agilità, Mente, Spirito), arma, scudo sì/no, CA, salute; in cima a ciascuno lo stato in scontro con le barre.
 - **Metà bassa:** turno, azioni, tecniche/incantesimi a sinistra; diario a colori a destra (blu tu, rosso nemico, verde esito buono, rosso chiaro esito cattivo, grigio sistema); dadi truccati e test automatici a scomparsa.
-- **Preset fissi** in `js/preset_test.js` (Umano, 11 punti, attributi non crescono col livello; salute e CA calcolate dalle regole):
+- **Preset fissi** in `js/preset_test.js`: base di classe (minimo 10, 8 punti, prima sulla caratteristica di classe) + bonus di razza da `Regole.RAZZE` (Elfo +2 Agi +1 Men, Nano +2 Vig +1 Spi, Gnomo +2 Spi +1 Agi; Umano 3 punti liberi spesi secondo la classe). Massimo 20; gli attributi non crescono col livello; salute e CA calcolate dalle regole.
 
-| Classe | Vig | Agi | Men | Spi | Arma | Scudo | Armatura | CA | Salute liv. 1 → 5 |
-|---|---|---|---|---|---|---|---|---|---|
-| Guerriero | 16 | 13 | 10 | 12 | Spada corta | sì | pesante | 15 | 23 → 59 |
-| Sciamano | 12 | 14 | 10 | 15 | Mazza chiodata | no | media | 15 | 19 → 43 |
-| Arcanista | 10 | 14 | 17 | 10 | Bastone | no | leggera | 14 | 16 → 32 |
-| Monaco | 12 | 12 | 10 | 17 | Spada corta | sì | media | 15 | 19 → 43 |
+| Classe | Base (Vig/Agi/Men/Spi) | Umano | Elfo | Nano | Gnomo | Arma | Scudo | Armatura |
+|---|---|---|---|---|---|---|---|---|
+| Guerriero | 15/12/10/11 | 16/13/10/12 | 15/14/11/11 | 17/12/10/12 | 15/13/10/13 | Spada corta | sì | pesante |
+| Sciamano | 11/15/10/12 | 12/16/10/13 | 11/17/11/12 | 13/15/10/13 | 11/16/10/14 | Mazza chiodata | no | media |
+| Arcanista | 10/13/15/10 | 10/14/17/10 | 10/15/16/10 | 12/13/15/11 | 10/14/15/12 | Bastone | no | leggera |
+| Monaco | 11/11/10/16 | 12/12/10/17 | 11/13/11/16 | 13/11/10/17 | 11/12/10/18 | Spada corta | sì | media |
 
 | Nemico | Liv | Vig | Agi | Men | Spi | CA | Salute |
 |---|---|---|---|---|---|---|---|
@@ -48,7 +48,7 @@ Controllo rapido dopo ogni modifica: `npm test` (regole + lint + coerenza).
 | Enea | 3 | 12 | 10 | 12 | 14 | 13 | 36 |
 | Manichino | 1 | 10 | 10 | 10 | 10 | 12 | 60 |
 
-Cambiare classe rimette il preset; livello e Vigore ricalcolano la salute; armatura, Agilità e scudo ricalcolano la CA; «Ripristina preset» torna ai valori di default. Mente e Spirito del nemico sono solo di scheda (il motore non li usa ancora).
+Cambiare classe o razza rimette il preset; livello e Vigore ricalcolano la salute; armatura, Agilità e scudo ricalcolano la CA; «Ripristina preset» torna ai valori di default. Mente e Spirito del nemico sono solo di scheda (il motore non li usa ancora).
 
 ## File nuovi (29/10/2026)
 

@@ -596,7 +596,8 @@
         gruppo("Classe e livello",
           campo("Classe", sel("pClasse", [["guerriero", "Guerriero"], ["sciamano", "Sciamano"], ["arcanista", "Arcanista"], ["monaco", "Monaco"]], "guerriero")),
           campo("Livello", sel("pLiv", [1, 2, 3, 4, 5].map(n => [n, n]), 1)),
-          campo("Razza", el("span", { class: "fisso", text: "Umano (preset)" }))),
+          campo("Razza", sel("pRazza", P.RAZZE.map(r => [r, r]), "Umano")),
+          el("p", { class: "nota", id: "tRazza" })),
         gruppo("Statistiche",
           el("div", { class: "attrs" }, attr("pVig", "Vigore", 16, "mVig"), attr("pAgi", "Agilità", 13, "mAgi"), attr("pMente", "Mente", 10, "mMente"), attr("pSpi", "Spirito", 12, "mSpi"))),
         gruppo("Arma e difesa",
@@ -659,14 +660,15 @@
 
     /* preset: classe → tutto; livello o Vigore → salute; armatura, Agilità o scudo → CA */
     function applicaPresetPg(tutto) {
-      const x = P.pg($("pClasse").value, Number($("pLiv").value));
+      const x = P.pg($("pClasse").value, Number($("pLiv").value), $("pRazza").value);
+      $("tRazza").textContent = `Bonus di razza: ${P.testoBonus(x.razza, x.classe)}`;
       if (tutto) { $("pVig").value = x.vig; $("pAgi").value = x.agi; $("pMente").value = x.men; $("pSpi").value = x.spi; $("pArma").value = x.arma; $("pScudo").checked = x.scudo; $("pArmatura").value = x.armatura; $("pInt").value = x.intuizione; }
       ricalcolaPv(); ricalcolaCa();
     }
     const ricalcolaPv = () => {
       const b = P.PG[$("pClasse").value], liv = Number($("pLiv").value);
       $("pPv").value = P.salute(b.dado, $("pVig").value, liv);
-      $("tPgSotto").textContent = `Umano ${b.nome} · livello ${liv} · d${b.dado} · ${b.risorsa}`;
+      $("tPgSotto").textContent = `${$("pRazza").value} ${b.nome} · livello ${liv} · d${b.dado} · ${b.risorsa}`;
     };
     const ricalcolaCa = () => { $("pCa").value = P.ca($("pArmatura").value, $("pAgi").value, $("pScudo").checked); };
     function applicaPresetNem() {
@@ -683,7 +685,7 @@
       disegna();
     }
     const su = (ids, prima) => ids.forEach(id => $(id).addEventListener("change", () => { if (prima) prima(); aggiornaPg(); }));
-    su(["pClasse"], () => applicaPresetPg(true));
+    su(["pClasse", "pRazza"], () => applicaPresetPg(true));
     su(["pLiv", "pVig"], ricalcolaPv);
     su(["pArmatura", "pAgi", "pScudo"], ricalcolaCa);
     su(["pMente", "pSpi", "pCa", "pPv", "pArma", "pVia", "pSerie", "pIgnora", "pInt"]);

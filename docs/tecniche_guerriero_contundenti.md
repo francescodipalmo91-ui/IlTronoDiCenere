@@ -39,15 +39,15 @@ Incrinatura e Sbilanciato si sommano: la CA può scendere al massimo di 5 (3 + 2
 | Liv | Tecnica | Costo | Effetto |
 |---|---|---|---|
 | 1 | Colpo del Maglio Incrinante | 2 | Incrinatura 1 |
-| 1 | Percossa al Mento | 2 | Indebolito 1; nel suo prossimo turno il nemico non può fare critici |
-| 1 | Impatto Sbilanciante | 3 | Sbilanciato 1 + Indebolito 1 |
+| 1 | Percossa al Mento | 2 | Frastornato 1 (−4, niente critici); boss: Sbilanciato 2 |
+| 1 | Impatto Sbilanciante | 3 | Sbilanciato 2 |
 | 2 | Frantumazione dello Scudo | 4 | Incrinatura 2 |
 | 2 | Mazzata Tremante | 5 | Tiro salvezza → Frastornato 1; se resiste (o è un boss) Sbilanciato 1 |
 | 2 | Spezza-Costole | 5 | +1 dado; Frattura 2 |
 | 3 | Martellata Sismica | 5 | Incrinatura 1 + Sbilanciato 2 |
 | 3 | Impatto Demolitore | 6 | +1 dado; Incrinatura 2 |
-| 3 | Colpo del Coma | 6 | Tiro salvezza → Stordito 1; se resiste (o è un boss) Indebolito 2 |
-| 4 | Spezza-Ginocchia | 8 | +1 dado; Indebolito 3 + Sbilanciato 3 |
+| 3 | Colpo del Coma | 6 | Tiro salvezza → Stordito 1; se resiste (o è un boss) Sbilanciato 2 |
+| 4 | Spezza-Ginocchia | 8 | +1 dado; Sbilanciato 3 + Frastornato 1 (boss: solo Sbilanciato) |
 | 4 | Demolizione della Guardia | 8 | Due attacchi col solo dado; se vanno a segno entrambi: Incrinatura 2 + tiro salvezza → Stordito 1 (boss: Sbilanciato 2) |
 | 4 | Contro-Schiacciamento | 7 | Consuma l'azione; il primo colpo subito fa 0 danni, contrattacco + Incrinatura 1 |
 | 5 | Cateratta della Roccia Infranta | 10 | 3 attacchi col solo dado, ognuno a segno dà Incrinatura 1; 3 su 3 + tiro salvezza → Stordito 1 (boss: Sbilanciato 2) |
@@ -69,9 +69,9 @@ Stessa scelta del taglio (Aldo o Guendalina, `sceglieVia`), ma con abilità dive
 | Aldo | 3 | Sigillo del Demolitore | 6 | Incrinatura 2; finché ha le cariche massime, +1d4 agli attacchi normali |
 | Aldo | 4 | Crollo | 8 | Se ha Incrinatura: +1 dado per carica e le cariche si consumano; altrimenti Incrinatura 2 |
 | Aldo | 5 | Martello del Mastro | 10 | Se ha le cariche massime e colpisci: sempre critico + Frattura per tutto lo scontro |
-| Guendalina | 3 | Rintocco | 5 | Tiro salvezza → Frastornato 1 (boss: Indebolito 2); +2 CA fino al tuo turno |
-| Guendalina | 4 | Cadenza della Campana | 8 | +1 dado; tiro salvezza → Stordito 1 (boss: Indebolito + Sbilanciato 2); prossima tecnica −2 furia |
-| Guendalina | 5 | Silenzio della Casa | 10 | +1 dado; Indebolito + Sbilanciato 3; Inibito 2 (boss: +4 ai tuoi tiri salvezza e prove contrapposte per 3 turni); +2 CA per 3 turni |
+| Guendalina | 3 | Rintocco | 5 | Tiro salvezza → Frastornato 1 (boss: Sbilanciato 2); +2 CA fino al tuo turno |
+| Guendalina | 4 | Cadenza della Campana | 8 | +1 dado; tiro salvezza → Stordito 1 (boss: Sbilanciato 2); prossima tecnica −2 furia |
+| Guendalina | 5 | Silenzio della Casa | 10 | +1 dado; Sbilanciato 3 + Frastornato 2 (boss: +4 ai tuoi tiri salvezza e prove contrapposte per 3 turni); +2 CA per 3 turni |
 
 ## 5. Decisioni (24/10/2026)
 
@@ -114,3 +114,6 @@ Restano così, dopo verifica:
 - `node tests/combattimento.test.js`: 63 test delle regole (23 nuovi per le contundenti e le loro vie).
 - `node tests/combattimento.browser.js`: 37 test nel browser (11 nuovi: sala di prova, partita col martello, boss, via, creazione, regolamento).
 - **Sala di prova:** `tutorial.html?prova`, arma «Martello da battaglia» o «Bastone».
+
+## Revisione del 1° novembre 2026: il contundente stordisce
+Stati del ramo: Stordito, Frastornato, Sbilanciato, più Incrinatura e Frattura. Sui boss il controllo (Stordito, Frastornato) diventa Sbilanciato. Tolti Indebolito e Inibito (sono del taglio) da 7 tecniche; lo stato `intontito` di Percossa al Mento non si usa più (Frastornato già toglie i critici).

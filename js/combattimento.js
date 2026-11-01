@@ -252,8 +252,8 @@
 
       /* ---- contundenti: livello 1 ---- */
       case "maglio": r = hit(); if (r.ok) crp(1); break;
-      case "mento": r = hit(); if (r.ok) { fx("debole", 1); fx("intontito", 1); } break;
-      case "sbilanciante": r = hit(); if (r.ok) { fx("sbilanciato", 1); fx("debole", 1); } break;
+      case "mento": r = hit(); if (r.ok) { if (ctx.boss) fx("sbilanciato", 2); else fx("frastornato", 1); } break; /* 01/11: contundente stordisce */
+      case "sbilanciante": r = hit(); if (r.ok) fx("sbilanciato", 2); break;
       /* ---- contundenti: livello 2 ---- */
       case "frantumascudo": r = hit(); if (r.ok) crp(2); break;
       case "tremante": r = hit(); if (r.ok && vivo(s)) conTSn({ frastornato: 1 }, () => fx("sbilanciato", 1)); break;
@@ -261,9 +261,9 @@
       /* ---- contundenti: livello 3 ---- */
       case "sismica": r = hit(); if (r.ok) { crp(1); fx("sbilanciato", 2); } break;
       case "demolitore": r = hit({ piuDadi: 1 }); if (r.ok) crp(2); break;
-      case "coma": r = hit(); if (r.ok && vivo(s)) conTSn({ bloccato: 1 }, () => fx("debole", 2)); break;
+      case "coma": r = hit(); if (r.ok && vivo(s)) conTSn({ bloccato: 1 }, () => fx("sbilanciato", 2)); break;
       /* ---- contundenti: livello 4 ---- */
-      case "ginocchia": r = hit({ piuDadi: 1 }); if (r.ok) { fx("debole", 3); fx("sbilanciato", 3); } break;
+      case "ginocchia": r = hit({ piuDadi: 1 }); if (r.ok) { fx("sbilanciato", 3); if (!ctx.boss) fx("frastornato", 1); } break;
       case "demolizione": {
         let aSegno = 0;
         for (let i = 0; i < 2 && vivo(s); i++) { const z = hit({ conMod: false }); if (z.ok) aSegno++; }
@@ -300,14 +300,14 @@
         break;
       }
       /* ---- via di Guendalina (contundenti): Controllo ---- */
-      case "rintocco": r = hit(); if (r.ok && vivo(s)) controlloORipiego({ frastornato: 1 }, () => fx("debole", 2)); E.push(guardia(s, 2, 1)); break;
-      case "cadenza": r = hit({ piuDadi: 1 }); if (r.ok && vivo(s)) controlloORipiego({ bloccato: 1 }, () => { fx("debole", 2); fx("sbilanciato", 2); }); s.sconto = 2; E.push({ k: "sconto", n: 2 }); break;
+      case "rintocco": r = hit(); if (r.ok && vivo(s)) controlloORipiego({ frastornato: 1 }, () => fx("sbilanciato", 2)); E.push(guardia(s, 2, 1)); break;
+      case "cadenza": r = hit({ piuDadi: 1 }); if (r.ok && vivo(s)) controlloORipiego({ bloccato: 1 }, () => fx("sbilanciato", 2)); s.sconto = 2; E.push({ k: "sconto", n: 2 }); break;
       case "silenzio_casa":
         r = hit({ piuDadi: 1 });
         if (r.ok) {
-          fx("debole", 3); fx("sbilanciato", 3);
-          if (ctx.boss) { E.push({ k: "immune", s: "silenzio" }); s.eff.furore = Math.max(s.eff.furore || 0, 3); s.effMax.furore = Math.max(s.effMax.furore || 0, 3); E.push({ k: "furore", turni: 3 }); }
-          else fx("silenzio", 2);
+          fx("sbilanciato", 3);
+          if (ctx.boss) { E.push({ k: "immune", s: "frastornato" }); s.eff.furore = Math.max(s.eff.furore || 0, 3); s.effMax.furore = Math.max(s.effMax.furore || 0, 3); E.push({ k: "furore", turni: 3 }); }
+          else fx("frastornato", 2);
         }
         E.push(guardia(s, 2, 3));
         break;

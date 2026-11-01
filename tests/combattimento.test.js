@@ -282,13 +282,14 @@
   });
 
   /* ================= Contundenti: le 15 tecniche ================= */
-  caso("Percossa al Mento: Indebolito 1 e niente critici nel prossimo turno, anche su un boss", () => {
-    const s = scontro(), c = ctx({ liv: 1, boss: true, dadi: [15, 2] }); prova(s, c, "mento");
-    eq([s.eff.debole, s.eff.intontito], [2, 1]); eq(C.critNemPossibile(s), false); eq(C.modAttaccoNem(s), -2);
+  caso("Percossa al Mento (01/11): Frastornato 1 (−4, niente critici); sui boss Sbilanciato 2", () => {
+    const s = scontro(); prova(s, ctx({ liv: 1, dadi: [15, 2] }), "mento");
+    eq(s.eff.frastornato, 1); eq(C.critNemPossibile(s), false); eq(C.modAttaccoNem(s), -4);
     C.fineTurnoNemico(s); eq(C.critNemPossibile(s), true);
+    const b = scontro(); prova(b, ctx({ liv: 1, boss: true, dadi: [15, 2] }), "mento"); eq([b.eff.frastornato || 0, b.eff.sbilanciato, b.eff.debole || 0], [0, 2, 0]);
   });
-  caso("Impatto Sbilanciante: Sbilanciato 1 e Indebolito 1", () => {
-    const s = scontro(); prova(s, ctx({ dadi: [15, 2] }), "sbilanciante"); eq([s.eff.sbilanciato, s.eff.debole], [1, 2]);
+  caso("Impatto Sbilanciante (01/11): Sbilanciato 2", () => {
+    const s = scontro(); prova(s, ctx({ dadi: [15, 2] }), "sbilanciante"); eq([s.eff.sbilanciato, s.eff.debole || 0], [2, 0]);
   });
   caso("Frantumazione dello Scudo: 2 cariche di Incrinatura", () => {
     const s = scontro(); prova(s, ctx({ liv: 2, dadi: [15, 2] }), "frantumascudo"); eq(s.crepe, 2);
@@ -304,15 +305,15 @@
   caso("Impatto Demolitore: +1 dado e 2 cariche", () => {
     const s = scontro(), r = prova(s, ctx({ liv: 3, dadi: [15, 2, 2] }), "demolitore"); eq(ev(r, "colpo")[0].nd, 2); eq(s.crepe, 2);
   });
-  caso("Colpo del Coma: Stordito; se resiste Indebolito 2; boss Indebolito 2 senza tiro; nessun dado extra", () => {
+  caso("Colpo del Coma (01/11): Stordito; se resiste Sbilanciato 2; boss Sbilanciato 2 senza tiro; nessun dado extra", () => {
     const a = scontro(), ra = prova(a, ctx({ liv: 3, dadi: [15, 2, 3] }), "coma"); eq(a.eff.bloccato, 1); eq(ev(ra, "colpo")[0].nd, 1);
-    const b = scontro(); prova(b, ctx({ liv: 3, dadi: [15, 2, 18] }), "coma"); eq([b.eff.bloccato || 0, b.eff.debole], [0, 2]);
-    const c = scontro(), r = prova(c, ctx({ liv: 3, boss: true, dadi: [15, 2] }), "coma"); eq([c.eff.bloccato || 0, c.eff.debole], [0, 2]); eq(ev(r, "ts").length, 0);
+    const b = scontro(); prova(b, ctx({ liv: 3, dadi: [15, 2, 18] }), "coma"); eq([b.eff.bloccato || 0, b.eff.sbilanciato], [0, 2]);
+    const c = scontro(), r = prova(c, ctx({ liv: 3, boss: true, dadi: [15, 2] }), "coma"); eq([c.eff.bloccato || 0, c.eff.sbilanciato], [0, 2]); eq(ev(r, "ts").length, 0);
   });
-  caso("Spezza-Ginocchia: +1 dado, Indebolito e Sbilanciato 3 (2 su un boss), costa 8", () => {
+  caso("Spezza-Ginocchia (01/11): +1 dado, Sbilanciato 3 e Frastornato 1 (boss: solo Sbilanciato 2), costa 8", () => {
     eq(tec("ginocchia").costo, 8);
-    const s = scontro(); prova(s, ctx({ liv: 4, dadi: [15, 2, 2] }), "ginocchia"); eq([s.eff.debole, s.eff.sbilanciato], [2, 3]);
-    const b = scontro(); prova(b, ctx({ liv: 4, boss: true, dadi: [15, 2, 2] }), "ginocchia"); eq([b.eff.debole, b.eff.sbilanciato], [2, 2]);
+    const s = scontro(); prova(s, ctx({ liv: 4, dadi: [15, 2, 2] }), "ginocchia"); eq([s.eff.frastornato, s.eff.sbilanciato], [1, 3]);
+    const b = scontro(); prova(b, ctx({ liv: 4, boss: true, dadi: [15, 2, 2] }), "ginocchia"); eq([b.eff.frastornato || 0, b.eff.sbilanciato], [0, 2]);
   });
   caso("Demolizione della Guardia: due attacchi col solo dado; due a segno → 2 cariche e Stordito (boss: Sbilanciato 2)", () => {
     const s = scontro(), r = prova(s, ctx({ liv: 4, dadi: [15, 2, 15, 3, 4] }), "demolizione");
@@ -357,19 +358,19 @@
     const n = scontro({ crepe: 2 }), rn = prova(n, ctx({ liv: 5, dadi: [15, 2] }), "martello"); eq(ev(rn, "colpo")[0].crit, false); eq(n.eff.frattura || 0, 0);
     const b = scontro({ crepe: 2 }), rb = prova(b, ctx({ liv: 5, boss: true, dadi: [15, 2, 2] }), "martello"); eq(ev(rb, "colpo")[0].crit, true, "sul boss bastano 2");
   });
-  caso("Rintocco: Frastornato (boss: Indebolito 2) e +2 CA per un turno, anche se manchi", () => {
+  caso("Rintocco (01/11): Frastornato (boss: Sbilanciato 2) e +2 CA per un turno, anche se manchi", () => {
     const s = scontro(); prova(s, ctx({ liv: 3, dadi: [15, 2, 3] }), "rintocco"); eq([s.eff.frastornato, s.eff.guardia, s.guardiaVal], [1, 1, 2]);
-    const b = scontro(), rb = prova(b, ctx({ liv: 3, boss: true, dadi: [15, 2] }), "rintocco"); eq([b.eff.frastornato || 0, b.eff.debole], [0, 2]); eq(ev(rb, "ts").length, 0);
-    const z = scontro(); prova(z, ctx({ liv: 3, dadi: [15, 2, 18] }), "rintocco"); eq(z.eff.debole || 0, 0, "il comune che resiste non ha ripiego");
+    const b = scontro(), rb = prova(b, ctx({ liv: 3, boss: true, dadi: [15, 2] }), "rintocco"); eq([b.eff.frastornato || 0, b.eff.sbilanciato], [0, 2]); eq(ev(rb, "ts").length, 0);
+    const z = scontro(); prova(z, ctx({ liv: 3, dadi: [15, 2, 18] }), "rintocco"); eq(z.eff.sbilanciato || 0, 0, "il comune che resiste non ha ripiego");
     const m = scontro(); prova(m, ctx({ liv: 3, dadi: [2] }), "rintocco"); eq(m.eff.guardia, 1);
   });
-  caso("Cadenza della Campana: Stordito (boss: Indebolito e Sbilanciato 2) e prossima tecnica −2", () => {
+  caso("Cadenza della Campana (01/11): Stordito (boss: Sbilanciato 2) e prossima tecnica −2", () => {
     const s = scontro(); prova(s, ctx({ liv: 4, dadi: [15, 2, 2, 3] }), "cadenza"); eq([s.eff.bloccato, s.sconto], [1, 2]);
-    const b = scontro(); prova(b, ctx({ liv: 4, boss: true, dadi: [15, 2, 2] }), "cadenza"); eq([b.eff.bloccato || 0, b.eff.debole, b.eff.sbilanciato], [0, 2, 2]);
+    const b = scontro(); prova(b, ctx({ liv: 4, boss: true, dadi: [15, 2, 2] }), "cadenza"); eq([b.eff.bloccato || 0, b.eff.debole || 0, b.eff.sbilanciato], [0, 0, 2]);
   });
-  caso("Silenzio della Casa: niente attacchi speciali sui comuni, +4 ai tiri salvezza contro i boss, +2 CA per 3 turni", () => {
-    const s = scontro(); prova(s, ctx({ liv: 5, dadi: [15, 2, 2] }), "silenzio_casa"); eq([s.eff.debole, s.eff.sbilanciato, s.eff.silenzio, s.eff.guardia, s.eff.furore || 0], [2, 3, 2, 3, 0]);
-    const b = scontro(); prova(b, ctx({ liv: 5, boss: true, dadi: [15, 2, 2] }), "silenzio_casa"); eq([b.eff.silenzio || 0, b.eff.furore, b.eff.guardia], [0, 3, 3]);
+  caso("Silenzio della Casa (01/11): Sbilanciato 3 e Frastornato 2 sui comuni, +4 ai tiri salvezza contro i boss, +2 CA per 3 turni", () => {
+    const s = scontro(); prova(s, ctx({ liv: 5, dadi: [15, 2, 2] }), "silenzio_casa"); eq([s.eff.debole || 0, s.eff.sbilanciato, s.eff.frastornato, s.eff.guardia, s.eff.furore || 0], [0, 3, 2, 3, 0]);
+    const b = scontro(); prova(b, ctx({ liv: 5, boss: true, dadi: [15, 2, 2] }), "silenzio_casa"); eq([b.eff.frastornato || 0, b.eff.furore, b.eff.guardia], [0, 3, 3]);
   });
 
   /* ================= Perforanti: Esposto e intervallo del critico ================= */

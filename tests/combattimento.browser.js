@@ -491,13 +491,13 @@ caso("Gioco: scelta della via col martello mostra le abilità contundenti", asyn
   const t = await page.textContent("#prepBox"); vero(/Sigillo del Demolitore/.test(t) && /Rintocco/.test(t), "mancano le abilità contundenti"); vero(!/Marchio del Guardiano/.test(t), "compare il taglio");
   eq(errori, [], "errori"); await chiudi();
 });
-caso("Gioco: contro Ettore (boss) Colpo del Coma non stordisce ma indebolisce, senza tiro salvezza", async (b) => {
+caso("Gioco: contro Ettore (boss) Colpo del Coma non stordisce ma sbilancia, senza tiro salvezza (01/11)", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ equipaggiamento: MARTELLO }), PARTITA({ livello: 4, usate: { riposo: "sbloccato", tecPreparate: ["maglio", "mento", "tremante", "costole", "coma", "ginocchia"] } }));
   await page.evaluate(() => avviaScontro("esploratore", { ctx: "ettore", testi: "esploratore", primo: "pg" })); await aspettaTurnoPg(page);
   await page.evaluate(() => { scontro.pv = 90; scontro.pvMax = 90; });
   await accoda(page, [R(19, 20), R(1, 8)]);
   await page.evaluate(() => usaTecnica(TECNICHE.find(t => t.id === "coma")));
-  eq(await page.evaluate(() => [scontro.eff.bloccato || 0, scontro.eff.debole]), [0, 2]);
+  eq(await page.evaluate(() => [scontro.eff.bloccato || 0, scontro.eff.sbilanciato]), [0, 2]);
   vero(/troppo potente/.test(await diario(page)), "manca il messaggio dei boss"); eq(errori, [], "errori"); await chiudi();
 });
 caso("Gioco: un salvataggio con le vecchie tecniche contundenti lascia i posti vuoti", async (b) => {

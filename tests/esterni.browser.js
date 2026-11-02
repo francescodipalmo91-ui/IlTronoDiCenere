@@ -101,6 +101,15 @@ caso("Esterni: la foresta che riporta indietro, senza costo (niente ingresso pri
   eq(errori, [], "errori"); await chiudi();
 });
 
+caso("Esterni: visitare la serra sblocca la domanda a Guendalina su chi la cura", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), FUORI()); await prep(page);
+  eq(await page.evaluate(() => usate.serra_vista || null), null);
+  eq(await vai_(page, "vado all'orto"), "serra");
+  eq(await page.evaluate(() => usate.serra_vista), "si");
+  eq(await page.evaluate(() => ["it", "en"].map(l => { const g = DIALOGHI[l].guendalina.nodi; return !!g.serra && g.domande.risposte.some(r => r.vai === "serra" && r.se === "serra_vista=si"); })), [true, true]);
+  eq(errori, [], "errori"); await chiudi();
+});
+
 caso("Esterni: immagine del cimitero, con Enea finché è lì", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), FUORI());
   const img = () => page.evaluate(() => vista("cimitero").img.src);

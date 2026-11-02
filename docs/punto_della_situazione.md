@@ -28,11 +28,12 @@ Metodo: punto per punto, prima le cose leggere; zip dei file modificati solo a f
 - Documenti riallineati (questo file; elisir comuni e rari segnati come decisi).
 - **Niente ingresso principale:** tolti il luogo «ingresso», l'arco e la fuga con i mastini. **La foresta che riporta indietro:** a sud del giardino, scavalcando le siepi o oltre i settori della foresta si torna alla fontana o al limitare, senza costo (prima la fuga dal giardino costava 1 punto mentale). Salvataggi fermi sull'ingresso → giardino.
 - Nuova immagine del giardino (logo rimosso).
+- **Serra:** era di Adele, Guendalina tiene in vita le ultime piantine; visitata la serra si sblocca la domanda a Guendalina (testi PROVVISORI). Erba unica a ricrescita lenta rimandata agli elisir dei boss.
 
 ## Punti aperti, in ordine di priorità
 
 **Leggeri**
-1. Esterni (storia §11b): cosa offre la serra; agguati e animali anche nell'orto (oggi sì, 20%).
+1. Esterni (storia §11b): agguati e animali anche nell'orto (oggi sì, 20%).
 2. Primaria del sovrano.
 
 **Da provare prima di costruirci sopra**

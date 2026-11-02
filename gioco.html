@@ -1622,6 +1622,7 @@
                 { testo: "Quale disgrazia si è abbattuta su questa dimora?", vai: "incendio", una: true },
                 { testo: "Esistono stanze in cui poter trovare rifugio?", vai: "sicure", una: true },
                 { testo: "In giardino ho trovato una fontana. Che cosa sapete dirmi?", vai: "fontana", una: true, se: "giardino_visto=si" },
+                { testo: "Nell'orto c'è una serra con qualche pianta ancora viva. Chi se ne prende cura?", vai: "serra", una: true, se: "serra_vista=si" }, /* 02/11, testo PROVVISORIO */
                 { testo: "Ora devo proseguire il mio cammino.", vai: "avvertimento" }
               ]
             },
@@ -1773,6 +1774,24 @@
               },
               poi: "domande"
             },
+            serra: { /* 02/11: la serra di Adele, tenuta in vita da Guendalina. Testi PROVVISORI */
+              testo: {
+                gentile: [
+                  "Guendalina si ferma, lo straccio sospeso a mezz'aria. Per un lungo momento non risponde.",
+                  "«Sono io» ammette infine, quasi a bassa voce, come chi confessa una debolezza. «Ogni mattina, prima che la casa si svegli. Se di mattine si può ancora parlare.»",
+                  "«Era della Signora, quella serra. Ci coltivava le sue erbe con le proprie mani, e non lasciava che nessuno le toccasse. Diceva che ogni pianta ha una cura nascosta dentro, e che basta avere la pazienza di cercarla.»",
+                  "Abbassa lo sguardo sulle mani screpolate.",
+                  "«Quando il fuoco si spense, tutto diventò di pietra. Tutto tranne quelle poche piantine. Non so perché resistano, e non voglio saperlo. So soltanto che, se un giorno lei tornerà a camminare tra quei vasi, deve trovarle vive.»"
+                ],
+                brusco: [
+                  "Guendalina non alza gli occhi dal tavolo.",
+                  "«Io. Qualcuno deve pur farlo.»",
+                  "Strofina più forte, come se la domanda le avesse lasciato una macchia addosso.",
+                  "«Era della Signora. Ci coltivava le sue erbe. Il resto è diventato pietra, quelle no. Le annaffio e basta: non chiedetemi altro.»"
+                ]
+              },
+              poi: "domande"
+            },
             /* congedo: le stesse informazioni con entrambi gli approcci, con calore diverso */
             avvertimento: {
               testo: {
@@ -1883,6 +1902,7 @@
                 { testo: "What misfortune has befallen this manor?", vai: "incendio", una: true },
                 { testo: "Are there rooms where one can find refuge?", vai: "sicure", una: true },
                 { testo: "I found a fountain in the garden. What can you tell me?", vai: "fontana", una: true, se: "giardino_visto=si" },
+                { testo: "There is a greenhouse in the kitchen garden, with a few plants still alive. Who tends it?", vai: "serra", una: true, se: "serra_vista=si" },
                 { testo: "Now I must continue on my way.", vai: "avvertimento" }
               ]
             },
@@ -2029,6 +2049,24 @@
                   "«The fountain. Yes, there is one.»",
                   "«The butler never sets foot in the garden: that water frightens him, though his tongue would dry up before he admitted it. It should not scare you. Quite the contrary.»",
                   "«Drink when you are in a bad way. It puts your body back on its feet, but only once: then you wait for the old man to send you on another hunt. Your head you mend yourself.»"
+                ]
+              },
+              poi: "domande"
+            },
+            serra: {
+              testo: {
+                gentile: [
+                  "Guendalina stops, the cloth held in mid-air. For a long moment she does not answer.",
+                  "«I do» she admits at last, almost in a whisper, like someone confessing a weakness. «Every morning, before the house wakes. If one can still speak of mornings.»",
+                  "«It was the Lady's, that greenhouse. She grew her herbs there with her own hands, and let no one touch them. She used to say that every plant hides a cure inside, and that you only need the patience to look for it.»",
+                  "She lowers her gaze to her chapped hands.",
+                  "«When the fire died, everything turned to stone. Everything but those few seedlings. I do not know why they hold on, and I do not want to know. I only know that if one day she walks among those pots again, she must find them alive.»"
+                ],
+                brusco: [
+                  "Guendalina does not raise her eyes from the table.",
+                  "«I do. Someone has to.»",
+                  "She scrubs harder, as if the question had left a stain on her.",
+                  "«It was the Lady's. She grew her herbs there. The rest turned to stone, those did not. I water them, that is all: ask me nothing more.»"
                 ]
               },
               poi: "domande"
@@ -10169,6 +10207,7 @@
       ultimoNemico = null; disegnaNemico(); /* la scheda del nemico si chiude cambiando stanza */
       chiudiScelte(); /* eventuali scelte rimaste in sospeso nella stanza che si lascia */
       if (id === "giardino" && usate.giardino_visto !== "si") { usate.giardino_visto = "si"; salvaUsate(); } /* sblocca la domanda sulla fontana con Guendalina */
+      if (id === "serra" && usate.serra_vista !== "si") { usate.serra_vista = "si"; salvaUsate(); } /* 02/11: sblocca la domanda sulla serra con Guendalina */
       if (id === "sala_ballo" && (luogo === "corridoio" || luogo === "corridoio_primo")) usate.ballo_da = luogo;
       if (id === "cimitero" && (luogo === "giardino" || luogo === "cappella")) usate.cimitero_da = luogo; /* 30/10: dal sentiero o dalla porticina */ /* «torno indietro»: da dove si è entrati */
       if (luogo === "sala_caccia" && id !== "sala_caccia" && usate.caccia_rimprovero) { usate.caccia_rimprovero = false; salvaUsate(); }

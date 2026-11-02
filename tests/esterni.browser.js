@@ -101,12 +101,25 @@ caso("Esterni: la foresta che riporta indietro, senza costo (niente ingresso pri
   eq(errori, [], "errori"); await chiudi();
 });
 
-caso("Esterni: visitare la serra sblocca la domanda a Guendalina su chi la cura", async (b) => {
+caso("Esterni: Guendalina nella serra, di mattina, una volta sola, con un'erba in dono", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), FUORI()); await prep(page);
-  eq(await page.evaluate(() => usate.serra_vista || null), null);
+  await page.evaluate(() => { usate.dialogo_guendalina_tono = "gentile"; usate.giorno = 3; delete usate.laboratorio; salvaUsate(); });
   eq(await vai_(page, "vado all'orto"), "serra");
-  eq(await page.evaluate(() => usate.serra_vista), "si");
-  eq(await page.evaluate(() => ["it", "en"].map(l => { const g = DIALOGHI[l].guendalina.nodi; return !!g.serra && g.domande.risposte.some(r => r.vai === "serra" && r.se === "serra_vista=si"); })), [true, true]);
+  await page.waitForTimeout(1500);
+  eq(await page.evaluate(() => usate.serra_guendalina || null), null, "alla prima visita la serra è vuota");
+  await vai_(page, "torno in giardino");
+  await page.evaluate(() => { usate.giorno = 4; salvaUsate(); }); /* un riposo dopo */
+  await vai_(page, "vado all'orto");
+  await page.waitForFunction(() => usate.serra_guendalina === "vista", null, { timeout: 5000 });
+  await page.waitForFunction(() => diario.some(e => e.chi === "Guendalina" && (e.righe || []).join(" ").includes("scaletta")), null, { timeout: 15000 });
+  await page.evaluate(() => { saltaScrittura = true; });
+  await page.waitForFunction(() => (usate.erbe_viste || []).length > 0, null, { timeout: 30000 }).catch(() => {});
+  vero(await page.evaluate(() => (usate.erbe_viste || []).length > 0), "manca l'erba in dono");
+  await vai_(page, "torno in giardino");
+  await page.evaluate(() => { usate.giorno = 5; salvaUsate(); });
+  const prima = await page.evaluate(() => diario.filter(e => e.chi === "Guendalina").length);
+  await vai_(page, "vado all'orto"); await page.waitForTimeout(1500);
+  eq(await page.evaluate(() => diario.filter(e => e.chi === "Guendalina").length), prima, "la scena non si ripete");
   eq(errori, [], "errori"); await chiudi();
 });
 

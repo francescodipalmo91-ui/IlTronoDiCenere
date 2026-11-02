@@ -28,24 +28,24 @@ Metodo: punto per punto, prima le cose leggere; zip dei file modificati solo a f
 - Documenti riallineati (questo file; elisir comuni e rari segnati come decisi).
 - **Niente ingresso principale:** tolti il luogo «ingresso», l'arco e la fuga con i mastini. **La foresta che riporta indietro:** a sud del giardino, scavalcando le siepi o oltre i settori della foresta si torna alla fontana o al limitare, senza costo (prima la fuga dal giardino costava 1 punto mentale). Salvataggi fermi sull'ingresso → giardino.
 - Nuova immagine del giardino (logo rimosso).
-- **Serra:** era di Adele, Guendalina tiene in vita le ultime piantine; visitata la serra si sblocca la domanda a Guendalina (testi PROVVISORI). Erba unica a ricrescita lenta rimandata agli elisir dei boss.
+- **Serra:** era di Adele. Dopo un riposo, alla prima visita del giorno (non la prima in assoluto) e dopo il dialogo in cucina, si trova Guendalina tra i vasi: una volta sola, racconta la serra e la sua arte di miscelare, promette il laboratorio in cambio della scaletta (o lo collega alla serra se già sbloccato) e regala un'erba. Niente incontri durante la scena. Testi PROVVISORI.
+- **Orto:** agguati e animali restano al 20%.
 
 ## Punti aperti, in ordine di priorità
 
 **Leggeri**
-1. Esterni (storia §11b): agguati e animali anche nell'orto (oggi sì, 20%).
-2. Primaria del sovrano.
+1. Primaria del sovrano.
 
 **Da provare prima di costruirci sopra**
-3. **Enea nella sala di prova** con le classi vere. I numeri (bilanciamento 5c) sono precedenti a Monaco d8, caratteristica di classe e CD che salgono: il 44% del Monaco nel modello non vale più.
-4. **Le otto cacce comuni** nella stessa sessione.
+2. **Enea nella sala di prova** con le classi vere. I numeri (bilanciamento 5c) sono precedenti a Monaco d8, caratteristica di classe e CD che salgono: il 44% del Monaco nel modello non vale più.
+3. **Le otto cacce comuni** nella stessa sessione.
 
 **Lavoro grosso, in ordine di storia**
-5. **Set Vespera:** mantello (prima caccia comune) e guanti (bronzo) per primi; l'arma; dove va «Passo Silenzioso»; il prezzo del set.
-6. **Esempi di bottino e poteri delle armi** per grado (costo deciso: 50%).
-7. **Enea nel gioco:** dialogo con i rami Signore/Signora, tre domande, cimitero, oggetti nei settori della foresta, collana.
-8. **Mastini del secondo piano e pedinamento** (Impaurito ancora fuori dal codice).
-9. **Dafne → Atena → sovrano** (numeri del livello 5).
+4. **Set Vespera:** mantello (prima caccia comune) e guanti (bronzo) per primi; l'arma; dove va «Passo Silenzioso»; il prezzo del set.
+5. **Esempi di bottino e poteri delle armi** per grado (costo deciso: 50%).
+6. **Enea nel gioco:** dialogo con i rami Signore/Signora, tre domande, cimitero, oggetti nei settori della foresta, collana.
+7. **Mastini del secondo piano e pedinamento** (Impaurito ancora fuori dal codice).
+8. **Dafne → Atena → sovrano** (numeri del livello 5).
 
 **In attesa di materiale di Francesco**
 - Testi PROVVISORI (78 in `gioco.html`, più quelli degli esterni).

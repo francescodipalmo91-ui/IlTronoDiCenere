@@ -36,10 +36,10 @@ Metodo: punto per punto, prima le cose leggere; zip dei file modificati solo a f
 ## Punti aperti, in ordine di priorità
 
 **Leggeri**
-1. **Guardiani, uno alla volta:** Enea deciso (storia 10a: arma a doppia faccia, Furia del becchino, bottino); manca la debolezza per lo Sciamano al posto del veleno, poi va nel codice e nella sala di prova. Poi Dafne, Atena, sovrano (documenti).
+1. **Guardiani, uno alla volta:** Enea deciso (storia 10a: arma a doppia faccia, Furia del becchino, bottino); vulnerabile al sottobosco (Sciamano) al posto del veleno; **nella sala di prova dal 2 novembre**, da provare con le classi vere, poi nel gioco (dialogo, cimitero, bottino). Poi Dafne, Atena, sovrano (documenti).
 
 **Da provare prima di costruirci sopra**
-2. **Enea nella sala di prova** con le classi vere. I numeri (bilanciamento 5c) sono precedenti a Monaco d8, caratteristica di classe e CD che salgono: il 44% del Monaco nel modello non vale più.
+2. **Enea nella sala di prova** con le classi vere (scheda del 2 novembre, bilanciamento 5c). Il 44% del Monaco del vecchio modello non vale più.
 3. **Le otto cacce comuni** nella stessa sessione.
 
 **Lavoro grosso, in ordine di storia**

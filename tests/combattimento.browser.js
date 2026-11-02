@@ -1165,12 +1165,13 @@ const eneaSala = async (b, mossa, o) => {
   o = o || {};
   const x = await apri(b, "tutorial.html?prova");
   await x.page.selectOption("#pLiv", "3"); await x.page.selectOption("#nTipo", "enea"); await x.page.selectOption("#nEneaMossa", mossa);
+  await x.page.selectOption("#nEneaLato", o.lato || "maglio"); /* 02/11: arma a doppia faccia */
   if (o.nascosto) await x.page.uncheck("#nFermaglio");
   if (o.pv) await x.page.fill("#nPv", String(o.pv));
   await x.page.click("#svNuovo");
   return x;
 };
-const statoSala = (page) => page.evaluate(() => { const t = SalaProva.stato(); return { pv: t.pg.pv, epv: t.s.pv, carica: t.s.carica, guardia: t.s.inGuardia, maglio: t.s.maglio, risorto: t.s.risorto, pa: t.s.pa, spinta: t.s.spinta, finito: t.finito }; });
+const statoSala = (page) => page.evaluate(() => { const t = SalaProva.stato(); return { pv: t.pg.pv, epv: t.s.pv, carica: t.s.carica, guardia: t.s.inGuardia, maglio: t.s.maglio, risorto: t.s.risorto, pa: t.s.pa, spinta: t.s.spinta, finito: t.finito, lato: t.s.lato, sangue: t.s.sangue, furia: t.s.furiaB }; });
 caso("Sala di prova, Enea: col fermaglio impugna il maglio, la carica si annuncia e «Mi difendo» la dimezza", async (b) => {
   const { page, errori, chiudi } = await eneaSala(b, "carica");
   eq((await statoSala(page)).maglio, true, "maglio da subito col fermaglio");
@@ -1217,9 +1218,26 @@ caso("Sala di prova, Enea: fermaglio nascosto, Spinta dà svantaggio; alla prima
   await page.evaluate(() => SalaProva.accoda(20, 2, /* Enea */ 1, 1)); await page.click("#svAttacca"); /* svantaggio: 20 e 2 → 2, mancato */
   st = await statoSala(page); eq(st.epv, 30, "lo svantaggio ha tenuto il 2"); eq(st.spinta, false, "la Spinta vale un turno");
   await page.evaluate(() => { SalaProva.stato().s.pv = 3; SalaProva.accoda(19, 6, /* risurrezione */ 2, /* Enea, maglio */ 1); }); await page.click("#svAttacca");
-  st = await statoSala(page); eq([st.risorto, st.maglio, st.epv, st.finito], [true, true, 5, false], "1d4 2 + 3 = 5, impugna il maglio");
+  st = await statoSala(page); eq([st.risorto, st.maglio, st.epv, st.finito, st.furia], [true, true, 5, false, true], "1d4 2 + 3 = 5, impugna l'arma, Furia del becchino");
   await page.evaluate(() => SalaProva.accoda(19, 6)); await page.click("#svAttacca");
   st = await statoSala(page); eq(st.finito, true); vero(/seconda volta/.test(await page.innerText("#svLog")));
+  eq(errori, [], "errori"); await chiudi();
+});
+
+caso("02/11: Sala di prova, Enea barbaro: lato dell'ascia e Sanguinamento; in Furia +2 ai danni e niente finte", async (b) => {
+  const { page, errori, chiudi } = await eneaSala(b, "finta", { lato: "ascia" });
+  await page.evaluate(() => { SalaProva.stato().s.lato = "ascia"; SalaProva.accoda(1, /* ascia */ 15, 5, /* TS Vigore */ 1, /* primo sangue */ 2); }); await page.click("#svAttacca");
+  let st = await statoSala(page); eq([st.sangue, st.pa, st.lato], [2, 7, "ascia"], "Squarcio: 2 PA e Sanguinamento (3 turni, il primo già all'inizio del tuo)");
+  vero(/lato dell'ascia/.test(await page.innerText("#svLog")), "manca l'annuncio del lato");
+  const prima = st.pv;
+  await page.evaluate(() => SalaProva.accoda(/* tuo attacco */ 1, /* ascia */ 1, /* sangue */ 3)); await page.click("#svAttacca");
+  st = await statoSala(page); eq([prima - st.pv, st.sangue], [3, 1], "l'ascia manca, 1d4 di sangue all'inizio del tuo turno");
+  await page.selectOption("#nEneaLato", "maglio");
+  await page.evaluate(() => { const t = SalaProva.stato(); t.s.lato = "maglio"; t.s.sangue = 0; t.s.pv = 2; SalaProva.accoda(19, 6, /* furia */ 1); }); await page.click("#svAttacca");
+  st = await statoSala(page); eq([st.risorto, st.furia, st.carica], [true, true, "vera"], "in furia, mossa «finta»: niente finta, la carica è vera");
+  const p2 = st.pv;
+  await page.evaluate(() => SalaProva.accoda(/* tuo attacco */ 1, /* colpo caricato */ 15, 4, 4)); await page.click("#svAttacca");
+  st = await statoSala(page); eq(p2 - st.pv, 14, "2d8 (4 + 4) + 4 + 2 di furia");
   eq(errori, [], "errori"); await chiudi();
 });
 

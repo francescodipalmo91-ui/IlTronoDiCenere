@@ -4,8 +4,9 @@
    con le stesse regole della partita (js/combattimento.js), senza entrare in gioco.
    - Personaggio: livello, Vigore, Agilità, CA, arma, scudo, via e serie della via (arma o scudo).
    - Nemico: mastino comune, Ettore (boss), Enea (boss, argento) o manichino; boss forzabile; PV e CA modificabili.
-   - Enea (30/10): mani nude veloci o maglio lento, colpo caricato con «Mi difendo» e interruzione, carica in guardia,
-     finta con Intuizione, Spinta, risurrezione, vulnerabile a forza, luce e veleno, sdegno del cavaliere.
+   - Enea (30/10, rivisto il 02/11: barbaro nano): mani nude veloci o arma a doppia faccia (lato del maglio: colpo caricato con
+     «Mi difendo» e interruzione, carica in guardia, finta con Intuizione; lato dell'ascia: Sanguinamento), Spinta,
+     Furia del becchino alla prima caduta, vulnerabile a forza, luce e sottobosco (Sciamano), sdegno del cavaliere.
    - Dadi truccati: una coda di valori usati dai prossimi tiri (qualsiasi dado), per risultati certi.
    - «Esegui i test»: gli stessi test di tests/combattimento.test.js, tests/magia_combattimento.test.js e tests/sciamano.test.js, nel browser.
    - Sciamano: tecniche della natura (js/sciamano.js), punti natura dallo Spirito, veleno, trappole, Scudo di Corteccia.
@@ -36,7 +37,8 @@
     /* 02/11: Ettore ladro, due pugnali 1d4 + 1 (in gioco anche il conteggio, Lama nel fianco e «L'ho già vista»; qui solo i due attacchi) */
     ettore: { nome: "Ettore (boss)", ca: 13, pv: 30, vigore: 10, stat: { Vigore: 10, "Agilità": 13, Mente: 13, Spirito: 8 }, primaria: "Mente", dadoVita: 8, dannoDado: 4, dannoBonus: 1, attacchi: 2, nomeArma: "Pugnale", attacco: 1, boss: true, probPresa: 0, probSoffio: 0, soffio: null, arma: true, resa: true, vuln: ["Contundente", "Luce"] },
     /* 30/10, PROPOSTA: bilanciamento_nemici_oggetti.md, sezione 5c */
-    enea: { nome: "Enea (boss, argento)", ca: 13, pv: 36, vigore: 12, stat: { Vigore: 12, "Agilità": 10, Mente: 12, Spirito: 14 }, primaria: "Spirito", attaccoFisso: 4 /* Spirito 14 (+2) + 2 */, pa: 9, boss: true, enea: true, arma: true, vuln: ["Forza", "Luce", "Veleno"] },
+    /* 02/11: barbaro nano, primaria Vigore; «Sottobosco»: con lo Sciamano gli stati durano 1 turno in più, in furia il veleno ha un dado in più */
+    enea: { nome: "Enea (boss, argento)", ca: 13, pv: 36, vigore: 14, stat: { Vigore: 14, "Agilità": 10, Mente: 10, Spirito: 12 }, primaria: "Vigore", attaccoFisso: 4 /* Vigore 14 (+2) + 2 */, pa: 9, boss: true, enea: true, arma: true, vuln: ["Forza", "Luce", "Sottobosco"] },
     manichino: { nome: "Manichino (non attacca)", ca: 12, pv: 60, boss: false, passivo: true, arma: false }
   };
   const NOMI_EFF = { sanguina: "Sanguinamento", frattura: "Frattura", intontito: "Intontito", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Inibito", frastornato: "Frastornato", bloccato: "Stordito", guardia: "Guardia alzata", furore: "Furore inarrestabile", esposto: "Esposto", precisione: "Mille Soli", baluardo: "Baluardo d'Acciaio", fortezza: "Fortezza Eterna", runa: "Runa sull'arma", occhio: "Occhio del Tomo", tomo: "Tomo Proibito", quiete: "Quiete Assoluta", muro: "Muro di forza", scudo: "Scudo", invuln: "Invulnerabilità", pressione: "Pressione", parola: "Parola Vera", santuario: "Santuario", voto: "Voto di Luce", gemella: "Ombra Gemella", cerchio: "Cerchio del Focolare", fiamma: "Fiamma Calda", notte: "Notte Senza Fine", furiaCinerea: "Furia Cinerea", manto: "Manto d'Ombra", seconda: "Seconda Vita", accecato: "Accecato", avvizzito: "Avvizzito", paura: "Terrore", corona: "Corona di Raggi",
@@ -94,6 +96,7 @@
     });
     if (sciamano()) Object.assign(c, {
       modAtt: pg.modS, modDanno: pg.modS, cd: 8 + pg.modS + pg.liv, /* 01/11: caratteristica di classe = Agilità */
+      sottobosco: !!(nem.vuln && nem.vuln.includes("Sottobosco")), /* 02/11: Enea, gli stati dello Sciamano durano 1 turno in più */
       modSpirito: pg.modS, resisteVeleno: !!($("nResiste") && $("nResiste").checked), linfaRigeneratrice: pg.via === "guendalina",
       naturaPiu: (n) => { const r = Math.min(n, pg.furiaMax - pg.furia); pg.furia += r; return r; }, dannoPg: (n) => { pg.pv -= n; }
     });
@@ -102,7 +105,7 @@
   function ctxBase() {
     return {
       tira, liv: pg.liv, modAtt: pg.modV, modDanno: pg.modV, dado: pg.arma.dado, ca: caNem, boss: nem.boss,
-      piuDadiVuln: nem.vuln && tipoAzione && nem.vuln.includes(tipoAzione) ? 1 : 0, vulnVeleno: !!(nem.vuln && nem.vuln.includes("Veleno")),
+      piuDadiVuln: nem.vuln && tipoAzione && nem.vuln.includes(tipoAzione) ? 1 : 0, vulnVeleno: !!(nem.vuln && (nem.vuln.includes("Veleno") || (nem.vuln.includes("Sottobosco") && s && s.furiaB))),
       svantaggio: !!(s && s.spinta && turnoPg), /* Spinta di Enea: il tuo prossimo attacco ha svantaggio */
       cd: 8 + pg.modV + pg.liv, attrTs: "Vigore", modTs: modTsSala("Vigore"), modTsDi: modTsSala, /* 01/11: d20 + caratteristica che si oppone + livello (il nemico della sala di prova ha il livello del personaggio) */
       curaPg: (n) => { pg.pv = Math.min(pg.pvMax, pg.pv + n); },
@@ -197,6 +200,11 @@
   }
   function inizioTurno() {
     nTurno++; turnoPg = true; if (s) s.pvInizioTurno = s.pv;
+    if (s && s.sangue > 0 && pg.pv > 0) { /* 02/11: Sanguinamento dell'ascia di Enea sul personaggio, 1d4 per 3 turni */
+      const x = tira(4); pg.pv -= x; s.sangue--;
+      blocco("Sanguini", [`Sanguinamento: ${x} danni${s.sangue ? `, ancora ${s.sangue} turni` : ", la ferita si chiude"}.`], "nem");
+      if (controllaFine()) { turnoPg = false; return disegna(); }
+    }
     const ril = C.inizioTurnoPg(s, ctx()); /* Mare Profondo ed Egida rilasciano l'onda */
     if (ril.length) { blocco("Inizio del tuo turno", testoEventi(ril), "mia"); if (controllaFine()) { turnoPg = false; return disegna(); } }
     disegna();
@@ -346,19 +354,20 @@
      2d8 + 4 il turno dopo, mai due cariche di fila; «Mi difendo» dimezza; colpirlo mentre carica lo fa andare a vuoto;
      dopo la prima interruzione carica in guardia (+2 CA); Finta (2 PA): annuncia la carica e colpisce di lato
      ignorando la difesa; Intuizione gratuita per smascherarla. Risurrezione una volta: 1d4 + 3. */
-  const eneaOpz = () => ({ fermaglio: $("nFermaglio").checked, spada: $("nSpada").checked, socialita: $("nSocialita").checked, mossa: $("nEneaMossa").value });
+  const eneaOpz = () => ({ fermaglio: $("nFermaglio").checked, spada: $("nSpada").checked, socialita: $("nSocialita").checked, mossa: $("nEneaMossa").value, lato: $("nEneaLato") ? $("nEneaLato").value : "casuale" });
   const sdegno = () => (eneaOpz().spada && !eneaOpz().socialita ? 1 : 0);
   function iniziaEnea() {
     const o = eneaOpz();
-    s.pa = nem.pa; s.maglio = o.fermaglio || o.spada; s.carica = null; s.dopoCarica = false; s.inGuardia = false; s.risorto = false; s.spinta = false;
+    s.pa = nem.pa; s.maglio = o.fermaglio || o.spada; s.carica = null; s.dopoCarica = false; s.inGuardia = false; s.risorto = false; s.spinta = false; s.furiaB = false; s.sangue = 0; s.lato = "maglio";
     log(s.maglio ? (o.spada ? "Enea vede la spada del Signore nelle tue mani e impugna il maglio." : "Enea vede il fermaglio di bronzo sul tuo petto e impugna il maglio: sei venuto a prendere il suo posto.") : "Il fermaglio è nascosto: Enea ti prende per l'ennesimo sperduto e si fa avanti a mani nude.", "sis");
+    if (s.maglio) log("Enea ti mostra il lato del maglio: a ogni turno girerà l'arma, e la scheda ti dice quale lato vedrai.", "sis");
     if (o.spada) log(o.socialita ? "Gli spieghi che ti sei inginocchiato e che la spada ti ha scelto: lo sdegno svanisce, Enea è turbato." : "Sdegno del cavaliere: un estraneo ha osato toccare la spada del suo re (+1 per colpire).", "sis");
   }
   function risurrezione() {
     const x = tira(4), pv = x + 3;
-    s.risorto = true; s.pv = pv; s.carica = null; s.dopoCarica = false;
+    s.risorto = true; s.pv = pv; s.carica = null; s.dopoCarica = false; s.furiaB = true; s.inGuardia = false; s.inGuardiaDopo = false;
     const prima = s.maglio; s.maglio = true;
-    blocco("Enea cade… e si rialza", ["Le tombe dei suoi uomini lo rimettono in piedi.", `Risurrezione: 1d4 ${x} + 3 = ${pv} salute.`, prima ? "" : "Ora impugna il maglio."], "nem");
+    blocco("Enea cade… e si rialza nella furia", ["Le tombe dei suoi uomini lo rimettono in piedi. Non prega più: ringhia.", `Furia del becchino: 1d4 ${x} + 3 = ${pv} salute; +2 ai danni, niente più finte né carica in guardia.`, prima ? "" : "Ora impugna l'arma a doppia faccia."], "nem");
   }
   /* dopo la tua azione: se Enea stava caricando e lo hai colpito, la carica va a vuoto */
   function dopoAzioneEnea() {
@@ -384,11 +393,12 @@
   }
   /* un colpo di Enea: tiro, Parata, scudo, difese dello Sciamano, furia; o.dimezza: «Mi difendo»; o.ignora: la finta aggira la difesa */
   function colpoEnea(c, righe, difesa, nome, nd0, dado, bonus, o) {
-    o = o || {};
+    o = o || {}; if (s.furiaB) bonus += 2; /* 02/11: Furia del becchino */
     if (o.ignora) { if (s.parata || s.assorbe || s.difeso) righe.push("La finta aggira la tua difesa."); s.parata = false; s.parataCrepe = false; s.parataPunta = false; s.assorbe = null; }
     const furia = !arcanista() && !sciamano();
     const m = nem.attaccoFisso + sdegno() + C.modAttaccoNem(s), at = C.tiroAttaccoNem(s, c), d = at.d, tot = d + m, ca = caPg(), crit = d === 20 && C.critNemPossibile(s), ok = crit || tot > ca;
     if (at.tiri) righe.push(`Due d20, tiene il peggiore: ${at.tiri[0]} e ${at.tiri[1]}.`);
+    if (!ok && o.ascia) s.asciaOk = false;
     if (!ok) { righe.push(`${nome}: mancato (d20 ${d} ${fmt(m)} = ${tot} contro la tua CA ${ca}).`); righe.push(...testoEventi(C.colpoMancato(s, c))); return false; }
     const n = (crit ? 2 : 1) * nd0, tiri = Array.from({ length: n }, () => tira(dado)), pieno0 = Math.max(1, tiri.reduce((a, b) => a + b, 0) + bonus), pieno = o.dimezza ? Math.max(1, Math.floor(pieno0 / 2)) : pieno0;
     const testa = `${nome}: ${crit ? "CRITICO" : "colpito"} (d20 ${d} ${fmt(m)} = ${tot} contro CA ${ca}), ${pieno0} danni [${tiri.join("+")}${bonus ? ` ${fmt(bonus)}` : ""}]${o.dimezza ? ` → dimezzati dalla tua guardia: ${pieno}` : ""}.`;
@@ -398,6 +408,7 @@
       const dd = difesa(sub.danno), fatto = dd > 0 ? ferisci(dd, righe) : 0;
       if (furia) pg.furia = Math.min(pg.furiaMax, pg.furia + sub.furia);
       righe.push(`Subisci ${fatto} danni.${furia ? ` +${sub.furia} furia.` : ""}`);
+      if (o.ascia) s.asciaOk = fatto > 0;
     } else {
       const sub = C.colpoSubito(s, c, crit);
       if (sub.annullato) righe.push(`${nome}: colpirebbe (d20 ${d} ${fmt(m)} = ${tot} contro CA ${ca}), ma la Parata lo annulla: 0 danni.`, ...sub.eventi.filter(e => e.k === "contrattacco").map(e => `Contrattacco: ${e.tiri.length}d${e.dado} [${e.tiri.join("+")}] ${fmt(e.mm)} = ${e.danno} danni.`));
@@ -414,18 +425,34 @@
         if (s.caricaRotta) righe.push("Il maglio ricade fuori misura: la carica va a vuoto.");
         else colpoEnea(c, righe, difesa, "Colpo caricato", 2, 8, 1 + 3, { dimezza: difeso });
       } else colpoEnea(c, righe, difesa, "Finta: colpo di lato", 1, 8, 1 + 3, { ignora: true });
-      if (s.inGuardiaDopo) s.inGuardia = true;
+      if (s.inGuardiaDopo && !s.furiaB) s.inGuardia = true; /* in furia niente carica in guardia */
+      s.lato = Math.random() < 0.5 ? "maglio" : "ascia"; if (o.lato === "maglio" || o.lato === "ascia") s.lato = o.lato;
+      righe.push(s.lato === "ascia" ? "Enea gira l'arma: ora ti mostra il lato dell'ascia." : "Enea gira l'arma: ora ti mostra il lato del maglio.");
       s.carica = null; s.caricaRotta = false; s.difeso = false; s.osservato = false; s.dopoCarica = true;
       return;
     }
     if (s.maglio) {
+      /* 02/11: arma a doppia faccia. Il lato si annuncia alla fine del turno prima (lo leggi nella scheda) */
+      const lato = s.lato || "maglio";
+      const prossimo = () => { s.lato = o.lato === "maglio" || o.lato === "ascia" ? o.lato : Math.random() < 0.5 ? "maglio" : "ascia"; righe.push(s.lato === "ascia" ? "Enea gira l'arma: ora ti mostra il lato dell'ascia." : "Enea gira l'arma: ora ti mostra il lato del maglio."); };
+      if (lato === "ascia") {
+        s.dopoCarica = false;
+        const ok = colpoEnea(c, righe, difesa, "Ascia", 1, 8, 4, { ascia: true });
+        if (ok && s.asciaOk && pg.pv > 0 && s.pa >= 2 && !s.sangue) {
+          s.pa -= 2;
+          const cd = 8 + 2 + pg.liv, d = tira(20), tot = d + pg.modV;
+          righe.push(`Squarcio (−2 PA): tiro salvezza sul Vigore d20 ${d} ${fmt(pg.modV)} = ${tot} contro CD ${cd} → ${tot >= cd ? "la ferita si chiude" : "sanguini, 1d4 per 3 turni"}.`);
+          if (tot < cd) s.sangue = 3;
+        }
+        prossimo(); return;
+      }
       const puo = !s.dopoCarica, vuole = o.mossa === "carica" || o.mossa === "finta" || (o.mossa === "casuale" && Math.random() < 0.55);
-      const finta = o.mossa === "finta" || (o.mossa === "casuale" && s.inGuardia && Math.random() < 0.4);
+      const finta = !s.furiaB && (o.mossa === "finta" || (o.mossa === "casuale" && s.inGuardia && Math.random() < 0.4)); /* in furia niente finte */
       s.dopoCarica = false;
       if (puo && vuole && finta && s.pa >= 2) { s.pa -= 2; s.carica = "finta"; righe.push("Enea solleva il maglio sopra la testa (−2 PA). Il prossimo colpo sarà devastante… o forse no."); return; }
       if (puo && vuole && s.pa >= 3) { s.pa -= 3; s.carica = "vera"; righe.push(`Enea solleva il maglio sopra la testa (−3 PA)${s.inGuardia ? ", in guardia (+2 CA)" : ""}. Il prossimo colpo sarà devastante.`); return; }
       colpoEnea(c, righe, difesa, "Maglio", 1, 8, 1 + 3);
-      return;
+      prossimo(); return;
     }
     /* mani nude: due pugni, oppure Spinta e un pugno */
     if (s.pa >= 1 && (o.mossa === "spinta" || (o.mossa === "casuale" && Math.random() < 0.35))) {
@@ -458,7 +485,7 @@
     if (!pg) pg = leggiPg();
     const st = pg.pv != null ? pg : { ...pg, pv: pg.pvMax, furia: pg.furiaMax };
     scheda($("svPg"), [["Salute", `${st.pv} / ${pg.pvMax}`], [arcanista() ? (monaco() ? "Punti fede" : "Mana") : sciamano() ? "Punti natura" : "Furia", `${st.furia} / ${pg.furiaMax}`], ["CA", String(s ? caPg() : pg.ca)], ["CD dei tuoi effetti", String(8 + (arcanista() ? pg.modM : pg.modV) + pg.liv)], ...(sciamano() ? [["Natura per evento", `${S.recupero({ liv: pg.liv }, false)} (doppio con la Tossina), uno per turno del nemico`], ...(s && s.corteccia ? [["Scudo di Corteccia", `${s.corteccia}/${S.scudoMax({ liv: pg.liv })}`]] : []), ...(s && s.trappola ? [["Trappola", s.trappola]] : [])] : arcanista() ? (monaco() ? [["Fede per Crepuscolo", `${M.recupero(pg.liv)} (doppio da Nadir)`], ["Bilancia", bilanciaTesto()]] : [["Mana per Detonazione", `${M.recupero(pg.liv)} (doppio con i Sigilli al massimo)`]]) : [["Furia per colpo subito", `${C.furiaPerColpo(pg.liv, false)} (critico ${C.furiaPerColpo(pg.liv, true)})`]]), ...effetti(EFF_PG), ...(s && s.parata ? [["Parata", "pronta"]] : []), ...(s && C.cariche(s) ? [["Carica Cinetica", `${C.cariche(s)}/${C.CARICHE_MAX}${s.elastica && C.cariche(s) >= 2 ? " · elastica" : ""}`]] : []), ...(s && s.assorbe ? [["Scudo", `pronto (${s.assorbe.tipo})`]] : []), ...(s && s.difesaBloccata ? [["Difesa dello scudo", "non questo turno"]] : []), ...(s && s.sconto ? [["Sconto", `−${s.sconto} furia`]] : []), ...(s && s.spinta ? [["Spinta di Enea", "il tuo prossimo attacco ha svantaggio"]] : []), ...(s && s.difeso ? [["Guardia", "il colpo caricato ti arriverà dimezzato"]] : [])]);
-    if (nem) scheda($("svNem"), [["Nemico", nem.nome + (nem.boss ? " — BOSS" : "")], ["Salute", `${Math.max(0, s.pv)} / ${s.pvMax}`], ["CA", String(caNem())], ...(nem.soffio ? [["Soffio", s.soffioPronto ? "carico" : "scarico"]] : []), ...(nem.enea ? [["Arma", s.maglio ? "maglio (1d8 + 4)" : "mani nude (2 × 1d4)"], ["Punti abilità", `${s.pa} / ${nem.pa}`], ["Carica", s.carica ? (s.caricaRotta ? "spezzata: andrà a vuoto" : "annunciata" + (s.inGuardia ? " · in guardia" : "")) : s.inGuardia ? "nessuna · ora carica in guardia" : "nessuna"], ["Risurrezione", s.risorto ? "usata" : "pronta"], ["Vulnerabile a", "forza, luce, veleno"], ...(sdegno() ? [["Sdegno del cavaliere", "+1 per colpire"]] : [])] : []), ...crepeNem(), ...sigilliNem(), ...(s && s.caMeno ? [["Spezzato", `CA −${s.caMeno} per tutto lo scontro`]] : []), ...(s && s.filo ? [["Filo di Rune", C.sigilli(s) >= 2 ? "attivo: −2 a colpirti" : "in attesa di 2 Sigilli"]] : []), ...(s && s.demolitore ? [["Demolitore", "ogni Detonazione fa Sbilanciato 1"]] : []), ...(s && s.morbo ? [["Morbo", `${s.morbo}/3`]] : []), ...effetti(["sanguina", "frattura", "esposto", "debole", "sbilanciato", "silenzio", "frastornato", "intontito", "bloccato", "pressione", "parola", "accecato", "avvizzito", "paura", "corona", "avvelenato", "marea"])]);
+    if (nem) scheda($("svNem"), [["Nemico", nem.nome + (nem.boss ? " — BOSS" : "")], ["Salute", `${Math.max(0, s.pv)} / ${s.pvMax}`], ["CA", String(caNem())], ...(nem.soffio ? [["Soffio", s.soffioPronto ? "carico" : "scarico"]] : []), ...(nem.enea ? [["Arma", s.maglio ? `doppia faccia, lato ${s.lato === "ascia" ? "dell'ascia (1d8 + 4, Sanguinamento)" : "del maglio (1d8 + 4, colpo caricato)"}${s.furiaB ? " · +2 furia" : ""}` : "mani nude (2 × 1d4)"], ...(s.sangue ? [["Ti fa sanguinare", `${s.sangue} turni`]] : []), ["Punti abilità", `${s.pa} / ${nem.pa}`], ["Carica", s.carica ? (s.caricaRotta ? "spezzata: andrà a vuoto" : "annunciata" + (s.inGuardia ? " · in guardia" : "")) : s.inGuardia ? "nessuna · ora carica in guardia" : "nessuna"], ["Furia del becchino", s.risorto ? "attiva" : "pronta"], ["Vulnerabile a", "forza, luce, sottobosco (Sciamano)"], ...(sdegno() ? [["Sdegno del cavaliere", "+1 per colpire"]] : [])] : []), ...crepeNem(), ...sigilliNem(), ...(s && s.caMeno ? [["Spezzato", `CA −${s.caMeno} per tutto lo scontro`]] : []), ...(s && s.filo ? [["Filo di Rune", C.sigilli(s) >= 2 ? "attivo: −2 a colpirti" : "in attesa di 2 Sigilli"]] : []), ...(s && s.demolitore ? [["Demolitore", "ogni Detonazione fa Sbilanciato 1"]] : []), ...(s && s.morbo ? [["Morbo", `${s.morbo}/3`]] : []), ...effetti(["sanguina", "frattura", "esposto", "debole", "sbilanciato", "silenzio", "frastornato", "intontito", "bloccato", "pressione", "parola", "accecato", "avvizzito", "paura", "corona", "avvelenato", "marea"])]);
     else scheda($("svNem"), [["Nemico", "—"]]);
     /* posti e tecniche */
     const prep = prepT().filter(t => sciamano() === (t.classe === "Forestiero")), max = C.slotTecniche(pg.liv, scudoPosti());
@@ -531,8 +558,9 @@
         el("h2", { text: "Nemico" }),
         campo("Tipo", sel("nTipo", Object.entries(NEMICI).map(([k, d]) => [k, d.nome]), "mastino")), chk("nBoss", "Trattalo come boss"),
         campo("Salute (vuoto = tirata)", num("nPv", "", 1, 300)), campo("Classe armatura (vuoto = sua)", num("nCa", "", 5, 25)),
-        chk("nFermaglio", "Enea: fermaglio di bronzo indossato (maglio da subito)", true), chk("nSpada", "Enea: spada del Retaggio impugnata (sdegno, maglio da subito)"), chk("nSocialita", "Enea: Socialità riuscita con la spada (niente sdegno)"),
+        chk("nFermaglio", "Enea: fermaglio di bronzo indossato (arma da subito)", true), chk("nSpada", "Enea: spada del Retaggio impugnata (sdegno, arma da subito)"), chk("nSocialita", "Enea: Socialità riuscita con la spada (niente sdegno)"),
         campo("Enea: mossa", sel("nEneaMossa", [["casuale", "casuale"], ["carica", "carica sempre quando può"], ["finta", "finta sempre quando può"], ["spinta", "Spinta sempre a mani nude"]], "casuale")),
+        campo("Enea: lato dell'arma", sel("nEneaLato", [["casuale", "casuale"], ["maglio", "sempre il maglio"], ["ascia", "sempre l'ascia"]], "casuale")),
         chk("nResiste", "Resiste al veleno (come Dafne e il sovrano)"), chk("nSoffio", "Forza il Soffio quando è carico"), chk("nMorso", "Il mastino morde sempre"), chk("nPresa", "Forza la Presa dopo un morso"),
         el("div", { class: "azioni" }, el("button", { type: "button", id: "svNuovo", class: "primario", onclick: nuovoScontro }, "Nuovo scontro"), el("button", { type: "button", id: "svRiposa", onclick: riposa }, "Riposa")),
         el("h2", { text: "Dadi truccati" }),

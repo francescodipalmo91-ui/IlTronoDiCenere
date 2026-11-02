@@ -11856,7 +11856,8 @@
         cd: cdTecniche(), attrTs: "Vigore", modTs: modTsNem("Vigore"), modTsDi: modTsNem,
         modSpirito: modAttaccoPg(), /* 01/11: esplosione del Bulbo e simili con la caratteristica di classe (Sciamano: Agilità) */
         resisteVeleno: resisteA("Veleno"), /* Dafne, il sovrano, Ladra e Strega */
-        vulnVeleno: dadiVuln("Veleno") > 0, /* 01/11: un dado di veleno in più (Enea, Cartografo, Profeta) */
+        vulnVeleno: dadiVuln("Veleno") > 0, /* 01/11: un dado di veleno in più (Cartografo, Profeta) */
+        sottobosco: sciamano() && dadiVuln("Sottobosco") > 0, /* 02/11: Enea, gli stati dello Sciamano durano 1 turno in più */
         linfaRigeneratrice: sciamano() && viaPg() === "guendalina",
         naturaPiu: (n) => guadagnaNatura(n),
         dannoPg: (n) => { pg.dannoFisico = Math.min(pvMaxPg(), (pg.dannoFisico || 0) + n); disegnaVitali(); scuotiScheda(); modificato(); },

@@ -61,6 +61,7 @@
     if (ctx.immuni && ctx.immuni.includes(k)) return { k: "immune", s: k }; /* 28/10: le creature di cenere non sanguinano */
     let n = DURATE_COMUNI[k] && turni !== PER_SCONTRO ? DURATE_COMUNI[k] : turni, ridotto = false;
     if (ctx.boss && TETTO_BOSS[k] && n > TETTO_BOSS[k]) { n = TETTO_BOSS[k]; ridotto = true; }
+    if (ctx.sottobosco && turni !== PER_SCONTRO) n += 1; /* 02/11: Enea vulnerabile al sottobosco, gli stati dello Sciamano durano 1 turno in più */
     s.eff[k] = Math.max(s.eff[k] || 0, n);
     s.effMax = s.effMax || {}; s.effMax[k] = Math.max(s.effMax[k] || 0, s.eff[k]);
     return { k: "stato", s: k, turni: n, ridotto };

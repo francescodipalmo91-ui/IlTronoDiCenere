@@ -404,6 +404,23 @@ Gli incantesimi che fanno un attacco magico aggiungono al danno il **modificator
 
 ## 5c. Enea, livello 3 (PROPOSTA del 30 ottobre, da confermare)
 
+**Revisione del 2 novembre: barbaro nano (vale questa; la scheda del 30 ottobre resta sotto come storico).** Storia, sezione 10a.
+
+| Voce | Valore |
+|---|---|
+| Attributi | **Vigore 14 (+2, primaria)**, Agilità 10, Mente 10, Spirito 12 (+1) |
+| Salute, CA, PA, attacco | 36, 13, 9, +4: invariati |
+| Mani nude | come prima: 2 × 1d4, Spinta (1 PA) |
+| Arma a doppia faccia | a ogni turno gira l'arma e annuncia il lato del turno dopo. **Maglio:** 1d8 + 4, Colpo caricato (3 PA, 2d8 + 4), Finta (2 PA), carica in guardia, «Mi difendo». **Ascia:** 1d8 + 4 tagliente; se va a segno, **Squarcio** (2 PA): TS Vigore CD 13 (8 + 2 + livello) o Sanguinamento 1d4 per 3 turni |
+| Furia del becchino | alla prima caduta si rialza con 1d4 + 3 salute; da lì **+2 ai danni**, niente Finta, niente carica in guardia |
+| Vulnerabilità | **forza, luce, sottobosco**: niente più veleno (i nani non la giustificano). **Sottobosco** (solo Sciamano): gli stati che lo Sciamano gli infligge durano **1 turno in più**, anche sopra il tetto dei boss; **in Furia** il veleno ha **un dado in più** (respira a pieni polmoni, le spore gli entrano dentro). Se non basta: anche l'acido che corrode i resti dell'armatura (−1 CA per colpo d'acido, massimo −2) |
+| CD dei suoi effetti | 13 |
+
+- **Cosa cambia per la difficoltà, da verificare nella sala di prova:** lo Squarcio e la Furia rendono Enea un po' più duro di prima; lo Sciamano perde il dado di veleno in più nella prima fase e guadagna stati più lunghi. Il Monaco era già il punto debole (44% nel modello del 30 ottobre): se la sala di prova conferma che è troppo duro, il primo freno è lo Squarcio (solo con l'ascia caricata, o CD 12).
+- **Nella sala di prova (2 novembre):** casella «Enea: lato dell'arma» (casuale, sempre il maglio, sempre l'ascia); la scheda mostra il lato del prossimo colpo, il Sanguinamento sul personaggio e la Furia.
+
+### Scheda del 30 ottobre (storico, superata)
+
 | Voce | Valore |
 |---|---|
 | Attributi | Vigore 12 (+1), Agilità 10 (0), Mente 12 (+1), Spirito 14 (+2) |

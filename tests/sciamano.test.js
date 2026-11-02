@@ -113,6 +113,11 @@
     const s = scontro({ eff: { avvelenato: 3 }, velenoDado: 4 }), c = ctx({ vulnVeleno: true, dadi: [3, 2] });
     const E = S.tickNemico(s, c); eq(s.pv, 35, "3 + 2"); const t = ev(E, "velenoTick")[0]; eq(t.vuln, true); eq(t.tiri, [3, 2]);
   });
+  caso("2e-ter. Vulnerabile al sottobosco (Enea, 02/11): gli stati dello Sciamano durano 1 turno in più, anche sui boss", () => {
+    const s = scontro({ rivest: "muffa", eff: { rivest: 3 } }), c = ctx({ boss: true, sottobosco: true });
+    S.suColpo(s, c, { ok: true, danno: 3 }); eq(s.eff.sbilanciato, 3, "Muffa: Sbilanciato 2 + 1");
+    const s2 = scontro({ rivest: "muffa", eff: { rivest: 3 } }); S.suColpo(s2, ctx({ boss: true }), { ok: true, danno: 3 }); eq(s2.eff.sbilanciato, 2, "senza vulnerabilità");
+  });
   caso("2f. Sui boss Avvelenato e Tossina durano 3 turni come per tutti (28/10: niente tetto)", () => {
     const s = scontro({ eff: { avvelenato: 1 }, velenoDado: 4 }), c = ctx({ liv: 5, boss: true, dadi: [15, 3, 3] });
     const r = prova(s, c, "cuore_tossina"); eq(s.eff.avvelenato, 3); vero(!ev(r, "veleno")[0].ridotto, "non ridotto"); eq(s.eff.debole, 2);

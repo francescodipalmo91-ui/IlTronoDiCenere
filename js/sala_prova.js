@@ -443,7 +443,7 @@
         const ok = colpoEnea(c, righe, difesa, "Ascia", 1, 8, 4, { ascia: true });
         if (ok && s.asciaOk && pg.pv > 0 && s.pa >= 2 && !s.sangue) {
           s.pa -= 2;
-          const cd = 8 + 2 + pg.liv, d = tira(20), tot = d + pg.modV;
+          const cd = 13 /* 8 + Vigore di Enea (+2) + il suo livello (3) */, d = tira(20), tot = d + pg.modV;
           righe.push(`Squarcio (−2 PA): tiro salvezza sul Vigore d20 ${d} ${fmt(pg.modV)} = ${tot} contro CD ${cd} → ${tot >= cd ? "la ferita si chiude" : "sanguini, 1d4 per 3 turni"}.`);
           if (tot < cd) s.sangue = 3;
         }
@@ -661,8 +661,9 @@
           campo("Classe armatura", num("nCa", 10, 5, 30)),
           campo("Salute massima", num("nPv", 13, 1, 300))),
         gruppo("Opzioni di prova",
-          el("div", { id: "oEnea" }, chk("nFermaglio", "Fermaglio di bronzo indossato (maglio da subito)", true), chk("nSpada", "Spada del Retaggio impugnata (sdegno)"), chk("nSocialita", "Socialità riuscita con la spada"),
-            campo("Mossa", sel("nEneaMossa", [["casuale", "casuale"], ["carica", "carica sempre"], ["finta", "finta sempre"], ["spinta", "Spinta sempre (mani nude)"]], "casuale"))),
+          el("div", { id: "oEnea" }, chk("nFermaglio", "Fermaglio di bronzo indossato (arma da subito)", true), chk("nSpada", "Spada del Retaggio impugnata (sdegno)"), chk("nSocialita", "Socialità riuscita con la spada"),
+            campo("Mossa", sel("nEneaMossa", [["casuale", "casuale"], ["carica", "carica sempre"], ["finta", "finta sempre"], ["spinta", "Spinta sempre (mani nude)"]], "casuale")),
+            campo("Lato dell'arma", sel("nEneaLato", [["casuale", "casuale"], ["maglio", "sempre il maglio"], ["ascia", "sempre l'ascia"]], "casuale"))), /* 02/11: arma a doppia faccia */
           el("div", { id: "oMastino" }, chk("nSoffio", "Forza il Soffio quando è carico"), chk("nMorso", "Morde sempre"), chk("nPresa", "Forza la Presa dopo un morso")),
           chk("nResiste", "Resiste al veleno"))));
 

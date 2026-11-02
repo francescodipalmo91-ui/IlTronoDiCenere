@@ -50,8 +50,8 @@ window.PresetTest = (() => {
      ca = senza scudo; lo scudo del nemico aggiunge 1. */
   const NEMICI = {
     mastino:   { classe: "Bestia infernale", liv: 1, vig: 12, agi: 12, men: 6,  spi: 10, ca: 10, pv: 13, arma: "Morso o zampata · 1d4 + Vigore; Soffio Infuocato 2d6, Presa 1d4", scudo: false },
-    ettore:    { classe: "Cacciatore di taglie (boss, bronzo)", liv: 2, vig: 12, agi: 13, men: 12, spi: 8, ca: 13, pv: 30, arma: "Spada sbreccata · 1d6 + Vigore + 1", scudo: false },
-    enea:      { classe: "Paladino decaduto (boss, argento)", liv: 3, vig: 12, agi: 10, men: 12, spi: 14, ca: 13, pv: 36, arma: "Mani nude 2 × 1d4 · Maglio 1d8 + 4 (caricato 2d8 + 4)", scudo: false },
+    ettore:    { classe: "Ladro umano (boss, bronzo)", liv: 2, vig: 10, agi: 13, men: 13, spi: 8, ca: 13, pv: 30, arma: "Due pugnali · 2 × 1d4 + 1 tagliente (+2 per colpire)", scudo: false }, /* 02/11 */
+    enea:      { classe: "Barbaro nano, ex paladino (boss, argento)", liv: 3, vig: 14, agi: 10, men: 10, spi: 12, ca: 13, pv: 36, arma: "Mani nude 2 × 1d4 · Doppia faccia 1d8 + 4: maglio (caricato 2d8 + 4) o ascia (Squarcio)", scudo: false }, /* 02/11 */
     manichino: { classe: "Bersaglio (non attacca)", liv: 1, vig: 10, agi: 10, men: 10, spi: 10, ca: 12, pv: 60, arma: "Nessuna", scudo: false }
   };
 

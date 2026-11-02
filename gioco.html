@@ -5527,7 +5527,9 @@
     /* =====================================================================
        FUORI CASA, NUOVA CONFORMAZIONE (30/10): il giardino è il crocevia.
        Nord: cimitero (anche dalla porticina della cappella). Est: cappella e cripta. Ovest: orto e serra.
-       Sud: ingresso principale, un arco senza porte: chi prova a oltrepassarlo viene riportato da Aldo dai mastini.
+       Sud: nessun ingresso (02/11): la tenuta non ha cancelli, il personaggio è entrato dalla grotta.
+       La foresta che riporta indietro: chi prova ad allontanarsi (a sud del giardino, oltre i settori della foresta) si ritrova
+       alla fontana o al limitare da cui è entrato. Nessun costo.
        Tutto attorno la foresta, a settori: nord (pineta, oltre il cimitero), est (oltre la cappella), ovest (oltre la serra).
        TESTI PROVVISORI, da riscrivere; le immagini dei settori arriveranno (foresta_nord/est/ovest).
        ===================================================================== */
@@ -5544,17 +5546,6 @@
             ritorno: ["Torni tra le aiuole di pietra. Dai vetri anneriti della serra trapela ancora quel tepore umido."]
           },
           fatti: "Orto di Casa Vespera, a ovest della casa, oltre una siepe di bosso pietrificato: aiuole in file ordinate con paletti e cartellini di legno scritti a mano, ortaggi grigi e duri come pietra; in fondo una serra di ferro battuto e vetro, molti vetri anneriti dal fumo e alcuni incrinati, dentro un tepore umido e odore di terra bagnata; oltre la serra comincia la foresta di pini. Si torna in giardino dal viale verso la fontana."
-        },
-        ingresso: {
-          vista: { titolo: "Ingresso principale", alt: "Un viale di ghiaia tra cipressi pietrificati che termina sotto un grande arco di pietra annerita, senza cancello; oltre, la nebbia e i pini." },
-          stanza: {
-            intro: ["A sud della fontana il viale di ghiaia corre dritto tra due file di cipressi pietrificati, fino a un grande arco di pietra annerita. È l'ingresso della tenuta: due pilastri sormontati dall'albero dei Vespera, e in mezzo niente. Nessun cancello, nessuna catena, nessuna serratura. Solo il viale che prosegue oltre, nella nebbia, verso i pini.",
-              "Proprio sotto l'arco la ghiaia è segnata da solchi profondi, come di unghie trascinate. Tornano tutti indietro, verso la casa."],
-            nota: "Puoi oltrepassare l'arco («attraverso l'arco», «vado a sud») o tornare in giardino («torno in giardino»).",
-            fallbackLibera: ["Ci provi, ma qui non c'è nulla di utile in questo senso. Il viale, i cipressi di pietra e l'arco senza porte sono ciò che hai intorno."],
-            ritorno: ["Torni sotto l'arco. La nebbia oltre i pilastri non si è mossa di un palmo."]
-          },
-          fatti: "Ingresso principale della tenuta dei Vespera, a sud della fontana: viale di ghiaia dritto tra due file di cipressi pietrificati; in fondo un grande arco di pietra annerita su due pilastri sormontati dall'albero dei Vespera, senza cancello né porte; oltre l'arco il viale prosegue nella nebbia verso i pini; sotto l'arco solchi profondi nella ghiaia, come di unghie trascinate, che tornano tutti verso la casa. Dalla casa si esce solo con il permesso di Aldo, dalla tenuta mai: chi oltrepassa l'arco viene riportato indietro dai mastini. Si torna in giardino dal viale."
         },
         pineta_est: {
           vista: { titolo: "Foresta dei pini, est", alt: "Una foresta di pini alti sotto le lune, oltre la cappella." },
@@ -5584,16 +5575,6 @@
             ritorno: ["You return among the stone beds. That damp warmth still seeps from the blackened panes of the greenhouse."]
           }
         },
-        ingresso: {
-          vista: { titolo: "Main entrance", alt: "A gravel avenue between petrified cypresses ending beneath a great arch of blackened stone, with no gate; beyond, mist and pines." },
-          stanza: {
-            intro: ["South of the fountain the gravel avenue runs straight between two rows of petrified cypresses, up to a great arch of blackened stone. It is the entrance to the estate: two pillars crowned with the Vespera tree, and between them nothing. No gate, no chain, no lock. Only the avenue going on, into the mist, towards the pines.",
-              "Right beneath the arch the gravel is scored with deep furrows, like dragged claws. They all lead back, towards the house."],
-            nota: "You can pass beyond the arch (“I cross the arch”, “I go south”) or go back to the garden (“I return to the garden”).",
-            fallbackLibera: ["You try, but there is nothing useful here in that respect. The avenue, the stone cypresses and the doorless arch are what lie around you."],
-            ritorno: ["You return beneath the arch. The mist beyond the pillars has not moved an inch."]
-          }
-        },
         pineta_est: {
           vista: { titolo: "Pine forest, east", alt: "A forest of tall pines under the moons, beyond the chapel." },
           stanza: { intro: pEn.intro,
@@ -5609,38 +5590,28 @@
             ritorno: pEn.ritorno }
         }
       });
-      for (const id of ["serra", "ingresso", "pineta_est", "pineta_ovest"]) ESTERNI.en[id].fatti = ESTERNI.it[id].fatti;
+      for (const id of ["serra", "pineta_est", "pineta_ovest"]) ESTERNI.en[id].fatti = ESTERNI.it[id].fatti;
       Object.assign(ESTERNI.it.luoghi, {
         serra_aiuole: { fisso: ["Ti chini sulle aiuole. Cavoli, porri, cespi d'insalata: tutto di pietra grigia, perfetto fino all'ultima venatura delle foglie. Sui cartellini di legno una grafia minuta e ordinata ha scritto i nomi delle piante. Qualcuno, un tempo, teneva molto a quest'orto."] },
         serra_interno: { fisso: ["Spingi la porta della serra. Dentro l'aria è tiepida e umida, e per un attimo ti sembra di respirare di nuovo. Sui banconi, file di vasi: quasi tutti di pietra come il resto, ma in un angolo, sotto il vetro meno annerito, qualche piantina è ancora verde. La terra nei vasi è bagnata: qualcuno le annaffia."] },
-        ingresso_arco: { fisso: ["Ti avvicini ai pilastri. La pietra è annerita, ma l'albero dei Vespera in cima è intatto, le radici intrecciate scolpite con cura. Tra i pilastri non ci sono cardini, né segni di un cancello che sia mai stato montato. Questa porta non ha mai avuto bisogno di chiudersi."] },
-        ingresso_solchi: { fisso: ["Ti chini sulla ghiaia. I solchi sono profondi, a gruppi di quattro, come artigli che hanno trascinato qualcosa di pesante. Partono tutti appena oltre l'arco e tornano verso la casa. Nessuno va nell'altra direzione."] }
       });
       Object.assign(ESTERNI.en.luoghi, {
         serra_aiuole: { fisso: ["You bend over the beds. Cabbages, leeks, heads of lettuce: all grey stone, perfect down to the last vein of the leaves. On the wooden labels a small, neat hand has written the names of the plants. Someone, once, cared a great deal for this garden."] },
         serra_interno: { fisso: ["You push the greenhouse door. Inside the air is warm and damp, and for a moment you feel you can breathe again. On the benches, rows of pots: almost all stone like the rest, but in a corner, under the least blackened pane, a few seedlings are still green. The soil in the pots is wet: someone waters them."] },
-        ingresso_arco: { fisso: ["You approach the pillars. The stone is blackened, but the Vespera tree on top is intact, its intertwined roots carved with care. Between the pillars there are no hinges, no sign that a gate was ever hung. This door has never needed to close."] },
-        ingresso_solchi: { fisso: ["You bend over the gravel. The furrows are deep, in groups of four, like claws that dragged something heavy. They all start just beyond the arch and lead back towards the house. None goes the other way."] }
       });
       Object.assign(ESTERNI.it, {
-        fugaIngresso: ["Passi sotto l'arco. Dieci passi, venti: la ghiaia diventa terra battuta, la nebbia si chiude alle tue spalle. Poi, davanti a te, un ringhio basso. Un altro di lato. Un terzo dietro. I mastini escono dalla nebbia senza fretta, gli occhi di brace, il fiato che fuma. Non ti attaccano: ti stringono, ti spingono, un passo alla volta, lungo il viale, oltre la fontana, dentro il portone.",
-          "Non hai ancora superato i pilastri che il viale si riempie di ombre basse e fumanti. I mastini ti circondano in silenzio; uno ti prende il polso tra le zanne, senza stringere, e comincia a tirare. Non verso la nebbia. Verso la casa."],
-        aldoFuga: ["«Uscire dalla casa è un permesso che concedo io. Lasciare le terre dei Vespera, invece, è un permesso che non concedo a nessuno.» Aldo fa un cenno, e i mastini si dileguano. «Che non si ripeta. I miei cani non sono pazienti quanto me.»"],
         nessunaStrada: "Da quella parte non c'è un passaggio: solo siepi, pietra e buio."
       });
       Object.assign(ESTERNI.en, {
-        fugaIngresso: ["You pass beneath the arch. Ten steps, twenty: the gravel turns to packed earth, the mist closes behind you. Then, ahead of you, a low growl. Another to one side. A third behind. The mastiffs come out of the mist unhurried, eyes of embers, breath smoking. They do not attack: they close in, they push, one step at a time, along the avenue, past the fountain, through the great door.",
-          "You have not yet passed the pillars when the avenue fills with low, smoking shadows. The mastiffs surround you in silence; one takes your wrist between its jaws, without biting down, and starts to pull. Not towards the mist. Towards the house."],
-        aldoFuga: ["“Leaving the house is a permission I grant. Leaving the lands of the Vespera, however, is a permission I grant to no one.” Aldo makes a sign, and the mastiffs melt away. “Do not let it happen again. My dogs are not as patient as I am.”"],
         nessunaStrada: "There is no way through in that direction: only hedges, stone and darkness."
       });
     }
-    for (const l of ["it", "en"]) for (const id of ["cimitero", "pineta", "serra", "ingresso", "pineta_est", "pineta_ovest"]) { TESTI[l].stanze[id] = ESTERNI[l][id].stanza; TESTI[l].viste[id] = ESTERNI[l][id].vista; Object.assign(TESTI[l].luoghi, ESTERNI[l].luoghi); }
-    for (const id of ["cimitero", "pineta", "serra", "ingresso", "pineta_est", "pineta_ovest"]) STANZE_FATTI[id] = ESTERNI.it[id].fatti;
+    for (const l of ["it", "en"]) for (const id of ["cimitero", "pineta", "serra", "pineta_est", "pineta_ovest"]) { TESTI[l].stanze[id] = ESTERNI[l][id].stanza; TESTI[l].viste[id] = ESTERNI[l][id].vista; Object.assign(TESTI[l].luoghi, ESTERNI[l].luoghi); }
+    for (const id of ["cimitero", "pineta", "serra", "pineta_est", "pineta_ovest"]) STANZE_FATTI[id] = ESTERNI.it[id].fatti;
     const EST2 = ESTERNI[LINGUA] || ESTERNI.it;
     { /* luoghi del cimitero e della foresta: due prove per gli ingredienti, che si riaprono a ogni riposo */
       const erbe = (ok) => { if (ok) { usate.pineta_erbe = usate.pineta_cerca = "ok"; salvaUsate(); raccogliErbe(); } };
-      const M = { cim_lapidi: {}, cim_rovi: {}, cim_cancello: {}, pineta_alberi: {}, pineta_sentiero: {}, serra_aiuole: {}, serra_interno: {}, ingresso_arco: {}, ingresso_solchi: {},
+      const M = { cim_lapidi: {}, cim_rovi: {}, cim_cancello: {}, pineta_alberi: {}, pineta_sentiero: {}, serra_aiuole: {}, serra_interno: {},
         pineta_erbe: { prova: { abilita: "Sopravvivenza", dado: 20, cd: 12 }, poi: erbe },
         pineta_cerca: { prova: { abilita: "Indagare", dado: 20, cd: 12 }, poi: erbe } };
       for (const id in M) LUOGHI[id] = { ...M[id], ...EST2.luoghi[id] };
@@ -5648,7 +5619,6 @@
     LUOGHI.cappella_panche = { ...LUOGHI.cappella_panche, prova: { abilita: "Indagare", dado: 20, cd: 12 }, ...ET.panche }; /* le tacche di Ettore: i suoi giorni */
     PROVE_DICHIARATE.pineta = PROVE_DICHIARATE.pineta_est = PROVE_DICHIARATE.pineta_ovest = { Sopravvivenza: "pineta_erbe", Indagare: "pineta_cerca", Percezione: "pineta_alberi" };
     PROVE_DICHIARATE.serra = { Indagare: "serra_interno", Percezione: "serra_aiuole" };
-    PROVE_DICHIARATE.ingresso = { Indagare: "ingresso_solchi", Percezione: "ingresso_arco", Sopravvivenza: "ingresso_solchi" };
     const FORESTE = ["pineta", "pineta_est", "pineta_ovest"]; /* 30/10: la foresta a settori (nord, est, ovest) */
     PROVE_DICHIARATE.cimitero = { Indagare: "cim_lapidi", Percezione: "cim_rovi" };
     /* =====================================================================
@@ -5908,6 +5878,7 @@
 
     /* Una nuova partita parte dalla foresta, fuori dal dungeon; i salvataggi già esistenti riprendono dal loro luogo */
     let luogo = (salvata && Array.isArray(salvata.diario) && salvata.diario.length) ? "atrio" : "foresta";
+    if (salvata && salvata.luogo === "ingresso") salvata.luogo = "giardino"; /* 02/11: l'ingresso principale non esiste più */
     if (salvata && salvata.luogo && STANZE[salvata.luogo]) luogo = salvata.luogo;
 
     const SCALE = { ...TX.scale, soglia: 14, dannoDado: 4 };
@@ -6086,7 +6057,6 @@
         if (/cappell|chapel|chiesa|church/.test(t)) return (muovi || torna || /\bentr\w*|\bvado\b|\bgo\b/.test(t)) && !guarda ? "entra_cappella" : "giardino_cappella";
         if (/cimiter\w*|camposanto|lapid\w*|graveyard|cemetery|headstones?/.test(t)) return (muovi || /\bentr\w*|\bvado\b|\bgo\b/.test(t)) && !guarda ? "entra_cimitero" : "stanza_corrente";
         if (/\bserr[ae]\b|\borto\b|ortagg\w*|aiuol\w*|greenhouse|kitchen garden|vegetable/.test(t)) return (muovi || /\bentr\w*|\bvado\b|\bgo\b/.test(t)) && !guarda ? "entra_serra" : "stanza_corrente";
-        if (/ingresso|\barco\b|cipress\w*|viale principal\w*|main entrance|archway|\barch\b|cypress\w*|main avenue/.test(t)) return (muovi || /\bentr\w*|\bvado\b|\bgo\b/.test(t)) && !guarda ? "entra_ingresso" : "stanza_corrente";
         if (/pinet\w*|\bpini\b|forest\w*|\bbosco\b|\bwoods?\b|\bpines?\b/.test(t)) return "pineta_lontana";
         if (/fontan|vasca|\bacqua\b|fountain|basin|water/.test(t)) return /\bbev\w*|\bbere\b|sors\w*|\bdrink\w*|\bsip\w*|disset\w*/.test(t) ? "fontana_bevi" : "giardino_fontana";
         if (/statu\w*|\bdam[ae] velat\w*|statue/.test(t)) return "giardino_statue";
@@ -6129,16 +6099,10 @@
         if (/\bserr[ae]\b|vetr\w*|vas[io]\b|piantin\w*|bancon\w*|greenhouse|glass|panes?|pots?|seedlings?|dentro|inside/.test(t)) return "serra_interno";
         if (/aiuol\w*|ortagg\w*|\borto\b|cartellin\w*|palett\w*|cavol\w*|beds?|vegetables?|labels?|stakes?/.test(t)) return "serra_aiuole";
       }
-      if (luogo === "ingresso") {
-        if (!guarda && /oltrepass\w*|attravers\w*|varc\w*|super\w*|scapp\w*|fugg\w*|\besc[oi]\b|uscir\w*|allontan\w*|prosegu\w*|nebbi\w*|\bcross\w*|pass (through|beyond|under)|escape|flee|run away|\bleave\b|beyond|\bmist\b/.test(t)) return "fuga_ingresso";
-        if (torna || /giardin|garden|fontan|fountain/.test(t)) return "torna";
-        if (atrio || /\bcasa\b|house|manor|cappell|chapel|cripta|crypt|cimiter|graveyard/.test(t)) return "casa_lontana";
-        if (/solch\w*|ghiai\w*|unghi\w*|artigl\w*|furrows?|gravel|claws?|tracks?/.test(t)) return "ingresso_solchi";
-        if (/\barco\b|pilastr\w*|alber\w*|cardin\w*|\barch\w*|pillars?|tree|hinges?/.test(t)) return "ingresso_arco";
-      }
       if (FORESTE.includes(luogo)) {
         const ritorno = { pineta: /cimiter\w*|cancell\w*|lapid\w*|graveyard|cemetery|\bgate\b/, pineta_est: /cappell\w*|campanil\w*|chapel|bell tower/, pineta_ovest: /\bserr[ae]\b|\borto\b|greenhouse|kitchen garden/ }[luogo];
         if (torna || ritorno.test(t)) return "torna";
+        if (!guarda && /scapp\w*|fugg\w*|allontan\w*|uscir\w*|\besc[oi] dal\w*|oltre|confin\w*|escape|flee|run away|get away|\bleave\b|beyond|way out/.test(t)) return "pineta_sentiero"; /* 02/11: la foresta riporta indietro */
         if (atrio || /\bcasa\b|house|manor|cappell|chapel|cripta|crypt|giardin|garden|cimiter\w*|graveyard|\bserr[ae]\b|greenhouse/.test(t)) return "casa_lontana";
         if (/\berb[ae]\b|ingredient\w*|radic\w*|fung\w*|bacch\w*|spor[ae]\b|sottobosc\w*|veleni?\b|raccogl\w*|herbs?|roots?|mushroom\w*|berr\w*|spores?|undergrowth|poisons?|gather\w*|forag\w*/.test(t))
           return /indag\w*|\bfrug\w*|rovist\w*|scav\w*|rivolt\w*|search\w*|rummag\w*|\bdig\w*/.test(t) ? "pineta_cerca" : "pineta_erbe";
@@ -7982,9 +7946,8 @@
       if (prima) { usate.portone_aperto = true; salvaUsate(); }
       vai("giardino", prima ? { prima: A.ui.portoneApre } : undefined);
     }
-    function fugaGiardino() {
-      const [da, a] = dannoMenteSubito(1);
-      aggiungi({ tipo: "narra", box: "ko", righe: [pesca(A.ui.fuga), U.dannoMentale(da, a)] });
+    function fugaGiardino() { /* 02/11: la foresta che riporta indietro, senza costo */
+      aggiungi({ tipo: "narra", righe: [pesca(A.ui.fuga)] });
     }
 
     /* ---------- Ettore, nella cripta ---------- */
@@ -8309,7 +8272,7 @@
        - fuori casa (giardino, cimitero, cappella): 20% a ogni ingresso; ratto, corvo, lupo e i loro doppi infernali. Mai alla prima visita,
          e in giardino con una caccia aperta si fa avanti la preda di Aldo. In cripta niente: lì c'è il braciere (ed Ettore).
        In caso di incontro: 70% animale, 30% infernale; livello 1 solo infernali di grado 1, poi anche il grado 2. */
-    const PROB_ZONA = { foresta: 0.4, fuori: 0.2 }, PROB_ANIMALE_ZONA = { foresta: 0.6, fuori: 0.67 }, LUOGHI_FUORI = ["giardino", "cimitero", "cappella", "serra", "ingresso"]; /* 30/10: anche orto e ingresso */ /* 29/10: foresta 60:40; fuori casa 67:33, dopo il bronzo 50:25:25 con gli agguati */
+    const PROB_ZONA = { foresta: 0.4, fuori: 0.2 }, PROB_ANIMALE_ZONA = { foresta: 0.6, fuori: 0.67 }, LUOGHI_FUORI = ["giardino", "cimitero", "cappella", "serra"]; /* 30/10: anche l'orto (02/11: ingresso tolto) */ /* 29/10: foresta 60:40; fuori casa 67:33, dopo il bronzo 50:25:25 con gli agguati */
     const zonaDi = (l) => FORESTE.includes(l) ? "foresta" : LUOGHI_FUORI.includes(l) ? "fuori" : null;
     const inZona = (k, z) => (PREDE[k].zone || []).includes(z);
     const ANIMALI_IDS = (z) => Object.keys(PREDE).filter(k => PREDE[k].grado === 0 && inZona(k, z || "foresta"));
@@ -10326,8 +10289,8 @@
       anticamera_trono: ["pianerottolo", "atrio"], corridoio_primo: ["pianerottolo", "atrio", "sala_ballo"], sala_conversazione: ["atrio", "sala_pranzo"],
       sala_pranzo: ["sala_conversazione", "corridoio"], corridoio: ["sala_pranzo", "cucina", "sala_ballo"],
       cucina: ["corridoio", "dispensa", "servizio"], dispensa: ["cucina"], servizio: ["cucina", "cantina"], cantina: ["servizio"],
-      sala_ballo: ["corridoio", "corridoio_primo"], giardino: ["atrio", "cappella", "cimitero", "serra", "ingresso"], cappella: ["giardino", "cripta", "cimitero", "pineta_est"], cripta: ["cappella"], cimitero: ["giardino", "cappella", "pineta"],
-      serra: ["giardino", "pineta_ovest"], ingresso: ["giardino"], pineta: ["cimitero", "pineta_est", "pineta_ovest"], pineta_est: ["cappella", "pineta"], pineta_ovest: ["serra", "pineta"],
+      sala_ballo: ["corridoio", "corridoio_primo"], giardino: ["atrio", "cappella", "cimitero", "serra"], cappella: ["giardino", "cripta", "cimitero", "pineta_est"], cripta: ["cappella"], cimitero: ["giardino", "cappella", "pineta"],
+      serra: ["giardino", "pineta_ovest"], pineta: ["cimitero", "pineta_est", "pineta_ovest"], pineta_est: ["cappella", "pineta"], pineta_ovest: ["serra", "pineta"],
       sala_caccia: ["atrio", "sala_trofei"], sala_trofei: ["sala_caccia"]
     };
     const NOMI_STANZE = [ /* dal più specifico al più generico */
@@ -10348,7 +10311,6 @@
       ["pineta", /pinet\w*|\bpini\b|forest\w*|\bbosco\b|\bwoods?\b|\bpines?\b/],
       ["cappella", /cappell\w*|chapel/],
       ["serra", /\bserr[ae]\b|\borto\b|greenhouse|kitchen garden/],
-      ["ingresso", /ingresso principal\w*|\barco\b|main entrance|archway|\barch\b/],
       ["giardino", /giardin\w*|garden|fontan\w*|fountain/],
       ["pianerottolo", /pianerottol\w*|\blanding\b/],
       ["atrio", /atrio|atrium|foyer|entrance hall|\bthe hall\b/] /* «the hall» da solo: le altre sale («hunting hall», «dining hall») sono riconosciute prima */
@@ -10393,14 +10355,13 @@
     }
     /* ---------- 30/10: muoversi per punti cardinali fuori casa («vado a est», «nord») ---------- */
     const DIREZIONI = {
-      giardino: { nord: "cimitero", est: "cappella", ovest: "serra", sud: "ingresso" },
+      giardino: { nord: "cimitero", est: "cappella", ovest: "serra", sud: "giro" },
       cimitero: { sud: "giardino", nord: "pineta" },
       cappella: { ovest: "giardino", est: "pineta_est" },
       serra: { est: "giardino", ovest: "pineta_ovest" },
-      ingresso: { nord: "giardino", sud: "fuga" },
-      pineta: { sud: "cimitero", est: "pineta_est", ovest: "pineta_ovest" },
-      pineta_est: { ovest: "cappella", nord: "pineta" },
-      pineta_ovest: { est: "serra", nord: "pineta" }
+      pineta: { sud: "cimitero", est: "pineta_est", ovest: "pineta_ovest", nord: "giro" },
+      pineta_est: { ovest: "cappella", nord: "pineta", est: "giro", sud: "giro" },
+      pineta_ovest: { est: "serra", nord: "pineta", ovest: "giro", sud: "giro" }
     };
     const PUNTI_CARDINALI = [
       ["nord", /\b(nord|settentrione|north\w*)\b/], ["sud", /\b(sud|meridione|south\w*)\b/],
@@ -10416,22 +10377,12 @@
       if (ha(t, "guarda") && !RE_MOSSA.test(t)) return null; /* «guardo a nord»: lo descrive la stanza */
       const dest = mappa[p[0]];
       if (!dest) return () => aggiungi({ tipo: "narra", righe: [EST2.nessunaStrada] });
-      if (dest === "fuga") return () => fugaIngresso();
+      if (dest === "giro") return () => FORESTE.includes(luogo) ? esamina("pineta_sentiero") : fugaGiardino(); /* 02/11: la foresta che riporta indietro */
       if (dest === "cappella" && luogo === "giardino") return () => vai("cappella");
       return () => vai(dest);
     }
-    /* oltre l'arco dell'ingresso: i mastini riportano il personaggio da Aldo (si esce dalla casa solo con il suo permesso, dalla tenuta mai) */
-    function fugaIngresso() {
-      const [da, a] = dannoMenteSubito(1);
-      aggiungi({ tipo: "narra", box: "ko", righe: [pesca(EST2.fugaIngresso), U.dannoMentale(da, a)] });
-      const dest = cacciaAperta() ? "sala_caccia" : "atrio";
-      setTimeout(() => fuoriDallaTendina(() => {
-        vai(dest);
-        aggiungi({ tipo: "dialogo", fuori: true, tuttoBox: true, chi: "Aldo", macchina: true, righe: EST2.aldoFuga });
-      }), 1800);
-    }
     /* «torno indietro»: la stanza da cui si è arrivati */
-    const DOVE_TORNA = { serra: "giardino", ingresso: "giardino", pineta_est: "cappella", pineta_ovest: "serra", pianerottolo: "atrio", cantina: "servizio", dispensa: "cucina", servizio: "cucina", cucina: "corridoio", sala_ballo: "corridoio", corridoio: "sala_pranzo", sala_pranzo: "sala_conversazione", giardino: "atrio", cappella: "giardino", cimitero: "giardino", pineta: "cimitero", cripta: "cappella", sala_trofei: "sala_caccia", anticamera_trono: "pianerottolo", corridoio_primo: "pianerottolo" };
+    const DOVE_TORNA = { serra: "giardino", pineta_est: "cappella", pineta_ovest: "serra", pianerottolo: "atrio", cantina: "servizio", dispensa: "cucina", servizio: "cucina", cucina: "corridoio", sala_ballo: "corridoio", corridoio: "sala_pranzo", sala_pranzo: "sala_conversazione", giardino: "atrio", cappella: "giardino", cimitero: "giardino", pineta: "cimitero", cripta: "cappella", sala_trofei: "sala_caccia", anticamera_trono: "pianerottolo", corridoio_primo: "pianerottolo" };
     let ultimoTesto = "";
     async function gestisci(testo) {
       const t = norm(testo);
@@ -10578,8 +10529,6 @@
       if (id === "entra_pineta_est") return vai("pineta_est");
       if (id === "entra_pineta_ovest") return vai("pineta_ovest");
       if (id === "entra_serra") return vai("serra");
-      if (id === "entra_ingresso") return vai("ingresso");
-      if (id === "fuga_ingresso") return fugaIngresso();
       if (id === "pineta_lontana") return aggiungi({ tipo: "narra", righe: [EST2.pineLontana] });
       if (id === "cappella_porticina") return aggiungi({ tipo: "narra", righe: [LINGUA === "en" ? "At the back of the chapel, to the left of the altar, a low little door opens onto the family graveyard." : "Sul fondo della cappella, a sinistra dell'altare, una porticina bassa dà sul cimitero di famiglia."] });
       if (id === "entra_trofei") return vai("sala_trofei");

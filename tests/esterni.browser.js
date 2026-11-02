@@ -50,7 +50,7 @@ const aspettaTurnoPg = (page) => page.waitForFunction(() => typeof scontro !== "
 const diario = (page) => page.evaluate(() => document.getElementById("diario").textContent);
 
 
-/* 30/10: fuori casa il giardino è il crocevia (nord cimitero, est cappella, ovest serra, sud ingresso) e la foresta è a settori */
+/* 30/10: fuori casa il giardino è il crocevia (nord cimitero, est cappella, ovest serra, a sud la foresta riporta indietro) e la foresta è a settori */
 const FUORI = () => PARTITA({ luogo: "giardino", diario: [{ tipo: "narra", stanza: "giardino", righe: ["x"] }], usate: { riposo: "sbloccato", luce: "ok", chiave_portone: "presa", q4: "prova", giardino_visto: "si" } });
 const prep = (page) => page.evaluate(() => { window.incontroZona = () => {}; });
 const vai_ = async (page, t) => { await page.evaluate(x => gestisci(x), t); await page.waitForTimeout(250); return page.evaluate(() => luogo); };
@@ -65,11 +65,9 @@ caso("Esterni: punti cardinali dal giardino e ritorno", async (b) => {
   eq(await vai_(page, "torno in giardino"), "giardino");
   eq(await vai_(page, "ovest"), "serra");
   eq(await vai_(page, "torno alla fontana"), "giardino");
-  eq(await vai_(page, "vado verso sud"), "ingresso");
-  eq(await vai_(page, "torno in giardino"), "giardino");
+  eq(await vai_(page, "vado verso sud"), "giardino", "a sud non c'è un ingresso: la foresta riporta indietro");
   eq(await vai_(page, "vado all'orto"), "serra");
   eq(await vai_(page, "torno indietro"), "giardino");
-  eq(await vai_(page, "vado all'ingresso principale"), "ingresso");
   eq(errori, [], "errori"); await chiudi();
 });
 
@@ -81,24 +79,25 @@ caso("Esterni: la foresta a settori, ingresso dal luogo confinante", async (b) =
   eq(await vai_(page, "vado nella foresta"), "pineta_ovest");
   eq(await vai_(page, "vado a nord"), "pineta");
   eq(await vai_(page, "vado a est"), "pineta_est");
-  eq(await vai_(page, "vado a sud"), "pineta_est", "a sud della foresta est non c'è passaggio");
+  eq(await vai_(page, "vado a sud"), "pineta_est", "a sud della foresta est il bosco riporta indietro");
   eq(await vai_(page, "torno indietro"), "cappella");
   eq(await vai_(page, "vado nella foresta"), "pineta_est");
-  eq(await page.evaluate(() => [zonaDi("pineta_est"), zonaDi("serra"), zonaDi("ingresso"), vista("pineta_ovest").titolo]), ["foresta", "fuori", "fuori", "Foresta dei pini, ovest"]);
+  eq(await page.evaluate(() => [zonaDi("pineta_est"), zonaDi("serra"), vista("pineta_ovest").titolo]), ["foresta", "fuori", "Foresta dei pini, ovest"]);
   eq(await page.evaluate(() => PROVE_DICHIARATE.pineta_est.Sopravvivenza), "pineta_erbe");
   eq(errori, [], "errori"); await chiudi();
 });
 
-caso("Esterni: oltre l'arco i mastini riportano il personaggio da Aldo (1 danno mentale)", async (b) => {
+caso("Esterni: la foresta che riporta indietro, senza costo (niente ingresso principale)", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), FUORI()); await prep(page);
-  await vai_(page, "vado a sud");
   const prima = await page.evaluate(() => pg.dannoMentale || 0);
-  await page.evaluate(() => gestisci("attraverso l'arco"));
-  await page.waitForFunction(() => luogo === "sala_caccia", null, { timeout: 5000 });
-  eq(await page.evaluate(() => pg.dannoMentale || 0), prima + 1);
-  vero(await page.evaluate(() => diario.some(e => e.chi === "Aldo" && e.stanza === "sala_caccia" && (e.righe || []).join(" ").includes("non concedo a nessuno"))), "manca la battuta di Aldo");
-  await page.evaluate(() => { luogo = "ingresso"; }); await vai_(page, "vado a sud");
-  await page.waitForFunction(() => luogo === "sala_caccia", null, { timeout: 5000 });
+  eq(await vai_(page, "vado a sud"), "giardino");
+  eq(await vai_(page, "scappo oltre le siepi"), "giardino");
+  eq(await page.evaluate(() => typeof STANZE.ingresso), "undefined", "il luogo ingresso non deve esistere");
+  await vai_(page, "vado alla serra"); await vai_(page, "vado nella foresta");
+  eq(await vai_(page, "vado a ovest"), "pineta_ovest", "oltre il settore ovest si torna al limitare");
+  eq(await vai_(page, "mi allontano dalla casa"), "pineta_ovest");
+  vero((await diario(page)).includes("non c'è un'uscita"), "manca il testo del bosco che gira in tondo");
+  eq(await page.evaluate(() => pg.dannoMentale || 0), prima, "allontanarsi non costa punti mentali");
   eq(errori, [], "errori"); await chiudi();
 });
 

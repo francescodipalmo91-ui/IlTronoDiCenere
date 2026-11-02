@@ -27,7 +27,7 @@ Metodo: punto per punto, prima le cose leggere; zip dei file modificati solo a f
 - Tolte dal repo le 12 immagini .png sorgenti (~100 MB, non usate dal gioco).
 - Documenti riallineati (questo file; elisir comuni e rari segnati come decisi).
 - **Niente ingresso principale:** tolti il luogo «ingresso», l'arco e la fuga con i mastini. **La foresta che riporta indietro:** a sud del giardino, scavalcando le siepi o oltre i settori della foresta si torna alla fontana o al limitare, senza costo (prima la fuga dal giardino costava 1 punto mentale). Salvataggi fermi sull'ingresso → giardino.
-- Nuova immagine del giardino (logo rimosso).
+- Nuova immagine del giardino (logo rimosso). Immagini dei tre settori della foresta collegate (dalla cartella locale di Francesco, loghi rimossi).
 - **Serra:** era di Adele. Dopo un riposo, alla prima visita del giorno (non la prima in assoluto) e dopo il dialogo in cucina, si trova Guendalina tra i vasi: una volta sola, racconta la serra e la sua arte di miscelare, promette il laboratorio in cambio della scaletta (o lo collega alla serra se già sbloccato) e regala un'erba. Niente incontri durante la scena. Testi PROVVISORI.
 - **Orto:** agguati e animali restano al 20%.
 - **Revisione dei guardiani e del sovrano** (storia 10a): razza, arma, classe e una primaria diversa per ciascuno (Ettore Mente, Enea Vigore, Dafne Agilità, Atena Spirito, sovrano Vigore + Spirito). Enea barbaro, ex paladino, compagnia di nani, arma maglio-ascia; Atena ghiaccio e ombra; sovrano con armatura di cenere che si sgretola.
@@ -36,7 +36,7 @@ Metodo: punto per punto, prima le cose leggere; zip dei file modificati solo a f
 ## Punti aperti, in ordine di priorità
 
 **Leggeri**
-1. **Guardiani, uno alla volta:** prossimo Enea (barbaro, arma maglio-ascia, primaria Vigore: rivedere scontro, bottino e sala di prova), poi Dafne, Atena, sovrano (documenti).
+1. **Guardiani, uno alla volta:** Enea deciso (storia 10a: arma a doppia faccia, Furia del becchino, bottino); manca la debolezza per lo Sciamano al posto del veleno, poi va nel codice e nella sala di prova. Poi Dafne, Atena, sovrano (documenti).
 
 **Da provare prima di costruirci sopra**
 2. **Enea nella sala di prova** con le classi vere. I numeri (bilanciamento 5c) sono precedenti a Monaco d8, caratteristica di classe e CD che salgono: il 44% del Monaco nel modello non vale più.

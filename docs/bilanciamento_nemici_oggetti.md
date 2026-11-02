@@ -295,7 +295,7 @@ Il lupo normale è stato abbassato: con 11 di salute e 1d6 + 1 dava il 15% di sc
 - **Ricetta:** ingrediente base + parte infernale. **Effetto:** bevuto durante lo scontro cura lo stato e rende immuni per il resto dello scontro; bevuto prima protegge **fino al prossimo riposo** invece che per uno scontro. Conta come l'unico elisir di protezione attivo.
 - **Borsa:** i concentrati rientrano nel tetto del loro stato (2 in tutto per stato). Aldo, nella rastrelliera Elisir, dà solo quelli base.
 - Come per le altre parti, la prima portata a Guendalina sblocca una domanda e la ricetta.
-- **Alternativa di Francesco (29 ottobre, da decidere):** chiamarli elisir **comuni** e **rari**. I comuni, con risorse accessibili, *interrompono* lo stato già applicato; i rari, con risorse scarse, *proteggono* per tutto l'incontro. Differenza con il modello attuale: i comuni non proteggerebbero più se bevuti prima (vedi punto della situazione).
+- **Alternativa di Francesco (29 ottobre) → DECISA e nel codice il 29 pomeriggio:** elisir **comuni** e **rari**. I comuni, con risorse accessibili, *interrompono* lo stato già applicato; i rari, con risorse scarse, *proteggono* per tutto l'incontro. Differenza con il modello attuale: i comuni non proteggerebbero più se bevuti prima (vedi punto della situazione).
 - Senso: dal livello 3-4, quando gli animali non danno più PE, gli infernali restano utili per i concentrati, e prepararsi a Dafne, Atena e al sovrano ha una forma vera.
 
 ### Infernali delle cacce di Aldo
@@ -630,7 +630,7 @@ Le indicazioni di scena (tra parentesi) diventano narrazione, le battute dialogo
 6. Abilità del set Vespera, compresa quella dell'arma; «Passo Silenzioso» era pensata per gli stivali, va spostata o tolta. Resta da definire anche il prezzo del set (mente massima ridotta o follia più vicina).
 7. Enea: ~~carattere e stato firma~~ → decisi (storia 10b: nessuno stato firma, Incrinatura libera). Restano: conferma dei numeri dalla sala di prova (sezione 5c), dialogo con i rami Signore/Signora, scena del cimitero e collana nel gioco.
 8. ~~Borsa degli elisir~~ → confermato: 2 per stato.
-9. Elisir comuni e rari (alternativa di Francesco ai concentrati).
+9. ~~Elisir comuni e rari~~ → deciso e nel codice (29 ottobre pomeriggio): i comuni curano, i rari rendono immuni per lo scontro.
 10. Cacce contro altri avventurieri: nemici nuovi e posto nel percorso atteso.
 
 ## 10. Cosa manca (verifica del 28 ottobre)

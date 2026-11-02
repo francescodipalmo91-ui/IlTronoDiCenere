@@ -1226,14 +1226,16 @@ caso("Sala di prova, Enea: fermaglio nascosto, Spinta dà svantaggio; alla prima
 
 caso("02/11: Sala di prova, Enea barbaro: lato dell'ascia e Sanguinamento; in Furia +2 ai danni e niente finte", async (b) => {
   const { page, errori, chiudi } = await eneaSala(b, "finta", { lato: "ascia" });
-  await page.evaluate(() => { SalaProva.stato().s.lato = "ascia"; SalaProva.accoda(1, /* ascia */ 15, 5, /* TS Vigore */ 1, /* primo sangue */ 2); }); await page.click("#svAttacca");
-  let st = await statoSala(page); eq([st.sangue, st.pa, st.lato], [2, 7, "ascia"], "Squarcio: 2 PA e Sanguinamento (3 turni, il primo già all'inizio del tuo)");
+  await page.evaluate(() => { SalaProva.stato().s.lato = "ascia"; SalaProva.accoda(1, /* ascia, fuori dalla furia: niente Squarcio */ 15, 5); }); await page.click("#svAttacca");
+  eq((await statoSala(page)).sangue, 0, "prima della Furia lo Squarcio non c'è (02/11)");
+  await page.evaluate(() => { const t = SalaProva.stato(); t.s.lato = "ascia"; t.s.furiaB = true; SalaProva.accoda(1, /* ascia */ 15, 5, /* TS Vigore */ 1, /* primo sangue */ 2); }); await page.click("#svAttacca");
+  let st = await statoSala(page); eq([st.sangue, st.pa, st.lato], [2, 7, "ascia"], "Squarcio in Furia: 2 PA e Sanguinamento (3 turni, il primo già all'inizio del tuo)");
   vero(/lato dell'ascia/.test(await page.innerText("#svLog")), "manca l'annuncio del lato");
   const prima = st.pv;
   await page.evaluate(() => SalaProva.accoda(/* tuo attacco */ 1, /* ascia */ 1, /* sangue */ 3)); await page.click("#svAttacca");
   st = await statoSala(page); eq([prima - st.pv, st.sangue], [3, 1], "l'ascia manca, 1d4 di sangue all'inizio del tuo turno");
   await page.selectOption("#nEneaLato", "maglio");
-  await page.evaluate(() => { const t = SalaProva.stato(); t.s.lato = "maglio"; t.s.sangue = 0; t.s.pv = 2; SalaProva.accoda(19, 6, /* furia */ 1); }); await page.click("#svAttacca");
+  await page.evaluate(() => { const t = SalaProva.stato(); t.s.lato = "maglio"; t.s.sangue = 0; t.s.pv = 2; t.s.furiaB = false; SalaProva.accoda(19, 6, /* furia */ 1); }); await page.click("#svAttacca");
   st = await statoSala(page); eq([st.risorto, st.furia, st.carica], [true, true, "vera"], "in furia, mossa «finta»: niente finta, la carica è vera");
   const p2 = st.pv;
   await page.evaluate(() => SalaProva.accoda(/* tuo attacco */ 1, /* colpo caricato */ 15, 4, 4)); await page.click("#svAttacca");

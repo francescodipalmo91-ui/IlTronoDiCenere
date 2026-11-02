@@ -331,7 +331,37 @@ Il lupo normale è stato abbassato: con 11 di salute e 1d6 + 1 dava il 15% di sc
 
 ---
 
-## 5. Ettore, livello 2 (DECISO il 28 ottobre, passo 3)
+## 5. Ettore, livello 2 (DECISO il 28 ottobre, passo 3; RIVISTO il 2 novembre: ladro con due pugnali)
+
+**Revisione del 2 novembre (vale questa, la scheda del 28 ottobre resta sotto come storico).** Ettore è un ladro umano, il ladro calcolatore prossimo alla pazzia (storia, sezione 10a).
+
+| Voce | Valore |
+|---|---|
+| Attributi | Vigore 10, Agilità 13, **Mente 13 (+1, primaria)**, Spirito 8 (−1) |
+| Salute, CA, PA | 30, 13 (11 con il consiglio di Aldo), 8: invariati |
+| Attacco | **due pugnali per turno**, ciascuno **+2** (Mente +1, arma +1) e **1d4 + 1 tagliente** |
+| CD dei suoi effetti | 11 |
+
+- **Il conteggio:** conta ogni pugnale, quindi il dodicesimo colpo arriva intorno al sesto turno, dentro la durata di uno scontro. Abbassato a **vantaggio e +1d6** (prima +1d8). Resta chi gli fa perdere il conto (sotto metà salute, frastornato, stordito).
+- **Lama nel fianco** (2 PA, al posto del Fendente sporco): al secondo pugnale, se il primo è andato a segno, paga 2 punti (tenendo da parte i 3 delle braci); se anche il secondo va a segno, TS Vigore CD 11 contro Sanguinamento.
+- **«L'ho già vista»** (gratis): dalla seconda volta che il personaggio usa la stessa tecnica o lo stesso incantesimo d'attacco, Ettore ha +2 alla CA contro quell'attacco. Le difese non contano. Spinge a variare invece di ripetere la mossa migliore.
+- **Invariati:** Colpo basso (ora con un pugnale), Le braci, La gamba, vulnerabilità a luce e contundente, perde il primo turno se sorpreso (a recuperare i pugnali).
+- **Bottino se ucciso:** «Pugnale del conteggio», 1d4 + livello tagliente, una mano; ogni terzo colpo a segno con l'arma nello stesso scontro +1d4. Diverso dal Pugnale della Biscia di Isotta, che fa solo danno.
+- **Simulazione del 2 novembre** (modello di duello tarato sulle percentuali del 28 ottobre senza consiglio, 20.000 scontri; vale il confronto, non il numero assoluto):
+
+| Personaggio | Prima (spada) | Pugnali a +3 | **Pugnali a +2 (scelto)** |
+|---|---|---|---|
+| Guerriero | 84% | 80% | **86%** |
+| Sciamano | 67% | 59% | **67%** |
+| Arcanista | 47% | 38% | **45-46%** |
+| Monaco | 58% | 46% | **53-55%** |
+
+  Con +3 i due attacchi colpivano troppo spesso le CA basse degli incantatori. Il Monaco resta qualche punto sotto per via di «L'ho già vista» (nel modello ripete sempre la stessa mossa: un giocatore che varia ne soffre meno). Da confermare nella sala di prova con le classi vere.
+- **Attenzione:** anche Isotta (agguati) combatte con due pugnali. Il giocatore incontra prima Ettore: valutare più avanti se differenziarla.
+- **Immagini da rifare** (Francesco): la cripta con Ettore e il suo ritratto mostrano ancora la spada.
+
+### Scheda del 28 ottobre (storico, superata)
+
 
 | Voce | Valore |
 |---|---|

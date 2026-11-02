@@ -33,7 +33,8 @@
   const NEMICI = {
     mastino: { nome: "Mastino infernale (comune)", ca: 10, dadoVita: 6, dannoDado: 4, attacco: 1, boss: false, probPresa: 0.6, probSoffio: 0.4, soffio: { cd: 12, dadi: 2, dado: 6, ricarica: 5 }, arma: false },
     /* 01/11: caratteristica primaria dei guardiani (attacco): Ettore Mente con Spirito volutamente basso, Enea Spirito */
-    ettore: { nome: "Ettore (boss)", ca: 13, pv: 30, vigore: 12, stat: { Vigore: 12, "Agilità": 13, Mente: 12, Spirito: 8 }, primaria: "Mente", dadoVita: 8, dannoDado: 6, attacco: 2, boss: true, probPresa: 0, probSoffio: 0, soffio: null, arma: true, resa: true, vuln: ["Contundente", "Luce"] },
+    /* 02/11: Ettore ladro, due pugnali 1d4 + 1 (in gioco anche il conteggio, Lama nel fianco e «L'ho già vista»; qui solo i due attacchi) */
+    ettore: { nome: "Ettore (boss)", ca: 13, pv: 30, vigore: 10, stat: { Vigore: 10, "Agilità": 13, Mente: 13, Spirito: 8 }, primaria: "Mente", dadoVita: 8, dannoDado: 4, dannoBonus: 1, attacchi: 2, nomeArma: "Pugnale", attacco: 1, boss: true, probPresa: 0, probSoffio: 0, soffio: null, arma: true, resa: true, vuln: ["Contundente", "Luce"] },
     /* 30/10, PROPOSTA: bilanciamento_nemici_oggetti.md, sezione 5c */
     enea: { nome: "Enea (boss, argento)", ca: 13, pv: 36, vigore: 12, stat: { Vigore: 12, "Agilità": 10, Mente: 12, Spirito: 14 }, primaria: "Spirito", attaccoFisso: 4 /* Spirito 14 (+2) + 2 */, pa: 9, boss: true, enea: true, arma: true, vuln: ["Forza", "Luce", "Veleno"] },
     manichino: { nome: "Manichino (non attacca)", ca: 12, pv: 60, boss: false, passivo: true, arma: false }
@@ -294,13 +295,13 @@
           const dd = difesa(dn); if (dd > 0) ferisci(dd, righe);
         }
       }
-      if (!fatto) {
-        const morso = nem.arma ? false : Math.random() < 0.5 || $("nMorso").checked, nome = nem.arma ? "Spada" : morso ? "Morso" : "Zampata";
-        const m = mod(statNem(nem.primaria || "Vigore")) + (nem.attacco || 0) + C.modAttaccoNem(s), /* 01/11: caratteristica primaria */ at = C.tiroAttaccoNem(s, c), d = at.d, tot = d + m, ca = caPg(), crit = d === 20 && C.critNemPossibile(s), ok = crit || tot > ca;
+      for (let k = 0; !fatto && k < (nem.attacchi || 1) && pg.pv > 0; k++) { /* 02/11: più attacchi per turno (Ettore) */
+        const morso = nem.arma ? false : Math.random() < 0.5 || $("nMorso").checked, nome = nem.arma ? (nem.nomeArma || "Spada") : morso ? "Morso" : "Zampata";
+        const m = mod(statNem(nem.primaria || "Vigore")) + (nem.attacco || 0) + C.modAttaccoNem(s), /* 01/11: caratteristica primaria */ at = C.tiroAttaccoNem(s, c), d = at.d, tot = d + m, ca = caPg(), crit = d === 20 && C.critNemPossibile(s), ok = crit || tot > ca, bD = nem.dannoBonus != null ? nem.dannoBonus : m;
         if (at.tiri) righe.push(`Due d20, tiene il peggiore: ${at.tiri[0]} e ${at.tiri[1]}.`);
         if (!ok) { righe.push(`${nome}: mancato (d20 ${d} ${fmt(m)} = ${tot} contro la tua CA ${ca}). Nessuna furia.`); righe.push(...testoEventi(C.colpoMancato(s, c))); }
         else if (!s.parata) { /* scudo, Baluardo, Marea Elastica: il danno si tira prima */
-          const nd = crit ? 2 : 1, tiri = Array.from({ length: nd }, () => tira(nem.dannoDado)), pieno = Math.max(1, tiri.reduce((a, b) => a + b, 0) + m);
+          const nd = crit ? 2 : 1, tiri = Array.from({ length: nd }, () => tira(nem.dannoDado)), pieno = Math.max(1, tiri.reduce((a, b) => a + b, 0) + bD);
           const sub = C.colpoSubito(s, c, crit, pieno);
           righe.push(`${nome}: ${crit ? "CRITICO" : "colpito"} (d20 ${d} ${fmt(m)} = ${tot} contro CA ${ca}), ${pieno} danni [${tiri.join("+")}].`, ...testoEventi(sub.eventi));
           const dd = difesa(sub.danno), fatto = dd > 0 ? ferisci(dd, righe) : 0;
@@ -318,7 +319,7 @@
           const sub = C.colpoSubito(s, c, crit);
           if (sub.annullato) righe.push(`${nome}: colpirebbe (d20 ${d} ${fmt(m)} = ${tot} contro CA ${ca}), ma la Parata lo annulla: 0 danni, nessuna furia.`, ...testoEventi(sub.eventi.filter(e => e.k === "stato" || e.k === "crepe")), ...sub.eventi.filter(e => e.k === "contrattacco").map(e => `Contrattacco${e.dCrit ? ` (critico 18-20: d20 ${e.dCrit} → ${e.crit ? "CRITICO" : "no"})` : ""}: ${e.tiri.length}d${e.dado} [${e.tiri.join("+")}] ${fmt(e.mm)} = ${e.danno} danni.`));
           else {
-            const nd = crit ? 2 : 1, tiri = Array.from({ length: nd }, () => tira(nem.dannoDado)), dn = Math.max(1, tiri.reduce((a, b) => a + b, 0) + m);
+            const nd = crit ? 2 : 1, tiri = Array.from({ length: nd }, () => tira(nem.dannoDado)), dn = Math.max(1, tiri.reduce((a, b) => a + b, 0) + bD);
             pg.pv -= dn; if (!arcanista()) pg.furia = Math.min(pg.furiaMax, pg.furia + sub.furia);
             righe.push(`${nome}: ${crit ? "CRITICO" : "colpito"} (d20 ${d} ${fmt(m)} = ${tot} contro CA ${ca}), ${dn} danni [${tiri.join("+")}]. +${sub.furia} furia.`);
             if (morso && !s.presaUsata && !C.attivo(s, "silenzio") && !C.attivo(s, "muro") && (Math.random() < nem.probPresa || $("nPresa").checked)) {

@@ -30,11 +30,13 @@ Metodo: punto per punto, prima le cose leggere; zip dei file modificati solo a f
 - Nuova immagine del giardino (logo rimosso).
 - **Serra:** era di Adele. Dopo un riposo, alla prima visita del giorno (non la prima in assoluto) e dopo il dialogo in cucina, si trova Guendalina tra i vasi: una volta sola, racconta la serra e la sua arte di miscelare, promette il laboratorio in cambio della scaletta (o lo collega alla serra se già sbloccato) e regala un'erba. Niente incontri durante la scena. Testi PROVVISORI.
 - **Orto:** agguati e animali restano al 20%.
+- **Revisione dei guardiani e del sovrano** (storia 10a): razza, arma, classe e una primaria diversa per ciascuno (Ettore Mente, Enea Vigore, Dafne Agilità, Atena Spirito, sovrano Vigore + Spirito). Enea barbaro, ex paladino, compagnia di nani, arma maglio-ascia; Atena ghiaccio e ombra; sovrano con armatura di cenere che si sgretola.
+- **Ettore ladro nel codice:** due pugnali a +2 (1d4 + 1), conteggio per pugnale (+1d6), Lama nel fianco, «L'ho già vista», Pugnale del conteggio se ucciso, testi con i pugnali. Simulazione: percentuali in linea con prima (Monaco qualche punto sotto). Immagini della cripta e del ritratto da rifare.
 
 ## Punti aperti, in ordine di priorità
 
 **Leggeri**
-1. Primaria del sovrano.
+1. **Guardiani, uno alla volta:** prossimo Enea (barbaro, arma maglio-ascia, primaria Vigore: rivedere scontro, bottino e sala di prova), poi Dafne, Atena, sovrano (documenti).
 
 **Da provare prima di costruirci sopra**
 2. **Enea nella sala di prova** con le classi vere. I numeri (bilanciamento 5c) sono precedenti a Monaco d8, caratteristica di classe e CD che salgono: il 44% del Monaco nel modello non vale più.

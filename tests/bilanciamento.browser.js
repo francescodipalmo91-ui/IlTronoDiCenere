@@ -74,10 +74,10 @@ caso("Mastino della cantina: statistiche fisse (13 salute, 3 PA, Vigore 12) e So
   eq(await page.evaluate(() => [scontro.pvMax, scontro.paMax, scontro.stat.Vigore, NEMICI.mastino.soffio.cd, NEMICI.mastino.soffio.dadi]), [13, 3, 12, 11, 1]);
   eq(errori, [], "errori"); await chiudi();
 });
-caso("Ettore: Vigore 12, attacco +3, danno 1d6 + 3", async (b) => {
+caso("02/11: Ettore ladro, Mente 13, attacco +2, due pugnali 1d4 + 1", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ livello: 2 }), PARTITA({ livello: 2 }));
   await page.evaluate(() => avviaScontro("esploratore", { ctx: "ettore", primo: "pg" })); await aspettaTurnoPg(page);
-  eq(await page.evaluate(() => [scontro.stat.Vigore, mod(scontro.stat.Vigore) + NEMICI.esploratore.attacco, NEMICI.esploratore.dannoBonus, scontro.pvMax, scontro.paMax]), [12, 3, 3, 30, 8]);
+  eq(await page.evaluate(() => [scontro.stat.Mente, mod(scontro.stat.Mente) + NEMICI.esploratore.attacco, NEMICI.esploratore.dannoDado, NEMICI.esploratore.dannoBonus, NEMICI.esploratore.attacchi, NEMICI.esploratore.tipoDanno, scontro.pvMax, scontro.paMax]), [13, 2, 4, 1, 2, "Tagliente", 30, 8]);
   eq(errori, [], "errori"); await chiudi();
 });
 caso("Stati: Sanguinamento 1d4 per 3 turni, letale; i malus durano 2 turni; tutto finisce con lo scontro", async (b) => {
@@ -199,13 +199,13 @@ caso("29/10: la vulnerabilità alla forza vale anche per la Spinta (senza tiro),
   eq(r, 50 - 4 - 5, "2d6 invece di 1d6");
   eq(errori, [], "errori"); await chiudi();
 });
-caso("29/10: Ettore attaccato a sorpresa perde il primo turno a recuperare la spada; vulnerabile a luce e contundente", async (b) => {
+caso("29/10: Ettore attaccato a sorpresa perde il primo turno a recuperare i pugnali; vulnerabile a luce e contundente", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ livello: 2 }), PARTITA({ livello: 2, luogo: "cripta", usate: { riposo: "sbloccato", ettore: "incontrato", ettore_sorpreso: true, ettore_disarmato: true } }));
   await page.evaluate(() => { luogo = "cripta"; avviaScontroEttore(); }); await aspettaTurnoPg(page);
   eq(await page.evaluate(() => [scontro.disarmato, usate.ettore_disarmato, dadiVuln("Luce"), dadiVuln("Forza")]), [true, false, 1, 0]);
   await page.evaluate(() => { scontro.tuoTurno = false; turnoNemScontro(); });
   await aspettaTurnoPg(page);
-  vero(/recuperare l'arma/.test(await diario(page)), "manca il turno perso");
+  vero(/recuperarli/.test(await diario(page)), "manca il turno perso");
   eq(await page.evaluate(() => [scontro.disarmato, pg.dannoFisico || 0]), [false, 0], "nessun attacco nel turno perso");
   eq(errori, [], "errori"); await chiudi();
 });

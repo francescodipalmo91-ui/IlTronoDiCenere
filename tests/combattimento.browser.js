@@ -1129,7 +1129,7 @@ caso("Cripta: discesa furtiva riuscita, scelta tra farsi avanti e colpire; il co
 caso("Ettore: livello 2 fisso (30 salute, 8 punti abilità, 400 PE), crescita oltre il livello 2, vulnerabile a contundente e luce", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "cripta", usate: { riposo: "sbloccato", ettore: "scontro" } }));
   await page.evaluate(() => { luogo = "cripta"; avviaScontro("esploratore", { ctx: "ettore", testi: "esploratore", primo: "pg" }); }); await aspettaTurnoPg(page);
-  eq(await page.evaluate(() => [scontro.pvMax, scontro.paMax, scontro.stat.Vigore, scontro.stat.Spirito, NEMICI.esploratore.xp, dadiVuln("Contundente"), dadiVuln("Luce"), dadiVuln("Forza")]), [30, 8, 12, 8, 400, 1, 1, 0], "Vigore 12; luce e contundente (29/10)");
+  eq(await page.evaluate(() => [scontro.pvMax, scontro.paMax, scontro.stat.Vigore, scontro.stat.Spirito, NEMICI.esploratore.xp, dadiVuln("Contundente"), dadiVuln("Luce"), dadiVuln("Forza")]), [30, 8, 10, 8, 400, 1, 1, 0], "Vigore 10 (02/11: ladro); luce e contundente (29/10)");
   vero(await page.evaluate(() => document.getElementById("vitaliNem").textContent.includes(ET.scontro.pa) || !scontro.svelata), "punti abilità nella scheda");
   await page.evaluate(() => { scontro.svelata = true; disegnaNemico(); });
   vero(await page.evaluate(() => document.getElementById("vitaliNem").textContent.includes("8 / 8") && document.getElementById("specNem").textContent.includes(ET.scontro.abilita[1][0])), "scheda con punti abilità e abilità");
@@ -1137,16 +1137,18 @@ caso("Ettore: livello 2 fisso (30 salute, 8 punti abilità, 400 PE), crescita ol
   eq(await page.evaluate(() => [scontro.pvMax, scontro.paMax, scontro.bonusAtt, scontro.conta]), [35, 9, 1, 3], "livello 3: +5 salute, +1 PA, +1 per colpire; rivincita da tre");
   eq(errori, [], "errori"); await chiudi();
 });
-caso("Ettore: fendente sporco e Sanguinamento, braci sotto metà salute, colpo basso dopo una difesa, la gamba, conto perso", async (b) => {
+caso("Ettore: Lama nel fianco (entrambi i pugnali a segno) e Sanguinamento, braci sotto metà salute, colpo basso dopo una difesa, la gamba, conto perso", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "cripta", usate: { riposo: "sbloccato", ettore: "scontro" } }));
   await page.evaluate(() => { luogo = "cripta"; avviaScontro("esploratore", { ctx: "ettore", testi: "esploratore", primo: "pg" }); }); await aspettaTurnoPg(page);
-  await accoda(page, [R(18, 20), R(3, 6), R(1, 20)], [0.1]);
-  await page.evaluate(() => { scontro.tuoTurno = false; attaccoNemScontro(); });
-  eq(await page.evaluate(() => [scontro.pa, haStato("sangue")]), [6, true], "fendente: 2 PA e Sanguinamento");
-  await page.waitForTimeout(3500); await aspettaTurnoPg(page);
+  await accoda(page, [R(18, 20), R(3, 4), R(18, 20), R(3, 4), R(1, 20)], [0.1, 0.1]);
+  await page.evaluate(() => { scontro.tuoTurno = false; scontro.attRest = 1; attaccoNemScontro(); }); /* due pugnali: il secondo parte da solo */
+  await page.waitForFunction(() => haStato("sangue"), null, { timeout: 10000 });
+  eq(await page.evaluate(() => [scontro.pa, haStato("sangue"), scontro.ettColpi]), [6, true, 2], "Lama nel fianco: 2 PA e Sanguinamento");
+  await page.waitForTimeout(3500);
+  await aspettaTurnoPg(page);
   eq(await page.evaluate(() => [haStato("sangue"), document.getElementById("diario").textContent.includes(BT.stati.sangue.tick(1, 1, 1).split(":")[0])]), [true, true], "il sangue scorre all'inizio del tuo turno");
   await accoda(page, [R(1, 20), R(3, 4)]);
-  eq(await page.evaluate(() => { scontro.pv = 14; const fine = abilitaEttorePrimaDiAttaccare(); return [fine, scontro.braciUsate, scontro.pa, haStato("ustione")]; }), [true, true, 3, true], "le braci");
+  eq(await page.evaluate(() => { scontro.pv = 14; pg.dannoFisico = 0; const fine = abilitaEttorePrimaDiAttaccare(); /* 02/11: due pugnali fanno più male, si riparte da salute piena */ return [fine, scontro.braciUsate, scontro.pa, haStato("ustione")]; }), [true, true, 3, true], "le braci");
   await page.waitForTimeout(3500); await aspettaTurnoPg(page);
   await accoda(page, [R(2, 4)]);
   eq(await page.evaluate(() => { pg.dannoFisico = 0; scontro.difesaUltima = true; const fine = abilitaEttorePrimaDiAttaccare(); return [fine, scontro.colpoBassoUsato, scontro.pa]; }), [false, true, 0], "colpo basso, poi l'attacco"); /* 28/10: gli stati sono letali, si riparte da salute piena */
@@ -1265,10 +1267,21 @@ caso("Peso dei giorni: al 10° giorno −1 alla salute mentale massima con avvis
   eq(errori, [], "errori"); await chiudi();
 });
 
+caso("02/11: Ettore, «L'ho già vista» (+2 CA dalla seconda volta della stessa tecnica), dodicesimo colpo +1d6, Pugnale del conteggio se ucciso", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "cripta", usate: { riposo: "sbloccato", ettore: "scontro" } }));
+  await page.evaluate(() => { luogo = "cripta"; avviaScontro("esploratore", { ctx: "ettore", testi: "esploratore", primo: "pg" }); }); await aspettaTurnoPg(page);
+  eq(await page.evaluate(() => { const ca0 = caNem(); const a = giaVistaEttore("t:x"); scontro.giaVista = a; const ca1 = caNem(); const b2 = giaVistaEttore("t:x"); scontro.giaVista = b2; const ca2 = caNem(); scontro.giaVista = false; return [a, ca1 - ca0, b2, ca2 - ca0, giaVistaEttore("i:y")]; }), [false, 0, true, 2, false], "la prima volta no, la seconda +2, un'altra mossa no");
+  eq(await page.evaluate(() => [ET.scontro.dodiciDanno(3).includes("1d6"), ET.scontro.abilita.map(x => x[0]).includes("L'ho già vista")]), [true, true]);
+  await page.evaluate(() => { scontro.pv = 0; vittoriaScontro(); });
+  await page.waitForFunction(() => zaino.some(x => x.conteggio), null, { timeout: 10000 });
+  eq(await page.evaluate(() => { const p = zaino.find(x => x.conteggio); return [p.danno, p.tipoDanno, p.bonus >= 2, usate.ettore]; }), ["1d4", "Tagliente", true, "morto"], "Pugnale del conteggio nello zaino");
+  eq(errori, [], "errori"); await chiudi();
+});
+
 /* ======================= 01/11: Furtività contro la Percezione dei guardiani ======================= */
 caso("Furtività contro Ettore: prova contrapposta; riuscita → agisci per primo e lui −2 CA nel primo turno; fallita → agisce lui e tu −2 CA", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "cappella", usate: { riposo: "sbloccato", q4: "accettata" } }));
-  eq(await page.evaluate(() => percezioneGuardiano("esploratore", 0).mod), 3, "Ettore: Mente 12 (+1) + livello 2");
+  eq(await page.evaluate(() => percezioneGuardiano("esploratore", 0).mod), 3, "Ettore: Mente 13 (+1) + livello 2");
   eq(await page.evaluate(() => percezioneGuardiano("esploratore", -2).mod), 1, "tracce trovate: −2");
   /* riuscita: tu 15 + Furtività, lui 5 + 3 */
   await page.evaluate(() => { luogo = "cappella"; esamina("cripta_furtiva"); });

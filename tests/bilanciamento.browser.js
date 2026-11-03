@@ -187,7 +187,7 @@ caso("Zone: fuori casa ratto, corvo, lupo e i doppi infernali; foresta lupo, cin
 });
 caso("29/10: foresta con immagine e testo nuovi; cripta con Ettore e senza", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA());
-  eq(await page.evaluate(() => [vista("pineta").img.src, TX.stanze.pineta.intro.length]), ["immagini/house/foresta_pini.webp", 3]);
+  eq(await page.evaluate(() => [vista("pineta").img.src, TX.stanze.pineta.intro.length]), ["immagini/house/foresta_pini_nord.webp", 3] /* 02/11: tre settori della foresta */);
   eq(await page.evaluate(() => { usate.ettore = "scontro"; const a = vista("cripta").img.src; usate.ettore = "morto"; return [a, vista("cripta").img.src]; }), ["immagini/house/cripta_ettore.webp", "immagini/house/cripta.webp"]);
   eq(errori, [], "errori"); await chiudi();
 });
@@ -199,10 +199,10 @@ caso("29/10: la vulnerabilità alla forza vale anche per la Spinta (senza tiro),
   eq(r, 50 - 4 - 5, "2d6 invece di 1d6");
   eq(errori, [], "errori"); await chiudi();
 });
-caso("29/10: Ettore attaccato a sorpresa perde il primo turno a recuperare i pugnali; vulnerabile a luce e contundente", async (b) => {
+caso("29/10: Ettore attaccato a sorpresa perde il primo turno a recuperare i pugnali; vulnerabile a contundente, forza e negromanzia (mappa del 03/11)", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ livello: 2 }), PARTITA({ livello: 2, luogo: "cripta", usate: { riposo: "sbloccato", ettore: "incontrato", ettore_sorpreso: true, ettore_disarmato: true } }));
   await page.evaluate(() => { luogo = "cripta"; avviaScontroEttore(); }); await aspettaTurnoPg(page);
-  eq(await page.evaluate(() => [scontro.disarmato, usate.ettore_disarmato, dadiVuln("Luce"), dadiVuln("Forza")]), [true, false, 1, 0]);
+  eq(await page.evaluate(() => [scontro.disarmato, usate.ettore_disarmato, dadiVuln("Ombra"), dadiVuln("Forza"), dadiVuln("Luce")]), [true, false, 1, 1, 0]);
   await page.evaluate(() => { scontro.tuoTurno = false; turnoNemScontro(); });
   await aspettaTurnoPg(page);
   vero(/recuperarli/.test(await diario(page)), "manca il turno perso");

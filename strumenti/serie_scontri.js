@@ -1,6 +1,6 @@
 /* Serie automatica di scontri nella pagina di test (stesso motore della sala di prova): percentuale di vittorie per classe e caso.
    Uso: python3 -m http.server 8765 --bind 127.0.0.1, poi  N=150 node strumenti/serie_scontri.js
-   Opzioni: N (scontri per caso), SOLO_ENEA=1 (solo Enea col fermaglio), CLASSI=guerriero,monaco. Equipaggiamento e preparazione rispettano le regole di classe (03/11). Il giocatore automatico è pessimista: confronta le versioni, non leggere i numeri come assoluti. */
+   Opzioni: PORT (porta del server, predefinita 8765), N (scontri per caso), SOLO_ENEA=1 (solo Enea col fermaglio), CLASSI=guerriero,monaco. Equipaggiamento e preparazione rispettano le regole di classe (03/11). Il giocatore automatico è pessimista: confronta le versioni, non leggere i numeri come assoluti. */
 const { chromium } = require('playwright');
 const N = Number(process.env.N || 300);
 const MEDIO = process.env.BOT !== 'vecchio'; /* 03/11: predefinito il giocatore medio che gioca le combo; BOT=vecchio per il confronto */
@@ -15,7 +15,7 @@ const CLASSI = process.env.CLASSI ? process.env.CLASSI.split(',') : ['guerriero'
 (async () => {
   const b = await chromium.launch(); const p = await b.newPage(); const err = [];
   p.on('pageerror', e => err.push(e.message));
-  await p.goto('http://127.0.0.1:8765/test.html'); await p.waitForTimeout(800);
+  await p.goto(`http://127.0.0.1:${process.env.PORT || 8765}/test.html`); /* 03/11: PORT per più serie in parallelo (ognuna su una copia dei file, così le modifiche in corso non si mescolano) */ await p.waitForTimeout(800);
   const righe = [];
   for (const c of CASI) for (const cl of CLASSI) {
     await p.selectOption('#pLiv', String(c.liv)); await p.selectOption('#pClasse', cl); if (process.env.SCUOLA && (cl === 'arcanista' || cl === 'monaco')) await p.selectOption('#pScuola', process.env.SCUOLA.split(',')[cl === 'arcanista' ? 0 : 1] || process.env.SCUOLA);

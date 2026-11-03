@@ -93,3 +93,48 @@
 | 7 | **Fatto.** Tolto il codice morto e il danno «tutte le prove della stanza fallite». Nuova regola decisa: diari (bronzo/argento 1d2, oro/platino 1d4, campo `grado` della pagina) e flashback (1d4) feriscono la mente solo la prima volta e non la portano mai sotto 1. Regolamento aggiornato. |
 | 8 | **Fatto.** Tolto il ripiego HTMLAudio; senza howler il gioco resta giocabile ma muto (il fuoco generato suona comunque). |
 | 9 | **Fatto.** Corretti i 4 commenti. |
+
+---
+
+# Audit Ponytail del 3 novembre 2026 (seconda passata)
+
+*Regole di `/ponytail-audit` (DietrichGebert/ponytail, scaricato da GitHub il 3/11), insieme a `impeccable detect` (pbakaus/impeccable 0.1.18) e a tutti gli strumenti del repo.*
+
+**Cosa fa questo progetto:** gioco di ruolo testuale per browser, statico, con salvataggi nel browser e su Firestore. **Carico ipotizzato:** una persona, due dispositivi.
+
+**Cosa ho letto e provato:** tutto ciò che è cambiato il 3 novembre (Arcanista, Vita e Negromanzia, mappa delle vulnerabilità, Enea, regolamento) per intero; `npm test`; tutti i test nel browser (fumo con axe, esterni, bilanciamento, Sciamano, combattimento in 4 parti, livelli, cacce); `impeccable detect` sui file e sulle pagine renderizzate.
+
+## Sistemato in questa passata
+
+1. **Ramo morto del vecchio sistema di incantesimi** (`gioco.html`, `lanciaInScontro`): 34 righe irraggiungibili, perché dal 25/10 ogni incantesimo ha una scuola. Tolte; un incantesimo senza scuola ora mostra «arriverà presto».
+2. **`js/incantesimi.js`** non era caricato da nessuna pagina: cancellato (64 righe).
+3. **Variabili morte** in `js/magia_combattimento.js` (`segno`, `inflitto`) dopo il cambio dello Spirito Servitore: tolte (lint da 14 a 12 avvisi).
+4. **Titoli di creazione.html** saltavano un livello (h1 → h3 → h4): ora h1 → h2 → h3, aspetto identico al pixel (segnalato da impeccable; conta per i lettori di schermo).
+5. **Sei test con aspettative superate** dalle decisioni del giorno (mappa di Ettore, 20 capitoli, 1 mana per Sigillo, Vita, immagine della foresta): aggiornati. Tutti i test nel browser verdi.
+6. **`strumenti/serie_scontri.js`**: opzione `PORT`, per lanciare più serie in parallelo su copie dei file.
+
+## Da sistemare
+
+7. **I dati di Enea sono in due posti e presto in tre** (`js/sala_prova.js` riga 48, `js/preset_test.js` riga 54; poi `NEMICI` in gioco.html)
+   - **Problema:** oggi la salute 36 → 32 è andata cambiata due volte a mano. Lo stesso vale per le vulnerabilità di Ettore (sala e gioco).
+   - **Correzione:** quando Enea entra nel gioco, la sala legga i numeri da `NEMICI` (come già fa per altro), oppure un test confronti sala e gioco. Un test bastano 10 righe.
+   - **Se non lo facciamo:** la sala di prova misura un Enea diverso da quello del gioco e i numeri del bilanciamento mentono.
+8. **Il giocatore automatico conta Runa sull'Arma tra gli incantesimi di danno** (`js/sala_prova.js`, `preparaPredefiniti`, regola `/\dd\d/`)
+   - **Problema:** il testo «1d6 → 1d8» fa scattare la regola: con l'Arcano principale il bot prepara sempre la Runa.
+   - **Correzione:** escludere i testi con «→»; poi rifare la serie dell'Arcanista.
+   - **Se non lo facciamo:** la misura dell'Arcano è un po' falsata (in che verso, si vedrà).
+9. **SISTEMATO (3/11): Stordito saltava anche la Rigenerazione e il Pozzo Arcano** (`gioco.html`, inizio del turno; ora Linfa, Pozzo, Rigenerazione e Spirito Servitore vengono prima del controllo di Stordito)
+   - **Problema:** se il personaggio è Stordito, l'inizio turno esce prima di Rigenerazione, Spirito Servitore e Pozzo, ma gli effetti scalano lo stesso: si perde una cura o un colpo.
+   - **Correzione:** chiamare `inizioTurnoMonaco` / `inizioTurnoPozzo` prima del controllo di Stordito. Due righe spostate. Raro finché pochi nemici stordiscono il personaggio.
+10. **Testi narrativi del vecchio sistema ancora presenti** (`gioco.html`, mappe `inc` e `tsEffetto` dei testi di Ettore e del mastino): circa 60 righe di dati non più letti. Da togliere insieme alle due righe `rimO(B.inc)` e `rimO(B.tsEffetto)` che li copiano.
+
+## Note di impeccable
+
+- `gioco.html`: bagliore rosso attorno al ritratto: **voluto** (salute bassa ben visibile, deciso con Francesco).
+- Spaziatura 0.06em sui titoli in Cinzel: **voluta** (Cinzel solo per titoli brevi).
+- `test.html`: riquadri annidati e barre senza margine interno: pagina di servizio, non del giocatore.
+- Molte dimensioni di carattere fuori dalla scala di DESIGN.md (avvisi): da riordinare solo se si rifà la grafica.
+
+**Verdetto:** sano. Prima la 7 (dati di Enea in un posto solo) quando Enea entra nel gioco, poi la 8 e la 10.
+**Lean:** −98 righe fatte oggi, −60 possibili (punto 10).
+**Non controllato:** regole Firestore sull'emulatore (serve Java), il sito pubblicato e il telefono vero.

@@ -47,6 +47,12 @@ Metodo: punto per punto, prima le cose leggere; zip dei file modificati solo a f
 - **Monaco: Vita e Negromanzia** al posto di Luce e Ombra (nomi, testi, Rigenerazione su Voto di Vita e Grazia, Spirito Servitore). Incantesimi, sezione 3.
 - Serie di tutte le classi in bilanciamento (fine documento). Enea sotto l'80% per tutti; l'Arcano principale 20 punti sotto la Forza per la meccanica (Sigilli 2 sui boss, controlli ridotti), non per le vulnerabilità.
 
+## 3 novembre, sera
+- **Enea tarato:** salute 32, Furia senza +2 (scala: 80% con la via giusta).
+- **Regolamento riorganizzato:** 4 parti, 20 capitoli, «Regole comuni alle classi», classi con lo stesso schema; IT e EN.
+- **Verifiche:** ponytail-audit e impeccable da GitHub (resoconto in PONYTAIL_AUDIT.md, seconda passata); tolti il vecchio `js/incantesimi.js` e il suo ramo in gioco.html; titoli di creazione in ordine; Stordito non salta più Rigenerazione, Pozzo, Linfa e Spirito; test aggiornati, tutti verdi.
+- **Restano dall'audit:** dati di Enea in un posto solo (quando entra nel gioco), bot che conta Runa sull'Arma come danno, testi narrativi del vecchio sistema (~60 righe).
+
 ## Punti aperti, in ordine di priorità
 
 **Subito (in corso il 3 novembre)**

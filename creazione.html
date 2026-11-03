@@ -18,7 +18,7 @@
     main { max-width: 78rem; margin: 0 auto; }
     h1 { font-size: clamp(2rem, 5vw, 2.5rem); margin: 0 0 1.5rem; font-weight: 600; text-align: center; }
     h2 { font-size: 1.6rem; margin: 0 0 1rem; font-weight: 600; }
-    h3 { font-size: 1.2rem; margin: 1.75rem 0 0.4rem; font-weight: 600; }
+    h2.sez, h3 { font-size: 1.2rem; margin: 1.75rem 0 0.4rem; font-weight: 600; } /* 03/11: titoli di sezione h2 (prima h3: saltavano un livello dopo l'h1) */
     h2, h3 { font-family: var(--f-titoli); letter-spacing: 0.05em; }
     label { display: block; margin-bottom: 0.4rem; }
     .formati, .guida { color: var(--muted); font-size: 0.9rem; margin: 0.4rem 0 0; }
@@ -52,12 +52,12 @@
       .pagina.magia #equip { padding-right: 0; }
       #incantesimi, #tecniche { padding: 2rem 0 0; margin-top: 2rem; border-left: 0; border-image: none; border-top: 1px solid var(--line); }
     }
-    h4 { font-size: 1.05rem; margin: 1.5rem 0 0.3rem; font-weight: 600; }
+    h3.sub, h4 { font-size: 1.05rem; margin: 1.5rem 0 0.3rem; font-weight: 600; }
     .riga { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem 3rem; max-width: 46rem; margin: 0 auto 1.75rem; text-align: center; }
     .riga .razze, .riga .ritratto { justify-content: center; }
     .riga .ritratto > div:last-child { text-align: left; }
     @media (max-width: 560px) { .riga { grid-template-columns: 1fr; } }
-    .riga h3 { margin-top: 0; }
+    .riga h2.sez { margin-top: 0; }
 
     input[type="text"], input[type="number"] { font: inherit; color: inherit; background: transparent; border: 2px solid var(--line); border-radius: 0.5rem; padding: 0.6rem 0.75rem; }
     #nome { width: 100%; }
@@ -177,7 +177,7 @@
     <h1 data-t="titolo">Creazione del personaggio</h1>
     <form id="scheda">
         <div class="centro nome-box">
-          <h3 style="margin-top:0"><label for="nome" style="margin:0" data-t="nome">Nome</label></h3>
+          <h2 class="sez" style="margin-top:0"><label for="nome" style="margin:0" data-t="nome">Nome</label></h2>
           <input id="nome" name="nome" type="text" maxlength="40" required autocomplete="off">
         </div>
         <div class="centro">
@@ -187,12 +187,12 @@
 
         <div class="riga">
           <div>
-            <h3 id="h-razza" data-t="razza">Razza</h3>
+            <h2 class="sez" id="h-razza" data-t="razza">Razza</h2>
             <p class="guida" style="margin:0 0 0.6rem" data-t="guidaRazza">Scegli una razza.</p>
             <div class="razze" id="razze" role="radiogroup" aria-labelledby="h-razza"></div>
           </div>
           <div>
-            <h3 id="h-classe" data-t="classe">Classe</h3>
+            <h2 class="sez" id="h-classe" data-t="classe">Classe</h2>
             <p class="guida" style="margin:0 0 0.6rem" data-t="guidaClasse">Scegli una classe.</p>
             <div class="razze" id="classi" role="radiogroup" aria-labelledby="h-classe"></div>
           </div>
@@ -200,54 +200,54 @@
 
         <div class="pagina">
           <section id="pers">
-          <h3 style="margin-top:0" data-t="statistiche">Statistiche</h3>
+          <h2 class="sez" style="margin-top:0" data-t="statistiche">Statistiche</h2>
           <p class="punti" id="punti"><span data-t="punti">Punti da distribuire:</span> <strong id="rimasti">10</strong> <span data-t="su">su</span> <span id="totale">10</span></p>
           <table>
             <thead><tr><th data-t="thAttributo">Attributo</th><th data-t="thUtilizzo">Utilizzo</th><th data-t="thRazza">Razza</th><th data-t="thMod">Mod</th><th data-t="thValore">Valore</th></tr></thead>
             <tbody id="statistiche"></tbody>
           </table>
 
-          <h3 id="h-abilita" data-t="abilita">Abilità</h3>
+          <h2 class="sez" id="h-abilita" data-t="abilita">Abilità</h2>
           <p class="guida" style="margin:0 0 0.75rem" data-t="guidaAbilita"></p>
           <div class="opzioni" id="abilita" role="group" aria-labelledby="h-abilita"></div>
 
           </section>
 
           <section id="equip" aria-labelledby="t-equip">
-            <h3 id="t-equip" style="margin-top:0" data-t="equipaggiamento">Equipaggiamento</h3>
-          <h4 id="h-arma" data-t="arma">Arma</h4>
+            <h2 class="sez" id="t-equip" style="margin-top:0" data-t="equipaggiamento">Equipaggiamento</h2>
+          <h3 class="sub" id="h-arma" data-t="arma">Arma</h3>
           <p class="guida" id="guida-arma" style="margin:0 0 0.75rem"></p>
           <div class="opzioni" id="armi" role="radiogroup" aria-labelledby="h-arma"></div>
 
-          <h4 id="h-armatura" data-t="armatura">Armatura</h4>
+          <h3 class="sub" id="h-armatura" data-t="armatura">Armatura</h3>
           <p class="guida" id="guida-armatura" style="margin:0 0 0.75rem"></p>
           <div class="opzioni" id="armature" role="radiogroup" aria-labelledby="h-armatura"></div>
 
-          <h4 id="h-scudo" data-t="scudo">Scudo</h4>
+          <h3 class="sub" id="h-scudo" data-t="scudo">Scudo</h3>
           <p class="guida" id="guida-scudo" style="margin:0 0 0.75rem"></p>
           <div class="opzioni" id="scudi" role="group" aria-labelledby="h-scudo"></div>
 
-          <h4 id="h-dotazione" data-t="dotazione">Dotazione</h4>
+          <h3 class="sub" id="h-dotazione" data-t="dotazione">Dotazione</h3>
           <p class="guida" style="margin:0 0 0.75rem" data-t="guidaDotazione">Scegline tre.</p>
           <div class="opzioni" id="dotazione" role="group" aria-labelledby="h-dotazione"></div>
 
           </section>
 
           <section id="incantesimi" aria-labelledby="t-incantesimi" hidden>
-            <h3 id="t-incantesimi" style="margin-top:0" data-t="incantesimi">Incantesimi</h3>
+            <h2 class="sez" id="t-incantesimi" style="margin-top:0" data-t="incantesimi">Incantesimi</h2>
             <p class="guida" style="margin:0 0 0.75rem" id="guida-incantesimi"></p>
-            <h4 id="t-scuola" style="margin-top:0" data-t="scuolaPrincipale">Scuola principale</h4>
+            <h3 class="sub" id="t-scuola" style="margin-top:0" data-t="scuolaPrincipale">Scuola principale</h3>
             <div class="opzioni" id="scelta-scuola" role="radiogroup" aria-labelledby="t-scuola"></div>
-            <h4 id="t-inc1"></h4>
+            <h3 class="sub" id="t-inc1"></h3>
             <div class="opzioni" id="lista-incantesimi" role="group" aria-labelledby="t-inc1"></div>
-            <h4 id="t-inc2"></h4>
+            <h3 class="sub" id="t-inc2"></h3>
             <div class="opzioni" id="lista-incantesimi2" role="group" aria-labelledby="t-inc2"></div>
             <p class="guida" id="cap-classe-inc" style="margin-top:0.9rem"></p>
             <p class="nota-riposo" data-t="notaRiposo"></p>
           </section>
 
           <section id="tecniche" aria-labelledby="t-tecniche" hidden>
-            <h3 id="t-tecniche" style="margin-top:0" data-t="tecnicheTit">Tecniche speciali lv 1</h3>
+            <h2 class="sez" id="t-tecniche" style="margin-top:0" data-t="tecnicheTit">Tecniche speciali lv 1</h2>
             <p class="guida" style="margin:0 0 0.75rem" id="guida-tecniche"></p>
             <div class="opzioni" id="lista-tecniche" role="group" aria-labelledby="t-tecniche"></div>
             <p class="nota-riposo" data-t="notaRiposoTec"></p>

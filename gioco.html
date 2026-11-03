@@ -11628,11 +11628,7 @@
       scontro.tuoTurno = true; scontro.cambio = false; scontro.frontaleUsato = false; scontro.difesaUltima = false;
       tickStatiPg(); /* Ustionato, Sanguinamento, Avvelenato: 1d4 a inizio turno, letali (28/10) */
       if (pvPg() <= 0) { scontro.tuoTurno = false; barraScontro(); return setTimeout(sconfittaScontro, pausaScontro() / 2); }
-      if (haStato("stordito")) { /* 01/11: Stordito, salti il turno */
-        aggiungi({ tipo: "narra", box: "nem", righe: [BT.stati.stordito.salta] }); segnaTurno(BT.stati.stordito.nome);
-        scalaStatoPg("stordito"); return fineAzionePgScontro();
-      }
-      const rilascio = CMB.inizioTurnoPg(scontro, ctxTecnica()); /* la Parata scade; Mare Profondo ed Egida rilasciano l'onda */
+      /* 03/11: Linfa, Pozzo, Rigenerazione e Spirito Servitore valgono anche se sei Stordito (gli effetti scalano comunque) */
       if (sciamano() && livelloPg() >= 4 && scontro.eff && scontro.eff.avvelenato > 0 && pvPg() < pvMaxPg()) { const c = curaPgN(1); aggiungi({ tipo: "narra", box: "mia", righe: [TRATTI_MARZ().linfa(c)] }); disegnaVitali(); } /* 03/11: Linfa che ritorna */
       if (pg && pg.classe === "Sapiente" && window.MagiaCombattimento) { const pz = window.MagiaCombattimento.inizioTurnoPozzo(scontro, ctxIncantesimo()); if (pz.length) { aggiungi({ tipo: "narra", box: "mia", righe: pz.map(e => window.MagiaCombattimento.testo(e)) }); disegnaVitali(); } } /* 03/11: Pozzo Arcano */
       if (pg && pg.classe === "Accolito" && window.MagiaCombattimento) { /* 03/11: Rigenerazione (Vita) e Spirito Servitore (Negromanzia) */
@@ -11643,6 +11639,11 @@
           if (scontro.pv <= 0) { scontro.tuoTurno = false; barraScontro(); return setTimeout(vittoriaScontro, pausaScontro() / 2); }
         }
       }
+      if (haStato("stordito")) { /* 01/11: Stordito, salti il turno */
+        aggiungi({ tipo: "narra", box: "nem", righe: [BT.stati.stordito.salta] }); segnaTurno(BT.stati.stordito.nome);
+        scalaStatoPg("stordito"); return fineAzionePgScontro();
+      }
+      const rilascio = CMB.inizioTurnoPg(scontro, ctxTecnica()); /* la Parata scade; Mare Profondo ed Egida rilasciano l'onda */
       if (rilascio.length) {
         aggiungi({ tipo: "narra", box: "mia", righe: rilascio.map(rigaScudo).filter(Boolean) }); scuotiNemico();
         if (scontro.pv <= 0) { scontro.tuoTurno = false; barraScontro(); return setTimeout(vittoriaScontro, pausaScontro() / 2); }
@@ -11789,40 +11790,7 @@
       if (haStato("inibito")) return sist(BT.stati.inibito.blocca); /* 01/11 */
       if (inc.id === "luce") return sist(CB.luceInutile);
       if (inc.scuola) return lanciaMagia(inc); /* Sigilli, Detonazione, Bilancia: js/magia_combattimento.js */
-      const costo = Number(inc.costo) || 1;
-      if (manaMax() != null && manaAttuale() < costo) return sist(CB.pocoMana(costo, manaAttuale()));
-      if (manaMax() != null) { pg.manaUsato = (pg.manaUsato || 0) + costo; disegnaVitali(); modificato(); }
-      const righe = [CB.inc[inc.id] || Lingua.t(inc.desc)];
-      const E = scontro.eff, durata = (k, n) => { E[k] = n; scontro.effMax[k] = n; };
-      /* il nemico prova a resistere: d20 + modificatore di Corpo contro la CD degli incantesimi (mostrato in riquadri a parte) */
-      let salvezza = null;
-      const resiste = () => {
-        const cd = cdIncantesimi() || 10, m = modNem("Corpo"), d = tira(20), tot = d + m, ok = tot >= cd;
-        salvezza = { cd, m, d, tot, ok };
-        return ok;
-      };
-      switch (inc.id) {
-        case "dardo_ghiaccio": case "dardo_luce": { const d = tira(8); scontro.pv -= d; righe.push(CB.incDanno(d)); scuotiNemico(); break; }
-        case "scudo": durata("scudo", 2); break;
-        case "stop": case "folgorazione": if (!resiste()) durata("bloccato", 2); break;
-        case "invulnerabilita": durata("invuln", 2); break;
-        case "pelle_pietra": durata("pietra", 2); break;
-        case "accecare": if (!resiste()) durata("cieco", 2); break;
-        case "scopri_carte": scontro.svelata = true; break;
-        case "arma_migliorata": durata("armaPiu", 3); break;
-        case "aumento_potenza": durata("potenza", 3); disegnaVitali(); break;
-      }
-      if (manaMax() != null) righe.push(CB.costo(costo, manaAttuale()));
-      notaAzioneEttore(salvezza && !salvezza.ok && ["stop", "folgorazione"].includes(inc.id) ? [{ k: "stato", s: "bloccato" }] : [], DIFESE_INC.includes(inc.id));
-      aggiungi({ tipo: "narra", box: "mia", esito: nomeInc(inc), righe });
-      if (salvezza) {
-        const z = salvezza;
-        aggiungi({ tipo: "prova", titolo: CB.tsTitolo, dati: [U.difficolta(z.cd), "d20", `${N("attributi", "Corpo")} ${fmtN(z.m)}`], righe: [CB.tsRegola(z.cd)] });
-        aggiungi({ tipo: "narra", box: z.ok ? "ko" : "ok", esito: z.ok ? CB.tsSuperato : CB.tsFallito, righe: [CB.tsTiro(z.d, z.m, z.tot, z.cd), z.ok ? CB.resistito : CB.tsEffetto[inc.id]] });
-      }
-      segnaTurno(nomeInc(inc) + (salvezza ? ": " + (salvezza.ok ? CB.resisteBreve : CB.effettoBreve) : ""));
-      disegnaVitali();
-      fineAzionePgScontro();
+      return sist(CB.incInArrivo); /* 03/11: tolto il ramo del vecchio sistema di incantesimi (dati azzerati il 25/10): ogni incantesimo ha una scuola */
     }
 
 

@@ -408,7 +408,7 @@ Da cambiare anche i nomi delle abilità che citano personaggi: «Filo della Gove
 
 ## 14. Stato (25/10/2026, pomeriggio)
 
-- **Dati:** tutti gli incantesimi, le vie e le capacità di classe sono in `js/magia.js` (italiano e inglese), con le correzioni della sezione 10. Li leggono regolamento, creazione e scheda di gioco (fase 1, sotto); `js/incantesimi.js` non è più usato da nessuna pagina.
+- **Dati:** tutti gli incantesimi, le vie e le capacità di classe sono in `js/magia.js` (italiano e inglese), con le correzioni della sezione 10. Li leggono regolamento, creazione e scheda di gioco (fase 1, sotto); `js/incantesimi.js` (vecchio sistema) è stato cancellato il 3 novembre.
 - **Regolamento:** sezioni per classe (Guerriero, Sciamano, Arcanista, Monaco) con tutte le tecniche e gli incantesimi, stati, avversari temibili, debolezze, enigmi ed esempi di combattimento. Le sezioni degli incantatori hanno l'avviso «in arrivo», quella dello Sciamano «in preparazione». Nessun PNG nominato nelle vie.
 - **Abilità delle vie rinominate** (prima citavano personaggi): Pugno della Casa → Colpo Demolitore, Filo della Governante → Filo di Rune, Concentrazione di Adele → Quiete Assoluta, Rabbia del Sovrano → Furia Cinerea.
 - **Attacco magico:** d20 + mod attributo, senza livello, come l'attacco con l'arma.

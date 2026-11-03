@@ -75,7 +75,6 @@
     const piu = crep ? 1 : 0;                                                          /* +1 dado di danno o cura */
     const piuD = piu + (velo ? 1 : 0) + (ombra && attivo(s, "furiaCinerea") ? 1 : 0);          /* sul danno: anche Velo e Furia Cinerea */
     const pv0 = s.pv;
-    let segno = false;                                                                  /* l'incantesimo è andato a segno (Ombra Gemella) */
     const occhio = attivo(s, "occhio");
     let crits = 0, rimborso = false;
 
@@ -124,7 +123,7 @@
       if (s.demolitore) fx("sbilanciato", 1);
       return n;
     };
-    const dopoColpo = (r, fn) => { if (r.ok) { segno = true; fn(); } return r; };
+    const dopoColpo = (r, fn) => { if (r.ok) { fn(); } return r; };
     /* ---- strumenti del Monaco ---- */
     const dannoMente = (n) => (ctx.dannoMente ? ctx.dannoMente(n) : n);
     const fede = (n) => recuperaMana(n);
@@ -250,41 +249,41 @@
       case "quiete_assoluta": s.eff.quiete = 3; s.effMax.quiete = 3; E.push({ k: "quiete", turni: 3 }); break;
 
       /* ================= Luce ================= */
-      case "dardo_luce": { const r = hit({ dado: 8, piuDadi: piu }); if (r.ok) { segno = true; if (r.crit && vivo()) fx("accecato", 1); } break; }
+      case "dardo_luce": { const r = hit({ dado: 8, piuDadi: piu }); if (r.ok) { if (r.crit && vivo()) fx("accecato", 1); } break; }
       case "tocco_lenitivo": guarisci(1, 8, ctx.modAtt); break;
       case "scudo_fede": s.eff.scudo = 3; s.effMax.scudo = 3; E.push({ k: "scudoMagico", turni: 3 }); break; /* 03/11: da 2 a 3 turni */
-      case "accecare": if (conTS({ accecato: 2 })) segno = true; break;
+      case "accecare": conTS({ accecato: 2 }); break;
       case "folgore_sacra": {
         const r = hit({ dado: 6, piuDadi: 1 + piu });
-        if (r.ok) { segno = true; if (vivo()) { if (ctx.boss) diretto(1, 6, 0); else conTS({ frastornato: 1 }); } }
+        if (r.ok) { if (vivo()) { if (ctx.boss) diretto(1, 6, 0); else conTS({ frastornato: 1 }); } }
         break;
       }
       case "voto_luce": s.eff.voto = 3; s.effMax.voto = 3; s.eff.rigen = 3; s.effMax.rigen = 3; E.push({ k: "voto", turni: 3 }); break; /* 03/11: Voto di Vita, Rigenerazione al posto di «cura 1 per colpo» */
       case "raggio_mattino": {
         const tiri = tiraDadi(ctx, 2 + piu, 8), pieno = somma(tiri), z = salva(); E.push(z);
-        const danno = Math.max(1, z.ok ? Math.floor(pieno / 2) : pieno); s.pv -= danno; segno = true;
+        const danno = Math.max(1, z.ok ? Math.floor(pieno / 2) : pieno); s.pv -= danno; 
         E.push({ k: "diretto", n: 2 + piu, dado: 8, tiri, mm: 0, danno, meta: z.ok }); break;
       }
       case "santuario": s.eff.santuario = 2; s.effMax.santuario = 2; s.santColpo = false; E.push({ k: "santuario", turni: 2 }); break;
       case "purificazione": s.presaUsata = true; E.push({ k: "liberato" }); guarisci(1, 6, 0); break;
-      case "lancia_sole": { const r = hit({ dado: 8, piuDadi: 2 + piu }); if (r.ok) { segno = true; if (vivo()) conTS({ accecato: 2 }); } break; }
+      case "lancia_sole": { const r = hit({ dado: 8, piuDadi: 2 + piu }); if (r.ok) { if (vivo()) conTS({ accecato: 2 }); } break; }
       case "corona_raggi": s.eff.corona = 3; s.effMax.corona = 3; E.push({ k: "corona", turni: 3 }); break;
       case "grazia": guarisci(1, 8, ctx.modAtt); s.eff.rigen = 3; s.effMax.rigen = 3; E.push({ k: "rigenInizia", turni: 3 }); s.eff.scudo = 2; s.effMax.scudo = 2; E.push({ k: "scudoMagico", turni: 2 }); break; /* 03/11: cura spalmata */
       case "alba_eterna": {
-        diretto(4 + piu, 8, 0); segno = true; fx("accecato", 2);
+        diretto(4 + piu, 8, 0); fx("accecato", 2);
         curaFissa(Math.floor((pv0 - s.pv) / 2)); break;
       }
       case "seconda_vita": s.eff.seconda = C.PER_SCONTRO; s.effMax.seconda = C.PER_SCONTRO; s.secondaUsata = true; E.push({ k: "seconda" }); break;
       case "giudizio": {
         const l = Math.max(0, bil), r = hit({ dado: 10, piuDadi: 1 + piu + l });
-        if (r.ok) segno = true;
+        if (r.ok) 
         E.push({ k: "giudizio", luce: l }); break; /* la Bilancia torna a 0 dopo l'incantesimo */
       }
       case "fiamma_calda": guarisci(2, 6, ctx.modAtt); s.eff.fiamma = 2; s.effMax.fiamma = 2; E.push({ k: "fiamma", turni: 2 }); break;
       case "cerchio_focolare": s.eff.cerchio = 3; s.effMax.cerchio = 3; E.push({ k: "cerchio", turni: 3 }); break;
       case "fuoco_cura": {
         const g = guarisci(4, 8, ctx.modAtt);
-        if (g.eccesso > 0) { s.pv -= g.eccesso; segno = true; E.push({ k: "eccesso", n: g.eccesso }); }
+        if (g.eccesso > 0) { s.pv -= g.eccesso; E.push({ k: "eccesso", n: g.eccesso }); }
         break;
       }
 
@@ -292,7 +291,7 @@
       case "tocco_avvizzente": dopoColpo(hit({ dado: 6, piuDadi: piuD }), () => {}); break;
       case "sussurro_paura": controlloORipiego({ silenzio: 1 }, () => fx("debole", 1)); break;
       case "manto_ombra": s.eff.manto = 1; s.effMax.manto = 1; E.push({ k: "manto" }); break;
-      case "avvizzire": if (conTS({})) { /* il tiro è fallito */ } else break; avvizzisci(4, 3); segno = true; break;
+      case "avvizzire": if (conTS({})) { /* il tiro è fallito */ } else break; avvizzisci(4, 3); break;
       case "sete_tenebra": dopoColpo(hit({ dado: 6, piuDadi: 1 + piuD }), () => E.push({ k: "fede", n: fede(1) })); break;
       case "catene_ombra": controlloORipiego({ bloccato: 1 }, () => fx("sbilanciato", 2)); break;
       case "divorare": {
@@ -307,26 +306,26 @@
         const d = ctx.tira(4), f = ctx.dannoCorpo ? ctx.dannoCorpo(d) : d, r = fede(ctx.tira(4) + ctx.liv);
         E.push({ k: "patto", d: f, fede: r }); break;
       }
-      case "eclisse": if (conTS({ accecato: 2, debole: 2 })) segno = true; break;
+      case "eclisse": conTS({ accecato: 2, debole: 2 }); break;
       case "ombra_gemella": s.eff.gemella = 3; s.effMax.gemella = 3; E.push({ k: "gemella", turni: 3 }); break;
       case "terrore": {
         if (ctx.boss) { E.push({ k: "immune", s: "frastornato" }); fx("debole", 2); fx("paura", 2); }
-        else if (conTS({ frastornato: 2 })) segno = true;
+        else conTS({ frastornato: 2 });
         break;
       }
       case "mietitura": {
-        dannoSpirito(3, 6); segno = true;
+        dannoSpirito(3, 6); 
         if (s.pv < s.pvMax / 2) E.push({ k: "fede", n: fede(2) });
         break;
       }
       case "notte_senza_fine": {
-        fx("accecato", 3); avvizzisci(6, 3); segno = true;
+        fx("accecato", 3); avvizzisci(6, 3); 
         s.eff.notte = 3; s.effMax.notte = 3; E.push({ k: "notte", turni: 3, mente: dannoMente(ctx.tira(4)) }); break;
       }
       case "nome_taciuto": controlloORipiego({ bloccato: 2 }, () => { fx("debole", 2); fx("sbilanciato", 2); }); break;
       case "abbraccio_vuoto": dopoColpo(hit({ dado: 8, piuDadi: 3 + piuD }), () => {}); break;
       case "rancore": { const n = Math.min(3, Number(s.colpiSubiti) || 0); dopoColpo(hit({ dado: 6, piuDadi: 1 + piuD + n }), () => {}); if (n) E.push({ k: "rancore", n }); break; }
-      case "lutto": s.lutto = true; if (conTS({ debole: 2 })) { avvizzisci(6, 3); segno = true; } E.push({ k: "lutto" }); break;
+      case "lutto": s.lutto = true; if (conTS({ debole: 2 })) { avvizzisci(6, 3); } E.push({ k: "lutto" }); break;
       case "furia_cinerea": s.eff.furiaCinerea = 3; s.effMax.furiaCinerea = 3; s.bilancia = -3; E.push({ k: "furiaCinerea", turni: 3 }); break;
 
       default: E.push({ k: "sconosciuta" });
@@ -334,7 +333,6 @@
 
     /* ---- dopo l'incantesimo del Monaco ---- */
     if (mon) {
-      const inflitto = Math.max(0, pv0 - s.pv);
       /* 03/11: lo Spirito Servitore colpisce da solo a inizio turno (inizioTurnoMonaco), non più sugli incantesimi a segno */
       const drenato = Math.max(0, pv0 - s.pv);
       if (ombra && s.fameOmbra && drenato > 0 && inc.id !== "furia_cinerea") { s.fameOmbra = false; E.push({ k: "fameOmbraScatta" }); curaFissa(drenato); } /* 03/11: Fame dell'Ombra (Monaco, via Cenere, grado III) */

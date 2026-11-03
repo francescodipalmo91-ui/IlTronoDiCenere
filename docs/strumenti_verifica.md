@@ -22,7 +22,7 @@ npx playwright install chromium
 | 7 | axe-core (accessibilità) | dentro `node tests/fumo.browser.js` |
 | 8 | html-validate | dentro `npm run lint` |
 | 9 | Pagina di test (consigliata) / sala di prova storica | `test.html` · `tutorial.html?prova` (la usano i test Playwright) |
-| 10 | Audit periodici | `/ponytail-audit`, `/impeccable critique` (Claude Code) |
+| 10 | Audit periodici | `/ponytail-audit`, `/impeccable critique` (Claude Code); senza plugin vedi «Strumenti da GitHub» sotto |
 | 11 | Sito pubblicato e telefono vero | Claude in Chrome / Chrome DevTools MCP |
 
 Controllo rapido dopo ogni modifica: `npm test` (regole + lint + coerenza).
@@ -77,3 +77,20 @@ Cambiare classe o razza rimette il preset; livello e Vigore ricalcolano la salut
 - Gli incantesimi d'Arcano contano come tipo «Arcano» per vulnerabilità e resistenze, come in gioco.
 - **Spada del Retaggio:** si sceglie come arma (1d10 + caratteristica di classe, tagliente, una mano, come in gioco); la casella «Spada del Retaggio impugnata» di Enea si spunta da sola e attiva lo sdegno.
 - **Resistenza al veleno:** niente più casella: vale solo se il nemico la ha davvero (oggi nessuno tra quelli della pagina; Dafne e il sovrano quando ci saranno).
+
+## Strumenti da GitHub (3 novembre 2026)
+
+Usati senza installarli nel progetto, da una cartella a parte:
+
+```
+git clone --depth 1 https://github.com/DietrichGebert/ponytail      # regole di /ponytail-audit: skills/ponytail-audit/SKILL.md
+git clone --depth 1 https://github.com/pbakaus/impeccable           # scanner deterministico
+impeccable/skill/scripts/impeccable telemetry off
+impeccable/skill/scripts/impeccable detect --no-advisory index.html gioco.html creazione.html tutorial.html regolamento.html test.html tema.css
+impeccable/skill/scripts/impeccable detect --no-advisory http://127.0.0.1:8765/regolamento.html   # pagina renderizzata: controlla anche contrasto, titoli, testo minuscolo
+```
+
+Ultimo esito in `docs/PONYTAIL_AUDIT.md` (seconda passata). Note: il bagliore rosso del ritratto e la spaziatura dei titoli in Cinzel sono voluti.
+
+**Serie di scontri in parallelo:** `PORT=8780 CLASSI=arcanista SCUOLA=arcano N=400 node strumenti/serie_scontri.js`, con un server per ogni copia dei file (`python3 -m http.server 8780` dentro la copia). Lanciarla sulla cartella in cui si sta lavorando mescola le versioni.
+

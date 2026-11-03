@@ -678,7 +678,7 @@ caso("Regolamento: classi, scuole di magia, stati ed esempi in italiano e in ing
   const parti = await page.$$eval("#sezioni > details.parte > summary", s => s.map(x => x.textContent));
   eq(parti.length, 4, "quattro parti"); vero(/Parte 1/.test(parti[0]) && /Parte 4/.test(parti[3]), "numerazione delle parti");
   const titoli = await page.$$eval("#sezioni details.cap > summary .tt", s => s.map(x => x.textContent));
-  eq(titoli.length, 14, "quattordici capitoli");
+  eq(titoli.length, 20, "venti capitoli (03/11)");
   ["Abilità", "Guerriero", "Sciamano", "Arcanista", "Monaco", "Esempi di combattimento"].forEach(x => vero(titoli.some(t => t.endsWith(": " + x)), "manca la sezione: " + x));
   eq(await page.$$eval("#sezioni details.parte[open]", l => l.length), 4, "le parti sono aperte all'inizio");
   eq(await page.$$eval("#sezioni details.cap[open]", l => l.length), 0, "i capitoli sono chiusi all'inizio");
@@ -686,14 +686,14 @@ caso("Regolamento: classi, scuole di magia, stati ed esempi in italiano e in ing
   await page.click("#apriTutto"); eq(await page.$$eval("#sezioni details:not([open])", l => l.length), 0, "Apri tutto"); await page.click("#chiudiTutto");
   eq(await page.$$eval("#sezioni details[open]", l => l.length), 4, "Comprimi lascia aperte solo le parti");
   const t = await page.textContent("body");
-  ["Sigilli", "Detonazione", "Bilancia", "Nadir", "Crepuscolo", "Accecato", "Avvizzito", "Lume Arcano", "Via della Frattura", "Via della Brace", "Via della Lama", "Via dello Scoglio", "Dardo Arcano", "Abbraccio del Vuoto", "Turno 3.", "Punta di Mandragora", "Avvelenato", "Quando serve", "Indagare o Percezione", "Malus alle abilità di Agilità"].forEach(x => vero(t.includes(x), "manca: " + x)); /* lo Sciamano non è più «in preparazione» */
+  ["Sigilli", "Detonazione", "Bilancia", "Nadir", "Crepuscolo", "Accecato", "Avvizzito", "Lume Arcano", "Via della Frattura", "Via della Brace", "Via della Lama", "Via dello Scoglio", "Dardo Arcano", "Abbraccio della Tomba", "Turno 3.", "Punta di Mandragora", "Avvelenato", "Quando serve", "Indagare o Percezione", "Malus alle abilità di Agilità"].forEach(x => vero(t.includes(x), "manca: " + x)); /* lo Sciamano non è più «in preparazione» */
   /* 60 incantesimi e 12 abilità delle vie, tutte le tecniche del Guerriero in tabella */
   const righe = await page.$$eval("table tr", r => r.length);
   vero(righe > 60 + 12 + 85, "tabelle incomplete: " + righe);
   vero(!/Aldo|Guendalina/.test((await page.textContent("#sezioni")).replace(/«parlo con Guendalina»/g, "")), "il regolamento nomina i PNG delle vie");
   await page.evaluate(() => { localStorage.setItem("lingua", "en"); }); await page.reload();
   const e = await page.textContent("body");
-  ["Seals", "Detonation", "Balance", "Twilight", "Blinded", "Withered", "Arcane Glow", "Path of the Fracture", "Path of the Ember", "Combat examples", "Shadow Monk", "When it helps", "Agility skill penalty"].forEach(x => vero(e.includes(x), "missing: " + x));
+  ["Seals", "Detonation", "Balance", "Twilight", "Blinded", "Withered", "Arcane Glow", "Path of the Fracture", "Path of the Ember", "Combat examples", "Necromancer Monk", "When it helps", "Agility skill penalty"].forEach(x => vero(e.includes(x), "missing: " + x));
   eq(errori, [], "errori"); await chiudi();
 });
 caso("Gioco in inglese: una tecnica nuova si usa senza errori e con i testi inglesi", async (b) => {
@@ -773,7 +773,7 @@ caso("Gioco in inglese: la Detonazione si legge in inglese", async (b) => {
   await page.evaluate(() => localStorage.setItem("lingua", "en")); await page.reload(); await page.waitForTimeout(500);
   await page.evaluate(() => { avviaScontro("mastino", { primo: "pg", soffioScarico: true }); scontro.sigilli = 2; }); await aspettaTurnoPg(page);
   await accoda(page, [R(15, 20), R(5, 8), R(3, 6), R(2, 6)]); await page.evaluate(() => lanciaIncantesimo(listaIncantesimi().find(i => i.id === "pugno_forza")));
-  vero(/Detonation/.test(await diario(page)), "manca il testo inglese"); eq(await page.evaluate(() => manaAttuale()), 12, "13 − 2 + 1"); eq(errori, [], "errori"); await chiudi();
+  vero(/Detonation/.test(await diario(page)), "manca il testo inglese"); eq(await page.evaluate(() => manaAttuale()), 13, "13 − 2 + 2: 1 mana per Sigillo (03/11)"); eq(errori, [], "errori"); await chiudi();
 });
 
 caso("Gioco: Pressione schiaccia il nemico all'inizio del suo turno; Muro di Forza alza la CA di 3", async (b) => {
@@ -823,12 +823,12 @@ caso("Sala di prova: Monaco — Avvizzire e il suo tic a inizio turno del nemico
   const st = await page.evaluate(() => SalaProva.stato()); eq(st.s.eff.avvizzito, 2, "3 turni, uno già passato"); eq(st.s.pv, 200 - 3, "1d4 = 3");
   eq(errori, [], "errori"); await chiudi();
 });
-caso("Gioco: Monaco lancia — Dardo di Luce, costo in punti fede, Bilancia e Crepuscolo", async (b) => {
+caso("Gioco: Monaco lancia — Dardo Vitale, costo in punti fede, Bilancia e Crepuscolo", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", MON(), PARTITA());
   await page.evaluate(() => avviaScontro("mastino", { primo: "pg", soffioScarico: true })); await aspettaTurnoPg(page);
   await accoda(page, [R(15, 20), R(6, 8)]); await page.evaluate((c) => eval(c), LANCIA("dardo_luce"));
-  eq(await page.evaluate(() => manaAttuale()), 11, "13 − 2"); eq(await page.evaluate(() => scontro.bilancia), 1, "Luce 1");
-  vero(/Bilancia: equilibrio → Luce 1/.test(await page.evaluate(() => document.getElementById("diario").textContent)), "manca la Bilancia nel diario");
+  eq(await page.evaluate(() => manaAttuale()), 11, "13 − 2"); eq(await page.evaluate(() => scontro.bilancia), 1, "Vita 1");
+  vero(/Bilancia: equilibrio → Vita 1/.test(await page.evaluate(() => document.getElementById("diario").textContent)), "manca la Bilancia nel diario");
   eq(errori, [], "errori"); await chiudi();
 });
 caso("Gioco: Monaco — da Nadir il Dardo di Luce è un Crepuscolo e la Bilancia torna a 0", async (b) => {
@@ -1129,7 +1129,7 @@ caso("Cripta: discesa furtiva riuscita, scelta tra farsi avanti e colpire; il co
 caso("Ettore: livello 2 fisso (30 salute, 8 punti abilità, 400 PE), crescita oltre il livello 2, vulnerabile a contundente e luce", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "cripta", usate: { riposo: "sbloccato", ettore: "scontro" } }));
   await page.evaluate(() => { luogo = "cripta"; avviaScontro("esploratore", { ctx: "ettore", testi: "esploratore", primo: "pg" }); }); await aspettaTurnoPg(page);
-  eq(await page.evaluate(() => [scontro.pvMax, scontro.paMax, scontro.stat.Vigore, scontro.stat.Spirito, NEMICI.esploratore.xp, dadiVuln("Contundente"), dadiVuln("Luce"), dadiVuln("Forza")]), [30, 8, 10, 8, 400, 1, 1, 0], "Vigore 10 (02/11: ladro); luce e contundente (29/10)");
+  eq(await page.evaluate(() => [scontro.pvMax, scontro.paMax, scontro.stat.Vigore, scontro.stat.Spirito, NEMICI.esploratore.xp, dadiVuln("Contundente"), dadiVuln("Luce"), dadiVuln("Forza")]), [30, 8, 10, 8, 400, 1, 0, 1], "Vigore 10 (02/11: ladro); contundente, forza e negromanzia (03/11)");
   vero(await page.evaluate(() => document.getElementById("vitaliNem").textContent.includes(ET.scontro.pa) || !scontro.svelata), "punti abilità nella scheda");
   await page.evaluate(() => { scontro.svelata = true; disegnaNemico(); });
   vero(await page.evaluate(() => document.getElementById("vitaliNem").textContent.includes("8 / 8") && document.getElementById("specNem").textContent.includes(ET.scontro.abilita[1][0])), "scheda con punti abilità e abilità");

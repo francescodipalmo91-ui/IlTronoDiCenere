@@ -252,13 +252,13 @@ Effetto, come deciso: **+1 dado di danno** oppure **condizione +1 turno**.
 |---|---|---|---|
 | Mastini (tutti) | Luce | Condizione +1 turno (Accecato più lungo) | Niente dado in più: sono i nemici più frequenti, il Monaco di Luce sarebbe sempre avvantaggiato |
 | Avventurieri delle cacce comuni | Ombra | +1 dado | Menti fresche e fragili in una casa che opprime |
-| Ettore (bronzo, cripta) | Luce + contundente | +1 dado | La cripta è buia; vecchia armatura che si incrina |
-| Enea (argento, cimitero) | Forza + taglio | +1 dado | |
-| Dafne (oro, foresta) | Ombra + perforante | +1 dado | Cacciatrice che sta perdendo la mente |
-| Atena (platino, sottotetto) | Arcano + taglio | +1 dado | Custodisce una Lacrima: è legata alla magia |
+| Ettore (bronzo, cripta) | **Contundente + Forza + Ombra** (03/11) | +1 dado | Corpo leggero, la spinta lo scaraventa; gli spiriti delle sue prede (negromanzia) |
+| Enea (argento, cimitero) | **Perforante + Arcano + Luce + Sottobosco** (03/11) | +1 dado (Sottobosco: stati +1 turno) | Armatura sbrecciata; le rune spezzano una volontà incrinata; il dio che l'ha abbandonato |
+| Dafne (oro, foresta) | **Taglio + Arcano + Luce** (03/11) | +1 dado | Drow: la luce; resiste al veleno |
+| Atena (platino, sottotetto) | **Contundente + Forza + Ombra + Sottobosco** (03/11) | +1 dado | Il ghiaccio si spezza; la corruzione che la divora |
 | Sovrano | **Resiste all'Ombra** (metà danni); vulnerabile a tutto oltre la soglia del Retaggio | +1 dado a ogni danno | Vedi sezione 9 |
 
-- Ogni scuola copre un guardiano, ogni tipo d'arma almeno uno: nessuna classe resta senza risposta.
+- **Mappa bilanciata (DECISA il 3 novembre):** ogni guardiano ha una vulnerabilità per il Guerriero (un ramo d'arma), una per l'Arcanista (una scuola) e una per il Monaco (una scuola); il Sottobosco su due guardiani. Conteggi: Forza 2, Arcano 2, Luce 2, Ombra 2; ogni ramo d'arma almeno una volta. Sostituisce la tabella del 25 ottobre e la frase «forza, come tutti i guardiani dei fermagli».
 - Gli **Appunti di Guendalina** tornano utili: rivelano la vulnerabilità del guardiano successivo.
 - Le vulnerabilità dei guardiani sono una proposta, si possono scambiare.
 

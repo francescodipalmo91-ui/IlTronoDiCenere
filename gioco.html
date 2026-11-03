@@ -4416,7 +4416,7 @@
             ["Le braci (3, una volta)", "Sotto metà salute, al posto dell'attacco, calcia le braci: tiro salvezza su Agilità CD 11, altrimenti 1d4 e Ustionato."],
             ["La gamba", "Un tuo colpo critico gli fa saltare il turno."]
           ],
-          vulnTit: "Vulnerabile", vulnDesc: "armi contundenti e incantesimi di luce: un dado di danno in più.",
+          vulnTit: "Vulnerabile", vulnDesc: "armi contundenti, incantesimi di forza e di negromanzia (gli spiriti delle sue prede): un dado di danno in più.",
           vulnColpo: "Il colpo trova il suo punto debole: un dado di danno in più.",
           fendente: "Lama nel fianco",
           fendenteLog: "Il primo pugnale ti ha aperto la guardia; il secondo entra di taglio nello stesso varco, per aprire la carne più che per uccidere.",
@@ -4518,7 +4518,7 @@
             ["The embers (3, once)", "Below half health, instead of attacking, he kicks the embers: Agility saving throw DC 11, or 1d4 and Burned."],
             ["The leg", "A critical hit of yours makes him lose his turn."]
           ],
-          vulnTit: "Vulnerable", vulnDesc: "bludgeoning weapons and light spells: one extra damage die.",
+          vulnTit: "Vulnerable", vulnDesc: "bludgeoning weapons, force and necromancy spells (the spirits of his prey): one extra damage die.",
           vulnColpo: "The blow finds his weak point: one extra damage die.",
           fendente: "Blade in the side",
           fendenteLog: "The first dagger opened your guard; the second slides edgewise into the same gap, to open flesh rather than to kill.",
@@ -10707,7 +10707,7 @@
       /* 01/11: primaria Mente (la pazzia lucida del cacciatore di taglie: il conteggio, il calcolo), Spirito volutamente basso.
          Mente 12 dà +1 come prima il Vigore 12: tiro per colpire invariato (+1 + attacco 2 = +3). Il danno resta dannoBonus 3 */
       esploratore: { ca: 13, dadoVita: 8, dannoDado: 4, xp: 400, attacco: 1, attacchi: 2, tipoDanno: "Tagliente", boss: true, livello: 2, pvFissi: 30, pa: 8, ettore: true, primaria: "Mente",
-        statFisse: { Vigore: 10, "Agilità": 13, Mente: 13, Spirito: 8 }, dannoBonus: 1, /* 02/11: il ladro calcolatore, due pugnali 1d4 + 1 (Mente 13 = +1, per colpire +2: con +3 gli incantatori perdevano 9-12 punti nella simulazione) */ vulnerabile: ["Contundente", "Luce"], /* 29/10: luce e contundente */ /* 28/10: Vigore 12 (la gamba), +3 per colpire, spada 1d6 + 3, CD 11 */ /* boss: niente effetti di controllo, durate brevi, niente esecuzione */ /* custode del fermaglio: 400 PE, gli stessi se risparmiato */ probPresa: 0, probSoffio: 0, soffio: null, ritratto: "immagini/nemici/Ettore.webp" } /* immagine da aggiungere */
+        statFisse: { Vigore: 10, "Agilità": 13, Mente: 13, Spirito: 8 }, dannoBonus: 1, /* 02/11: il ladro calcolatore, due pugnali 1d4 + 1 (Mente 13 = +1, per colpire +2: con +3 gli incantatori perdevano 9-12 punti nella simulazione) */ vulnerabile: ["Contundente", "Forza", "Ombra"] /* 03/11: mappa bilanciata, una vulnerabilità per classe */, /* 29/10: luce e contundente */ /* 28/10: Vigore 12 (la gamba), +3 per colpire, spada 1d6 + 3, CD 11 */ /* boss: niente effetti di controllo, durate brevi, niente esecuzione */ /* custode del fermaglio: 400 PE, gli stessi se risparmiato */ probPresa: 0, probSoffio: 0, soffio: null, ritratto: "immagini/nemici/Ettore.webp" } /* immagine da aggiungere */
     };
     /* boss: Guendalina, Aldo, il sovrano, Adele, i guardiani dei fermagli e i due mastini speciali (campo boss in NEMICI) */
     /* resistenze: resiste: ["veleno"] dimezza i danni da veleno dello Sciamano (da mettere a Dafne e al sovrano quando avranno la loro voce qui) */

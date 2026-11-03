@@ -345,7 +345,7 @@ Il lupo normale è stato abbassato: con 11 di salute e 1d6 + 1 dava il 15% di sc
 - **Il conteggio:** conta ogni pugnale, quindi il dodicesimo colpo arriva intorno al sesto turno, dentro la durata di uno scontro. Abbassato a **vantaggio e +1d6** (prima +1d8). Resta chi gli fa perdere il conto (sotto metà salute, frastornato, stordito).
 - **Lama nel fianco** (2 PA, al posto del Fendente sporco): al secondo pugnale, se il primo è andato a segno, paga 2 punti (tenendo da parte i 3 delle braci); se anche il secondo va a segno, TS Vigore CD 11 contro Sanguinamento.
 - **«L'ho già vista»** (gratis): dalla seconda volta che il personaggio usa la stessa tecnica o lo stesso incantesimo d'attacco, Ettore ha +2 alla CA contro quell'attacco. Le difese non contano. Spinge a variare invece di ripetere la mossa migliore.
-- **Invariati:** Colpo basso (ora con un pugnale), Le braci, La gamba, vulnerabilità a luce e contundente, perde il primo turno se sorpreso (a recuperare i pugnali).
+- **Invariati:** Colpo basso (ora con un pugnale), Le braci, La gamba, vulnerabilità a luce e contundente (dal 3 novembre: contundente, forza, ombra), perde il primo turno se sorpreso (a recuperare i pugnali).
 - **Bottino se ucciso:** «Pugnale del conteggio», 1d4 + livello tagliente, una mano; ogni terzo colpo a segno con l'arma nello stesso scontro +1d4. Diverso dal Pugnale della Biscia di Isotta, che fa solo danno.
 - **Simulazione del 2 novembre** (modello di duello tarato sulle percentuali del 28 ottobre senza consiglio, 20.000 scontri; vale il confronto, non il numero assoluto):
 
@@ -413,7 +413,7 @@ Gli incantesimi che fanno un attacco magico aggiungono al danno il **modificator
 | Mani nude | come prima: 2 × 1d4, Spinta (1 PA) |
 | Arma a doppia faccia | a ogni turno gira l'arma e annuncia il lato del turno dopo. **Maglio:** 1d8 + 4, Colpo caricato (3 PA, 2d8 + 4), Finta (2 PA), carica in guardia, «Mi difendo». **Ascia:** 1d8 + 4 tagliente; se va a segno **e solo in Furia**, **Squarcio** (2 PA): TS Vigore CD 13 (8 + 2 + livello) o Sanguinamento 1d4 per 3 turni |
 | Furia del becchino | alla prima caduta si rialza con 1d4 + 3 salute; da lì **+2 ai danni**, niente Finta, niente carica in guardia |
-| Vulnerabilità | **forza, luce, sottobosco**: niente più veleno (i nani non la giustificano). **Sottobosco** (solo Sciamano): gli stati che lo Sciamano gli infligge durano **1 turno in più**, anche sopra il tetto dei boss; **in Furia** il veleno ha **un dado in più** (respira a pieni polmoni, le spore gli entrano dentro). Se non basta: anche l'acido che corrode i resti dell'armatura (−1 CA per colpo d'acido, massimo −2) |
+| Vulnerabilità | **dal 3 novembre: perforante, arcano, luce, sottobosco** (mappa bilanciata, incantesimi sezione 6). Prima: **forza, luce, sottobosco**: niente più veleno (i nani non la giustificano). **Sottobosco** (solo Sciamano): gli stati che lo Sciamano gli infligge durano **1 turno in più**, anche sopra il tetto dei boss; **in Furia** il veleno ha **un dado in più** (respira a pieni polmoni, le spore gli entrano dentro). Se non basta: anche l'acido che corrode i resti dell'armatura (−1 CA per colpo d'acido, massimo −2) |
 | CD dei suoi effetti | 13 |
 
 - **Serie automatica del 2 novembre** (`strumenti/serie_scontri.js`, giocatore automatico pessimista; percentuali di vittorie, fermaglio indossato, lato casuale):
@@ -843,4 +843,17 @@ P1 scartata (quasi nessun effetto: si detona appena i Sigilli sono al massimo; n
 | Monaco, Ombra | 92% | 49% | 57% | 47% |
 
 Ettore per l'Arcanista va bene così (Francesco: il 74% è accettabile). Enea è sotto l'80% per tutti. Le scuole senza la vulnerabilità di Enea (Arcano, Ombra) perdono 16-20 punti: «forza, come tutti i guardiani dei fermagli» penalizza l'Arcano principale in ogni scontro importante. Prova: Enea vulnerabile anche all'Arcano → Arcano 25/30/33 → 35/40/42, Forza 42/57/47 → 55/58/58 (non applicato).
+
+**Serie dopo la mappa bilanciata** (3 novembre; Ettore contundente-forza-ombra, Enea perforante-arcano-luce-sottobosco; armi del giocatore automatico: Guerriero spada corta (taglio), Sciamano mazza chiodata (perforante), Arcanista bastone, Monaco spada corta):
+
+| Classe, scuola principale | Ettore | Enea fermaglio | Enea nascosto | Enea maglio |
+|---|---|---|---|---|
+| Guerriero (taglio) | 88% | 42% | 55% | 45% |
+| Sciamano | 94% | 69% | 79% | 75% |
+| Arcanista, Forza | 72% | 51% | 57% | 59% |
+| Arcanista, Arcano | 65% | 30% | 36% | 35% |
+| Monaco, Luce | 86% | 68% | 78% | 65% |
+| Monaco, Ombra | 89% | 47% | 58% | 51% |
+
+L'Arcano principale resta 20 punti sotto la Forza anche ora che Enea è vulnerabile all'Arcano: lo scarto è della meccanica (Sigilli al massimo 2 sui boss, controlli d'Arcano ridotti a ripieghi), non della vulnerabilità.
 

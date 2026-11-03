@@ -51,6 +51,11 @@
   });
 
   /* ================= Sigilli ================= */
+  caso("03/11: Sigilli massimi +1 dal livello 4 (4, boss 3); Filo di Rune −1 a colpirti per Sigillo", () => {
+    eq([C.sigilliMax({ liv: 3 }), C.sigilliMax({ liv: 3, boss: true }), C.sigilliMax({ liv: 4 }), C.sigilliMax({ liv: 5, boss: true })], [3, 2, 4, 3]);
+    const s = { pv: 40, pvMax: 40, eff: {}, effMax: {}, sigilli: 0, filo: true };
+    eq(C.modAttaccoNem(s), 0, "nessun Sigillo"); s.sigilli = 1; eq(C.modAttaccoNem(s), -1); s.sigilli = 3; eq(C.modAttaccoNem(s), -3);
+  });
   caso("03/11: Specchio di Rune aspetta il primo colpo a segno, senza limite di turni", () => {
     const s = { pv: 40, pvMax: 40, eff: {}, effMax: {}, sigilli: 0 }, c = { tira: () => 1, boss: false };
     s.assorbe = { tipo: "specchio", n: 0 };
@@ -181,7 +186,7 @@
     eq(s.pv, 80 - 4 - 5); eq(s.eff.sbilanciato, 1); eq(c.mana, 1);
     const s2 = scontro({ sigilli: 1 }), c2 = ctx({ dadi: [4, 18, 5] }); lancia("spinta", s2, c2); eq(s2.eff.sbilanciato || 0, 0); eq(c2.mana, 1, "detona anche se resiste");
   });
-  caso("Scudo: +2 CA per 2 turni (effetto 'scudo')", () => { const s = scontro(), c = ctx(); lancia("scudo", s, c); eq(s.eff.scudo, 2); });
+  caso("Scudo: +2 CA per 3 turni (effetto 'scudo', 03/11)", () => { const s = scontro(), c = ctx(); lancia("scudo", s, c); eq(s.eff.scudo, 3); const t = scontro(); lancia("scudo_fede", t, ctx()); eq(t.eff.scudo, 3, "anche lo Scudo della Fede"); });
   caso("Ariete: 2d6, Sbilanciato 2 se colpisce, Detonazione", () => {
     const s = scontro({ sigilli: 1 }), c = ctx({ dadi: [15, 2, 3, 6] }); lancia("ariete", s, c); eq(s.eff.sbilanciato, 2); eq(s.pv, 80 - 5 - 6);
   });
@@ -227,8 +232,8 @@
   });
   caso("Cataclisma: 3 colpi 1d8, ognuno fa detonare 1 Sigillo, una sola Detonazione per il mana", () => {
     const s = scontro({ sigilli: 2 }), c = ctx({ liv: 5, dadi: [15, 4, 6, 15, 3, 5, 15, 2] }); /* 3 colpi a segno; Sigilli: solo 2 */
-    lancia("cataclisma", s, c); eq(s.pv, 80 - (4 + 6) - (3 + 5) - 2); eq(s.sigilli, 0); eq(c.mana, 3, "una Detonazione, non doppia (2 Sigilli su 3)");
-    const s2 = scontro({ sigilli: 3 }), c2 = ctx({ liv: 5, dadi: [15, 1, 1, 15, 1, 1, 15, 1, 1] }); lancia("cataclisma", s2, c2); eq(c2.mana, 6, "3 Sigilli: doppia");
+    lancia("cataclisma", s, c); eq(s.pv, 80 - (4 + 6) - (3 + 5) - 2); eq(s.sigilli, 0); eq(c.mana, 3, "una Detonazione, non doppia (2 Sigilli su 4: dal livello 4 il tetto è 4, 03/11)");
+    const s2 = scontro({ sigilli: 4 }), c2 = ctx({ liv: 5, dadi: [15, 1, 1, 15, 1, 1, 15, 1, 1] }); lancia("cataclisma", s2, c2); eq(c2.mana, 6, "Sigilli al massimo (4 al livello 5): doppia");
   });
 
   /* ================= Vie ================= */
@@ -247,9 +252,9 @@
     const s = scontro({ sigilli: 2, pv: 20 }), c = ctx({ liv: 5, dadi: [10, 9, 8, 7] }); const r = lancia("crollo_arcano", s, c); eq(s.pv <= 0, true); eq(c.mana, 9, "rimborso del costo");
     const s2 = scontro({ sigilli: 1 }), c2 = ctx({ liv: 5, dadi: [1, 1] }); lancia("crollo_arcano", s2, c2); eq(c2.mana, 0, "il nemico vive: nessun rimborso");
   });
-  caso("Filo di Rune: 2 Sigilli; con almeno 2 Sigilli il nemico ha −2 per colpirti", () => {
+  caso("Filo di Rune: 2 Sigilli; il nemico ha −1 per colpirti per ogni Sigillo (03/11)", () => {
     const s = scontro(), c = ctx(); lancia("filo_rune", s, c); eq(s.sigilli, 2); eq(C.modAttaccoNem(s), -2);
-    s.sigilli = 1; eq(C.modAttaccoNem(s), 0, "con meno di 2 no");
+    s.sigilli = 1; eq(C.modAttaccoNem(s), -1, "con 1 Sigillo −1");
   });
   caso("Ricamo di Rune: Senza attacchi speciali + Esposto 2; il prossimo incantesimo costa 2 in meno", () => {
     let s = scontro(), c = ctx({ dadi: [3] }); lancia("ricamo_rune", s, c); eq(s.eff.silenzio, 2); eq(s.eff.esposto, 2); eq(s.scontoInc, 2);

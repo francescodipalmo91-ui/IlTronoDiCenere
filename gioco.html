@@ -6839,7 +6839,7 @@
       if (corteccia) rigaNatura("pelle", CB.effNomi.corteccia, `${corteccia}/${SCI.scudoMax({ liv: livelloPg() })}`, "dif");
       if (trappola) rigaNatura("bulbo", CB.effNomi.trappola, nomeTec(TEC.find(x => x.id === trappola) || { nome: { it: trappola, en: trappola } }), "off");
       if (sigilli) { /* Sigilli dell'Arcanista: incisi sul nemico, durano tutto lo scontro */
-        const max = CMB.sigilliMax({ boss: bossNem() });
+        const max = CMB.sigilliMax({ boss: bossNem(), liv: livelloPg() });
         const dt = document.createElement("dt"); dt.className = "eff-nome"; dt.append(medaglione("sigilli"), document.createTextNode(CB.effNomi.sigilli));
         const dd = document.createElement("dd"); dd.className = "eff-dur mal";
         const pall = document.createElement("span"); pall.className = "rombi"; pall.setAttribute("aria-hidden", "true");

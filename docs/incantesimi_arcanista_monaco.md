@@ -37,7 +37,8 @@ Gli altri stati sono quelli che il gioco ha già: Indebolito, Sbilanciato, Espos
 
 ### Meccanica: i Sigilli
 
-- Gli incantesimi d'**Arcano** incidono **Sigilli** sul nemico. **Massimo 3, 2 sui boss.** Durano tutto lo scontro.
+- Gli incantesimi d'**Arcano** incidono **Sigilli** sul nemico. **Massimo 3, 2 sui boss; dal livello 4 uno in più (4, sui boss 3)** (03/11). Durano tutto lo scontro.
+- **03/11, Arcanista più resistente:** Scudo e Scudo della Fede +2 CA per **3 turni**; Specchio di Rune aspetta il primo colpo **a segno** per tutto lo scontro; **Filo di Rune: −1 a colpirti per ogni Sigillo** sul nemico (prima −2 solo con almeno 2). Cataclisma rende il mana doppio se i Sigilli erano al massimo prima del lancio. Scelto di non alzare il tetto a «un Sigillo per livello»: Crollo, Implosione e Risonanza crescono per Sigillo e con 5 Sigilli i boss finali (Atena, il sovrano) cadrebbero in un colpo.
 - Gli incantesimi di **Forza** con la scritta *Detonazione* consumano tutti i Sigilli: **+1d6 di danno per Sigillo** e **recuperi 1 mana per Sigillo**. È così che l'Arcanista ricarica in combattimento.
 - Lo stile: preparare con l'Arcano (controllo, informazioni), chiudere con la Forza (danno, spinta). Chi sceglie una sola scuola funziona lo stesso, ma rende meno.
 - Nella scheda: tre piccole rune accanto al nemico, come le Cariche dello scudo.
@@ -68,7 +69,7 @@ Gli altri stati sono quelli che il gioco ha già: Indebolito, Sbilanciato, Espos
 |---|---|---|---|
 | 1 | Pugno di Forza | 2 | Attacco magico, 1d10 forza. *Detonazione* |
 | 1 | Spinta | 2 | Senza tiro, 1d6 forza; tiro salvezza → Sbilanciato 1. *Detonazione* |
-| 1 | Scudo | 1 | +2 CA per 2 turni (l'incantesimo di oggi) |
+| 1 | Scudo | 1 | +2 CA per **3 turni** (03/11: prima 2) |
 | 2 | Ariete | 4 | Attacco magico 2d6; se colpisce, Sbilanciato 2. *Detonazione* |
 | 2 | Onda d'Urto | 4 | Senza tiro, 2d4; tiro salvezza → perde l'attacco speciale pronto. *Detonazione* |
 | 2 | Barriera Cinetica | 3 | Consuma l'azione; il primo colpo subito fa 0 danni e l'attaccante subisce 1d6 forza |
@@ -113,7 +114,7 @@ Perché funziona nel gioco:
 |---|---|---|---|
 | 1 | Dardo di Luce | 2 | Attacco magico, 1d8 radiante; sul critico anche Accecato 1 |
 | 1 | Tocco Lenitivo | 2 | Cura 1d8 + mod Spirito |
-| 1 | Scudo della Fede | 1 | +2 CA per 2 turni (l'incantesimo Scudo di oggi) |
+| 1 | Scudo della Fede | 1 | +2 CA per **3 turni** (03/11: prima 2) |
 | 2 | Accecare | 3 | Tiro salvezza → Accecato 2 |
 | 2 | Folgore Sacra | 4 | Attacco magico 2d6 radiante; tiro salvezza → Frastornato 1 (boss: +1d6) |
 | 2 | Voto di Luce | 3 | Per 3 turni ogni colpo d'arma a segno fa +1d4 radiante e ti cura 1 |
@@ -167,7 +168,7 @@ Stessa scelta del Guerriero (`sceglieVia("aldo")` / `sceglieVia("guendalina")`),
 
 | Liv | Abilità | Costo | Effetto |
 |---|---|---|---|
-| 3 | Filo della Governante | 5 | 2 Sigilli senza tiro. Per tutto lo scontro, finché il nemico ha almeno 2 Sigilli, ha −2 per colpirti |
+| 3 | Filo della Governante | 5 | 2 Sigilli senza tiro. Per tutto lo scontro, il nemico ha −1 per colpirti per ogni Sigillo (03/11; prima −2 con almeno 2) |
 | 4 | Ricamo di Rune | 7 | Tiro salvezza → Silenzio 2 ed Esposto 2 (boss: Indebolito ed Esposto 2); il prossimo incantesimo −2 mana |
 | 5 | Concentrazione di Adele | 9 | Per 3 turni gli incantesimi d'Arcano non costano mana: ognuno consuma 1 Sigillo al suo posto (se non ce ne sono, si paga normalmente) |
 

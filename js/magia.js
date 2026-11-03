@@ -36,7 +36,7 @@
   const FORZA = [
     ["pugno_forza", 1, 2, "Pugno di Forza", "Force Fist", "Attacco magico, 1d10 forza. Detonazione.", "Spell attack, 1d10 force. Detonation."],
     ["spinta", 1, 2, "Spinta", "Thrust", "Senza tiro, 1d6 forza; tiro salvezza → Sbilanciato 1. Detonazione.", "No roll, 1d6 force; saving throw → Off-balance 1. Detonation."],
-    ["scudo", 1, 1, "Scudo", "Shield", "+2 alla Classe armatura per 2 turni.", "+2 Armor class for 2 turns."],
+    ["scudo", 1, 1, "Scudo", "Shield", "+2 alla Classe armatura per 3 turni.", "+2 Armor class for 3 turns."],
     ["ariete", 2, 4, "Ariete", "Battering Ram", "Attacco magico, 2d6 forza; se colpisce, Sbilanciato 2. Detonazione.", "Spell attack, 2d6 force; on a hit, Off-balance 2. Detonation."],
     ["onda_urto", 2, 4, "Onda d'Urto", "Shockwave", "Senza tiro, 2d4 forza; tiro salvezza → perde l'attacco speciale pronto. Detonazione.", "No roll, 2d4 force; saving throw → loses its readied special attack. Detonation."],
     ["barriera_cinetica", 2, 3, "Barriera Cinetica", "Kinetic Barrier", "Consuma l'azione; il primo colpo che subisci fa 0 danni e chi ti ha colpito subisce 1d6 forza.", "Uses your action; the first blow you take deals 0 damage and the attacker takes 1d6 force."],
@@ -54,7 +54,7 @@
   const LUCE = [
     ["dardo_luce", 1, 2, "Dardo di Luce", "Bolt of Light", "Attacco magico, 1d8 radiante; sul critico anche Accecato 2.", "Spell attack, 1d8 radiant; on a critical also Blinded 2."],
     ["tocco_lenitivo", 1, 2, "Tocco Lenitivo", "Soothing Touch", "Cura 1d8 + mod. Spirito.", "Heals 1d8 + Spirit mod."],
-    ["scudo_fede", 1, 1, "Scudo della Fede", "Shield of Faith", "+2 alla Classe armatura per 2 turni.", "+2 Armor class for 2 turns."],
+    ["scudo_fede", 1, 1, "Scudo della Fede", "Shield of Faith", "+2 alla Classe armatura per 3 turni.", "+2 Armor class for 3 turns."],
     ["accecare", 2, 3, "Accecare", "Blind", "Tiro salvezza → Accecato 2.", "Saving throw → Blinded 2."],
     ["folgore_sacra", 2, 4, "Folgore Sacra", "Holy Lightning", "Attacco magico, 2d6 radiante; tiro salvezza → Frastornato 1 (avversari temibili: +1d6).", "Spell attack, 2d6 radiant; saving throw → Dazed 1 (fearsome foes: +1d6)."],
     ["voto_luce", 2, 3, "Voto di Luce", "Vow of Light", "Per 3 turni ogni colpo d'arma a segno fa +1d4 radiante e ti cura 1.", "For 3 turns every weapon hit deals +1d4 radiant and heals you 1."],
@@ -93,7 +93,7 @@
         ["spezzare_vincolo", 4, 7, "Spezzare il Vincolo", "Break the Bond", "Tiro salvezza → Indebolito 2 (avversari temibili 2); per tutto lo scontro la sua Classe armatura −2.", "Saving throw → Weakened 2 (fearsome foes 2); for the whole fight its Armor class −2."],
         ["crollo_arcano", 5, 9, "Crollo", "Collapse", "Consuma tutti i Sigilli: 2d10 forza per Sigillo, senza tiro; se il nemico arriva a 0, recuperi il mana speso.", "Spends all Seals: 2d10 force per Seal, no roll; if the enemy drops to 0, you recover the mana spent."]
       ].map(voce("forza", "aldo")),
-    ...[["filo_rune", 3, 5, "Filo di Rune", "Thread of Runes", "2 Sigilli senza tiro. Per tutto lo scontro, finché il nemico ha almeno 2 Sigilli, ha −2 per colpirti.", "2 Seals with no roll. For the whole fight, while the enemy has at least 2 Seals, it has −2 to hit you."],
+    ...[["filo_rune", 3, 5, "Filo di Rune", "Thread of Runes", "2 Sigilli senza tiro. Per tutto lo scontro il nemico ha −1 per colpirti per ogni Sigillo che porta.", "2 Seals with no roll. For the whole fight the enemy has −1 to hit you for every Seal it carries."],
         ["ricamo_rune", 4, 7, "Ricamo di Rune", "Rune Embroidery", "Tiro salvezza → Inibito 2 ed Esposto 2 (avversari temibili: Indebolito ed Esposto 2); il prossimo incantesimo costa 2 in meno.", "Saving throw → Inhibited 2 and Exposed 2 (fearsome foes: Weakened and Exposed 2); your next spell costs 2 less."],
         ["quiete_assoluta", 5, 9, "Quiete Assoluta", "Absolute Stillness", "Per 3 turni gli incantesimi d'Arcano non costano mana: ognuno consuma 1 Sigillo al suo posto (senza Sigilli si paga normalmente).", "For 3 turns Arcane spells cost no mana: each spends 1 Seal instead (with no Seals you pay as usual)."]
       ].map(voce("arcano", "guendalina")),

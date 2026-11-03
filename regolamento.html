@@ -357,7 +357,7 @@
             <ul>
               <li><b>Mana</b>: parte da ${R.RISORSA_BASE} + mod. Mente e a ogni livello aumenta di mod. Mente + il nuovo livello.</li>
               <li><b>Scuola principale</b>: si sceglie in creazione, come il Guerriero sceglie l'arma. I posti sono ${posti()}, tra gli incantesimi sbloccati della scuola principale, più ${MG ? MG.POSTI_ALTRA_SCUOLA : 1} posto dell'altra scuola, di qualsiasi livello. Se cambi scuola principale, vale dal livello successivo. Gli incantesimi si cambiano riposando.</li>
-              <li><b>Sigilli</b>: gli incantesimi d'Arcano incidono Sigilli sul nemico, al massimo ${MG ? MG.SIGILLI_MAX : 3} (${MG ? MG.SIGILLI_MAX_BOSS : 2} sugli avversari temibili). Durano tutto lo scontro. Il critico di un incantesimo di Forza incide anche 1 Sigillo.</li>
+              <li><b>Sigilli</b>: gli incantesimi d'Arcano incidono Sigilli sul nemico, al massimo ${MG ? MG.SIGILLI_MAX : 3} (${MG ? MG.SIGILLI_MAX_BOSS : 2} sugli avversari temibili), uno in più dal livello 4. Durano tutto lo scontro. Il critico di un incantesimo di Forza incide anche 1 Sigillo.</li>
               <li><b>Detonazione</b>: gli incantesimi di Forza che la indicano consumano tutti i Sigilli e fanno +1d6 di danno per Sigillo. Senza Sigilli non c'è niente da far esplodere: niente danno in più e niente mana.</li>
               <li><b>Recupero</b>: ogni Detonazione ti restituisce ${recupero()} mana, il doppio se fa esplodere il massimo dei Sigilli.</li>
               <li>${capacita("Sapiente")}: capacità di classe, non occupa posti. Illumina il buio al posto della torcia.</li>
@@ -603,7 +603,7 @@
             <ul>
               <li><b>Mana</b>: starts at ${R.RISORSA_BASE} + Mind mod. and grows at every level by Mind mod. + the new level.</li>
               <li><b>Main school</b>: chosen at creation, as the Warrior chooses a weapon. Slots are ${posti()}, among the unlocked spells of the main school, plus ${MG ? MG.POSTI_ALTRA_SCUOLA : 1} slot from the other school, of any level. If you change main school, it applies from the next level. Spells are changed by resting.</li>
-              <li><b>Seals</b>: Arcane spells carve Seals on the enemy, up to ${MG ? MG.SIGILLI_MAX : 3} (${MG ? MG.SIGILLI_MAX_BOSS : 2} on fearsome foes). They last the whole fight. A Force spell's critical also carves 1 Seal.</li>
+              <li><b>Seals</b>: Arcane spells carve Seals on the enemy, up to ${MG ? MG.SIGILLI_MAX : 3} (${MG ? MG.SIGILLI_MAX_BOSS : 2} on fearsome foes), one more from level 4. They last the whole fight. A Force spell's critical also carves 1 Seal.</li>
               <li><b>Detonation</b>: Force spells that show it spend all Seals and deal +1d6 damage per Seal. With no Seals there is nothing to burst: no extra damage and no mana.</li>
               <li><b>Recovery</b>: each Detonation gives you back ${recupero()} mana, double if it detonates the maximum number of Seals.</li>
               <li>${capacita("Sapiente")}: class ability, takes no slot. Lights the dark instead of a torch.</li>

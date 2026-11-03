@@ -169,7 +169,7 @@
       /* ================= Forza ================= */
       case "pugno_forza": dopoColpo(hit({ dado: 10 }), () => detona()); break;
       case "spinta": diretto(1, 6, 0); conTS({ sbilanciato: 1 }); detona(); break;
-      case "scudo": s.eff.scudo = 2; s.effMax.scudo = 2; E.push({ k: "scudoMagico", turni: 2 }); break;
+      case "scudo": s.eff.scudo = 3; s.effMax.scudo = 3; E.push({ k: "scudoMagico", turni: 3 }); break; /* 03/11: da 2 a 3 turni */
       case "ariete": dopoColpo(hit({ dado: 6, piuDadi: 1 }), () => { fx("sbilanciato", 2); detona(); }); break;
       case "onda_urto": {
         diretto(2, 4, 0);
@@ -206,13 +206,13 @@
       }
       case "invulnerabilita": s.eff.invuln = 1; s.effMax.invuln = 1; E.push({ k: "invuln" }); break;
       case "cataclisma": {
-        let consumati = 0, bonus = 0;
+        let consumati = 0, bonus = 0; const pieni = C.sigilli(s) >= sigMax; /* 03/11: con il tetto a 4 i tre colpi non li consumano tutti: conta se erano al massimo */
         for (let i = 0; i < 3 && vivo(); i++) {
           const r = hit({ dado: 8 });
           if (r.ok && C.sigilli(s) > 0) { const t = ctx.tira(6); s.sigilli -= 1; consumati++; bonus += t; s.pv -= t; E.push({ k: "detonaUno", d: t, restano: s.sigilli }); }
         }
         if (consumati > 0) {
-          const mana = recuperaMana(recupero(ctx.liv) * (consumati >= sigMax ? 2 : 1));
+          const mana = recuperaMana(recupero(ctx.liv) * (pieni && consumati >= Math.min(3, sigMax) ? 2 : 1));
           E.push({ k: "detonaTotale", n: consumati, bonus, mana });
           if (s.demolitore) fx("sbilanciato", 1);
         }
@@ -242,7 +242,7 @@
       /* ================= Luce ================= */
       case "dardo_luce": { const r = hit({ dado: 8, piuDadi: piu }); if (r.ok) { segno = true; if (r.crit && vivo()) fx("accecato", 1); } break; }
       case "tocco_lenitivo": guarisci(1, 8, ctx.modAtt); break;
-      case "scudo_fede": s.eff.scudo = 2; s.effMax.scudo = 2; E.push({ k: "scudoMagico", turni: 2 }); break;
+      case "scudo_fede": s.eff.scudo = 3; s.effMax.scudo = 3; E.push({ k: "scudoMagico", turni: 3 }); break; /* 03/11: da 2 a 3 turni */
       case "accecare": if (conTS({ accecato: 2 })) segno = true; break;
       case "folgore_sacra": {
         const r = hit({ dado: 6, piuDadi: 1 + piu });
@@ -414,7 +414,7 @@
       case "demolitore": return T("Per tutto lo scontro ogni tua Detonazione fa anche Sbilanciato 1.", "For the whole fight every Detonation of yours also causes Off-balance 1.");
       case "caMeno": return T(`Per tutto lo scontro la Classe armatura del nemico scende di ${e.n}.`, `For the whole fight the enemy's Armor Class drops by ${e.n}.`);
       case "rimborso": return T(`Il nemico cade: recuperi il mana speso (${e.mana}).`, `The enemy falls: you recover the mana spent (${e.mana}).`);
-      case "filo": return T("Finché il nemico ha almeno 2 Sigilli, ha −2 per colpirti.", "While the enemy has at least 2 Seals, it has −2 to hit you.");
+      case "filo": return T("Per tutto lo scontro il nemico ha −1 per colpirti per ogni Sigillo che porta.", "For the whole fight the enemy has −1 to hit you for every Seal it carries.");
       case "prossimoSconto": return T(`Il prossimo incantesimo costerà ${e.n} in meno.`, `Your next spell will cost ${e.n} less.`);
       case "scontoInc": return e.n > 0 ? T(`Il ricamo alleggerisce l'incantesimo: costa ${e.n} in meno.`, `The embroidery lightens the spell: it costs ${e.n} less.`) : null;
       case "quiete": return T(`Per ${e.turni} turni gli incantesimi d'Arcano non costano mana: ognuno spende 1 Sigillo (senza Sigilli paghi il costo).`, `For ${e.turni} turns Arcane spells cost no mana: each spends 1 Seal (with no Seals you pay the cost).`);

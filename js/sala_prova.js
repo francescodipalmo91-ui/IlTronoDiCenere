@@ -101,6 +101,7 @@
     const c = ctxBase();
     if (arcanista()) Object.assign(c, {
       pozzo: monaco() ? 0 : M.gradoPozzo(pg.liv), /* 03/11: Pozzo Arcano, tratto dell'Arcanista */
+      respiro: monaco() ? M.gradoTratto(pg.liv) : 0, via: pg.via, /* 03/11: Respiro dell'Equilibrio, tratto del Monaco */
       modAtt: pg.modM, modDanno: pg.modM, cd: 8 + pg.modM + pg.liv, attrTs: monaco() ? "Spirito" : "Mente", modTs: modTsSala(monaco() ? "Spirito" : "Mente"), /* 01/11: TS contro Mente (Arcanista) o Spirito (Monaco) */ dado: s && C.attivo(s, "runa") ? passoDado(pg.arma.dado) : pg.arma.dado,
       manaPiu: (n) => { const r = Math.min(n, pg.furiaMax - pg.furia); pg.furia += r; return r; }, dannoMente: (n) => n,
       cura: (n) => { const f = Math.min(n, pg.pvMax - pg.pv); pg.pv += f; return f; }, pvMancanti: () => pg.pvMax - pg.pv, dannoCorpo: (n) => { const f = Math.min(n, pg.pv - 1); pg.pv -= f; return f; }
@@ -228,8 +229,10 @@
   function ferisci(dn, righe) {
     if (C.attivo(s, "invuln")) { righe.push("Invulnerabilità: nessun danno."); return 0; }
     const f = C.fortezza(s, dn, pg.pv), sv = M ? M.secondaVita(s, f.danno, pg.pv, ctx()) : { danno: f.danno, eventi: [] };
+    const prima = pg.pv;
     pg.pv -= sv.danno; righe.push(...testoEventi(f.eventi), ...testoEventi(sv.eventi));
     if (sv.cura) pg.pv = Math.min(pg.pvMax, pg.pv + sv.cura);
+    if (monaco() && M) righe.push(...M.sottoMetaMonaco(s, ctx(), prima, pg.pv, pg.pvMax).map(e => M.testo(e))); /* 03/11: Respiro dell'Equilibrio, grado III */
     return sv.danno;
   }
   function dopoAzione() {
@@ -253,12 +256,14 @@
     if (!turnoPg || finito) return;
     const pre = s.prossimo || {}; s.prossimo = null;
     tipoAzione = pg.arma.tipo;
-    const c = ctx(), e = C.colpo(s, c, { base: true, bonus: pre.bonus || 0, piuDadi: pre.piuDadi || 0 });
+    const c = ctx(), ombraR = monaco() && (Number(s.bilancia) || 0) < 0; if (ombraR) c.modDanno += 1; /* 03/11: Respiro dell'Equilibrio, Bilancia in Ombra */
+    const e = C.colpo(s, c, { base: true, bonus: pre.bonus || 0, piuDadi: pre.piuDadi || 0 });
+    if (ombraR && e.ok) e.respiro = true;
     if (e.crit && !arcanista() && !sciamano()) c.furiaPiu(2);
     const runa = e.ok && arcanista() && C.attivo(s, "runa") ? testoEventi([C.incidi(s, c, 1)]) : [];
     if (sciamano()) { if (e.ok) runa.push(...testoEventi(S.suColpo(s, c, e))); runa.push(...testoEventi(S.attaccoFuria(s, c))); } /* rivestimento e Linfa Furiosa */
     if (e.ok && arcanista() && C.attivo(s, "voto")) { const x = tira(4); s.pv -= x; pg.pv = Math.min(pg.pvMax, pg.pv + 1); runa.push(M.testo({ k: "votoColpo", d: x, cura: 1 })); }
-    blocco("Attacco normale", [...testoEventi([e]), ...runa, e.crit && !arcanista() && !sciamano() ? "Tuo critico: +2 furia." : ""], e.ok ? "mia" : "");
+    blocco("Attacco normale", [...testoEventi([e]), ...(e.respiro ? [M.testo({ k: "respiroOmbra" })] : []), ...runa, e.crit && !arcanista() && !sciamano() ? "Tuo critico: +2 furia." : ""], e.ok ? "mia" : "");
     dopoAzione();
   }
   function usaTecnica(t) {

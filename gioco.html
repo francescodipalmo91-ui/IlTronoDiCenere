@@ -11645,10 +11645,13 @@
       let svCura = 0;
       if (scontro) { const f = CMB.fortezza(scontro, d, pvPg()); d = f.danno; f.eventi.forEach(e => { const x = rigaScudo(e); if (x) righe.push(x); }); } /* Fortezza Eterna */
       if (scontro && window.MagiaCombattimento) { const sv = window.MagiaCombattimento.secondaVita(scontro, d, pvPg(), { tira }); d = sv.danno; svCura = sv.cura || 0; sv.eventi.forEach(e => { const x = rigaScudo(e); if (x) righe.push(x); }); } /* Seconda Vita */
+      const pvPrimaColpo = pvPg();
       righe.push(ferisciPg(d));
       if (svCura) curaPgN(svCura);
+      if (scontro && pg.classe === "Accolito" && window.MagiaCombattimento) window.MagiaCombattimento.sottoMetaMonaco(scontro, ctxIncantesimo(), pvPrimaColpo, pvPg(), pvMaxPg()).forEach(e => righe.push(window.MagiaCombattimento.testo(e))); /* 03/11: Respiro dell'Equilibrio, grado III */
     }
 
+    const respiroOmbraPg = () => !!(scontro && pg && pg.classe === "Accolito" && (Number(scontro.bilancia) || 0) < 0); /* 03/11 */
     function attaccoPgScontro(conTorcia) {
       const coraggio = anelloAlDito() && pvPg() <= Math.floor(pvMaxPg() / 4) ? 1 : 0; /* coraggio dei Vespera: +1 al tiro per colpire a salute bassa */
       if (coraggio && !scontro.coraggio) { scontro.coraggio = true; sist(A2.anello.coraggio); }
@@ -11659,7 +11662,7 @@
       if (crit) guadagnaFuria(2);
       if (ok) {
         const vuln = dadiVuln(conTorcia ? "Contundente" : tipoArmaInMano()); /* la torcia colpisce come un'arma contundente */
-        const dado = dadoArmaPg(conTorcia), nd = (crit ? 2 : 1) * (1 + (pre.piuDadi || 0) + vuln), tiri = tiraDadi(nd, dado), bA = conTorcia ? 0 : bonusArmaPg(), pieno = Math.max(1, somma(tiri) + m + bA), resA = resisteA(conTorcia ? "Contundente" : tipoArmaInMano()), base = resA ? Math.max(1, Math.floor(pieno / 2)) : pieno; /* 01/11: resistenza al tipo d'arma */
+        const dado = dadoArmaPg(conTorcia), nd = (crit ? 2 : 1) * (1 + (pre.piuDadi || 0) + vuln), tiri = tiraDadi(nd, dado), bA = (conTorcia ? 0 : bonusArmaPg()) + (respiroOmbraPg() ? 1 : 0), /* 03/11: Respiro dell'Equilibrio, Bilancia in Ombra */ pieno = Math.max(1, somma(tiri) + m + bA), resA = resisteA(conTorcia ? "Contundente" : tipoArmaInMano()), base = resA ? Math.max(1, Math.floor(pieno / 2)) : pieno; /* 01/11: resistenza al tipo d'arma */
         const marc = CMB.marchiato(scontro) ? tira(4) : 0, sig = scontro.sigillo && CMB.crepePiene(scontro, { boss: bossNem() }) ? tira(4) : 0, seg = CMB.segnato(scontro) ? tira(4) : 0, danno = base + marc + sig + seg; /* Marchio del Guardiano, Sigillo del Demolitore e Segno del Cacciatore: +1d4 agli attacchi normali */
         scontro.pv -= danno;
         righe.push(pesca(crit ? CB.critPg : conTorcia ? CB.colpTorcia : CB.colpArma), crit ? CB.tiroAttCrit(mA, tot, d) : CB.tiroAtt(d, mA, tot, ca), CB.tiroDanno(nd, dado, tiri, m + bA, pieno));
@@ -11669,6 +11672,7 @@
           if (scontro.contaPugnale % 3 === 0) { const x = tira(4); scontro.pv -= x; righe.push(BOTTINO_ETTORE.colpo(x)); }
         }
         if (vuln) righe.push(ET.scontro.vulnColpo);
+        if (!conTorcia && respiroOmbraPg()) righe.push(window.MagiaCombattimento.testo({ k: "respiroOmbra" }));
         if (crit) gambaEttore(righe); /* Ettore: un critico gli fa perdere il turno */
         if (marc) righe.push(RT.marchioDanno(marc));
         if (sig) righe.push(RT.sigilloDanno(sig));
@@ -11865,6 +11869,7 @@
         vulnVeleno: dadiVuln("Veleno") > 0, /* 01/11: un dado di veleno in più (Cartografo, Profeta) */
         sottobosco: sciamano() && dadiVuln("Sottobosco") > 0, /* 02/11: Enea, gli stati dello Sciamano durano 1 turno in più */
         linfaRigeneratrice: sciamano() && viaPg() === "guendalina",
+        respiro: pg && pg.classe === "Accolito" ? MC_GRADO_POZZO(livelloPg()) : 0, via: viaPg(), /* 03/11: Respiro dell'Equilibrio del Monaco */
         naturaPiu: (n) => guadagnaNatura(n),
         dannoPg: (n) => { pg.dannoFisico = Math.min(pvMaxPg(), (pg.dannoFisico || 0) + n); disegnaVitali(); scuotiScheda(); modificato(); },
         curaPg: (n) => { pg.dannoFisico = Math.max(0, (pg.dannoFisico || 0) - n); disegnaVitali(); modificato(); },

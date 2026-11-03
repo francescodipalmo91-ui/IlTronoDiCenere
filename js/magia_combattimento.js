@@ -337,7 +337,8 @@
       const inflitto = Math.max(0, pv0 - s.pv);
       if (segno && attivo(s, "gemella") && inc.id !== "ombra_gemella" && vivo()) { const d = ctx.tira(6); s.pv -= d; E.push({ k: "gemellaDanno", d }); }
       const drenato = Math.max(0, pv0 - s.pv);
-      if (inc.id === "tocco_avvizzente" && drenato > 0) curaFissa(Math.floor(drenato / 2));
+      if (ombra && s.fameOmbra && drenato > 0 && inc.id !== "furia_cinerea") { s.fameOmbra = false; E.push({ k: "fameOmbraScatta" }); curaFissa(drenato); } /* 03/11: Fame dell'Ombra (Monaco, via Cenere, grado III) */
+      else if (inc.id === "tocco_avvizzente" && drenato > 0) curaFissa(Math.floor(drenato / 2));
       else if (inc.id === "abbraccio_vuoto" && drenato > 0) curaFissa(drenato);
       else if (ombra && attivo(s, "furiaCinerea") && drenato > 0 && inc.id !== "furia_cinerea") curaFissa(Math.floor(drenato / 2));
       if (nadir) E.push({ k: "nadir", mente: dannoMente(1) });
@@ -352,6 +353,10 @@
       else nuova = Math.max(-3, Math.min(3, bil + (luce ? 1 : -1)));
       s.bilancia = nuova;
       E.push({ k: "bilancia", da: bil, a: nuova });
+      if (Number(ctx.respiro) >= 2 && Math.abs(nuova) === 3 && Math.abs(bil) !== 3) { /* 03/11: Respiro dell'Alba, grado II */
+        const t = ctx.tira(4), n = t + (Number(ctx.liv) || 1), fatto = ctx.cura ? ctx.cura(n) : n;
+        E.push({ k: "respiroAlba", zenit: nuova > 0, d: t, n, fatto });
+      }
     }
     /* Sigilli che arrivano dopo l'incantesimo: critico di Forza (1), Occhio del Tomo (2 per critico), Tomo Proibito (1 sull'Arcano) */
     const dopo = crits * ((forza ? 1 : 0) + (occhio ? 2 : 0));
@@ -385,6 +390,15 @@
     return E;
   }
 
+  /* 03/11: Respiro dell'Equilibrio, grado III. Da chiamare dopo ogni danno al Monaco: la prima volta sotto metà salute.
+     Via Brace (guendalina): la Bilancia torna a 0 e ti curi di 1d6 + mod. Spirito. Via Cenere (aldo): il prossimo incantesimo d'Ombra cura tutto il danno inflitto. */
+  function sottoMetaMonaco(s, ctx, prima, dopo, max) {
+    if (Number(ctx && ctx.respiro) < 3 || s.respiroUsato || !(prima >= max / 2 && dopo < max / 2 && dopo > 0)) return [];
+    s.respiroUsato = true;
+    if (ctx.via === "guendalina") { s.bilancia = 0; const t = ctx.tira(6), n = t + (Number(ctx.modDanno) || 0), fatto = ctx.cura ? ctx.cura(n) : n; return [{ k: "equilibrioRitrovato", d: t, n, fatto }]; }
+    if (ctx.via === "aldo") { s.fameOmbra = true; return [{ k: "fameOmbra" }]; }
+    return [];
+  }
   /* Pozzo Arcano, grado I: da chiamare all'inizio di ogni tuo turno (dopo il primo) */
   function inizioTurnoPozzo(s, ctx) {
     const pozzo = Number(ctx && ctx.pozzo) || 0, E = [];
@@ -431,6 +445,12 @@
       case "demolitore": return T("Per tutto lo scontro ogni tua Detonazione fa anche Sbilanciato 1.", "For the whole fight every Detonation of yours also causes Off-balance 1.");
       case "caMeno": return T(`Per tutto lo scontro la Classe armatura del nemico scende di ${e.n}.`, `For the whole fight the enemy's Armor Class drops by ${e.n}.`);
       case "rimborso": return T(`Il nemico cade: recuperi il mana speso (${e.mana}).`, `The enemy falls: you recover the mana spent (${e.mana}).`);
+      case "respiroLuce": return T(`Respiro dell'Equilibrio: con la Bilancia in Luce il colpo fa 1 danno in meno (${e.prima} → ${e.dopo}).`, `Breath of Balance: with the Balance on Light the blow deals 1 less damage (${e.prima} → ${e.dopo}).`);
+      case "respiroOmbra": return T("Respiro dell'Equilibrio: con la Bilancia in Ombra il tuo colpo fa 1 danno in più.", "Breath of Balance: with the Balance on Shadow your blow deals 1 extra damage.");
+      case "respiroAlba": return T(`Respiro dell'Alba: la Bilancia tocca ${e.zenit ? "lo Zenit" : "il Nadir"}, ti curi di 1d4 [${e.d}] + livello = ${e.fatto}.`, `Breath of Dawn: the Balance reaches ${e.zenit ? "Zenith" : "Nadir"}, you heal 1d4 [${e.d}] + level = ${e.fatto}.`);
+      case "equilibrioRitrovato": return T(`Equilibrio ritrovato: sotto metà salute la Bilancia torna a 0 e ti curi di 1d6 [${e.d}] + Spirito = ${e.fatto}.`, `Balance Regained: below half health the Balance returns to 0 and you heal 1d6 [${e.d}] + Spirit = ${e.fatto}.`);
+      case "fameOmbra": return T("Fame dell'Ombra: sotto metà salute, il tuo prossimo incantesimo d'Ombra ti curerà di tutto il danno che infligge.", "Hunger of Shadow: below half health, your next Shadow spell will heal you for all the damage it deals.");
+      case "fameOmbraScatta": return T("Fame dell'Ombra: l'Ombra ti restituisce tutto ciò che strappa.", "Hunger of Shadow: the Shadow gives back all it tears away.");
       case "pozzo": return T(`Pozzo Arcano: nel turno passato non hai lanciato incantesimi, recuperi ${e.n} mana.`, `Arcane Well: you cast no spell last turn, you recover ${e.n} mana.`);
       case "filo": return T("Per tutto lo scontro il nemico ha −1 per colpirti per ogni Sigillo che porta.", "For the whole fight the enemy has −1 to hit you for every Seal it carries.");
       case "prossimoSconto": return T(`Il prossimo incantesimo costerà ${e.n} in meno.`, `Your next spell will cost ${e.n} less.`);
@@ -478,7 +498,7 @@
     }
   }
 
-  const API = { UNA_PER_RIPOSO, DIFESE, SERVONO_SIGILLI, POZZO_SCONTO, gradoPozzo, inizioTurnoPozzo, recupero, costo, disponibile, lancia, inizioTurnoNemico, haTick, bonusTsPg, secondaVita, scaduti, testo };
+  const API = { UNA_PER_RIPOSO, DIFESE, SERVONO_SIGILLI, POZZO_SCONTO, gradoPozzo, gradoTratto: gradoPozzo, inizioTurnoPozzo, sottoMetaMonaco, recupero, costo, disponibile, lancia, inizioTurnoNemico, haTick, bonusTsPg, secondaVita, scaduti, testo };
   root.MagiaCombattimento = API;
   if (typeof module !== "undefined" && module.exports) module.exports = API;
 })(typeof window !== "undefined" ? window : globalThis);

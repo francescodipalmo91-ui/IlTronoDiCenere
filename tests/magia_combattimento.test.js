@@ -51,6 +51,17 @@
   });
 
   /* ================= Sigilli ================= */
+  caso("03/11: Respiro dell'Equilibrio (Monaco) — I: Luce −1 ai colpi subiti; II: Zenit/Nadir curano 1d4 + livello; III: sotto metà, Brace cura e azzera, Cenere fa curare il prossimo incantesimo d'Ombra", () => {
+    const s = scontro({ bilancia: 2 }), cl = ctx({ respiro: 1 });
+    const r = C.colpoSubito(s, cl, false, 7); eq(r.danno, 6, "in Luce −1"); s.bilancia = -1; eq(C.colpoSubito(s, cl, false, 7).danno, 7, "in Ombra no");
+    let t = scontro({ bilancia: 2 }), c = ctx({ respiro: 2, liv: 2, dadi: [15, 4, 3] }); lancia("dardo_luce", t, c); eq(t.bilancia, 3); eq(c.curato, 3 + 2, "Zenit: 1d4 3 + livello 2");
+    t = scontro({ bilancia: 3 }); c = ctx({ respiro: 2, liv: 2, dadi: [15, 4, 1, 1, 1] }); const rz = lancia("tocco_avvizzente", t, c); eq(ev(rz, "respiroAlba").length, 0, "uscendo dallo Zenit (Crepuscolo) il Respiro non scatta");
+    const b = scontro({ bilancia: 2 }), cb = ctx({ respiro: 3, via: "guendalina", modDanno: 3, dadi: [4] });
+    eq(M.sottoMetaMonaco(b, cb, 24, 17, 31).length, 0, "sopra metà niente"); eq(M.sottoMetaMonaco(b, cb, 16, 12, 31)[0].k, "equilibrioRitrovato"); eq([b.bilancia, cb.curato], [0, 7]);
+    eq(M.sottoMetaMonaco(b, cb, 16, 10, 31).length, 0, "una volta per scontro");
+    const n = scontro({ bilancia: -1 }), cn = ctx({ respiro: 3, via: "aldo" }); eq(M.sottoMetaMonaco(n, cn, 16, 12, 31)[0].k, "fameOmbra"); eq(n.fameOmbra, true);
+    const cn2 = ctx({ respiro: 3, via: "aldo", dadi: [15, 4, 5] }); lancia("tocco_avvizzente", n, cn2); eq([n.fameOmbra, cn2.curato], [false, 80 - n.pv], "cura tutto il danno");
+  });
   caso("03/11: Pozzo Arcano — I: +1 mana dopo un turno senza incantesimi; II: Specchio e Barriera −1; III: il primo incantesimo dello scontro è gratis", () => {
     const inc = (id) => MG.INCANTESIMI.find(i => i.id === id);
     eq([M.gradoPozzo(1), M.gradoPozzo(2), M.gradoPozzo(3), M.gradoPozzo(4)], [1, 2, 2, 3]);

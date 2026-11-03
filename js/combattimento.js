@@ -506,6 +506,7 @@
       const nc = a.tipo === "tutti" ? 1 : (a.cariche || 0);
       if (nc) E.push(carica(s, nc));
     }
+    if (Number(ctx && ctx.respiro) >= 1 && (Number(s.bilancia) || 0) > 0 && finale > 1) { finale -= 1; E.push({ k: "respiroLuce", prima: finale + 1, dopo: finale }); } /* 03/11: Respiro dell'Equilibrio del Monaco, Bilancia in Luce */
     if (attivo(s, "santuario") && !s.santColpo && finale > 0) { s.santColpo = true; const prima = finale; finale = Math.floor(finale / 2); E.push({ k: "assorbito", tipo: "meta", prima, dopo: finale }); } /* Santuario: il primo colpo di ogni turno fa metà */
     if (attivo(s, "baluardo")) { furia *= 2; E.push({ k: "baluardoColpo" }); E.push(carica(s, 1)); }
     if (s.elastica && cariche(s) >= 2 && vivo(s)) { const d = ctx.tira(4); s.pv -= d; E.push({ k: "elasticaColpo", d }); }

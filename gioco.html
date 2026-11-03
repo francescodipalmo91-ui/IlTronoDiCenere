@@ -4892,7 +4892,8 @@
         nuovoPosto: (l) => `Hai sbloccato le tecniche di livello ${l}: puoi prepararle riposando.`,
         emorragia: (d, t) => `Emorragia: 1d${d} danni per ${t} turni.`, durata: (n) => n === 1 ? " (1 turno)" : ` (${n} turni)`,
         ridotto: (nome, n) => `Contro un avversario di questo calibro, «${nome}» dura al massimo ${n} turni.`,
-        immune: (nome) => `L'avversario è troppo potente: «${nome}» non ha effetto.`,
+        immune: (nome) => `L'avversario è troppo potente: «${nome}» non funziona sui boss, niente tiro salvezza.`,
+        immuneCreatura: (nome) => `La creatura è immune a «${nome}».`, alPosto: "Al suo posto, effetto ridotto per i boss:",
         esecuzione: "Il colpo è fatale: il nemico crolla a terra.", cura: (n) => `Recuperi ${n} punti di salute.`,
         parata: "Ti chiudi in guardia: il primo colpo che ti raggiungerà prima del tuo turno non ti farà nulla.",
         parataOk: "Pari il colpo e rispondi subito: nessun danno.", contrattacco: "Contrattacco:", contrPunta: (d, c) => `Critico (18-20): d20 ${d}, ${c ? "critico!" : "niente critico"}`,
@@ -4977,7 +4978,8 @@
         nuovoPosto: (l) => `You have unlocked level ${l} techniques: you can prepare them when you rest.`,
         emorragia: (d, t) => `Haemorrhage: 1d${d} damage for ${t} turns.`, durata: (n) => n === 1 ? " (1 turn)" : ` (${n} turns)`,
         ridotto: (nome, n) => `Against an opponent of this calibre, “${nome}” lasts at most ${n} turns.`,
-        immune: (nome) => `The opponent is too powerful: “${nome}” has no effect.`,
+        immune: (nome) => `The opponent is too powerful: “${nome}” does not work on bosses, no saving throw.`,
+        immuneCreatura: (nome) => `The creature is immune to “${nome}”.`, alPosto: "Instead, the reduced effect for bosses:",
         esecuzione: "The blow is fatal: the enemy collapses.", cura: (n) => `You recover ${n} health.`,
         parata: "You lock into your guard: the first blow that reaches you before your turn will do you no harm.",
         parataOk: "You parry the blow and answer at once: no damage.", contrattacco: "Counterattack:", contrPunta: (d, c) => `Critical (18-20): d20 ${d}, ${c ? "critical!" : "no critical"}`,
@@ -11869,9 +11871,10 @@
     }
     /* dagli eventi del modulo alle righe del diario */
     function righeEventi(eventi, t) {
-      const righe = [], esiti = []; let crit = 0, ts = null, colpito = false;
+      const righe = [], esiti = []; let crit = 0, ts = null, colpito = false, dopoImmune = false;
       const nomeEff = (k) => CB.effNomi[k] || k;
       eventi.forEach(e => {
+        if (dopoImmune && e.k === "stato") { dopoImmune = false; righe.push(RT.alPosto); } /* 03/11: il ripiego dei boss, dopo l'immunità */
         switch (e.k) {
           case "colpo":
             esiti.push(e.crit ? RT.critico : e.ok ? RT.colpito : RT.mancato); if (e.crit) crit++;
@@ -11884,7 +11887,7 @@
             else righe.push((RT.effetti[e.s] || nomeEff(e.s)) + (CMB.perScontro(e.turni) ? RT.perScontro : RT.durata(e.turni)));
             if (e.ridotto) righe.push(RT.ridotto(nomeEff(e.s), e.turni));
             break;
-          case "immune": righe.push(RT.immune(nomeEff(e.s))); break;
+          case "immune": righe.push(e.creatura ? RT.immuneCreatura(nomeEff(e.s)) : RT.immune(nomeEff(e.s))); dopoImmune = !e.creatura; break;
           case "ts": ts = e; break;
           case "resiste": righe.push(RT.resiste); break;
           case "sangueTutto": righe.push(RT.sangueTutto(e.n, e.tiri, e.tot)); break;

@@ -58,7 +58,7 @@
   const sogliaCrit = (s, base) => Math.max(CRIT_MIN, attivo(s, "precisione") ? CRIT_MIN : (base || 20) - (attivo(s, "esposto") ? 1 : 0));
   function metti(s, ctx, k, turni) { /* applica uno stato al nemico rispettando le regole dei boss */
     if (ctx.boss && CONTROLLI.includes(k)) return { k: "immune", s: k };
-    if (ctx.immuni && ctx.immuni.includes(k)) return { k: "immune", s: k }; /* 28/10: le creature di cenere non sanguinano */
+    if (ctx.immuni && ctx.immuni.includes(k)) return { k: "immune", s: k, creatura: true }; /* 28/10: le creature di cenere non sanguinano */
     let n = DURATE_COMUNI[k] && turni !== PER_SCONTRO ? DURATE_COMUNI[k] : turni, ridotto = false;
     if (ctx.boss && TETTO_BOSS[k] && n > TETTO_BOSS[k]) { n = TETTO_BOSS[k]; ridotto = true; }
     if (ctx.sottobosco && turni !== PER_SCONTRO) n += 1; /* 02/11: Enea vulnerabile al sottobosco, gli stati dello Sciamano durano 1 turno in più */

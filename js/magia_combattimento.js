@@ -378,11 +378,13 @@
   /* ---------- testi (IT/EN): una riga per evento. I colpi, i tiri salvezza e gli stati li scrive già chi mostra lo scontro ---------- */
   const T = (it, en) => (root.Lingua && typeof root.Lingua.t === "function" ? root.Lingua.t({ it, en }) : it);
   const dadi = (e) => `${e.nd ? e.nd * Math.max(1, e.n) : e.n}d${e.dado} [${e.tiri.join("+")}]${e.mm ? (e.mm > 0 ? "+" : "−") + Math.abs(e.mm) : ""}`;
+  const rombi = (n, max) => "◆".repeat(Math.max(0, Math.min(n, max))) + "◇".repeat(Math.max(0, max - n)); /* 03/11: Sigilli leggibili a colpo d'occhio */
   function testo(e) {
     switch (e.k) {
       case "sigilli":
-        if (e.n <= 0 && e.perse > 0) return T(`Sigilli già al massimo (${e.tot}/${e.max}).`, `Seals already at the maximum (${e.tot}/${e.max}).`);
-        return T(`Incidi ${e.n === 1 ? "1 Sigillo" : e.n + " Sigilli"} sul nemico (${e.tot}/${e.max}).`, `You carve ${e.n === 1 ? "1 Seal" : e.n + " Seals"} on the enemy (${e.tot}/${e.max}).`) + (e.perse > 0 ? T(" Il resto va perso.", " The rest is lost.") : "");
+        if (e.n <= 0 && e.perse > 0) return T(`Sigilli già al massimo: ${rombi(e.tot, e.max)} ${e.tot} su ${e.max}, quello nuovo va perso.`, `Seals already at the maximum: ${rombi(e.tot, e.max)} ${e.tot} of ${e.max}, the new one is lost.`);
+        return T(`Incidi ${e.n === 1 ? "1 Sigillo" : e.n + " Sigilli"} sul nemico: ${rombi(e.tot, e.max)} ${e.tot} su ${e.max}.`, `You carve ${e.n === 1 ? "1 Seal" : e.n + " Seals"} on the enemy: ${rombi(e.tot, e.max)} ${e.tot} of ${e.max}.`)
+          + (e.tot >= e.max ? T(" Sigilli al massimo: la prossima Detonazione ti rende il doppio del mana.", " Seals at the maximum: the next Detonation gives you double mana.") : "") + (e.perse > 0 ? T(" Il resto va perso.", " The rest is lost.") : "");
       case "diretto": return T(`Danno senza tiro: ${dadi(e)} = ${e.danno}${e.meta ? " (dimezzato)" : ""}.`, `Damage with no roll: ${dadi(e)} = ${e.danno}${e.meta ? " (halved)" : ""}.`);
       case "detona":
         return T(`Detonazione: ${e.n} ${e.n === 1 ? "Sigillo" : "Sigilli"} esplodono, +${e.n}d${e.dado} [${e.tiri.join("+")}] = ${e.bonus} danni.`, `Detonation: ${e.n} ${e.n === 1 ? "Seal" : "Seals"} burst, +${e.n}d${e.dado} [${e.tiri.join("+")}] = ${e.bonus} damage.`)

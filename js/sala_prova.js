@@ -133,14 +133,15 @@
   }
   const durata = (n) => (n === 1 ? "1 turno" : `${n} turni`);
   function testoEventi(eventi) {
-    const r = [];
+    const r = []; let dopoImmune = false; /* 03/11: dopo un'immunità da boss, lo stato che segue è il ripiego */
     eventi.forEach(e => {
+      if (dopoImmune && e.k === "stato") { dopoImmune = false; r.push("Al suo posto, effetto ridotto per i boss:"); }
       switch (e.k) {
         case "colpo":
           if (!e.ok) { r.push(`Mancato: d20 ${e.d} ${fmt(e.mA)} = ${e.tot} contro CA ${e.ca}.`); break; }
           r.push(`${e.crit ? "CRITICO" : "Colpito"}: d20 ${e.d} ${fmt(e.mA)} = ${e.tot} contro CA ${e.ca}${e.critDa ? ` (critico da ${e.critDa})` : ""}. Danno ${e.nd}d${e.dado} [${e.tiri.join("+")}] ${fmt(e.mm)}${e.marchio ? ` + marchio ${e.marchio}` : ""}${e.sigillo ? ` + sigillo ${e.sigillo}` : ""}${e.segno ? ` + segno ${e.segno}` : ""} = ${e.danno}.`); break;
         case "stato": r.push(e.s === "sanguina" ? `${e.dado === 6 ? "Emorragia" : "Sanguinamento"} 1d${e.dado} per ${durata(e.turni)}.` : `${NOMI_EFF[e.s] || e.s} per ${C.perScontro(e.turni) ? "tutto lo scontro" : durata(e.turni)}${DESC_EFF[e.s] ? ` (${DESC_EFF[e.s]})` : ""}.`); if (e.ridotto) r.push(`Boss: durata ridotta a ${durata(e.turni)}.`); break;
-        case "immune": r.push(`Boss: «${NOMI_EFF[e.s]}» non ha effetto.`); break;
+        case "immune": r.push(e.creatura ? `${nem.nome.replace(/ \(.*\)/, "")} è immune a «${NOMI_EFF[e.s]}».` : `«${NOMI_EFF[e.s]}» non funziona sui boss: niente tiro salvezza, non attecchisce mai.`); dopoImmune = !e.creatura; break;
         case "ts": r.push(`Tiro salvezza del nemico: d20 ${e.d} ${fmt(e.m)} = ${e.tot} contro CD ${e.cd} → ${e.ok ? "resiste" : "non resiste"}.`); break;
         case "resiste": break;
         case "sangueTutto": r.push(`La ferita si apre del tutto: ${e.n} × d${e.dado} [${e.tiri.join("+")}] = ${e.tot} danni; il sanguinamento finisce.`); break;
@@ -492,7 +493,7 @@
     return att.map(k => [k === "sanguina" ? (Number(s.sangueDado) === 6 ? "Emorragia 1d6" : "Sanguinamento 1d4") + (s.marchio ? " · marchiato" : "") : k === "avvelenato" ? (Number(s.velenoDado) === 6 ? "Tossina 1d6" : "Avvelenato 1d4") : NOMI_EFF[k] + (k === "esposto" && s.segno ? " · segnato" : "") + (k === "rivest" && s.rivest ? " · " + s.rivest : ""), C.perScontro(s.eff[k]) ? "tutto lo scontro" : durata(s.eff[k])]);
   }
   const bilanciaTesto = () => { const v = (s && s.bilancia) || 0; return v === 0 ? "equilibrio" : v > 0 ? `Luce ${v}${v === 3 ? " · Zenit" : v === 2 ? " · Aureola" : ""}` : `Ombra ${-v}${v === -3 ? " · Nadir" : v === -2 ? " · Velo" : ""}`; };
-  const sigilliNem = () => (s && C.sigilli(s) ? [["Sigilli", `${C.sigilli(s)}/${C.sigilliMax({ boss: nem.boss })}`]] : []);
+  const sigilliNem = () => { if (!s || !C.sigilli(s)) return []; const n = C.sigilli(s), max = C.sigilliMax({ boss: nem.boss }); return [["Sigilli (tutto lo scontro)", `${"◆".repeat(n)}${"◇".repeat(Math.max(0, max - n))} ${n} su ${max}${n >= max ? " · al massimo: Detonazione doppia" : ""}`]]; }; /* 03/11 */
   const crepeNem = () => { if (!s || !C.crepe(s)) return []; const max = C.crepeMax({ boss: nem.boss }); return [["Incrinatura" + (s.sigillo && C.crepe(s) >= max ? " · sigillo" : ""), `${C.crepe(s)}/${max} cariche (−${C.crepe(s)} CA)`]]; };
   function disegna() {
     if (!pg) pg = leggiPg();

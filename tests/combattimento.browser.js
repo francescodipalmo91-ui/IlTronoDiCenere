@@ -85,7 +85,7 @@ caso("Sala di prova: un boss ignora l'Inibito di Eco del Metallo e resta Indebol
   await page.selectOption("#pLiv", "3"); await page.selectOption("#nTipo", "manichino"); await page.check("#nBoss"); await page.click("#svNuovo");
   await page.evaluate(() => SalaProva.accoda(15, 3)); await page.click('[data-tec="eco"]');
   const s = await page.evaluate(() => SalaProva.stato().s);
-  eq(s.eff.bloccato || 0, 0); vero(/non ha effetto/.test(await page.innerText("#svLog")), "manca il messaggio di immunità"); await chiudi();
+  eq(s.eff.bloccato || 0, 0); vero(/non funziona sui boss/.test(await page.innerText("#svLog")) && /Al suo posto/.test(await page.innerText("#svLog")), "manca il messaggio di immunità con il ripiego"); await chiudi();
 });
 caso("Sala di prova: Parata Mutilante annulla il morso, niente furia, contrattacco e sanguinamento", async (b) => {
   const { page, chiudi } = await apri(b, "tutorial.html?prova");

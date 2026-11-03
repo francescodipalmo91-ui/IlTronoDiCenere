@@ -14,8 +14,8 @@
    - attacco magico = d20 + mod Mente contro la CA; dal 28/10 il danno aggiunge il modificatore (ctx.modDanno), come le armi il Vigore; critico = doppio dei dadi
    - tiro salvezza del nemico: d20 + suo Vigore contro 8 + Mente + livello; i boss ignorano i controlli e usano il ripiego del testo
    - Sigilli (Arcano): massimo 3, 2 sui boss, per tutto lo scontro
-   - Detonazione (Forza): consuma tutti i Sigilli, +1d6 per Sigillo; recupero di mana per Detonazione = 1/1/2/2/3 per livello,
-     doppio se si consuma il massimo dei Sigilli; senza Sigilli non c'è niente da far esplodere (né danno né recupero)
+   - Detonazione (Forza): consuma tutti i Sigilli, +1d6 per Sigillo; recupero di 1 mana per Sigillo (03/11; Singolarità 2 per Sigillo);
+     senza Sigilli non c'è niente da far esplodere (né danno né recupero)
    - un critico con un incantesimo di Forza incide 1 Sigillo (dopo l'eventuale Detonazione)
    - le difese che consumano l'azione non si usano due turni di fila
    ===================================================================== */
@@ -119,7 +119,7 @@
       if (n < 1) { E.push({ k: "detonaVuota" }); return 0; }
       const dado = o.dado || 6, tiri = tiraDadi(ctx, n, dado), bonus = somma(tiri), max = n >= sigMax;
       s.pv -= bonus; s.sigilli = 0;
-      const mana = recuperaMana(recupero(ctx.liv) * (max || o.doppia ? 2 : 1));
+      const mana = recuperaMana(n * (o.doppia ? 2 : 1)); /* 03/11 (Francesco): 1 mana per Sigillo, come nel documento; niente più tabella per livello */
       E.push({ k: "detona", n, dado, tiri, bonus, max, mana });
       if (s.demolitore) fx("sbilanciato", 1);
       return n;
@@ -192,7 +192,7 @@
       case "implosione": {
         const n = C.sigilli(s), tiri = tiraDadi(ctx, 2 * n, 6), danno = somma(tiri);
         s.pv -= danno; s.sigilli = 0;
-        const mana = recuperaMana(recupero(ctx.liv) * (n >= sigMax ? 2 : 1));
+        const mana = recuperaMana(n);
         E.push({ k: "consumo", n, nd: 2, dado: 6, tiri, mm: 0, danno, mana });
         if (s.demolitore) fx("sbilanciato", 1);
         break;
@@ -209,20 +209,20 @@
       case "singolarita": {
         const n = C.sigilli(s), tiri = tiraDadi(ctx, 3 * n, 6), danno = Math.max(1, somma(tiri) + ctx.modAtt);
         s.pv -= danno; s.sigilli = 0;
-        const mana = recuperaMana(recupero(ctx.liv) * 2);
+        const mana = recuperaMana(n * 2); /* Singolarità: 2 mana per Sigillo */
         E.push({ k: "consumo", n, nd: 3, dado: 6, tiri, mm: ctx.modAtt, danno, mana });
         if (s.demolitore) fx("sbilanciato", 1);
         break;
       }
       case "invulnerabilita": s.eff.invuln = 1; s.effMax.invuln = 1; E.push({ k: "invuln" }); break;
       case "cataclisma": {
-        let consumati = 0, bonus = 0; const pieni = C.sigilli(s) >= sigMax; /* 03/11: con il tetto a 4 i tre colpi non li consumano tutti: conta se erano al massimo */
+        let consumati = 0, bonus = 0; 
         for (let i = 0; i < 3 && vivo(); i++) {
           const r = hit({ dado: 8 });
           if (r.ok && C.sigilli(s) > 0) { const t = ctx.tira(6); s.sigilli -= 1; consumati++; bonus += t; s.pv -= t; E.push({ k: "detonaUno", d: t, restano: s.sigilli }); }
         }
         if (consumati > 0) {
-          const mana = recuperaMana(recupero(ctx.liv) * (pieni && consumati >= Math.min(3, sigMax) ? 2 : 1));
+          const mana = recuperaMana(consumati);
           E.push({ k: "detonaTotale", n: consumati, bonus, mana });
           if (s.demolitore) fx("sbilanciato", 1);
         }
@@ -412,7 +412,7 @@
     const detona = /Detonazione/.test(e) || SERVONO_SIGILLI.includes(inc.id) || /Consuma tutti i Sigilli/.test(e);
     if (detona) {
       if (sig <= 0) return SERVONO_SIGILLI.includes(inc.id) || /Consuma tutti i Sigilli/.test(e) ? { ok: false, t: T("Serve almeno 1 Sigillo: prima incidi", "Needs at least 1 Seal: carve first") } : { ok: false, t: T("Nessun Sigillo: solo il colpo, niente Detonazione", "No Seal: just the hit, no Detonation") };
-      if (sig >= max) return { ok: true, t: T(`Combo pronta: Sigilli al massimo (${sig}), mana doppio`, `Combo ready: Seals at the maximum (${sig}), double mana`) };
+      if (sig >= max) return { ok: true, t: T(`Combo pronta: Sigilli al massimo (${sig}), ${sig} mana`, `Combo ready: Seals at the maximum (${sig}), ${sig} mana`) };
       return { ok: true, t: T(`${sig} ${sig === 1 ? "Sigillo" : "Sigilli"} da far esplodere`, `${sig} ${sig === 1 ? "Seal" : "Seals"} to burst`) };
     }
     if (/Sigill/.test(e) && inc.scuola === "arcano" && sig >= max) return { ok: false, t: T("Sigilli già al massimo: quelli nuovi vanno persi", "Seals already at the maximum: new ones are lost") };
@@ -450,11 +450,11 @@
       case "sigilli":
         if (e.n <= 0 && e.perse > 0) return T(`Sigilli già al massimo: ${rombi(e.tot, e.max)} ${e.tot} su ${e.max}, quello nuovo va perso.`, `Seals already at the maximum: ${rombi(e.tot, e.max)} ${e.tot} of ${e.max}, the new one is lost.`);
         return T(`Incidi ${e.n === 1 ? "1 Sigillo" : e.n + " Sigilli"} sul nemico: ${rombi(e.tot, e.max)} ${e.tot} su ${e.max}.`, `You carve ${e.n === 1 ? "1 Seal" : e.n + " Seals"} on the enemy: ${rombi(e.tot, e.max)} ${e.tot} of ${e.max}.`)
-          + (e.tot >= e.max ? T(" Sigilli al massimo: la prossima Detonazione ti rende il doppio del mana.", " Seals at the maximum: the next Detonation gives you double mana.") : "") + (e.perse > 0 ? T(" Il resto va perso.", " The rest is lost.") : "");
+          + (e.tot >= e.max ? T(" Sigilli al massimo: falli esplodere.", " Seals at the maximum: burst them.") : "") + (e.perse > 0 ? T(" Il resto va perso.", " The rest is lost.") : "");
       case "diretto": return T(`Danno senza tiro: ${dadi(e)} = ${e.danno}${e.meta ? " (dimezzato)" : ""}.`, `Damage with no roll: ${dadi(e)} = ${e.danno}${e.meta ? " (halved)" : ""}.`);
       case "detona":
         return T(`Detonazione: ${e.n} ${e.n === 1 ? "Sigillo" : "Sigilli"} esplodono, +${e.n}d${e.dado} [${e.tiri.join("+")}] = ${e.bonus} danni.`, `Detonation: ${e.n} ${e.n === 1 ? "Seal" : "Seals"} burst, +${e.n}d${e.dado} [${e.tiri.join("+")}] = ${e.bonus} damage.`)
-          + (e.mana ? T(` Recuperi ${e.mana} mana${e.max ? " (Sigilli al massimo: doppio)" : ""}.`, ` You recover ${e.mana} mana${e.max ? " (Seals at the maximum: double)" : ""}.`) : "");
+          + (e.mana ? T(` Recuperi ${e.mana} mana.`, ` You recover ${e.mana} mana.`) : "");
       case "detonaVuota": return T("Nessun Sigillo da far esplodere: niente Detonazione.", "No Seal to burst: no Detonation.");
       case "detonaUno": return T(`Un Sigillo esplode: +1d6 [${e.d}] (ne restano ${e.restano}).`, `A Seal bursts: +1d6 [${e.d}] (${e.restano} left).`);
       case "detonaTotale": return T(`I tre colpi contano come una Detonazione: ${e.n} Sigilli, ${e.bonus} danni in più.` + (e.mana ? ` Recuperi ${e.mana} mana.` : ""), `The three blows count as one Detonation: ${e.n} Seals, ${e.bonus} extra damage.` + (e.mana ? ` You recover ${e.mana} mana.` : ""));

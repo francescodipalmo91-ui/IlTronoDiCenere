@@ -281,7 +281,7 @@
             <p>Tetto del bonus di Agilità: ${tetti}.</p>
             <p>Le armi a due mani non lasciano libera la mano per torcia o scudo: devi prima riporre l'arma.</p>
             <h3>Risorse in combattimento</h3>
-            <p>Ogni classe ha una risorsa (furia, natura, mana, fede) che si ricarica riposando. Durante lo scontro ne recuperi un po', ognuno a modo suo, con la stessa tabella: ${recupero()}, il doppio nel caso migliore. Il dettaglio è nella sezione di ogni classe.</p>
+            <p>Ogni classe ha una risorsa (furia, natura, mana, fede) che si ricarica riposando. Durante lo scontro ne recuperi un po', ognuno a modo suo: furia, natura e fede con la stessa tabella (${recupero()}, il doppio nel caso migliore), il mana dell'Arcanista 1 per Sigillo che fa esplodere. Il dettaglio è nella sezione di ogni classe.</p>
             <h3>Stati</h3>
             <div class="scroll"><table class="stati"><tr><th>Stato</th><th>Effetto</th><th>Effetto maggiore</th><th>Turni</th></tr>
               <tr><td>Indebolito</td><td>−2 per colpire</td><td>—</td><td class="n">2</td></tr>
@@ -361,7 +361,7 @@
               <li><b>Scuola principale</b>: si sceglie in creazione, come il Guerriero sceglie l'arma. I posti sono ${posti()}, tra gli incantesimi sbloccati della scuola principale, più ${MG ? MG.POSTI_ALTRA_SCUOLA : 1} posto dell'altra scuola, di qualsiasi livello. Se cambi scuola principale, vale dal livello successivo. Gli incantesimi si cambiano riposando.</li>
               <li><b>Sigilli</b>: gli incantesimi d'Arcano incidono Sigilli sul nemico, al massimo ${MG ? MG.SIGILLI_MAX : 3} (${MG ? MG.SIGILLI_MAX_BOSS : 2} sugli avversari temibili), uno in più dal livello 4. Durano tutto lo scontro. Il critico di un incantesimo di Forza incide anche 1 Sigillo.</li>
               <li><b>Detonazione</b>: gli incantesimi di Forza che la indicano consumano tutti i Sigilli e fanno +1d6 di danno per Sigillo. Senza Sigilli non c'è niente da far esplodere: niente danno in più e niente mana.</li>
-              <li><b>Recupero</b>: ogni Detonazione ti restituisce ${recupero()} mana, il doppio se fa esplodere il massimo dei Sigilli.</li>
+              <li><b>Recupero</b>: ogni Detonazione ti restituisce 1 mana per ogni Sigillo che fa esplodere (Singolarità 2 per Sigillo).</li>
               <li>${capacita("Sapiente")}: capacità di classe, non occupa posti. Illumina il buio al posto della torcia.</li>
               <li><b>Pozzo Arcano</b> (tratto di classe): livello 1, se in un tuo turno non lanci incantesimi, al turno dopo recuperi 1 mana; livello 2, Specchio di Rune e Barriera Cinetica costano 1 in meno; livello 4, il primo incantesimo di ogni scontro non costa mana.</li>
               <li><b>Via di prestigio</b> (dal livello 3): la Frattura o la Sutura, tre abilità sempre pronte (livelli 3, 4 e 5). La scelta è definitiva.</li>
@@ -531,7 +531,7 @@
             <p>Agility bonus cap: ${tetti}.</p>
             <p>Two-handed weapons leave no hand free for torch or shield: put the weapon away first.</p>
             <h3>Resources in combat</h3>
-            <p>Every class has a resource (fury, nature, mana, faith) that recharges by resting. During a fight you recover some, each class in its own way, with the same table: ${recupero()}, double in the best case. Details are in each class section.</p>
+            <p>Every class has a resource (fury, nature, mana, faith) that recharges by resting. During a fight you recover some, each class in its own way: fury, nature and faith with the same table (${recupero()}, double in the best case), the Arcanist's mana 1 per Seal burst. Details are in each class section.</p>
             <h3>Conditions</h3>
             <div class="scroll"><table class="stati"><tr><th>Condition</th><th>Effect</th><th>Greater effect</th><th>Turns</th></tr>
               <tr><td>Weakened</td><td>−2 to hit</td><td>—</td><td class="n">2</td></tr>
@@ -611,7 +611,7 @@
               <li><b>Main school</b>: chosen at creation, as the Warrior chooses a weapon. Slots are ${posti()}, among the unlocked spells of the main school, plus ${MG ? MG.POSTI_ALTRA_SCUOLA : 1} slot from the other school, of any level. If you change main school, it applies from the next level. Spells are changed by resting.</li>
               <li><b>Seals</b>: Arcane spells carve Seals on the enemy, up to ${MG ? MG.SIGILLI_MAX : 3} (${MG ? MG.SIGILLI_MAX_BOSS : 2} on fearsome foes), one more from level 4. They last the whole fight. A Force spell's critical also carves 1 Seal.</li>
               <li><b>Detonation</b>: Force spells that show it spend all Seals and deal +1d6 damage per Seal. With no Seals there is nothing to burst: no extra damage and no mana.</li>
-              <li><b>Recovery</b>: each Detonation gives you back ${recupero()} mana, double if it detonates the maximum number of Seals.</li>
+              <li><b>Recovery</b>: each Detonation gives you back 1 mana for every Seal it bursts (Singularity 2 per Seal).</li>
               <li>${capacita("Sapiente")}: class ability, takes no slot. Lights the dark instead of a torch.</li>
               <li><b>Arcane Well</b> (class trait): level 1, if you cast no spell in one of your turns, next turn you recover 1 mana; level 2, Rune Mirror and Kinetic Barrier cost 1 less; level 4, the first spell of each fight costs no mana.</li>
               <li><b>Prestige path</b> (from level 3): Fracture or Suture, three abilities always ready (levels 3, 4 and 5). The choice is final.</li>

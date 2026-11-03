@@ -829,5 +829,18 @@ Il punto debole è strutturale: le combo dell'Arcanista sono **tra due scuole** 
 | **P2: Marchio Arcano + 1d6 senza tiro (IN PROVA nel codice)** | **62%** | 22-25 / 29-31 / 29-31 | 74% | invariato |
 | P1 + P2 | 62% | 25 / 32 / 29 | 76% | 39 / 44 / 45 |
 
-P1 scartata (quasi nessun effetto: si detona appena i Sigilli sono al massimo; nel gioco lo Specchio incide con un contesto senza mana). Da decidere: P2 a 1d6 o 1d8; l'Arcanista resta sotto l'obiettivo di Ettore (90-95%) anche con la Forza principale. Incongruenza: il recupero della Detonazione nel codice è 1/1/2/2/3 per livello (doppio al massimo), non «1 mana per Sigillo» come scritto negli incantesimi.
+P1 scartata (quasi nessun effetto: si detona appena i Sigilli sono al massimo; nel gioco lo Specchio incide con un contesto senza mana). Da decidere: P2 a 1d6 o 1d8; l'Arcanista resta sotto l'obiettivo di Ettore (90-95%) anche con la Forza principale. Recupero della Detonazione DECISO il 3 novembre: 1 mana per Sigillo, senza doppio (Singolarità 2 per Sigillo); il codice usava la tabella 1/1/2/2/3.
+
+**Serie del 3 novembre sera** (P2 + 1 mana per Sigillo; giocatore medio, 400 scontri per caso):
+
+| Classe, scuola principale | Ettore | Enea fermaglio | Enea nascosto | Enea maglio |
+|---|---|---|---|---|
+| Guerriero | 85% | 41% | 52% | 45% |
+| Sciamano | 96% | 55% | 65% | 58% |
+| Arcanista, Forza | 70% | 42% | 57% | 47% |
+| Arcanista, Arcano | 66% | 25% | 30% | 33% |
+| Monaco, Luce | 91% | 66% | 73% | 69% |
+| Monaco, Ombra | 92% | 49% | 57% | 47% |
+
+Ettore per l'Arcanista va bene così (Francesco: il 74% è accettabile). Enea è sotto l'80% per tutti. Le scuole senza la vulnerabilità di Enea (Arcano, Ombra) perdono 16-20 punti: «forza, come tutti i guardiani dei fermagli» penalizza l'Arcano principale in ogni scontro importante. Prova: Enea vulnerabile anche all'Arcano → Arcano 25/30/33 → 35/40/42, Forza 42/57/47 → 55/58/58 (non applicato).
 

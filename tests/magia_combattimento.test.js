@@ -179,18 +179,18 @@
   });
 
   /* ================= Detonazione ================= */
-  caso("Detonazione: +1d6 per Sigillo, consuma i Sigilli, recupera 1 mana al livello 1 (doppio con 3)", () => {
+  caso("Detonazione: +1d6 per Sigillo, consuma i Sigilli, recupera 1 mana per Sigillo (03/11)", () => {
     let s = scontro({ sigilli: 2 }), c = ctx({ dadi: [15, 6, 4, 2] }); /* pugno 1d10 = 6, poi 2d6 = 4+2 */
-    const r = lancia("pugno_forza", s, c); eq(s.pv, 80 - 6 - 6); eq(s.sigilli, 0); eq(c.mana, 1);
+    const r = lancia("pugno_forza", s, c); eq(s.pv, 80 - 6 - 6); eq(s.sigilli, 0); eq(c.mana, 2, "2 Sigilli: 2 mana");
     eq(ev(r, "detona")[0].bonus, 6);
-    s = scontro({ sigilli: 3 }); c = ctx({ dadi: [15, 6, 1, 1, 1] }); lancia("pugno_forza", s, c); eq(c.mana, 2, "massimo: doppio");
+    s = scontro({ sigilli: 3 }); c = ctx({ dadi: [15, 6, 1, 1, 1] }); lancia("pugno_forza", s, c); eq(c.mana, 3, "3 Sigilli: 3 mana, niente doppio");
   });
   caso("Detonazione sui boss: il massimo è 2 Sigilli", () => {
     const s = scontro({ sigilli: 2 }), c = ctx({ boss: true, dadi: [15, 6, 1, 1] }); lancia("pugno_forza", s, c); eq(c.mana, 2, "2 Sigilli su un boss = massimo");
   });
-  caso("Il recupero cresce con il livello: 1/1/2/2/3", () => {
+  caso("Il recupero non dipende dal livello: 1 Sigillo = 1 mana (03/11)", () => {
     [1, 2, 3, 4, 5].forEach((liv, i) => {
-      const s = scontro({ sigilli: 1 }), c = ctx({ liv, dadi: [15, 6, 3] }); lancia("pugno_forza", s, c); eq(c.mana, [1, 1, 2, 2, 3][i], "livello " + liv);
+      const s = scontro({ sigilli: 1 }), c = ctx({ liv, dadi: [15, 6, 3] }); lancia("pugno_forza", s, c); eq(c.mana, 1, "livello " + liv);
     });
   });
   caso("Senza Sigilli non c'è Detonazione: né danno né mana", () => {
@@ -221,10 +221,10 @@
     const sub = C.colpoSubito(s, c, false, 9); eq(sub.danno, 0); eq(sub.annullato, true); eq(s.pv, 75, "1d6 = 5 al nemico");
     const sub2 = C.colpoSubito(s, c, false, 9); eq(sub2.danno, 9, "il secondo colpo passa");
   });
-  caso("Implosione: serve almeno 1 Sigillo; 2d6 per Sigillo; recupero della tabella, doppio col massimo", () => {
+  caso("Implosione: serve almeno 1 Sigillo; 2d6 per Sigillo; 1 mana per Sigillo", () => {
     const s0 = scontro(); eq(M.disponibile(inc("implosione"), s0, ctx()).motivo, "senzaSigilli");
-    const s = scontro({ sigilli: 2 }), c = ctx({ liv: 3, dadi: [1, 2, 3, 4] }); const r = lancia("implosione", s, c); eq(s.pv, 70); eq(s.sigilli, 0); eq(c.mana, 2, "livello 3: 2");
-    const s3 = scontro({ sigilli: 3 }), c3 = ctx({ liv: 3, dadi: [1, 1, 1, 1, 1, 1] }); lancia("implosione", s3, c3); eq(c3.mana, 4, "massimo: doppio");
+    const s = scontro({ sigilli: 2 }), c = ctx({ liv: 3, dadi: [1, 2, 3, 4] }); const r = lancia("implosione", s, c); eq(s.pv, 70); eq(s.sigilli, 0); eq(c.mana, 2, "2 Sigilli: 2");
+    const s3 = scontro({ sigilli: 3 }), c3 = ctx({ liv: 3, dadi: [1, 1, 1, 1, 1, 1] }); lancia("implosione", s3, c3); eq(c3.mana, 3, "3 Sigilli: 3");
   });
   caso("Pressione: Indebolito 2 e 1d6 forza all'inizio dei suoi turni", () => {
     const s = scontro({ sigilli: 0 }), c = ctx({ dadi: [3] }); lancia("pressione", s, c); eq(s.eff.debole, 2); eq(s.eff.pressione, 2);
@@ -246,7 +246,7 @@
     C.inizioTurnoPg(s, c); eq(s.assorbe, null);
   });
   caso("Singolarità: una volta per riposo, 3d6 per Sigillo + Mente, sempre doppia", () => {
-    const s = scontro({ sigilli: 1 }), c = ctx({ liv: 5, dadi: [2, 3, 4] }); lancia("singolarita", s, c); eq(s.pv, 80 - 9 - 3); eq(c.mana, 6, "3 × 2");
+    const s = scontro({ sigilli: 1 }), c = ctx({ liv: 5, dadi: [2, 3, 4] }); lancia("singolarita", s, c); eq(s.pv, 80 - 9 - 3); eq(c.mana, 2, "1 Sigillo × 2");
     eq(M.disponibile(inc("singolarita"), scontro({ sigilli: 1 }), c).motivo, "giaUsataRiposo");
   });
   caso("Invulnerabilità: una volta per riposo, dura fino al tuo turno", () => {
@@ -254,8 +254,8 @@
   });
   caso("Cataclisma: 3 colpi 1d8, ognuno fa detonare 1 Sigillo, una sola Detonazione per il mana", () => {
     const s = scontro({ sigilli: 2 }), c = ctx({ liv: 5, dadi: [15, 4, 6, 15, 3, 5, 15, 2] }); /* 3 colpi a segno; Sigilli: solo 2 */
-    lancia("cataclisma", s, c); eq(s.pv, 80 - (4 + 6) - (3 + 5) - 2); eq(s.sigilli, 0); eq(c.mana, 3, "una Detonazione, non doppia (2 Sigilli su 4: dal livello 4 il tetto è 4, 03/11)");
-    const s2 = scontro({ sigilli: 4 }), c2 = ctx({ liv: 5, dadi: [15, 1, 1, 15, 1, 1, 15, 1, 1] }); lancia("cataclisma", s2, c2); eq(c2.mana, 6, "Sigilli al massimo (4 al livello 5): doppia");
+    lancia("cataclisma", s, c); eq(s.pv, 80 - (4 + 6) - (3 + 5) - 2); eq(s.sigilli, 0); eq(c.mana, 2, "2 Sigilli consumati: 2 mana");
+    const s2 = scontro({ sigilli: 4 }), c2 = ctx({ liv: 5, dadi: [15, 1, 1, 15, 1, 1, 15, 1, 1] }); lancia("cataclisma", s2, c2); eq(c2.mana, 3, "3 colpi, 3 Sigilli consumati: 3 mana");
   });
 
   /* ================= Vie ================= */

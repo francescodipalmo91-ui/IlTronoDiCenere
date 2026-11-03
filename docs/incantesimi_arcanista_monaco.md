@@ -304,7 +304,7 @@ Gli incantatori recuperano un po' meno, quindi **i costi restano 1 punto sotto i
 
 **Correzioni agli incantesimi:**
 - **Crepuscolo:** non costa più 2 in meno; dà il recupero della tabella e +1 dado.
-- **Detonazione:** +1d6 di danno per Sigillo resta; il recupero diventa quello della tabella (prima era 1 mana per Sigillo).
+- **Detonazione:** +1d6 di danno per Sigillo resta; il recupero diventa quello della tabella (prima era 1 mana per Sigillo). **Superato il 3 novembre: si torna a 1 mana per Sigillo, senza doppio.**
 - **Implosione:** è una Detonazione (tabella, doppia con 3 Sigilli).
 - **Singolarità:** Detonazione sempre doppia.
 - **Cataclisma Cinetico:** i 3 colpi contano come **una sola** Detonazione.
@@ -400,7 +400,7 @@ Non ancora fatto:
 Fatto, in `js/magia_combattimento.js` (regole) con test in `tests/magia_combattimento.test.js` (49 casi, dadi programmati) e prove nel browser:
 - **Tutti i 30 incantesimi di Arcano e Forza e le 6 abilità delle vie Frattura e Sutura.**
 - **Sigilli:** massimo 3 (2 sui boss), per tutto lo scontro; compaiono nella scheda del nemico come rombi.
-- **Detonazione:** consuma tutti i Sigilli, +1d6 per Sigillo; recupero mana 1/1/2/2/3 per livello, doppio con il massimo dei Sigilli. Implosione e Crollo contano come indicato nei testi; Singolarità sempre doppia; Cataclisma Cinetico è una sola Detonazione.
+- **Detonazione:** consuma tutti i Sigilli, +1d6 per Sigillo; **1 mana per Sigillo** (deciso il 3 novembre, al posto della tabella 1/1/2/2/3 doppia con il massimo). Implosione 1 per Sigillo; Singolarità 2 per Sigillo; Cataclisma Cinetico 1 per Sigillo che fa esplodere; Crollo come indicato nel testo.
 - **Attacco magico** d20 + Mente contro la CA, **dadi senza modificatore** (tranne Singolarità: + Mente), critico = dadi doppi (Esposto lo allarga, Occhio del Tomo e Maglio Invisibile 19-20). **Tiro salvezza** del nemico: d20 + Vigore contro 8 + Mente + livello. I boss ignorano Bloccato, Silenzio e Frastornato e usano il ripiego scritto nell'incantesimo.
 - **Difese** (Specchio di Rune, Barriera Cinetica, Respingere) consumano l'azione e non si usano due turni di fila; Scudo +2 CA, Muro di Forza +3 CA e la Presa non ti tiene; Invulnerabilità annulla ogni danno fino al tuo turno, Soffio compreso.
 - **Una volta per riposo:** Parola Vera, Singolarità, Invulnerabilità.

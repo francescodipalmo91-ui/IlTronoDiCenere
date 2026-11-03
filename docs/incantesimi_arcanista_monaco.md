@@ -3,7 +3,7 @@
 Bozza da leggere, **niente codice ancora**. Segue le regole del Guerriero: d20 contro CA, durate in turni del nemico, immunità dei boss (Frastornato, Bloccato, Silenzio), tetto di 2 turni sui boss per Indebolito, Sbilanciato ed Esposto, critico = 20 sul d20 con il doppio dei dadi.
 
 - **Arcanista** (mana, Mente): **Arcano** e **Forza**. L'Arcano *scrive* rune sul nemico, la Forza le *fa esplodere*.
-- **Monaco** (punti fede, Spirito): **Luce** e **Ombra**. Ogni incantesimo sposta una bilancia: l'Ombra è più forte ma costa la mente, la Luce protegge e cura.
+- **Monaco** (punti fede, Spirito): **Vita** e **Negromanzia** (dal 3 novembre; prima Luce e Ombra, id nel codice invariati `luce` / `ombra`). Ogni incantesimo sposta una bilancia: la Negromanzia evoca i morti ed è più forte ma costa la mente, la Vita protegge e cura.
 
 ---
 
@@ -91,7 +91,41 @@ Note:
 
 ---
 
-## 3. Monaco — Luce e Ombra
+## 3. Monaco — Vita e Negromanzia (ex Luce e Ombra)
+
+### Vita e Negromanzia (DECISO il 3 novembre)
+
+L'Ombra non è un elemento ma una specializzazione di **negromanzia** (spiriti, sussurri, morti); di conseguenza la Luce diventa **Vita**: due poli veri, vita e morte, legati alla maledizione che tiene gli abitanti sospesi tra le due. Id nel codice invariati (`luce`, `ombra`): salvataggi, vulnerabilità e tipi restano compatibili. Danno: «radiante» → **vitale**, «necrotico» resta. La **capacità di classe Luce** (vedere al buio) resta Luce. Accecato resta lo stato della Vita: «un bagliore di vita troppo intenso».
+
+| Oggi | Diventa | Cambio |
+|---|---|---|
+| Dardo di Luce | Dardo Vitale | testo |
+| Accecare | Bagliore Vitale | testo |
+| Folgore Sacra | Impeto Vitale | testo |
+| Voto di Luce | **Voto di Vita** | **meccanica:** +1d4 vitale sull'arma e **Rigenerazione** per 3 turni, al posto di «ti cura 1 per colpo» |
+| Raggio del Mattino | Flusso di Vita | testo |
+| Lancia del Sole | Lancia della Vita | testo |
+| Corona di Raggi | Aura Vitale | testo |
+| Grazia | Grazia | **meccanica:** cura 1d8 + Spirito subito (prima 2d8 + Spirito) e Rigenerazione 3 turni; +2 CA per 2 turni invariato |
+| Alba Eterna | Primavera Eterna | testo |
+| Sussurro della Paura | Sussurri dei Morti | testo |
+| Manto d'Ombra | Velo degli Spiriti | testo (fuori dallo scontro: «uno spirito ti precede») |
+| Sete di Tenebra | Sete del Sepolcro | nome |
+| Catene d'Ombra | Mani dalla Terra | testo |
+| Patto d'Ombra | Patto col Defunto | nome |
+| Eclisse | Coro dei Morti | testo |
+| Ombra Gemella | **Spirito Servitore** | **meccanica:** per 3 turni lo spirito colpisce da solo all'inizio del tuo turno, 1d6 necrotico senza tiro (prima +1d6 sui tuoi incantesimi a segno) |
+| Notte Senza Fine | Notte dei Morti | nome |
+| Abbraccio del Vuoto | Abbraccio della Tomba | nome |
+| Fame dell'Ombra (tratto, via Cenere) | Fame dei Morti | nome |
+
+- **Rigenerazione** (stato nuovo sul personaggio): cura 1d4 all'inizio del tuo turno, per 3 dei tuoi turni (il turno del nemico subito dopo il lancio non la consuma); non si somma, si rinnova. Tocco Lenitivo resta la cura immediata.
+- **Bilancia:** poli Vita / Negromanzia; Aureola resta, **Velo → Coro** («gli spiriti ti seguono»), Zenit e Nadir restano; a Nadir «i morti chiedono il loro prezzo».
+- Restano: Tocco Avvizzente, Avvizzire, Divorare, Terrore, Mietitura, Nome Taciuto, la via Cenere (Rancore, Lutto, Furia Cinerea) e la via Brace.
+- **Serie (3 novembre, livelli 2-3):** Vita 88% Ettore, Enea 67 / 78 / 60; Negromanzia 87%, Enea 50 / 58 / 53. Invariato entro il rumore: a questi livelli cambia solo il Voto; Grazia e Spirito Servitore (livello 4) da misurare al livello 4.
+
+Le tabelle qui sotto riportano i nomi vecchi; vale la tabella qui sopra (dati in js/magia.js).
+
 
 ### Meccanica: la Bilancia
 
@@ -254,11 +288,11 @@ Effetto, come deciso: **+1 dado di danno** oppure **condizione +1 turno**.
 | Avventurieri delle cacce comuni | Ombra | +1 dado | Menti fresche e fragili in una casa che opprime |
 | Ettore (bronzo, cripta) | **Contundente + Forza + Ombra** (03/11) | +1 dado | Corpo leggero, la spinta lo scaraventa; gli spiriti delle sue prede (negromanzia) |
 | Enea (argento, cimitero) | **Perforante + Arcano + Luce + Sottobosco** (03/11) | +1 dado (Sottobosco: stati +1 turno) | Armatura sbrecciata; le rune spezzano una volontà incrinata; il dio che l'ha abbandonato |
-| Dafne (oro, foresta) | **Taglio + Arcano + Luce** (03/11) | +1 dado | Drow: la luce; resiste al veleno |
+| Dafne (oro, foresta) | **Taglio + Arcano + Vita** (03/11) | +1 dado | Serve Aldo più da vicino degli altri: la vita la brucia; resiste al veleno |
 | Atena (platino, sottotetto) | **Contundente + Forza + Ombra + Sottobosco** (03/11) | +1 dado | Il ghiaccio si spezza; la corruzione che la divora |
 | Sovrano | **Resiste all'Ombra** (metà danni); vulnerabile a tutto oltre la soglia del Retaggio | +1 dado a ogni danno | Vedi sezione 9 |
 
-- **Mappa bilanciata (DECISA il 3 novembre):** ogni guardiano ha una vulnerabilità per il Guerriero (un ramo d'arma), una per l'Arcanista (una scuola) e una per il Monaco (una scuola); il Sottobosco su due guardiani. Conteggi: Forza 2, Arcano 2, Luce 2, Ombra 2; ogni ramo d'arma almeno una volta. Sostituisce la tabella del 25 ottobre e la frase «forza, come tutti i guardiani dei fermagli».
+- **Mappa bilanciata (DECISA il 3 novembre):** ogni guardiano ha una vulnerabilità per il Guerriero (un ramo d'arma), una per l'Arcanista (una scuola) e una per il Monaco (una scuola); il Sottobosco su due guardiani. Conteggi: Forza 2, Arcano 2, Vita 2, Negromanzia 2; ogni ramo d'arma almeno una volta. Sostituisce la tabella del 25 ottobre e la frase «forza, come tutti i guardiani dei fermagli».
 - Gli **Appunti di Guendalina** tornano utili: rivelano la vulnerabilità del guardiano successivo.
 - Le vulnerabilità dei guardiani sono una proposta, si possono scambiare.
 

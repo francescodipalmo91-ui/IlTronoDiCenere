@@ -41,11 +41,17 @@ Metodo: punto per punto, prima le cose leggere; zip dei file modificati solo a f
 - **Giocatore medio (B)** in `strumenti/serie_scontri.js` (predefinito; `BOT=vecchio`, `SCUOLA=forza,luce`). Risultati in bilanciamento, sezione «Combo tra incantesimi».
 - **Scala dei guardiani DECISA:** Ettore 90-95%, Enea 80%, Dafne 70%, Atena 60%, sovrano 50% per ogni classe e razza (±7), misurata col giocatore medio al livello e all'equipaggiamento previsti.
 
+## 3 novembre, pomeriggio
+- **Arcanista:** Marchio Arcano +1d6 senza tiro (proposta 2, in prova; la 1 scartata); **Detonazione 1 mana per Sigillo**, senza doppio (Singolarità 2).
+- **Mappa bilanciata delle vulnerabilità dei guardiani** (una per Guerriero, Arcanista, Monaco; Sottobosco su due): Ettore contundente-forza-negromanzia, Enea perforante-arcano-vita-sottobosco, Dafne taglio-arcano-vita, Atena contundente-forza-negromanzia-sottobosco.
+- **Monaco: Vita e Negromanzia** al posto di Luce e Ombra (nomi, testi, Rigenerazione su Voto di Vita e Grazia, Spirito Servitore). Incantesimi, sezione 3.
+- Serie di tutte le classi in bilanciamento (fine documento). Enea sotto l'80% per tutti; l'Arcano principale 20 punti sotto la Forza per la meccanica (Sigilli 2 sui boss, controlli ridotti), non per le vulnerabilità.
+
 ## Punti aperti, in ordine di priorità
 
 **Subito (in corso il 3 novembre)**
 0. **Arcanista con Arcano principale** troppo debole (Ettore 44% contro 80% con Forza principale): le combo sono tra due scuole ma l'altra ha un solo posto. Proposte da provare con la serie: (1) un Sigillo inciso oltre il massimo rende 1 mana (massimo 1 per turno); (2) un incantesimo d'Arcano di danno al livello 2 (es. Marchio Arcano + 1d6); (3) in riserva, 2 posti all'altra scuola dal livello 3. Cambiare la meccanica sconsigliato per ora.
-0b. **Enea troppo duro per tutti** (36-76% contro l'obiettivo 80%): da sistemare nella scala dei guardiani.
+0b. **Enea troppo duro per tutti** (42-79% dopo la mappa, obiettivo 80%): **prossimo passo.** Poi l'Arcano principale (meccanica dei Sigilli sui boss).
 0c. **A3:** poche combo nuove tra scuole, solo dove la serie lo chiede.
 
 **Leggeri**

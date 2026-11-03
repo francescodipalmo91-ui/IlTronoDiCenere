@@ -371,8 +371,15 @@
     M.inizioTurnoNemico(s, ctx({ dadi: [5] })); eq(s.pv, 75);
     C.colpoSubito(s, ctx({ boss: false }), false, 3); eq(s.eff.accecato, 2, "durata comune");
   });
-  caso("Grazia: 2d8 + Spirito e +2 CA per 2 turni", () => {
-    const s = scontro(), c = ctx({ dadi: [4, 5] }); lancia("grazia", s, c); eq(c.curato, 12); eq(s.eff.scudo, 2);
+  caso("Grazia (03/11): 1d8 + Spirito subito, Rigenerazione 3 turni, +2 CA per 2 turni", () => {
+    const s = scontro(), c = ctx({ dadi: [4] }); lancia("grazia", s, c); eq(c.curato, 7); eq(s.eff.scudo, 2); eq(s.eff.rigen, 3);
+    const c2 = ctx({ dadi: [3] }); const e = M.inizioTurnoMonaco(s, c2); eq(c2.curato, 3); eq(e[0].k, "rigenera");
+  });
+  caso("Voto di Vita (03/11): +1d4 sull'arma e Rigenerazione per 3 dei tuoi turni", () => {
+    const s = scontro(), c = ctx(); lancia("voto_luce", s, c); eq(s.eff.voto, 3); eq(s.eff.rigen, 3);
+    s.effInizio = {}; C.fineTurnoNemico(s); eq(s.eff.rigen, 3, "il turno del nemico subito dopo il lancio non la consuma");
+    let cure = 0; for (let i = 0; i < 4; i++) { const ci = ctx({ dadi: [2] }); M.inizioTurnoMonaco(s, ci); cure += ci.curato || 0; C.fineTurnoNemico(s); }
+    eq(cure, 6, "tre cure da 2, poi finisce");
   });
   caso("Alba Eterna: una volta per riposo, 4d8 senza tiro, Accecato 2, ti curi della metà", () => {
     const s = scontro(), c = ctx({ liv: 5, dadi: [2, 3, 4, 5] }); lancia("alba_eterna", s, c); eq(s.pv, 80 - 14); eq(s.eff.accecato, 2); eq(c.curato, 7);
@@ -420,10 +427,10 @@
   caso("Eclisse: Accecato 2 e Indebolito 2, costa sempre 1 punto mentale", () => {
     const s = scontro(), c = ctx({ liv: 3, dadi: [3] }); lancia("eclisse", s, c); eq(s.eff.accecato, 2); eq(s.eff.debole, 2); eq(c.mente, 1);
   });
-  caso("Ombra Gemella: ogni incantesimo a segno fa +1d6 necrotico", () => {
+  caso("Spirito Servitore (03/11): colpisce da solo a inizio turno, 1d6 senza tiro, non più sugli incantesimi", () => {
     const s = scontro(), c = ctx({ liv: 4 }); lancia("ombra_gemella", s, c);
-    lancia("dardo_luce", s, ctx({ dadi: [15, 4, 5] })); eq(s.pv, 80 - 4 - 5);
-    lancia("dardo_luce", s, ctx({ dadi: [2] })); eq(s.pv, 71, "mancato: niente");
+    lancia("dardo_luce", s, ctx({ dadi: [15, 4] })); eq(s.pv, 76, "l'incantesimo non aggiunge più il dado");
+    M.inizioTurnoMonaco(s, ctx({ dadi: [5] })); eq(s.pv, 71);
   });
   caso("Terrore: Frastornato 2; sui boss Indebolito 2 e −2 ai suoi tiri salvezza", () => {
     let s = scontro(), c = ctx({ liv: 4, dadi: [3] }); lancia("terrore", s, c); eq(s.eff.frastornato, 2);
@@ -458,7 +465,7 @@
   caso("Combo (03/11): etichette e avvisi «combo pronta»", () => {
     const tg = (id) => M.etichette(inc(id)).join("|");
     vero(/Incide/.test(tg("dardo_arcano")), "il Dardo incide"); vero(/Detona/.test(tg("pugno_forza")), "il Pugno detona");
-    vero(/Consuma i Sigilli/.test(tg("implosione")), "Implosione consuma"); vero(/Luce \+1/.test(tg("dardo_luce"))); vero(/Ombra \+1/.test(tg("tocco_avvizzente")));
+    vero(/Consuma i Sigilli/.test(tg("implosione")), "Implosione consuma"); vero(/Vita \+1/.test(tg("dardo_luce"))); vero(/Negromanzia \+1/.test(tg("tocco_avvizzente")));
     vero(/→ 0/.test(tg("giudizio"))); vero(/Difesa/.test(tg("specchio_rune")));
     eq(M.comboPronta(inc("pugno_forza"), scontro(), ctx({ liv: 2 })).ok, false, "senza Sigilli niente da far esplodere");
     vero(/al massimo/.test(M.comboPronta(inc("pugno_forza"), scontro({ sigilli: 3 }), ctx({ liv: 2 })).t));

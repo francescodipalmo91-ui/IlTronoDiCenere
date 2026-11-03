@@ -259,7 +259,7 @@
         if (r.ok) { segno = true; if (vivo()) { if (ctx.boss) diretto(1, 6, 0); else conTS({ frastornato: 1 }); } }
         break;
       }
-      case "voto_luce": s.eff.voto = 3; s.effMax.voto = 3; E.push({ k: "voto", turni: 3 }); break;
+      case "voto_luce": s.eff.voto = 3; s.effMax.voto = 3; s.eff.rigen = 3; s.effMax.rigen = 3; E.push({ k: "voto", turni: 3 }); break; /* 03/11: Voto di Vita, Rigenerazione al posto di «cura 1 per colpo» */
       case "raggio_mattino": {
         const tiri = tiraDadi(ctx, 2 + piu, 8), pieno = somma(tiri), z = salva(); E.push(z);
         const danno = Math.max(1, z.ok ? Math.floor(pieno / 2) : pieno); s.pv -= danno; segno = true;
@@ -269,7 +269,7 @@
       case "purificazione": s.presaUsata = true; E.push({ k: "liberato" }); guarisci(1, 6, 0); break;
       case "lancia_sole": { const r = hit({ dado: 8, piuDadi: 2 + piu }); if (r.ok) { segno = true; if (vivo()) conTS({ accecato: 2 }); } break; }
       case "corona_raggi": s.eff.corona = 3; s.effMax.corona = 3; E.push({ k: "corona", turni: 3 }); break;
-      case "grazia": guarisci(2, 8, ctx.modAtt); s.eff.scudo = 2; s.effMax.scudo = 2; E.push({ k: "scudoMagico", turni: 2 }); break;
+      case "grazia": guarisci(1, 8, ctx.modAtt); s.eff.rigen = 3; s.effMax.rigen = 3; E.push({ k: "rigenInizia", turni: 3 }); s.eff.scudo = 2; s.effMax.scudo = 2; E.push({ k: "scudoMagico", turni: 2 }); break; /* 03/11: cura spalmata */
       case "alba_eterna": {
         diretto(4 + piu, 8, 0); segno = true; fx("accecato", 2);
         curaFissa(Math.floor((pv0 - s.pv) / 2)); break;
@@ -335,7 +335,7 @@
     /* ---- dopo l'incantesimo del Monaco ---- */
     if (mon) {
       const inflitto = Math.max(0, pv0 - s.pv);
-      if (segno && attivo(s, "gemella") && inc.id !== "ombra_gemella" && vivo()) { const d = ctx.tira(6); s.pv -= d; E.push({ k: "gemellaDanno", d }); }
+      /* 03/11: lo Spirito Servitore colpisce da solo a inizio turno (inizioTurnoMonaco), non più sugli incantesimi a segno */
       const drenato = Math.max(0, pv0 - s.pv);
       if (ombra && s.fameOmbra && drenato > 0 && inc.id !== "furia_cinerea") { s.fameOmbra = false; E.push({ k: "fameOmbraScatta" }); curaFissa(drenato); } /* 03/11: Fame dell'Ombra (Monaco, via Cenere, grado III) */
       else if (inc.id === "tocco_avvizzente" && drenato > 0) curaFissa(Math.floor(drenato / 2));
@@ -399,8 +399,8 @@
     if (!consuma && /Sigill/.test(e) && !/Detonazione/.test(e) && inc.id !== "quiete_assoluta") t.push(T("Incide Sigilli", "Carves Seals"));
     if (inc.scuola === "luce" || inc.scuola === "ombra") {
       if (inc.id === "giudizio") t.push(T("Bilancia → 0", "Balance → 0"));
-      else if (inc.id === "abbraccio_vuoto" || inc.id === "furia_cinerea") t.push(T("Bilancia → Ombra 3", "Balance → Shadow 3"));
-      else t.push(inc.scuola === "luce" ? T("Bilancia: Luce +1", "Balance: Light +1") : T("Bilancia: Ombra +1", "Balance: Shadow +1"));
+      else if (inc.id === "abbraccio_vuoto" || inc.id === "furia_cinerea") t.push(T("Bilancia → Negromanzia 3", "Balance → Necromancy 3"));
+      else t.push(inc.scuola === "luce" ? T("Bilancia: Vita +1", "Balance: Life +1") : T("Bilancia: Negromanzia +1", "Balance: Necromancy +1"));
     }
     if (DIFESE.includes(inc.id)) t.push(T("Difesa, consuma l'azione", "Defence, uses your action"));
     return t;
@@ -422,17 +422,25 @@
     if (ferma && (inc.scuola === "luce" || inc.scuola === "ombra")) return null;
     if (inc.scuola === "luce" && bil === 2 && inc.id !== "giudizio") return { ok: true, t: T("Porta la Bilancia allo Zenit", "Takes the Balance to Zenith") };
     if (inc.scuola === "ombra" && bil === -2 && inc.id !== "abbraccio_vuoto") return { ok: true, t: T("Porta la Bilancia al Nadir (costa 1 punto mentale)", "Takes the Balance to Nadir (costs 1 mental point)") };
-    if (inc.id === "giudizio" && bil > 0) return { ok: true, t: T(`Giudizio con Luce ${bil}: +${bil}d10`, `Judgement with Light ${bil}: +${bil}d10`) };
+    if (inc.id === "giudizio" && bil > 0) return { ok: true, t: T(`Giudizio con Vita ${bil}: +${bil}d10`, `Judgement with Life ${bil}: +${bil}d10`) };
     return null;
   }
   /* 03/11: Respiro dell'Equilibrio, grado III. Da chiamare dopo ogni danno al Monaco: la prima volta sotto metà salute.
-     Via Brace (guendalina): la Bilancia torna a 0 e ti curi di 1d6 + mod. Spirito. Via Cenere (aldo): il prossimo incantesimo d'Ombra cura tutto il danno inflitto. */
+     Via Brace (guendalina): la Bilancia torna a 0 e ti curi di 1d6 + mod. Spirito. Via Cenere (aldo): il prossimo incantesimo di Negromanzia cura tutto il danno inflitto. */
   function sottoMetaMonaco(s, ctx, prima, dopo, max) {
     if (Number(ctx && ctx.respiro) < 3 || s.respiroUsato || !(prima >= max / 2 && dopo < max / 2 && dopo > 0)) return [];
     s.respiroUsato = true;
     if (ctx.via === "guendalina") { s.bilancia = 0; const t = ctx.tira(6), n = t + (Number(ctx.modDanno) || 0), fatto = ctx.cura ? ctx.cura(n) : n; return [{ k: "equilibrioRitrovato", d: t, n, fatto }]; }
     if (ctx.via === "aldo") { s.fameOmbra = true; return [{ k: "fameOmbra" }]; }
     return [];
+  }
+  /* 03/11, Monaco: da chiamare all'inizio di ogni tuo turno. Rigenerazione (Vita): cura 1d4. Spirito Servitore (Negromanzia): 1d6 necrotico al nemico, senza tiro */
+  function inizioTurnoMonaco(s, ctx) {
+    const E = [];
+    if (!s) return E;
+    if (attivo(s, "rigen") && ctx.cura) { const d = ctx.tira(4), fatto = ctx.cura(d); E.push({ k: "rigenera", d, fatto }); }
+    if (attivo(s, "gemella") && s.pv > 0) { const d = ctx.tira(6); s.pv -= d; E.push({ k: "gemellaDanno", d }); }
+    return E;
   }
   /* Pozzo Arcano, grado I: da chiamare all'inizio di ogni tuo turno (dopo il primo) */
   function inizioTurnoPozzo(s, ctx) {
@@ -480,12 +488,12 @@
       case "demolitore": return T("Per tutto lo scontro ogni tua Detonazione fa anche Sbilanciato 1.", "For the whole fight every Detonation of yours also causes Off-balance 1.");
       case "caMeno": return T(`Per tutto lo scontro la Classe armatura del nemico scende di ${e.n}.`, `For the whole fight the enemy's Armor Class drops by ${e.n}.`);
       case "rimborso": return T(`Il nemico cade: recuperi il mana speso (${e.mana}).`, `The enemy falls: you recover the mana spent (${e.mana}).`);
-      case "respiroLuce": return T(`Respiro dell'Equilibrio: con la Bilancia in Luce il colpo fa 1 danno in meno (${e.prima} → ${e.dopo}).`, `Breath of Balance: with the Balance on Light the blow deals 1 less damage (${e.prima} → ${e.dopo}).`);
-      case "respiroOmbra": return T("Respiro dell'Equilibrio: con la Bilancia in Ombra il tuo colpo fa 1 danno in più.", "Breath of Balance: with the Balance on Shadow your blow deals 1 extra damage.");
+      case "respiroLuce": return T(`Respiro dell'Equilibrio: con la Bilancia in Vita il colpo fa 1 danno in meno (${e.prima} → ${e.dopo}).`, `Breath of Balance: with the Balance on Life the blow deals 1 less damage (${e.prima} → ${e.dopo}).`);
+      case "respiroOmbra": return T("Respiro dell'Equilibrio: con la Bilancia in Negromanzia il tuo colpo fa 1 danno in più.", "Breath of Balance: with the Balance on Necromancy your blow deals 1 extra damage.");
       case "respiroAlba": return T(`Respiro dell'Alba: la Bilancia tocca ${e.zenit ? "lo Zenit" : "il Nadir"}, ti curi di 1d4 [${e.d}] + livello = ${e.fatto}.`, `Breath of Dawn: the Balance reaches ${e.zenit ? "Zenith" : "Nadir"}, you heal 1d4 [${e.d}] + level = ${e.fatto}.`);
       case "equilibrioRitrovato": return T(`Equilibrio ritrovato: sotto metà salute la Bilancia torna a 0 e ti curi di 1d6 [${e.d}] + Spirito = ${e.fatto}.`, `Balance Regained: below half health the Balance returns to 0 and you heal 1d6 [${e.d}] + Spirit = ${e.fatto}.`);
-      case "fameOmbra": return T("Fame dell'Ombra: sotto metà salute, il tuo prossimo incantesimo d'Ombra ti curerà di tutto il danno che infligge.", "Hunger of Shadow: below half health, your next Shadow spell will heal you for all the damage it deals.");
-      case "fameOmbraScatta": return T("Fame dell'Ombra: l'Ombra ti restituisce tutto ciò che strappa.", "Hunger of Shadow: the Shadow gives back all it tears away.");
+      case "fameOmbra": return T("Fame dei Morti: sotto metà salute, il tuo prossimo incantesimo di Negromanzia ti curerà di tutto il danno che infligge.", "Hunger of the Dead: below half health, your next Necromancy spell will heal you for all the damage it deals.");
+      case "fameOmbraScatta": return T("Fame dei Morti: i morti ti restituiscono tutto ciò che strappano.", "Hunger of the Dead: the dead give back all they tear away.");
       case "pozzo": return T(`Pozzo Arcano: nel turno passato non hai lanciato incantesimi, recuperi ${e.n} mana.`, `Arcane Well: you cast no spell last turn, you recover ${e.n} mana.`);
       case "filo": return T("Per tutto lo scontro il nemico ha −1 per colpirti per ogni Sigillo che porta.", "For the whole fight the enemy has −1 to hit you for every Seal it carries.");
       case "prossimoSconto": return T(`Il prossimo incantesimo costerà ${e.n} in meno.`, `Your next spell will cost ${e.n} less.`);
@@ -497,33 +505,35 @@
       case "fede": return T(`Recuperi ${e.n} ${e.n === 1 ? "punto" : "punti"} fede.`, `You recover ${e.n} faith.`);
       case "divora": return T(`Divori l'Avvizzito: ${e.n}d${e.dado} [${e.tiri.join("+")}] = ${e.tot} danni subito.`, `You devour the Withering: ${e.n}d${e.dado} [${e.tiri.join("+")}] = ${e.tot} damage at once.`);
       case "patto": return T(`Patto: perdi ${e.d} salute e recuperi ${e.fede} fede.`, `Pact: you lose ${e.d} health and recover ${e.fede} faith.`);
-      case "nadir": return T(`L'Ombra chiede il suo prezzo: ${e.mente} salute mentale (non letale).`, `The Shadow takes its price: ${e.mente} mental health (non-lethal).`);
+      case "nadir": return T(`I morti chiedono il loro prezzo: ${e.mente} salute mentale (non letale).`, `The dead take their price: ${e.mente} mental health (non-lethal).`);
       case "crepuscolo": return T(`Crepuscolo (${e.da === "nadir" ? "da Nadir" : "da Zenit"}): +1 dado${e.mana ? `, recuperi ${e.mana} fede` : ""}. La Bilancia torna a 0.`, `Twilight (${e.da === "nadir" ? "from Nadir" : "from Zenith"}): +1 die${e.mana ? `, you recover ${e.mana} faith` : ""}. The Balance returns to 0.`);
       case "bilancia": {
-        const nome = (v) => (v === 0 ? T("equilibrio", "even") : v > 0 ? T(`Luce ${v}`, `Light ${v}`) : T(`Ombra ${-v}`, `Shadow ${-v}`));
+        const nome = (v) => (v === 0 ? T("equilibrio", "even") : v > 0 ? T(`Vita ${v}`, `Life ${v}`) : T(`Negromanzia ${-v}`, `Necromancy ${-v}`));
         const base = e.da === e.a ? T(`Bilancia: ${nome(e.a)}.`, `Balance: ${nome(e.a)}.`) : T(`Bilancia: ${nome(e.da)} → ${nome(e.a)}.`, `Balance: ${nome(e.da)} → ${nome(e.a)}.`);
         /* 03/11: avviso della combo pronta */
-        const pronta = e.da !== e.a && e.a === 3 ? T(" Zenit: il prossimo incantesimo d'Ombra è un Crepuscolo.", " Zenith: your next Shadow spell is a Twilight.")
-          : e.da !== e.a && e.a === -3 ? T(" Nadir: il prossimo incantesimo di Luce è un Crepuscolo (fede doppia).", " Nadir: your next Light spell is a Twilight (double faith).") : "";
+        const pronta = e.da !== e.a && e.a === 3 ? T(" Zenit: il prossimo incantesimo di Negromanzia è un Crepuscolo.", " Zenith: your next Necromancy spell is a Twilight.")
+          : e.da !== e.a && e.a === -3 ? T(" Nadir: il prossimo incantesimo di Vita è un Crepuscolo (fede doppia).", " Nadir: your next Life spell is a Twilight (double faith).") : "";
         return base + pronta;
       }
-      case "giudizio": return e.luce ? T(`Il Giudizio pesa ${e.luce} ${e.luce === 1 ? "punto" : "punti"} di Luce: +${e.luce}d10.`, `Judgment weighs ${e.luce} Light: +${e.luce}d10.`) : null;
-      case "eccesso": return T(`La cura in eccesso ferisce il nemico: ${e.n} danni radianti.`, `The excess healing wounds the enemy: ${e.n} radiant damage.`);
+      case "giudizio": return e.luce ? T(`Il Giudizio pesa ${e.luce} ${e.luce === 1 ? "punto" : "punti"} di Vita: +${e.luce}d10.`, `Judgment weighs ${e.luce} Life: +${e.luce}d10.`) : null;
+      case "eccesso": return T(`La cura in eccesso ferisce il nemico: ${e.n} danni vitali.`, `The excess healing wounds the enemy: ${e.n} life damage.`);
       case "santuario": return T(`Per ${e.turni} turni il primo colpo di ogni turno fa metà danni; alla fine ti curi.`, `For ${e.turni} turns the first blow of each turn does half damage; you heal at the end.`);
       case "santuarioFine": return T(`Il santuario si dissolve e ti cura di ${e.fatto}.`, `The sanctuary fades and heals you for ${e.fatto}.`);
-      case "corona": return T(`Per ${e.turni} turni il nemico subisce 1d6 radiante a inizio turno; se ti colpisce, resta Accecato 1.`, `For ${e.turni} turns the enemy takes 1d6 radiant at the start of its turn; if it hits you it is Blinded 1.`);
-      case "coronaTick": return T(`La corona di raggi brucia il nemico: ${e.d} danni radianti.`, `The crown of rays burns the enemy: ${e.d} radiant damage.`);
+      case "corona": return T(`Per ${e.turni} turni il nemico subisce 1d6 vitale a inizio turno; se ti colpisce, resta Accecato 1.`, `For ${e.turni} turns the enemy takes 1d6 life at the start of its turn; if it hits you it is Blinded 1.`);
+      case "coronaTick": return T(`L'aura vitale brucia il nemico: ${e.d} danni vitali.`, `The vital aura burns the enemy: ${e.d} life damage.`);
       case "avvizzitoTick": return T(`L'Avvizzito consuma il nemico: ${e.d} danni necrotici (d${e.dado}).`, `The Withering consumes the enemy: ${e.d} necrotic damage (d${e.dado}).`);
-      case "voto": return T(`Per ${e.turni} turni ogni colpo d'arma a segno fa +1d4 radiante e ti cura 1.`, `For ${e.turni} turns every weapon hit deals +1d4 radiant and heals you 1.`);
-      case "votoColpo": return T(`Il voto di luce brucia: +${e.d} radianti${e.cura ? " e ti cura 1" : ""}.`, `The vow of light burns: +${e.d} radiant${e.cura ? " and heals you 1" : ""}.`);
+      case "voto": return T(`Per ${e.turni} turni ogni colpo d'arma a segno fa +1d4 vitale, e la Rigenerazione ti cura 1d4 all'inizio di ogni tuo turno.`, `For ${e.turni} turns every weapon hit deals +1d4 life, and Regeneration heals you 1d4 at the start of each of your turns.`);
+      case "rigenInizia": return T(`Rigenerazione: per ${e.turni} turni ti curi di 1d4 all'inizio del tuo turno.`, `Regeneration: for ${e.turni} turns you heal 1d4 at the start of your turn.`);
+      case "rigenera": return T(`Rigenerazione: la vita ti scorre dentro, 1d4 [${e.d}] → ti curi di ${e.fatto}.`, `Regeneration: life flows through you, 1d4 [${e.d}] → you heal ${e.fatto}.`);
+      case "votoColpo": return T(`Il voto di vita colpisce: +${e.d} vitali.`, `The vow of life strikes: +${e.d} life.`);
       case "fiamma": return T(`Per ${e.turni} turni chi ti colpisce subisce 1d4 di fuoco sacro.`, `For ${e.turni} turns whoever hits you takes 1d4 sacred fire.`);
       case "fiammaColpo": return T(`La fiamma ti protegge: ${e.d} danni di fuoco sacro al nemico.`, `The flame protects you: ${e.d} sacred fire damage to the enemy.`);
       case "cerchio": return T(`Per ${e.turni} turni +2 alla Classe armatura e ai tiri salvezza; il Soffio ti fa metà danni.`, `For ${e.turni} turns +2 Armor Class and saving throws; the Breath does half damage to you.`);
       case "manto": return T("Il prossimo attacco del nemico tira 2d20 e tiene il peggiore.", "The enemy's next attack rolls 2d20 and keeps the worse.");
-      case "gemella": return T(`Per ${e.turni} turni ogni tuo incantesimo a segno fa +1d6 necrotico.`, `For ${e.turni} turns every spell of yours that lands deals +1d6 necrotic.`);
-      case "gemellaDanno": return T(`L'ombra gemella colpisce: +${e.d} necrotici.`, `The twin shadow strikes: +${e.d} necrotic.`);
-      case "notte": return T(`Per ${e.turni} turni: nemico Accecato e Avvizzito, gli incantesimi d'Ombra costano 2 in meno. Perdi ${e.mente} salute mentale (non letale).`, `For ${e.turni} turns: enemy Blinded and Withered, Shadow spells cost 2 less. You lose ${e.mente} mental health (non-lethal).`);
-      case "furiaCinerea": return T(`Per ${e.turni} turni gli incantesimi d'Ombra hanno +1 dado e ti curano della metà dei danni; la Bilancia resta a Ombra 3.`, `For ${e.turni} turns Shadow spells have +1 die and heal you for half the damage; the Balance stays at Shadow 3.`);
+      case "gemella": return T(`Per ${e.turni} turni uno spirito evocato ti segue: all'inizio di ogni tuo turno colpisce da solo, 1d6 necrotico.`, `For ${e.turni} turns every spell of yours that lands deals +1d6 necrotic.`);
+      case "gemellaDanno": return T(`Lo spirito servitore colpisce: ${e.d} necrotici.`, `The servant spirit strikes: ${e.d} necrotic.`);
+      case "notte": return T(`Per ${e.turni} turni: nemico Accecato e Avvizzito, gli incantesimi di Negromanzia costano 2 in meno. Perdi ${e.mente} salute mentale (non letale).`, `For ${e.turni} turns: enemy Blinded and Withered, Necromancy spells cost 2 less. You lose ${e.mente} mental health (non-lethal).`);
+      case "furiaCinerea": return T(`Per ${e.turni} turni gli incantesimi di Negromanzia hanno +1 dado e ti curano della metà dei danni; la Bilancia resta a Negromanzia 3.`, `For ${e.turni} turns Necromancy spells have +1 die and heal you for half the damage; the Balance stays at Necromancy 3.`);
       case "lutto": return T("Per tutto lo scontro Nadir non ti costa salute mentale.", "For the whole fight Nadir costs you no mental health.");
       case "rancore": return T(`Rancore: +${e.n}d6 per i colpi subiti.`, `Grudge: +${e.n}d6 for the blows taken.`);
       case "seconda": return T("Il prossimo colpo che ti porterebbe a 0 ti lascia a 1 e ti cura.", "The next blow that would take you to 0 leaves you at 1 and heals you.");
@@ -537,7 +547,7 @@
     }
   }
 
-  const API = { UNA_PER_RIPOSO, DIFESE, SERVONO_SIGILLI, POZZO_SCONTO, etichette, comboPronta, gradoPozzo, gradoTratto: gradoPozzo, inizioTurnoPozzo, sottoMetaMonaco, recupero, costo, disponibile, lancia, inizioTurnoNemico, haTick, bonusTsPg, secondaVita, scaduti, testo };
+  const API = { UNA_PER_RIPOSO, DIFESE, SERVONO_SIGILLI, POZZO_SCONTO, etichette, comboPronta, gradoPozzo, gradoTratto: gradoPozzo, inizioTurnoPozzo, inizioTurnoMonaco, sottoMetaMonaco, recupero, costo, disponibile, lancia, inizioTurnoNemico, haTick, bonusTsPg, secondaVita, scaduti, testo };
   root.MagiaCombattimento = API;
   if (typeof module !== "undefined" && module.exports) module.exports = API;
 })(typeof window !== "undefined" ? window : globalThis);

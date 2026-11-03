@@ -530,7 +530,7 @@
   /* inizio del tuo turno: Parata e difese dello scudo scadono; il Mare Profondo e l'Egida rilasciano l'onda */
   /* 03/11: potenziamenti che valgono per le TUE azioni (Runa sull'Arma, Voto di Luce, Occhio del Tomo…): «per 3 turni» vuol dire i tuoi 3 turni
      successivi. Senza questa regola il turno del nemico subito dopo il lancio ne consumava uno e restavano solo 2 attacchi. */
-  const BUFF_AZIONI = ["runa", "occhio", "tomo", "voto", "gemella", "quiete", "furiaCinerea", "precisione"];
+  const BUFF_AZIONI = ["runa", "occhio", "tomo", "voto", "gemella", "rigen", "quiete", "furiaCinerea", "precisione"];
   function inizioTurnoPg(s, ctx) {
     const E = [];
     s.effInizio = Object.assign({}, s.eff); /* per sapere quali potenziamenti sono nati in questo turno */

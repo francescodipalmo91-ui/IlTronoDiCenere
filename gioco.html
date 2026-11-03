@@ -6754,7 +6754,7 @@
     }
 
     /* Effetti a durata: medaglione con simbolo, nome e turni rimasti (rombi pieni = turni ancora attivi) */
-    const EFF_PG = ["scudo", "invuln", "pietra", "armaPiu", "potenza", "guardia", "baluardo", "fortezza", "furore", "precisione", "runa", "occhio", "tomo", "quiete", "muro", "santuario", "voto", "gemella", "cerchio", "fiamma", "notte", "furiaCinerea", "manto", "seconda", "rivest", "linfaFuria", "pelle", "infuso", "aura", "rinascita", "bulbo"], EFF_NEM = ["bloccato", "cieco", "sanguina", "frattura", "esposto", "debole", "sbilanciato", "silenzio", "frastornato", "intontito", "pressione", "parola", "accecato", "avvizzito", "paura", "corona", "avvelenato", "marea"];
+    const EFF_PG = ["scudo", "invuln", "pietra", "armaPiu", "potenza", "guardia", "baluardo", "fortezza", "furore", "precisione", "runa", "occhio", "tomo", "quiete", "muro", "santuario", "voto", "rigen", "gemella", "cerchio", "fiamma", "notte", "furiaCinerea", "manto", "seconda", "rivest", "linfaFuria", "pelle", "infuso", "aura", "rinascita", "bulbo"], EFF_NEM = ["bloccato", "cieco", "sanguina", "frattura", "esposto", "debole", "sbilanciato", "silenzio", "frastornato", "intontito", "pressione", "parola", "accecato", "avvizzito", "paura", "corona", "avvelenato", "marea"];
     const SHIELD = "M12 2.8l7 2.7v5.3c0 4.6-3 8.1-7 10.4-4-2.3-7-5.8-7-10.4V5.5z";
     const ICONE_EFF = { /* tratti a 24×24, colore dal tema dell'effetto */
       scudo: { tono: "dif", d: `<path d="${SHIELD}"/><path d="M12 6.5v11M8.2 10.5h7.6" opacity=".7"/>` },
@@ -6787,6 +6787,7 @@
       pressione: { tono: "mal", d: `<path d="M12 3v13M7 11l5 5 5-5"/><path d="M5 20h14" opacity=".8"/>` },
       parola: { tono: "mal", d: `<circle cx="12" cy="12" r="8"/><path d="M8 9l8 6M16 9l-8 6" opacity=".8"/>` },
       santuario: { tono: "dif", d: `<path d="M4 20V10l8-6 8 6v10z"/><path d="M9 20v-5h6v5" opacity=".8"/>` },
+      rigen: { tono: "dif", d: `<path d="M12 21c-4-3-7-6-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4-3 7-7 10z"/><path d="M12 9v6M9 12h6" opacity=".8"/>` },
       voto: { tono: "off", d: `<path d="M12 3v18M7 8h10" opacity=".9"/><circle cx="12" cy="12" r="8" opacity=".6"/>` },
       gemella: { tono: "off", d: `<circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6" opacity=".7"/>` },
       cerchio: { tono: "dif", d: `<circle cx="12" cy="12" r="8.5"/><path d="M12 7c1 2.2 3 3 3 5.2a3 3 0 0 1-6 0C9 10 11 9.4 12 7z" opacity=".85"/>` },
@@ -10722,8 +10723,8 @@
     const nomeBilancia = (v) => { /* Luce 3 = Zenit, Ombra 3 = Nadir; da 2 Aureola (Luce) e Velo (Ombra) */
       const L = (it, en) => Lingua.t({ it, en });
       if (v === 0) return L("equilibrio", "even");
-      if (v > 0) return L(`Luce ${v}`, `Light ${v}`) + (v === 3 ? " · Zenit" : v === 2 ? " · Aureola" : "");
-      return L(`Ombra ${-v}`, `Shadow ${-v}`) + (v === -3 ? " · Nadir" : v === -2 ? " · Velo" : "");
+      if (v > 0) return L(`Vita ${v}`, `Life ${v}`) + (v === 3 ? " · Zenit" : v === 2 ? " · Aureola" : "");
+      return L(`Negromanzia ${-v}`, `Necromancy ${-v}`) + (v === -3 ? " · Nadir" : v === -2 ? L(" · Coro", " · Choir") : "");
     };
     const nomeRisorsaInc = () => (pg && pg.classe === "Accolito" ? (Lingua.t({ it: "punti fede", en: "faith" })) : "mana");
     const cdIncantesimi = () => { const a = pg && ATTR_INC[pg.classe]; return a ? 8 + mod(statPg(a)) + (Number(pg.livello) || 1) : null; };
@@ -10759,7 +10760,7 @@
         effetti: "Effetti", effettiTit: "Effetti attivi", turniRim: (n) => n === 1 ? "1 turno" : `${n} turni`,
         turnoTit: (n) => `${n}° turno`, lblAttacco: "Attacco", lblTorcia: "Attacco con la torcia", lblPozione: "Pozione", lblBloccato: "Mastino bloccato",
         emorragia: "Emorragia", marchiato: "marchiato", sigillato: "sigillo", segnato: "segnato", cariche: (n, max) => `${n}/${max} cariche`, tuttoScontro: "tutto lo scontro",
-        effNomi: { sanguina: "Sanguinamento", crepe: "Incrinatura", frattura: "Frattura", intontito: "Intontito", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Inibito", frastornato: "Frastornato", guardia: "Guardia alzata", furore: "Furore inarrestabile", esposto: "Esposto", precisione: "Mille Soli", baluardo: "Baluardo d'Acciaio", fortezza: "Fortezza Eterna", cariche: "Carica Cinetica", scudo: "Scudo", bloccato: "Nemico bloccato", invuln: "Invulnerabilità", armaPiu: "Arma migliorata", pietra: "Pelle di pietra", cieco: "Nemico accecato", potenza: "Aumento di potenza", impaurito: "Impaurito", runa: "Runa sull'arma", occhio: "Occhio del Tomo", tomo: "Tomo Proibito", quiete: "Quiete Assoluta", muro: "Muro di forza", pressione: "Pressione", parola: "Parola Vera", sigilli: "Sigilli", santuario: "Santuario", voto: "Voto di Luce", gemella: "Ombra Gemella", cerchio: "Cerchio del Focolare", fiamma: "Fiamma Calda", notte: "Notte Senza Fine", furiaCinerea: "Furia Cinerea", manto: "Manto d'Ombra", seconda: "Seconda Vita", accecato: "Accecato", avvizzito: "Avvizzito", paura: "Terrore", corona: "Corona di Raggi", avvelenato: "Avvelenato", tossina: "Tossina", marea: "Marea di Putrefazione", rivest: "Arma rivestita", linfaFuria: "Linfa Furiosa", pelle: "Pelle di Corteccia", infuso: "Infuso di Linfa Vitale", aura: "Aura di Purificazione", rinascita: "Rinascita del Sottobosco", bulbo: "Bulbo primordiale", morbo: "Morbo", corteccia: "Scudo di Corteccia", trappola: "Trappola pronta" },
+        effNomi: { sanguina: "Sanguinamento", crepe: "Incrinatura", frattura: "Frattura", intontito: "Intontito", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Inibito", frastornato: "Frastornato", guardia: "Guardia alzata", furore: "Furore inarrestabile", esposto: "Esposto", precisione: "Mille Soli", baluardo: "Baluardo d'Acciaio", fortezza: "Fortezza Eterna", cariche: "Carica Cinetica", scudo: "Scudo", bloccato: "Nemico bloccato", invuln: "Invulnerabilità", armaPiu: "Arma migliorata", pietra: "Pelle di pietra", cieco: "Nemico accecato", potenza: "Aumento di potenza", impaurito: "Impaurito", runa: "Runa sull'arma", occhio: "Occhio del Tomo", tomo: "Tomo Proibito", quiete: "Quiete Assoluta", muro: "Muro di forza", pressione: "Pressione", parola: "Parola Vera", sigilli: "Sigilli", santuario: "Santuario", voto: "Voto di Vita", rigen: "Rigenerazione", gemella: "Spirito Servitore", cerchio: "Cerchio del Focolare", fiamma: "Fiamma Calda", notte: "Notte dei Morti", furiaCinerea: "Furia Cinerea", manto: "Velo degli Spiriti", seconda: "Seconda Vita", accecato: "Accecato", avvizzito: "Avvizzito", paura: "Terrore", corona: "Aura Vitale", avvelenato: "Avvelenato", tossina: "Tossina", marea: "Marea di Putrefazione", rivest: "Arma rivestita", linfaFuria: "Linfa Furiosa", pelle: "Pelle di Corteccia", infuso: "Infuso di Linfa Vitale", aura: "Aura di Purificazione", rinascita: "Rinascita del Sottobosco", bulbo: "Bulbo primordiale", morbo: "Morbo", corteccia: "Scudo di Corteccia", trappola: "Trappola pronta" },
         effFinito: (n) => `L'effetto «${n}» svanisce.`, resisteBreve: "resiste", effettoBreve: "a segno",
         iniziativa: (a, b) => `Iniziativa: la tua Agilità (${a}) contro quella del Mastino (${b}).`,
         pari: (x, y) => `Agilità pari: si tira un d20 a testa. Tu ${x}, il Mastino ${y}.`,
@@ -10873,7 +10874,7 @@
         effetti: "Effects", effettiTit: "Active effects", turniRim: (n) => n === 1 ? "1 round" : `${n} rounds`,
         turnoTit: (n) => `Round ${n}`, lblAttacco: "Attack", lblTorcia: "Torch attack", lblPozione: "Potion", lblBloccato: "Mastiff held",
         emorragia: "Haemorrhage", marchiato: "branded", sigillato: "seal", segnato: "marked", cariche: (n, max) => `${n}/${max} charges`, tuttoScontro: "whole fight",
-        effNomi: { sanguina: "Bleeding", crepe: "Cracked", frattura: "Fractured", intontito: "Dazzled", debole: "Weakened", sbilanciato: "Off-balance", silenzio: "Inhibited", frastornato: "Dazed", guardia: "Guard up", furore: "Unstoppable Fury", esposto: "Exposed", precisione: "Thousand Suns", baluardo: "Steel Bulwark", fortezza: "Eternal Fortress", cariche: "Kinetic Charge", scudo: "Shield", bloccato: "Enemy held", invuln: "Invulnerability", armaPiu: "Empowered weapon", pietra: "Stoneskin", cieco: "Enemy blinded", potenza: "Surge of power", impaurito: "Frightened", runa: "Weapon rune", occhio: "Eye of the Tome", tomo: "Forbidden Tome", quiete: "Absolute Stillness", muro: "Wall of force", pressione: "Pressure", parola: "True Word", sigilli: "Seals", santuario: "Sanctuary", voto: "Vow of Light", gemella: "Twin Shadow", cerchio: "Hearth Circle", fiamma: "Warm Flame", notte: "Endless Night", furiaCinerea: "Ashen Fury", manto: "Shadow Cloak", seconda: "Second Life", accecato: "Blinded", avvizzito: "Withered", paura: "Terror", corona: "Crown of Rays", avvelenato: "Poisoned", tossina: "Toxin", marea: "Tide of Rot", rivest: "Coated weapon", linfaFuria: "Furious Sap", pelle: "Bark Skin", infuso: "Lifesap Infusion", aura: "Purifying Aura", rinascita: "Rebirth of the Undergrowth", bulbo: "Primordial bulb", morbo: "Blight", corteccia: "Bark Shield", trappola: "Trap set" },
+        effNomi: { sanguina: "Bleeding", crepe: "Cracked", frattura: "Fractured", intontito: "Dazzled", debole: "Weakened", sbilanciato: "Off-balance", silenzio: "Inhibited", frastornato: "Dazed", guardia: "Guard up", furore: "Unstoppable Fury", esposto: "Exposed", precisione: "Thousand Suns", baluardo: "Steel Bulwark", fortezza: "Eternal Fortress", cariche: "Kinetic Charge", scudo: "Shield", bloccato: "Enemy held", invuln: "Invulnerability", armaPiu: "Empowered weapon", pietra: "Stoneskin", cieco: "Enemy blinded", potenza: "Surge of power", impaurito: "Frightened", runa: "Weapon rune", occhio: "Eye of the Tome", tomo: "Forbidden Tome", quiete: "Absolute Stillness", muro: "Wall of force", pressione: "Pressure", parola: "True Word", sigilli: "Seals", santuario: "Sanctuary", voto: "Vow of Life", rigen: "Regeneration", gemella: "Servant Spirit", cerchio: "Hearth Circle", fiamma: "Warm Flame", notte: "Night of the Dead", furiaCinerea: "Ashen Fury", manto: "Veil of Spirits", seconda: "Second Life", accecato: "Blinded", avvizzito: "Withered", paura: "Terror", corona: "Vital Aura", avvelenato: "Poisoned", tossina: "Toxin", marea: "Tide of Rot", rivest: "Coated weapon", linfaFuria: "Furious Sap", pelle: "Bark Skin", infuso: "Lifesap Infusion", aura: "Purifying Aura", rinascita: "Rebirth of the Undergrowth", bulbo: "Primordial bulb", morbo: "Blight", corteccia: "Bark Shield", trappola: "Trap set" },
         effFinito: (n) => `The “${n}” effect fades.`, resisteBreve: "resisted", effettoBreve: "takes hold",
         iniziativa: (a, b) => `Initiative: your Agility (${a}) against the Mastiff's (${b}).`,
         pari: (x, y) => `Agility tied: each side rolls a d20. You ${x}, the Mastiff ${y}.`,
@@ -11634,6 +11635,14 @@
       const rilascio = CMB.inizioTurnoPg(scontro, ctxTecnica()); /* la Parata scade; Mare Profondo ed Egida rilasciano l'onda */
       if (sciamano() && livelloPg() >= 4 && scontro.eff && scontro.eff.avvelenato > 0 && pvPg() < pvMaxPg()) { const c = curaPgN(1); aggiungi({ tipo: "narra", box: "mia", righe: [TRATTI_MARZ().linfa(c)] }); disegnaVitali(); } /* 03/11: Linfa che ritorna */
       if (pg && pg.classe === "Sapiente" && window.MagiaCombattimento) { const pz = window.MagiaCombattimento.inizioTurnoPozzo(scontro, ctxIncantesimo()); if (pz.length) { aggiungi({ tipo: "narra", box: "mia", righe: pz.map(e => window.MagiaCombattimento.testo(e)) }); disegnaVitali(); } } /* 03/11: Pozzo Arcano */
+      if (pg && pg.classe === "Accolito" && window.MagiaCombattimento) { /* 03/11: Rigenerazione (Vita) e Spirito Servitore (Negromanzia) */
+        const mt = window.MagiaCombattimento.inizioTurnoMonaco(scontro, ctxIncantesimo());
+        if (mt.length) {
+          aggiungi({ tipo: "narra", box: "mia", righe: mt.map(e => window.MagiaCombattimento.testo(e)) }); disegnaVitali();
+          if (mt.some(e => e.k === "gemellaDanno")) scuotiNemico();
+          if (scontro.pv <= 0) { scontro.tuoTurno = false; barraScontro(); return setTimeout(vittoriaScontro, pausaScontro() / 2); }
+        }
+      }
       if (rilascio.length) {
         aggiungi({ tipo: "narra", box: "mia", righe: rilascio.map(rigaScudo).filter(Boolean) }); scuotiNemico();
         if (scontro.pv <= 0) { scontro.tuoTurno = false; barraScontro(); return setTimeout(vittoriaScontro, pausaScontro() / 2); }
@@ -11703,7 +11712,7 @@
         if (marc) righe.push(RT.marchioDanno(marc));
         if (sig) righe.push(RT.sigilloDanno(sig));
         if (seg) righe.push(RT.segnoDanno(seg));
-        if (eff("voto") && !conTorcia) { const x = tira(4); scontro.pv -= x; const c1 = curaPgN(1); righe.push(window.MagiaCombattimento.testo({ k: "votoColpo", d: x, cura: c1 })); } /* Voto di Luce */
+        if (eff("voto") && !conTorcia) { const x = tira(4); scontro.pv -= x; righe.push(window.MagiaCombattimento.testo({ k: "votoColpo", d: x })); } /* Voto di Vita (03/11: la cura è la Rigenerazione) */
         if (eff("runa") && !conTorcia) righe.push(window.MagiaCombattimento.testo(CMB.incidi(scontro, { boss: bossNem() }, 1))); /* Runa sull'Arma: ogni colpo a segno incide 1 Sigillo */
         if (sciamano() && !conTorcia) righe.push(...righeEventi(SCI.suColpo(scontro, ctxTecnica(), { ok: true, danno })).righe); /* il rivestimento dell'arma */
         scuotiNemico();

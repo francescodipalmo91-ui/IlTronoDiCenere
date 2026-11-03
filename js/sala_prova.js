@@ -48,10 +48,10 @@
     enea: { nome: "Enea (boss, argento)", ca: 13, pv: 36, vigore: 14, stat: { Vigore: 14, "Agilità": 10, Mente: 10, Spirito: 12 }, primaria: "Vigore", attaccoFisso: 4 /* Vigore 14 (+2) + 2 */, pa: 9, boss: true, enea: true, arma: true, vuln: ["Perforante", "Arcano", "Luce", "Sottobosco"] },
     manichino: { nome: "Manichino (non attacca)", ca: 12, pv: 60, boss: false, passivo: true, arma: false }
   };
-  const NOMI_EFF = { sanguina: "Sanguinamento", frattura: "Frattura", intontito: "Intontito", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Inibito", frastornato: "Frastornato", bloccato: "Stordito", guardia: "Guardia alzata", furore: "Furore inarrestabile", esposto: "Esposto", precisione: "Mille Soli", baluardo: "Baluardo d'Acciaio", fortezza: "Fortezza Eterna", runa: "Runa sull'arma", occhio: "Occhio del Tomo", tomo: "Tomo Proibito", quiete: "Quiete Assoluta", muro: "Muro di forza", scudo: "Scudo", invuln: "Invulnerabilità", pressione: "Pressione", parola: "Parola Vera", santuario: "Santuario", voto: "Voto di Luce", gemella: "Ombra Gemella", cerchio: "Cerchio del Focolare", fiamma: "Fiamma Calda", notte: "Notte Senza Fine", furiaCinerea: "Furia Cinerea", manto: "Manto d'Ombra", seconda: "Seconda Vita", accecato: "Accecato", avvizzito: "Avvizzito", paura: "Terrore", corona: "Corona di Raggi",
+  const NOMI_EFF = { sanguina: "Sanguinamento", frattura: "Frattura", intontito: "Intontito", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Inibito", frastornato: "Frastornato", bloccato: "Stordito", guardia: "Guardia alzata", furore: "Furore inarrestabile", esposto: "Esposto", precisione: "Mille Soli", baluardo: "Baluardo d'Acciaio", fortezza: "Fortezza Eterna", runa: "Runa sull'arma", occhio: "Occhio del Tomo", tomo: "Tomo Proibito", quiete: "Quiete Assoluta", muro: "Muro di forza", scudo: "Scudo", invuln: "Invulnerabilità", pressione: "Pressione", parola: "Parola Vera", santuario: "Santuario", voto: "Voto di Vita", rigen: "Rigenerazione", gemella: "Spirito Servitore", cerchio: "Cerchio del Focolare", fiamma: "Fiamma Calda", notte: "Notte dei Morti", furiaCinerea: "Furia Cinerea", manto: "Velo degli Spiriti", seconda: "Seconda Vita", accecato: "Accecato", avvizzito: "Avvizzito", paura: "Terrore", corona: "Aura Vitale",
     avvelenato: "Avvelenato", marea: "Marea di Putrefazione", rivest: "Arma rivestita", linfaFuria: "Linfa Furiosa", pelle: "Pelle di Corteccia", infuso: "Infuso di Linfa Vitale", aura: "Aura di Purificazione", rinascita: "Rinascita del Sottobosco", bulbo: "Bulbo primordiale" };
   const DESC_EFF = { frattura: "1d4 danni a ogni suo attacco", intontito: "niente critici", debole: "−2 per colpire", sbilanciato: "−2 alla Classe armatura", silenzio: "niente Presa né Soffio", frastornato: "−4 per colpire, niente critici", bloccato: "salta il prossimo turno", furore: "+4 ai tiri salvezza e alle prove contrapposte", esposto: "i tuoi attacchi fanno critico con un numero in meno, mai sotto 18", precisione: "i tuoi attacchi fanno critico da 18 a 20" };
-  const EFF_PG = ["guardia", "baluardo", "fortezza", "furore", "precisione", "scudo", "muro", "invuln", "runa", "occhio", "tomo", "quiete", "santuario", "voto", "gemella", "cerchio", "fiamma", "notte", "furiaCinerea", "manto", "seconda", "rivest", "linfaFuria", "pelle", "infuso", "aura", "rinascita", "bulbo"];
+  const EFF_PG = ["guardia", "baluardo", "fortezza", "furore", "precisione", "scudo", "muro", "invuln", "runa", "occhio", "tomo", "quiete", "santuario", "voto", "rigen", "gemella", "cerchio", "fiamma", "notte", "furiaCinerea", "manto", "seconda", "rivest", "linfaFuria", "pelle", "infuso", "aura", "rinascita", "bulbo"];
   const arcanista = () => !!pg && (pg.classe === "arcanista" || pg.classe === "monaco"); /* incantatori: mana o punti fede */
   const monaco = () => !!pg && pg.classe === "monaco";
   const sciamano = () => !!pg && pg.classe === "sciamano" && !!S; /* tecniche della natura e punti natura */
@@ -222,6 +222,7 @@
     }
     const ril = C.inizioTurnoPg(s, ctx()); /* Mare Profondo ed Egida rilasciano l'onda */
     if (s && arcanista() && !monaco()) M.inizioTurnoPozzo(s, ctx()).forEach(e => ril.push({ k: "_testo", t: M.testo(e) })); /* 03/11: Pozzo Arcano */
+    if (s && monaco()) M.inizioTurnoMonaco(s, ctx()).forEach(e => ril.push({ k: "_testo", t: M.testo(e) })); /* 03/11: Rigenerazione e Spirito Servitore */
     if (s && sciamano() && pg.liv >= 4 && C.attivo(s, "avvelenato") && pg.pv < pg.pvMax) { pg.pv += 1; ril.push({ k: "_testo", t: "Linfa che ritorna: il veleno nel nemico ti torna come linfa, ti curi di 1." }); } /* 03/11 */
     if (ril.length) { blocco("Inizio del tuo turno", testoEventi(ril), "mia"); if (controllaFine()) { turnoPg = false; return disegna(); } }
     disegna();
@@ -261,13 +262,13 @@
     if (!turnoPg || finito) return;
     const pre = s.prossimo || {}; s.prossimo = null;
     tipoAzione = pg.arma.tipo;
-    const c = ctx(), ombraR = monaco() && (Number(s.bilancia) || 0) < 0; if (ombraR) c.modDanno += 1; /* 03/11: Respiro dell'Equilibrio, Bilancia in Ombra */
+    const c = ctx(), ombraR = monaco() && (Number(s.bilancia) || 0) < 0; if (ombraR) c.modDanno += 1; /* 03/11: Respiro dell'Equilibrio, Bilancia in Negromanzia */
     const e = C.colpo(s, c, { base: true, bonus: pre.bonus || 0, piuDadi: pre.piuDadi || 0 });
     if (ombraR && e.ok) e.respiro = true;
     if (e.crit && !arcanista() && !sciamano()) c.furiaPiu(2);
     const runa = e.ok && arcanista() && C.attivo(s, "runa") ? testoEventi([C.incidi(s, c, 1)]) : [];
     if (sciamano()) { if (e.ok) runa.push(...testoEventi(S.suColpo(s, c, e))); runa.push(...testoEventi(S.attaccoFuria(s, c))); } /* rivestimento e Linfa Furiosa */
-    if (e.ok && arcanista() && C.attivo(s, "voto")) { const x = tira(4); s.pv -= x; pg.pv = Math.min(pg.pvMax, pg.pv + 1); runa.push(M.testo({ k: "votoColpo", d: x, cura: 1 })); }
+    if (e.ok && arcanista() && C.attivo(s, "voto")) { const x = tira(4); s.pv -= x; runa.push(M.testo({ k: "votoColpo", d: x })); } /* 03/11: niente più «cura 1», ora c'è la Rigenerazione */
     blocco("Attacco normale", [...testoEventi([e]), ...(e.respiro ? [M.testo({ k: "respiroOmbra" })] : []), ...runa, e.crit && !arcanista() && !sciamano() ? "Tuo critico: +2 furia." : ""], e.ok ? "mia" : "");
     dopoAzione();
   }
@@ -505,7 +506,7 @@
     const att = chiavi.filter(k => s && s.eff[k] > 0);
     return att.map(k => [k === "sanguina" ? (Number(s.sangueDado) === 6 ? "Emorragia 1d6" : "Sanguinamento 1d4") + (s.marchio ? " · marchiato" : "") : k === "avvelenato" ? (Number(s.velenoDado) === 6 ? "Tossina 1d6" : "Avvelenato 1d4") : NOMI_EFF[k] + (k === "esposto" && s.segno ? " · segnato" : "") + (k === "rivest" && s.rivest ? " · " + s.rivest : ""), C.perScontro(s.eff[k]) ? "tutto lo scontro" : durata(s.eff[k])]);
   }
-  const bilanciaTesto = () => { const v = (s && s.bilancia) || 0; return v === 0 ? "equilibrio" : v > 0 ? `Luce ${v}${v === 3 ? " · Zenit" : v === 2 ? " · Aureola" : ""}` : `Ombra ${-v}${v === -3 ? " · Nadir" : v === -2 ? " · Velo" : ""}`; };
+  const bilanciaTesto = () => { const v = (s && s.bilancia) || 0; return v === 0 ? "equilibrio" : v > 0 ? `Vita ${v}${v === 3 ? " · Zenit" : v === 2 ? " · Aureola" : ""}` : `Negromanzia ${-v}${v === -3 ? " · Nadir" : v === -2 ? " · Coro" : ""}`; };
   const sigilliNem = () => { if (!s || !C.sigilli(s)) return []; const n = C.sigilli(s), max = C.sigilliMax({ boss: nem.boss, liv: pg.liv }); return [["Sigilli (tutto lo scontro)", `${"◆".repeat(n)}${"◇".repeat(Math.max(0, max - n))} ${n} su ${max}${n >= max ? " · al massimo: Detonazione doppia" : ""}`]]; }; /* 03/11 */
   const crepeNem = () => { if (!s || !C.crepe(s)) return []; const max = C.crepeMax({ boss: nem.boss }); return [["Incrinatura" + (s.sigillo && C.crepe(s) >= max ? " · sigillo" : ""), `${C.crepe(s)}/${max} cariche (−${C.crepe(s)} CA)`]]; };
   function disegna() {
@@ -538,7 +539,7 @@
       const prepInc = !!window.LAYOUT_TEST, princ = prepInc ? scuolaPrinc() : null, maxP = postiPrincInc(pg.liv), quota = (sc) => (sc === princ ? maxP : 1);
       $("svPosti").textContent = prepInc ? `Incantesimi preparati: ${preparatiInc.size} / ${maxP + 1} (${maxP} della scuola principale, 1 dell'altra; si cambiano al riposo). Il costo si paga in ${monaco() ? "punti fede" : "mana"}.` : "Tutti gli incantesimi sbloccati sono usabili (la preparazione ai posti non si prova qui). Il costo si paga in " + (monaco() ? "punti fede" : "mana") + ".";
       lista.replaceChildren();
-      const sc2 = prepInc ? [princ, SCUOLE().find(x => x !== princ)] : SCUOLE(), sblocc = MG.INCANTESIMI.filter(i => sc2.includes(i.scuola) && i.liv <= pg.liv), NS = { arcano: "Arcano", forza: "Forza", luce: "Luce", ombra: "Ombra" };
+      const sc2 = prepInc ? [princ, SCUOLE().find(x => x !== princ)] : SCUOLE(), sblocc = MG.INCANTESIMI.filter(i => sc2.includes(i.scuola) && i.liv <= pg.liv), NS = { arcano: "Arcano", forza: "Forza", luce: "Vita", ombra: "Negromanzia" };
       const rigaInc = (inc, etichetta) => {
         const costoR = s ? M.costo(inc, s, ctx()) : inc.costo;
         const usata = M.UNA_PER_RIPOSO.includes(inc.id) && perRiposo[inc.id];
@@ -559,7 +560,7 @@
       };
       sc2.forEach((sc, n) => { lista.append(el("h4", { text: NS[sc] + (prepInc ? (n === 0 ? ` — scuola principale (${maxP} posti)` : " — altra scuola (1 posto)") : "") })); sblocc.filter(i => i.scuola === sc).forEach(i => rigaInc(i)); });
       if (pg.liv >= 3) {
-        lista.append(el("h4", { text: pg.via ? `Via ${monaco() ? (pg.via === "aldo" ? "Cenere (Ombra)" : "Brace (Luce)") : (pg.via === "aldo" ? "Frattura (Forza)" : "Sutura (Arcano)")}` : "Via di prestigio: sceglila nel pannello a sinistra" }));
+        lista.append(el("h4", { text: pg.via ? `Via ${monaco() ? (pg.via === "aldo" ? "Cenere (Negromanzia)" : "Brace (Vita)") : (pg.via === "aldo" ? "Frattura (Forza)" : "Sutura (Arcano)")}` : "Via di prestigio: sceglila nel pannello a sinistra" }));
         if (pg.via) MG.VIE.filter(v => v.via === pg.via && sc2.includes(v.scuola) && v.liv <= pg.liv).forEach(i => rigaInc(i, "via"));
       }
     }
@@ -588,7 +589,7 @@
     const app = el("div", { class: "sala" },
       el("header", {}, el("h1", { text: "Sala di prova — combattimento" }), el("a", { href: "tutorial.html", text: "Torna al tutorial" })),
       el("section", { class: "pannello" }, el("h2", { text: "Personaggio" }),
-        campo("Classe", sel("pClasse", [["guerriero", "Guerriero (tecniche e furia)"], ["arcanista", "Arcanista (incantesimi, Sigilli e mana)"], ["monaco", "Monaco (Luce e Ombra, Bilancia e punti fede)"], ["sciamano", "Sciamano (natura, veleni e trappole)"]], "guerriero")), campo("Mente (Arcanista) o Spirito (Monaco, Sciamano)", num("pMen", 16, 8, 20)),
+        campo("Classe", sel("pClasse", [["guerriero", "Guerriero (tecniche e furia)"], ["arcanista", "Arcanista (incantesimi, Sigilli e mana)"], ["monaco", "Monaco (Vita e Negromanzia, Bilancia e punti fede)"], ["sciamano", "Sciamano (natura, veleni e trappole)"]], "guerriero")), campo("Mente (Arcanista) o Spirito (Monaco, Sciamano)", num("pMen", 16, 8, 20)),
         campo("Livello", sel("pLiv", [1, 2, 3, 4, 5].map(n => [n, n]), 1)), campo("Vigore", num("pVig", 16, 8, 20)), campo("Agilità", num("pAgi", 12, 8, 20)),
         campo("Classe armatura", num("pCa", 14, 8, 25)), campo("Salute (vuoto = calcolata)", num("pPv", "", 1, 200)), campo("Intuizione (bonus, per smascherare la finta di Enea)", num("pInt", 0, -5, 15)),
         campo("Arma", sel("pArma", ARMI.map((a, i) => [i, `${a.nome} · 1d${a.dado} ${a.tipo.toLowerCase()}`]), 0)), chk("pScudo", "Scudo imbracciato"),
@@ -763,7 +764,7 @@
       const inc = cl === "arcanista" || cl === "monaco";
       $("rScuola").hidden = !inc;
       if (inc) {
-        const sc = cl === "monaco" ? ["luce", "ombra"] : ["arcano", "forza"], NS = { arcano: "Arcano", forza: "Forza", luce: "Luce", ombra: "Ombra" };
+        const sc = cl === "monaco" ? ["luce", "ombra"] : ["arcano", "forza"], NS = { arcano: "Arcano", forza: "Forza", luce: "Vita", ombra: "Negromanzia" };
         if (!sc.includes($("pScuola").value)) { $("pScuola").replaceChildren(...sc.map(k => el("option", { value: k, text: NS[k] }))); $("pScuola").value = (P.PG[cl] && P.PG[cl].scuola) || sc[0]; }
       }
       $("pSerie").disabled = !(cl === "guerriero" && $("pScudo").checked && Number($("pLiv").value) >= 3); if ($("pSerie").disabled) $("pSerie").value = "arma"; /* la serie dello scudo esiste solo per il Guerriero con lo scudo */

@@ -13,8 +13,8 @@ window.CacceComuni = (() => {
   const LUOGO = ["giardino", "giardino", "foresta", "foresta"]; /* ★★★: nemici appena entrati nei confini, nella foresta */
   /* nomi dei tipi di danno (vulnerabilità e resistenze) */
   const TIPI = {
-    it: { Tagliente: "taglio", Contundente: "contundente", Perforante: "perforante", Forza: "forza", Arcano: "arcano", Luce: "luce", Ombra: "ombra", Veleno: "veleno", Fuoco: "fuoco" },
-    en: { Tagliente: "slashing", Contundente: "bludgeoning", Perforante: "piercing", Forza: "force", Arcano: "arcane", Luce: "light", Ombra: "shadow", Veleno: "poison", Fuoco: "fire" }
+    it: { Tagliente: "taglio", Contundente: "contundente", Perforante: "perforante", Forza: "forza", Arcano: "arcano", Luce: "vita", Ombra: "negromanzia", Veleno: "veleno", Fuoco: "fuoco" },
+    en: { Tagliente: "slashing", Contundente: "bludgeoning", Perforante: "piercing", Forza: "force", Arcano: "arcane", Luce: "life", Ombra: "necromancy", Veleno: "poison", Fuoco: "fire" }
   };
   const P = (o) => Object.assign({ zone: [], attacchi: 1, dadoVita: 8, cacciaComune: true }, o);
   const prede = {

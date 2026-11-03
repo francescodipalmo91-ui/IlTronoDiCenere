@@ -298,7 +298,7 @@
               <tr><td>Avvizzito</td><td>1d4 danni necrotici a ogni suo turno; si somma al Sanguinamento</td><td>1d6 dove indicato</td><td>secondo la tecnica</td></tr>
             </table></div>
             <p>Gli effetti non si sommano: uno nuovo dello stesso tipo rinnova la durata. Le eccezioni (Incrinatura, Sigilli) sono spiegate nelle classi.</p>
-            <p><b>Quanto dura «per 3 turni».</b> Gli stati che infliggi al nemico contano i suoi turni. I potenziamenti che migliorano le tue azioni (per esempio Runa sull'Arma, Voto di Luce, Occhio del Tomo) contano i tuoi turni successivi al lancio: «per 3 turni» vuol dire i tuoi prossimi 3 attacchi o incantesimi.</p>
+            <p><b>Quanto dura «per 3 turni».</b> Gli stati che infliggi al nemico contano i suoi turni. I potenziamenti che migliorano le tue azioni (per esempio Runa sull'Arma, Voto di Vita, Occhio del Tomo) contano i tuoi turni successivi al lancio: «per 3 turni» vuol dire i tuoi prossimi 3 attacchi o incantesimi.</p>
             <p><b>Sei stati valgono allo stesso modo per te e per i nemici</b>: Ustionato, Sanguinamento e Avvelenato (1d4 a turno per 3 turni, 1d6 nella versione potenziata), Indebolito, Impaurito e Accecato (2 turni). <b>Alcune prede possono infliggerti anche</b> Stordito (salti il prossimo turno), Sbilanciato (−2 alla Classe armatura), Frastornato (−4 per colpire e niente critici) e Inibito (niente tecniche né incantesimi, solo attacchi normali), per 2 turni. Stati diversi si sommano. Finiscono con lo scontro. Le creature di cenere non sanguinano; quelle di fuoco non si ustionano.</p>
             <p><b>Elisir.</b> Gli elisir comuni (con le parti degli animali e le erbe) curano uno stato. Gli elisir rari (con la sola parte di una creatura di cenere) rendono immuni a quello stato per tutto lo scontro, bevuti prima o durante. Un nemico che vede fallire il suo stato contro l'immunità non ci riprova. Ne porti al massimo 2 per stato.</p>
             <p><b>Abilità dei nemici.</b> Anche i nemici hanno punti abilità: ogni abilità che infligge uno stato costa punti (2 per uno stato, 3 per uno potenziato o per due stati, 4 per un controllo come Stordito o Bloccato). Finiti i punti, solo attacchi normali.</p>
@@ -311,7 +311,7 @@
             <h3>Avversari temibili</h3>
             <p>Gli avversari più temibili non subiscono gli effetti che tolgono azioni o attacchi (Frastornato, Stordito, Inibito); al loro posto molte tecniche e incantesimi hanno un effetto di ripiego, indicato tra parentesi. Su di loro gli altri effetti durano al massimo 2 turni (Avvizzito 3), e cariche e Sigilli arrivano al massimo a 2.</p>
             <h3>Debolezze e resistenze</h3>
-            <p>Alcuni nemici sono vulnerabili a un tipo di danno: taglio, contundente, perforante, arcano, forza, luce (radiante), ombra (necrotico), veleno oppure fuoco. Contro di loro quel danno ha un dado in più, oppure un effetto dura un turno in più. Altri resistono a un tipo di danno e ne subiscono metà. Esplorando e parlando puoi scoprire le debolezze degli avversari.</p>`],
+            <p>Alcuni nemici sono vulnerabili a un tipo di danno: taglio, contundente, perforante, arcano, forza, vita (vitale), negromanzia (necrotico), veleno oppure fuoco. Contro di loro quel danno ha un dado in più, oppure un effetto dura un turno in più. Altri resistono a un tipo di danno e ne subiscono metà. Esplorando e parlando puoi scoprire le debolezze degli avversari.</p>`],
           ["Guerriero", `
             <p>Combatte con l'arma e prepara <b>tecniche speciali</b>, che costano punti furia.</p>
             <h3>Regole della classe</h3>
@@ -370,23 +370,23 @@
             <h3>Incantesimi</h3>
             ${tendineScuole("Sapiente")}`],
           ["Monaco", `
-            <p>Prega due forze opposte: la <b>Luce</b> protegge e cura, l'<b>Ombra</b> ferisce di più ma chiede un prezzo alla mente. Gli incantesimi costano punti fede.</p>
+            <p>Prega due forze opposte: la <b>Vita</b> protegge e cura, la <b>Negromanzia</b> evoca i morti e ferisce di più, ma chiede un prezzo alla mente. Gli incantesimi costano punti fede.</p>
             <h3>Regole della classe</h3>
             <ul>
               <li><b>Punti fede</b>: partono da ${R.RISORSA_BASE} + mod. Spirito e a ogni livello aumentano di mod. Spirito + il nuovo livello.</li>
               <li><b>Scuola principale</b>: come per l'Arcanista. Posti ${posti()} della scuola principale, più ${MG ? MG.POSTI_ALTRA_SCUOLA : 1} posto dell'altra.</li>
-              <li><b>Bilancia</b>: va da Ombra ${MG ? MG.BILANCIA_MAX : 3} a Luce ${MG ? MG.BILANCIA_MAX : 3} e parte da 0 a ogni scontro. Ogni incantesimo di Luce la sposta di 1 verso la Luce, ogni incantesimo d'Ombra di 1 verso l'Ombra.</li>
+              <li><b>Bilancia</b>: va da Negromanzia ${MG ? MG.BILANCIA_MAX : 3} a Vita ${MG ? MG.BILANCIA_MAX : 3} e parte da 0 a ogni scontro. Ogni incantesimo di Vita la sposta di 1 verso la Vita, ogni incantesimo di Negromanzia di 1 verso la Negromanzia.</li>
             </ul>
             <div class="scroll"><table><tr><th>Posizione</th><th>Effetto</th></tr>
-              <tr><td>Luce 2-3 · Aureola</td><td>Le tue cure +2, +1 ai tuoi tiri salvezza</td></tr>
-              <tr><td>Luce 3 · Zenit</td><td>Il prossimo incantesimo d'Ombra è un Crepuscolo</td></tr>
-              <tr><td>Ombra 2-3 · Velo</td><td>Gli incantesimi d'Ombra hanno +1 dado di danno</td></tr>
-              <tr><td>Ombra 3 · Nadir</td><td>Ogni incantesimo d'Ombra costa anche 1 punto di salute mentale (non letale); il prossimo incantesimo di Luce è un Crepuscolo</td></tr>
+              <tr><td>Vita 2-3 · Aureola</td><td>Le tue cure +2, +1 ai tuoi tiri salvezza</td></tr>
+              <tr><td>Vita 3 · Zenit</td><td>Il prossimo incantesimo di Negromanzia è un Crepuscolo</td></tr>
+              <tr><td>Negromanzia 2-3 · Coro</td><td>Gli incantesimi di Negromanzia hanno +1 dado di danno</td></tr>
+              <tr><td>Negromanzia 3 · Nadir</td><td>Ogni incantesimo di Negromanzia costa anche 1 punto di salute mentale (non letale); il prossimo incantesimo di Vita è un Crepuscolo</td></tr>
               <tr><td>Crepuscolo</td><td>L'incantesimo ha +1 dado (danno o cura) e ti restituisce ${recupero()} punti fede, il doppio se parti da Nadir; poi la Bilancia torna a 0</td></tr>
             </table></div>
             <ul>
               <li>${capacita("Accolito")}: capacità di classe, non occupa posti. Illumina il buio al posto della torcia.</li>
-              <li><b>Respiro dell'Equilibrio</b> (tratto di classe): livello 1, con la Bilancia in Luce i colpi che subisci fanno 1 danno in meno (minimo 1), in Ombra i tuoi attacchi con l'arma fanno 1 danno in più; livello 2, quando la Bilancia raggiunge Zenit o Nadir ti curi di 1d4 + livello; livello 4, una volta per scontro, la prima volta che scendi sotto metà salute: con la Brace la Bilancia torna a 0 e ti curi di 1d6 + mod. Spirito, con la Cenere il tuo prossimo incantesimo d'Ombra ti cura di tutto il danno che infligge.</li>
+              <li><b>Respiro dell'Equilibrio</b> (tratto di classe): livello 1, con la Bilancia in Vita i colpi che subisci fanno 1 danno in meno (minimo 1), in Negromanzia i tuoi attacchi con l'arma fanno 1 danno in più; livello 2, quando la Bilancia raggiunge Zenit o Nadir ti curi di 1d4 + livello; livello 4, una volta per scontro, la prima volta che scendi sotto metà salute: con la Brace la Bilancia torna a 0 e ti curi di 1d6 + mod. Spirito, con la Cenere il tuo prossimo incantesimo di Negromanzia ti cura di tutto il danno che infligge.</li>
               <li><b>Via di prestigio</b> (dal livello 3): la Cenere o la Brace, tre abilità sempre pronte (livelli 3, 4 e 5). La scelta è definitiva.</li>
             </ul>
             <h3>Incantesimi</h3>
@@ -404,13 +404,13 @@
             <div class="turno"><b>Turno 2.</b> Scopri Carte (1 mana, restano 10). Vedi la scheda del nemico e incidi il secondo Sigillo, senza tiro.</div>
             <div class="turno"><b>Turno 3.</b> Pugno di Forza (2 mana, restano 8). Tiri 14: 17, colpisci. 1d10 + 3 fa 6 + 3, e la Detonazione consuma i 2 Sigilli: +2d6, esce 7. Totale 16 danni. La Detonazione ti restituisce 1 mana (9). Con 3 Sigilli sarebbero stati 2.</div>
             <p class="esempio">L'Arcanista prepara e poi colpisce: più aspetti, più fa male, ma il nemico intanto attacca.</p>
-            <h3>Monaco d'Ombra, con un posto di Luce</h3>
+            <h3>Monaco di Negromanzia, con un posto di Vita</h3>
             <p class="esempio">Livello 2, Spirito 16 (+3), 18 punti fede. La Bilancia parte da 0.</p>
-            <div class="turno"><b>Turno 1.</b> Avvizzire (3 fede, restano 15). Il nemico fallisce il tiro salvezza: è Avvizzito per 3 turni. Bilancia: Ombra 1.</div>
-            <div class="turno"><b>Turno 2.</b> Sete di Tenebra (4 fede, restano 11). Colpisci; la Bilancia passa a Ombra 2 e scatta il Velo: 3d6 invece di 2d6. Recuperi 1 fede (12).</div>
-            <div class="turno"><b>Turno 3.</b> Tocco Avvizzente (2 fede, restano 10): Bilancia a Ombra 3, sei a Nadir. Il prossimo incantesimo d'Ombra ti costerebbe 1 punto di salute mentale.</div>
+            <div class="turno"><b>Turno 1.</b> Avvizzire (3 fede, restano 15). Il nemico fallisce il tiro salvezza: è Avvizzito per 3 turni. Bilancia: Negromanzia 1.</div>
+            <div class="turno"><b>Turno 2.</b> Sete del Sepolcro (4 fede, restano 11). Colpisci; la Bilancia passa a Negromanzia 2 e scatta il Coro: 3d6 invece di 2d6. Recuperi 1 fede (12).</div>
+            <div class="turno"><b>Turno 3.</b> Tocco Avvizzente (2 fede, restano 10): Bilancia a Negromanzia 3, sei a Nadir. Il prossimo incantesimo di Negromanzia ti costerebbe 1 punto di salute mentale.</div>
             <div class="turno"><b>Turno 4.</b> Ti curi con Tocco Lenitivo (2 fede, restano 8). È un Crepuscolo: cura con 2d8 + 3 invece di 1d8 + 3, e partendo da Nadir recuperi il doppio, 2 fede (10). La Bilancia torna a 0.</div>
-            <p class="esempio">Il Monaco d'Ombra spinge fino al limite, poi usa la Luce per tornare in equilibrio prima che la mente ceda.</p>`],
+            <p class="esempio">Il Monaco di Negromanzia spinge fino al limite, poi usa la Vita per tornare in equilibrio prima che la mente ceda.</p>`],
           ["Riposo e razioni", `
             <p>Si riposa solo accanto a un fuoco caldo, dalle fiamme arancioni, in un luogo di cui ti fidi. Alcuni fuochi si consumano dopo un riposo.</p>
             <p><b>Riposare ti porta al giorno successivo.</b> Il gioco tiene il conto dei giorni passati nella casa: lo trovi in cima alla scheda del personaggio.</p>
@@ -548,7 +548,7 @@
               <tr><td>Withered</td><td>1d4 necrotic damage each of its turns; stacks with Bleeding</td><td>1d6 where stated</td><td>as the technique says</td></tr>
             </table></div>
             <p>Effects do not stack: a new one of the same kind renews the duration. The exceptions (Cracked, Seals) are explained in the classes.</p>
-            <p><b>How long “for 3 turns” lasts.</b> States you inflict on the enemy count its turns. Boosts to your own actions (for example Rune on the Weapon, Vow of Light, Eye of the Tome) count your turns after casting: “for 3 turns” means your next 3 attacks or spells.</p>
+            <p><b>How long “for 3 turns” lasts.</b> States you inflict on the enemy count its turns. Boosts to your own actions (for example Rune on the Weapon, Vow of Life, Eye of the Tome) count your turns after casting: “for 3 turns” means your next 3 attacks or spells.</p>
             <p><b>Six conditions work the same for you and for enemies</b>: Burned, Bleeding and Poisoned (1d4 per turn for 3 turns, 1d6 when empowered), Weakened, Frightened and Blinded (2 turns). <b>Some prey can also inflict on you</b> Stunned (you skip your next turn), Off-balance (−2 Armor class), Dazed (−4 to hit and no criticals) and Inhibited (no techniques or spells, only normal attacks), for 2 turns. Different conditions stack. They end with the fight. Ash creatures do not bleed; fire creatures do not burn.</p>
             <p><b>Elixirs.</b> Common elixirs (made with animal parts and herbs) cure one condition. Rare elixirs (made with the part of an ash creature alone) make you immune to that condition for the whole fight, drunk before or during it. An enemy that sees its condition fail against the immunity does not try again. You carry at most 2 per condition.</p>
             <p><b>Enemy abilities.</b> Enemies have ability points too: every ability that inflicts a condition costs points (2 for a condition, 3 for an empowered one or for two conditions, 4 for a control like Stunned or Held). Out of points, only normal attacks.</p>
@@ -561,7 +561,7 @@
             <h3>Fearsome foes</h3>
             <p>The most fearsome foes are immune to effects that take away actions or attacks (Dazed, Stunned, Inhibited); against them many techniques and spells have a fallback effect, shown in brackets. On them other effects last at most 2 turns (Withered 3), and charges and Seals reach at most 2.</p>
             <h3>Weaknesses and resistances</h3>
-            <p>Some enemies are vulnerable to a damage type: slashing, bludgeoning, piercing, arcane, force, light (radiant), shadow (necrotic), poison or fire. Against them that damage gets one extra die, or an effect lasts one turn longer. Others resist a damage type and take half. Exploring and talking you can discover your foes' weaknesses.</p>`],
+            <p>Some enemies are vulnerable to a damage type: slashing, bludgeoning, piercing, arcane, force, life (life), necromancy (necrotic), poison or fire. Against them that damage gets one extra die, or an effect lasts one turn longer. Others resist a damage type and take half. Exploring and talking you can discover your foes' weaknesses.</p>`],
           ["Warrior", `
             <p>Fights with the weapon and prepares <b>special techniques</b>, which cost fury points.</p>
             <h3>Class rules</h3>
@@ -612,7 +612,7 @@
               <li><b>Seals</b>: Arcane spells carve Seals on the enemy, up to ${MG ? MG.SIGILLI_MAX : 3} (${MG ? MG.SIGILLI_MAX_BOSS : 2} on fearsome foes), one more from level 4. They last the whole fight. A Force spell's critical also carves 1 Seal.</li>
               <li><b>Detonation</b>: Force spells that show it spend all Seals and deal +1d6 damage per Seal. With no Seals there is nothing to burst: no extra damage and no mana.</li>
               <li><b>Recovery</b>: each Detonation gives you back 1 mana for every Seal it bursts (Singularity 2 per Seal).</li>
-              <li>${capacita("Sapiente")}: class ability, takes no slot. Lights the dark instead of a torch.</li>
+              <li>${capacita("Sapiente")}: class ability, takes no slot. Lifes the dark instead of a torch.</li>
               <li><b>Arcane Well</b> (class trait): level 1, if you cast no spell in one of your turns, next turn you recover 1 mana; level 2, Rune Mirror and Kinetic Barrier cost 1 less; level 4, the first spell of each fight costs no mana.</li>
               <li><b>Prestige path</b> (from level 3): Fracture or Suture, three abilities always ready (levels 3, 4 and 5). The choice is final.</li>
               <li>Some spells can be used only once between rests; those that “use your action” cannot be used two turns in a row.</li>
@@ -620,23 +620,23 @@
             <h3>Spells</h3>
             ${tendineScuole("Sapiente")}`],
           ["Monk", `
-            <p>Prays to two opposing forces: <b>Light</b> protects and heals, <b>Shadow</b> hurts more but asks a price of the mind. Spells cost faith points.</p>
+            <p>Prays to two opposing forces: <b>Life</b> protects and heals, <b>Necromancy</b> calls on the dead and hurts more, but asks a price of the mind. Spells cost faith points.</p>
             <h3>Class rules</h3>
             <ul>
               <li><b>Faith points</b>: start at ${R.RISORSA_BASE} + Spirit mod. and grow at every level by Spirit mod. + the new level.</li>
               <li><b>Main school</b>: as for the Arcanist. Slots ${posti()} from the main school, plus ${MG ? MG.POSTI_ALTRA_SCUOLA : 1} slot from the other.</li>
-              <li><b>Balance</b>: runs from Shadow ${MG ? MG.BILANCIA_MAX : 3} to Light ${MG ? MG.BILANCIA_MAX : 3} and starts at 0 every fight. Each Light spell moves it 1 towards Light, each Shadow spell 1 towards Shadow.</li>
+              <li><b>Balance</b>: runs from Necromancy ${MG ? MG.BILANCIA_MAX : 3} to Life ${MG ? MG.BILANCIA_MAX : 3} and starts at 0 every fight. Each Life spell moves it 1 towards Life, each Necromancy spell 1 towards Necromancy.</li>
             </ul>
             <div class="scroll"><table><tr><th>Position</th><th>Effect</th></tr>
-              <tr><td>Light 2-3 · Halo</td><td>Your healing +2, +1 to your saving throws</td></tr>
-              <tr><td>Light 3 · Zenith</td><td>Your next Shadow spell is a Twilight</td></tr>
-              <tr><td>Shadow 2-3 · Veil</td><td>Shadow spells have +1 damage die</td></tr>
-              <tr><td>Shadow 3 · Nadir</td><td>Every Shadow spell also costs 1 point of mental health (never lethal); your next Light spell is a Twilight</td></tr>
+              <tr><td>Life 2-3 · Halo</td><td>Your healing +2, +1 to your saving throws</td></tr>
+              <tr><td>Life 3 · Zenith</td><td>Your next Necromancy spell is a Twilight</td></tr>
+              <tr><td>Necromancy 2-3 · Choir</td><td>Necromancy spells have +1 damage die</td></tr>
+              <tr><td>Necromancy 3 · Nadir</td><td>Every Necromancy spell also costs 1 point of mental health (never lethal); your next Life spell is a Twilight</td></tr>
               <tr><td>Twilight</td><td>The spell has +1 die (damage or healing) and gives you back ${recupero()} faith points, double if you start from Nadir; then the Balance returns to 0</td></tr>
             </table></div>
             <ul>
-              <li>${capacita("Accolito")}: class ability, takes no slot. Lights the dark instead of a torch.</li>
-              <li><b>Breath of Balance</b> (class trait): level 1, with the Balance on Light the blows you take deal 1 less damage (minimum 1), on Shadow your weapon attacks deal 1 extra damage; level 2, when the Balance reaches Zenith or Nadir you heal 1d4 + level; level 4, once per fight, the first time you drop below half health: with Ember the Balance returns to 0 and you heal 1d6 + Spirit mod., with Ash your next Shadow spell heals you for all the damage it deals.</li>
+              <li>${capacita("Accolito")}: class ability, takes no slot. Lifes the dark instead of a torch.</li>
+              <li><b>Breath of Balance</b> (class trait): level 1, with the Balance on Life the blows you take deal 1 less damage (minimum 1), on Necromancy your weapon attacks deal 1 extra damage; level 2, when the Balance reaches Zenith or Nadir you heal 1d4 + level; level 4, once per fight, the first time you drop below half health: with Ember the Balance returns to 0 and you heal 1d6 + Spirit mod., with Ash your next Necromancy spell heals you for all the damage it deals.</li>
               <li><b>Prestige path</b> (from level 3): Ash or Ember, three abilities always ready (levels 3, 4 and 5). The choice is final.</li>
             </ul>
             <h3>Spells</h3>
@@ -654,13 +654,13 @@
             <div class="turno"><b>Turn 2.</b> Reveal Cards (1 mana, 10 left). You see the enemy's sheet and carve the second Seal, with no roll.</div>
             <div class="turno"><b>Turn 3.</b> Force Fist (2 mana, 8 left). You roll 14: 17, you hit. 1d10 + 3 gives 6 + 3, and the Detonation spends the 2 Seals: +2d6, you roll 7. Total 16 damage. The Detonation gives you back 1 mana (9). With 3 Seals it would have been 2.</div>
             <p class="esempio">The Arcanist prepares, then strikes: the longer you wait, the more it hurts, but meanwhile the enemy attacks.</p>
-            <h3>Shadow Monk, with one Light slot</h3>
+            <h3>Necromancer Monk, with one Life slot</h3>
             <p class="esempio">Level 2, Spirit 16 (+3), 18 faith points. The Balance starts at 0.</p>
-            <div class="turno"><b>Turn 1.</b> Wither (3 faith, 15 left). The enemy fails its saving throw: it is Withered for 3 turns. Balance: Shadow 1.</div>
-            <div class="turno"><b>Turn 2.</b> Thirst of Darkness (4 faith, 11 left). You hit; the Balance moves to Shadow 2 and the Veil kicks in: 3d6 instead of 2d6. You recover 1 faith (12).</div>
-            <div class="turno"><b>Turn 3.</b> Withering Touch (2 faith, 10 left): Balance at Shadow 3, you are at Nadir. Your next Shadow spell would cost you 1 point of mental health.</div>
+            <div class="turno"><b>Turn 1.</b> Wither (3 faith, 15 left). The enemy fails its saving throw: it is Withered for 3 turns. Balance: Necromancy 1.</div>
+            <div class="turno"><b>Turn 2.</b> Thirst of the Grave (4 faith, 11 left). You hit; the Balance moves to Necromancy 2 and the Choir kicks in: 3d6 instead of 2d6. You recover 1 faith (12).</div>
+            <div class="turno"><b>Turn 3.</b> Withering Touch (2 faith, 10 left): Balance at Necromancy 3, you are at Nadir. Your next Necromancy spell would cost you 1 point of mental health.</div>
             <div class="turno"><b>Turn 4.</b> You heal with Soothing Touch (2 faith, 8 left). It is a Twilight: it heals 2d8 + 3 instead of 1d8 + 3, and starting from Nadir you recover double, 2 faith (10). The Balance returns to 0.</div>
-            <p class="esempio">The Shadow Monk pushes to the limit, then uses Light to find balance again before the mind gives way.</p>`],
+            <p class="esempio">The Necromancer Monk pushes to the limit, then uses Life to find balance again before the mind gives way.</p>`],
           ["Rest and rations", `
             <p>You can only rest by a warm fire, one with orange flames, in a place you trust. Some fires are spent after one rest.</p>
             <p><b>Resting takes you to the next day.</b> The game keeps count of the days spent in the house: you will find it at the top of your character sheet.</p>

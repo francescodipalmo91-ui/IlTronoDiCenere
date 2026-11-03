@@ -390,6 +390,41 @@
     return E;
   }
 
+  /* 03/11: etichette delle combo, per leggere a colpo d'occhio cosa prepara cosa (gioco e pagina di test) */
+  function etichette(inc) {
+    const e = (inc.effetto && inc.effetto.it) || "", t = [];
+    const consuma = SERVONO_SIGILLI.includes(inc.id) || /Consuma tutti i Sigilli/.test(e);
+    if (consuma) t.push(T("Consuma i Sigilli", "Spends Seals"));
+    else if (/Detonazione/.test(e)) t.push(T("Detona", "Detonates"));
+    if (!consuma && /Sigill/.test(e) && !/Detonazione/.test(e) && inc.id !== "quiete_assoluta") t.push(T("Incide Sigilli", "Carves Seals"));
+    if (inc.scuola === "luce" || inc.scuola === "ombra") {
+      if (inc.id === "giudizio") t.push(T("Bilancia → 0", "Balance → 0"));
+      else if (inc.id === "abbraccio_vuoto" || inc.id === "furia_cinerea") t.push(T("Bilancia → Ombra 3", "Balance → Shadow 3"));
+      else t.push(inc.scuola === "luce" ? T("Bilancia: Luce +1", "Balance: Light +1") : T("Bilancia: Ombra +1", "Balance: Shadow +1"));
+    }
+    if (DIFESE.includes(inc.id)) t.push(T("Difesa, consuma l'azione", "Defence, uses your action"));
+    return t;
+  }
+  /* combo pronta adesso (o il motivo per cui non serve): testo breve, oppure null */
+  function comboPronta(inc, s, ctx) {
+    if (!s || !inc || !inc.scuola) return null;
+    const sig = C.sigilli(s), max = C.sigilliMax(ctx), e = (inc.effetto && inc.effetto.it) || "";
+    const detona = /Detonazione/.test(e) || SERVONO_SIGILLI.includes(inc.id) || /Consuma tutti i Sigilli/.test(e);
+    if (detona) {
+      if (sig <= 0) return SERVONO_SIGILLI.includes(inc.id) || /Consuma tutti i Sigilli/.test(e) ? { ok: false, t: T("Serve almeno 1 Sigillo: prima incidi", "Needs at least 1 Seal: carve first") } : { ok: false, t: T("Nessun Sigillo: solo il colpo, niente Detonazione", "No Seal: just the hit, no Detonation") };
+      if (sig >= max) return { ok: true, t: T(`Combo pronta: Sigilli al massimo (${sig}), mana doppio`, `Combo ready: Seals at the maximum (${sig}), double mana`) };
+      return { ok: true, t: T(`${sig} ${sig === 1 ? "Sigillo" : "Sigilli"} da far esplodere`, `${sig} ${sig === 1 ? "Seal" : "Seals"} to burst`) };
+    }
+    if (/Sigill/.test(e) && inc.scuola === "arcano" && sig >= max) return { ok: false, t: T("Sigilli già al massimo: quelli nuovi vanno persi", "Seals already at the maximum: new ones are lost") };
+    const bil = Number(s.bilancia) || 0, ferma = attivo(s, "furiaCinerea");
+    if (!ferma && inc.scuola === "ombra" && bil === 3) return { ok: true, t: T("Combo pronta: dallo Zenit è un Crepuscolo (+1 dado, recuperi fede)", "Combo ready: from Zenith it is a Twilight (+1 die, you recover faith)") };
+    if (!ferma && inc.scuola === "luce" && bil === -3) return { ok: true, t: T("Combo pronta: dal Nadir è un Crepuscolo (+1 dado, fede doppia)", "Combo ready: from Nadir it is a Twilight (+1 die, double faith)") };
+    if (ferma && (inc.scuola === "luce" || inc.scuola === "ombra")) return null;
+    if (inc.scuola === "luce" && bil === 2 && inc.id !== "giudizio") return { ok: true, t: T("Porta la Bilancia allo Zenit", "Takes the Balance to Zenith") };
+    if (inc.scuola === "ombra" && bil === -2 && inc.id !== "abbraccio_vuoto") return { ok: true, t: T("Porta la Bilancia al Nadir (costa 1 punto mentale)", "Takes the Balance to Nadir (costs 1 mental point)") };
+    if (inc.id === "giudizio" && bil > 0) return { ok: true, t: T(`Giudizio con Luce ${bil}: +${bil}d10`, `Judgement with Light ${bil}: +${bil}d10`) };
+    return null;
+  }
   /* 03/11: Respiro dell'Equilibrio, grado III. Da chiamare dopo ogni danno al Monaco: la prima volta sotto metà salute.
      Via Brace (guendalina): la Bilancia torna a 0 e ti curi di 1d6 + mod. Spirito. Via Cenere (aldo): il prossimo incantesimo d'Ombra cura tutto il danno inflitto. */
   function sottoMetaMonaco(s, ctx, prima, dopo, max) {
@@ -466,7 +501,11 @@
       case "crepuscolo": return T(`Crepuscolo (${e.da === "nadir" ? "da Nadir" : "da Zenit"}): +1 dado${e.mana ? `, recuperi ${e.mana} fede` : ""}. La Bilancia torna a 0.`, `Twilight (${e.da === "nadir" ? "from Nadir" : "from Zenith"}): +1 die${e.mana ? `, you recover ${e.mana} faith` : ""}. The Balance returns to 0.`);
       case "bilancia": {
         const nome = (v) => (v === 0 ? T("equilibrio", "even") : v > 0 ? T(`Luce ${v}`, `Light ${v}`) : T(`Ombra ${-v}`, `Shadow ${-v}`));
-        return e.da === e.a ? T(`Bilancia: ${nome(e.a)}.`, `Balance: ${nome(e.a)}.`) : T(`Bilancia: ${nome(e.da)} → ${nome(e.a)}.`, `Balance: ${nome(e.da)} → ${nome(e.a)}.`);
+        const base = e.da === e.a ? T(`Bilancia: ${nome(e.a)}.`, `Balance: ${nome(e.a)}.`) : T(`Bilancia: ${nome(e.da)} → ${nome(e.a)}.`, `Balance: ${nome(e.da)} → ${nome(e.a)}.`);
+        /* 03/11: avviso della combo pronta */
+        const pronta = e.da !== e.a && e.a === 3 ? T(" Zenit: il prossimo incantesimo d'Ombra è un Crepuscolo.", " Zenith: your next Shadow spell is a Twilight.")
+          : e.da !== e.a && e.a === -3 ? T(" Nadir: il prossimo incantesimo di Luce è un Crepuscolo (fede doppia).", " Nadir: your next Light spell is a Twilight (double faith).") : "";
+        return base + pronta;
       }
       case "giudizio": return e.luce ? T(`Il Giudizio pesa ${e.luce} ${e.luce === 1 ? "punto" : "punti"} di Luce: +${e.luce}d10.`, `Judgment weighs ${e.luce} Light: +${e.luce}d10.`) : null;
       case "eccesso": return T(`La cura in eccesso ferisce il nemico: ${e.n} danni radianti.`, `The excess healing wounds the enemy: ${e.n} radiant damage.`);
@@ -498,7 +537,7 @@
     }
   }
 
-  const API = { UNA_PER_RIPOSO, DIFESE, SERVONO_SIGILLI, POZZO_SCONTO, gradoPozzo, gradoTratto: gradoPozzo, inizioTurnoPozzo, sottoMetaMonaco, recupero, costo, disponibile, lancia, inizioTurnoNemico, haTick, bonusTsPg, secondaVita, scaduti, testo };
+  const API = { UNA_PER_RIPOSO, DIFESE, SERVONO_SIGILLI, POZZO_SCONTO, etichette, comboPronta, gradoPozzo, gradoTratto: gradoPozzo, inizioTurnoPozzo, sottoMetaMonaco, recupero, costo, disponibile, lancia, inizioTurnoNemico, haTick, bonusTsPg, secondaVita, scaduti, testo };
   root.MagiaCombattimento = API;
   if (typeof module !== "undefined" && module.exports) module.exports = API;
 })(typeof window !== "undefined" ? window : globalThis);

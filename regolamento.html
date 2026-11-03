@@ -321,6 +321,7 @@
               <li><b>Posti</b>: ${posti()}. Il tipo d'arma che impugni (taglio, contundente, perforante) decide tra quali tecniche scegli; con lo scudo imbracciato hai un posto in più, di qualsiasi livello, tra le tecniche dello scudo. Si scelgono in creazione e si cambiano riposando.</li>
               <li>Una tecnica di un tipo d'arma diverso da quella che impugni resta preparata, ma non si può usare. Se cambi arma, le tecniche del nuovo tipo arrivano dal livello successivo.</li>
               <li>${utilitaGuerriero.map(t => `<b>${t.nome.it}</b>`).join(", ")} e Mente incrollabile appartengono alla classe e non occupano posti.</li>
+              <li><b>Tempra del Soldato</b> (tratto di classe): livello 1 Mente incrollabile, livello 2 Furore inarrestabile, livello 4 <b>Ultimo a cadere</b>: una volta per riposo, un colpo che ti porterebbe a 0 ti lascia a 1 salute e ti dà 3 furia.</li>
               <li>Dal livello 3 scegli una <b>via di prestigio</b>: tre abilità, una ai livelli 3, 4 e 5, sempre pronte e senza occupare posti. Cambiano con il tipo d'arma; anche lo scudo ha le sue, e quando riposi scegli quale serie preparare. La scelta della via è definitiva.</li>
               <li>Alcune tecniche si usano una sola volta tra un riposo e l'altro.</li>
             </ul>
@@ -348,6 +349,7 @@
               <li><b>Scudo di Corteccia</b>: salute temporanea che assorbe i danni prima della salute fisica, al massimo 5 + livello, per tutto lo scontro.</li>
               <li><b>Borsa dei veleni</b> (dotazione dello Sciamano): 3 dosi da 1d4 + livello punti natura. Vuota, si riempie con gli ingredienti giusti, che si trovano nella foresta.</li>
               <li>Mente incrollabile appartiene alla classe. Dal livello 3 scegli una via di prestigio: una passiva e tre abilità (livelli 3, 4 e 5), sempre pronte e senza occupare posti. La scelta è definitiva.</li>
+              <li><b>Legame del Sottobosco</b> (tratto di classe): livello 1 Mente incrollabile; livello 2 <b>Sangue del Sottobosco</b>, +2 ai tiri salvezza contro Avvelenato e la Borsa dei veleni tiene 4 dosi; livello 4 <b>Linfa che ritorna</b>, all'inizio di ogni tuo turno, se il nemico è Avvelenato, ti curi di 1.</li>
             </ul>
             <h3>Tecniche</h3>
             ${tecnicheSciamano}`],
@@ -569,6 +571,7 @@
               <li><b>Slots</b>: ${posti()}. The weapon type you hold (slashing, bludgeoning, piercing) decides which techniques you choose from; with the shield on your arm you get one extra slot, of any level, among the shield techniques. Chosen at creation and changed by resting.</li>
               <li>A technique for a different weapon type than the one you hold stays prepared but cannot be used. If you change weapon, the new type's techniques arrive from the next level.</li>
               <li>${utilitaGuerriero.map(t => `<b>${t.nome.en}</b>`).join(", ")} and Unshakeable Mind belong to the class and take no slots.</li>
+              <li><b>Soldier's Temper</b> (class trait): level 1 Unshakeable Mind, level 2 Unstoppable Fury, level 4 <b>Last to Fall</b>: once per rest, a blow that would drop you to 0 leaves you at 1 health and gives you 3 fury.</li>
               <li>From level 3 you choose a <b>prestige path</b>: three abilities, one at levels 3, 4 and 5, always ready and taking no slots. They change with the weapon type; the shield has its own too, and when you rest you choose which set to prepare. The choice of path is final.</li>
               <li>Some techniques can be used only once between one rest and the next.</li>
             </ul>
@@ -596,6 +599,7 @@
               <li><b>Bark Shield</b>: temporary health that absorbs damage before physical health, at most 5 + level, for the whole fight.</li>
               <li><b>Poison pouch</b> (Shaman gear): 3 doses of 1d4 + level nature points. When empty, it is refilled with the right ingredients, found in the forest.</li>
               <li>Unshakeable Mind belongs to the class. From level 3 you choose a prestige path: one passive and three abilities (levels 3, 4 and 5), always ready and taking no slots. The choice is final.</li>
+              <li><b>Bond of the Undergrowth</b> (class trait): level 1 Unshakeable Mind; level 2 <b>Undergrowth Blood</b>, +2 to saving throws against Poisoned and the Poison pouch holds 4 doses; level 4 <b>Returning Sap</b>, at the start of each of your turns, if the enemy is Poisoned, you heal 1.</li>
             </ul>
             <h3>Techniques</h3>
             ${tecnicheSciamano}`],

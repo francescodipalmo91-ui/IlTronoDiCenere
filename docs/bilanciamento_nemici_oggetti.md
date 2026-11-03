@@ -789,3 +789,33 @@ Dati e testi in `js/cacce.js` (`CacceComuni`), uniti alle PREDE di `gioco.html`.
 - **Finestre:** la prima si apre dopo l'udienza del bronzo, le altre con il fermaglio corrispondente. Vecchie prede in corso nei salvataggi: restano valide e si consegnano come prima.
 - **Studio ★★★:** CD 12 + crescita col livello; l'avvicinamento è Furtività contro d20 + Mente + livello della preda (come con i guardiani), riuscito dà vantaggio alla prova successiva e, allo scontro, primo turno al giocatore e −2 CA alla preda; fallito fa partire subito lo scontro con la preda per prima e −2 CA al giocatore. Le voci scoperte stanno in `usate.cc_info` e compaiono in Missioni.
 - **Test:** `tests/cacce.browser.js`; casi su resistenza e Frastornato in `tests/combattimento.test.js`.
+
+## Tratti di classe (DECISO il 3 novembre)
+
+Una passiva per classe in tre gradi, ai livelli 1, 2 e 4 (i livelli 3 e 5 sono della via di prestigio). Più forte per le classi fragili, leggera per le altre.
+
+| Classe | Tratto | Grado I (liv. 1) | Grado II (liv. 2) | Grado III (liv. 4) |
+|---|---|---|---|---|
+| Arcanista | Pozzo Arcano | +1 mana dopo un turno senza incantesimi | Specchio di Rune e Barriera Cinetica −1 | primo incantesimo dello scontro gratis |
+| Monaco | Respiro dell'Equilibrio | Luce: −1 ai colpi subiti; Ombra: +1 agli attacchi con l'arma | Zenit o Nadir curano 1d4 + livello | sotto metà salute, una volta: Brace cura 1d6 + Spirito e azzera la Bilancia; Cenere: il prossimo incantesimo d'Ombra cura tutto il danno |
+| Guerriero | Tempra del Soldato | Mente incrollabile (c'era già) | Furore inarrestabile (c'era già) | Ultimo a cadere: una volta per riposo resti a 1 salute e +3 furia |
+| Sciamano | Legame del Sottobosco | Mente incrollabile (c'era già) | Sangue del Sottobosco: +2 ai TS contro Avvelenato, Borsa dei veleni a 4 dosi | Linfa che ritorna: +1 salute a inizio turno se il nemico è Avvelenato |
+
+Dettagli e motivazioni di Arcanista e Monaco in incantesimi_arcanista_monaco.md. Serie automatica contro Enea dopo il tratto del Monaco: Monaco 34% → 47%.
+
+## Combo tra incantesimi (3 novembre)
+
+**Etichette e avvisi (A1-A2, nel codice):** sotto ogni incantesimo, nel gioco e nella pagina di test, una riga dice cosa fa per le combo: «Incide Sigilli», «Detona», «Consuma i Sigilli», «Bilancia: Luce +1 / Ombra +1», «Bilancia → 0» (Giudizio), «Difesa, consuma l'azione». Durante lo scontro si aggiunge lo stato: «Combo pronta: Sigilli al massimo, mana doppio», «Serve almeno 1 Sigillo: prima incidi», «Nessun Sigillo: solo il colpo», «Sigilli già al massimo: quelli nuovi vanno persi», «Combo pronta: dallo Zenit / dal Nadir è un Crepuscolo», «Porta la Bilancia allo Zenit / al Nadir». Nel diario, quando la Bilancia arriva a Zenit o Nadir, una frase ricorda quale incantesimo fa il Crepuscolo.
+
+**Giocatore medio (B, nel bot):** legge le stesse etichette: si cura sotto il 40%, contro la carica vera di Enea si difende, gioca prima le combo pronte, detona da 2 Sigilli, incide preferendo gli incantesimi che fanno danno; prepara nella scuola principale gli incantesimi di danno e una difesa, nell'altra il più economico che fa danno.
+
+**Cosa dice la serie (80 scontri per caso, Ettore liv. 2, Enea liv. 3):**
+
+| Classe, scuola principale | Ettore | Enea fermaglio | Enea nascosto | Enea maglio |
+|---|---|---|---|---|
+| Arcanista, Forza | 80% | 36% | 45% | 48% |
+| Arcanista, Arcano | 44% | 24% | 20% | 33% |
+| Monaco, Luce | 94% | 64% | 76% | 66% |
+| Monaco, Ombra | 89% | 53% | 64% | 39% |
+
+Il punto debole è strutturale: le combo dell'Arcanista sono **tra due scuole** (l'Arcano incide, la Forza detona), ma l'altra scuola ha **un solo posto**. Con l'Arcano principale si incide molto e si detona poco, e l'Arcano fa poco danno: −35 punti contro Ettore. Da qui parte A3 (combo nuove tra scuole) solo dove serve: prima l'Arcano principale.

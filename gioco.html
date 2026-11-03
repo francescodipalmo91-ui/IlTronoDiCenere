@@ -290,6 +290,9 @@
     #incantesimi .testa { display: flex; align-items: baseline; justify-content: space-between; gap: 0.6rem; }
     #incantesimi .costo { color: var(--muted); font-size: 0.88rem; flex: none; }
     #incantesimi .testa { align-items: center; }
+    #incantesimi .combo { margin: 0.1rem 0 0.2rem; font-size: 0.8rem; color: var(--muted); }
+    #incantesimi .combo .pronta { color: var(--accent, #d9a441); font-weight: 600; }
+    #incantesimi .combo .inutile { font-style: italic; }
     #incantesimi .azioni-inc { display: flex; align-items: center; gap: 0.5rem; flex: none; }
     details.voce.giocatore > summary {
       display: flex; align-items: baseline; gap: 0.6rem; cursor: pointer; list-style: none;
@@ -6902,7 +6905,19 @@
         const lancia = document.createElement("button"); lancia.type = "button"; lancia.className = "mini"; lancia.textContent = U.lanciaInc;
         lancia.addEventListener("click", clic(() => lanciaIncantesimo(inc)));
         const dx = document.createElement("span"); dx.className = "azioni-inc"; dx.append(c, lancia);
-        testa.append(b, dx); og.append(testa, testo); box.append(og);
+        testa.append(b, dx); og.append(testa);
+        /* 03/11: etichette delle combo e avviso «combo pronta» durante lo scontro */
+        const MCx = window.MagiaCombattimento;
+        if (MCx && MCx.etichette && inc.scuola) {
+          const tg = MCx.etichette(inc), cp = scontro ? MCx.comboPronta(inc, scontro, ctxIncantesimo()) : null;
+          if (tg.length || cp) {
+            const r = document.createElement("p"); r.className = "combo";
+            if (tg.length) { const t = document.createElement("span"); t.className = "tag"; t.textContent = tg.join(" · "); r.append(t); }
+            if (cp) { const a = document.createElement("span"); a.className = cp.ok ? "pronta" : "inutile"; a.textContent = (tg.length ? " — " : "") + cp.t; r.append(a); }
+            og.append(r);
+          }
+        }
+        og.append(testo); box.append(og);
       };
       titolo(RT.inc.capacita);
       voce(capLuce(), "luce");
@@ -8586,6 +8601,7 @@
       raccogliErba();
       const b = borsaVeleni();
       if (!b) return aggiungi({ tipo: "narra", righe: [EST2.erbeInutili] }); /* i veleni no, ma l'erba sì */
+      dosiBorsaPg();
       if (Number(b.usi) >= DOSI_BORSA) return aggiungi({ tipo: "narra", righe: [EST2.erbeGiaPiena] });
       b.usi = DOSI_BORSA; aggiornaEquip(); modificato();
       sist(EST2.erbePiene(b.usi));
@@ -9652,9 +9668,10 @@
     const effettoDi = (it) => it && (it.effetto || { "Pozione di cura": "pozCura", "Pozione di essenza": "pozMana", "Pozione di mana": "pozMana", "Razioni da viaggio": "razione", "Borsa dei veleni": "borsa" }[it.nome]);
     const EFFETTI_BEVANDA = ["pozCura", "pozMana", "serenita", "razione", "borsa", "cura_ustione", "cura_debole", "cura_veleno", "cura_paura", "cura_sangue", "cura_cieco", "conc_ustione", "conc_debole", "conc_veleno", "conc_paura", "conc_sangue", "conc_cieco"]; /* consumabili con un effetto immediato (in combattimento sono l'azione del turno) */
     /* Borsa dei veleni (Sciamano): 3 dosi; vuota resta nello zaino e si riempie con gli ingredienti della foresta dei pini */
-    const DOSI_BORSA = 3;
+    let DOSI_BORSA = 3; /* 03/11: 4 per lo Sciamano dal livello 2 (Sangue del Sottobosco), aggiornato da dosiBorsaPg() */
+    const dosiBorsaPg = () => { DOSI_BORSA = pg && pg.classe === "Forestiero" && livelloPg() >= 2 ? 4 : 3; return DOSI_BORSA; };
     const ricaricabile = (it) => effettoDi(it) === "borsa" || (it && it.id === "lanterna"); /* 01/11: la lanterna vuota resta, si riempie d'olio */
-    function riempiBorse() { [...zaino, mano].filter(it => it && ricaricabile(it)).forEach(it => { it.usi = DOSI_BORSA; }); }
+    function riempiBorse() { dosiBorsaPg(); [...zaino, mano].filter(it => it && ricaricabile(it)).forEach(it => { it.usi = DOSI_BORSA; }); }
     /* applica l'effetto di una bevanda; restituisce il testo, oppure null se è inutile (in quel caso non si consuma) */
     function effettoBevanda(it) {
       const ef = effettoDi(it), B = Q.oggetti.bevi, nome = nomeOg(it);
@@ -11615,6 +11632,7 @@
         scalaStatoPg("stordito"); return fineAzionePgScontro();
       }
       const rilascio = CMB.inizioTurnoPg(scontro, ctxTecnica()); /* la Parata scade; Mare Profondo ed Egida rilasciano l'onda */
+      if (sciamano() && livelloPg() >= 4 && scontro.eff && scontro.eff.avvelenato > 0 && pvPg() < pvMaxPg()) { const c = curaPgN(1); aggiungi({ tipo: "narra", box: "mia", righe: [TRATTI_MARZ().linfa(c)] }); disegnaVitali(); } /* 03/11: Linfa che ritorna */
       if (pg && pg.classe === "Sapiente" && window.MagiaCombattimento) { const pz = window.MagiaCombattimento.inizioTurnoPozzo(scontro, ctxIncantesimo()); if (pz.length) { aggiungi({ tipo: "narra", box: "mia", righe: pz.map(e => window.MagiaCombattimento.testo(e)) }); disegnaVitali(); } } /* 03/11: Pozzo Arcano */
       if (rilascio.length) {
         aggiungi({ tipo: "narra", box: "mia", righe: rilascio.map(rigaScudo).filter(Boolean) }); scuotiNemico();
@@ -11646,11 +11664,19 @@
       if (scontro) { const f = CMB.fortezza(scontro, d, pvPg()); d = f.danno; f.eventi.forEach(e => { const x = rigaScudo(e); if (x) righe.push(x); }); } /* Fortezza Eterna */
       if (scontro && window.MagiaCombattimento) { const sv = window.MagiaCombattimento.secondaVita(scontro, d, pvPg(), { tira }); d = sv.danno; svCura = sv.cura || 0; sv.eventi.forEach(e => { const x = rigaScudo(e); if (x) righe.push(x); }); } /* Seconda Vita */
       const pvPrimaColpo = pvPg();
+      if (scontro && pg.classe === "Soldato" && livelloPg() >= 4 && pvPg() - d <= 0 && pvPg() > 0 && !(usate.perRiposo && usate.perRiposo.ultimo_cadere)) { /* 03/11: Ultimo a cadere, una volta per riposo */
+        usate.perRiposo = { ...(usate.perRiposo || {}), ultimo_cadere: true }; salvaUsate();
+        d = pvPg() - 1; righe.push(TRATTI_MARZ().ultimo); const fu = guadagnaFuria(3); if (fu) righe.push(fu);
+      }
       righe.push(ferisciPg(d));
       if (svCura) curaPgN(svCura);
       if (scontro && pg.classe === "Accolito" && window.MagiaCombattimento) window.MagiaCombattimento.sottoMetaMonaco(scontro, ctxIncantesimo(), pvPrimaColpo, pvPg(), pvMaxPg()).forEach(e => righe.push(window.MagiaCombattimento.testo(e))); /* 03/11: Respiro dell'Equilibrio, grado III */
     }
 
+    /* 03/11: tratti di classe di Guerriero e Sciamano (grado III / II e III) */
+    const TRATTI_MARZ = () => LINGUA === "en"
+      ? { ultimo: "Last to Fall: the blow should have dropped you, but you stay on your feet with 1 health.", linfa: (n) => `Returning Sap: the poison in the enemy flows back to you as sap, you heal ${n}.` }
+      : { ultimo: "Ultimo a cadere: il colpo doveva atterrarti, ma resti in piedi con 1 di salute.", linfa: (n) => `Linfa che ritorna: il veleno nel nemico ti torna come linfa, ti curi di ${n}.` };
     const respiroOmbraPg = () => !!(scontro && pg && pg.classe === "Accolito" && (Number(scontro.bilancia) || 0) < 0); /* 03/11 */
     function attaccoPgScontro(conTorcia) {
       const coraggio = anelloAlDito() && pvPg() <= Math.floor(pvMaxPg() / 4) ? 1 : 0; /* coraggio dei Vespera: +1 al tiro per colpire a salute bassa */
@@ -12101,7 +12127,8 @@
     }
     /* tiro salvezza del personaggio contro un'abilità; se fallisce, lo stato */
     function tsAbilitaNem(a, righe, crit) {
-      const m = (a.ts === "Agilità" ? modAgiPg() : mod(statPg(a.ts))) + (eff("furore") ? 4 : 0) + (window.MagiaCombattimento ? window.MagiaCombattimento.bonusTsPg(scontro) : 0);
+      const sangueSott = a.stato === "veleno" && sciamano() && livelloPg() >= 2 ? 2 : 0; /* 03/11: Sangue del Sottobosco */
+      const m = (a.ts === "Agilità" ? modAgiPg() : mod(statPg(a.ts))) + (eff("furore") ? 4 : 0) + (window.MagiaCombattimento ? window.MagiaCombattimento.bonusTsPg(scontro) : 0) + sangueSott;
       const d = tira(20), tot = d + m, ok = tot >= a.cd;
       righe.push(AN().ts(N("attributi", a.ts), d, m, tot, a.cd) + " " + (ok ? AN().resisti : AN().cedi));
       if (!ok) applicaStatoPg(a.stato, righe);
@@ -12291,7 +12318,7 @@
       aggiungi({ tipo: "narra", box: "ok", fuori: true, righe: [CB.bannerVinto, CB.xp(xpVinti, pg.esperienza)] });
       controllaLivello();
       if (D.parte) { const n = Number(D.qta) || 1; aggiungiMateriale(D.parte, n); aggiungi({ tipo: "sistema", box: "cap", fuori: true, righe: [BT.parte(n, Q.oggetti[D.parte].nome)] }); }
-      if (ctx === "pineta") { const b = borsaVeleni(); if (b && Number(b.usi) < DOSI_BORSA && Math.random() < 0.5) { b.usi = Number(b.usi) + 1; aggiornaEquip(); sist(EST2.dose(b.usi)); } }
+      if (ctx === "pineta") { dosiBorsaPg(); const b = borsaVeleni(); if (b && Number(b.usi) < DOSI_BORSA && Math.random() < 0.5) { b.usi = Number(b.usi) + 1; aggiornaEquip(); sist(EST2.dose(b.usi)); } }
       if (ctx === "agguato") bottinoAgguato(idNem, avv);
       if (ctx === "caccia") { usate.cc_stato = "trofeo"; salvaUsate(); trofeoCaccia(idNem); sist(CCT().preso); disegnaMissioni(); }
       if (ctx === "ettore" && !usate.q2_diario) { /* Ettore morto: il diario del figlio maggiore è tra le sue cose */

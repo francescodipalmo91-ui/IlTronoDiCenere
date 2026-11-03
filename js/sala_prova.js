@@ -222,6 +222,7 @@
     }
     const ril = C.inizioTurnoPg(s, ctx()); /* Mare Profondo ed Egida rilasciano l'onda */
     if (s && arcanista() && !monaco()) M.inizioTurnoPozzo(s, ctx()).forEach(e => ril.push({ k: "_testo", t: M.testo(e) })); /* 03/11: Pozzo Arcano */
+    if (s && sciamano() && pg.liv >= 4 && C.attivo(s, "avvelenato") && pg.pv < pg.pvMax) { pg.pv += 1; ril.push({ k: "_testo", t: "Linfa che ritorna: il veleno nel nemico ti torna come linfa, ti curi di 1." }); } /* 03/11 */
     if (ril.length) { blocco("Inizio del tuo turno", testoEventi(ril), "mia"); if (controllaFine()) { turnoPg = false; return disegna(); } }
     disegna();
   }
@@ -230,6 +231,10 @@
     if (C.attivo(s, "invuln")) { righe.push("Invulnerabilità: nessun danno."); return 0; }
     const f = C.fortezza(s, dn, pg.pv), sv = M ? M.secondaVita(s, f.danno, pg.pv, ctx()) : { danno: f.danno, eventi: [] };
     const prima = pg.pv;
+    if (!arcanista() && !sciamano() && pg.liv >= 4 && pg.pv - sv.danno <= 0 && pg.pv > 0 && !perRiposo.ultimo_cadere) { /* 03/11: Ultimo a cadere (Guerriero), una volta per riposo */
+      perRiposo.ultimo_cadere = true; sv.danno = pg.pv - 1; pg.furia = Math.min(pg.furiaMax, pg.furia + 3);
+      righe.push("Ultimo a cadere: il colpo doveva atterrarti, ma resti in piedi con 1 di salute (+3 furia).");
+    }
     pg.pv -= sv.danno; righe.push(...testoEventi(f.eventi), ...testoEventi(sv.eventi));
     if (sv.cura) pg.pv = Math.min(pg.pvMax, pg.pv + sv.cura);
     if (monaco() && M) righe.push(...M.sottoMetaMonaco(s, ctx(), prima, pg.pv, pg.pvMax).map(e => M.testo(e))); /* 03/11: Respiro dell'Equilibrio, grado III */
@@ -547,7 +552,10 @@
           const nSc = [...preparatiInc].filter(id => (MG.INCANTESIMI.find(x => x.id === id) || {}).scuola === inc.scuola).length;
           chkI.checked = preparatiInc.has(inc.id); chkI.disabled = !chkI.checked && (preparatiInc.size >= maxP + 1 || nSc >= quota(inc.scuola));
         }
-        lista.append(el("div", { class: "tec" + (prep ? "" : " spenta") }, el("span", { class: "sx" }, chkI, el("b", { text: inc.nome.it }), el("small", { text: ` liv. ${inc.liv} · ${costoR} ${monaco() ? "fede" : "mana"}${M.UNA_PER_RIPOSO.includes(inc.id) ? " · una per riposo" : ""}${etichetta ? " · " + etichetta : ""}` })), b, el("p", { class: "eff", text: inc.effetto.it })));
+        const tg = M.etichette ? M.etichette(inc) : [], cp = s && M.comboPronta ? M.comboPronta(inc, s, ctx()) : null; /* 03/11: combo */
+        lista.append(el("div", { class: "tec" + (prep ? "" : " spenta") }, el("span", { class: "sx" }, chkI, el("b", { text: inc.nome.it }), el("small", { text: ` liv. ${inc.liv} · ${costoR} ${monaco() ? "fede" : "mana"}${M.UNA_PER_RIPOSO.includes(inc.id) ? " · una per riposo" : ""}${etichetta ? " · " + etichetta : ""}` })), b,
+          tg.length || cp ? el("p", { class: "combo" }, tg.length ? el("span", { class: "tag", text: tg.join(" · ") }) : null, cp ? el("span", { class: cp.ok ? "pronta" : "inutile", text: (tg.length ? " — " : "") + cp.t }) : null) : null,
+          el("p", { class: "eff", text: inc.effetto.it })));
       };
       sc2.forEach((sc, n) => { lista.append(el("h4", { text: NS[sc] + (prepInc ? (n === 0 ? ` — scuola principale (${maxP} posti)` : " — altra scuola (1 posto)") : "") })); sblocc.filter(i => i.scuola === sc).forEach(i => rigaInc(i)); });
       if (pg.liv >= 3) {
@@ -767,6 +775,15 @@
       if (!pg) return;
       if (arcanista()) {
         const princ = scuolaPrinc(), altra = SCUOLE().find(x => x !== princ), sb = (sc) => mescola(MG.INCANTESIMI.filter(i => i.scuola === sc && i.liv <= pg.liv).sort((a, b) => casuale ? 0 : b.liv - a.liv));
+        if (casuale === "combo") { /* 03/11: come un giocatore medio — nella scuola principale gli incantesimi che fanno danno e una difesa, nell'altra il più economico che fa danno (serve alle combo) */
+          const danno = (i) => /\dd\d/.test(i.effetto.it) && !/[Cc]ura|ti curi/.test(i.effetto.it), lista = MG.INCANTESIMI.filter(i => i.scuola === princ && i.liv <= pg.liv);
+          const dif = lista.filter(i => M.DIFESE.includes(i.id)).sort((a, b) => a.costo - b.costo)[0];
+          const off = lista.filter(i => danno(i) && i !== dif).sort((a, b) => b.liv - a.liv), resto = lista.filter(i => i !== dif && !off.includes(i)).sort((a, b) => b.liv - a.liv);
+          [...off.slice(0, Math.max(1, postiPrincInc(pg.liv) - 1)), ...(dif ? [dif] : []), ...off.slice(Math.max(1, postiPrincInc(pg.liv) - 1)), ...resto].slice(0, postiPrincInc(pg.liv)).forEach(i => preparatiInc.add(i.id));
+          const al = MG.INCANTESIMI.filter(i => i.scuola === altra && i.liv <= pg.liv), alD = al.filter(danno).sort((a, b) => a.costo - b.costo);
+          (alD.length ? alD : al).slice(0, 1).forEach(i => preparatiInc.add(i.id));
+          return;
+        }
         sb(princ).slice(0, postiPrincInc(pg.liv)).forEach(i => preparatiInc.add(i.id));
         sb(altra).slice(0, 1).forEach(i => preparatiInc.add(i.id));
       } else {
@@ -795,6 +812,6 @@
     mostraCoda(); pg = leggiPg(); disegna();
   }
   /* comandi per i test automatici del browser (Playwright): window.SalaProva */
-  window.SalaProva = { accoda: (...v) => { coda.push(...v); mostraCoda(); }, stato: () => ({ pg, nem, s, turnoPg, finito, preparate: [...preparate], perRiposo }), nuovoScontro, attaccoNormale, difendo: () => difendoEnea(), osserva: () => osservaEnea(), usa: (id) => usaTecnica(TEC.find(t => t.id === id)), incanta: (id) => usaIncantesimo(MG.INCANTESIMI.concat(MG.VIE).find(i => i.id === id)), riposa, eseguiTest };
+  window.SalaProva = { accoda: (...v) => { coda.push(...v); mostraCoda(); }, stato: () => ({ pg, nem, s, turnoPg, finito, nTurno, preparate: [...preparate], perRiposo }), nuovoScontro, attaccoNormale, difendo: () => difendoEnea(), osserva: () => osservaEnea(), usa: (id) => usaTecnica(TEC.find(t => t.id === id)), incanta: (id) => usaIncantesimo(MG.INCANTESIMI.concat(MG.VIE).find(i => i.id === id)), riposa, eseguiTest };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", costruisci); else costruisci();
 })();

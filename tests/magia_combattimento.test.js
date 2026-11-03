@@ -455,6 +455,21 @@
   caso("Avvizzito: 1d6 dove indicato sostituisce 1d4; sui boss dura al massimo 3 turni", () => {
     const s = scontro(), c = ctx({ liv: 5, boss: true }); C.metti(s, c, "avvizzito", 5); eq(s.eff.avvizzito, 3);
   });
+  caso("Combo (03/11): etichette e avvisi «combo pronta»", () => {
+    const tg = (id) => M.etichette(inc(id)).join("|");
+    vero(/Incide/.test(tg("dardo_arcano")), "il Dardo incide"); vero(/Detona/.test(tg("pugno_forza")), "il Pugno detona");
+    vero(/Consuma i Sigilli/.test(tg("implosione")), "Implosione consuma"); vero(/Luce \+1/.test(tg("dardo_luce"))); vero(/Ombra \+1/.test(tg("tocco_avvizzente")));
+    vero(/→ 0/.test(tg("giudizio"))); vero(/Difesa/.test(tg("specchio_rune")));
+    eq(M.comboPronta(inc("pugno_forza"), scontro(), ctx({ liv: 2 })).ok, false, "senza Sigilli niente da far esplodere");
+    vero(/al massimo/.test(M.comboPronta(inc("pugno_forza"), scontro({ sigilli: 3 }), ctx({ liv: 2 })).t));
+    eq(M.comboPronta(inc("pugno_forza"), scontro({ sigilli: 3 }), ctx({ liv: 4 })).ok, true);
+    vero(!/al massimo/.test(M.comboPronta(inc("pugno_forza"), scontro({ sigilli: 3 }), ctx({ liv: 4 })).t), "dal livello 4 il massimo è 4");
+    eq(M.comboPronta(inc("dardo_arcano"), scontro({ sigilli: 3 }), ctx({ liv: 2 })).ok, false, "Sigilli nuovi persi");
+    vero(/Crepuscolo/.test(M.comboPronta(inc("tocco_avvizzente"), scontro({ bilancia: 3 }), ctx()).t));
+    vero(/Crepuscolo/.test(M.comboPronta(inc("dardo_luce"), scontro({ bilancia: -3 }), ctx()).t));
+    eq(M.comboPronta(inc("dardo_luce"), scontro({ bilancia: -3, eff: { furiaCinerea: 2 } }), ctx()), null, "Furia Cinerea blocca la Bilancia");
+    eq(M.comboPronta(inc("dardo_luce"), scontro(), ctx()), null);
+  });
 
   function esegui() {
     return casi.map(({ nome, fn }) => { try { fn(); return { nome, ok: true }; } catch (e) { return { nome, ok: false, errore: e.message }; } });

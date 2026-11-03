@@ -146,7 +146,7 @@
       case "dardo_arcano": dopoColpo(hit({ dado: 8 }), () => ink(1)); break;
       case "scopri_carte": s.svelata = true; E.push({ k: "svelata" }); ink(1); break;
       case "runa_arma": s.eff.runa = 3; s.effMax.runa = 3; E.push({ k: "runa", turni: 3 }); break;
-      case "marchio_arcano": conTS({ esposto: 2 }); ink(1); break;
+      case "marchio_arcano": diretto(1, 6, 0); if (vivo()) conTS({ esposto: 2 }); ink(1); break; /* 03/11 (proposta 2, in prova): 1d6 arcano senza tiro, l'Arcano principale ha un danno al livello 2 */
       case "stasi": controlloORipiego({ bloccato: 1 }, () => ink(2)); break;
       case "specchio_rune": s.assorbe = { tipo: "specchio", n: 0 }; E.push({ k: "difesaPronta", tipo: "specchio" }); break;
       case "catena_glifi": dopoColpo(hit({ dado: 6, piuDadi: 1 }), () => ink(2)); break;

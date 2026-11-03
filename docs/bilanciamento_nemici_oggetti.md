@@ -819,3 +819,15 @@ Dettagli e motivazioni di Arcanista e Monaco in incantesimi_arcanista_monaco.md.
 | Monaco, Ombra | 89% | 53% | 64% | 39% |
 
 Il punto debole è strutturale: le combo dell'Arcanista sono **tra due scuole** (l'Arcano incide, la Forza detona), ma l'altra scuola ha **un solo posto**. Con l'Arcano principale si incide molto e si detona poco, e l'Arcano fa poco danno: −35 punti contro Ettore. Da qui parte A3 (combo nuove tra scuole) solo dove serve: prima l'Arcano principale.
+
+**Proposte per l'Arcano principale, misurate il 3 novembre** (giocatore medio, serie da 600 e 1200 scontri, ±3-4 punti):
+
+| Versione | Arcano: Ettore | Arcano: Enea fermaglio / nascosto / maglio | Forza: Ettore | Forza: Enea |
+|---|---|---|---|---|
+| Attuale | ~41% | 20 / 26 / 25 | 74% | 41 / 47 / 47 |
+| P1: Sigillo oltre il massimo → 1 mana (1 per turno) | 46% | 22 / 27 / 25 | 75% | 41 / 49 / 47 |
+| **P2: Marchio Arcano + 1d6 senza tiro (IN PROVA nel codice)** | **62%** | 22-25 / 29-31 / 29-31 | 74% | invariato |
+| P1 + P2 | 62% | 25 / 32 / 29 | 76% | 39 / 44 / 45 |
+
+P1 scartata (quasi nessun effetto: si detona appena i Sigilli sono al massimo; nel gioco lo Specchio incide con un contesto senza mana). Da decidere: P2 a 1d6 o 1d8; l'Arcanista resta sotto l'obiettivo di Ettore (90-95%) anche con la Forza principale. Incongruenza: il recupero della Detonazione nel codice è 1/1/2/2/3 per livello (doppio al massimo), non «1 mana per Sigillo» come scritto negli incantesimi.
+

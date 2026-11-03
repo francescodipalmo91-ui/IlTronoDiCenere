@@ -52,7 +52,7 @@ Gli altri stati sono quelli che il gioco ha già: Indebolito, Sbilanciato, Espos
 | 1 | Dardo Arcano | 2 | Attacco magico, 1d8 arcano; se colpisce, 1 Sigillo |
 | 1 | Scopri Carte | 1 | Apre la scheda del nemico (CA, salute, vulnerabilità) e incide 1 Sigillo senza tiro. Fuori dallo scontro: +2 a Sapienza su rune e oggetti magici |
 | 1 | Runa sull'Arma | 2 | Per 3 turni il dado dell'arma sale di un passo (1d6→1d8→1d10→1d12); ogni colpo d'arma a segno incide 1 Sigillo |
-| 2 | Marchio Arcano | 3 | Tiro salvezza → Esposto 2 e 1 Sigillo (il Sigillo resta anche se resiste) |
+| 2 | Marchio Arcano | 3 | **Senza tiro 1d6 arcano** (03/11, IN PROVA: danno al livello 2 per l'Arcano principale); tiro salvezza → Esposto 2 e 1 Sigillo (il Sigillo resta anche se resiste) |
 | 2 | Stasi | 4 | Tiro salvezza → Bloccato 1 (boss: 2 Sigilli) |
 | 2 | Specchio di Rune | 3 | Consuma l'azione; il primo colpo **a segno**, quando arriva (senza limite di turni nello scontro), fa metà danni e incide 1 Sigillo sull'attaccante (03/11: prima scadeva al tuo turno anche se il nemico mancava; niente limite per renderlo più utile contro i boss e aiutare l'Arcanista) |
 | 3 | Catena di Glifi | 5 | Attacco magico 2d6; se colpisce, 2 Sigilli |

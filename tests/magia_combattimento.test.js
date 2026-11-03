@@ -116,12 +116,12 @@
   caso("Runa sull'Arma: 3 turni di runa", () => {
     const s = scontro(), c = ctx(); lancia("runa_arma", s, c); eq(s.eff.runa, 3);
   });
-  caso("Marchio Arcano: Esposto 2 se fallisce il tiro; 1 Sigillo in ogni caso", () => {
-    let s = scontro(), c = ctx({ dadi: [3] }); lancia("marchio_arcano", s, c); eq(s.eff.esposto, 2); eq(s.sigilli, 1);
-    s = scontro(); c = ctx({ dadi: [18] }); const r = lancia("marchio_arcano", s, c); eq(s.eff.esposto || 0, 0); eq(s.sigilli, 1); vero(ev(r, "resiste").length);
+  caso("Marchio Arcano: 1d6 senza tiro (03/11), Esposto 2 se fallisce il tiro; 1 Sigillo in ogni caso", () => {
+    let s = scontro(), c = ctx({ dadi: [4, 3] }); lancia("marchio_arcano", s, c); eq(s.eff.esposto, 2); eq(s.sigilli, 1); eq(s.pv, 76, "1d6 = 4 senza tiro");
+    s = scontro(); c = ctx({ dadi: [4, 18] }); const r = lancia("marchio_arcano", s, c); eq(s.eff.esposto || 0, 0); eq(s.sigilli, 1); vero(ev(r, "resiste").length);
   });
   caso("Marchio Arcano su un boss: Esposto dura al massimo 2", () => {
-    const s = scontro(), c = ctx({ dadi: [3], boss: true }); lancia("marchio_arcano", s, c); eq(s.eff.esposto, 2);
+    const s = scontro(), c = ctx({ dadi: [4, 3], boss: true }); lancia("marchio_arcano", s, c); eq(s.eff.esposto, 2);
   });
   caso("Stasi: Bloccato 1 se fallisce; resiste se supera; sui boss 2 Sigilli e nessun tiro", () => {
     let s = scontro(), c = ctx({ dadi: [3] }); lancia("stasi", s, c); eq(s.eff.bloccato, 1); eq(s.sigilli || 0, 0);
@@ -162,10 +162,10 @@
     const s = scontro(), c = ctx({ dadi: [2, 3, 4, 5, 7] }); /* 14 danni, poi salvezza 7 contro CD 12 */
     lancia("parola_vera", s, c); eq(s.pv, 66); eq(s.eff.parola, 2); eq(c.usate.parola_vera, true);
     eq(M.disponibile(inc("parola_vera"), s, c).motivo, "giaUsataRiposo");
-    const c2 = ctx({ dadi: [9], modTs: 0, cd: 12 }); lancia("marchio_arcano", s, c2); /* 9 − 4 = 5: fallisce anche se tirerebbe 9+3? CD 12, 9+0 = 9 comunque */
+    const c2 = ctx({ dadi: [1, 9], modTs: 0, cd: 12 }); lancia("marchio_arcano", s, c2); /* 9 − 4 = 5: fallisce anche se tirerebbe 9+3? CD 12, 9+0 = 9 comunque */
     eq(s.eff.esposto, 2);
-    const s2 = scontro({ eff: { parola: 2 } }), c3 = ctx({ dadi: [14], cd: 12 }); lancia("marchio_arcano", s2, c3); eq(s2.eff.esposto, 2, "14 −4 = 10 < 12: fallisce");
-    const s3 = scontro(), c4 = ctx({ dadi: [14], cd: 12 }); lancia("marchio_arcano", s3, c4); eq(s3.eff.esposto || 0, 0, "senza Parola 14 supera");
+    const s2 = scontro({ eff: { parola: 2 } }), c3 = ctx({ dadi: [1, 14], cd: 12 }); lancia("marchio_arcano", s2, c3); eq(s2.eff.esposto, 2, "14 −4 = 10 < 12: fallisce");
+    const s3 = scontro(), c4 = ctx({ dadi: [1, 14], cd: 12 }); lancia("marchio_arcano", s3, c4); eq(s3.eff.esposto || 0, 0, "senza Parola 14 supera");
   });
   caso("Tomo Proibito: −1 salute mentale, Arcano a −2 (minimo 1) e 1 Sigillo in più", () => {
     const s = scontro(), c = ctx(); const r = lancia("tomo_proibito", s, c); eq(s.eff.tomo, 3); eq(c.mente, 1); eq(r.costo, 8);

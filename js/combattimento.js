@@ -526,8 +526,12 @@
     return E;
   }
   /* inizio del tuo turno: Parata e difese dello scudo scadono; il Mare Profondo e l'Egida rilasciano l'onda */
+  /* 03/11: potenziamenti che valgono per le TUE azioni (Runa sull'Arma, Voto di Luce, Occhio del Tomo…): «per 3 turni» vuol dire i tuoi 3 turni
+     successivi. Senza questa regola il turno del nemico subito dopo il lancio ne consumava uno e restavano solo 2 attacchi. */
+  const BUFF_AZIONI = ["runa", "occhio", "tomo", "voto", "gemella", "quiete", "furiaCinerea", "precisione"];
   function inizioTurnoPg(s, ctx) {
     const E = [];
+    s.effInizio = Object.assign({}, s.eff); /* per sapere quali potenziamenti sono nati in questo turno */
     s.parata = false; s.parataCrepe = false; s.parataPunta = false; /* la Parata vale solo fino al tuo turno successivo */
     const a = s.assorbe;
     if (a && a.onda && ctx && vivo(s)) {
@@ -547,7 +551,12 @@
   /* fine del turno del nemico: gli effetti scalano di un turno; finito il sanguinamento finisce anche il marchio */
   function fineTurnoNemico(s) {
     const finiti = []; s.santColpo = false;
-    Object.keys(s.eff).forEach(k => { if (s.eff[k] > 0 && --s.eff[k] === 0) finiti.push(k); });
+    const prima = s.effInizio || {};
+    Object.keys(s.eff).forEach(k => {
+      if (BUFF_AZIONI.includes(k) && s.eff[k] > (Number(prima[k]) || 0)) return; /* appena lanciato: il turno del nemico non lo consuma */
+      if (s.eff[k] > 0 && --s.eff[k] === 0) finiti.push(k);
+    });
+    s.effInizio = Object.assign({}, s.eff);
     if (!attivo(s, "sanguina")) s.marchio = false;
     if (!attivo(s, "esposto")) s.segno = false;
     return finiti;

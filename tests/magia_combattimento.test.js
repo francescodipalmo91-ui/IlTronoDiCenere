@@ -51,6 +51,14 @@
   });
 
   /* ================= Sigilli ================= */
+  caso("03/11: Runa sull'Arma dura i tuoi 3 turni successivi (il turno del nemico subito dopo il lancio non la consuma)", () => {
+    const s = { pv: 40, pvMax: 40, eff: {}, effMax: {} };
+    C.inizioTurnoPg(s, {}); s.eff.runa = 3; /* lanciata nel tuo turno */
+    C.fineTurnoNemico(s); eq(s.eff.runa, 3, "dopo il primo turno del nemico");
+    for (let i = 1; i <= 3; i++) { C.inizioTurnoPg(s, {}); /* qui il tuo attacco la usa */ eq(s.eff.runa > 0, true, "attacco " + i); C.fineTurnoNemico(s); }
+    eq(s.eff.runa, 0, "finita dopo il terzo attacco");
+    const t = { pv: 40, pvMax: 40, eff: {}, effMax: {} }; C.inizioTurnoPg(t, {}); t.eff.debole = 2; C.fineTurnoNemico(t); eq(t.eff.debole, 1, "gli stati sul nemico scendono come prima");
+  });
   caso("Dardo Arcano: colpisce, 1d8 e 1 Sigillo; manca, nessun Sigillo", () => {
     let s = scontro(), c = ctx({ dadi: [15, 5] }); /* 15+3 = 18 contro CA 12 */
     let r = lancia("dardo_arcano", s, c); eq(r.costo, 2); eq(s.pv, 75, "5 danni senza modificatore"); eq(s.sigilli, 1);

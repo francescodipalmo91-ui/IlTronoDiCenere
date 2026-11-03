@@ -12,76 +12,111 @@
   <script src="js/magia.js"></script>
   <link rel="stylesheet" href="tema.css">
   <style>
+    /* 03/11: impaginazione da manuale stampato. Cinzel solo per il titolo e le parti; capitoli e testo in Lora.
+       Un solo livello di tendine per leggere (il capitolo); restano a tendina solo le tabelle lunghe di tecniche e incantesimi. */
     * { box-sizing: border-box; }
     html { background: var(--bg); }
-    body { margin: 0; background: transparent; color: var(--text); font-family: var(--f-testo); line-height: 1.55; padding: 2rem 16px 3rem; }
-    /* 30/10: immagine statica a contorno; sfuma nel fondo dietro la colonna di testo, così la lettura non ne risente */
+    body { margin: 0; background: transparent; color: var(--text); font-family: var(--f-testo); font-size: 1.0625rem; line-height: 1.7; padding: 2.5rem 16px 4rem; }
+    /* immagine a contorno (30/10): ai lati, sfumata nel fondo dietro la colonna di testo */
     body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
       background:
-        linear-gradient(to right, color-mix(in srgb, var(--bg) 35%, transparent) 0%, var(--bg) 30%, var(--bg) 70%, color-mix(in srgb, var(--bg) 35%, transparent) 100%),
+        linear-gradient(to right, color-mix(in srgb, var(--bg) 55%, transparent) 0%, var(--bg) 24%, var(--bg) 76%, color-mix(in srgb, var(--bg) 55%, transparent) 100%),
         url("immagini/regolamento_sfondo.webp") center / cover no-repeat; }
-    @media (max-width: 900px) { body::before { background: linear-gradient(color-mix(in srgb, var(--bg) 70%, transparent), color-mix(in srgb, var(--bg) 88%, transparent)), url("immagini/regolamento_sfondo_mobile.webp") center / cover no-repeat; } } /* telefono: immagine ruotata di 90° antiorario, in verticale */
-    main { max-width: 46rem; margin: 0 auto; }
-    .torna { color: var(--muted); text-decoration: none; font-size: 0.95rem; display: inline-block; padding: 0.6rem 0; } /* 29/10: più facile da toccare sul telefono */
-    .torna:hover { color: var(--accent); }
+    @media (max-width: 900px) { body::before { background: linear-gradient(color-mix(in srgb, var(--bg) 88%, transparent), color-mix(in srgb, var(--bg) 96%, transparent)), url("immagini/regolamento_sfondo_mobile.webp") center / cover no-repeat; } }
+    main { max-width: 44rem; margin: 0 auto; }
+    p, li { text-wrap: pretty; }
+    .torna { color: var(--muted); text-decoration: none; font-size: 0.95rem; display: inline-block; padding: 0.6rem 0; }
+    .torna:hover { color: var(--gold); }
     body.dentro .torna { display: none; } /* aperto dal gioco: si chiude con la ✕ della finestra */
-    h1 { font-size: clamp(1.8rem, 5vw, 2.4rem); margin: 0.8rem 0 0.3rem; font-weight: 600; text-align: center; }
-    .sotto { text-align: center; color: var(--muted); font-style: italic; margin: 0 0 2rem; }
-    details { border: 1px solid var(--line); border-radius: 0.6rem; margin: 0 0 0.75rem; background: color-mix(in srgb, var(--bg) 92%, var(--text)); }
-    summary { cursor: pointer; padding: 0.85rem 1.1rem; font-size: 1.12rem; font-weight: 600; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
-    summary::-webkit-details-marker { display: none; }
-    summary, .corpo h3 { font-family: var(--f-titoli); letter-spacing: 0.05em; }
-    summary::after { content: "▸"; color: var(--muted); transition: transform 0.2s; }
-    details[open] > summary::after { transform: rotate(90deg); }
-    summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 0.6rem; }
-    .corpo { padding: 0 1.1rem 1rem; }
-    .corpo h3 { font-size: 1rem; margin: 1.1rem 0 0.35rem; font-weight: 600; }
-    .corpo p, .corpo li { margin: 0.35rem 0; }
-    .corpo ul, .corpo ol { padding-left: 1.2rem; margin: 0.35rem 0; }
-    /* indice a tendine, come l'indice di un libro: Parte › Capitolo › voci (rami, scuole, vie), con i puntini di guida */
-    summary { align-items: baseline; }
-    .punti { flex: 1; min-width: 1rem; margin: 0 0.1rem 0.3em; border-bottom: 1px dotted var(--muted); opacity: 0.8; }
-    summary:hover .tt { color: var(--accent); }
-    details.parte { border: 0; border-radius: 0; background: none; margin: 0 0 1.5rem; }
-    details.parte > summary { padding: 0.5rem 0.2rem; border-bottom: 1px solid var(--line); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.14em; }
-    details.parte > .corpo { padding: 0.35rem 0 0; }
-    .corpo details.cap, .corpo details.sub { border: 0; border-radius: 0; background: none; margin: 0; }
-    .corpo details.cap > summary { font-size: 1rem; padding: 0.55rem 0.2rem; }
-    .corpo details.sub > summary { font-size: 0.93rem; padding: 0.4rem 0.2rem; font-weight: 500; }
-    .corpo details.cap > .corpo, .corpo details.sub > .corpo { margin-left: 0.45rem; padding: 0.15rem 0 0.7rem 0.85rem; border-left: 1px solid var(--line); }
-    @media (max-width: 560px) {
-      body { padding-inline: 10px; }
-      .corpo details.cap > .corpo, .corpo details.sub > .corpo { margin-left: 0.15rem; padding-left: 0.5rem; }
-      th, td { padding: 0.35rem 0.3rem; }
-      .scroll td:last-child { min-width: 11rem; }
-    }
-    .azioni { display: flex; justify-content: center; gap: 0.6rem; margin: 0 0 1.4rem; }
-    .azioni button { font: inherit; font-size: 0.88rem; color: var(--muted); background: none; border: 1px solid var(--line); border-radius: 0.4rem; padding: 0.3rem 0.9rem; cursor: pointer; }
-    .azioni button:hover { color: var(--accent); border-color: var(--accent); }
-    .formula { display: block; margin: 0.5rem 0; padding: 0.45rem 0.8rem; border-left: 3px solid var(--tip-line); background: var(--tip-bg); border-radius: 0 0.4rem 0.4rem 0; font-variant-numeric: tabular-nums; }
-    .esempio { color: var(--muted); font-style: italic; font-size: 0.93rem; }
-    .avviso { margin: 0.5rem 0; padding: 0.5rem 0.8rem; border: 1px dashed var(--line); border-radius: 0.4rem; color: var(--muted); font-size: 0.93rem; }
-    .turno { margin: 0.5rem 0; padding: 0.4rem 0.8rem; border-left: 3px solid var(--line); font-size: 0.95rem; }
-    .turno b { font-family: var(--f-titoli); letter-spacing: 0.04em; }
-    .scroll { overflow-x: auto; }
-    table { border-collapse: collapse; width: 100%; font-size: 0.93rem; margin: 0.4rem 0; }
-    th, td { text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--line); vertical-align: top; }
-    th { color: var(--muted); font-weight: 400; }
+
+    /* frontespizio */
+    header.fronte { text-align: center; margin: 1.5rem 0 2.75rem; }
+    h1 { font-family: var(--f-titoli); font-weight: 600; font-size: clamp(2.2rem, 7vw, 3.1rem); letter-spacing: 0.05em; line-height: 1.1; margin: 0; }
+    .sotto { color: var(--muted); font-style: italic; margin: 0.6rem 0 0; }
+    .azioni { display: flex; justify-content: center; gap: 1.5rem; margin-top: 1.4rem; }
+    .azioni button { font: inherit; font-size: 0.92rem; color: var(--muted); background: none; border: 0; border-bottom: 1px solid transparent; padding: 0.35rem 0.1rem; cursor: pointer; }
+    .azioni button:hover { color: var(--gold); border-bottom-color: var(--line); }
+    button:focus-visible, summary:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+    /* parti: numero romano grande e titolo in Cinzel */
+    .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } /* per i lettori di schermo: «Parte 1», «Capitolo 3» */
+    details.parte { margin: 0 0 2.5rem; }
+    details.parte > summary { list-style: none; cursor: pointer; display: flex; align-items: baseline; gap: 0.9rem; padding: 0 0 0.7rem; border-bottom: 1px solid var(--line); }
+    details.parte > summary::-webkit-details-marker { display: none; }
+    .romano { font-family: var(--f-titoli); font-size: 2.1rem; line-height: 1; color: var(--muted); min-width: 2.6rem; }
+    .parte-tt { margin: 0; font-family: var(--f-titoli); font-weight: 600; font-size: 1.35rem; letter-spacing: 0.04em; }
+
+    /* capitoli: numero in cifre antiche nel margine, titolo e riga di contenuto */
+    details.cap { border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
+    details.cap > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 2.6rem 1fr 1.2rem; grid-template-areas: "n tt ap" ". desc ap"; column-gap: 0.9rem; align-items: baseline; padding: 0.95rem 0; }
+    .cap-n { grid-area: n; } .cap-tt { grid-area: tt; } .cap-desc { grid-area: desc; } details.cap > summary .apri { grid-area: ap; }
+    details.cap > summary::-webkit-details-marker { display: none; }
+    .cap-n { font-size: 1.25rem; color: var(--muted); text-align: right; font-variant-numeric: oldstyle-nums; }
+    .cap-tt { display: block; margin: 0; font-family: var(--f-testo); font-weight: 600; font-size: 1.12rem; line-height: 1.35; letter-spacing: 0; text-wrap: balance; }
+    .cap-desc { display: block; color: var(--muted); font-size: 0.95rem; line-height: 1.45; margin-top: 0.15rem; }
+    details.cap > summary:hover .cap-tt { color: var(--gold); }
+    .apri { width: 0.55rem; height: 0.55rem; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(45deg); align-self: center; justify-self: center; transition: transform 0.2s ease; }
+    details[open] > summary .apri { transform: rotate(-135deg); }
+    @media (prefers-reduced-motion: reduce) { .apri { transition: none; } }
+    details.cap > .testo { padding: 0 0 1.8rem 3.5rem; }
+
+    /* testo del capitolo, letto di seguito */
+    .testo p, .testo li { margin: 0.45rem 0; }
+    .testo ul, .testo ol { padding-left: 1.25rem; margin: 0.5rem 0; }
+    .testo li::marker { color: var(--muted); }
+    .testo h4 { font-family: var(--f-testo); font-weight: 700; font-size: 1.14rem; letter-spacing: 0.01em; color: var(--gold); margin: 2rem 0 0.35rem; text-wrap: balance; }
+    .testo > h4:first-child { margin-top: 0.3rem; }
+    .formula { display: block; margin: 0.7rem 0; padding: 0.55rem 0.9rem; border-left: 2px solid var(--accent); background: color-mix(in srgb, var(--bg) 88%, var(--text)); font-size: 0.97rem; font-variant-numeric: tabular-nums; }
+    .esempio { color: var(--muted); font-style: italic; }
+    .nota { margin: 0.8rem 0; padding: 0.1rem 0 0.1rem 0.9rem; border-left: 2px solid var(--line); color: var(--muted); font-style: italic; }
+    .turno { margin: 0.55rem 0; padding: 0.15rem 0 0.15rem 0.9rem; border-left: 2px solid var(--line); }
+    .turno b { font-weight: 600; color: var(--gold); }
+
+    /* scheda della classe */
+    dl.scheda { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0 1rem; margin: 1rem 0 0.4rem; padding: 0.6rem 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    dl.scheda dt { color: var(--muted); font-size: 0.85rem; font-style: italic; }
+    dl.scheda dd { margin: 0; font-size: 0.98rem; line-height: 1.4; }
+
+    /* tabelle */
+    .scroll { overflow-x: auto; margin: 0.6rem 0; }
+    table { border-collapse: collapse; width: 100%; font-size: 0.95rem; line-height: 1.5; }
+    th, td { text-align: left; padding: 0.45rem 0.6rem 0.45rem 0; border-bottom: 1px solid color-mix(in srgb, var(--line) 70%, transparent); vertical-align: top; }
+    th { color: var(--muted); font-weight: 400; font-style: italic; border-bottom-color: var(--line); }
     td.n { white-space: nowrap; font-variant-numeric: tabular-nums; }
-    .tendine { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0; }
-    .tendine span { padding: 0.25rem 0.7rem; border-radius: 0.4rem; border: 1px solid var(--line); font-size: 0.9rem; }
-    .tendine span { background: var(--tip-bg); border-left-width: 3px !important; }
+
+    /* tabelle lunghe (tecniche, incantesimi, vie): l'unico livello di tendina dentro un capitolo */
+    details.sub { margin: 0.3rem 0; border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
+    details.sub > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.6rem 0; font-weight: 600; }
+    details.sub > summary::-webkit-details-marker { display: none; }
+    details.sub > summary:hover { color: var(--gold); }
+    details.sub > .corpo { padding: 0 0 0.6rem; }
+    details.sub details.sub { margin-left: 1rem; }
+
+    /* colori delle tendine del gioco: solo come significato */
+    .tendine { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.6rem 0; }
+    .tendine span { padding: 0.2rem 0.7rem; border-left: 3px solid var(--line); background: var(--tip-bg); font-size: 0.95rem; }
     .t-azz { border-left-color: var(--accent) !important; }
     .t-ok { border-left-color: var(--ok) !important; color: var(--ok); }
     .t-ko { border-left-color: var(--ko) !important; color: var(--ko); }
+
+    @media (max-width: 560px) {
+      body { padding: 1.5rem 16px 3rem; }
+      details.cap > summary { grid-template-columns: 1.7rem 1fr 1rem; column-gap: 0.6rem; }
+      details.cap > .testo { padding-left: 0; }
+      .romano { font-size: 1.7rem; min-width: 2rem; }
+      dl.scheda { grid-template-columns: repeat(2, 1fr); gap: 0.5rem 1rem; }
+      .scroll td:last-child { min-width: 11rem; }
+    }
   </style>
 </head>
 <body>
   <main>
     <a class="torna" id="torna" href="index.html"></a>
-    <h1 id="titolo"></h1>
-    <p class="sotto" id="sotto"></p>
-    <div class="azioni"><button type="button" id="apriTutto"></button><button type="button" id="chiudiTutto"></button></div>
+    <header class="fronte">
+      <h1 id="titolo"></h1>
+      <p class="sotto" id="sotto"></p>
+      <div class="azioni"><button type="button" id="apriTutto"></button><button type="button" id="chiudiTutto"></button></div>
+    </header>
     <div id="sezioni"></div>
   </main>
 
@@ -170,7 +205,7 @@
     const H = EN ? ["Lv", "Name", "Cost", "Effect"] : ["Liv", "Nome", "Costo", "Effetto"];
     const tabella = (voci) => `<div class="scroll"><table><tr>${H.map(h => `<th>${h}</th>`).join("")}</tr>${voci.slice().sort((a, b) => a.liv - b.liv).map(v =>
       `<tr><td class="n">${v.liv}</td><td>${v.nome[L]}</td><td class="n">${v.costo}</td><td>${(v.effetto && v.effetto[L]) || ""}</td></tr>`).join("")}</table></div>`;
-    const sommario = (titolo) => `<summary><span class="tt">${titolo}</span><span class="punti"></span></summary>`;
+    const sommario = (titolo) => `<summary><span class="tt">${titolo}</span><span class="apri" aria-hidden="true"></span></summary>`;
     const tendina = (titolo, html) => `<details class="sub">${sommario(titolo)}<div class="corpo">${html}</div></details>`;
 
     /* Guerriero: un ramo per tipo d'arma e lo scudo, con le due vie (nomi opposti, senza i PNG che le insegnano) */
@@ -206,6 +241,7 @@
       it: {
         torna: "← Pagina iniziale", titolo: "Regolamento", sotto: "Le regole del gioco, da consultare quando vuoi.",
         parte: "Parte", capitolo: "Capitolo", apri: "Apri tutto", chiudi: "Comprimi",
+        desc: ["Come dare ordini al personaggio e leggere le risposte del gioco.", "Il tiro del d20, la difficoltà e cosa costa fallire.", "Le nove abilità, come si calcolano e quando servono.", "Il fuoco, le razioni e il conto dei giorni.", "Cosa succede a zero salute e cosa logora la mente.", "Tre posti, condivisi tra computer e telefono.", "Le quattro caratteristiche e quella con cui combatti.", "Bonus di razza, dado vita, salute e risorse al primo livello.", "Esperienza, soglie e cosa guadagni a ogni livello.", "Iniziativa, attacco, danno, critico e Classe armatura.", "Come il nemico resiste ai tuoi effetti.", "Gli effetti che durano qualche turno, su di te e sui nemici.", "Nemici temibili, vulnerabilità, abilità e fuga.", "Le cacce del maggiordomo, gli agguati fuori casa, il fermaglio.", "Tre scontri raccontati turno per turno.", "Risorsa, posti, tratti e vie: ciò che vale per tutte le classi.", "Arma e furia: logorare, stordire, trafiggere, parare.", "Veleni, trappole e corteccia, un turno dopo l'altro.", "Incidere Sigilli con l'Arcano, farli esplodere con la Forza.", "La Bilancia tra Vita e Negromanzia."],
         parti: [["Come si gioca", [0, 1, 2, 3, 4, 5]], ["Il personaggio", [6, 7, 8]], ["Combattimento", [9, 10, 11, 12, 13, 14]], ["Le classi", [15, 16, 17, 18, 19]]],
         sezioni: [
           /* 0 */ ["Scrivere le azioni ed esplorare", `
@@ -226,7 +262,7 @@
             <p>Quando l'esito di un'azione è incerto, il gioco ti chiede una prova e ti mostra difficoltà, dado e modificatore.</p>
             <span class="formula">d20 + valore dell'abilità ≥ difficoltà (CD) → prova superata</span>
             <p class="esempio">Esempio: Furtività +3 contro CD 13. Tiri 11: 11 + 3 = 14, che è almeno 13, quindi la prova è superata. Con un 9 avresti fatto 12 e la prova sarebbe fallita.</p>
-            <p>Il valore dell'abilità si calcola come spiegato nel capitolo «Abilità». La difficoltà dipende dalla situazione: più è alta, più è difficile riuscire.</p>
+            <p>Il valore dell'abilità è nel capitolo «Abilità»; la difficoltà dipende dalla situazione.</p>
             <h3>Le regole delle prove</h3>
             <ul>
               <li><b>Le CD crescono con te</b>: +${R.CD_PER_LIVELLO} per ogni livello sopra il primo. Una prova da CD 10 al livello 1 vale CD 12 al livello 3: crescere ti rende più forte, ma la casa diventa più esigente.</li>
@@ -325,7 +361,12 @@
           /* 9 */ ["Il turno di combattimento", `
             <h3>Chi agisce per primo</h3>
             <p>Agisce per primo chi ha più Agilità (a parità, un d20 a testa).</p>
-            <p><b>Avvicinarsi furtivi.</b> Alcuni avversari ti aspettano in luoghi precisi. Se ti avvicini di soppiatto («scendo furtivo»), tiri d20 + Furtività contro d20 + Percezione dell'avversario, che ti scopre solo se fa più di te. Se resti nascosto agisci per primo e nel primo turno la sua Classe armatura scende di 2; se ti scopre agisce lui per primo e nel primo turno è la tua a scendere di 2. Qualcuno, abituato a cacciare, si accorge di te più facilmente.</p>
+            <p><b>Avvicinarsi furtivi.</b> Alcuni avversari ti aspettano in luoghi precisi. Puoi avvicinarti di soppiatto («scendo furtivo»): tiri d20 + Furtività contro d20 + Percezione dell'avversario, che ti scopre solo se fa più di te.</p>
+            <ul>
+              <li><b>Resti nascosto</b>: agisci per primo e nel primo turno la sua Classe armatura scende di 2.</li>
+              <li><b>Ti scopre</b>: agisce lui per primo e nel primo turno è la tua a scendere di 2.</li>
+            </ul>
+            <p>Chi è abituato a cacciare si accorge di te più facilmente.</p>
             <h3>La tua azione</h3>
             <p>A ogni turno hai un'azione: attaccare, usare una tecnica, lanciare un incantesimo o usare un oggetto. Prendere in mano la torcia o imbracciare lo scudo non consuma l'azione. L'attacco con l'arma è sempre gratuito. Scrivi l'azione («attacco», «lancio…», «bevo la pozione di cura») oppure usa i pulsanti che compaiono.</p>
             <h3>Colpire e ferire</h3>
@@ -391,7 +432,11 @@
               <li><b>Tre stelle</b>: la preda è appena entrata nei confini e nessuno ne sa nulla. Prima di attaccare puoi <b>osservarla</b> (Percezione: arma e armatura, caratteristica principale, tipo di danno), <b>ricordare</b> cosa sia (Sapienza: vulnerabilità, resistenze, stato che infligge) e <b>avvicinarti</b> di nascosto (Furtività contro la sua Percezione). Ogni azione si fa una volta sola.</li>
             </ul>
             <span class="formula">Osservare e ricordare: d20 + abilità contro CD 12 (+ la crescita col livello): CD → una voce, CD + 5 → due, CD + 10 → tre</span>
-            <p>Avvicinarti bene ti dà vantaggio sulla prova successiva, e con un 20 naturale scopri tutta la scheda della preda; allo scontro agisci per primo e la preda ha −2 alla Classe armatura nel primo turno. Se ti scopre agisce lei per prima e nel primo turno la tua Classe armatura scende di 2. Osservare e ricordare falliti costano 1 punto di salute mentale, come ogni prova; l'avvicinamento no.</p>
+            <ul>
+              <li><b>Avvicinamento riuscito</b>: vantaggio sulla prova successiva; allo scontro agisci per primo e la preda ha −2 alla Classe armatura nel primo turno. Con un 20 naturale scopri tutta la sua scheda.</li>
+              <li><b>Ti scopre</b>: agisce lei per prima e nel primo turno la tua Classe armatura scende di 2.</li>
+              <li>Osservare e ricordare falliti costano 1 punto di salute mentale, come ogni prova; l'avvicinamento no.</li>
+            </ul>
             <h3>Agguati</h3>
             <p>Dopo il fermaglio di bronzo, fuori casa può tenderti un agguato chi è entrato da altri ingressi: goblin e orchi, da soli o in banda (un gruppo combatte come una creatura sola), oppure uno di cinque avventurieri che crescono con te.</p>
             <ul>
@@ -450,7 +495,7 @@
             <p>Dal livello 3 scegli una delle due vie della tua classe: tre abilità, una ai livelli 3, 4 e 5, sempre pronte e senza occupare posti. Le due vie sono opposte (una più violenta, una più paziente). <b>La scelta è definitiva.</b></p>`],
           /* 16 */ ["Guerriero", `
             <p>Il combattente addestrato: picchia con l'arma e apre ogni scontro con tecniche che logorano, stordiscono o spezzano il nemico.</p>
-            <p class="esempio">Vigore · punti furia · dado vita d10 · tutte le armature e le armi da battaglia</p>
+            <dl class="scheda"><div><dt>Attributo</dt><dd>Vigore</dd></div><div><dt>Risorsa</dt><dd>punti furia</dd></div><div><dt>Dado vita</dt><dd>d10</dd></div><div><dt>Armature</dt><dd>tutte, più le armi da battaglia</dd></div></dl>
             <h3>Come combatte</h3>
             <p>Il tipo d'arma che impugni decide le tecniche, e ogni ramo ha un modo suo di battere il nemico:</p>
             <ul>
@@ -479,7 +524,7 @@
             ${ramiGuerriero}`],
           /* 17 */ ["Sciamano", `
             <p>L'eremita dei boschi: combatte con l'arma e con la natura, avvelenando, intrappolando e consumando il nemico un turno dopo l'altro.</p>
-            <p class="esempio">Agilità · punti natura · dado vita d8 · armature leggere e medie</p>
+            <dl class="scheda"><div><dt>Attributo</dt><dd>Agilità</dd></div><div><dt>Risorsa</dt><dd>punti natura</dd></div><div><dt>Dado vita</dt><dd>d8</dd></div><div><dt>Armature</dt><dd>leggere e medie</dd></div></dl>
             <h3>Come combatte</h3>
             <ul>
               <li><b>Veleno</b>: Avvelenato fa 1d4 a ogni turno del nemico (Tossina 1d6). Si rinnova, non si somma, ma si somma a Sanguinamento e Avvizzito. Alcuni avversari resistono al veleno e ne subiscono metà.</li>
@@ -511,7 +556,7 @@
             ${tecnicheSciamano}`],
           /* 18 */ ["Arcanista", `
             <p>Lo studioso: legge l'avversario e lo smonta con due scuole che lavorano in coppia. L'<b>Arcano</b> incide Sigilli sul nemico, la <b>Forza</b> li fa esplodere.</p>
-            <p class="esempio">Mente · mana · dado vita d6 · armature leggere</p>
+            <dl class="scheda"><div><dt>Attributo</dt><dd>Mente</dd></div><div><dt>Risorsa</dt><dd>mana</dd></div><div><dt>Dado vita</dt><dd>d6</dd></div><div><dt>Armature</dt><dd>leggere</dd></div></dl>
             <h3>Come combatte: Sigilli e Detonazione</h3>
             <ol>
               <li><b>Incidi</b>: gli incantesimi d'Arcano lasciano Sigilli sul nemico (◆). Durano tutto lo scontro, al massimo ${MG ? MG.SIGILLI_MAX : 3} (${MG ? MG.SIGILLI_MAX_BOSS : 2} sugli avversari temibili), uno in più dal livello 4. Il critico di un incantesimo di Forza incide anche 1 Sigillo.</li>
@@ -519,7 +564,7 @@
               <li><b>Recupera</b>: ogni Detonazione ti restituisce <b>1 mana per Sigillo</b> (Singolarità 2). Senza Sigilli non c'è niente da far esplodere: niente danno in più e niente mana.</li>
             </ol>
             <p>Sotto ogni incantesimo il gioco ti dice cosa fa per la combinazione («Incide Sigilli», «Detona») e, durante lo scontro, quando è pronta («Combo pronta: Sigilli al massimo»).</p>
-            <p class="esempio">Consiglio: se scegli l'Arcano come scuola principale, usa il posto della Forza per un incantesimo che detona. Chi prepara una sola scuola funziona lo stesso, ma rende meno.</p>
+            <p class="nota">Se scegli l'Arcano come scuola principale, usa il posto della Forza per un incantesimo che detona. Chi prepara una sola scuola funziona lo stesso, ma rende meno.</p>
             <h3>Risorsa e recupero</h3>
             <p>Il mana si recupera solo facendo esplodere i Sigilli (e con il Pozzo Arcano, sotto). È il cuore della classe: chi incide e poi detona spende molto meno.</p>
             <h3>Preparazione: scuola principale</h3>
@@ -536,7 +581,7 @@
             ${tendineScuole("Sapiente")}`],
           /* 19 */ ["Monaco", `
             <p>L'uomo di fede: prega due forze opposte. La <b>Vita</b> protegge e cura, la <b>Negromanzia</b> evoca i morti e ferisce di più, ma chiede un prezzo alla mente.</p>
-            <p class="esempio">Spirito · punti fede · dado vita d8 · armature leggere e medie</p>
+            <dl class="scheda"><div><dt>Attributo</dt><dd>Spirito</dd></div><div><dt>Risorsa</dt><dd>punti fede</dd></div><div><dt>Dado vita</dt><dd>d8</dd></div><div><dt>Armature</dt><dd>leggere e medie</dd></div></dl>
             <h3>Come combatte: la Bilancia</h3>
             <p>La Bilancia va da Negromanzia ${MG ? MG.BILANCIA_MAX : 3} a Vita ${MG ? MG.BILANCIA_MAX : 3} e parte da 0 a ogni scontro. Ogni incantesimo di Vita la sposta di 1 verso la Vita, ogni incantesimo di Negromanzia di 1 verso la Negromanzia.</p>
             <div class="scroll"><table><tr><th>Posizione</th><th>Effetto</th></tr>
@@ -570,6 +615,7 @@
       en: {
         torna: "← Home page", titolo: "Rules", sotto: "The rules of the game, to look up whenever you like.",
         parte: "Part", capitolo: "Chapter", apri: "Expand all", chiudi: "Collapse",
+        desc: ["How to give your character orders and read the game's answers.", "The d20 roll, the difficulty and the cost of failing.", "The nine skills, how they are worked out and when they help.", "Fire, rations and the count of days.", "What happens at zero health and what wears the mind down.", "Three slots, shared between computer and phone.", "The four attributes and the one you fight with.", "Race bonuses, hit die, health and resources at level 1.", "Experience, thresholds and what you gain at each level.", "Initiative, attack, damage, critical hits and Armor class.", "How the enemy resists your effects.", "Effects that last a few turns, on you and on enemies.", "Fearsome foes, vulnerabilities, abilities and fleeing.", "The butler's hunts, ambushes outside the house, the clasp.", "Three fights told turn by turn.", "Resource, slots, traits and paths: what every class shares.", "Weapon and fury: wear down, stun, pierce, parry.", "Poisons, traps and bark, one turn after another.", "Carve Seals with Arcane, burst them with Force.", "The Balance between Life and Necromancy."],
         parti: [["How to play", [0, 1, 2, 3, 4, 5]], ["Your character", [6, 7, 8]], ["Combat", [9, 10, 11, 12, 13, 14]], ["The classes", [15, 16, 17, 18, 19]]],
         sezioni: [
           /* 0 */ ["Writing actions and exploring", `
@@ -590,7 +636,7 @@
             <p>When the outcome of an action is uncertain, the game asks for a check and shows you the difficulty, the die and the modifier.</p>
             <span class="formula">d20 + skill value ≥ difficulty (DC) → check passed</span>
             <p class="esempio">Example: Stealth +3 against DC 13. You roll 11: 11 + 3 = 14, at least 13, so the check is passed. With a 9 you would have made 12 and failed.</p>
-            <p>The skill value is worked out as explained in the “Skills” chapter. The difficulty depends on the situation: the higher it is, the harder to succeed.</p>
+            <p>The skill value is explained in the “Skills” chapter; the difficulty depends on the situation.</p>
             <h3>The rules of checks</h3>
             <ul>
               <li><b>DCs grow with you</b>: +${R.CD_PER_LIVELLO} for every level above the first. A DC 10 check at level 1 is DC 12 at level 3: growing makes you stronger, but the house grows more demanding.</li>
@@ -689,7 +735,12 @@
           /* 9 */ ["The combat turn", `
             <h3>Who acts first</h3>
             <p>Whoever has more Agility acts first (on a tie, a d20 each).</p>
-            <p><b>Sneaking up.</b> Some foes wait for you in specific places. If you sneak up on them (“I go down stealthily”), you roll d20 + Stealth against the foe's d20 + Perception, and they spot you only if they roll higher. If you stay hidden you act first and in the first turn their Armor class drops by 2; if they spot you they act first and in the first turn yours drops by 2. Someone used to hunting notices you more easily.</p>
+            <p><b>Sneaking up.</b> Some foes wait for you in specific places. You can sneak up on them (“I go down stealthily”): you roll d20 + Stealth against the foe's d20 + Perception, and they spot you only if they roll higher.</p>
+            <ul>
+              <li><b>You stay hidden</b>: you act first and in the first turn their Armor class drops by 2.</li>
+              <li><b>They spot you</b>: they act first and in the first turn yours drops by 2.</li>
+            </ul>
+            <p>Someone used to hunting notices you more easily.</p>
             <h3>Your action</h3>
             <p>Each turn you have one action: attack, use a technique, cast a spell or use an item. Picking up the torch or strapping on the shield does not use your action. Attacking with your weapon is always free. Write the action (“I attack”, “I cast…”, “I drink the healing potion”) or use the buttons that appear.</p>
             <h3>Hitting and wounding</h3>
@@ -755,7 +806,11 @@
               <li><b>Three stars</b>: the prey has just entered the bounds and nobody knows anything about it. Before attacking you can <b>observe</b> it (Perception: weapon and armour, main attribute, damage type), <b>recall</b> what it is (Lore: vulnerabilities, resistances, the condition it inflicts) and <b>sneak up</b> on it (Stealth against its Perception). Each action can be done only once.</li>
             </ul>
             <span class="formula">Observe and recall: d20 + skill against DC 12 (+ the growth with level): DC → one entry, DC + 5 → two, DC + 10 → three</span>
-            <p>Sneaking up well gives you advantage on the next check, and with a natural 20 you discover the prey's whole sheet; in the fight you act first and the prey has −2 Armor class in the first turn. If it spots you it acts first and in the first turn your Armor class drops by 2. Failed observe and recall checks cost 1 point of mental health, like every check; sneaking up does not.</p>
+            <ul>
+              <li><b>Sneaking up succeeds</b>: advantage on the next check; in the fight you act first and the prey has −2 Armor class in the first turn. With a natural 20 you discover its whole sheet.</li>
+              <li><b>It spots you</b>: it acts first and in the first turn your Armor class drops by 2.</li>
+              <li>Failed observe and recall checks cost 1 point of mental health, like every check; sneaking up does not.</li>
+            </ul>
             <h3>Ambushes</h3>
             <p>After the bronze clasp, outside the house you can be ambushed by those who came in through other entrances: goblins and orcs, alone or in a band (a group fights as a single creature), or one of five adventurers who grow with you.</p>
             <ul>
@@ -814,7 +869,7 @@
             <p>From level 3 you choose one of your class's two paths: three abilities, one at levels 3, 4 and 5, always ready and taking no slots. The two paths are opposites (one more violent, one more patient). <b>The choice is final.</b></p>`],
           /* 16 */ ["Warrior", `
             <p>The trained fighter: strikes with the weapon and opens every fight with techniques that wear down, stun or break the enemy.</p>
-            <p class="esempio">Vigour · fury points · hit die d10 · all armour and battle weapons</p>
+            <dl class="scheda"><div><dt>Attribute</dt><dd>Vigour</dd></div><div><dt>Resource</dt><dd>fury points</dd></div><div><dt>Hit die</dt><dd>d10</dd></div><div><dt>Armour</dt><dd>all, plus battle weapons</dd></div></dl>
             <h3>How he fights</h3>
             <p>The weapon type you hold decides your techniques, and each branch has its own way of beating the enemy:</p>
             <ul>
@@ -843,7 +898,7 @@
             ${ramiGuerriero}`],
           /* 17 */ ["Shaman", `
             <p>The hermit of the woods: fights with weapon and nature, poisoning, trapping and wearing the enemy down turn after turn.</p>
-            <p class="esempio">Agility · nature points · hit die d8 · light and medium armour</p>
+            <dl class="scheda"><div><dt>Attribute</dt><dd>Agility</dd></div><div><dt>Resource</dt><dd>nature points</dd></div><div><dt>Hit die</dt><dd>d8</dd></div><div><dt>Armour</dt><dd>light and medium</dd></div></dl>
             <h3>How he fights</h3>
             <ul>
               <li><b>Poison</b>: Poisoned deals 1d4 each enemy turn (Toxin 1d6). It renews, does not stack, but stacks with Bleeding and Withered. Some foes resist poison and take half.</li>
@@ -875,7 +930,7 @@
             ${tecnicheSciamano}`],
           /* 18 */ ["Arcanist", `
             <p>The scholar: reads the foe and takes it apart with two schools that work as a pair. <b>Arcane</b> carves Seals on the enemy, <b>Force</b> makes them burst.</p>
-            <p class="esempio">Mind · mana · hit die d6 · light armour</p>
+            <dl class="scheda"><div><dt>Attribute</dt><dd>Mind</dd></div><div><dt>Resource</dt><dd>mana</dd></div><div><dt>Hit die</dt><dd>d6</dd></div><div><dt>Armour</dt><dd>light</dd></div></dl>
             <h3>How he fights: Seals and Detonation</h3>
             <ol>
               <li><b>Carve</b>: Arcane spells leave Seals on the enemy (◆). They last the whole fight, at most ${MG ? MG.SIGILLI_MAX : 3} (${MG ? MG.SIGILLI_MAX_BOSS : 2} on fearsome foes), one more from level 4. The critical of a Force spell also carves 1 Seal.</li>
@@ -883,7 +938,7 @@
               <li><b>Recover</b>: every Detonation gives you back <b>1 mana per Seal</b> (Singularity 2). With no Seals there is nothing to burst: no extra damage and no mana.</li>
             </ol>
             <p>Under every spell the game tells you what it does for the combo (“Carves Seals”, “Detonates”) and, during the fight, when it is ready (“Combo ready: Seals at the maximum”).</p>
-            <p class="esempio">Tip: if you choose Arcane as your main school, use the Force slot for a spell that detonates. Preparing a single school still works, but yields less.</p>
+            <p class="nota">If you choose Arcane as your main school, use the Force slot for a spell that detonates. Preparing a single school still works, but yields less.</p>
             <h3>Resource and recovery</h3>
             <p>Mana comes back only by bursting Seals (and with the Arcane Well, below). It is the heart of the class: carving and then detonating costs far less.</p>
             <h3>Preparation: main school</h3>
@@ -900,7 +955,7 @@
             ${tendineScuole("Sapiente")}`],
           /* 19 */ ["Monk", `
             <p>The man of faith: prays to two opposing forces. <b>Life</b> protects and heals, <b>Necromancy</b> calls on the dead and hurts more, but asks a price of the mind.</p>
-            <p class="esempio">Spirit · faith points · hit die d8 · light and medium armour</p>
+            <dl class="scheda"><div><dt>Attribute</dt><dd>Spirit</dd></div><div><dt>Resource</dt><dd>faith points</dd></div><div><dt>Hit die</dt><dd>d8</dd></div><div><dt>Armour</dt><dd>light and medium</dd></div></dl>
             <h3>How he fights: the Balance</h3>
             <p>The Balance runs from Necromancy ${MG ? MG.BILANCIA_MAX : 3} to Life ${MG ? MG.BILANCIA_MAX : 3} and starts at 0 every fight. Each Life spell moves it 1 towards Life, each Necromancy spell 1 towards Necromancy.</p>
             <div class="scroll"><table><tr><th>Position</th><th>Effect</th></tr>
@@ -937,22 +992,13 @@
     document.getElementById("torna").textContent = T.torna;
     document.getElementById("titolo").textContent = T.titolo;
     document.getElementById("sotto").textContent = T.sotto;
-    /* dentro ogni capitolo, ogni titoletto (h3) di primo livello diventa una tendina; il testo prima del primo resta in vista */
-    const dividi = (html) => {
-      const tp = document.createElement("template"); tp.innerHTML = html;
-      let out = "", voce = null, buf = "";
-      const chiudi = () => { out += voce === null ? buf : `<details class="sub">${sommario(voce)}<div class="corpo">${buf}</div></details>`; buf = ""; };
-      for (const n of tp.content.childNodes) {
-        if (n.nodeName === "H3") { chiudi(); voce = n.textContent; }
-        else if (n.nodeType === 1) buf += n.outerHTML;
-      }
-      chiudi(); return out;
-    };
+    /* 03/11: indice da manuale. Parte: numero romano e titolo; capitolo: numero, titolo e riga di contenuto; il testo si legge di seguito */
+    const ROMANI = ["I", "II", "III", "IV", "V"];
     let numCap = 0;
     Sicuro.html(document.getElementById("sezioni"), T.parti.map(([titolo, idx], p) =>
-      `<details class="parte" open><summary><span class="tt">${T.parte} ${p + 1} · ${titolo}</span></summary><div class="corpo">${idx.map(i => {
-        const [t, c] = T.sezioni[i]; numCap++;
-        return `<details class="cap"><summary><span class="tt">${T.capitolo} ${numCap}: ${t}</span><span class="punti"></span></summary><div class="corpo">${dividi(c)}</div></details>`;
+      `<details class="parte" open><summary><span class="romano" aria-hidden="true">${ROMANI[p]}</span><h2 class="parte-tt"><span class="sr">${T.parte} ${p + 1}: </span>${titolo}</h2></summary><div class="corpo">${idx.map(i => {
+        const [tt, c] = T.sezioni[i]; numCap++;
+        return `<details class="cap"><summary><span class="cap-n" aria-hidden="true">${numCap}</span><h3 class="tt cap-tt"><span class="sr">${T.capitolo} ${numCap}: </span>${tt}</h3><span class="apri" aria-hidden="true"></span><span class="cap-desc">${T.desc[i]}</span></summary><div class="testo">${c.replace(/<(\/?)h3>/g, "<$1h4>")}</div></details>`;
       }).join("")}</div></details>`).join(""));
     const tutte = (aperte) => document.querySelectorAll("#sezioni details").forEach(d => { d.open = aperte || d.classList.contains("parte"); });
     document.getElementById("apriTutto").textContent = T.apri;

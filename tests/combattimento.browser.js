@@ -682,7 +682,7 @@ caso("Regolamento: classi, scuole di magia, stati ed esempi in italiano e in ing
   ["Abilità", "Guerriero", "Sciamano", "Arcanista", "Monaco", "Esempi di combattimento"].forEach(x => vero(titoli.some(t => t.endsWith(": " + x)), "manca la sezione: " + x));
   eq(await page.$$eval("#sezioni details.parte[open]", l => l.length), 4, "le parti sono aperte all'inizio");
   eq(await page.$$eval("#sezioni details.cap[open]", l => l.length), 0, "i capitoli sono chiusi all'inizio");
-  eq(await page.$$eval("#sezioni h3", l => l.length), 0, "ogni titoletto è diventato una tendina");
+  vero(await page.$$eval("#sezioni details.cap > .testo h4", l => l.length) > 40, "03/11: i titoletti si leggono di seguito dentro il capitolo"); eq(await page.$$eval("#sezioni .cap-desc", l => l.length), 20, "una riga di contenuto per capitolo");
   await page.click("#apriTutto"); eq(await page.$$eval("#sezioni details:not([open])", l => l.length), 0, "Apri tutto"); await page.click("#chiudiTutto");
   eq(await page.$$eval("#sezioni details[open]", l => l.length), 4, "Comprimi lascia aperte solo le parti");
   const t = await page.textContent("body");

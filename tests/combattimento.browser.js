@@ -1224,7 +1224,7 @@ caso("Sala di prova, Enea: fermaglio nascosto, Spinta dà svantaggio; alla prima
   eq(errori, [], "errori"); await chiudi();
 });
 
-caso("02/11: Sala di prova, Enea barbaro: lato dell'ascia e Sanguinamento; in Furia +2 ai danni e niente finte", async (b) => {
+caso("02/11: Sala di prova, Enea barbaro: lato dell'ascia e Sanguinamento; in Furia niente finte (dal 03/11 niente +2 ai danni)", async (b) => {
   const { page, errori, chiudi } = await eneaSala(b, "finta", { lato: "ascia" });
   await page.evaluate(() => { SalaProva.stato().s.lato = "ascia"; SalaProva.accoda(1, /* ascia, fuori dalla furia: niente Squarcio */ 15, 5); }); await page.click("#svAttacca");
   eq((await statoSala(page)).sangue, 0, "prima della Furia lo Squarcio non c'è (02/11)");
@@ -1239,7 +1239,7 @@ caso("02/11: Sala di prova, Enea barbaro: lato dell'ascia e Sanguinamento; in Fu
   st = await statoSala(page); eq([st.risorto, st.furia, st.carica], [true, true, "vera"], "in furia, mossa «finta»: niente finta, la carica è vera");
   const p2 = st.pv;
   await page.evaluate(() => SalaProva.accoda(/* tuo attacco */ 1, /* colpo caricato */ 15, 4, 4)); await page.click("#svAttacca");
-  st = await statoSala(page); eq(p2 - st.pv, 14, "2d8 (4 + 4) + 4 + 2 di furia");
+  st = await statoSala(page); eq(p2 - st.pv, 12, "2d8 (4 + 4) + 4: dal 03/11 la Furia non dà più +2");
   eq(errori, [], "errori"); await chiudi();
 });
 

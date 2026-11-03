@@ -51,7 +51,8 @@ Metodo: punto per punto, prima le cose leggere; zip dei file modificati solo a f
 
 **Subito (in corso il 3 novembre)**
 0. **Arcanista con Arcano principale** troppo debole (Ettore 44% contro 80% con Forza principale): le combo sono tra due scuole ma l'altra ha un solo posto. Proposte da provare con la serie: (1) un Sigillo inciso oltre il massimo rende 1 mana (massimo 1 per turno); (2) un incantesimo d'Arcano di danno al livello 2 (es. Marchio Arcano + 1d6); (3) in riserva, 2 posti all'altra scuola dal livello 3. Cambiare la meccanica sconsigliato per ora.
-0b. **Enea troppo duro per tutti** (42-79% dopo la mappa, obiettivo 80%): **prossimo passo.** Poi l'Arcano principale (meccanica dei Sigilli sui boss).
+0b. **Enea tarato (3 novembre):** salute 32, niente +2 in Furia; l'80% vale con la via giusta (vulnerabilità), senza si sta al 55-65%. Tabella in bilanciamento, «Taratura di Enea».
+0d. **Arcano principale: prossimo passo** (Sigilli 2 sui boss, controlli ridotti a ripieghi; 37-45% contro Enea anche con la vulnerabilità).
 0c. **A3:** poche combo nuove tra scuole, solo dove la serie lo chiede.
 
 **Leggeri**

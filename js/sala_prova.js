@@ -45,7 +45,7 @@
     ettore: { nome: "Ettore (boss)", ca: 13, pv: 30, vigore: 10, stat: { Vigore: 10, "Agilità": 13, Mente: 13, Spirito: 8 }, primaria: "Mente", dadoVita: 8, dannoDado: 4, dannoBonus: 1, attacchi: 2, nomeArma: "Pugnale", attacco: 1, boss: true, probPresa: 0, probSoffio: 0, soffio: null, arma: true, resa: true, vuln: ["Contundente", "Forza", "Ombra"] },
     /* 30/10, PROPOSTA: bilanciamento_nemici_oggetti.md, sezione 5c */
     /* 02/11: barbaro nano, primaria Vigore; «Sottobosco»: con lo Sciamano gli stati durano 1 turno in più, in furia il veleno ha un dado in più */
-    enea: { nome: "Enea (boss, argento)", ca: 13, pv: 36, vigore: 14, stat: { Vigore: 14, "Agilità": 10, Mente: 10, Spirito: 12 }, primaria: "Vigore", attaccoFisso: 4 /* Vigore 14 (+2) + 2 */, pa: 9, boss: true, enea: true, arma: true, vuln: ["Perforante", "Arcano", "Luce", "Sottobosco"] },
+    enea: { nome: "Enea (boss, argento)", ca: 13, pv: 32, vigore: 14, stat: { Vigore: 14, "Agilità": 10, Mente: 10, Spirito: 12 }, primaria: "Vigore", attaccoFisso: 4 /* Vigore 14 (+2) + 2 */, pa: 9, boss: true, enea: true, arma: true, vuln: ["Perforante", "Arcano", "Luce", "Sottobosco"] },
     manichino: { nome: "Manichino (non attacca)", ca: 12, pv: 60, boss: false, passivo: true, arma: false }
   };
   const NOMI_EFF = { sanguina: "Sanguinamento", frattura: "Frattura", intontito: "Intontito", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Inibito", frastornato: "Frastornato", bloccato: "Stordito", guardia: "Guardia alzata", furore: "Furore inarrestabile", esposto: "Esposto", precisione: "Mille Soli", baluardo: "Baluardo d'Acciaio", fortezza: "Fortezza Eterna", runa: "Runa sull'arma", occhio: "Occhio del Tomo", tomo: "Tomo Proibito", quiete: "Quiete Assoluta", muro: "Muro di forza", scudo: "Scudo", invuln: "Invulnerabilità", pressione: "Pressione", parola: "Parola Vera", santuario: "Santuario", voto: "Voto di Vita", rigen: "Rigenerazione", gemella: "Spirito Servitore", cerchio: "Cerchio del Focolare", fiamma: "Fiamma Calda", notte: "Notte dei Morti", furiaCinerea: "Furia Cinerea", manto: "Velo degli Spiriti", seconda: "Seconda Vita", accecato: "Accecato", avvizzito: "Avvizzito", paura: "Terrore", corona: "Aura Vitale",
@@ -395,7 +395,7 @@
     const x = tira(4), pv = x + 3;
     s.risorto = true; s.pv = pv; s.carica = null; s.dopoCarica = false; s.furiaB = true; s.inGuardia = false; s.inGuardiaDopo = false;
     const prima = s.maglio; s.maglio = true;
-    blocco("Enea cade… e si rialza nella furia", ["Le tombe dei suoi uomini lo rimettono in piedi. Non prega più: ringhia.", `Furia del becchino: 1d4 ${x} + 3 = ${pv} salute; +2 ai danni, niente più finte né carica in guardia.`, prima ? "" : "Ora impugna l'arma a doppia faccia."], "nem");
+    blocco("Enea cade… e si rialza nella furia", ["Le tombe dei suoi uomini lo rimettono in piedi. Non prega più: ringhia.", `Furia del becchino: 1d4 ${x} + 3 = ${pv} salute; niente più finte né carica in guardia.`, prima ? "" : "Ora impugna l'arma a doppia faccia."], "nem");
   }
   /* dopo la tua azione: se Enea stava caricando e lo hai colpito, la carica va a vuoto */
   function dopoAzioneEnea() {
@@ -421,7 +421,7 @@
   }
   /* un colpo di Enea: tiro, Parata, scudo, difese dello Sciamano, furia; o.dimezza: «Mi difendo»; o.ignora: la finta aggira la difesa */
   function colpoEnea(c, righe, difesa, nome, nd0, dado, bonus, o) {
-    o = o || {}; if (s.furiaB) bonus += 2; /* 02/11: Furia del becchino */
+    o = o || {}; /* 03/11: la Furia del becchino non dà più +2 ai danni (taratura di Enea) */
     if (o.ignora) { if (s.parata || s.assorbe || s.difeso) righe.push("La finta aggira la tua difesa."); s.parata = false; s.parataCrepe = false; s.parataPunta = false; s.assorbe = null; }
     const furia = !arcanista() && !sciamano();
     const m = nem.attaccoFisso + sdegno() + C.modAttaccoNem(s), at = C.tiroAttaccoNem(s, c), d = at.d, tot = d + m, ca = caPg(), crit = d === 20 && C.critNemPossibile(s), ok = crit || tot > ca;

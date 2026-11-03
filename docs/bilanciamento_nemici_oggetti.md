@@ -409,10 +409,10 @@ Gli incantesimi che fanno un attacco magico aggiungono al danno il **modificator
 | Voce | Valore |
 |---|---|
 | Attributi | **Vigore 14 (+2, primaria)**, Agilità 10, Mente 10, Spirito 12 (+1) |
-| Salute, CA, PA, attacco | 36, 13, 9, +4: invariati |
+| Salute, CA, PA, attacco | **32** (dal 3 novembre, prima 36), 13, 9, +4 |
 | Mani nude | come prima: 2 × 1d4, Spinta (1 PA) |
 | Arma a doppia faccia | a ogni turno gira l'arma e annuncia il lato del turno dopo. **Maglio:** 1d8 + 4, Colpo caricato (3 PA, 2d8 + 4), Finta (2 PA), carica in guardia, «Mi difendo». **Ascia:** 1d8 + 4 tagliente; se va a segno **e solo in Furia**, **Squarcio** (2 PA): TS Vigore CD 13 (8 + 2 + livello) o Sanguinamento 1d4 per 3 turni |
-| Furia del becchino | alla prima caduta si rialza con 1d4 + 3 salute; da lì **+2 ai danni**, niente Finta, niente carica in guardia |
+| Furia del becchino | alla prima caduta si rialza con 1d4 + 3 salute; niente Finta, niente carica in guardia (**dal 3 novembre niente più +2 ai danni**) |
 | Vulnerabilità | **dal 3 novembre: perforante, arcano, luce, sottobosco** (mappa bilanciata, incantesimi sezione 6). Prima: **forza, luce, sottobosco**: niente più veleno (i nani non la giustificano). **Sottobosco** (solo Sciamano): gli stati che lo Sciamano gli infligge durano **1 turno in più**, anche sopra il tetto dei boss; **in Furia** il veleno ha **un dado in più** (respira a pieni polmoni, le spore gli entrano dentro). Se non basta: anche l'acido che corrode i resti dell'armatura (−1 CA per colpo d'acido, massimo −2) |
 | CD dei suoi effetti | 13 |
 
@@ -856,4 +856,24 @@ Ettore per l'Arcanista va bene così (Francesco: il 74% è accettabile). Enea è
 | Monaco, Ombra | 89% | 47% | 58% | 51% |
 
 L'Arcano principale resta 20 punti sotto la Forza anche ora che Enea è vulnerabile all'Arcano: lo scarto è della meccanica (Sigilli al massimo 2 sui boss, controlli d'Arcano ridotti a ripieghi), non della vulnerabilità.
+
+## Taratura di Enea (DECISA il 3 novembre)
+
+- **Regola della scala (scelta a):** l'80% vale per chi arriva con la **via giusta**, cioè con la vulnerabilità del guardiano (arma o scuola). Chi arriva senza resta intorno al 55-65%: gli Appunti di Guendalina e il cambio di arma o incantesimi al riposo sono la scelta tattica premiata.
+- **Leve adottate:** salute 36 → **32**; la Furia del becchino non dà più +2 ai danni. **Scartata** la leva sul colpo caricato (2d6 al posto di 2d8): quasi nessun effetto, il giocatore interrompe quasi sempre la carica.
+- La vulnerabilità vale da sola circa 15-20 punti: chi ce l'ha arriva all'80%, chi no al 55-65%.
+
+**Serie finale del 3 novembre** (giocatore medio, 400 scontri per caso; Ettore liv. 2, Enea liv. 3):
+
+| Classe | Ettore | Enea fermaglio | Enea nascosto | Enea maglio | Vulnerabilità di Enea? |
+|---|---|---|---|---|---|
+| Guerriero, spada (taglio) | 86% | 51% | 61% | 59% | no |
+| Guerriero, mazza (perforante) | 80% | 69% | 77% | 71% | sì |
+| Sciamano (mazza, perforante + sottobosco) | 96% | 76% | 87% | 80% | sì |
+| Arcanista, Forza | 72% | 58% | 63% | 65% | no |
+| Arcanista, Arcano | 65% | 37% | 45% | 43% | sì, ma meccanica debole |
+| Monaco, Vita | 87% | 73% | 79% | 78% | sì |
+| Monaco, Negromanzia | 85% | 61% | 67% | 63% | no |
+
+Prossimo: l'Arcano principale (Sigilli al massimo 2 sui boss, controlli d'Arcano ridotti a ripieghi).
 

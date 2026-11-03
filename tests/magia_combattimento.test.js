@@ -51,12 +51,11 @@
   });
 
   /* ================= Sigilli ================= */
-  caso("03/11: Specchio di Rune aspetta il primo colpo a segno, al massimo 2 turni del nemico", () => {
+  caso("03/11: Specchio di Rune aspetta il primo colpo a segno, senza limite di turni", () => {
     const s = { pv: 40, pvMax: 40, eff: {}, effMax: {}, sigilli: 0 }, c = { tira: () => 1, boss: false };
-    s.assorbe = { tipo: "specchio", n: 0, turni: 2 };
-    C.colpoMancato(s, c); C.fineTurnoNemico(s); C.inizioTurnoPg(s, c); eq(!!s.assorbe, true, "dopo un colpo mancato resta pronto");
-    C.fineTurnoNemico(s); C.inizioTurnoPg(s, c); eq(s.assorbe, null, "dopo il secondo turno del nemico scade");
-    s.assorbe = { tipo: "specchio", n: 0, turni: 2 };
+    s.assorbe = { tipo: "specchio", n: 0 };
+    for (let i = 0; i < 4; i++) { C.colpoMancato(s, c); C.fineTurnoNemico(s); C.inizioTurnoPg(s, c); }
+    eq(!!s.assorbe, true, "dopo quattro colpi mancati resta pronto");
     const r = C.colpoSubito(s, c, false, 10); eq(r.danno, 5, "il colpo a segno fa metà"); eq(s.assorbe, null, "e lo consuma");
   });
   caso("03/11: Runa sull'Arma dura i tuoi 3 turni successivi (il turno del nemico subito dopo il lancio non la consuma)", () => {

@@ -543,9 +543,8 @@
         else E.push({ k: "ondaVuota" });
       }
     }
-    /* 03/11: lo Specchio di Rune aspetta il primo colpo a segno, al massimo per 2 turni del nemico; le altre difese scadono qui */
-    if (a && a.tipo === "specchio" && (Number(a.turni) || 1) > 1) { a.turni = Number(a.turni) - 1; }
-    else s.assorbe = null;
+    /* 03/11: lo Specchio di Rune aspetta il primo colpo a segno, senza limite di turni (deciso da Francesco); le altre difese scadono qui */
+    if (!(a && a.tipo === "specchio")) s.assorbe = null;
     s.postura = false; s.drenaggio = false;
     s.difesaBloccata = !!s.difesaUsata; s.difesaUsata = false; /* niente difesa dello scudo due turni di fila */
     s.colpitoUltimo = !!s.colpitoOra; s.colpitoOra = false;

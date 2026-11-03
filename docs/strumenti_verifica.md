@@ -67,3 +67,11 @@ Cambiare classe o razza rimette il preset; livello e Vigore ricalcolano la salut
 ## Serie automatica di scontri (02/11/2026)
 
 `strumenti/serie_scontri.js`: fa giocare in automatico molti scontri nella pagina di test (`test.html`, stesso motore della sala di prova) e stampa una riga per classe e caso (vittorie, salute residua, turni). Avvio: `python3 -m http.server 8765 --bind 127.0.0.1`, poi `N=150 node strumenti/serie_scontri.js` (`SOLO_ENEA=1` per il solo Enea col fermaglio, `CLASSI=guerriero,monaco` per scegliere le classi). Il giocatore automatico usa a caso tecniche e incantesimi, si cura sotto il 40% e contro le cariche di Enea osserva e interrompe: è pessimista, serve a confrontare versioni e classi. Con 150 scontri per caso l'errore è di circa ±5 punti; per decidere tra due versioni vicine usare 400.
+
+## Pagina di test più veritiera (03/11/2026)
+
+- **Equipaggiamento con i limiti di classe** (come in creazione): armi «da battaglia» solo al Guerriero; armature: Guerriero tutte, Sciamano e Monaco fino alla media, Arcanista solo leggera; con un'arma a due mani lo scudo non si imbraccia. Le opzioni non permesse restano visibili ma spente.
+- **Tecniche:** niente più «Ignora i posti»: si usano solo quelle preparate, entro i posti e le quote del livello (+1 con lo scudo, solo Guerriero). Cambiando classe, livello, arma o scudo si riparte da una preparazione predefinita valida.
+- **Incantesimi:** scuola principale da scegliere (preset: Arcanista Forza, Monaco Luce); preparati 2/4/5/6/7 della principale più 1 dell'altra, come in gioco; si lanciano solo quelli preparati (le abilità della via non occupano posti).
+- **Serie della via:** solo per il Guerriero con lo scudo.
+- Gli incantesimi d'Arcano contano come tipo «Arcano» per vulnerabilità e resistenze, come in gioco.

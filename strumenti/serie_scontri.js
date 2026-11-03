@@ -1,6 +1,6 @@
 /* Serie automatica di scontri nella pagina di test (stesso motore della sala di prova): percentuale di vittorie per classe e caso.
    Uso: python3 -m http.server 8765 --bind 127.0.0.1, poi  N=150 node strumenti/serie_scontri.js
-   Opzioni: N (scontri per caso), SOLO_ENEA=1 (solo Enea col fermaglio), CLASSI=guerriero,monaco. Il giocatore automatico è pessimista: confronta le versioni, non leggere i numeri come assoluti. */
+   Opzioni: N (scontri per caso), SOLO_ENEA=1 (solo Enea col fermaglio), CLASSI=guerriero,monaco. Equipaggiamento e preparazione rispettano le regole di classe (03/11). Il giocatore automatico è pessimista: confronta le versioni, non leggere i numeri come assoluti. */
 const { chromium } = require('playwright');
 const N = Number(process.env.N || 300);
 const CASI0 = [
@@ -20,12 +20,11 @@ const CLASSI = process.env.CLASSI ? process.env.CLASSI.split(',') : ['guerriero'
     await p.selectOption('#pLiv', String(c.liv)); await p.selectOption('#pClasse', cl);
     await p.selectOption('#nTipo', c.nem);
     if (c.nem === 'enea') { await p.setChecked('#nFermaglio', c.fermaglio); await p.selectOption('#nEneaLato', c.lato); await p.selectOption('#nEneaMossa', 'casuale'); }
-    await p.setChecked('#pIgnora', true);
     const r = await p.evaluate((N) => {
       const SP = window.SalaProva; let vinte = 0, pvRest = 0, turni = 0;
       const lista = (sel) => [...document.querySelectorAll(sel)].filter(x => !x.disabled);
       for (let i = 0; i < N; i++) {
-        SP.nuovoScontro(); let g = 0;
+        window.SalaProvaPrepara(true); SP.nuovoScontro(); let g = 0; /* 03/11: preparazione legale a caso (posti, quote, scuola principale) a ogni scontro */
         while (!SP.stato().finito && g++ < 200) {
           const st = SP.stato(); if (!st.turnoPg) break;
           const pg = st.pg, s = st.s, basso = pg.pv < pg.pvMax * 0.4;

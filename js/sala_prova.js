@@ -26,10 +26,16 @@
   };
 
   const ARMI = [
-    { nome: "Spada corta", dado: 6, tipo: "Tagliente" }, { nome: "Ascia da battaglia", dado: 8, tipo: "Tagliente" },
-    { nome: "Bastone", dado: 6, tipo: "Contundente" }, { nome: "Martello da battaglia", dado: 8, tipo: "Contundente" },
-    { nome: "Mazza chiodata", dado: 6, tipo: "Perforante" }, { nome: "Piccone da battaglia", dado: 8, tipo: "Perforante" }
+    { nome: "Spada corta", dado: 6, tipo: "Tagliente", mani: 1 }, { nome: "Ascia da battaglia", dado: 8, tipo: "Tagliente", mani: 2 },
+    { nome: "Bastone", dado: 6, tipo: "Contundente", mani: 2 }, { nome: "Martello da battaglia", dado: 8, tipo: "Contundente", mani: 1 },
+    { nome: "Mazza chiodata", dado: 6, tipo: "Perforante", mani: 1 }, { nome: "Piccone da battaglia", dado: 8, tipo: "Perforante", mani: 2 }
   ];
+  /* 03/11: limiti di classe come in creazione.html. Le armi «da battaglia» solo al Guerriero; armature per classe; lo scudo occupa una mano */
+  const ARMATURE_OK = { guerriero: ["nessuna", "leggera", "media", "pesante"], sciamano: ["nessuna", "leggera", "media"], arcanista: ["nessuna", "leggera"], monaco: ["nessuna", "leggera", "media"] };
+  const armaOk = (classe, i) => classe === "guerriero" || !/da battaglia/.test(ARMI[i].nome);
+  /* incantesimi preparati (03/11): posti della scuola principale come le tecniche (2, 4, 5, 6, 7) più 1 dell'altra scuola, come in gioco */
+  const preparatiInc = new Set();
+  const postiPrincInc = (liv) => [2, 2, 1, 1, 1].slice(0, Math.max(1, Math.min(5, liv))).reduce((a, b) => a + b, 0);
   /* gli stessi valori di NEMICI in gioco.html */
   const NEMICI = {
     mastino: { nome: "Mastino infernale (comune)", ca: 10, dadoVita: 6, dannoDado: 4, attacco: 1, boss: false, probPresa: 0.6, probSoffio: 0.4, soffio: { cd: 12, dadi: 2, dado: 6, ricarica: 5 }, arma: false },
@@ -50,6 +56,7 @@
   const sciamano = () => !!pg && pg.classe === "sciamano" && !!S; /* tecniche della natura e punti natura */
   const risorsa = () => (arcanista() ? (monaco() ? "fede" : "mana") : sciamano() ? "natura" : "furia");
   const SCUOLE = () => (monaco() ? ["luce", "ombra"] : ["arcano", "forza"]);
+  const scuolaPrinc = () => { const v = $("pScuola") && $("pScuola").value; return SCUOLE().includes(v) ? v : SCUOLE()[0]; }; /* 03/11: pagina di test */
 
   /* ---------- dadi: coda truccata, poi caso ---------- */
   const coda = [];
@@ -85,7 +92,7 @@
   const tipoVia = () => (pg.serie === "scudo" ? "Scudo" : pg.arma.tipo); /* serie della via preparata al riposo: arma o scudo */
   const dellaVia = () => pg.via ? TEC.filter(t => t.via === pg.via && t.tipo === (sciamano() ? "Natura" : tipoVia()) && t.liv <= pg.liv) : [];
   const scudoPosti = () => !sciamano() && pg.scudo;
-  const ignoraPosti = () => $("pIgnora").checked;
+  const ignoraPosti = () => !window.LAYOUT_TEST && !!$("pIgnora") && $("pIgnora").checked; /* 03/11: la pagina di test usa sempre i posti */
   const prepT = () => [...preparate].map(id => TEC.find(t => t.id === id)).filter(Boolean);
 
   const passoDado = (d) => (d >= 12 ? 12 : d + 2); /* Runa sull'Arma: 1d6 → 1d8 → 1d10 → 1d12 */
@@ -251,6 +258,7 @@
   }
   function usaTecnica(t) {
     if (!turnoPg || finito) return;
+    if (!ignoraPosti() && !t.via && t.tipo !== "Utilita" && !preparate.has(t.id)) return log(`${t.nome.it}: non è tra le tecniche preparate.`, "ko");
     const c = ctx();
     if (t.unaPerRiposo && c.usataPerRiposo(t.id)) return log(`${t.nome.it}: già usata in questo riposo.`, "ko");
     const disp = C.disponibile(t, s); if (!disp.ok) return log(`${t.nome.it}: ${testoEventi([{ k: disp.motivo }])[0]}`, "ko");
@@ -267,11 +275,12 @@
   }
   function usaIncantesimo(inc) {
     if (!turnoPg || finito || !arcanista()) return;
+    if (window.LAYOUT_TEST && !inc.via && !preparatiInc.has(inc.id)) return log(`${inc.nome.it}: non è tra gli incantesimi preparati.`, "ko");
     const c = ctx();
     const disp = M.disponibile(inc, s, c); if (!disp.ok) return log(`${inc.nome.it}: ${M.testo({ k: disp.motivo })}`, "ko");
     const costo = M.costo(inc, s);
     if (pg.furia < costo) return log(`${inc.nome.it}: servono ${costo} mana, ne hai ${pg.furia}.`, "ko");
-    pg.furia -= costo; tipoAzione = { forza: "Forza", luce: "Luce", ombra: "Ombra" }[inc.scuola] || null; /* le armi non contano negli incantesimi */
+    pg.furia -= costo; tipoAzione = { arcano: "Arcano", forza: "Forza", luce: "Luce", ombra: "Ombra" }[inc.scuola] || null; /* 03/11: anche Arcano, come in gioco */ /* le armi non contano negli incantesimi */
     const r = M.lancia(inc, s, ctx());
     blocco(`${inc.nome.it} (−${costo} ${monaco() ? "fede" : "mana"})`, [...testoEventi(r.eventi), `${monaco() ? "Fede" : "Mana"}: ${pg.furia}/${pg.furiaMax}.`], "mia");
     dopoAzione();
@@ -510,19 +519,27 @@
     lista.append(el("h4", { text: sciamano() ? "Tecniche della natura sbloccate (con qualsiasi arma)" : `Tecniche sbloccate (${pg.arma.tipo.toLowerCase()}${pg.scudo ? " + scudo" : ""})` }));
     opzioni().forEach(t => riga(t, "base"));
     if (pg.liv >= 3) { lista.append(el("h4", { text: pg.via ? `Via di ${pg.via === "aldo" ? (sciamano() ? "Aldo — Signore delle Spore Putride" : "Aldo — Lama del Guardiano") : (sciamano() ? "Guendalina — Custode dei Boschi Sacri" : "Guendalina — Veglia")}, serie ${pg.serie === "scudo" ? "dello scudo" : "dell'arma"} (non occupa posti${dellaVia().length ? "" : "; nessuna abilità per quest'arma"})` : "Via di prestigio: nessuna scelta" })); dellaVia().forEach(t => riga(t, "via")); }
-    if (arcanista()) { /* niente preparazione: tutti gli incantesimi sbloccati sono usabili */
-      $("svPosti").textContent = "Tutti gli incantesimi sbloccati sono usabili (la preparazione ai posti non si prova qui). Il costo si paga in " + (monaco() ? "punti fede" : "mana") + ".";
+    if (arcanista()) { /* classica: tutti gli incantesimi sbloccati; pagina di test (03/11): scuola principale e posti come in gioco */
+      const prepInc = !!window.LAYOUT_TEST, princ = prepInc ? scuolaPrinc() : null, maxP = postiPrincInc(pg.liv), quota = (sc) => (sc === princ ? maxP : 1);
+      $("svPosti").textContent = prepInc ? `Incantesimi preparati: ${preparatiInc.size} / ${maxP + 1} (${maxP} della scuola principale, 1 dell'altra; si cambiano al riposo). Il costo si paga in ${monaco() ? "punti fede" : "mana"}.` : "Tutti gli incantesimi sbloccati sono usabili (la preparazione ai posti non si prova qui). Il costo si paga in " + (monaco() ? "punti fede" : "mana") + ".";
       lista.replaceChildren();
-      const sc2 = SCUOLE(), sblocc = MG.INCANTESIMI.filter(i => sc2.includes(i.scuola) && i.liv <= pg.liv), NS = { arcano: "Arcano", forza: "Forza", luce: "Luce", ombra: "Ombra" };
+      const sc2 = prepInc ? [princ, SCUOLE().find(x => x !== princ)] : SCUOLE(), sblocc = MG.INCANTESIMI.filter(i => sc2.includes(i.scuola) && i.liv <= pg.liv), NS = { arcano: "Arcano", forza: "Forza", luce: "Luce", ombra: "Ombra" };
       const rigaInc = (inc, etichetta) => {
         const costoR = s ? M.costo(inc, s) : inc.costo;
         const usata = M.UNA_PER_RIPOSO.includes(inc.id) && perRiposo[inc.id];
-        const ok = !finito && turnoPg && s && pg.furia >= costoR && !usata && M.disponibile(inc, s, ctx()).ok;
+        const prep = !prepInc || etichetta === "via" || preparatiInc.has(inc.id);
+        const ok = prep && !finito && turnoPg && s && pg.furia >= costoR && !usata && M.disponibile(inc, s, ctx()).ok;
         const b = el("button", { type: "button", class: "mini", "data-inc": inc.id, onclick: () => usaIncantesimo(inc) }, "Lancia");
         b.disabled = !ok;
-        lista.append(el("div", { class: "tec" }, el("span", { class: "sx" }, el("b", { text: inc.nome.it }), el("small", { text: ` liv. ${inc.liv} · ${costoR} ${monaco() ? "fede" : "mana"}${M.UNA_PER_RIPOSO.includes(inc.id) ? " · una per riposo" : ""}${etichetta ? " · " + etichetta : ""}` })), b, el("p", { class: "eff", text: inc.effetto.it })));
+        let chkI = null;
+        if (prepInc && etichetta !== "via") {
+          chkI = el("input", { type: "checkbox", title: "Prepara", onchange: (e) => { if (e.target.checked) preparatiInc.add(inc.id); else preparatiInc.delete(inc.id); disegna(); } });
+          const nSc = [...preparatiInc].filter(id => (MG.INCANTESIMI.find(x => x.id === id) || {}).scuola === inc.scuola).length;
+          chkI.checked = preparatiInc.has(inc.id); chkI.disabled = !chkI.checked && (preparatiInc.size >= maxP + 1 || nSc >= quota(inc.scuola));
+        }
+        lista.append(el("div", { class: "tec" + (prep ? "" : " spenta") }, el("span", { class: "sx" }, chkI, el("b", { text: inc.nome.it }), el("small", { text: ` liv. ${inc.liv} · ${costoR} ${monaco() ? "fede" : "mana"}${M.UNA_PER_RIPOSO.includes(inc.id) ? " · una per riposo" : ""}${etichetta ? " · " + etichetta : ""}` })), b, el("p", { class: "eff", text: inc.effetto.it })));
       };
-      sc2.forEach(sc => { lista.append(el("h4", { text: NS[sc] })); sblocc.filter(i => i.scuola === sc).forEach(i => rigaInc(i)); });
+      sc2.forEach((sc, n) => { lista.append(el("h4", { text: NS[sc] + (prepInc ? (n === 0 ? ` — scuola principale (${maxP} posti)` : " — altra scuola (1 posto)") : "") })); sblocc.filter(i => i.scuola === sc).forEach(i => rigaInc(i)); });
       if (pg.liv >= 3) {
         lista.append(el("h4", { text: pg.via ? `Via ${monaco() ? (pg.via === "aldo" ? "Cenere (Ombra)" : "Brace (Luce)") : (pg.via === "aldo" ? "Frattura (Forza)" : "Sutura (Arcano)")}` : "Via di prestigio: sceglila nel pannello a sinistra" }));
         if (pg.via) MG.VIE.filter(v => v.via === pg.via && sc2.includes(v.scuola) && v.liv <= pg.liv).forEach(i => rigaInc(i, "via"));
@@ -532,7 +549,7 @@
     const caricaOra = !finito && turnoPg && nem && nem.enea && s && s.carica;
     $("svDifendo").hidden = !caricaOra; $("svDifendo").disabled = !caricaOra;
     $("svOsserva").hidden = !caricaOra; $("svOsserva").disabled = !caricaOra || !!s.osservato;
-    $("pVia").disabled = Number($("pLiv").value) < 3; $("pSerie").disabled = Number($("pLiv").value) < 3;
+    $("pVia").disabled = Number($("pLiv").value) < 3; $("pSerie").disabled = Number($("pLiv").value) < 3 || (!!window.LAYOUT_TEST && !(pg && pg.classe === "guerriero" && pg.scudo));
   }
   function mostraCoda() { const c = $("svCodaVis"); if (c) c.textContent = coda.length ? `In coda: ${coda.join(", ")}` : "Coda vuota: i dadi tirano a caso."; }
   function eseguiTest() {
@@ -642,8 +659,8 @@
         gruppo("Opzioni di prova",
           campo("Intuizione (bonus)", num("pInt", 1, -5, 15)),
           campo("Via di prestigio (liv. 3+)", sel("pVia", [["", "nessuna"], ["aldo", "Aldo"], ["guendalina", "Guendalina"]], "")),
-          campo("Serie della via", sel("pSerie", [["arma", "dell'arma"], ["scudo", "dello scudo"]], "arma")),
-          chk("pIgnora", "Ignora i posti (tutte le tecniche sbloccate)", true))));
+          campo("Serie della via (Guerriero con scudo)", sel("pSerie", [["arma", "dell'arma"], ["scudo", "dello scudo"]], "arma")),
+          el("div", { id: "rScuola" }, campo("Scuola principale", sel("pScuola", [["arcano", "Arcano"], ["forza", "Forza"]], "forza"))))));
 
     const cardNem = lato("nem", "Nemico", "tNemSotto", () => { applicaPresetNem(); aggiornaPg(); },
       el("div", { class: "stato" }, el("h3", { text: "In scontro" }), barraEl("bNemPv", "Salute"), barraEl("bNemPa", "Punti abilità"), el("dl", { id: "svNem" })),
@@ -712,8 +729,43 @@
       $("oEnea").hidden = k !== "enea"; $("oMastino").hidden = k !== "mastino";
       $("tNemSotto").textContent = `${NEMICI[k].nome.replace(/ \(.*\)/, "")} · livello ${x.liv}${NEMICI[k].vuln ? " · vulnerabile a " + NEMICI[k].vuln.join(", ").toLowerCase() : ""}`;
     }
+    /* 03/11: limiti di classe sull'equipaggiamento e preparazione predefinita, come in creazione e in gioco */
+    function applicaLimiti() {
+      const cl = $("pClasse").value;
+      [...$("pArma").options].forEach(o => { o.disabled = !armaOk(cl, Number(o.value)); });
+      if (!armaOk(cl, Number($("pArma").value))) $("pArma").value = String([0, 2, 4].find(i => armaOk(cl, i)));
+      [...$("pArmatura").options].forEach(o => { o.disabled = !ARMATURE_OK[cl].includes(o.value); });
+      if (!ARMATURE_OK[cl].includes($("pArmatura").value)) $("pArmatura").value = ARMATURE_OK[cl][ARMATURE_OK[cl].length - 1];
+      const dueMani = ARMI[Number($("pArma").value)].mani === 2;
+      $("pScudo").disabled = dueMani; if (dueMani) $("pScudo").checked = false;
+      const inc = cl === "arcanista" || cl === "monaco";
+      $("rScuola").hidden = !inc;
+      if (inc) {
+        const sc = cl === "monaco" ? ["luce", "ombra"] : ["arcano", "forza"], NS = { arcano: "Arcano", forza: "Forza", luce: "Luce", ombra: "Ombra" };
+        if (!sc.includes($("pScuola").value)) { $("pScuola").replaceChildren(...sc.map(k => el("option", { value: k, text: NS[k] }))); $("pScuola").value = (P.PG[cl] && P.PG[cl].scuola) || sc[0]; }
+      }
+      $("pSerie").disabled = !(cl === "guerriero" && $("pScudo").checked && Number($("pLiv").value) >= 3); if ($("pSerie").disabled) $("pSerie").value = "arma"; /* la serie dello scudo esiste solo per il Guerriero con lo scudo */
+      ricalcolaCa();
+    }
+    function preparaPredefiniti(casuale) {
+      const mescola = (a) => casuale ? a.map(x => [Math.random(), x]).sort((x, y) => x[0] - y[0]).map(x => x[1]) : a;
+      preparate.clear(); preparatiInc.clear();
+      if (!pg) return;
+      if (arcanista()) {
+        const princ = scuolaPrinc(), altra = SCUOLE().find(x => x !== princ), sb = (sc) => mescola(MG.INCANTESIMI.filter(i => i.scuola === sc && i.liv <= pg.liv).sort((a, b) => casuale ? 0 : b.liv - a.liv));
+        sb(princ).slice(0, postiPrincInc(pg.liv)).forEach(i => preparatiInc.add(i.id));
+        sb(altra).slice(0, 1).forEach(i => preparatiInc.add(i.id));
+      } else {
+        const opz = mescola(opzioni()), max = C.slotTecniche(pg.liv, scudoPosti());
+        C.sceltaPredefinita(opz, pg.liv, scudoPosti()).slice(0, max).forEach(t => preparate.add(t.id));
+      }
+    }
+    window.SalaProvaPrepara = (casuale) => { pg = leggiPg(); preparaPredefiniti(casuale); disegna(); };
     function aggiornaPg() {
+      applicaLimiti();
       const vecchio = pg; pg = leggiPg();
+      const chiave = [pg.classe, pg.liv, pg.arma.nome, pg.scudo, $("pScuola").value].join("|");
+      if (chiave !== costruisciTest.chiave) { costruisciTest.chiave = chiave; preparaPredefiniti(false); } /* cambia la scelta: si riparte dai preparati predefiniti */
       if (vecchio && s && !finito) { pg.pv = Math.min(vecchio.pv, pg.pvMax); pg.furia = Math.min(vecchio.furia, pg.furiaMax); log("Personaggio cambiato a scontro in corso: valido dal prossimo tiro.", "sis"); }
       [...preparate].forEach(id => { const t = TEC.find(x => x.id === id); if (!t || t.liv > pg.liv) preparate.delete(id); });
       disegna();
@@ -722,10 +774,10 @@
     su(["pClasse", "pRazza"], () => applicaPresetPg(true));
     su(["pLiv", "pVig"], ricalcolaPv);
     su(["pArmatura", "pAgi", "pScudo"], ricalcolaCa);
-    su(["pMente", "pSpi", "pCa", "pPv", "pArma", "pVia", "pSerie", "pIgnora", "pInt"]);
+    su(["pMente", "pSpi", "pCa", "pPv", "pArma", "pVia", "pSerie", "pInt", "pScuola"]);
     su(["nTipo"], applicaPresetNem);
     su(["nVig", "nAgi", "nMen", "nSpi", "nLiv", "nCa", "nPv", "nScudo"]);
-    applicaPresetPg(true); applicaPresetNem();
+    applicaPresetPg(true); applicaPresetNem(); aggiornaPg();
     mostraCoda(); pg = leggiPg(); disegna();
   }
   /* comandi per i test automatici del browser (Playwright): window.SalaProva */

@@ -34,7 +34,7 @@
   ].map(voce("arcano"));
 
   const FORZA = [
-    ["pugno_forza", 1, 2, "Pugno di Forza", "Force Fist", "Attacco magico, 1d10 forza. Detonazione.", "Spell attack, 1d10 force. Detonation."],
+    ["pugno_forza", 1, 2, "Pugno di Forza", "Force Fist", "Attacco magico, 1d8 forza. Detonazione.", "Spell attack, 1d8 force. Detonation."],
     ["spinta", 1, 2, "Spinta", "Thrust", "Senza tiro, 1d6 forza; tiro salvezza → Sbilanciato 1. Detonazione.", "No roll, 1d6 force; saving throw → Off-balance 1. Detonation."],
     ["scudo", 1, 1, "Scudo", "Shield", "+2 alla Classe armatura per 3 turni.", "+2 Armor class for 3 turns."],
     ["ariete", 2, 4, "Ariete", "Battering Ram", "Attacco magico, 2d6 forza; se colpisce, Sbilanciato 2. Detonazione.", "Spell attack, 2d6 force; on a hit, Off-balance 2. Detonation."],

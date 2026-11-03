@@ -100,6 +100,7 @@
   function ctx() {
     const c = ctxBase();
     if (arcanista()) Object.assign(c, {
+      pozzo: monaco() ? 0 : M.gradoPozzo(pg.liv), /* 03/11: Pozzo Arcano, tratto dell'Arcanista */
       modAtt: pg.modM, modDanno: pg.modM, cd: 8 + pg.modM + pg.liv, attrTs: monaco() ? "Spirito" : "Mente", modTs: modTsSala(monaco() ? "Spirito" : "Mente"), /* 01/11: TS contro Mente (Arcanista) o Spirito (Monaco) */ dado: s && C.attivo(s, "runa") ? passoDado(pg.arma.dado) : pg.arma.dado,
       manaPiu: (n) => { const r = Math.min(n, pg.furiaMax - pg.furia); pg.furia += r; return r; }, dannoMente: (n) => n,
       cura: (n) => { const f = Math.min(n, pg.pvMax - pg.pv); pg.pv += f; return f; }, pvMancanti: () => pg.pvMax - pg.pv, dannoCorpo: (n) => { const f = Math.min(n, pg.pv - 1); pg.pv -= f; return f; }
@@ -137,6 +138,7 @@
     eventi.forEach(e => {
       if (dopoImmune && e.k === "stato") { dopoImmune = false; r.push("Al suo posto, effetto ridotto per i boss:"); }
       switch (e.k) {
+        case "_testo": r.push(e.t); break;
         case "colpo":
           if (!e.ok) { r.push(`Mancato: d20 ${e.d} ${fmt(e.mA)} = ${e.tot} contro CA ${e.ca}.`); break; }
           r.push(`${e.crit ? "CRITICO" : "Colpito"}: d20 ${e.d} ${fmt(e.mA)} = ${e.tot} contro CA ${e.ca}${e.critDa ? ` (critico da ${e.critDa})` : ""}. Danno ${e.nd}d${e.dado} [${e.tiri.join("+")}] ${fmt(e.mm)}${e.marchio ? ` + marchio ${e.marchio}` : ""}${e.sigillo ? ` + sigillo ${e.sigillo}` : ""}${e.segno ? ` + segno ${e.segno}` : ""} = ${e.danno}.`); break;
@@ -218,6 +220,7 @@
       if (controllaFine()) { turnoPg = false; return disegna(); }
     }
     const ril = C.inizioTurnoPg(s, ctx()); /* Mare Profondo ed Egida rilasciano l'onda */
+    if (s && arcanista() && !monaco()) M.inizioTurnoPozzo(s, ctx()).forEach(e => ril.push({ k: "_testo", t: M.testo(e) })); /* 03/11: Pozzo Arcano */
     if (ril.length) { blocco("Inizio del tuo turno", testoEventi(ril), "mia"); if (controllaFine()) { turnoPg = false; return disegna(); } }
     disegna();
   }
@@ -280,7 +283,7 @@
     if (window.LAYOUT_TEST && !inc.via && !preparatiInc.has(inc.id)) return log(`${inc.nome.it}: non è tra gli incantesimi preparati.`, "ko");
     const c = ctx();
     const disp = M.disponibile(inc, s, c); if (!disp.ok) return log(`${inc.nome.it}: ${M.testo({ k: disp.motivo })}`, "ko");
-    const costo = M.costo(inc, s);
+    const costo = M.costo(inc, s, c);
     if (pg.furia < costo) return log(`${inc.nome.it}: servono ${costo} mana, ne hai ${pg.furia}.`, "ko");
     pg.furia -= costo; tipoAzione = { arcano: "Arcano", forza: "Forza", luce: "Luce", ombra: "Ombra" }[inc.scuola] || null; /* 03/11: anche Arcano, come in gioco */ /* le armi non contano negli incantesimi */
     const r = M.lancia(inc, s, ctx());
@@ -527,7 +530,7 @@
       lista.replaceChildren();
       const sc2 = prepInc ? [princ, SCUOLE().find(x => x !== princ)] : SCUOLE(), sblocc = MG.INCANTESIMI.filter(i => sc2.includes(i.scuola) && i.liv <= pg.liv), NS = { arcano: "Arcano", forza: "Forza", luce: "Luce", ombra: "Ombra" };
       const rigaInc = (inc, etichetta) => {
-        const costoR = s ? M.costo(inc, s) : inc.costo;
+        const costoR = s ? M.costo(inc, s, ctx()) : inc.costo;
         const usata = M.UNA_PER_RIPOSO.includes(inc.id) && perRiposo[inc.id];
         const prep = !prepInc || etichetta === "via" || preparatiInc.has(inc.id);
         const ok = prep && !finito && turnoPg && s && pg.furia >= costoR && !usata && M.disponibile(inc, s, ctx()).ok;

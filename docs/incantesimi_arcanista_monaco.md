@@ -38,6 +38,7 @@ Gli altri stati sono quelli che il gioco ha già: Indebolito, Sbilanciato, Espos
 ### Meccanica: i Sigilli
 
 - Gli incantesimi d'**Arcano** incidono **Sigilli** sul nemico. **Massimo 3, 2 sui boss; dal livello 4 uno in più (4, sui boss 3)** (03/11). Durano tutto lo scontro.
+- **03/11, tratto di classe dell'Arcanista, «Pozzo Arcano»** (passivo, tre gradi): **I** (livello 1) se in un tuo turno non lanci incantesimi, all'inizio del turno dopo recuperi 1 mana; **II** (livello 2) Specchio di Rune e Barriera Cinetica costano 1 in meno (3 → 2); **III** (livello 4) il primo incantesimo di ogni scontro non costa mana. **Pugno di Forza passa da 1d10 a 1d8**, come il Dardo Arcano. Scartato lo sconto sugli attacchi base (2 → 1): con il grado I o con la Detonazione l'Arcanista avrebbe avuto mana infinito (al livello 3 contro un boss il giro Dardo + Dardo + Pugno sarebbe costato 3 e reso 4). Le altre classi avranno il loro tratto in tre gradi (livelli 1, 2 e 4).
 - **03/11, Arcanista più resistente:** Scudo e Scudo della Fede +2 CA per **3 turni**; Specchio di Rune aspetta il primo colpo **a segno** per tutto lo scontro; **Filo di Rune: −1 a colpirti per ogni Sigillo** sul nemico (prima −2 solo con almeno 2). Cataclisma rende il mana doppio se i Sigilli erano al massimo prima del lancio. Scelto di non alzare il tetto a «un Sigillo per livello»: Crollo, Implosione e Risonanza crescono per Sigillo e con 5 Sigilli i boss finali (Atena, il sovrano) cadrebbero in un colpo.
 - Gli incantesimi di **Forza** con la scritta *Detonazione* consumano tutti i Sigilli: **+1d6 di danno per Sigillo** e **recuperi 1 mana per Sigillo**. È così che l'Arcanista ricarica in combattimento.
 - Lo stile: preparare con l'Arcano (controllo, informazioni), chiudere con la Forza (danno, spinta). Chi sceglie una sola scuola funziona lo stesso, ma rende meno.
@@ -67,7 +68,7 @@ Gli altri stati sono quelli che il gioco ha già: Indebolito, Sbilanciato, Espos
 
 | Liv | Incantesimo | Costo | Effetto |
 |---|---|---|---|
-| 1 | Pugno di Forza | 2 | Attacco magico, 1d10 forza. *Detonazione* |
+| 1 | Pugno di Forza | 2 | Attacco magico, **1d8** forza (03/11, prima 1d10). *Detonazione* |
 | 1 | Spinta | 2 | Senza tiro, 1d6 forza; tiro salvezza → Sbilanciato 1. *Detonazione* |
 | 1 | Scudo | 1 | +2 CA per **3 turni** (03/11: prima 2) |
 | 2 | Ariete | 4 | Attacco magico 2d6; se colpisce, Sbilanciato 2. *Detonazione* |

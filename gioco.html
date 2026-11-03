@@ -6356,6 +6356,7 @@
        Posti: come le tecniche (2, 4, 5, 6, 7 della scuola principale) più 1 dell'altra scuola, di qualsiasi livello sbloccato.
        La capacità di classe (Luce / Lume Arcano) non occupa posti. */
     const MG = window.MAGIA;
+    const MC_GRADO_POZZO = (l) => (window.MagiaCombattimento ? window.MagiaCombattimento.gradoPozzo(l) : 0); /* 03/11: Pozzo Arcano */
     const incantatore = () => !!(MG && pg && MG.CLASSI[pg.classe]);
     let capLuceCache = null;
     const capLuce = () => capLuceCache || (capLuceCache = { id: "luce", costo: MG.CAPACITA[pg.classe].costo, nome: MG.CAPACITA[pg.classe].nome, effetto: MG.CAPACITA[pg.classe].effetto, capacita: true });
@@ -6896,7 +6897,8 @@
         b.setAttribute("aria-expanded", String(aperto)); b.setAttribute("aria-controls", testo.id);
         b.addEventListener("click", () => { const apri = testo.hidden; testo.hidden = !apri; if (apri) aperti.add(k); else aperti.delete(k); b.setAttribute("aria-expanded", String(apri)); });
         const c = document.createElement("span"); c.className = "costo";
-        c.textContent = inc.costo != null ? `${inc.costo} ${U.mana.toLowerCase()}` : "";
+        const costoVero = inc.costo != null && inc.scuola && window.MagiaCombattimento ? window.MagiaCombattimento.costo(inc, scontro || {}, { pozzo: pg.classe === "Sapiente" ? MC_GRADO_POZZO(livelloPg()) : 0 }) : inc.costo; /* 03/11: sconti del Pozzo Arcano */
+        c.textContent = inc.costo != null ? `${costoVero} ${U.mana.toLowerCase()}` : "";
         const lancia = document.createElement("button"); lancia.type = "button"; lancia.className = "mini"; lancia.textContent = U.lanciaInc;
         lancia.addEventListener("click", clic(() => lanciaIncantesimo(inc)));
         const dx = document.createElement("span"); dx.className = "azioni-inc"; dx.append(c, lancia);
@@ -11613,6 +11615,7 @@
         scalaStatoPg("stordito"); return fineAzionePgScontro();
       }
       const rilascio = CMB.inizioTurnoPg(scontro, ctxTecnica()); /* la Parata scade; Mare Profondo ed Egida rilasciano l'onda */
+      if (pg && pg.classe === "Sapiente" && window.MagiaCombattimento) { const pz = window.MagiaCombattimento.inizioTurnoPozzo(scontro, ctxIncantesimo()); if (pz.length) { aggiungi({ tipo: "narra", box: "mia", righe: pz.map(e => window.MagiaCombattimento.testo(e)) }); disegnaVitali(); } } /* 03/11: Pozzo Arcano */
       if (rilascio.length) {
         aggiungi({ tipo: "narra", box: "mia", righe: rilascio.map(rigaScudo).filter(Boolean) }); scuotiNemico();
         if (scontro.pv <= 0) { scontro.tuoTurno = false; barraScontro(); return setTimeout(vittoriaScontro, pausaScontro() / 2); }
@@ -11705,7 +11708,8 @@
     function ctxIncantesimo() {
       const m = mod(statPg(ATTR_INC[pg.classe] || "Mente"));
       return {
-        ...ctxTecnica(), modAtt: m + malusStatoAtt(), modDanno: m, dado: 6, cd: cdIncantesimi(), attrTs: attrTsPg(), modTs: modTsNem(attrTsPg()), modTsDi: modTsNem,
+        ...ctxTecnica(), modAtt: m + malusStatoAtt(), modDanno: m, dado: 6, cd: cdIncantesimi(),
+        pozzo: pg.classe === "Sapiente" ? MC_GRADO_POZZO(livelloPg()) : 0, /* 03/11: Pozzo Arcano, tratto dell'Arcanista */ attrTs: attrTsPg(), modTs: modTsNem(attrTsPg()), modTsDi: modTsNem,
         cura: (n) => curaPgN(n), pvMancanti: () => Math.max(0, pvMaxPg() - pvPg()), dannoCorpo: (n) => { const [a, b] = dannoCorpoNonLetale(n); return a - b; },
         manaPiu: (n) => { const r = Math.min(n, pg.manaUsato || 0); pg.manaUsato = (pg.manaUsato || 0) - r; return r; },
         dannoMente: (n) => dannoMenteNonLetale(n)
@@ -11716,7 +11720,7 @@
       ctx.piuDadiVuln = dadiVuln(tipoScuola(inc.scuola)); /* gli incantesimi non usano la vulnerabilità all'arma; la loro scuola sì (29/10; 01/11 anche Arcano) */
       ctx.dimezza = resisteA(tipoScuola(inc.scuola)); /* 01/11: resistenza alla scuola dell'incantesimo */
       const disp = MC.disponibile(inc, scontro, ctx); if (!disp.ok) return sist(MC.testo({ k: disp.motivo }));
-      const costo = MC.costo(inc, scontro);
+      const costo = MC.costo(inc, scontro, ctx);
       if (manaAttuale() < costo) return sist(CB.pocoMana(costo, manaAttuale()));
       pg.manaUsato = (pg.manaUsato || 0) + costo; /* si paga prima: il mana recuperato con la Detonazione arriva dopo */
       const pvPrima = scontro.pv;

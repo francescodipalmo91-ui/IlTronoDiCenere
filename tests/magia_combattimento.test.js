@@ -51,6 +51,17 @@
   });
 
   /* ================= Sigilli ================= */
+  caso("03/11: Pozzo Arcano — I: +1 mana dopo un turno senza incantesimi; II: Specchio e Barriera −1; III: il primo incantesimo dello scontro è gratis", () => {
+    const inc = (id) => MG.INCANTESIMI.find(i => i.id === id);
+    eq([M.gradoPozzo(1), M.gradoPozzo(2), M.gradoPozzo(3), M.gradoPozzo(4)], [1, 2, 2, 3]);
+    const s = scontro(); let mana = 0; const c = ctx({ pozzo: 1 }); c.manaPiu = (n) => { mana += n; return n; };
+    M.inizioTurnoPozzo(s, c); eq(mana, 0, "primo turno: niente");
+    M.inizioTurnoPozzo(s, c); eq(mana, 1, "turno passato senza incantesimi: +1");
+    s.incQuestoTurno = true; M.inizioTurnoPozzo(s, c); eq(mana, 1, "hai lanciato: niente");
+    eq([M.costo(inc("specchio_rune"), scontro(), { pozzo: 1 }), M.costo(inc("specchio_rune"), scontro(), { pozzo: 2 }), M.costo(inc("barriera_cinetica"), scontro(), { pozzo: 2 }), M.costo(inc("dardo_arcano"), scontro(), { pozzo: 2 })], [3, 2, 2, 2]);
+    const t = scontro(); eq(M.costo(inc("catena_glifi"), t, { pozzo: 3 }), 0, "grado III: il primo è gratis"); t.pozzoGratis = true; eq(M.costo(inc("catena_glifi"), t, { pozzo: 3 }), 5, "poi costa");
+    eq(MG.INCANTESIMI.find(i => i.id === "pugno_forza").effetto.it.includes("1d8"), true, "Pugno di Forza 1d8");
+  });
   caso("03/11: Sigilli massimi +1 dal livello 4 (4, boss 3); Filo di Rune −1 a colpirti per Sigillo", () => {
     eq([C.sigilliMax({ liv: 3 }), C.sigilliMax({ liv: 3, boss: true }), C.sigilliMax({ liv: 4 }), C.sigilliMax({ liv: 5, boss: true })], [3, 2, 4, 3]);
     const s = { pv: 40, pvMax: 40, eff: {}, effMax: {}, sigilli: 0, filo: true };

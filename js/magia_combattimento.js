@@ -33,9 +33,17 @@
   const attivo = (s, k) => !!(s && s.eff && s.eff[k] > 0);
 
   /* costo reale adesso: Tomo Proibito −2 (minimo 1) e Ricamo di Rune −2 sul prossimo; Quiete Assoluta: un Sigillo al posto del mana */
-  function costo(inc, s) {
-    const arc = inc.scuola === "arcano";
+  /* 03/11: tratto di classe dell'Arcanista, «Pozzo Arcano» (ctx.pozzo = grado 0-3: 1 dal livello 1, 2 dal 2, 3 dal 4).
+     I: se in un tuo turno non lanci incantesimi, all'inizio del turno dopo recuperi 1 mana.
+     II: Specchio di Rune e Barriera Cinetica costano 1 in meno.
+     III: il primo incantesimo di ogni scontro non costa mana. */
+  const POZZO_SCONTO = ["specchio_rune", "barriera_cinetica"];
+  const gradoPozzo = (liv) => (liv >= 4 ? 3 : liv >= 2 ? 2 : 1);
+  function costo(inc, s, ctx) {
+    const arc = inc.scuola === "arcano", pozzo = Number(ctx && ctx.pozzo) || 0;
     let c = Number(inc.costo) || 0;
+    if (pozzo >= 2 && POZZO_SCONTO.includes(inc.id)) c = Math.max(1, c - 1);
+    if (pozzo >= 3 && s && !s.pozzoGratis) return 0;
     if (arc && attivo(s, "tomo")) c = Math.max(1, c - 2);
     if (s && s.scontoInc) c = Math.max(1, c - s.scontoInc);
     if (arc && attivo(s, "quiete") && C.sigilli(s) > 0) c = 0;
@@ -55,8 +63,10 @@
     s.eff = s.eff || {}; s.effMax = s.effMax || {};
     const disp = disponibile(inc, s, ctx);
     if (!disp.ok) return { eventi: [{ k: disp.motivo }], costo: 0, rifiutata: true };
+    s.incQuestoTurno = true; /* Pozzo Arcano, grado I */
+    if ((Number(ctx && ctx.pozzo) || 0) >= 3) s.pozzoGratis = true; /* grado III: il primo dello scontro era gratis */
     const E = [], arc = inc.scuola === "arcano", forza = inc.scuola === "forza";
-    const c = costo(inc, s), tomoAttivo = arc && attivo(s, "tomo");
+    const c = costo(inc, s, ctx), tomoAttivo = arc && attivo(s, "tomo");
     /* ---- Monaco: la Bilancia (+ Luce, − Ombra) ---- */
     const luce = inc.scuola === "luce", ombra = inc.scuola === "ombra", mon = luce || ombra;
     const bil = Number(s.bilancia) || 0, bloccata = attivo(s, "furiaCinerea");
@@ -167,7 +177,7 @@
       }
 
       /* ================= Forza ================= */
-      case "pugno_forza": dopoColpo(hit({ dado: 10 }), () => detona()); break;
+      case "pugno_forza": dopoColpo(hit({ dado: 8 }), () => detona()); break; /* 03/11: da 1d10 a 1d8, come il Dardo Arcano */
       case "spinta": diretto(1, 6, 0); conTS({ sbilanciato: 1 }); detona(); break;
       case "scudo": s.eff.scudo = 3; s.effMax.scudo = 3; E.push({ k: "scudoMagico", turni: 3 }); break; /* 03/11: da 2 a 3 turni */
       case "ariete": dopoColpo(hit({ dado: 6, piuDadi: 1 }), () => { fx("sbilanciato", 2); detona(); }); break;
@@ -375,6 +385,13 @@
     return E;
   }
 
+  /* Pozzo Arcano, grado I: da chiamare all'inizio di ogni tuo turno (dopo il primo) */
+  function inizioTurnoPozzo(s, ctx) {
+    const pozzo = Number(ctx && ctx.pozzo) || 0, E = [];
+    if (pozzo >= 1 && s.pozzoTurni > 0 && !s.incQuestoTurno && ctx.manaPiu) { const n = ctx.manaPiu(1); if (n > 0) E.push({ k: "pozzo", n }); }
+    s.pozzoTurni = (Number(s.pozzoTurni) || 0) + 1; s.incQuestoTurno = false;
+    return E;
+  }
   /* ---------- testi (IT/EN): una riga per evento. I colpi, i tiri salvezza e gli stati li scrive già chi mostra lo scontro ---------- */
   const T = (it, en) => (root.Lingua && typeof root.Lingua.t === "function" ? root.Lingua.t({ it, en }) : it);
   const dadi = (e) => `${e.nd ? e.nd * Math.max(1, e.n) : e.n}d${e.dado} [${e.tiri.join("+")}]${e.mm ? (e.mm > 0 ? "+" : "−") + Math.abs(e.mm) : ""}`;
@@ -414,6 +431,7 @@
       case "demolitore": return T("Per tutto lo scontro ogni tua Detonazione fa anche Sbilanciato 1.", "For the whole fight every Detonation of yours also causes Off-balance 1.");
       case "caMeno": return T(`Per tutto lo scontro la Classe armatura del nemico scende di ${e.n}.`, `For the whole fight the enemy's Armor Class drops by ${e.n}.`);
       case "rimborso": return T(`Il nemico cade: recuperi il mana speso (${e.mana}).`, `The enemy falls: you recover the mana spent (${e.mana}).`);
+      case "pozzo": return T(`Pozzo Arcano: nel turno passato non hai lanciato incantesimi, recuperi ${e.n} mana.`, `Arcane Well: you cast no spell last turn, you recover ${e.n} mana.`);
       case "filo": return T("Per tutto lo scontro il nemico ha −1 per colpirti per ogni Sigillo che porta.", "For the whole fight the enemy has −1 to hit you for every Seal it carries.");
       case "prossimoSconto": return T(`Il prossimo incantesimo costerà ${e.n} in meno.`, `Your next spell will cost ${e.n} less.`);
       case "scontoInc": return e.n > 0 ? T(`Il ricamo alleggerisce l'incantesimo: costa ${e.n} in meno.`, `The embroidery lightens the spell: it costs ${e.n} less.`) : null;
@@ -460,7 +478,7 @@
     }
   }
 
-  const API = { UNA_PER_RIPOSO, DIFESE, SERVONO_SIGILLI, recupero, costo, disponibile, lancia, inizioTurnoNemico, haTick, bonusTsPg, secondaVita, scaduti, testo };
+  const API = { UNA_PER_RIPOSO, DIFESE, SERVONO_SIGILLI, POZZO_SCONTO, gradoPozzo, inizioTurnoPozzo, recupero, costo, disponibile, lancia, inizioTurnoNemico, haTick, bonusTsPg, secondaVita, scaduti, testo };
   root.MagiaCombattimento = API;
   if (typeof module !== "undefined" && module.exports) module.exports = API;
 })(typeof window !== "undefined" ? window : globalThis);

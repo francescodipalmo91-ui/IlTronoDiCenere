@@ -750,9 +750,9 @@ caso("Gioco: Arcanista lancia in scontro — Sigillo, costo, Detonazione e mana 
   vero((await page.$$eval(".eff-nome", e => e.map(x => x.textContent))).some(t => /Sigilli/.test(t)), "i Sigilli non compaiono nella scheda del nemico");
   await accoda(page, [R(1, 6), R(1, 20)], [0.1]); await aspettaTurnoPg(page);
   const pv = await page.evaluate(() => scontro.pv);
-  await accoda(page, [R(15, 20), R(5, 10), R(3, 6)]); await page.evaluate(() => lanciaIncantesimo(listaIncantesimi().find(i => i.id === "pugno_forza")));
+  await accoda(page, [R(15, 20), R(5, 8), R(3, 6)]); await page.evaluate(() => lanciaIncantesimo(listaIncantesimi().find(i => i.id === "pugno_forza")));
   eq(await page.evaluate(() => scontro.sigilli), 0, "Sigillo esploso"); eq(await page.evaluate(() => manaAttuale()), 10, "11 − 2 + 1");
-  eq(pv - (await page.evaluate(() => scontro.pv)), 5 + 3 + 3, "1d10 + mod Mente 3 (28/10) + 1d6 di Detonazione");
+  eq(pv - (await page.evaluate(() => scontro.pv)), 5 + 3 + 3, "1d8 (03/11) + mod Mente 3 (28/10) + 1d6 di Detonazione");
   vero(/Detonazione/.test(await diario(page)), "manca la Detonazione nel diario"); eq(errori, [], "errori"); await chiudi();
 });
 caso("Gioco: un incantesimo senza mana non parte e non spende nulla", async (b) => {
@@ -772,7 +772,7 @@ caso("Gioco in inglese: la Detonazione si legge in inglese", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", ARC(), PARTITA());
   await page.evaluate(() => localStorage.setItem("lingua", "en")); await page.reload(); await page.waitForTimeout(500);
   await page.evaluate(() => { avviaScontro("mastino", { primo: "pg", soffioScarico: true }); scontro.sigilli = 2; }); await aspettaTurnoPg(page);
-  await accoda(page, [R(15, 20), R(5, 10), R(3, 6), R(2, 6)]); await page.evaluate(() => lanciaIncantesimo(listaIncantesimi().find(i => i.id === "pugno_forza")));
+  await accoda(page, [R(15, 20), R(5, 8), R(3, 6), R(2, 6)]); await page.evaluate(() => lanciaIncantesimo(listaIncantesimi().find(i => i.id === "pugno_forza")));
   vero(/Detonation/.test(await diario(page)), "manca il testo inglese"); eq(await page.evaluate(() => manaAttuale()), 12, "13 − 2 + 1"); eq(errori, [], "errori"); await chiudi();
 });
 

@@ -28,7 +28,8 @@
   const ARMI = [
     { nome: "Spada corta", dado: 6, tipo: "Tagliente", mani: 1 }, { nome: "Ascia da battaglia", dado: 8, tipo: "Tagliente", mani: 2 },
     { nome: "Bastone", dado: 6, tipo: "Contundente", mani: 2 }, { nome: "Martello da battaglia", dado: 8, tipo: "Contundente", mani: 1 },
-    { nome: "Mazza chiodata", dado: 6, tipo: "Perforante", mani: 1 }, { nome: "Piccone da battaglia", dado: 8, tipo: "Perforante", mani: 2 }
+    { nome: "Mazza chiodata", dado: 6, tipo: "Perforante", mani: 1 }, { nome: "Piccone da battaglia", dado: 8, tipo: "Perforante", mani: 2 },
+    { nome: "Retaggio del Padrone", dado: 10, tipo: "Tagliente", mani: 1, retaggio: true } /* 03/11: la spada dell'armatura, 1d10 + caratteristica di classe come in gioco (nessun bonus di livello) */
   ];
   /* 03/11: limiti di classe come in creazione.html. Le armi «da battaglia» solo al Guerriero; armature per classe; lo scudo occupa una mano */
   const ARMATURE_OK = { guerriero: ["nessuna", "leggera", "media", "pesante"], sciamano: ["nessuna", "leggera", "media"], arcanista: ["nessuna", "leggera"], monaco: ["nessuna", "leggera", "media"] };
@@ -106,7 +107,7 @@
     if (sciamano()) Object.assign(c, {
       modAtt: pg.modS, modDanno: pg.modS, cd: 8 + pg.modS + pg.liv, /* 01/11: caratteristica di classe = Agilità */
       sottobosco: !!(nem.vuln && nem.vuln.includes("Sottobosco")), /* 02/11: Enea, gli stati dello Sciamano durano 1 turno in più */
-      modSpirito: pg.modS, resisteVeleno: !!($("nResiste") && $("nResiste").checked), linfaRigeneratrice: pg.via === "guendalina",
+      modSpirito: pg.modS, resisteVeleno: window.LAYOUT_TEST ? !!(nem.resiste && nem.resiste.includes("veleno")) : !!($("nResiste") && $("nResiste").checked), /* 03/11: nella pagina di test vale solo per chi resiste davvero */ linfaRigeneratrice: pg.via === "guendalina",
       naturaPiu: (n) => { const r = Math.min(n, pg.furiaMax - pg.furia); pg.furia += r; return r; }, dannoPg: (n) => { pg.pv -= n; }
     });
     return c;
@@ -366,7 +367,7 @@
      2d8 + 4 il turno dopo, mai due cariche di fila; «Mi difendo» dimezza; colpirlo mentre carica lo fa andare a vuoto;
      dopo la prima interruzione carica in guardia (+2 CA); Finta (2 PA): annuncia la carica e colpisce di lato
      ignorando la difesa; Intuizione gratuita per smascherarla. Risurrezione una volta: 1d4 + 3. */
-  const eneaOpz = () => ({ fermaglio: $("nFermaglio").checked, spada: $("nSpada").checked, socialita: $("nSocialita").checked, mossa: $("nEneaMossa").value, lato: $("nEneaLato") ? $("nEneaLato").value : "casuale" });
+  const eneaOpz = () => ({ fermaglio: $("nFermaglio").checked, spada: window.LAYOUT_TEST ? !!(pg && pg.arma && pg.arma.retaggio) : $("nSpada").checked, socialita: $("nSocialita").checked, mossa: $("nEneaMossa").value, lato: $("nEneaLato") ? $("nEneaLato").value : "casuale" });
   const sdegno = () => (eneaOpz().spada && !eneaOpz().socialita ? 1 : 0);
   function iniziaEnea() {
     const o = eneaOpz();
@@ -678,11 +679,11 @@
           campo("Classe armatura", num("nCa", 10, 5, 30)),
           campo("Salute massima", num("nPv", 13, 1, 300))),
         gruppo("Opzioni di prova",
-          el("div", { id: "oEnea" }, chk("nFermaglio", "Fermaglio di bronzo indossato (arma da subito)", true), chk("nSpada", "Spada del Retaggio impugnata (sdegno)"), chk("nSocialita", "Socialità riuscita con la spada"),
+          el("div", { id: "oEnea" }, chk("nFermaglio", "Fermaglio di bronzo indossato (arma da subito)", true), chk("nSpada", "Spada del Retaggio impugnata: si sceglie come arma del personaggio (sdegno)"), chk("nSocialita", "Socialità riuscita con la spada"),
             campo("Mossa", sel("nEneaMossa", [["casuale", "casuale"], ["carica", "carica sempre"], ["finta", "finta sempre"], ["spinta", "Spinta sempre (mani nude)"]], "casuale")),
             campo("Lato dell'arma", sel("nEneaLato", [["casuale", "casuale"], ["maglio", "sempre il maglio"], ["ascia", "sempre l'ascia"]], "casuale"))), /* 02/11: arma a doppia faccia */
           el("div", { id: "oMastino" }, chk("nSoffio", "Forza il Soffio quando è carico"), chk("nMorso", "Morde sempre"), chk("nPresa", "Forza la Presa dopo un morso")),
-          chk("nResiste", "Resiste al veleno"))));
+          el("p", { class: "nota", id: "tResiste" }))));
 
     const basso = el("div", { class: "basso" },
       el("section", { class: "comandi" },
@@ -736,6 +737,10 @@
       if (!armaOk(cl, Number($("pArma").value))) $("pArma").value = String([0, 2, 4].find(i => armaOk(cl, i)));
       [...$("pArmatura").options].forEach(o => { o.disabled = !ARMATURE_OK[cl].includes(o.value); });
       if (!ARMATURE_OK[cl].includes($("pArmatura").value)) $("pArmatura").value = ARMATURE_OK[cl][ARMATURE_OK[cl].length - 1];
+      const ret = !!ARMI[Number($("pArma").value)].retaggio;
+      $("nSpada").checked = ret; $("nSpada").disabled = true; /* la spada si impugna scegliendola come arma */
+      const N = NEMICI[$("nTipo").value] || {}, res = (N.resiste || []).includes("veleno");
+      $("tResiste").textContent = res ? "Resiste al veleno: il veleno dello Sciamano fa metà danni." : "";
       const dueMani = ARMI[Number($("pArma").value)].mani === 2;
       $("pScudo").disabled = dueMani; if (dueMani) $("pScudo").checked = false;
       const inc = cl === "arcanista" || cl === "monaco";

@@ -75,3 +75,5 @@ Cambiare classe o razza rimette il preset; livello e Vigore ricalcolano la salut
 - **Incantesimi:** scuola principale da scegliere (preset: Arcanista Forza, Monaco Luce); preparati 2/4/5/6/7 della principale più 1 dell'altra, come in gioco; si lanciano solo quelli preparati (le abilità della via non occupano posti).
 - **Serie della via:** solo per il Guerriero con lo scudo.
 - Gli incantesimi d'Arcano contano come tipo «Arcano» per vulnerabilità e resistenze, come in gioco.
+- **Spada del Retaggio:** si sceglie come arma (1d10 + caratteristica di classe, tagliente, una mano, come in gioco); la casella «Spada del Retaggio impugnata» di Enea si spunta da sola e attiva lo sdegno.
+- **Resistenza al veleno:** niente più casella: vale solo se il nemico la ha davvero (oggi nessuno tra quelli della pagina; Dafne e il sovrano quando ci saranno).

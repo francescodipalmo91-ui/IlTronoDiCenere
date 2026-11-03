@@ -138,7 +138,7 @@
       case "runa_arma": s.eff.runa = 3; s.effMax.runa = 3; E.push({ k: "runa", turni: 3 }); break;
       case "marchio_arcano": conTS({ esposto: 2 }); ink(1); break;
       case "stasi": controlloORipiego({ bloccato: 1 }, () => ink(2)); break;
-      case "specchio_rune": s.assorbe = { tipo: "specchio", n: 0 }; E.push({ k: "difesaPronta", tipo: "specchio" }); break;
+      case "specchio_rune": s.assorbe = { tipo: "specchio", n: 0, turni: 2 }; E.push({ k: "difesaPronta", tipo: "specchio" }); break;
       case "catena_glifi": dopoColpo(hit({ dado: 6, piuDadi: 1 }), () => ink(2)); break;
       case "sigillo_silenzio": controlloORipiego({ silenzio: 2 }, () => fx("debole", 2)); ink(1); break;
       case "disfare": s.soffioPronto = false; s.presaUsata = true; E.push({ k: "disfatto" }); ink(1); break;
@@ -401,7 +401,7 @@
       case "parola": return T(`Il nemico ha −4 ai tiri salvezza per ${e.turni} turni.`, `The enemy has −4 on saving throws for ${e.turni} turns.`);
       case "tomo": return T(`Il Tomo ti costa ${e.mente} di salute mentale (non letale). Per ${e.turni} turni gli incantesimi d'Arcano costano 2 in meno (minimo 1) e incidono 1 Sigillo in più.`, `The Tome costs you ${e.mente} mental health (non-lethal). For ${e.turni} turns Arcane spells cost 2 less (minimum 1) and carve 1 extra Seal.`);
       case "difesaPronta": return {
-        specchio: T("Il primo colpo che subisci farà metà danni e inciderà 1 Sigillo su chi ti ha colpito.", "The first blow you take does half damage and carves 1 Seal on whoever hit you."),
+        specchio: T("Il primo colpo che ti va a segno (entro i prossimi 2 turni del nemico) farà metà danni e inciderà 1 Sigillo su chi ti ha colpito.", "The first blow that hits you (within the enemy's next 2 turns) does half damage and carves 1 Seal on whoever hit you."),
         barriera: T("Il primo colpo che subisci farà 0 danni e chi ti colpisce subirà 1d6 forza.", "The first blow you take does 0 damage and whoever hits you takes 1d6 force."),
         respingere: T("Fino al tuo turno ogni colpo fa 0 danni e restituisce 1d6 forza.", "Until your turn every blow does 0 damage and returns 1d6 force.")
       }[e.tipo];

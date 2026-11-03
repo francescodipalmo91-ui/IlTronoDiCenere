@@ -1,4 +1,4 @@
-# Punto della situazione — 2 novembre 2026
+# Punto della situazione — 3 novembre 2026
 
 Da leggere all'inizio di una nuova conversazione. Repo: francescodipalmo91-ui/IlTronoDiCenere, ramo **main**. Linee guida: `storia_casa_vespera.md` e `bilanciamento_nemici_oggetti.md` (identiche nel progetto e in `docs/` nel repo). Copia locale di Francesco: `C:\Users\franc\OneDrive\Desktop\IlTronoDiCenere`. Test: `npm test` (il test nel browser dello Sciamano va lanciato senza limite di tempo o a pezzi con `SOLO=…`).
 
@@ -33,7 +33,20 @@ Metodo: punto per punto, prima le cose leggere; zip dei file modificati solo a f
 - **Revisione dei guardiani e del sovrano** (storia 10a): razza, arma, classe e una primaria diversa per ciascuno (Ettore Mente, Enea Vigore, Dafne Agilità, Atena Spirito, sovrano Vigore + Spirito). Enea barbaro, ex paladino, compagnia di nani, arma maglio-ascia; Atena ghiaccio e ombra; sovrano con armatura di cenere che si sgretola.
 - **Ettore ladro nel codice:** due pugnali a +2 (1d4 + 1), conteggio per pugnale (+1d6), Lama nel fianco, «L'ho già vista», Pugnale del conteggio se ucciso, testi con i pugnali. Simulazione: percentuali in linea con prima (Monaco qualche punto sotto). Immagini della cripta e del ritratto da rifare.
 
+## 3 novembre
+- **Pagina di test realistica** (`test.html`): limiti di classe su armi, armature, tecniche e incantesimi preparati, scuola principale, Retaggio come arma, resistenza al veleno automatica.
+- **Arcanista:** Sigilli leggibili (◆◇), +1 Sigillo massimo dal livello 4, Runa e Specchio di Rune corretti, Scudo 3 turni, Filo di Rune −1 per Sigillo, Cataclisma, Pugno di Forza 1d8.
+- **Tratti di classe** (livelli 1, 2, 4): Arcanista «Pozzo Arcano», Monaco «Respiro dell'Equilibrio», Guerriero «Tempra del Soldato» (Ultimo a cadere), Sciamano «Legame del Sottobosco». Tabella in bilanciamento, sezione «Tratti di classe».
+- **Combo (A1-A2):** etichette sotto ogni incantesimo e avvisi «combo pronta» in gioco, sala e test; avviso Zenit/Nadir nel diario.
+- **Giocatore medio (B)** in `strumenti/serie_scontri.js` (predefinito; `BOT=vecchio`, `SCUOLA=forza,luce`). Risultati in bilanciamento, sezione «Combo tra incantesimi».
+- **Scala dei guardiani DECISA:** Ettore 90-95%, Enea 80%, Dafne 70%, Atena 60%, sovrano 50% per ogni classe e razza (±7), misurata col giocatore medio al livello e all'equipaggiamento previsti.
+
 ## Punti aperti, in ordine di priorità
+
+**Subito (in corso il 3 novembre)**
+0. **Arcanista con Arcano principale** troppo debole (Ettore 44% contro 80% con Forza principale): le combo sono tra due scuole ma l'altra ha un solo posto. Proposte da provare con la serie: (1) un Sigillo inciso oltre il massimo rende 1 mana (massimo 1 per turno); (2) un incantesimo d'Arcano di danno al livello 2 (es. Marchio Arcano + 1d6); (3) in riserva, 2 posti all'altra scuola dal livello 3. Cambiare la meccanica sconsigliato per ora.
+0b. **Enea troppo duro per tutti** (36-76% contro l'obiettivo 80%): da sistemare nella scala dei guardiani.
+0c. **A3:** poche combo nuove tra scuole, solo dove la serie lo chiede.
 
 **Leggeri**
 1. **Guardiani, uno alla volta:** Enea deciso (storia 10a: arma a doppia faccia, Furia del becchino, bottino); vulnerabile al sottobosco (Sciamano) al posto del veleno; **nella sala di prova dal 2 novembre**, da provare con le classi vere, poi nel gioco (dialogo, cimitero, bottino). Poi Dafne, Atena, sovrano (documenti).

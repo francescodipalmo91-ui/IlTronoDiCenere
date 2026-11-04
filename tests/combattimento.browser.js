@@ -688,9 +688,9 @@ caso("Regolamento: classi, scuole di magia, stati ed esempi in italiano e in ing
   eq(await page.$$eval("#sezioni details[open]", l => l.length), 4, "Comprimi lascia aperte solo le parti");
   const t = await page.textContent("body");
   ["Ferite", "Copie", "Coagulo", "Bilancia", "Nadir", "Crepuscolo", "Accecato", "Avvizzito", "Lume Arcano", "Via della Vena", "Via del Velo", "Via della Brace", "Via della Lama", "Via dello Scoglio", "Stilo Cremisi", "Abbraccio della Tomba", "Turno 3.", "Punta di Mandragora", "Avvelenato", "Quando serve", "Indagare o Percezione", "Malus alle abilità di Agilità"].forEach(x => vero(t.includes(x), "manca: " + x)); /* lo Sciamano non è più «in preparazione» */
-  /* 44 incantesimi e 12 abilità delle vie, tutte le tecniche del Guerriero in tabella */
+  /* 60 incantesimi e 12 abilità delle vie, tutte le tecniche del Guerriero in tabella */
   const righe = await page.$$eval("table tr", r => r.length);
-  vero(righe > 44 + 12 + 85, "tabelle incomplete: " + righe); /* 04/11 sera: 44 incantesimi (7 + 7 dell'Arcanista, 15 + 15 del Monaco) */
+  vero(righe > 60 + 12 + 85, "tabelle incomplete: " + righe); /* 04/11 sera: 60 incantesimi, 15 per scuola */
   vero(!/Aldo|Guendalina/.test((await page.textContent("#sezioni")).replace(/«parlo con Guendalina»/g, "")), "il regolamento nomina i PNG delle vie");
   await page.evaluate(() => { localStorage.setItem("lingua", "en"); }); await page.reload();
   const e = await page.textContent("body");
@@ -945,7 +945,7 @@ caso("Creazione: l'Arcanista sceglie 3 incantesimi liberamente tra le due scuole
   const { page, errori, chiudi } = await apri(b, "creazione.html");
   await page.check('input[name="classe"][value="Sapiente"]', { force: true });
   eq(await page.$$eval('input[name="scuola"]', e => e.length), 0, "la scelta della scuola non c'è più");
-  eq(await page.$$eval('input[name="incantesimo"]:not(:disabled)', e => e.length), 4, "tutti e 4 gli incantesimi di livello 1 sono sceglibili (04/11 sera: 2 di Sangue, 2 d'Illusione)");
+  eq(await page.$$eval('input[name="incantesimo"]:not(:disabled)', e => e.length), 6, "tutti e 6 gli incantesimi di livello 1 sono sceglibili (04/11 sera: 3 di Sangue, 3 d'Illusione)");
   for (const id of ["riflessi", "dardo_fantasma", "stilo_cremisi"]) await page.check(`input[name="incantesimo"][value="${id}"]`, { force: true });
   vero(await page.$eval('input[name="incantesimo"][value="frusta_cremisi"]', c => c.disabled), "tre scelti: il quarto è bloccato");
   await page.uncheck('input[name="incantesimo"][value="riflessi"]', { force: true });

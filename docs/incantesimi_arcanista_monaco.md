@@ -119,6 +119,19 @@ Note:
 
 **Rischio principale: troppa cura** (Risucchio, Coagulo, Ebollizione, Cuore Spezzato). Differenza col Monaco: il Sangue si cura solo combattendo e dopo aver versato sangue. Correttivo pronto: Coagulo una volta per turno del nemico.
 
+**Sangue, incantesimi aggiunti il 4 novembre sera** (15 per scuola come il Monaco, 3 per livello; DECISO):
+
+| Liv | Costo | Incantesimo | Effetto |
+|---|---|---|---|
+| 1 | 1 | Crosta | Per 3 turni +2 CA; chi ti ferisce prende 1 Ferita |
+| 2 | 3 | Meteora di Sangue | Attacco magico 2d6, Sbilanciato 1; critico con 19-20 se il nemico ha almeno 2 Ferite |
+| 3 | 4 | Costellazione Rossa | All'inizio dei tuoi 3 turni successivi esplode una sfera: 1d6 e 1 Ferita |
+| 3 | 3 | Sangue Velenoso | TS → Avvelenato 3 (1d4, 1d6 con almeno 2 Ferite) |
+| 4 | 6 | Emorragia | Per 3 turni 1d4 per Ferita a inizio turno del nemico, senza consumarle |
+| 4 | 5 | Ali Cremisi | Difesa: fino al tuo turno ogni colpo fa metà e incide 1 Ferita |
+| 5 | 8 | Vincolo di Sangue | TS → per 3 turni il nemico subisce metà del danno che subisci tu |
+| 5 | 9 | Marea Cremisi | Una per riposo: 4d8 senza tiro, Ferite al massimo |
+
 ### Illusione: le Copie
 - **Copie** su di te: al massimo 3 (4 con la via Velo). Quando un attacco ti colpirebbe, si tira un dado da (copie + 1): con 1 colpisce te, altrimenti distrugge una copia e non subisci danno.
 - **Smascherare:** a inizio turno un boss fa un TS di Mente; se riesce distrugge 1 copia.
@@ -133,6 +146,21 @@ Note:
 | 3 | 3 | Dado Truccato | Per 3 turni il nemico tira due d20 per colpire e tiene il peggiore (boss 2 turni) |
 | 4 | 5 | Terrore Illusorio | 2d8 psichico; TS Mente → Impaurito 2 (metà danno se resiste) |
 | 5 | 8 | Teatro di Specchi | Copie al massimo; per 3 turni ogni copia distrutta esplode con 1d6 su chi l'ha colpita |
+
+**Illusione, incantesimi aggiunti il 4 novembre sera** (Mille Volti e Tutto o Niente scartati da Francesco: al loro posto Incubo e Il Grande Inganno; Copie restano a 3):
+
+| Liv | Costo | Incantesimo | Effetto |
+|---|---|---|---|
+| 1 | 1 | Colpo di Fortuna | Il prossimo attacco magico tira 2d20 e tiene il migliore; sul critico +1 Copia |
+| 2 | 3 | Miraggio | 1d8 psichico per Copia, senza consumarle |
+| 3 | 3 | Scambio | Consuma 1 Copia: ti liberi dalla Presa e il nemico perde l'attacco speciale pronto |
+| 3 | 4 | Specchio Rotto | La prossima Copia distrutta rimanda al nemico il danno (metà sui boss) |
+| 4 | 6 | Labirinto | TS → Stordito 1 (boss: Sbilanciato 2 e −2 a smascherare per 2 turni); +1 Copia |
+| 4 | 5 | Destino Segnato | Per 3 turni critico con 18-20; ogni critico crea 1 Copia |
+| 5 | 8 | Incubo | 3d8 psichico +1d8 per Copia senza consumarle; TS → Impaurito 2 |
+| 5 | 9 | Il Grande Inganno | Una per riposo: consuma le Copie, 2d10 per Copia, 1 mana per Copia; per 2 turni il nemico tira 2d20 e tiene il peggiore |
+
+Combo previste: Crosta/Ali Cremisi + Ebollizione (incassare e restituire); Costellazione + Emorragia + Sangue Velenoso (logoramento); Colpo di Fortuna/Destino Segnato + Miraggio (critici che creano Copie); Specchio Rotto/Teatro + Ebollizione (le Copie distrutte incidono Ferite).
 
 **Combo tra le scuole (bonus):** ogni copia distrutta incide 1 Ferita su chi l'ha colpita.
 

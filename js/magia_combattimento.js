@@ -27,10 +27,10 @@
   const C = root.Combattimento || (typeof require === "function" ? require("./combattimento.js") : null);
   const R = root.Regole || {};
   const RECUPERO = R.IRA_PER_COLPO || [1, 1, 2, 2, 3];
-  const UNA_PER_RIPOSO = ["ultima_goccia", "nessuno_qui", "alba_eterna", "notte_senza_fine"];
-  const DIFESE = ["passo_sfasato", "santuario"];       /* consumano l'azione: mai due turni di fila */
+  const UNA_PER_RIPOSO = ["ultima_goccia", "nessuno_qui", "marea_cremisi", "grande_inganno", "alba_eterna", "notte_senza_fine"];
+  const DIFESE = ["passo_sfasato", "ali_cremisi", "santuario"];       /* consumano l'azione: mai due turni di fila */
   const SERVONO_SIGILLI = ["cuore_spezzato", "ultima_goccia"];     /* senza Ferite non hanno niente da consumare (nome storico: i Sigilli sono diventati le Ferite) */
-  const SERVONO_COPIE = ["frantumare"];
+  const SERVONO_COPIE = ["frantumare", "miraggio", "scambio", "grande_inganno"];
   const GRATUITE = ["condensazione"];                  /* non consumano l'azione (una per turno) */
   const RISUCCHIO_NO = ["cuore_spezzato"];             /* cura già la metà del danno: niente Risucchio in più */
 
@@ -104,7 +104,10 @@
     const fx = (k, n) => E.push(C.metti(s, ctx, k, n));
     const vivo = () => s.pv > 0;
     const hit = (o) => {
-      const r = C.colpo(s, ctx, { ...o, scuola: inc.scuola });
+      const fort = !!s.fortuna; if (fort) s.fortuna = false; /* Colpo di Fortuna: il prossimo attacco magico */
+      const dest = attivo(s, "destino");
+      const r = C.colpo(s, ctx, { ...o, scuola: inc.scuola, vantaggio: fort || (o && o.vantaggio), critDa: dest ? Math.min(18, (o && o.critDa) || 20) : o && o.critDa });
+      if (r.crit && (fort || dest)) crea(1); /* sul critico, 1 Copia */
       E.push(r); if (r.crit) crits++;
       if (r.ok && vivo() && attivo(s, "doppio") && C.copie(s) >= 2) { const x = ctx.tira(6); s.pv -= x; E.push({ k: "doppioColpo", d: x }); } /* Il Doppio (Velo) */
       return r;
@@ -177,6 +180,14 @@
         sete();
         break;
       }
+      case "crosta": { const t = 3; s.eff.scudo = Math.max(Number(s.eff.scudo) || 0, t); s.effMax.scudo = Math.max(Number(s.effMax.scudo) || 0, t); s.eff.crosta = t; s.effMax.crosta = t; E.push({ k: "crosta", turni: t }); break; }
+      case "meteora_sangue": dopoColpo(hit({ dado: 6, piuDadi: 1 + piuS, critDa: C.sigilli(s) >= 2 ? 19 : undefined }), () => { if (vivo()) fx("sbilanciato", 1); }); break;
+      case "costellazione_rossa": s.eff.costellazione = 3; s.effMax.costellazione = 3; E.push({ k: "costellazione", turni: 3 }); break;
+      case "sangue_velenoso": { const z = salva(); E.push(z); if (z.ok) E.push({ k: "resiste" }); else { s.velenoArc = C.sigilli(s) >= 2 ? 6 : 4; const e = C.metti(s, ctx, "avvelenato", 3); e.dado = s.velenoArc; E.push(e); } break; }
+      case "emorragia": s.eff.emorragia = 3; s.effMax.emorragia = 3; E.push({ k: "emorragia", turni: 3 }); break;
+      case "ali_cremisi": s.assorbe = { tipo: "ali", n: 0 }; E.push({ k: "difesaPronta", tipo: "ali" }); break;
+      case "vincolo_sangue": { const z = salva(); E.push(z); if (z.ok) E.push({ k: "resiste" }); else { s.eff.vincolo = 3; s.effMax.vincolo = 3; E.push({ k: "vincolo", turni: 3 }); } break; }
+      case "marea_cremisi": diretto(4 + piuS, 8, 0); if (vivo()) ink(sigMax); break;
       /* ================= Via Vena (Aldo): Sangue ================= */
       case "fiume_rosso": ink(2); break;
       case "sete": s.sete = true; E.push({ k: "sete" }); break;
@@ -201,6 +212,19 @@
         break;
       }
       case "teatro_specchi": crea(copieMax); s.eff.teatro = 3; s.effMax.teatro = 3; E.push({ k: "teatro", turni: 3 }); break;
+      case "colpo_fortuna": s.fortuna = true; E.push({ k: "fortuna" }); break;
+      case "miraggio": diretto(C.copie(s), 8, 0); break;
+      case "scambio": s.copie = C.copie(s) - 1; s.soffioPronto = false; s.presaUsata = true; E.push({ k: "scambio", restano: s.copie }); break;
+      case "specchio_rotto": s.specchioRotto = true; E.push({ k: "specchioRotto" }); break;
+      case "labirinto": controlloORipiego({ bloccato: 1 }, () => { fx("sbilanciato", 2); s.eff.labirinto = 2; s.effMax.labirinto = 2; E.push({ k: "labirinto", turni: 2 }); }); crea(1); break;
+      case "destino_segnato": s.eff.destino = 3; s.effMax.destino = 3; E.push({ k: "destino", turni: 3 }); break;
+      case "incubo": diretto(3 + C.copie(s), 8, 0); if (vivo()) { const z = salva(); E.push(z); if (z.ok) E.push({ k: "resiste" }); else fx("paura", 2); } break;
+      case "grande_inganno": {
+        const n = C.copie(s); s.copie = 0; diretto(2 * n, 10, 0);
+        const mana = recuperaMana(n); E.push({ k: "frantuma", n, mana });
+        s.eff.truccato = Math.max(Number(s.eff.truccato) || 0, 2); s.effMax.truccato = Math.max(Number(s.effMax.truccato) || 0, 2); E.push({ k: "truccato", turni: 2 });
+        break;
+      }
       /* ================= Via Velo (Guendalina): Illusione ================= */
       case "il_doppio": s.eff.doppio = 3; s.effMax.doppio = 3; E.push({ k: "doppio", turni: 3 }); break;
       case "sala_specchi": crea(1); s.salaSpecchi = true; E.push({ k: "salaSpecchi" }); break;
@@ -323,15 +347,17 @@
   function inizioTurnoNemico(s, ctx) {
     const E = [];
     if (ctx && ctx.boss && C.copie(s) > 0) {
-      const z = C.ts({ ...ctx, attrTs: "Mente", modTs: (ctx.modTsDi ? ctx.modTsDi("Mente") : ctx.modTs) - (ctx.scuolaVia === "illusione" ? 2 : 0) }); E.push(z);
+      const z = C.ts({ ...ctx, attrTs: "Mente", modTs: (ctx.modTsDi ? ctx.modTsDi("Mente") : ctx.modTs) - (ctx.scuolaVia === "illusione" ? 2 : 0) - (attivo(s, "labirinto") ? 2 : 0) }); E.push(z);
       if (z.ok) { s.copie = C.copie(s) - 1; E.push({ k: "smascherata", restano: s.copie }); } else E.push({ k: "nonSmaschera" });
     }
     if (attivo(s, "pressione")) { const d = ctx.tira(6); s.pv -= d; E.push({ k: "pressioneTick", d }); }
     if (attivo(s, "corona")) { const d = ctx.tira(6); s.pv -= d; E.push({ k: "coronaTick", d }); }
     if (attivo(s, "avvizzito")) { const dado = Number(s.avvizzitoDado) || 4, d = ctx.tira(dado); s.pv -= d; E.push({ k: "avvizzitoTick", d, dado }); }
+    if (attivo(s, "emorragia") && C.sigilli(s) > 0) { const n = C.sigilli(s), tiri = tiraDadi(ctx, n, 4), d = somma(tiri); s.pv -= d; E.push({ k: "emorragiaTick", n, tiri, d }); } /* 04/11 sera */
+    if (attivo(s, "avvelenato") && s.velenoArc) { const d = ctx.tira(s.velenoArc); s.pv -= d; E.push({ k: "velenoArcTick", d, dado: s.velenoArc }); } /* Sangue Velenoso (lo Sciamano ha il suo veleno) */
     return E;
   }
-  const haTick = (s) => attivo(s, "pressione") || attivo(s, "corona") || attivo(s, "avvizzito") || C.copie(s) > 0;
+  const haTick = (s) => attivo(s, "pressione") || attivo(s, "corona") || attivo(s, "avvizzito") || C.copie(s) > 0 || attivo(s, "emorragia") || (attivo(s, "avvelenato") && !!s.velenoArc);
   /* bonus ai tuoi tiri salvezza (Soffio): Aureola +1, Cerchio del Focolare +2 */
   const bonusTsPg = (s) => ((Number(s && s.bilancia) || 0) >= 2 ? 1 : 0) + (attivo(s, "cerchio") ? 2 : 0);
   /* Seconda Vita: il primo colpo che ti porterebbe a 0 ti lascia a 1 e ti cura 2d6 (la cura la applica chi chiama, dopo il danno) */
@@ -419,6 +445,7 @@
   function inizioTurnoPozzo(s, ctx) {
     const pozzo = Number(ctx && ctx.pozzo) || 0, E = [];
     if (pozzo >= 1 && s.pozzoTurni > 0 && !s.incQuestoTurno && ctx.manaPiu) { const n = ctx.manaPiu(1); if (n > 0) E.push({ k: "pozzo", n }); }
+    if (attivo(s, "costellazione") && s.pv > 0) { const d = ctx.tira(6); s.pv -= d; E.push({ k: "costellazioneScoppio", d }, C.incidi(s, ctx, 1)); } /* 04/11 sera: Costellazione Rossa */
     s.pozzoTurni = (Number(s.pozzoTurni) || 0) + 1; s.incQuestoTurno = false; s.condensOra = false; /* 04/11 sera: la Condensazione torna disponibile */
     return E;
   }
@@ -463,6 +490,21 @@
       case "nonSmaschera": return T("Il nemico non distingue le Copie da te.", "The enemy cannot tell the Copies from you.");
       case "senzaCopie": return T("Serve almeno 1 Copia.", "You need at least 1 Copy.");
       case "unaPerTurno": return T("Una sola volta per turno.", "Only once per turn.");
+      case "crosta": return T(`Il sangue si rapprende in una crosta per ${e.turni} turni: +2 alla Classe armatura, e chi ti ferisce prende 1 Ferita.`, `Your blood hardens into a scab for ${e.turni} turns: +2 Armor Class, and whoever wounds you takes 1 Wound.`);
+      case "crostaColpo": return T("La crosta si spacca e il tuo sangue schizza addosso al nemico.", "The scab cracks and your blood splashes the enemy.");
+      case "costellazione": return T(`Tre sfere di sangue ti girano attorno: all'inizio dei tuoi ${e.turni} turni successivi ne esplode una.`, `Three spheres of blood circle you: one bursts at the start of each of your next ${e.turni} turns.`);
+      case "costellazioneScoppio": return T(`Una sfera di sangue esplode: ${e.d} danni.`, `A sphere of blood bursts: ${e.d} damage.`);
+      case "emorragia": return T(`Per ${e.turni} turni le Ferite sanguinano all'inizio del turno del nemico.`, `For ${e.turni} turns the Wounds bleed at the start of the enemy's turn.`);
+      case "emorragiaTick": return T(`Emorragia: ${e.n}d4 [${e.tiri.join("+")}] = ${e.d} danni.`, `Haemorrhage: ${e.n}d4 [${e.tiri.join("+")}] = ${e.d} damage.`);
+      case "velenoArcTick": return T(`Il sangue velenoso lo consuma: ${e.d} danni (d${e.dado}).`, `The poisoned blood eats at it: ${e.d} damage (d${e.dado}).`);
+      case "vincolo": return T(`Per ${e.turni} turni il nemico subisce metà del danno che subisci tu.`, `For ${e.turni} turns the enemy takes half the damage you take.`);
+      case "vincoloColpo": return T(`Il vincolo di sangue gli restituisce ${e.d} danni.`, `The blood bond deals ${e.d} damage back to it.`);
+      case "fortuna": return T("Il tuo prossimo attacco magico tira due d20 e tiene il migliore.", "Your next spell attack rolls two d20 and keeps the better.");
+      case "scambio": return T(`Ti scambi con una Copia: sei libero dalla Presa e il nemico perde l'attacco speciale pronto (Copie: ${e.restano}).`, `You swap with a Copy: you are free of the Grab and the enemy loses its readied special attack (Copies: ${e.restano}).`);
+      case "specchioRotto": return T("La prossima Copia distrutta rimanderà il colpo al nemico.", "The next destroyed Copy will send the blow back to the enemy.");
+      case "specchioRottoScatta": return T(`Lo specchio si rompe e il colpo torna indietro: ${e.d} danni al nemico.`, `The mirror breaks and the blow comes back: ${e.d} damage to the enemy.`);
+      case "labirinto": return T(`Per ${e.turni} turni il nemico smaschera le Copie con −2.`, `For ${e.turni} turns the enemy sees through Copies at −2.`);
+      case "destino": return T(`Per ${e.turni} turni i tuoi attacchi magici fanno critico con 18-20 e ogni critico crea 1 Copia.`, `For ${e.turni} turns your spell attacks crit on 18-20 and every critical creates 1 Copy.`);
       case "diretto": return T(`Danno senza tiro: ${dadi(e)} = ${e.danno}${e.meta ? " (dimezzato)" : ""}.`, `Damage with no roll: ${dadi(e)} = ${e.danno}${e.meta ? " (halved)" : ""}.`);
       case "detona":
         return T(`Detonazione: ${e.n} ${e.n === 1 ? "Sigillo" : "Sigilli"} esplodono, +${e.n}d${e.dado} [${e.tiri.join("+")}] = ${e.bonus} danni.`, `Detonation: ${e.n} ${e.n === 1 ? "Seal" : "Seals"} burst, +${e.n}d${e.dado} [${e.tiri.join("+")}] = ${e.bonus} damage.`)
@@ -479,6 +521,7 @@
       case "parola": return T(`Il nemico ha −4 ai tiri salvezza per ${e.turni} turni.`, `The enemy has −4 on saving throws for ${e.turni} turns.`);
       case "tomo": return T(`Il Tomo ti costa ${e.mente} di salute mentale (non letale). Per ${e.turni} turni gli incantesimi d'Arcano costano 2 in meno (minimo 1) e incidono 1 Sigillo in più.`, `The Tome costs you ${e.mente} mental health (non-lethal). For ${e.turni} turns Arcane spells cost 2 less (minimum 1) and carve 1 extra Seal.`);
       case "difesaPronta": return {
+        ali: T("Ali di sangue ti avvolgono: fino al tuo turno ogni colpo farà metà danni e inciderà 1 Ferita su chi ti colpisce.", "Wings of blood wrap around you: until your turn every blow will deal half damage and carve 1 Wound on the attacker."),
         passo: T("Il prossimo colpo che ti andrebbe a segno ti attraverserà, e lascerà al tuo posto una Copia.", "The next blow that would hit you will pass through you, leaving a Copy in your place."),
         specchio: T("Il primo colpo che ti va a segno, anche più avanti nello scontro, farà metà danni e inciderà 1 Sigillo su chi ti ha colpito.", "The first blow that hits you, even later in the fight, does half damage and carves 1 Seal on whoever hit you."),
         barriera: T("Il primo colpo che subisci farà 0 danni e chi ti colpisce subirà 1d6 forza.", "The first blow you take does 0 damage and whoever hits you takes 1d6 force."),

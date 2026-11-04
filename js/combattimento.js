@@ -146,7 +146,7 @@
     o = o || {};
     const pre = o.base ? {} : (s.prossimo || {}); if (!o.base) s.prossimo = null;
     const piena = attivo(s, "piena") && (o.base || o.scuola === "sangue") ? 2 : 0; /* 04/11: Sangue in Piena, +2 a colpire e ai danni con l'arma e con il Sangue */
-    const mA = ctx.modAtt + piena + (o.bonus || 0) + (pre.bonus || 0), ca = ctx.ca(), d = ctx.svantaggio ? Math.min(ctx.tira(20), ctx.tira(20)) : ctx.tira(20), tot = d + mA; /* 28/10: chi attacca Accecato tira 2d20 e tiene il peggiore */
+    const mA = ctx.modAtt + piena + (o.bonus || 0) + (pre.bonus || 0), ca = ctx.ca(), d = ctx.svantaggio && !o.vantaggio ? Math.min(ctx.tira(20), ctx.tira(20)) : o.vantaggio && !ctx.svantaggio ? Math.max(ctx.tira(20), ctx.tira(20)) : ctx.tira(20), tot = d + mA; /* 04/11 sera: Colpo di Fortuna, vantaggio */ /* 28/10: chi attacca Accecato tira 2d20 e tiene il peggiore */
     const soglia = sogliaCrit(s, o.critDa);
     let crit = !ctx.noCrit && d >= soglia, ok = (d >= soglia) || tot > ca; /* 01/11: Frastornato (ctx.noCrit): il 20 colpisce ma non è critico */
     if (ok && o.sempreCrit && !ctx.noCrit) crit = true;
@@ -484,6 +484,7 @@
         s.copie = n - 1; const E = [{ k: "copiaColpita", d, n, restano: s.copie }];
         E.push(incidi(s, ctx, 1)); /* combo tra le scuole: la Copia distrutta incide 1 Ferita su chi l'ha colpita */
         if (attivo(s, "teatro") && vivo(s)) { const x = ctx.tira(6); s.pv -= x; E.push({ k: "teatroScoppio", d: x }); }
+        if (s.specchioRotto && vivo(s) && Number(danno) > 0) { s.specchioRotto = false; const x = ctx.boss ? Math.max(1, Math.floor(Number(danno) / 2)) : Number(danno); s.pv -= x; E.push({ k: "specchioRottoScatta", d: x }); } /* 04/11 sera: Specchio Rotto */
         return { annullato: true, danno: 0, furia: 0, eventi: E };
       }
       EM.push({ k: "copiaMancata", d, n });
@@ -505,7 +506,7 @@
     let furia = furiaPerColpo(ctx.liv, crit), finale = pieno;
     const a = s.assorbe;
     if (a) {
-      if (a.tipo !== "tutti" && a.tipo !== "respingere") s.assorbe = null; /* vale per il primo colpo; «tutti» e Respingere durano fino al tuo turno */
+      if (a.tipo !== "tutti" && a.tipo !== "respingere" && a.tipo !== "ali") s.assorbe = null; /* vale per il primo colpo; «tutti» e Respingere durano fino al tuo turno */
       s.assorbiti = (Number(s.assorbiti) || 0) + 1;
       if (a.tipo === "meta") { finale = Math.floor(pieno / 2); E.push({ k: "assorbito", tipo: a.tipo, prima: pieno, dopo: finale }); }
       else if (a.tipo === "rimbalzo") {
@@ -517,6 +518,7 @@
       else if (a.tipo === "tutti") { finale = 0; furia = 0; a.n = (a.n || 0) + 1; E.push({ k: "assorbito", tipo: a.tipo, prima: pieno, dopo: 0 }); }
       /* difese degli incantesimi: Specchio di Rune (metà e 1 Sigillo), Barriera Cinetica (0 e 1d6 forza), Respingere (tutti i colpi: 0 e 1d6 forza) */
       else if (a.tipo === "specchio") { finale = Math.floor(pieno / 2); furia = 0; E.push({ k: "assorbito", tipo: "meta", prima: pieno, dopo: finale }, incidi(s, ctx, 1)); }
+      else if (a.tipo === "ali") { finale = Math.floor(pieno / 2); furia = 0; E.push({ k: "assorbito", tipo: "meta", prima: pieno, dopo: finale }, incidi(s, ctx, 1)); } /* 04/11 sera: Ali Cremisi, fino al tuo turno */
       else if (a.tipo === "passo") { finale = 0; furia = 0; s.copie = Math.min(copieMax(ctx), copie(s) + 1); E.push({ k: "passoSfasato", copie: s.copie }); } /* 04/11 sera: Passo Sfasato */
       else if (a.tipo === "barriera" || a.tipo === "respingere") {
         finale = 0; furia = 0; E.push({ k: "assorbito", tipo: "zero", prima: pieno, dopo: 0 });
@@ -531,6 +533,8 @@
     if (s.elastica && cariche(s) >= 2 && vivo(s)) { const d = ctx.tira(4); s.pv -= d; E.push({ k: "elasticaColpo", d }); }
     /* 04/11 sera, Coagulo del Sangue: se in questo scontro hai già versato sangue, recuperi subito un quarto del colpo (metà con Sangue in Piena), per eccesso.
        La cura la applica chi chiama, dopo il danno, solo se il personaggio è ancora in piedi */
+    if (attivo(s, "crosta") && finale > 0 && vivo(s)) E.push({ k: "crostaColpo" }, incidi(s, ctx, 1)); /* 04/11 sera: Crosta, chi ti ferisce prende 1 Ferita */
+    if (attivo(s, "vincolo") && finale > 0 && vivo(s)) { const x = Math.floor(finale / 2); if (x > 0) { s.pv -= x; E.push({ k: "vincoloColpo", d: x }); } } /* Vincolo di Sangue */
     const coagulo = s.versato && finale > 0 ? Math.ceil(finale / (attivo(s, "piena") ? 2 : 4)) : 0;
     return { annullato: !!a && finale === 0 && pieno > 0, danno: finale, furia, eventi: E, coagulo };
   }
@@ -552,7 +556,7 @@
   /* inizio del tuo turno: Parata e difese dello scudo scadono; il Mare Profondo e l'Egida rilasciano l'onda */
   /* 03/11: potenziamenti che valgono per le TUE azioni (Runa sull'Arma, Voto di Luce, Occhio del Tomo…): «per 3 turni» vuol dire i tuoi 3 turni
      successivi. Senza questa regola il turno del nemico subito dopo il lancio ne consumava uno e restavano solo 2 attacchi. */
-  const BUFF_AZIONI = ["runa", "occhio", "tomo", "voto", "gemella", "rigen", "quiete", "furiaCinerea", "precisione", "lama", "piena", "doppio"];
+  const BUFF_AZIONI = ["runa", "occhio", "tomo", "voto", "gemella", "rigen", "quiete", "furiaCinerea", "precisione", "lama", "piena", "doppio", "costellazione", "destino"];
   function inizioTurnoPg(s, ctx) {
     const E = [];
     s.effInizio = Object.assign({}, s.eff); /* per sapere quali potenziamenti sono nati in questo turno */

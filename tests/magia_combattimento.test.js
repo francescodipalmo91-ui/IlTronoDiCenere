@@ -52,7 +52,8 @@
   /* ================= Arcanista: Sangue e Illusione (04/11 sera) ================= */
   caso("04/11 sera: ogni incantesimo di Sangue, Illusione e delle vie Vena e Velo è gestito dal motore e ha il testo inglese", () => {
     const ids = [...MG.INCANTESIMI.filter(i => ["sangue", "illusione"].includes(i.scuola)), ...MG.VIE.filter(v => ["sangue", "illusione"].includes(v.scuola))];
-    eq(ids.length, 14 + 6, "7 + 7 incantesimi e 6 abilità di via");
+    eq(ids.length, 30 + 6, "15 + 15 incantesimi (come il Monaco) e 6 abilità di via");
+    ["sangue", "illusione"].forEach(sc => [1, 2, 3, 4, 5].forEach(l => eq(MG.INCANTESIMI.filter(i => i.scuola === sc && i.liv === l).length, 3, `${sc}, livello ${l}: 3 incantesimi`)));
     ids.forEach(i => {
       vero(i.nome.en && i.effetto.en, i.id + ": testo inglese");
       const s = scontro({ sigilli: 3, copie: 3 }), c = ctx({ liv: 5 }); c.tira = (d) => (d === 20 ? 15 : 1); c.s = s;
@@ -185,6 +186,35 @@
     s = scontro({ copie: 2 }); M.inizioTurnoNemico(s, ctx({ boss: true, scuolaVia: "illusione", dadi: [13] })); eq(s.copie, 2, "13 − 2 = 11 contro 12");
     s = scontro({ copie: 2 }); M.inizioTurnoNemico(s, ctx({ dadi: [] })); eq(s.copie, 2);
     eq(M.haTick(scontro({ copie: 1 })), true);
+  });
+  caso("04/11 sera, Sangue nuovo: Crosta (+2 CA, chi ferisce prende 1 Ferita), Meteora (critico 19 con 2 Ferite), Costellazione, Emorragia, Sangue Velenoso", () => {
+    let s = scontro(); lancia("crosta", s, ctx()); eq([s.eff.scudo, s.eff.crosta], [3, 3]); C.colpoSubito(s, ctx(), false, 6); eq(s.sigilli, 1);
+    s = scontro({ sigilli: 2 }); let r = lancia("meteora_sangue", s, ctx({ dadi: [19, 3, 3, 3, 3] })); eq(ev(r, "colpo")[0].crit, true); eq(s.eff.sbilanciato, 1);
+    s = scontro({ sigilli: 1 }); r = lancia("meteora_sangue", s, ctx({ dadi: [19, 3, 3] })); eq(ev(r, "colpo")[0].crit, false, "con 1 Ferita il 19 non è critico");
+    s = scontro(); lancia("costellazione_rossa", s, ctx()); const e = M.inizioTurnoPozzo(s, ctx({ dadi: [5] })); eq(e[0].d, 5); eq(s.sigilli, 1);
+    s = scontro({ sigilli: 2 }); lancia("emorragia", s, ctx()); eq(M.inizioTurnoNemico(s, ctx({ dadi: [3, 4] }))[0].d, 7); eq(s.sigilli, 2, "non le consuma");
+    s = scontro({ sigilli: 2 }); lancia("sangue_velenoso", s, ctx({ dadi: [3] })); eq([s.eff.avvelenato, s.velenoArc], [3, 6]);
+  });
+  caso("04/11 sera, Sangue nuovo: Ali Cremisi (metà e 1 Ferita a ogni colpo fino al tuo turno), Vincolo di Sangue, Marea Cremisi (una per riposo)", () => {
+    let s = scontro(); lancia("ali_cremisi", s, ctx()); eq(C.colpoSubito(s, ctx(), false, 9).danno, 4); eq(C.colpoSubito(s, ctx(), false, 9).danno, 4, "anche il secondo colpo"); eq(s.sigilli, 2);
+    C.inizioTurnoPg(s, {}); eq(s.assorbe, null, "finisce al tuo turno");
+    s = scontro(); lancia("vincolo_sangue", s, ctx({ dadi: [3] })); C.colpoSubito(s, ctx(), false, 9); eq(s.pv, 76, "metà di 9");
+    s = scontro(); const c = ctx({ dadi: [1, 2, 3, 4] }); lancia("marea_cremisi", s, c); eq([s.pv, s.sigilli], [70, 3]); eq(M.disponibile(inc("marea_cremisi"), scontro(), c).ok, false);
+  });
+  caso("04/11 sera, Illusione nuova: Colpo di Fortuna (2d20, il migliore), Miraggio, Scambio, Specchio Rotto", () => {
+    let s = scontro(); lancia("colpo_fortuna", s, ctx()); let r = lancia("dardo_fantasma", s, ctx({ dadi: [4, 20, 3, 3] })); eq(ev(r, "colpo")[0].crit, true); eq(s.copie, 2, "+1 per il colpo, +1 per il critico");
+    s = scontro({ copie: 2 }); lancia("miraggio", s, ctx({ dadi: [3, 4] })); eq([s.pv, s.copie], [73, 2]);
+    s = scontro({ copie: 2, soffioPronto: true }); lancia("scambio", s, ctx()); eq([s.copie, s.soffioPronto, s.presaUsata], [1, false, true]);
+    s = scontro({ copie: 1 }); lancia("specchio_rotto", s, ctx()); C.colpoSubito(s, ctx({ dadi: [2] }), false, 9); eq(s.pv, 71); eq(s.specchioRotto, false);
+    s = scontro({ copie: 1 }); lancia("specchio_rotto", s, ctx()); C.colpoSubito(s, ctx({ boss: true, dadi: [2] }), false, 9); eq(s.pv, 76, "metà sui boss");
+  });
+  caso("04/11 sera, Illusione nuova: Labirinto, Destino Segnato, Incubo, Il Grande Inganno", () => {
+    let s = scontro(); lancia("labirinto", s, ctx({ dadi: [3] })); eq([s.eff.bloccato, s.copie], [1, 1]);
+    s = scontro({ copie: 1 }); lancia("labirinto", s, ctx({ boss: true })); eq([s.eff.sbilanciato, s.eff.labirinto, s.copie], [2, 2, 2]);
+    M.inizioTurnoNemico(s, ctx({ boss: true, dadi: [13] })); eq(s.copie, 2, "13 − 2 = 11 contro 12");
+    s = scontro(); lancia("destino_segnato", s, ctx()); let r = lancia("dardo_fantasma", s, ctx({ dadi: [18, 3, 3] })); eq(ev(r, "colpo")[0].crit, true); eq(s.copie, 2);
+    s = scontro({ copie: 2 }); lancia("incubo", s, ctx({ dadi: [1, 1, 1, 1, 1, 3] })); eq([s.pv, s.eff.paura], [75, 2]);
+    s = scontro({ copie: 2 }); const c = ctx({ dadi: [1, 2, 3, 4] }); lancia("grande_inganno", s, c); eq([s.pv, s.copie, c.mana, s.eff.truccato], [70, 0, 2, 2]);
   });
   caso("Un incantesimo costa il suo mana; il critico raddoppia i dadi; Esposto allarga il critico; Sbilanciato abbassa la CA", () => {
     let s = scontro(), c = ctx({ dadi: [20, 3, 4] }); let r = lancia("stilo_cremisi", s, c); eq(r.costo, 1); eq(s.pv, 80 - 7);

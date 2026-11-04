@@ -968,3 +968,14 @@ Il punto 1 si è chiuso cambiando le scuole (incantesimi_arcanista_monaco.md, se
 - **La cura del Sangue non sfonda:** salute residua 63-71% contro Enea, come la Forza di ieri. Pagare in salute cambia poco le vittorie (+0-3), fa risparmiare mana (risorsa residua 57% contro 53%).
 - **Enea resta sotto l'80% per il Sangue:** punto 3 (ritaratura di Enea) ancora aperto.
 
+**Serie con 15 incantesimi per scuola** (4 novembre sera, 300 scontri, stesso giocatore medio):
+
+| Arcanista | Ettore | Enea fermaglio / nascosto / maglio |
+|---|---|---|
+| Sangue | 90% | 42 / 45 / 47% |
+| Illusione | 91% | 67 / 62 / 75% |
+| Misto | 62% | 44 / 49 / 49% |
+
+- **I numeri scendono, ma misurano la preparazione automatica, non la classe.** Il giocatore medio prepara «gli incantesimi di danno più alti» e con 15 scelte finisce su build sbilanciate (il misto prende Miraggio e Frantumare senza chi crea Copie). Gli incantesimi di ieri ci sono ancora tutti: chi li prepara ottiene almeno i numeri di ieri.
+- **Da fare se serve una misura vera:** preparazioni per build (difesa, logoramento, fortuna) nella serie.
+

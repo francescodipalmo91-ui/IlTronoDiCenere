@@ -1,6 +1,6 @@
 /* Serie automatica di scontri nella pagina di test (stesso motore della sala di prova): percentuale di vittorie per classe e caso.
    Uso: python3 -m http.server 8765 --bind 127.0.0.1, poi  N=150 node strumenti/serie_scontri.js
-   Opzioni: PORT (porta del server, predefinita 8765), MISTO=1 (04/11: prepara metà e metà tra le due scuole), VIA=scuola (04/11: incantatori con la via della loro scuola dal livello 3), N (scontri per caso), SOLO_ENEA=1 (solo Enea col fermaglio), CLASSI=guerriero,monaco. Equipaggiamento e preparazione rispettano le regole di classe (03/11). Il giocatore automatico è pessimista: confronta le versioni, non leggere i numeri come assoluti. */
+   Opzioni: CONTROLLO=1 (04/11: Arcano puro che prepara Stasi e Sigillo del Silenzio), PORT (porta del server, predefinita 8765), MISTO=1 (04/11: prepara metà e metà tra le due scuole), VIA=scuola (04/11: incantatori con la via della loro scuola dal livello 3), N (scontri per caso), SOLO_ENEA=1 (solo Enea col fermaglio), CLASSI=guerriero,monaco. Equipaggiamento e preparazione rispettano le regole di classe (03/11). Il giocatore automatico è pessimista: confronta le versioni, non leggere i numeri come assoluti. */
 const { chromium } = require('playwright');
 const N = Number(process.env.N || 300);
 const MEDIO = process.env.BOT !== 'vecchio'; /* 03/11: predefinito il giocatore medio che gioca le combo; BOT=vecchio per il confronto */
@@ -10,22 +10,22 @@ const CASI0 = [
   { nem: 'enea', liv: 3, fermaglio: false, lato: 'casuale' },
   { nem: 'enea', liv: 3, fermaglio: true, lato: 'maglio' },
 ];
-const CASI = process.env.CASI ? process.env.CASI.split(',').map(x => { const [nem, liv] = x.split(':'); return { nem, liv: Number(liv) || 1 }; }) /* 04/11: CASI=mastino:2,mastino:3 */ : process.env.SOLO_ENEA ? [{ nem: 'enea', liv: 3, fermaglio: true, lato: 'casuale' }] : CASI0;
+const CASI = process.env.CASI ? process.env.CASI.split(',').map(x => { const [nem, liv, pv] = x.split(':'); return { nem, liv: Number(liv) || 1, pv: Number(pv) || 0, ...(nem === 'enea' ? { fermaglio: true, lato: 'casuale' } : {}) }; /* 04/11: CASI=mastino:3:30 → salute fissa (nemico comune più robusto) */ }) /* 04/11: CASI=mastino:2,mastino:3 */ : process.env.SOLO_ENEA ? [{ nem: 'enea', liv: 3, fermaglio: true, lato: 'casuale' }] : CASI0;
 const CLASSI = process.env.CLASSI ? process.env.CLASSI.split(',') : ['guerriero', 'sciamano', 'arcanista', 'monaco'];
 (async () => {
   const b = await chromium.launch(); const p = await b.newPage(); const err = [];
   p.on('pageerror', e => err.push(e.message));
-  await p.goto(`http://127.0.0.1:${process.env.PORT || 8765}/test.html`); if (process.env.MISTO) await p.evaluate(() => { window.PREP_MISTO = true; }); /* 04/11: giocatore misto, metà e metà tra le scuole */ /* 03/11: PORT per più serie in parallelo (ognuna su una copia dei file, così le modifiche in corso non si mescolano) */ await p.waitForTimeout(800);
+  await p.goto(`http://127.0.0.1:${process.env.PORT || 8765}/test.html`); if (process.env.MISTO) await p.evaluate(() => { window.PREP_MISTO = true; }); if (process.env.CONTROLLO) await p.evaluate(() => { window.PREP_CONTROLLO = true; }); /* 04/11: Arcano puro di controllo (Stasi, Sigillo del Silenzio) */ /* 04/11: giocatore misto, metà e metà tra le scuole */ /* 03/11: PORT per più serie in parallelo (ognuna su una copia dei file, così le modifiche in corso non si mescolano) */ await p.waitForTimeout(800);
   const righe = [];
   for (const c of CASI) for (const cl of CLASSI) {
     await p.selectOption('#pLiv', String(c.liv)); await p.selectOption('#pClasse', cl); if (process.env.SCUOLA && (cl === 'arcanista' || cl === 'monaco')) await p.selectOption('#pScuola', process.env.SCUOLA.split(',')[cl === 'arcanista' ? 0 : 1] || process.env.SCUOLA);
     /* 04/11: VIA=scuola → dal livello 3 gli incantatori prendono la via della loro scuola preferita (Guendalina per Arcano e Vita, Aldo per Forza e Negromanzia) */
     if (process.env.VIA === 'scuola' && c.liv >= 3 && (cl === 'arcanista' || cl === 'monaco')) { const sc = await p.$eval('#pScuola', x => x.value); await p.selectOption('#pVia', sc === 'arcano' || sc === 'luce' ? 'guendalina' : 'aldo'); }
     else if (c.liv >= 3) await p.selectOption('#pVia', '');
-    await p.selectOption('#nTipo', c.nem);
+    await p.selectOption('#nTipo', c.nem); if (c.pv) await p.fill('#nPv', String(c.pv));
     if (c.nem === 'enea') { await p.setChecked('#nFermaglio', c.fermaglio); await p.selectOption('#nEneaLato', c.lato); await p.selectOption('#nEneaMossa', 'casuale'); }
     const r = await p.evaluate(([N, MEDIO]) => {
-      const SP = window.SalaProva; let vinte = 0, pvRest = 0, turni = 0;
+      const SP = window.SalaProva; let vinte = 0, pvRest = 0, turni = 0, risRest = 0;
       const lista = (sel) => [...document.querySelectorAll(sel)].filter(x => !x.disabled);
       for (let i = 0; i < N; i++) {
         window.SalaProvaPrepara(MEDIO ? 'combo' : true); SP.nuovoScontro(); let g = 0; /* 03/11: preparazione legale a caso (posti, quote, scuola principale) a ogni scontro */
@@ -62,12 +62,12 @@ const CLASSI = process.env.CLASSI ? process.env.CLASSI.split(',') : ['guerriero'
           if (!fatto) SP.attaccoNormale();
         }
         const st = SP.stato(); turni += g;
-        if (st.pg.pv > 0) { vinte++; pvRest += st.pg.pv / st.pg.pvMax; }
+        if (st.pg.pv > 0) { vinte++; pvRest += st.pg.pv / st.pg.pvMax; risRest += st.pg.furiaMax ? st.pg.furia / st.pg.furiaMax : 0; }
         SP.riposa();
       }
-      return { vinte, pvRest: vinte ? pvRest / vinte : 0, turni: turni / N };
+      return { vinte, pvRest: vinte ? pvRest / vinte : 0, risRest: vinte ? risRest / vinte : 0, turni: turni / N };
     }, [N, MEDIO]);
-    righe.push(`${(c.nem + (c.nem === 'enea' ? (c.fermaglio ? ' fermaglio' : ' nascosto') + ' ' + c.lato : '')).padEnd(26)} ${cl.padEnd(10)} ${Math.round(100 * r.vinte / N)}% vittorie · salute residua media ${Math.round(100 * r.pvRest)}% · ${r.turni.toFixed(1)} turni`);
+    righe.push(`${(c.nem + (c.nem === 'enea' ? (c.fermaglio ? ' fermaglio' : ' nascosto') + ' ' + c.lato : '')).padEnd(26)} ${cl.padEnd(10)} ${Math.round(100 * r.vinte / N)}% vittorie · salute residua media ${Math.round(100 * r.pvRest)}% · risorsa residua ${Math.round(100 * r.risRest)}% · ${r.turni.toFixed(1)} turni`);
   }
   console.log(righe.join('\n')); console.log('errori pagina:', err.length, err.slice(0, 3).join(' | '));
   await b.close();

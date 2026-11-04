@@ -784,6 +784,14 @@
           lista.slice(0, tot - (dif && tot > 3 ? 1 : 0)).forEach(i => preparatiInc.add(i.id)); if (dif && tot > 3) preparatiInc.add(dif.id);
           return;
         }
+        if (casuale === "combo" && window.PREP_CONTROLLO && princ === "arcano") { /* 04/11, PROVA punto 1: Arcano puro «di controllo» — Stasi e Sigillo del Silenzio se sbloccati, poi gli incantesimi d'Arcano che fanno danno; 1 posto di Forza */
+          const danno = (i) => /\dd\d/.test(i.effetto.it), tot = postiPrincInc(pg.liv);
+          const ctr = MG.INCANTESIMI.filter(i => ["stasi", "sigillo_silenzio", "prigione_rune"].includes(i.id) && i.liv <= pg.liv).sort((a, b) => b.liv - a.liv).slice(0, Math.max(1, tot - 3));
+          const off = MG.INCANTESIMI.filter(i => i.scuola === "arcano" && i.liv <= pg.liv && danno(i) && !ctr.includes(i)).sort((a, b) => b.liv - a.liv);
+          [...ctr, ...off].slice(0, tot).forEach(i => preparatiInc.add(i.id));
+          const alD = MG.INCANTESIMI.filter(i => i.scuola === altra && i.liv <= pg.liv && danno(i)).sort((a, b) => a.costo - b.costo); alD.slice(0, 1).forEach(i => preparatiInc.add(i.id));
+          return;
+        }
         if (casuale === "combo") { /* 03/11: come un giocatore medio — nella scuola principale gli incantesimi che fanno danno e una difesa, nell'altra il più economico che fa danno (serve alle combo) */
           const danno = (i) => /\dd\d/.test(i.effetto.it) && !/[Cc]ura|ti curi/.test(i.effetto.it), lista = MG.INCANTESIMI.filter(i => i.scuola === princ && i.liv <= pg.liv);
           const dif = lista.filter(i => M.DIFESE.includes(i.id)).sort((a, b) => a.costo - b.costo)[0];

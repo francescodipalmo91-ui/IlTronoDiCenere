@@ -918,3 +918,23 @@ Mastino comune (liv. 2 / liv. 3), con la via della scuola: Arcano puro 86 / 100%
 - **Arcano puro = stile più difficile (scelta B di Francesco, 4 novembre), a tre condizioni:** che sia detto chiaramente (regolamento, descrizione della via, Guendalina); che abbia un terreno dove rende di più; che non scenda sotto ~60% contro Enea. **La seconda oggi non è soddisfatta:** contro il mastino l'Arcano puro non rende di più, anzi è più lento. Limite: il giocatore automatico usa poco i controlli.
 - **Enea sotto l'80% per tutti gli incantatori anche con la vulnerabilità:** ritaratura di Enea da fare per tutte le classi insieme.
 
+### Punto 1 — terreno per l'Arcano puro (4 novembre, pomeriggio)
+
+Provate le due proposte nel codice (poi tolte) e una terza preparazione del giocatore automatico. Arcanista, via della scuola dal liv. 3; «mastino robusto» = mastino comune liv. 3 a 30 di salute (simula una caccia comune); serie da 200 (mastini) e 400 (guardiani), ±5-7.
+
+| Preparazione / regola | Ettore (liv. 2) | Enea fermaglio / nascosto / maglio | Mastino liv. 3 | Mastino robusto |
+|---|---|---|---|---|
+| Arcano puro «di danno» (come prima) | 75% | 39 / 46 / 48% | 99%, 3,9 turni | 90%, salute 54% |
+| + A: Rune che bruciano a 1d4 per Sigillo | — | 48% (fermaglio) | 100%, 3,9 turni | 86%, salute 65% |
+| **Arcano puro «di controllo»** (Stasi e Sigillo del Silenzio preparati) | 75% | **60 / 67 / 71%** | 99%, 3,3 turni | 94%, salute 68% |
+| + A | 72% | 63 / 71 / 69% | — | — |
+| + B: −2 al TS dei comuni per ogni Sigillo | — | 59% (fermaglio) | 99%, 2,9 turni | 93%, risorsa 30% |
+| Forza pura | 87% | 55 / 65 / 69% | 100%, 3,3 turni | 95%, salute 67% |
+| Misto | 84% | 55 / 67 / 61% | 98%, 3,2 turni | 92%, salute 62% |
+
+- **Il problema era la preparazione, non le regole.** Contro i boss Stasi e Sigillo del Silenzio non controllano ma incidono (Stasi 2 Sigilli): con Sutura (Sigilli pieni anche sui boss) diventano il motore dei Sigilli. L'Arcano puro che li prepara batte Enea quanto o più della Forza, con più risorsa residua (39-44% contro 31-36%).
+- **B scartata:** contro i comuni il controllo vale poco (muoiono in 3-5 turni) e spinge a spendere mana in Stasi invece che in danno: nessun guadagno, risorsa residua più bassa.
+- **A non necessaria:** +0-4 punti sull'Arcano di controllo, dentro il rumore.
+- **Terreno dell'Arcano puro = i guardiani senza armatura (Enea, Dafne), giocato di controllo.** Resta più debole contro Ettore (liv. 2, ancora senza via: 75% contro 84-87%) e contro i corazzati (regola delle armature).
+- **Conseguenza sulla scelta B:** l'Arcano puro non rende meno, è più difficile da capire (bisogna sapere che i controlli sui boss incidono). La prima condizione (dirlo chiaramente) diventa il punto centrale. Strumento: `CONTROLLO=1` nella serie degli scontri.
+

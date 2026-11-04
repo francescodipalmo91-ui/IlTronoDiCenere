@@ -6756,7 +6756,7 @@
     }
 
     /* Effetti a durata: medaglione con simbolo, nome e turni rimasti (rombi pieni = turni ancora attivi) */
-    const EFF_PG = ["scudo", "invuln", "pietra", "armaPiu", "potenza", "guardia", "baluardo", "fortezza", "furore", "precisione", "runa", "occhio", "tomo", "quiete", "muro", "santuario", "voto", "rigen", "gemella", "cerchio", "fiamma", "notte", "furiaCinerea", "manto", "seconda", "rivest", "linfaFuria", "pelle", "infuso", "aura", "rinascita", "bulbo"], EFF_NEM = ["bloccato", "cieco", "sanguina", "frattura", "esposto", "debole", "sbilanciato", "silenzio", "frastornato", "intontito", "pressione", "parola", "accecato", "avvizzito", "paura", "corona", "avvelenato", "marea"];
+    const EFF_PG = ["scudo", "invuln", "pietra", "armaPiu", "potenza", "guardia", "baluardo", "fortezza", "furore", "precisione", "runa", "occhio", "tomo", "quiete", "muro", "santuario", "voto", "rigen", "gemella", "cerchio", "fiamma", "notte", "furiaCinerea", "manto", "seconda", "rivest", "linfaFuria", "pelle", "infuso", "aura", "rinascita", "bulbo", "lama", "piena", "doppio", "teatro", "nessuno"], EFF_NEM = ["truccato", "bloccato", "cieco", "sanguina", "frattura", "esposto", "debole", "sbilanciato", "silenzio", "frastornato", "intontito", "pressione", "parola", "accecato", "avvizzito", "paura", "corona", "avvelenato", "marea"];
     const SHIELD = "M12 2.8l7 2.7v5.3c0 4.6-3 8.1-7 10.4-4-2.3-7-5.8-7-10.4V5.5z";
     const ICONE_EFF = { /* tratti a 24×24, colore dal tema dell'effetto */
       scudo: { tono: "dif", d: `<path d="${SHIELD}"/><path d="M12 6.5v11M8.2 10.5h7.6" opacity=".7"/>` },
@@ -6802,7 +6802,14 @@
       avvizzito: { tono: "mal", d: `<path d="M12 21V9M12 13c-4 0-6-2-6-5 4 0 6 2 6 5zM12 11c3 0 5-2 5-4-3 0-5 2-5 4z" opacity=".9"/>` },
       paura: { tono: "mal", d: `<circle cx="12" cy="12" r="8.5"/><circle cx="9" cy="10" r="1"/><circle cx="15" cy="10" r="1"/><ellipse cx="12" cy="15.5" rx="2" ry="2.4"/>` },
       corona: { tono: "mal", d: `<path d="M4 18l1.5-9 4 4L12 6l2.500 7 4-4L20 18z"/>` },
-      sigilli: { tono: "mal", d: `<circle cx="12" cy="12" r="8"/><path d="M12 6l3.5 6-3.5 6-3.5-6z" opacity=".85"/>` },
+      sigilli: { tono: "mal", d: `<path d="M12 3.5c3 4.2 5.5 7.4 5.5 10.4a5.5 5.5 0 0 1-11 0c0-3 2.5-6.2 5.5-10.4z"/><path d="M12 10.5v5M9.5 13h5" opacity=".8"/>` }, /* 04/11 sera: le Ferite del Sangue */
+      lama: { tono: "off", d: `<path d="M19.5 4.5l-9.8 9.8M17 4.2l2.8.3.3 2.8"/><path d="M6.6 11.2l6.2 6.2M8.6 15.4l-4.1 4.1"/><path d="M18 14c1.2 1.7 2 2.8 2 4a2 2 0 0 1-4 0c0-1.2.8-2.3 2-4z" opacity=".85"/>` },
+      piena: { tono: "off", d: `<path d="M12 3.5c3 4.2 5.5 7.4 5.5 10.4a5.5 5.5 0 0 1-11 0c0-3 2.5-6.2 5.5-10.4z"/><path d="M9 14l3-3 3 3" opacity=".85"/>` },
+      copie: { tono: "dif", d: `<circle cx="9" cy="7.5" r="2.5"/><path d="M4.5 19c.5-3.5 2.3-5.5 4.5-5.5s4 2 4.5 5.5"/><circle cx="15.5" cy="7.5" r="2.5" opacity=".55"/><path d="M14 13.6c2.4-.4 4.6 1.5 5.5 5.4" opacity=".55"/>` },
+      doppio: { tono: "off", d: `<circle cx="8.5" cy="8" r="2.5"/><circle cx="15.5" cy="8" r="2.5" opacity=".6"/><path d="M4.5 19.5c.6-3.6 2.2-5.5 4-5.5M19.5 19.5c-.6-3.6-2.2-5.5-4-5.5" opacity=".8"/><path d="M12 12v8"/>` },
+      teatro: { tono: "dif", d: `<rect x="4" y="4" width="7" height="16" rx="1"/><rect x="13" y="4" width="7" height="16" rx="1" opacity=".6"/><path d="M7.5 9v2M16.5 9v2" opacity=".8"/>` },
+      nessuno: { tono: "dif", d: `<circle cx="12" cy="8" r="3" stroke-dasharray="2 2"/><path d="M5.5 20c.7-4 3.2-6.5 6.5-6.5s5.8 2.5 6.5 6.5" stroke-dasharray="2 2"/>` },
+      truccato: { tono: "mal", d: `<rect x="4.5" y="4.5" width="15" height="15" rx="3"/><circle class="pieno" cx="9" cy="9" r="1.2"/><circle class="pieno" cx="15" cy="15" r="1.2"/><circle class="pieno" cx="12" cy="12" r="1.2"/>` },
       avvelenato: { tono: "mal", d: `<path d="M9 3h6M10 3v4.5L5.5 17a2.5 2.5 0 0 0 2.3 3.5h8.4a2.5 2.5 0 0 0 2.3-3.5L14 7.5V3"/><path d="M8 14h8" opacity=".7"/>` },
       marea: { tono: "mal", d: `<path d="M3 9c3-2 6 2 9 0s6 2 9 0M3 14c3-2 6 2 9 0s6 2 9 0M3 19c3-2 6 2 9 0s6 2 9 0" opacity=".9"/>` },
       rivest: { tono: "off", d: `<path d="M19.5 4.5l-9.8 9.8M17 4.2l2.8.3.3 2.8"/><path d="M6.6 11.2l6.2 6.2M8.6 15.4l-4.1 4.1"/><path d="M14 9c1.5.5 2.5 2 2 3.5" opacity=".7"/>` },
@@ -6823,8 +6830,9 @@
     function righeEffetti(dl, sc, chiavi, sep) {
       const attivi = chiavi.filter(k => sc.eff[k] > 0), crepe = chiavi === EFF_NEM ? CMB.crepe(sc) : 0, cariche = chiavi === EFF_PG ? CMB.cariche(sc) : 0, sigilli = chiavi === EFF_NEM ? CMB.sigilli(sc) : 0;
       /* Sciamano: cariche di Morbo sul nemico; Scudo di Corteccia e trappola pronta sul personaggio */
+      const copie = chiavi === EFF_PG ? CMB.copie(sc) : 0;
       const morbo = chiavi === EFF_NEM ? Number(sc.morbo) || 0 : 0, corteccia = chiavi === EFF_PG ? Number(sc.corteccia) || 0 : 0, trappola = chiavi === EFF_PG ? sc.trappola : null;
-      if (!attivi.length && !crepe && !cariche && !sigilli && !morbo && !corteccia && !trappola) return;
+      if (!attivi.length && !crepe && !cariche && !sigilli && !morbo && !corteccia && !trappola && !copie) return;
       sep("sep-spazio");
       const t = document.createElement("div"); t.className = "eff-tit"; t.textContent = CB.effettiTit; dl.append(t);
       if (cariche) { /* Carica Cinetica dello scudo: cariche, dura tutto lo scontro */
@@ -6843,6 +6851,7 @@
         dd.title = dt.title = `${nome}: ${valore}`; dl.append(dt, dd);
       };
       if (morbo) rigaNatura("avvelenato", CB.effNomi.morbo, `${morbo}/${SCI.MORBO_MAX}`, "mal");
+      if (copie) rigaNatura("copie", CB.effNomi.copie, `${copie}/${CMB.copieMax({ scuolaVia: scuolaPotenziata() })}`, "dif"); /* 04/11 sera: Copie dell'Illusione */
       if (corteccia) rigaNatura("pelle", CB.effNomi.corteccia, `${corteccia}/${SCI.scudoMax({ liv: livelloPg() })}`, "dif");
       if (trappola) rigaNatura("bulbo", CB.effNomi.trappola, nomeTec(TEC.find(x => x.id === trappola) || { nome: { it: trappola, en: trappola } }), "off");
       if (sigilli) { /* Sigilli dell'Arcanista: incisi sul nemico, durano tutto lo scontro */
@@ -6908,6 +6917,12 @@
         const lancia = document.createElement("button"); lancia.type = "button"; lancia.className = "mini"; lancia.textContent = U.lanciaInc;
         lancia.addEventListener("click", clic(() => lanciaIncantesimo(inc)));
         const dx = document.createElement("span"); dx.className = "azioni-inc"; dx.append(c, lancia);
+        /* 04/11 sera: il Sangue si può pagare in salute (+1 dado), in scontro e solo restando sopra metà */
+        if (inc.scuola === "sangue") { /* sempre visibile: al clic si controlla che resti sopra metà salute (la lista non si ridisegna a ogni colpo) */
+          const v = document.createElement("button"); v.type = "button"; v.className = "mini sangue"; v.textContent = Lingua.t({ it: `Col sangue (−${costoVero})`, en: `With blood (−${costoVero})` });
+          v.title = Lingua.t({ it: "Paga in salute: +1 dado", en: "Pay with health: +1 die" });
+          v.addEventListener("click", clic(() => lanciaIncantesimo(inc, true))); dx.append(v);
+        }
         testa.append(b, dx); og.append(testa);
         /* 03/11: etichette delle combo e avviso «combo pronta» durante lo scontro */
         const MCx = window.MagiaCombattimento;
@@ -10062,9 +10077,9 @@
     }
 
     /* Pulsante «Lancia» nella scheda: per ora ha effetto solo Luce nel buio della grotta */
-    function lanciaIncantesimo(inc) {
+    function lanciaIncantesimo(inc, versa) {
       if (occupato || !elAzioni.hidden) return; /* niente lanci durante una scelta in sospeso */
-      if (scontro) return lanciaInScontro(inc);
+      if (scontro) return lanciaInScontro(inc, versa);
       const luce = inc === incantesimoLuce();
       if (luce && luogo === "buio") return lanciaLuce();
       if (luce && luogo === "cantina") return luceCantina(true);
@@ -10710,7 +10725,7 @@
       /* 01/11: primaria Mente (la pazzia lucida del cacciatore di taglie: il conteggio, il calcolo), Spirito volutamente basso.
          Mente 12 dà +1 come prima il Vigore 12: tiro per colpire invariato (+1 + attacco 2 = +3). Il danno resta dannoBonus 3 */
       esploratore: { ca: 13, dadoVita: 8, dannoDado: 4, xp: 400, attacco: 1, attacchi: 2, tipoDanno: "Tagliente", boss: true, livello: 2, pvFissi: 30, pa: 8, ettore: true, primaria: "Mente",
-        statFisse: { Vigore: 10, "Agilità": 13, Mente: 13, Spirito: 8 }, dannoBonus: 1, /* 02/11: il ladro calcolatore, due pugnali 1d4 + 1 (Mente 13 = +1, per colpire +2: con +3 gli incantatori perdevano 9-12 punti nella simulazione) */ vulnerabile: ["Contundente", "Arcano", "Ombra"] /* 04/11: regola delle armature, senza armatura pesante → Arcano (prima Forza) */ /* 03/11: mappa bilanciata, una vulnerabilità per classe */, /* 29/10: luce e contundente */ /* 28/10: Vigore 12 (la gamba), +3 per colpire, spada 1d6 + 3, CD 11 */ /* boss: niente effetti di controllo, durate brevi, niente esecuzione */ /* custode del fermaglio: 400 PE, gli stessi se risparmiato */ probPresa: 0, probSoffio: 0, soffio: null, ritratto: "immagini/nemici/Ettore.webp" } /* immagine da aggiungere */
+        statFisse: { Vigore: 10, "Agilità": 13, Mente: 13, Spirito: 8 }, dannoBonus: 1, /* 02/11: il ladro calcolatore, due pugnali 1d4 + 1 (Mente 13 = +1, per colpire +2: con +3 gli incantatori perdevano 9-12 punti nella simulazione) */ vulnerabile: ["Contundente", "Illusione", "Ombra"] /* 04/11 sera: Illusione (la pazzia, il conteggio) al posto di Arcano; 04/11: regola delle armature, senza armatura pesante → Arcano (prima Forza) */ /* 03/11: mappa bilanciata, una vulnerabilità per classe */, /* 29/10: luce e contundente */ /* 28/10: Vigore 12 (la gamba), +3 per colpire, spada 1d6 + 3, CD 11 */ /* boss: niente effetti di controllo, durate brevi, niente esecuzione */ /* custode del fermaglio: 400 PE, gli stessi se risparmiato */ probPresa: 0, probSoffio: 0, soffio: null, ritratto: "immagini/nemici/Ettore.webp" } /* immagine da aggiungere */
     };
     /* boss: Guendalina, Aldo, il sovrano, Adele, i guardiani dei fermagli e i due mastini speciali (campo boss in NEMICI) */
     /* resistenze: resiste: ["veleno"] dimezza i danni da veleno dello Sciamano (da mettere a Dafne e al sovrano quando avranno la loro voce qui) */
@@ -10718,7 +10733,7 @@
     const dadiVuln = (tipo) => { const n = scontro || ultimoNemico, D = n && NEMICI[n.id]; return D && D.vulnerabile && tipo && D.vulnerabile.includes(tipo) ? 1 : 0; }; /* +1 dado di danno (28/10) */
     /* 01/11: resistenza a un tipo di danno = danno dimezzato (per difetto, minimo 1). «veleno» minuscolo resta per Dafne e il sovrano */
     const resisteA = (tipo) => { const n = scontro || ultimoNemico, D = n && NEMICI[n.id], r = (D && D.resiste) || []; return !!tipo && (r.includes(tipo) || (tipo === "Veleno" && r.includes("veleno"))); };
-    const tipoScuola = (s) => ({ forza: "Forza", arcano: "Arcano", luce: "Luce", ombra: "Ombra" })[s] || null;
+    const tipoScuola = (s) => ({ sangue: "Sangue", illusione: "Illusione", luce: "Luce", ombra: "Ombra" })[s] || null; /* 04/11 sera: Sangue e Illusione al posto di Forza e Arcano */
     const caNem = () => { const n = scontro || ultimoNemico; return NEMICI[n.id].ca + (Number(n.caMod) || 0) - (n.eff ? CMB.malusCA(n) : 0) - (n.sorpreso && (Number(n.round) || 0) <= 1 ? 2 : 0) + (n.giaVista ? 2 : 0); }; /* 02/11: «L'ho già vista» di Ettore */ /* 01/11: sorpreso dalla Furtività: −2 nel primo turno */ /* il consiglio di Aldo abbassa la CA di Ettore; Sbilanciato e Incrinatura la abbassano */
     /* classe difficoltà degli incantesimi: 8 + modificatore (Mente per il Sapiente, Spirito per l'Accolito) + livello */
     const ATTR_INC = { Sapiente: "Mente", Accolito: "Spirito" };
@@ -10762,7 +10777,7 @@
         effetti: "Effetti", effettiTit: "Effetti attivi", turniRim: (n) => n === 1 ? "1 turno" : `${n} turni`,
         turnoTit: (n) => `${n}° turno`, lblAttacco: "Attacco", lblTorcia: "Attacco con la torcia", lblPozione: "Pozione", lblBloccato: "Mastino bloccato",
         emorragia: "Emorragia", marchiato: "marchiato", sigillato: "sigillo", segnato: "segnato", cariche: (n, max) => `${n}/${max} cariche`, tuttoScontro: "tutto lo scontro",
-        effNomi: { sanguina: "Sanguinamento", crepe: "Incrinatura", frattura: "Frattura", intontito: "Intontito", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Inibito", frastornato: "Frastornato", guardia: "Guardia alzata", furore: "Furore inarrestabile", esposto: "Esposto", precisione: "Mille Soli", baluardo: "Baluardo d'Acciaio", fortezza: "Fortezza Eterna", cariche: "Carica Cinetica", scudo: "Scudo", bloccato: "Nemico bloccato", invuln: "Invulnerabilità", armaPiu: "Arma migliorata", pietra: "Pelle di pietra", cieco: "Nemico accecato", potenza: "Aumento di potenza", impaurito: "Impaurito", runa: "Runa sull'arma", occhio: "Occhio del Tomo", tomo: "Tomo Proibito", quiete: "Quiete Assoluta", muro: "Muro di forza", pressione: "Pressione", parola: "Parola Vera", sigilli: "Sigilli", santuario: "Santuario", voto: "Voto di Vita", rigen: "Rigenerazione", gemella: "Spirito Servitore", cerchio: "Cerchio del Focolare", fiamma: "Fiamma Calda", notte: "Notte dei Morti", furiaCinerea: "Furia Cinerea", manto: "Velo degli Spiriti", seconda: "Seconda Vita", accecato: "Accecato", avvizzito: "Avvizzito", paura: "Terrore", corona: "Aura Vitale", avvelenato: "Avvelenato", tossina: "Tossina", marea: "Marea di Putrefazione", rivest: "Arma rivestita", linfaFuria: "Linfa Furiosa", pelle: "Pelle di Corteccia", infuso: "Infuso di Linfa Vitale", aura: "Aura di Purificazione", rinascita: "Rinascita del Sottobosco", bulbo: "Bulbo primordiale", morbo: "Morbo", corteccia: "Scudo di Corteccia", trappola: "Trappola pronta" },
+        effNomi: { lama: "Lama Coagulata", piena: "Sangue in Piena", doppio: "Il Doppio", teatro: "Teatro di Specchi", nessuno: "Nessuno è Qui", truccato: "Dado Truccato", copie: "Copie", sanguina: "Sanguinamento", crepe: "Incrinatura", frattura: "Frattura", intontito: "Intontito", debole: "Indebolito", sbilanciato: "Sbilanciato", silenzio: "Inibito", frastornato: "Frastornato", guardia: "Guardia alzata", furore: "Furore inarrestabile", esposto: "Esposto", precisione: "Mille Soli", baluardo: "Baluardo d'Acciaio", fortezza: "Fortezza Eterna", cariche: "Carica Cinetica", scudo: "Scudo", bloccato: "Nemico bloccato", invuln: "Invulnerabilità", armaPiu: "Arma migliorata", pietra: "Pelle di pietra", cieco: "Nemico accecato", potenza: "Aumento di potenza", impaurito: "Impaurito", runa: "Runa sull'arma", occhio: "Occhio del Tomo", tomo: "Tomo Proibito", quiete: "Quiete Assoluta", muro: "Muro di forza", pressione: "Pressione", parola: "Parola Vera", sigilli: "Ferite", santuario: "Santuario", voto: "Voto di Vita", rigen: "Rigenerazione", gemella: "Spirito Servitore", cerchio: "Cerchio del Focolare", fiamma: "Fiamma Calda", notte: "Notte dei Morti", furiaCinerea: "Furia Cinerea", manto: "Velo degli Spiriti", seconda: "Seconda Vita", accecato: "Accecato", avvizzito: "Avvizzito", paura: "Terrore", corona: "Aura Vitale", avvelenato: "Avvelenato", tossina: "Tossina", marea: "Marea di Putrefazione", rivest: "Arma rivestita", linfaFuria: "Linfa Furiosa", pelle: "Pelle di Corteccia", infuso: "Infuso di Linfa Vitale", aura: "Aura di Purificazione", rinascita: "Rinascita del Sottobosco", bulbo: "Bulbo primordiale", morbo: "Morbo", corteccia: "Scudo di Corteccia", trappola: "Trappola pronta" },
         effFinito: (n) => `L'effetto «${n}» svanisce.`, resisteBreve: "resiste", effettoBreve: "a segno",
         iniziativa: (a, b) => `Iniziativa: la tua Agilità (${a}) contro quella del Mastino (${b}).`,
         pari: (x, y) => `Agilità pari: si tira un d20 a testa. Tu ${x}, il Mastino ${y}.`,
@@ -10876,7 +10891,7 @@
         effetti: "Effects", effettiTit: "Active effects", turniRim: (n) => n === 1 ? "1 round" : `${n} rounds`,
         turnoTit: (n) => `Round ${n}`, lblAttacco: "Attack", lblTorcia: "Torch attack", lblPozione: "Potion", lblBloccato: "Mastiff held",
         emorragia: "Haemorrhage", marchiato: "branded", sigillato: "seal", segnato: "marked", cariche: (n, max) => `${n}/${max} charges`, tuttoScontro: "whole fight",
-        effNomi: { sanguina: "Bleeding", crepe: "Cracked", frattura: "Fractured", intontito: "Dazzled", debole: "Weakened", sbilanciato: "Off-balance", silenzio: "Inhibited", frastornato: "Dazed", guardia: "Guard up", furore: "Unstoppable Fury", esposto: "Exposed", precisione: "Thousand Suns", baluardo: "Steel Bulwark", fortezza: "Eternal Fortress", cariche: "Kinetic Charge", scudo: "Shield", bloccato: "Enemy held", invuln: "Invulnerability", armaPiu: "Empowered weapon", pietra: "Stoneskin", cieco: "Enemy blinded", potenza: "Surge of power", impaurito: "Frightened", runa: "Weapon rune", occhio: "Eye of the Tome", tomo: "Forbidden Tome", quiete: "Absolute Stillness", muro: "Wall of force", pressione: "Pressure", parola: "True Word", sigilli: "Seals", santuario: "Sanctuary", voto: "Vow of Life", rigen: "Regeneration", gemella: "Servant Spirit", cerchio: "Hearth Circle", fiamma: "Warm Flame", notte: "Night of the Dead", furiaCinerea: "Ashen Fury", manto: "Veil of Spirits", seconda: "Second Life", accecato: "Blinded", avvizzito: "Withered", paura: "Terror", corona: "Vital Aura", avvelenato: "Poisoned", tossina: "Toxin", marea: "Tide of Rot", rivest: "Coated weapon", linfaFuria: "Furious Sap", pelle: "Bark Skin", infuso: "Lifesap Infusion", aura: "Purifying Aura", rinascita: "Rebirth of the Undergrowth", bulbo: "Primordial bulb", morbo: "Blight", corteccia: "Bark Shield", trappola: "Trap set" },
+        effNomi: { lama: "Clotted Blade", piena: "Blood in Flood", doppio: "The Double", teatro: "Theatre of Mirrors", nessuno: "No One Is Here", truccato: "Loaded Die", copie: "Copies", sanguina: "Bleeding", crepe: "Cracked", frattura: "Fractured", intontito: "Dazzled", debole: "Weakened", sbilanciato: "Off-balance", silenzio: "Inhibited", frastornato: "Dazed", guardia: "Guard up", furore: "Unstoppable Fury", esposto: "Exposed", precisione: "Thousand Suns", baluardo: "Steel Bulwark", fortezza: "Eternal Fortress", cariche: "Kinetic Charge", scudo: "Shield", bloccato: "Enemy held", invuln: "Invulnerability", armaPiu: "Empowered weapon", pietra: "Stoneskin", cieco: "Enemy blinded", potenza: "Surge of power", impaurito: "Frightened", runa: "Weapon rune", occhio: "Eye of the Tome", tomo: "Forbidden Tome", quiete: "Absolute Stillness", muro: "Wall of force", pressione: "Pressure", parola: "True Word", sigilli: "Wounds", santuario: "Sanctuary", voto: "Vow of Life", rigen: "Regeneration", gemella: "Servant Spirit", cerchio: "Hearth Circle", fiamma: "Warm Flame", notte: "Night of the Dead", furiaCinerea: "Ashen Fury", manto: "Veil of Spirits", seconda: "Second Life", accecato: "Blinded", avvizzito: "Withered", paura: "Terror", corona: "Vital Aura", avvelenato: "Poisoned", tossina: "Toxin", marea: "Tide of Rot", rivest: "Coated weapon", linfaFuria: "Furious Sap", pelle: "Bark Skin", infuso: "Lifesap Infusion", aura: "Purifying Aura", rinascita: "Rebirth of the Undergrowth", bulbo: "Primordial bulb", morbo: "Blight", corteccia: "Bark Shield", trappola: "Trap set" },
         effFinito: (n) => `The “${n}” effect fades.`, resisteBreve: "resisted", effettoBreve: "takes hold",
         iniziativa: (a, b) => `Initiative: your Agility (${a}) against the Mastiff's (${b}).`,
         pari: (x, y) => `Agility tied: each side rolls a d20. You ${x}, the Mastiff ${y}.`,
@@ -11694,13 +11709,13 @@
       const coraggio = anelloAlDito() && pvPg() <= Math.floor(pvMaxPg() / 4) ? 1 : 0; /* coraggio dei Vespera: +1 al tiro per colpire a salute bassa */
       if (coraggio && !scontro.coraggio) { scontro.coraggio = true; sist(A2.anello.coraggio); }
       const pre = scontro.prossimo || {}; scontro.prossimo = null; /* Puntura di Spillo, Colpo alla Giuntura */
-      const ca = caNem(), m = modAttaccoPg(), mA = m + coraggio + (pre.bonus || 0) + malusStatoAtt(), tAtt = tiroAttPg(), d = tAtt.d, tot = d + mA, critD = d >= CMB.sogliaCrit(scontro, 20), crit = critD && !haStato("frastornato") /* 01/11: Frastornato, niente critici */, ok = critD || tot > ca; /* Esposto e Mille Soli allargano il critico */
+      const piena = eff("piena") && !conTorcia ? 2 : 0 /* 04/11 sera: Sangue in Piena, +2 a colpire e ai danni con l'arma */, ca = caNem(), m = modAttaccoPg(), mA = m + coraggio + piena + (pre.bonus || 0) + malusStatoAtt(), tAtt = tiroAttPg(), d = tAtt.d, tot = d + mA, critD = d >= CMB.sogliaCrit(scontro, 20), crit = critD && !haStato("frastornato") /* 01/11: Frastornato, niente critici */, ok = critD || tot > ca; /* Esposto e Mille Soli allargano il critico */
       const righe = [];
       if (tAtt.tiri) righe.push(BT.svantaggio(tAtt.tiri[0], tAtt.tiri[1])); /* Accecato */
       if (crit) guadagnaFuria(2);
       if (ok) {
         const vuln = dadiVuln(conTorcia ? "Contundente" : tipoArmaInMano()); /* la torcia colpisce come un'arma contundente */
-        const dado = dadoArmaPg(conTorcia), nd = (crit ? 2 : 1) * (1 + (pre.piuDadi || 0) + vuln), tiri = tiraDadi(nd, dado), bA = (conTorcia ? 0 : bonusArmaPg()) + (respiroOmbraPg() ? 1 : 0), /* 03/11: Respiro dell'Equilibrio, Bilancia in Ombra */ pieno = Math.max(1, somma(tiri) + m + bA), resA = resisteA(conTorcia ? "Contundente" : tipoArmaInMano()), base = resA ? Math.max(1, Math.floor(pieno / 2)) : pieno; /* 01/11: resistenza al tipo d'arma */
+        const dado = dadoArmaPg(conTorcia), nd = (crit ? 2 : 1) * (1 + (pre.piuDadi || 0) + vuln), tiri = tiraDadi(nd, dado), bA = (conTorcia ? 0 : bonusArmaPg()) + (respiroOmbraPg() ? 1 : 0) + piena, /* 03/11: Respiro dell'Equilibrio, Bilancia in Ombra; 04/11 sera: Sangue in Piena */ pieno = Math.max(1, somma(tiri) + m + bA), resA = resisteA(conTorcia ? "Contundente" : tipoArmaInMano()), base = resA ? Math.max(1, Math.floor(pieno / 2)) : pieno; /* 01/11: resistenza al tipo d'arma */
         const marc = CMB.marchiato(scontro) ? tira(4) : 0, sig = scontro.sigillo && CMB.crepePiene(scontro, { boss: bossNem() }) ? tira(4) : 0, seg = CMB.segnato(scontro) ? tira(4) : 0, danno = base + marc + sig + seg; /* Marchio del Guardiano, Sigillo del Demolitore e Segno del Cacciatore: +1d4 agli attacchi normali */
         scontro.pv -= danno;
         righe.push(pesca(crit ? CB.critPg : conTorcia ? CB.colpTorcia : CB.colpArma), crit ? CB.tiroAttCrit(mA, tot, d) : CB.tiroAtt(d, mA, tot, ca), CB.tiroDanno(nd, dado, tiri, m + bA, pieno));
@@ -11716,7 +11731,7 @@
         if (sig) righe.push(RT.sigilloDanno(sig));
         if (seg) righe.push(RT.segnoDanno(seg));
         if (eff("voto") && !conTorcia) { const x = tira(4); scontro.pv -= x; righe.push(window.MagiaCombattimento.testo({ k: "votoColpo", d: x })); } /* Voto di Vita (03/11: la cura è la Rigenerazione) */
-        if (eff("runa") && !conTorcia) righe.push(window.MagiaCombattimento.testo(CMB.incidi(scontro, { boss: bossNem() }, 1))); /* Runa sull'Arma: ogni colpo a segno incide 1 Sigillo */
+        if (pg.classe === "Sapiente" && !conTorcia) window.MagiaCombattimento.suColpoArma(scontro, ctxIncantesimo()).forEach(e => righe.push(window.MagiaCombattimento.testo(e))); /* 04/11 sera: Lama Coagulata, +1d4 e 1 Ferita */
         if (sciamano() && !conTorcia) righe.push(...righeEventi(SCI.suColpo(scontro, ctxTecnica(), { ok: true, danno })).righe); /* il rivestimento dell'arma */
         scuotiNemico();
       } else righe.push(pesca(CB.manca), CB.tiroAtt(d, mA, tot, ca));
@@ -11752,19 +11767,22 @@
       return {
         ...ctxTecnica(), modAtt: m + malusStatoAtt(), modDanno: m, dado: 6, cd: cdIncantesimi(), scuolaVia: scuolaPotenziata(), /* 04/11: potenziamento della via */
         pozzo: pg.classe === "Sapiente" ? MC_GRADO_POZZO(livelloPg()) : 0, /* 03/11: Pozzo Arcano, tratto dell'Arcanista */ attrTs: attrTsPg(), modTs: modTsNem(attrTsPg()), modTsDi: modTsNem,
-        cura: (n) => curaPgN(n), pvMancanti: () => Math.max(0, pvMaxPg() - pvPg()), dannoCorpo: (n) => { const [a, b] = dannoCorpoNonLetale(n); return a - b; },
+        cura: (n) => curaPgN(n), pvMancanti: () => Math.max(0, pvMaxPg() - pvPg()), pvPg: pvPg(), pvMaxPg: pvMaxPg(), /* 04/11 sera: Sangue */ dannoCorpo: (n) => { const [a, b] = dannoCorpoNonLetale(n); return a - b; },
         manaPiu: (n) => { const r = Math.min(n, pg.manaUsato || 0); pg.manaUsato = (pg.manaUsato || 0) - r; return r; },
         dannoMente: (n) => dannoMenteNonLetale(n)
       };
     }
-    function lanciaMagia(inc) {
+    function lanciaMagia(inc, versa) {
       const MC = window.MagiaCombattimento, ctx = ctxIncantesimo();
       ctx.piuDadiVuln = dadiVuln(tipoScuola(inc.scuola)); /* gli incantesimi non usano la vulnerabilità all'arma; la loro scuola sì (29/10; 01/11 anche Arcano) */
       ctx.dimezza = resisteA(tipoScuola(inc.scuola)); /* 01/11: resistenza alla scuola dell'incantesimo */
       const disp = MC.disponibile(inc, scontro, ctx); if (!disp.ok) return sist(MC.testo({ k: disp.motivo }));
       const costo = MC.costo(inc, scontro, ctx);
-      if (manaAttuale() < costo) return sist(CB.pocoMana(costo, manaAttuale()));
-      pg.manaUsato = (pg.manaUsato || 0) + costo; /* si paga prima: il mana recuperato con la Detonazione arriva dopo */
+      /* 04/11 sera: il Sangue si può pagare in salute, 1 a 1, solo restando sopra metà (+1 dado) */
+      if (versa && !MC.puoVersare(inc, scontro, ctx)) return sist(Lingua.t({ it: "Col sangue puoi pagare solo restando sopra metà salute.", en: "You can pay with blood only while staying above half health." }));
+      if (!versa && manaAttuale() < costo) return sist(CB.pocoMana(costo, manaAttuale()));
+      if (versa) { pg.dannoFisico = (pg.dannoFisico || 0) + costo; ctx.versato = true; ctx.pvPg = pvPg(); }
+      else pg.manaUsato = (pg.manaUsato || 0) + costo; /* si paga prima: il mana recuperato con la Detonazione arriva dopo */
       const pvPrima = scontro.pv;
       const vista = !DIFESE_INC.includes(inc.id) && giaVistaEttore("i:" + inc.id);
       const r = MC.lancia(inc, scontro, ctx);
@@ -11774,7 +11792,7 @@
       if (vista) righe.splice(1, 0, ET.scontro.giaVista);
       if (crit) gambaEttore(righe);
       notaAzioneEttore(r.eventi, DIFESE_INC.includes(inc.id));
-      righe.push(CB.costo(costo, manaAttuale()));
+      righe.push(versa ? Lingua.t({ it: `Salute: ${pvPg()}/${pvMaxPg()}.`, en: `Health: ${pvPg()}/${pvMaxPg()}.` }) : CB.costo(costo, manaAttuale()));
       if (scontro.pv < pvPrima) scuotiNemico();
       const esito = nomeInc(inc) + (esiti.length ? ": " + esiti.join(", ") : "");
       aggiungi({ tipo: "narra", box: "mia", esito, righe });
@@ -11784,14 +11802,15 @@
       }
       segnaTurno(esito);
       disegnaVitali(); modificato();
+      if (r.gratuita && scontro.pv > 0) { disegnaIncantesimi(); return; } /* 04/11 sera: Condensazione, non consuma l'azione */
       fineAzionePgScontro();
     }
     /* incantesimi in combattimento (Sapiente e Accolito) */
-    function lanciaInScontro(inc) {
+    function lanciaInScontro(inc, versa) {
       if (!scontro.tuoTurno) return sist(CB.nonTuoTurno);
       if (haStato("inibito")) return sist(BT.stati.inibito.blocca); /* 01/11 */
       if (inc.id === "luce") return sist(CB.luceInutile);
-      if (inc.scuola) return lanciaMagia(inc); /* Sigilli, Detonazione, Bilancia: js/magia_combattimento.js */
+      if (inc.scuola) return lanciaMagia(inc, versa); /* Ferite, Copie, Bilancia: js/magia_combattimento.js */
       return sist(CB.incInArrivo); /* 03/11: tolto il ramo del vecchio sistema di incantesimi (dati azzerati il 25/10): ogni incantesimo ha una scuola */
     }
 
@@ -12033,7 +12052,7 @@
         if (scontro.pv <= 0) return setTimeout(vittoriaScontro, pausaScontro() / 2);
       }
       if (window.MagiaCombattimento.haTick(scontro)) { /* Pressione, Corona di Raggi, Avvizzito: danni all'inizio del turno del nemico */
-        const ev = window.MagiaCombattimento.inizioTurnoNemico(scontro, { tira });
+        const ev = window.MagiaCombattimento.inizioTurnoNemico(scontro, ATTR_INC[pg.classe] ? { ...ctxIncantesimo(), tira } : { tira }); /* 04/11 sera: per smascherare le Copie servono boss, CD e TS */
         aggiungi({ tipo: "narra", box: "mia", righe: ev.map(e => window.MagiaCombattimento.testo(e)) }); scuotiNemico(); barraScontro();
         if (scontro.pv <= 0) return setTimeout(vittoriaScontro, pausaScontro() / 2);
       }
@@ -12171,7 +12190,7 @@
       const fendente = !!(D.ettore && scontro.attRest === 0 && scontro.ettColpi === 1 && !statoInutile("sangue") && !haStato("sangue") && (scontro.pa || 0) >= 2 + (scontro.braciUsate ? 0 : 3));
       if (fendente) scontro.pa -= 2;
       const abC = !D.ettore ? abilitaNem(D, "colpo") : null; if (abC) spendiPaNem(abC.costo); /* 28/10: abilità a punti sul colpo */
-      let at = CMB.tiroAttaccoNem(scontro, { tira });
+      let at = CMB.tiroAttaccoNem(scontro, { tira }); /* Accecato, Velo degli Spiriti, Dado Truccato */
       if (conto && conto.dodici && !at.tiri) { const a = tira(20), b = tira(20); at = { d: Math.max(a, b), dodici: [a, b] }; } /* vantaggio (se non è accecato) */
       else if (scontro.vantaggioNem && !at.tiri) { const a = tira(20), b = tira(20); at = { d: Math.max(a, b), vant: [a, b] }; } /* fuga fallita: ti colpisce alle spalle */
       scontro.vantaggioNem = false;
@@ -12208,6 +12227,7 @@
           if (sub.eventi.some(e => e.k === "rimbalzo" || e.k === "elasticaColpo")) scuotiNemico();
           const dannoFin = difesaNatura(sub.danno, righe); /* Pelle e Scudo di Corteccia */
           if (dannoFin > 0) dannoAlPg(dannoFin, D.tipoDanno || (morso ? "Perforante" : "Tagliente"), righe);
+          if (sub.coagulo && pvPg() > 0) window.MagiaCombattimento.coagula(sub.coagulo, ctxIncantesimo()).forEach(e => righe.push(window.MagiaCombattimento.testo(e))); /* 04/11 sera: Coagulo del Sangue */
           if (dannoFin > 0 && abC) tsAbilitaNem(abC, righe, crit); /* lo stato dell'abilità a punti */
           if (D.ettore && dannoFin > 0) scontro.ettColpi = (Number(scontro.ettColpi) || 0) + 1;
           if (dannoFin > 0 && fendente) salvezzaSangue(righe); /* Lama nel fianco: Vigore CD 11 o Sanguinamento */

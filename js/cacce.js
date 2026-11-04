@@ -13,15 +13,15 @@ window.CacceComuni = (() => {
   const LUOGO = ["giardino", "giardino", "foresta", "foresta"]; /* ★★★: nemici appena entrati nei confini, nella foresta */
   /* nomi dei tipi di danno (vulnerabilità e resistenze) */
   const TIPI = {
-    it: { Tagliente: "taglio", Contundente: "contundente", Perforante: "perforante", Forza: "forza", Arcano: "arcano", Luce: "vita", Ombra: "negromanzia", Veleno: "veleno", Fuoco: "fuoco" },
-    en: { Tagliente: "slashing", Contundente: "bludgeoning", Perforante: "piercing", Forza: "force", Arcano: "arcane", Luce: "life", Ombra: "necromancy", Veleno: "poison", Fuoco: "fire" }
+    it: { Tagliente: "taglio", Contundente: "contundente", Perforante: "perforante", Forza: "forza", Arcano: "arcano", Sangue: "sangue", Illusione: "illusione", Luce: "vita", Ombra: "negromanzia", Veleno: "veleno", Fuoco: "fuoco" },
+    en: { Tagliente: "slashing", Contundente: "bludgeoning", Perforante: "piercing", Forza: "force", Arcano: "arcane", Sangue: "blood", Illusione: "illusion", Luce: "life", Ombra: "necromancy", Veleno: "poison", Fuoco: "fire" }
   };
   const P = (o) => Object.assign({ zone: [], attacchi: 1, dadoVita: 8, cacciaComune: true }, o);
   const prede = {
     /* ---------- dopo il bronzo (★) ---------- */
     bruto: P({ finestra: 0, grado: 1, livello: 2, primaria: "Vigore", stat: { Vigore: 16, "Agilità": 10, Mente: 8, Spirito: 10 },
       ca: 12, pvFissi: 22, dannoDado: 8, dannoBonus: 3, attacco: 1, xp: 100, pa: 4, tipoDanno: "Contundente",
-      vulnerabile: ["Arcano"], resiste: ["Contundente"],
+      vulnerabile: ["Illusione"], resiste: ["Contundente"], /* 04/11 sera: Illusione al posto di Arcano (scuole nuove dell'Arcanista) */
       abilita: [{ id: "maglio_cava", costo: 4, tipo: "colpo", stato: "stordito", ts: "Vigore", cd: 12 }],
       it: { nome: "Bruto delle cave", il: "il bruto", Il: "Il bruto", al: "al bruto", del: "del bruto", att1: "Maglio", att2: "Spallata", sotto: "Orco · giardino",
         aspetto: "Un maglio da cava, il manico consumato dalle mani. Addosso solo cuoio rattoppato e cicatrici: niente scudo, niente amuleti, nessuna traccia di magia.",
@@ -58,7 +58,7 @@ window.CacceComuni = (() => {
     /* ---------- dopo l'argento (★★) ---------- */
     cartografo: P({ finestra: 1, grado: 2, livello: 3, primaria: "Mente", stat: { Vigore: 10, "Agilità": 12, Mente: 16, Spirito: 12 },
       ca: 12, pvFissi: 22, dannoDado: 6, dannoBonus: 3, attacco: 2, xp: 150, pa: 5, tipoDanno: "Forza",
-      vulnerabile: ["Veleno"], resiste: ["Arcano"],
+      vulnerabile: ["Veleno"], resiste: ["Illusione"], /* 04/11 sera: il cartografo vede attraverso le illusioni */
       abilita: [{ id: "spinta_forza", costo: 2, tipo: "ts", stato: "sbilanciato", ts: "Agilità", cd: 13 }],
       it: { nome: "Cartografo rinnegato", il: "il cartografo", Il: "Il cartografo", al: "al cartografo", del: "del cartografo", att1: "Dardo di forza", att2: "Bastone", sotto: "Mago · giardino",
         aspetto: "Un bastone di frassino pieno di tacche, come un righello. Niente armatura, solo una veste con le tasche gonfie di mappe. Le dita sono macchiate d'inchiostro e di qualcosa che brilla.",
@@ -132,7 +132,7 @@ window.CacceComuni = (() => {
     /* ---------- dopo il platino (★★★) ---------- */
     lama: P({ finestra: 3, grado: 3, livello: 5, primaria: "Agilità", stat: { Vigore: 12, "Agilità": 18, Mente: 12, Spirito: 10 },
       ca: 15, pvFissi: 30, dannoDado: 6, dannoBonus: 2, attacco: 2, attacchi: 2, xp: 200, pa: 6, tipoDanno: "Tagliente",
-      vulnerabile: ["Forza"], resiste: ["Tagliente"],
+      vulnerabile: ["Sangue"], resiste: ["Tagliente"], /* 04/11 sera: Sangue al posto di Forza */
       abilita: [{ id: "taglio_tendine", costo: 2, tipo: "colpo", stato: "debole", ts: "Vigore", cd: 15 }],
       it: { nome: "Lama gemella", il: "il duellante", Il: "Il duellante", al: "al duellante", del: "del duellante", att1: "Prima lama", att2: "Seconda lama", sotto: "Duellante · foresta",
         aspetto: "Due spade corte, identiche, una per mano. Una cotta di maglia fine sotto la giubba: le lame scivolano sugli anelli. Si muove come chi ha passato la vita a duellare, e non ha mai perso.",

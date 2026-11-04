@@ -938,3 +938,33 @@ Provate le due proposte nel codice (poi tolte) e una terza preparazione del gioc
 - **Terreno dell'Arcano puro = i guardiani senza armatura (Enea, Dafne), giocato di controllo.** Resta più debole contro Ettore (liv. 2, ancora senza via: 75% contro 84-87%) e contro i corazzati (regola delle armature).
 - **Conseguenza sulla scelta B:** l'Arcano puro non rende meno, è più difficile da capire (bisogna sapere che i controlli sui boss incidono). La prima condizione (dirlo chiaramente) diventa il punto centrale. Strumento: `CONTROLLO=1` nella serie degli scontri.
 
+### Arcanista rifatto: Sangue e Illusione (4 novembre sera, nel codice)
+
+Il punto 1 si è chiuso cambiando le scuole (incantesimi_arcanista_monaco.md, sezione 2bis): Arcano e Forza erano due metà della stessa combo. Ora ogni scuola vince da sola. **Sangue** (Ferite sul nemico, mana o salute, Risucchio, Coagulo) e **Illusione** (Copie che prendono i colpi, Frantumare rende mana); vie **Vena** (Aldo, Sangue) e **Velo** (Guendalina, Illusione). La preparazione «di controllo» e `CONTROLLO=1` sono state tolte con le scuole vecchie.
+
+**Vulnerabilità (regola delle armature aggiornata):** Sangue contro i corpi vivi, Illusione contro le menti fragili e chi non ha sangue vivo.
+
+| Nemico | Vulnerabile a | Resiste a |
+|---|---|---|
+| Ettore | contundente, **illusione**, negromanzia | — |
+| Enea | perforante, **sangue**, vita, sottobosco | — |
+| Dafne | taglio, **sangue**, vita (da mettere quando avrà la sua voce nel codice) | — |
+| Atena | contundente, **illusione**, negromanzia, sottobosco (da mettere) | — |
+| Sovrano | **illusione** (da conciliare con la soglia del Retaggio) | **sangue**, negromanzia |
+| Cacce comuni | bruto: illusione (era arcano); lama gemella: sangue (era forza) | cartografo: illusione (era arcano) |
+
+**Serie del 4 novembre sera** (giocatore medio, 300 scontri per caso, ±5-6; via della scuola dal livello 3; il Sangue si paga in salute quando si può):
+
+| Arcanista | Ettore (liv. 2) | Enea fermaglio / nascosto / maglio | Mastino liv. 3 / robusto |
+|---|---|---|---|
+| Sangue | 91% | 53 / 61 / 58% | 99% / 97%, salute 84% |
+| Sangue, sempre in mana | 91% | 56 / 63 / 59% | — |
+| Illusione | **96%** | **76 / 65 / 77%** (13 turni) | 100% / 96% |
+| Misto | 88% | 58 / 58 / 74% | — |
+| Riferimento: Forza pura di ieri | 87% | 55 / 65 / 69% | 100% / 95% |
+
+- **Le due scuole reggono da sole:** il Sangue rende come la vecchia Forza pura, l'Illusione di più. L'Arcanista contro Ettore è ora 88-96%, nell'obiettivo «quasi sempre».
+- **Illusione più forte del Sangue di circa 15 punti contro Enea**, con scontri lunghi (13 turni): le Copie evitano molti colpi. Correttivo pronto: massimo 2 Copie, oppure lo smascherare più facile.
+- **La cura del Sangue non sfonda:** salute residua 63-71% contro Enea, come la Forza di ieri. Pagare in salute cambia poco le vittorie (+0-3), fa risparmiare mana (risorsa residua 57% contro 53%).
+- **Enea resta sotto l'80% per il Sangue:** punto 3 (ritaratura di Enea) ancora aperto.
+

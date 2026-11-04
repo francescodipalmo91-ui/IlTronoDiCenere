@@ -85,8 +85,12 @@
      03/11: dal livello 4 uno in più (4, sui boss 3), per crescere senza moltiplicare troppo gli incantesimi «per Sigillo» */
   const SIGILLI_MAX = 3, SIGILLI_MAX_BOSS = 2, SIGILLI_LIV_BONUS = 4;
   /* 04/11: con la via di Guendalina (Sutura, Arcano potenziato) anche sui boss il massimo è quello pieno (ctx.scuolaVia === "arcano") */
-  const sigilliMax = (ctx) => (ctx && ctx.boss && ctx.scuolaVia !== "arcano" ? SIGILLI_MAX_BOSS : SIGILLI_MAX) + (ctx && Number(ctx.liv) >= SIGILLI_LIV_BONUS ? 1 : 0);
+  /* 04/11 sera: i Sigilli diventano le Ferite del Sangue (stesso campo s.sigilli); con la via Vena (Sangue potenziato) anche sui boss il massimo è pieno */
+  const sigilliMax = (ctx) => (ctx && ctx.boss && ctx.scuolaVia !== "sangue" ? SIGILLI_MAX_BOSS : SIGILLI_MAX) + (ctx && Number(ctx.liv) >= SIGILLI_LIV_BONUS ? 1 : 0);
   const sigilli = (s) => Math.max(0, Number(s && s.sigilli) || 0);
+  /* 04/11 sera: Copie dell'Illusione, sul personaggio (stato dello scontro): al massimo 3, 4 con la via Velo */
+  const copie = (s) => Math.max(0, Number(s && s.copie) || 0);
+  const copieMax = (ctx) => 3 + (ctx && ctx.scuolaVia === "illusione" ? 1 : 0);
   function incidi(s, ctx, n) {
     const prima = sigilli(s), max = sigilliMax(ctx), dopo = Math.min(max, prima + n);
     s.sigilli = dopo;
@@ -141,7 +145,8 @@
   function colpo(s, ctx, o) {
     o = o || {};
     const pre = o.base ? {} : (s.prossimo || {}); if (!o.base) s.prossimo = null;
-    const mA = ctx.modAtt + (o.bonus || 0) + (pre.bonus || 0), ca = ctx.ca(), d = ctx.svantaggio ? Math.min(ctx.tira(20), ctx.tira(20)) : ctx.tira(20), tot = d + mA; /* 28/10: chi attacca Accecato tira 2d20 e tiene il peggiore */
+    const piena = attivo(s, "piena") && (o.base || o.scuola === "sangue") ? 2 : 0; /* 04/11: Sangue in Piena, +2 a colpire e ai danni con l'arma e con il Sangue */
+    const mA = ctx.modAtt + piena + (o.bonus || 0) + (pre.bonus || 0), ca = ctx.ca(), d = ctx.svantaggio ? Math.min(ctx.tira(20), ctx.tira(20)) : ctx.tira(20), tot = d + mA; /* 28/10: chi attacca Accecato tira 2d20 e tiene il peggiore */
     const soglia = sogliaCrit(s, o.critDa);
     let crit = !ctx.noCrit && d >= soglia, ok = (d >= soglia) || tot > ca; /* 01/11: Frastornato (ctx.noCrit): il 20 colpisce ma non è critico */
     if (ok && o.sempreCrit && !ctx.noCrit) crit = true;
@@ -149,8 +154,8 @@
     if (soglia < 20) ev.critDa = soglia;
     if (ok) {
       const dado = o.dado || ctx.dado, nd = (crit ? 2 : 1) * (1 + (o.piuDadi || 0) + (pre.piuDadi || 0) + (ctx.piuDadiVuln || 0)), tiri = tiraDadi(ctx, nd, dado), mm = o.conMod === false ? 0 : ctx.modDanno;
-      let danno = Math.max(1, somma(tiri) + mm);
-      Object.assign(ev, { nd, dado, tiri, mm });
+      let danno = Math.max(1, somma(tiri) + mm + piena);
+      Object.assign(ev, { nd, dado, tiri, mm: mm + piena });
       if (ctx.dimezza) { ev.pieno = danno; danno = Math.max(1, Math.floor(danno / 2)); ev.dimezzato = true; } /* 01/11: il nemico resiste a questo tipo di danno */
       if (o.base && marchiato(s)) { const x = ctx.tira(4); danno += x; ev.marchio = x; }
       if (o.base && s.sigillo && crepePiene(s, ctx)) { const x = ctx.tira(4); danno += x; ev.sigillo = x; } /* Sigillo del Demolitore */
@@ -458,7 +463,7 @@
   }
 
   /* ---------- Turno del nemico: modificatori, parata, furia ---------- */
-  const modAttaccoNem = (s) => (attivo(s, "debole") ? -2 : 0) + (attivo(s, "frastornato") ? -4 : 0) + (s.filo ? -sigilli(s) : 0); /* Filo di Rune (03/11): −1 a colpirti per ogni Sigillo sul nemico */
+  const modAttaccoNem = (s) => (attivo(s, "debole") ? -2 : 0) + (attivo(s, "frastornato") ? -4 : 0) + (s.salaSpecchi ? -copie(s) : 0); /* Sala degli Specchi (04/11 sera): −1 a colpirti per ogni Copia */
   const critNemPossibile = (s) => !attivo(s, "frastornato") && !attivo(s, "intontito"); /* Intontito: Percossa al Mento */
   /* un attacco del nemico che va a segno.
      - Parata (Mutilante, Contro-Schiacciamento, Guardia di Punta): lo annulla e contrattacca, niente furia.
@@ -471,6 +476,18 @@
     s.colpitoOra = true; /* Inversione della Marea: il nemico ti ha colpito in questo suo turno */
     s.colpiSubiti = (Number(s.colpiSubiti) || 0) + 1; /* Rancore: colpi subiti in questo scontro */
     const EM = []; /* effetti degli incantesimi che scattano quando il nemico ti colpisce */
+    /* 04/11 sera, Illusione: «Nessuno è Qui» annulla ogni colpo; le Copie: dado da (Copie + 1), con 1 colpisce te, altrimenti distrugge una Copia */
+    if (attivo(s, "nessuno")) return { annullato: true, danno: 0, furia: 0, eventi: [{ k: "nessunoQui" }] };
+    if (copie(s) > 0) {
+      const n = copie(s), d = ctx.tira(n + 1);
+      if (d !== 1) {
+        s.copie = n - 1; const E = [{ k: "copiaColpita", d, n, restano: s.copie }];
+        E.push(incidi(s, ctx, 1)); /* combo tra le scuole: la Copia distrutta incide 1 Ferita su chi l'ha colpita */
+        if (attivo(s, "teatro") && vivo(s)) { const x = ctx.tira(6); s.pv -= x; E.push({ k: "teatroScoppio", d: x }); }
+        return { annullato: true, danno: 0, furia: 0, eventi: E };
+      }
+      EM.push({ k: "copiaMancata", d, n });
+    }
     if (attivo(s, "fiamma")) { const d = ctx.tira(4); s.pv -= d; EM.push({ k: "fiammaColpo", d }); }          /* Fiamma Calda */
     if (attivo(s, "corona") && vivo(s)) EM.push(metti(s, ctx, "accecato", 1));                               /* Corona di Raggi */
     if (s.parata) {
@@ -500,6 +517,7 @@
       else if (a.tipo === "tutti") { finale = 0; furia = 0; a.n = (a.n || 0) + 1; E.push({ k: "assorbito", tipo: a.tipo, prima: pieno, dopo: 0 }); }
       /* difese degli incantesimi: Specchio di Rune (metà e 1 Sigillo), Barriera Cinetica (0 e 1d6 forza), Respingere (tutti i colpi: 0 e 1d6 forza) */
       else if (a.tipo === "specchio") { finale = Math.floor(pieno / 2); furia = 0; E.push({ k: "assorbito", tipo: "meta", prima: pieno, dopo: finale }, incidi(s, ctx, 1)); }
+      else if (a.tipo === "passo") { finale = 0; furia = 0; s.copie = Math.min(copieMax(ctx), copie(s) + 1); E.push({ k: "passoSfasato", copie: s.copie }); } /* 04/11 sera: Passo Sfasato */
       else if (a.tipo === "barriera" || a.tipo === "respingere") {
         finale = 0; furia = 0; E.push({ k: "assorbito", tipo: "zero", prima: pieno, dopo: 0 });
         const d = ctx.tira(6); s.pv -= d; E.push({ k: "riflesso", d });
@@ -511,14 +529,17 @@
     if (attivo(s, "santuario") && !s.santColpo && finale > 0) { s.santColpo = true; const prima = finale; finale = Math.floor(finale / 2); E.push({ k: "assorbito", tipo: "meta", prima, dopo: finale }); } /* Santuario: il primo colpo di ogni turno fa metà */
     if (attivo(s, "baluardo")) { furia *= 2; E.push({ k: "baluardoColpo" }); E.push(carica(s, 1)); }
     if (s.elastica && cariche(s) >= 2 && vivo(s)) { const d = ctx.tira(4); s.pv -= d; E.push({ k: "elasticaColpo", d }); }
-    return { annullato: !!a && finale === 0 && pieno > 0, danno: finale, furia, eventi: E };
+    /* 04/11 sera, Coagulo del Sangue: se in questo scontro hai già versato sangue, recuperi subito un quarto del colpo (metà con Sangue in Piena), per eccesso.
+       La cura la applica chi chiama, dopo il danno, solo se il personaggio è ancora in piedi */
+    const coagulo = s.versato && finale > 0 ? Math.ceil(finale / (attivo(s, "piena") ? 2 : 4)) : 0;
+    return { annullato: !!a && finale === 0 && pieno > 0, danno: finale, furia, eventi: E, coagulo };
   }
   /* un attacco del nemico che manca: Postura Salda dà 1 Carica, Drenaggio d'Urto +1 furia e 1 Carica */
   /* d20 d'attacco del nemico: Accecato e Manto d'Ombra fanno tirare 2d20 e tenere il peggiore (il manto vale per un solo attacco) */
   function tiroAttaccoNem(s, ctx) {
     s.eff = s.eff || {};
     const manto = attivo(s, "manto"); if (manto) s.eff.manto = 0;
-    if (!manto && !attivo(s, "accecato")) return { d: ctx.tira(20) };
+    if (!manto && !attivo(s, "accecato") && !attivo(s, "truccato")) return { d: ctx.tira(20) }; /* 04/11 sera: Dado Truccato */
     const a = ctx.tira(20), b = ctx.tira(20);
     return { d: Math.min(a, b), tiri: [a, b] };
   }
@@ -531,7 +552,7 @@
   /* inizio del tuo turno: Parata e difese dello scudo scadono; il Mare Profondo e l'Egida rilasciano l'onda */
   /* 03/11: potenziamenti che valgono per le TUE azioni (Runa sull'Arma, Voto di Luce, Occhio del Tomo…): «per 3 turni» vuol dire i tuoi 3 turni
      successivi. Senza questa regola il turno del nemico subito dopo il lancio ne consumava uno e restavano solo 2 attacchi. */
-  const BUFF_AZIONI = ["runa", "occhio", "tomo", "voto", "gemella", "rigen", "quiete", "furiaCinerea", "precisione"];
+  const BUFF_AZIONI = ["runa", "occhio", "tomo", "voto", "gemella", "rigen", "quiete", "furiaCinerea", "precisione", "lama", "piena", "doppio"];
   function inizioTurnoPg(s, ctx) {
     const E = [];
     s.effInizio = Object.assign({}, s.eff); /* per sapere quali potenziamenti sono nati in questo turno */
@@ -547,7 +568,7 @@
       }
     }
     /* 03/11: lo Specchio di Rune aspetta il primo colpo a segno, senza limite di turni (deciso da Francesco); le altre difese scadono qui */
-    if (!(a && a.tipo === "specchio")) s.assorbe = null;
+    if (!(a && (a.tipo === "specchio" || a.tipo === "passo"))) s.assorbe = null; /* 04/11 sera: anche il Passo Sfasato aspetta il primo colpo */
     s.postura = false; s.drenaggio = false;
     s.difesaBloccata = !!s.difesaUsata; s.difesaUsata = false; /* niente difesa dello scudo due turni di fila */
     s.colpitoUltimo = !!s.colpitoOra; s.colpitoOra = false;
@@ -573,7 +594,7 @@
     crescitaFuria, furiaMax, furiaPerColpo, slotTecniche, sceltaValida, sceltaPredefinita,
     attivo, marchiato, segnato, sogliaCrit, metti, sanguina, guardia, colpo, ts, costo, usa,
     crepe, crepeMax, crepePiene, incrina, malusCA, frattura, perScontro,
-    SIGILLI_MAX, SIGILLI_MAX_BOSS, SIGILLI_LIV_BONUS, sigilliMax, sigilli, incidi,
+    SIGILLI_MAX, SIGILLI_MAX_BOSS, SIGILLI_LIV_BONUS, sigilliMax, sigilli, incidi, copie, copieMax,
     cariche, carica, disponibile, difesaDiFila, presaBloccata, fortezza, onda,
     modAttaccoNem, critNemPossibile, tiroAttaccoNem, colpoSubito, colpoMancato, inizioTurnoPg, fineTurnoNemico, tickSangue
   };

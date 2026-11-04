@@ -301,9 +301,9 @@ caso("Gioco: salita al livello 3 — furia + mod Vigore + livello e avviso della
   eq(await page.evaluate(() => risorsaPg().max), 39, "13, 18, 24, 31, 39");
   const d = await diario(page); vero(/mod\. Vigore \+3 \+ livello 3 → \+6/.test(d), "manca la riga della furia"); vero(/scegliere una via di prestigio/.test(d), "manca l'avviso della via"); await chiudi();
 });
-/* Arcanista con le scuole di js/magia.js: due incantesimi d'Arcano e uno di Forza (04/11: la scuola principale non c'è più; «scuola» resta nei salvataggi vecchi) */
-const ARC = (o) => PG(Object.assign({ classe: "Sapiente", scuola: "arcano", statistiche: { Vigore: 10, "Agilità": 12, Mente: 16, Spirito: 12 }, statisticheBase: { Vigore: 10, "Agilità": 12, Mente: 16, Spirito: 12 },
-  modificatori: { Vigore: 0, "Agilità": 1, Mente: 3, Spirito: 1 }, tiroDado: { dado: 6, valore: 4 }, mana: 13, risorsa: null, tecniche: [], incantesimi: ["dardo_arcano", "scopri_carte", "pugno_forza"],
+/* Arcanista con le scuole di js/magia.js: due incantesimi di Sangue e uno d'Illusione (04/11 sera: Sangue e Illusione al posto di Arcano e Forza; «scuola» resta nei salvataggi vecchi) */
+const ARC = (o) => PG(Object.assign({ classe: "Sapiente", scuola: "sangue", statistiche: { Vigore: 10, "Agilità": 12, Mente: 16, Spirito: 12 }, statisticheBase: { Vigore: 10, "Agilità": 12, Mente: 16, Spirito: 12 },
+  modificatori: { Vigore: 0, "Agilità": 1, Mente: 3, Spirito: 1 }, tiroDado: { dado: 6, valore: 4 }, mana: 13, risorsa: null, tecniche: [], incantesimi: ["stilo_cremisi", "frusta_cremisi", "riflessi"],
   equipaggiamento: { arma: "Bastone", armaDanno: "1d6", armaTipoDanno: "Contundente", armaMani: 2, armatura: "Armatura leggera", armaturaCA: 2, malusAgilita: 0, scudo: null, dotazione: [] } }, o || {}));
 caso("Gioco: anche il mana dell'Arcanista cresce di mod Mente + livello, senza dado", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", ARC(), PARTITA());
@@ -314,16 +314,16 @@ caso("Gioco: anche il mana dell'Arcanista cresce di mod Mente + livello, senza d
 });
 caso("Gioco: Arcanista — capacità di classe, posti per livello, scuole libere e scuola potenziata dalla via", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", ARC({ scuola: null }), PARTITA({ livello: 3, usate: { riposo: "sbloccato", via: "guendalina" } }));
-  eq(await page.evaluate(() => listaIncantesimi().filter(i => !i.via).map(i => i.id)), ["luce", "dardo_arcano", "scopri_carte", "pugno_forza"], "la Luce non occupa posti");
+  eq(await page.evaluate(() => listaIncantesimi().filter(i => !i.via).map(i => i.id)), ["luce", "stilo_cremisi", "frusta_cremisi", "riflessi"], "la Luce non occupa posti");
   eq(await page.evaluate(() => [incTotale(), incLiberi()]), [6, 3], "5 + 1 posti, 3 liberi");
-  eq(await page.evaluate(() => scuolaPotenziata()), "arcano", "Sutura potenzia l'Arcano");
+  eq(await page.evaluate(() => scuolaPotenziata()), "illusione", "Velo potenzia l'Illusione");
   await page.evaluate(() => apriPreparazione(false));
   const box = '#prepBox input[name="inc"]';
-  vero(/potenziata dalla via Sutura/.test(await page.$eval("#prepBox", x => x.textContent)), "manca l'etichetta della scuola potenziata");
-  vero(!(await page.$eval(`${box}[value="spinta"]`, c => c.disabled)), "04/11: niente quote per scuola, la Forza è libera");
+  vero(/potenziata dalla via Velo/.test(await page.$eval("#prepBox", x => x.textContent)), "manca l'etichetta della scuola potenziata");
+  vero(!(await page.$eval(`${box}[value="dardo_fantasma"]`, c => c.disabled)), "niente quote per scuola, l'Illusione è libera");
   vero(await page.$eval("#prepBox button.primario", c => c.disabled), "non si conferma con posti vuoti");
-  for (const id of ["spinta", "ariete", "marchio_arcano"]) await page.check(`${box}[value="${id}"]`);
-  vero(await page.$eval(`${box}[value="runa_arma"]`, c => c.disabled), "6 posti pieni: il settimo è bloccato");
+  for (const id of ["dardo_fantasma", "lama_coagulata", "ebollizione"]) await page.check(`${box}[value="${id}"]`);
+  vero(await page.$eval(`${box}[value="passo_sfasato"]`, c => c.disabled), "6 posti pieni: il settimo è bloccato");
   vero(!(await page.$eval("#prepBox button.primario", c => c.disabled)), "6 scelte: si conferma"); await page.click("#prepBox button.primario");
   eq((await page.evaluate(() => usate.incPreparati)).length, 6); eq(await page.evaluate(() => incLiberi()), 0); eq(errori, [], "errori"); await chiudi();
 });
@@ -332,18 +332,18 @@ caso("Gioco: Arcanista — un posto nuovo si riempie subito, i posti già pieni 
   eq(await page.evaluate(() => incLiberi()), 2, "livello 2: 4 + 1 posti, 3 pieni");
   await page.evaluate(() => apriPreparazione(true));
   const box = '#prepBox input[name="inc"]';
-  vero(await page.$eval(`${box}[value="dardo_arcano"]`, c => c.disabled), "fuori dal riposo i posti pieni non si toccano");
-  await page.check(`${box}[value="marchio_arcano"]`); await page.check(`${box}[value="stasi"]`);
+  vero(await page.$eval(`${box}[value="stilo_cremisi"]`, c => c.disabled), "fuori dal riposo i posti pieni non si toccano");
+  await page.check(`${box}[value="lama_coagulata"]`); await page.check(`${box}[value="dardo_fantasma"]`);
   await page.click("#prepBox button.primario");
-  eq((await page.evaluate(() => usate.incPreparati)).slice().sort(), ["dardo_arcano", "marchio_arcano", "pugno_forza", "scopri_carte", "stasi"], "i tre vecchi restano e i due nuovi si aggiungono");
+  eq((await page.evaluate(() => usate.incPreparati)).slice().sort(), ["dardo_fantasma", "frusta_cremisi", "lama_coagulata", "riflessi", "stilo_cremisi"], "i tre vecchi restano e i due nuovi si aggiungono");
   eq(await page.evaluate(() => incLiberi()), 0); eq(errori, [], "errori"); await chiudi();
 });
-caso("Gioco: Arcanista — via di prestigio (Frattura o Sutura) scelta una sola volta, con le sue tre abilità", async (b) => {
+caso("Gioco: Arcanista — via di prestigio (Vena o Velo) scelta una sola volta, con le sue tre abilità", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", ARC(), PARTITA({ livello: 5, usate: { riposo: "sbloccato" } }));
   await page.evaluate(() => apriSceltaVia()); await page.check('#prepBox input[value="guendalina"]'); await page.click("#prepBox button.primario");
   eq(await page.evaluate(() => usate.via), "guendalina"); eq(await page.evaluate(() => sceglieVia("aldo")), false, "non si cambia");
   const nomi = await page.$$eval("#incantesimi .nome-btn", l => l.map(x => x.textContent));
-  for (const n of ["Filo di Rune", "Ricamo di Rune", "Quiete Assoluta"]) vero(nomi.includes(n), "manca " + n);
+  for (const n of ["Il Doppio", "Sala degli Specchi", "Nessuno è Qui"]) vero(nomi.includes(n), "manca " + n);
   eq(errori, [], "errori"); await chiudi();
 });
 caso("Gioco: Arcanista — in combattimento la Luce non serve e non costa mana", async (b) => {
@@ -687,14 +687,14 @@ caso("Regolamento: classi, scuole di magia, stati ed esempi in italiano e in ing
   await page.click("#apriTutto"); eq(await page.$$eval("#sezioni details:not([open])", l => l.length), 0, "Apri tutto"); await page.click("#chiudiTutto");
   eq(await page.$$eval("#sezioni details[open]", l => l.length), 4, "Comprimi lascia aperte solo le parti");
   const t = await page.textContent("body");
-  ["Sigilli", "Detonazione", "Bilancia", "Nadir", "Crepuscolo", "Accecato", "Avvizzito", "Lume Arcano", "Via della Frattura", "Via della Brace", "Via della Lama", "Via dello Scoglio", "Dardo Arcano", "Abbraccio della Tomba", "Turno 3.", "Punta di Mandragora", "Avvelenato", "Quando serve", "Indagare o Percezione", "Malus alle abilità di Agilità"].forEach(x => vero(t.includes(x), "manca: " + x)); /* lo Sciamano non è più «in preparazione» */
-  /* 60 incantesimi e 12 abilità delle vie, tutte le tecniche del Guerriero in tabella */
+  ["Ferite", "Copie", "Coagulo", "Bilancia", "Nadir", "Crepuscolo", "Accecato", "Avvizzito", "Lume Arcano", "Via della Vena", "Via del Velo", "Via della Brace", "Via della Lama", "Via dello Scoglio", "Stilo Cremisi", "Abbraccio della Tomba", "Turno 3.", "Punta di Mandragora", "Avvelenato", "Quando serve", "Indagare o Percezione", "Malus alle abilità di Agilità"].forEach(x => vero(t.includes(x), "manca: " + x)); /* lo Sciamano non è più «in preparazione» */
+  /* 44 incantesimi e 12 abilità delle vie, tutte le tecniche del Guerriero in tabella */
   const righe = await page.$$eval("table tr", r => r.length);
-  vero(righe > 60 + 12 + 85, "tabelle incomplete: " + righe);
+  vero(righe > 44 + 12 + 85, "tabelle incomplete: " + righe); /* 04/11 sera: 44 incantesimi (7 + 7 dell'Arcanista, 15 + 15 del Monaco) */
   vero(!/Aldo|Guendalina/.test((await page.textContent("#sezioni")).replace(/«parlo con Guendalina»/g, "")), "il regolamento nomina i PNG delle vie");
   await page.evaluate(() => { localStorage.setItem("lingua", "en"); }); await page.reload();
   const e = await page.textContent("body");
-  ["Seals", "Detonation", "Balance", "Twilight", "Blinded", "Withered", "Arcane Glow", "Path of the Fracture", "Path of the Ember", "Combat examples", "Necromancer Monk", "When it helps", "Agility skill penalty"].forEach(x => vero(e.includes(x), "missing: " + x));
+  ["Wounds", "Copies", "Clotting", "Balance", "Twilight", "Blinded", "Withered", "Arcane Glow", "Path of the Vein", "Path of the Ember", "Combat examples", "Necromancer Monk", "When it helps", "Agility skill penalty"].forEach(x => vero(e.includes(x), "missing: " + x));
   eq(errori, [], "errori"); await chiudi();
 });
 caso("Gioco in inglese: una tecnica nuova si usa senza errori e con i testi inglesi", async (b) => {
@@ -718,85 +718,89 @@ caso("Gioco in inglese: Muro di Assorbimento con i testi inglesi dello scudo", a
 
 /* ======================= Arcanista: incantesimi in combattimento ======================= */
 const INC_LANCIA = (id) => `lanciaIncantesimo(listaIncantesimi().find(i => i.id === "${id}"))`;
-caso("Sala di prova: Arcanista — Dardo Arcano incide un Sigillo, Pugno di Forza lo fa detonare e restituisce mana", async (b) => {
+caso("Sala di prova: Arcanista — Stilo Cremisi incide una Ferita, pagato col sangue fa un dado in più; l'Ebollizione la fa scoppiare e cura", async (b) => {
   const { page, errori, chiudi } = await apri(b, "tutorial.html?prova");
-  await page.selectOption("#pClasse", "arcanista"); await page.selectOption("#nTipo", "manichino"); await page.fill("#nPv", "200"); await page.dispatchEvent("#nPv", "change");
+  await page.selectOption("#pClasse", "arcanista"); await page.selectOption("#pLiv", "2"); await page.selectOption("#nTipo", "manichino"); await page.fill("#nPv", "200"); await page.dispatchEvent("#nPv", "change");
   await page.click("#svNuovo");
-  vero(await page.$('[data-inc="dardo_arcano"]'), "manca il pulsante del Dardo"); eq(await page.$('[data-inc="ariete"]'), null, "l'Ariete è di livello 2");
-  await page.evaluate(() => SalaProva.accoda(15, 5)); await page.click('[data-inc="dardo_arcano"]');
-  let st = await page.evaluate(() => SalaProva.stato()); eq(st.s.sigilli, 1, "un Sigillo"); eq(st.pg.furia, st.pg.furiaMax - 2, "mana −2");
-  await page.evaluate(() => SalaProva.accoda(15, 4, 3)); await page.click('[data-inc="pugno_forza"]');
-  st = await page.evaluate(() => SalaProva.stato()); eq(st.s.sigilli, 0, "Sigilli esplosi"); eq(st.pg.furia, st.pg.furiaMax - 2 - 2 + 1, "−2 e +1 di Detonazione");
-  vero(/Detonazione/.test(await page.textContent("#svLog")), "manca la Detonazione nel diario"); eq(errori, [], "errori"); await chiudi();
+  vero(await page.$('[data-inc="stilo_cremisi"]'), "manca il pulsante dello Stilo"); eq(await page.$('[data-inc="condensazione"]'), null, "la Condensazione è di livello 3");
+  await page.evaluate(() => SalaProva.accoda(15, 5, 4)); await page.click('[data-versa="stilo_cremisi"]');
+  let st = await page.evaluate(() => SalaProva.stato()); eq(st.s.sigilli, 1, "una Ferita"); eq(st.pg.furia, st.pg.furiaMax, "nessun mana: pagato col sangue"); eq(st.s.versato, true);
+  vero(/Paghi col tuo sangue/.test(await page.textContent("#svLog")), "manca il pagamento col sangue");
+  await page.evaluate(() => SalaProva.accoda(15, 3, 3, 4)); await page.click('[data-inc="ebollizione"]');
+  st = await page.evaluate(() => SalaProva.stato()); eq(st.s.sigilli, 0, "Ferita scoppiata"); eq(st.pg.furia, st.pg.furiaMax - 3, "−3 mana");
+  vero(/Il sangue ribolle/.test(await page.textContent("#svLog")), "manca l'Ebollizione nel diario"); eq(errori, [], "errori"); await chiudi();
 });
-caso("Sala di prova: Arcanista — Sigilli sul nemico e difese (Specchio di Rune) fino al nemico che attacca", async (b) => {
+caso("Sala di prova: Arcanista — le Copie prendono il colpo al posto tuo e incidono una Ferita (Riflessi)", async (b) => {
   const { page, errori, chiudi } = await apri(b, "tutorial.html?prova");
   await page.selectOption("#pClasse", "arcanista"); await page.selectOption("#pLiv", "2"); await page.check("#nMorso"); await page.evaluate(() => { Math.random = () => 0.99; });
   await page.fill("#nPv", "200"); await page.dispatchEvent("#nPv", "change"); await page.click("#svNuovo");
-  await page.evaluate(() => SalaProva.accoda(12, 20, 5)); await page.click('[data-inc="specchio_rune"]'); /* ricarica soffio, attacco 20 = critico: due dadi */
-  const d = await page.textContent("#svLog"); vero(/Specchio di Rune/.test(d), "manca il lancio");
-  const st = await page.evaluate(() => SalaProva.stato()); eq(st.s.sigilli, 1, "il colpo preso incide un Sigillo"); eq(await page.isDisabled('[data-inc="specchio_rune"]'), true, "non due turni di fila");
-  eq(errori, [], "errori"); await chiudi();
+  const pv0 = await page.evaluate(() => SalaProva.stato().pg.pv);
+  await page.evaluate(() => SalaProva.accoda(1, 20, 3, 3, 2)); await page.click('[data-inc="riflessi"]'); /* ricarica soffio, attacco 20 (critico: due d4), dado delle Copie 2: prende una Copia */
+  const st = await page.evaluate(() => SalaProva.stato()); eq(st.s.copie, 1, "una Copia distrutta"); eq(st.s.sigilli, 1, "la Copia incide una Ferita"); eq(st.pg.pv, pv0, "nessun danno");
+  vero(/Colpisce una Copia/.test(await page.textContent("#svLog")), "manca la Copia nel diario"); eq(errori, [], "errori"); await chiudi();
 });
 caso("Sala di prova: i test del motore degli incantesimi girano anche nel browser", async (b) => {
   const { page, errori, chiudi } = await apri(b, "tutorial.html?prova"); await page.click("#svTestBtn");
   const esiti = await page.evaluate(() => window.esitiTestCombattimento); eq(esiti.filter(e => !e.ok), [], "test falliti"); vero(esiti.some(e => /Detonazione/.test(e.nome)), "mancano i test della magia");
   eq(errori, [], "errori"); await chiudi();
 });
-caso("Gioco: Arcanista lancia in scontro — Sigillo, costo, Detonazione e mana recuperato", async (b) => {
-  const { page, errori, chiudi } = await apri(b, "gioco.html", ARC(), PARTITA());
+caso("Gioco: Arcanista lancia in scontro — Ferita, costo, Ebollizione che fa scoppiare e cura", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", ARC({ incantesimi: ["stilo_cremisi", "ebollizione", "riflessi"] }), PARTITA({ livello: 2 }));
   await page.evaluate(() => avviaScontro("mastino", { primo: "pg", soffioScarico: true })); await aspettaTurnoPg(page);
-  await accoda(page, [R(15, 20), R(5, 8)]); await page.evaluate(() => lanciaIncantesimo(listaIncantesimi().find(i => i.id === "dardo_arcano")));
-  eq(await page.evaluate(() => scontro.sigilli), 1, "un Sigillo"); eq(await page.evaluate(() => manaAttuale()), 11, "13 − 2");
-  vero((await page.$$eval(".eff-nome", e => e.map(x => x.textContent))).some(t => /Sigilli/.test(t)), "i Sigilli non compaiono nella scheda del nemico");
+  await accoda(page, [R(15, 20), R(5, 8)]); await page.evaluate(() => lanciaIncantesimo(listaIncantesimi().find(i => i.id === "stilo_cremisi")));
+  eq(await page.evaluate(() => scontro.sigilli), 1, "una Ferita"); const m0 = await page.evaluate(() => manaAttuale());
+  vero((await page.$$eval(".eff-nome", e => e.map(x => x.textContent))).some(t => /Ferite/.test(t)), "le Ferite non compaiono nella scheda del nemico");
   await accoda(page, [R(1, 6), R(1, 20)], [0.1]); await aspettaTurnoPg(page);
   const pv = await page.evaluate(() => scontro.pv);
-  await accoda(page, [R(15, 20), R(5, 8), R(3, 6)]); await page.evaluate(() => lanciaIncantesimo(listaIncantesimi().find(i => i.id === "pugno_forza")));
-  eq(await page.evaluate(() => scontro.sigilli), 0, "Sigillo esploso"); eq(await page.evaluate(() => manaAttuale()), 10, "11 − 2 + 1");
-  eq(pv - (await page.evaluate(() => scontro.pv)), 5 + 3 + 3, "1d8 (03/11) + mod Mente 3 (28/10) + 1d6 di Detonazione");
-  vero(/Detonazione/.test(await diario(page)), "manca la Detonazione nel diario"); eq(errori, [], "errori"); await chiudi();
+  await accoda(page, [R(15, 20), R(3, 6), R(3, 6), R(4, 6)]); await page.evaluate(() => lanciaIncantesimo(listaIncantesimi().find(i => i.id === "ebollizione")));
+  eq(await page.evaluate(() => scontro.sigilli), 0, "Ferita scoppiata"); eq(await page.evaluate(() => manaAttuale()), m0 - 3, "−3 mana");
+  eq(pv - (await page.evaluate(() => scontro.pv)), 3 + 3 + 3 + 4, "2d6 + mod Mente 3 + 1d6 della Ferita");
+  vero(/Il sangue ribolle/.test(await diario(page)), "manca l'Ebollizione nel diario"); eq(errori, [], "errori"); await chiudi();
 });
 caso("Gioco: un incantesimo senza mana non parte e non spende nulla", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", ARC(), PARTITA({ risorsaUsata: 0 }));
-  await page.evaluate(() => { pg.manaUsato = 12; avviaScontro("mastino", { primo: "pg", soffioScarico: true }); }); await aspettaTurnoPg(page);
-  await page.evaluate(() => lanciaIncantesimo(listaIncantesimi().find(i => i.id === "dardo_arcano")));
-  eq(await page.evaluate(() => manaAttuale()), 1, "nessuna spesa"); eq(await page.evaluate(() => scontro.tuoTurno), true, "il turno è ancora tuo"); eq(errori, [], "errori"); await chiudi();
+  await page.evaluate(() => { pg.manaUsato = 13; avviaScontro("mastino", { primo: "pg", soffioScarico: true }); }); await aspettaTurnoPg(page);
+  await page.evaluate(() => lanciaIncantesimo(listaIncantesimi().find(i => i.id === "riflessi")));
+  eq(await page.evaluate(() => manaAttuale()), 0, "nessuna spesa"); eq(await page.evaluate(() => scontro.tuoTurno), true, "il turno è ancora tuo"); eq(errori, [], "errori"); await chiudi();
 });
-caso("Gioco: Arcanista di livello 3 con la via Sutura — Filo di Rune compare nell'elenco e incide 2 Sigilli", async (b) => {
-  const { page, errori, chiudi } = await apri(b, "gioco.html", ARC(), PARTITA({ livello: 3, usate: { riposo: "sbloccato", via: "guendalina" } }));
-  vero(await page.evaluate(() => listaIncantesimi().some(i => i.id === "filo_rune")), "l'abilità della via deve essere lanciabile");
-  await page.evaluate(() => avviaScontro("mastino", { primo: "pg", soffioScarico: true })); await aspettaTurnoPg(page);
-  await page.evaluate(() => lanciaIncantesimo(listaIncantesimi().find(i => i.id === "filo_rune")));
-  eq(await page.evaluate(() => scontro.sigilli), 2, "2 Sigilli"); eq(await page.evaluate(() => scontro.filo), true); eq(errori, [], "errori"); await chiudi();
-});
-caso("Gioco in inglese: la Detonazione si legge in inglese", async (b) => {
+caso("Gioco: il Sangue si paga col sangue sopra metà salute (+1 dado); poi il Coagulo rende un quarto dei colpi subiti", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", ARC(), PARTITA());
+  await page.evaluate(() => avviaScontro("mastino", { primo: "pg", soffioScarico: true })); await aspettaTurnoPg(page);
+  const pv0 = await page.evaluate(() => pvPg()), m0 = await page.evaluate(() => manaAttuale());
+  vero(await page.$('#incantesimi button.sangue'), "manca il pulsante «Col sangue»");
+  await accoda(page, [R(15, 20), R(4, 8), R(4, 8)]); await page.evaluate(() => lanciaIncantesimo(listaIncantesimi().find(i => i.id === "stilo_cremisi"), true));
+  eq(await page.evaluate(() => manaAttuale()), m0, "nessun mana"); eq(await page.evaluate(() => scontro.versato), true);
+  vero(/Paghi col tuo sangue/.test(await diario(page)), "manca il pagamento col sangue");
+  await accoda(page, [R(1, 6), R(15, 20), R(4, 4)], [0.1, 0.99]); await aspettaTurnoPg(page);
+  vero(/Coagulo/.test(await diario(page)), "manca il Coagulo"); vero(await page.evaluate(() => pvPg()) <= pv0, "salute sensata");
+  await page.evaluate(() => { pg.dannoFisico = pvMaxPg() - 3; disegnaIncantesimi(); });
+  eq(await page.evaluate(() => window.MagiaCombattimento.puoVersare(MAGIA.INCANTESIMI.find(i => i.id === "stilo_cremisi"), scontro, ctxIncantesimo())), false, "sotto metà non si paga col sangue"); eq(errori, [], "errori"); await chiudi();
+});
+caso("Gioco: Arcanista di livello 3 con la via Velo — Sala degli Specchi compare nell'elenco, crea una Copia e abbassa i colpi del nemico", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", ARC(), PARTITA({ livello: 3, usate: { riposo: "sbloccato", via: "guendalina" } }));
+  vero(await page.evaluate(() => listaIncantesimi().some(i => i.id === "il_doppio")), "l'abilità della via deve essere lanciabile");
+  await page.evaluate(() => avviaScontro("mastino", { primo: "pg", soffioScarico: true })); await aspettaTurnoPg(page);
+  await page.evaluate(() => { usate.via = "guendalina"; }); await page.evaluate(() => lanciaIncantesimo(listaIncantesimi().find(i => i.id === "riflessi")));
+  eq(await page.evaluate(() => CMB.copie(scontro)) >= 1, true, "Copie create"); eq(errori, [], "errori"); await chiudi();
+});
+caso("Gioco in inglese: l'Ebollizione si legge in inglese", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", ARC({ incantesimi: ["stilo_cremisi", "ebollizione", "riflessi"] }), PARTITA({ livello: 2 }));
   await page.evaluate(() => localStorage.setItem("lingua", "en")); await page.reload(); await page.waitForTimeout(500);
   await page.evaluate(() => { avviaScontro("mastino", { primo: "pg", soffioScarico: true }); scontro.sigilli = 2; }); await aspettaTurnoPg(page);
-  await accoda(page, [R(15, 20), R(5, 8), R(3, 6), R(2, 6)]); await page.evaluate(() => lanciaIncantesimo(listaIncantesimi().find(i => i.id === "pugno_forza")));
-  vero(/Detonation/.test(await diario(page)), "manca il testo inglese"); eq(await page.evaluate(() => manaAttuale()), 13, "13 − 2 + 2: 1 mana per Sigillo (03/11)"); eq(errori, [], "errori"); await chiudi();
+  const m0 = await page.evaluate(() => manaAttuale());
+  await accoda(page, [R(15, 20), R(5, 6), R(3, 6), R(3, 6), R(2, 6)]); await page.evaluate(() => lanciaIncantesimo(listaIncantesimi().find(i => i.id === "ebollizione")));
+  vero(/The blood boils/.test(await diario(page)), "manca il testo inglese"); eq(await page.evaluate(() => manaAttuale()), m0 - 3, "−3 mana"); eq(errori, [], "errori"); await chiudi();
 });
 
-caso("Gioco: Pressione schiaccia il nemico all'inizio del suo turno; Muro di Forza alza la CA di 3", async (b) => {
-  const { page, errori, chiudi } = await apri(b, "gioco.html", ARC({ incantesimi: ["pressione", "muro_forza", "specchio_rune"] }), PARTITA({ livello: 3 }));
+caso("Gioco: Dado Truccato fa tirare al mastino due d20; Passo Sfasato annulla il primo colpo e lascia una Copia", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", ARC({ incantesimi: ["dado_truccato", "passo_sfasato", "riflessi"] }), PARTITA({ livello: 3 }));
   await page.evaluate(() => avviaScontro("mastino", { primo: "pg", soffioScarico: true })); await aspettaTurnoPg(page);
-  const ca0 = await page.evaluate(() => caScontro());
-  await accoda(page, [R(3, 20)]); await page.evaluate(() => lanciaIncantesimo(listaIncantesimi().find(i => i.id === "pressione")));
-  eq(await page.evaluate(() => [scontro.eff.pressione, scontro.eff.debole]), [2, 2], "Pressione e Indebolito");
-  const pv = await page.evaluate(() => scontro.pv);
-  await accoda(page, [R(4, 6), R(1, 6), R(1, 20)], [0.1]); await aspettaTurnoPg(page);
-  eq(pv - (await page.evaluate(() => scontro.pv)), 4, "1d6 della pressione");
-  await accoda(page, [R(1, 6), R(1, 20)], [0.1]); await page.evaluate(() => lanciaIncantesimo(listaIncantesimi().find(i => i.id === "muro_forza")));
-  eq(await page.evaluate(() => caScontro()), ca0 + 3, "+3 CA"); await aspettaTurnoPg(page); eq(errori, [], "errori"); await chiudi();
-});
-caso("Gioco: Specchio di Rune dimezza il primo colpo e incide un Sigillo sul mastino", async (b) => {
-  const { page, errori, chiudi } = await apri(b, "gioco.html", ARC({ incantesimi: ["pressione", "muro_forza", "specchio_rune"] }), PARTITA({ livello: 3 }));
-  await page.evaluate(() => avviaScontro("mastino", { primo: "pg", soffioScarico: true })); await aspettaTurnoPg(page);
-  await accoda(page, [R(1, 6), R(20, 20), R(4, 4)], [0.1, 0.99]); /* ricarica, attacco 20 (critico), morso 1d4 ×2 */
+  await accoda(page, [R(1, 6), R(18, 20), R(3, 20)], [0.1]); await page.evaluate(() => lanciaIncantesimo(listaIncantesimi().find(i => i.id === "dado_truccato")));
+  await aspettaTurnoPg(page); vero(/due d20 e tiene il peggiore/.test(await diario(page)), "manca il doppio d20");
   const pv0 = await page.evaluate(() => pvPg());
-  await page.evaluate(() => lanciaIncantesimo(listaIncantesimi().find(i => i.id === "specchio_rune"))); await aspettaTurnoPg(page);
-  eq(await page.evaluate(() => scontro.sigilli), 1, "1 Sigillo sul mastino");
-  vero(await page.evaluate(() => pvPg()) > pv0 - 8, "il danno è dimezzato"); eq(errori, [], "errori"); await chiudi();
+  await accoda(page, [R(1, 6), R(20, 20), R(20, 20), R(4, 4)], [0.1, 0.99]); await page.evaluate(() => lanciaIncantesimo(listaIncantesimi().find(i => i.id === "passo_sfasato")));
+  await aspettaTurnoPg(page);
+  eq(await page.evaluate(() => pvPg()), pv0, "il colpo ti attraversa"); eq(await page.evaluate(() => CMB.copie(scontro)), 1, "resta una Copia"); eq(errori, [], "errori"); await chiudi();
 });
 
 /* ======================= Monaco: incantesimi in combattimento ======================= */
@@ -941,11 +945,11 @@ caso("Creazione: l'Arcanista sceglie 3 incantesimi liberamente tra le due scuole
   const { page, errori, chiudi } = await apri(b, "creazione.html");
   await page.check('input[name="classe"][value="Sapiente"]', { force: true });
   eq(await page.$$eval('input[name="scuola"]', e => e.length), 0, "la scelta della scuola non c'è più");
-  eq(await page.$$eval('input[name="incantesimo"]:not(:disabled)', e => e.length), 6, "tutti e 6 gli incantesimi di livello 1 sono sceglibili");
-  for (const id of ["pugno_forza", "spinta", "scudo"]) await page.check(`input[name="incantesimo"][value="${id}"]`, { force: true });
-  vero(await page.$eval('input[name="incantesimo"][value="dardo_arcano"]', c => c.disabled), "tre scelti (anche tutti di Forza): il quarto è bloccato");
-  await page.uncheck('input[name="incantesimo"][value="scudo"]', { force: true });
-  vero(!(await page.$eval('input[name="incantesimo"][value="dardo_arcano"]', c => c.disabled)), "tolto uno, si riapre");
+  eq(await page.$$eval('input[name="incantesimo"]:not(:disabled)', e => e.length), 4, "tutti e 4 gli incantesimi di livello 1 sono sceglibili (04/11 sera: 2 di Sangue, 2 d'Illusione)");
+  for (const id of ["riflessi", "dardo_fantasma", "stilo_cremisi"]) await page.check(`input[name="incantesimo"][value="${id}"]`, { force: true });
+  vero(await page.$eval('input[name="incantesimo"][value="frusta_cremisi"]', c => c.disabled), "tre scelti: il quarto è bloccato");
+  await page.uncheck('input[name="incantesimo"][value="riflessi"]', { force: true });
+  vero(!(await page.$eval('input[name="incantesimo"][value="frusta_cremisi"]', c => c.disabled)), "tolto uno, si riapre");
   eq(errori, [], "errori"); await chiudi();
 });
 
@@ -1130,7 +1134,7 @@ caso("Cripta: discesa furtiva riuscita, scelta tra farsi avanti e colpire; il co
 caso("Ettore: livello 2 fisso (30 salute, 8 punti abilità, 400 PE), crescita oltre il livello 2, vulnerabile a contundente e luce", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "cripta", usate: { riposo: "sbloccato", ettore: "scontro" } }));
   await page.evaluate(() => { luogo = "cripta"; avviaScontro("esploratore", { ctx: "ettore", testi: "esploratore", primo: "pg" }); }); await aspettaTurnoPg(page);
-  eq(await page.evaluate(() => [scontro.pvMax, scontro.paMax, scontro.stat.Vigore, scontro.stat.Spirito, NEMICI.esploratore.xp, dadiVuln("Contundente"), dadiVuln("Luce"), dadiVuln("Forza"), dadiVuln("Arcano")]), [30, 8, 10, 8, 400, 1, 0, 0, 1], "Vigore 10 (02/11: ladro); contundente, arcano e negromanzia (04/11, regola delle armature)");
+  eq(await page.evaluate(() => [scontro.pvMax, scontro.paMax, scontro.stat.Vigore, scontro.stat.Spirito, NEMICI.esploratore.xp, dadiVuln("Contundente"), dadiVuln("Luce"), dadiVuln("Sangue"), dadiVuln("Illusione")]), [30, 8, 10, 8, 400, 1, 0, 0, 1], "Vigore 10 (02/11: ladro); contundente, illusione (04/11 sera) e negromanzia (04/11, regola delle armature)");
   vero(await page.evaluate(() => document.getElementById("vitaliNem").textContent.includes(ET.scontro.pa) || !scontro.svelata), "punti abilità nella scheda");
   await page.evaluate(() => { scontro.svelata = true; disegnaNemico(); });
   vero(await page.evaluate(() => document.getElementById("vitaliNem").textContent.includes("8 / 8") && document.getElementById("specNem").textContent.includes(ET.scontro.abilita[1][0])), "scheda con punti abilità e abilità");

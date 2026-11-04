@@ -1,4 +1,4 @@
-/* Test degli incantesimi dell'Arcanista (js/magia_combattimento.js) con dadi programmati.
+/* Test degli incantesimi dell'Arcanista (Sangue e Illusione dal 04/11 sera) e del Monaco (js/magia_combattimento.js) con dadi programmati.
    Uso:  node tests/magia_combattimento.test.js   → OK/ERRORE per ogni caso, esce con 1 se qualcosa fallisce.
    Gira anche nel browser (sala di prova: «Esegui i test»). */
 (function (root) {
@@ -38,19 +38,6 @@
   const vero = (x, msg) => { if (!x) throw new Error(msg || "atteso vero"); };
   /* tiro salvezza fallito: d20 basso; superato: d20 alto (CD 12, modTs 0) */
 
-  caso("Ogni incantesimo di Arcano, Forza e delle due vie è gestito dal motore", () => {
-    const ids = [...MG.INCANTESIMI.filter(i => ["arcano", "forza"].includes(i.scuola)), ...MG.VIE.filter(v => ["arcano", "forza"].includes(v.scuola))];
-    eq(ids.length, 30 + 6, "30 incantesimi + 6 abilità di via");
-    ids.forEach(i => {
-      const s = scontro({ sigilli: 3 }), c = ctx({ liv: 5 }); c.tira = (d) => (d === 20 ? 15 : 1); c.s = s;
-      const r = M.lancia(i, s, c); vero(!ev(r, "sconosciuta").length, i.id);
-    });
-  });
-  caso("Ogni incantesimo di Arcano e Forza ha il testo inglese", () => {
-    MG.INCANTESIMI.concat(MG.VIE).filter(i => ["arcano", "forza"].includes(i.scuola)).forEach(i => vero(i.nome.en && i.effetto.en, i.id));
-  });
-
-  /* ================= Sigilli ================= */
   caso("03/11: Respiro dell'Equilibrio (Monaco) — I: Luce −1 ai colpi subiti; II: Zenit/Nadir curano 1d4 + livello; III: sotto metà, Brace cura e azzera, Cenere fa curare il prossimo incantesimo d'Ombra", () => {
     const s = scontro({ bilancia: 2 }), cl = ctx({ respiro: 1 });
     const r = C.colpoSubito(s, cl, false, 7); eq(r.danno, 6, "in Luce −1"); s.bilancia = -1; eq(C.colpoSubito(s, cl, false, 7).danno, 7, "in Ombra no");
@@ -62,254 +49,147 @@
     const n = scontro({ bilancia: -1 }), cn = ctx({ respiro: 3, via: "aldo" }); eq(M.sottoMetaMonaco(n, cn, 16, 12, 31)[0].k, "fameOmbra"); eq(n.fameOmbra, true);
     const cn2 = ctx({ respiro: 3, via: "aldo", dadi: [15, 4, 5] }); lancia("tocco_avvizzente", n, cn2); eq([n.fameOmbra, cn2.curato], [false, 80 - n.pv], "cura tutto il danno");
   });
-  caso("03/11: Pozzo Arcano — I: +1 mana dopo un turno senza incantesimi; II: Specchio e Barriera −1; III: il primo incantesimo dello scontro è gratis", () => {
-    const inc = (id) => MG.INCANTESIMI.find(i => i.id === id);
+  /* ================= Arcanista: Sangue e Illusione (04/11 sera) ================= */
+  caso("04/11 sera: ogni incantesimo di Sangue, Illusione e delle vie Vena e Velo è gestito dal motore e ha il testo inglese", () => {
+    const ids = [...MG.INCANTESIMI.filter(i => ["sangue", "illusione"].includes(i.scuola)), ...MG.VIE.filter(v => ["sangue", "illusione"].includes(v.scuola))];
+    eq(ids.length, 14 + 6, "7 + 7 incantesimi e 6 abilità di via");
+    ids.forEach(i => {
+      vero(i.nome.en && i.effetto.en, i.id + ": testo inglese");
+      const s = scontro({ sigilli: 3, copie: 3 }), c = ctx({ liv: 5 }); c.tira = (d) => (d === 20 ? 15 : 1); c.s = s;
+      const r = M.lancia(i, s, c); vero(!ev(r, "sconosciuta").length, i.id);
+      r.eventi.filter(e => !["colpo", "ts", "stato", "immune", "resiste"].includes(e.k)).forEach(e => vero(M.testo(e) !== null, `${i.id}: evento senza testo: ${e.k}`));
+    });
+  });
+  caso("03/11: Pozzo Arcano — I: +1 mana dopo un turno senza incantesimi; II: Passo Sfasato −1 (04/11 sera); III: il primo incantesimo dello scontro è gratis", () => {
     eq([M.gradoPozzo(1), M.gradoPozzo(2), M.gradoPozzo(3), M.gradoPozzo(4)], [1, 2, 2, 3]);
     const s = scontro(); let mana = 0; const c = ctx({ pozzo: 1 }); c.manaPiu = (n) => { mana += n; return n; };
     M.inizioTurnoPozzo(s, c); eq(mana, 0, "primo turno: niente");
     M.inizioTurnoPozzo(s, c); eq(mana, 1, "turno passato senza incantesimi: +1");
     s.incQuestoTurno = true; M.inizioTurnoPozzo(s, c); eq(mana, 1, "hai lanciato: niente");
-    eq([M.costo(inc("specchio_rune"), scontro(), { pozzo: 1 }), M.costo(inc("specchio_rune"), scontro(), { pozzo: 2 }), M.costo(inc("barriera_cinetica"), scontro(), { pozzo: 2 }), M.costo(inc("dardo_arcano"), scontro(), { pozzo: 2 })], [3, 2, 2, 2]);
-    const t = scontro(); eq(M.costo(inc("catena_glifi"), t, { pozzo: 3 }), 0, "grado III: il primo è gratis"); t.pozzoGratis = true; eq(M.costo(inc("catena_glifi"), t, { pozzo: 3 }), 5, "poi costa");
-    eq(MG.INCANTESIMI.find(i => i.id === "pugno_forza").effetto.it.includes("1d8"), true, "Pugno di Forza 1d8");
+    eq([M.costo(inc("passo_sfasato"), scontro(), { pozzo: 1 }), M.costo(inc("passo_sfasato"), scontro(), { pozzo: 2 }), M.costo(inc("stilo_cremisi"), scontro(), { pozzo: 2 })], [2, 1, 1]);
+    const t = scontro(); eq(M.costo(inc("ebollizione"), t, { pozzo: 3 }), 0, "grado III: il primo è gratis"); t.pozzoGratis = true; eq(M.costo(inc("ebollizione"), t, { pozzo: 3 }), 3, "poi costa");
   });
-  caso("03/11: Sigilli massimi +1 dal livello 4 (4, boss 3); Filo di Rune −1 a colpirti per Sigillo", () => {
+  caso("Ferite (i vecchi Sigilli): 3, 2 sui boss, +1 dal livello 4; la via Vena le riempie anche sui boss", () => {
     eq([C.sigilliMax({ liv: 3 }), C.sigilliMax({ liv: 3, boss: true }), C.sigilliMax({ liv: 4 }), C.sigilliMax({ liv: 5, boss: true })], [3, 2, 4, 3]);
-    const s = { pv: 40, pvMax: 40, eff: {}, effMax: {}, sigilli: 0, filo: true };
-    eq(C.modAttaccoNem(s), 0, "nessun Sigillo"); s.sigilli = 1; eq(C.modAttaccoNem(s), -1); s.sigilli = 3; eq(C.modAttaccoNem(s), -3);
+    eq([C.sigilliMax({ boss: true, liv: 3, scuolaVia: "sangue" }), C.sigilliMax({ boss: true, liv: 3, scuolaVia: "illusione" })], [3, 2]);
+    const s = scontro({ sigilli: 1 }), c = ctx({ boss: true, liv: 2 }); const r = lancia("fiume_rosso", s, c);
+    eq(s.sigilli, 2); eq(ev(r, "sigilli")[0].perse, 1, "il resto va perso");
   });
-  caso("03/11: Specchio di Rune aspetta il primo colpo a segno, senza limite di turni", () => {
-    const s = { pv: 40, pvMax: 40, eff: {}, effMax: {}, sigilli: 0 }, c = { tira: () => 1, boss: false };
-    s.assorbe = { tipo: "specchio", n: 0 };
-    for (let i = 0; i < 4; i++) { C.colpoMancato(s, c); C.fineTurnoNemico(s); C.inizioTurnoPg(s, c); }
-    eq(!!s.assorbe, true, "dopo quattro colpi mancati resta pronto");
-    const r = C.colpoSubito(s, c, false, 10); eq(r.danno, 5, "il colpo a segno fa metà"); eq(s.assorbe, null, "e lo consuma");
+  caso("Stilo Cremisi: 1d8 e 1 Ferita; manca, niente Ferita; il modificatore si aggiunge al danno", () => {
+    let s = scontro(), c = ctx({ dadi: [15, 6] }); let r = lancia("stilo_cremisi", s, c); eq(s.pv, 80 - 6); eq(s.sigilli, 1); eq(r.costo, 1);
+    s = scontro(); c = ctx({ dadi: [2] }); lancia("stilo_cremisi", s, c); eq(s.sigilli || 0, 0);
+    s = scontro(); c = ctx({ modDanno: 3, dadi: [15, 6] }); lancia("stilo_cremisi", s, c); eq(s.pv, 80 - 9);
   });
-  caso("03/11: Runa sull'Arma dura i tuoi 3 turni successivi (il turno del nemico subito dopo il lancio non la consuma)", () => {
-    const s = { pv: 40, pvMax: 40, eff: {}, effMax: {} };
-    C.inizioTurnoPg(s, {}); s.eff.runa = 3; /* lanciata nel tuo turno */
-    C.fineTurnoNemico(s); eq(s.eff.runa, 3, "dopo il primo turno del nemico");
-    for (let i = 1; i <= 3; i++) { C.inizioTurnoPg(s, {}); /* qui il tuo attacco la usa */ eq(s.eff.runa > 0, true, "attacco " + i); C.fineTurnoNemico(s); }
-    eq(s.eff.runa, 0, "finita dopo il terzo attacco");
-    const t = { pv: 40, pvMax: 40, eff: {}, effMax: {} }; C.inizioTurnoPg(t, {}); t.eff.debole = 2; C.fineTurnoNemico(t); eq(t.eff.debole, 1, "gli stati sul nemico scendono come prima");
+  caso("Pagare in salute: solo il Sangue, solo restando sopra metà; Sangue versato +1 dado e accende il Coagulo", () => {
+    const s = scontro();
+    eq(M.puoVersare(inc("stilo_cremisi"), s, { pvPg: 12, pvMaxPg: 20 }), true, "12 − 1 = 11 > 10");
+    eq(M.puoVersare(inc("stilo_cremisi"), s, { pvPg: 11, pvMaxPg: 20 }), false, "11 − 1 = 10, non sopra metà");
+    eq(M.puoVersare(inc("ebollizione"), s, { pvPg: 13, pvMaxPg: 20 }), false, "13 − 3 = 10");
+    eq(M.puoVersare(inc("riflessi"), s, { pvPg: 20, pvMaxPg: 20 }), false, "l'Illusione si paga solo in mana");
+    const c = ctx({ versato: true, pvPg: 19, pvMaxPg: 20, dadi: [15, 4, 5] }); const r = lancia("stilo_cremisi", s, c);
+    eq(ev(r, "colpo")[0].nd, 2, "2d8"); eq(s.pv, 80 - 9); eq(s.versato, true);
   });
-  caso("Dardo Arcano: colpisce, 1d8 e 1 Sigillo; manca, nessun Sigillo", () => {
-    let s = scontro(), c = ctx({ dadi: [15, 5] }); /* 15+3 = 18 contro CA 12 */
-    let r = lancia("dardo_arcano", s, c); eq(r.costo, 2); eq(s.pv, 75, "5 danni senza modificatore"); eq(s.sigilli, 1);
-    s = scontro(); c = ctx({ dadi: [2] }); r = lancia("dardo_arcano", s, c); eq(s.pv, 80); eq(s.sigilli || 0, 0);
+  caso("Sangue che chiama: sotto metà salute +1 dado; Risucchio: un quarto del danno (per eccesso) ti cura", () => {
+    const s = scontro(), c = ctx({ pvPg: 9, pvMaxPg: 20, dadi: [15, 4, 5] }); const r = lancia("stilo_cremisi", s, c);
+    eq(ev(r, "sangueChiama").length, 1); eq(s.pv, 80 - 9); eq(c.curato, 3, "9 / 4 = 2,25 → 3");
+    const t = scontro(), d = ctx({ pvPg: 20, pvMaxPg: 20, dadi: [15, 4] }); lancia("stilo_cremisi", t, d); eq(d.curato, 1, "4 / 4 = 1");
+    const u = scontro(), e = ctx({ dadi: [2] }); lancia("stilo_cremisi", u, e); eq(e.curato, 0, "mancato: niente");
   });
-  caso("28/10: l'attacco magico aggiunge il modificatore al danno (Dardo Arcano 1d8 + 3)", () => {
-    const s = scontro(), c = ctx({ dadi: [15, 5], modDanno: 3 });
-    lancia("dardo_arcano", s, c); eq(s.pv, 72, "5 + 3 danni");
+  caso("Frusta Cremisi: 1d4 senza tiro, Sanguinamento se fallisce il tiro, 1 Ferita in ogni caso", () => {
+    let s = scontro(), c = ctx({ dadi: [3, 2, 4] }); lancia("frusta_cremisi", s, c); eq(s.pv, 80 - 3); vero(s.eff.sanguina > 0, "Sanguinamento"); eq(s.sangueDado, 4); eq(s.sigilli, 1);
+    s = scontro(); c = ctx({ dadi: [3, 19] }); lancia("frusta_cremisi", s, c); eq(s.eff.sanguina || 0, 0); eq(s.sigilli, 1);
   });
-  caso("I Sigilli si fermano a 3, a 2 sui boss; il resto va perso", () => {
-    const s = scontro({ sigilli: 2 }), c = ctx({ dadi: [15, 4] });
-    lancia("dardo_arcano", s, c); eq(s.sigilli, 3);
-    lancia("scopri_carte", s, ctx()); eq(s.sigilli, 3, "restano 3");
-    const b = scontro({ sigilli: 1 }); lancia("scopri_carte", b, ctx({ boss: true })); eq(b.sigilli, 2);
-    lancia("scopri_carte", b, ctx({ boss: true })); eq(b.sigilli, 2, "boss: massimo 2");
+  caso("Lama Coagulata: 3 dei tuoi turni; ogni colpo d'arma a segno fa +1d4 e incide 1 Ferita", () => {
+    const s = scontro(), c = ctx({ dadi: [3] }); lancia("lama_coagulata", s, c); eq(s.eff.lama, 3);
+    const e = M.suColpoArma(s, c); eq(e[0].d, 3); eq(s.pv, 77); eq(s.sigilli, 1);
+    eq(M.suColpoArma(scontro(), c).length, 0, "senza la lama niente");
   });
-  caso("Scopri Carte: apre la scheda e incide 1 Sigillo senza tiro", () => {
-    const s = scontro(), c = ctx(); const r = lancia("scopri_carte", s, c);
-    eq(s.svelata, true); eq(s.sigilli, 1); eq(r.costo, 1); eq(ev(r, "colpo").length, 0);
+  caso("Ebollizione: 2d6, poi le Ferite scoppiano (+1d6 ciascuna) e ti curi di 2 per Ferita (3 con la via Vena)", () => {
+    let s = scontro({ sigilli: 2 }), c = ctx({ dadi: [15, 3, 3, 4, 5], mancano: 100 }); let r = lancia("ebollizione", s, c);
+    eq(s.sigilli, 0); eq(s.pv, 80 - 6 - 9); eq(ev(r, "ebolle")[0].fatto, 4); eq(c.curato, 4 + Math.ceil(15 / 4));
+    s = scontro({ sigilli: 2 }); c = ctx({ scuolaVia: "sangue", dadi: [15, 3, 3, 4, 5] }); r = lancia("ebollizione", s, c); eq(ev(r, "ebolle")[0].fatto, 6);
+    s = scontro(); c = ctx({ dadi: [15, 3, 3] }); r = lancia("ebollizione", s, c); eq(ev(r, "detonaVuota").length, 1, "senza Ferite solo il colpo");
   });
-  caso("Runa sull'Arma: 3 turni di runa", () => {
-    const s = scontro(), c = ctx(); lancia("runa_arma", s, c); eq(s.eff.runa, 3);
+  caso("Condensazione: non consuma l'azione, una per turno; il prossimo incantesimo di Sangue fa +2 dadi", () => {
+    const s = scontro(), c = ctx(); const r = lancia("condensazione", s, c); eq(r.gratuita, true); eq(s.condens, 2);
+    eq(M.disponibile(inc("condensazione"), s, c).ok, false, "una per turno");
+    const d = ctx({ dadi: [15, 1, 2, 3] }); lancia("stilo_cremisi", s, d); eq(s.pv, 80 - 6); eq(s.condens, 0);
+    M.inizioTurnoPozzo(s, ctx({ pozzo: 0 })); eq(M.disponibile(inc("condensazione"), s, c).ok, true, "nuovo turno: di nuovo");
+    vero(/piena pressione/.test(M.comboPronta(inc("stilo_cremisi"), scontro({ condens: 2 }), ctx()).t));
   });
-  caso("Marchio Arcano: 1d6 senza tiro (03/11), Esposto 2 se fallisce il tiro; 1 Sigillo in ogni caso", () => {
-    let s = scontro(), c = ctx({ dadi: [4, 3] }); lancia("marchio_arcano", s, c); eq(s.eff.esposto, 2); eq(s.sigilli, 1); eq(s.pv, 76, "1d6 = 4 senza tiro");
-    s = scontro(); c = ctx({ dadi: [4, 18] }); const r = lancia("marchio_arcano", s, c); eq(s.eff.esposto || 0, 0); eq(s.sigilli, 1); vero(ev(r, "resiste").length);
+  caso("Sangue in Piena: +2 a colpire e ai danni con l'arma e con il Sangue (non con l'Illusione); il Coagulo cura metà", () => {
+    const s = scontro(); lancia("sangue_in_piena", s, ctx()); eq(s.eff.piena, 3);
+    let c = ctx({ dadi: [10, 4] }); let r = lancia("stilo_cremisi", s, c); eq(ev(r, "colpo")[0].mA, 5); eq(ev(r, "colpo")[0].danno, 6);
+    c = ctx({ dadi: [10, 4] }); r = lancia("dardo_fantasma", s, c); eq(ev(r, "colpo")[0].mA, 3, "l'Illusione no");
+    c = ctx({ dado: 8, dadi: [10, 4] }); r = { eventi: [C.colpo(s, c, { base: true })] }; eq(r.eventi[0].mA, 5, "l'arma sì");
+    s.copie = 0; s.versato = true; eq(C.colpoSubito(s, ctx(), false, 9).coagulo, 5, "metà per eccesso");
   });
-  caso("Marchio Arcano su un boss: Esposto dura al massimo 2", () => {
-    const s = scontro(), c = ctx({ dadi: [4, 3], boss: true }); lancia("marchio_arcano", s, c); eq(s.eff.esposto, 2);
+  caso("Coagulo: dopo aver versato sangue ogni colpo subito rende un quarto (per eccesso); prima no", () => {
+    const s = scontro(); eq(C.colpoSubito(s, ctx(), false, 9).coagulo, 0, "senza sangue versato");
+    s.versato = true; eq(C.colpoSubito(s, ctx(), false, 9).coagulo, 3); eq(C.colpoSubito(s, ctx(), false, 15).coagulo, 4, "colpo caricato di Enea");
+    const c = ctx({ mancano: 2 }); eq(M.coagula(3, c)[0].fatto, 2, "non oltre la salute mancante"); eq(M.coagula(0, c).length, 0);
   });
-  caso("Stasi: Bloccato 1 se fallisce; resiste se supera; sui boss 2 Sigilli e nessun tiro", () => {
-    let s = scontro(), c = ctx({ dadi: [3] }); lancia("stasi", s, c); eq(s.eff.bloccato, 1); eq(s.sigilli || 0, 0);
-    s = scontro(); c = ctx({ dadi: [18] }); lancia("stasi", s, c); eq(s.eff.bloccato || 0, 0);
-    s = scontro(); c = ctx({ boss: true }); const r = lancia("stasi", s, c); eq(s.eff.bloccato || 0, 0); eq(s.sigilli, 2); eq(ev(r, "ts").length, 0, "i boss non tirano");
+  caso("Cuore Spezzato: serve 1 Ferita; 2d8 per Ferita senza tiro, ti curi della metà (niente Risucchio); Ultima Goccia 3d10, una per riposo", () => {
+    eq(M.disponibile(inc("cuore_spezzato"), scontro(), ctx()).ok, false);
+    let s = scontro({ sigilli: 2 }), c = ctx({ dadi: [3, 4, 5, 6] }); let r = lancia("cuore_spezzato", s, c);
+    eq(s.pv, 80 - 18); eq(s.sigilli, 0); eq(c.curato, 9); eq(ev(r, "risucchio").length, 0);
+    s = scontro({ sigilli: 2 }); c = ctx({ liv: 5, dadi: [1, 2, 3, 4, 5, 6] }); lancia("ultima_goccia", s, c); eq(s.pv, 80 - 21);
+    eq(M.disponibile(inc("ultima_goccia"), scontro({ sigilli: 1 }), c).ok, false, "una per riposo");
   });
-  caso("Specchio di Rune: consuma l'azione; il primo colpo fa metà e incide 1 Sigillo; non due turni di fila", () => {
-    const s = scontro(), c = ctx(); lancia("specchio_rune", s, c); eq(s.assorbe.tipo, "specchio"); eq(s.difesaUsata, true);
-    const sub = C.colpoSubito(s, c, false, 9); eq(sub.danno, 4, "metà arrotondata per difetto"); eq(s.sigilli, 1); eq(s.assorbe, null, "vale una volta");
-    C.inizioTurnoPg(s, c); /* il turno dopo la difesa è bloccata */
-    eq(M.disponibile(inc("specchio_rune"), s, c).ok, false, "di fila no"); eq(M.disponibile(inc("specchio_rune"), s, c).motivo, "difesaDiFila");
-    C.inizioTurnoPg(s, c); eq(M.disponibile(inc("specchio_rune"), s, c).ok, true, "dopo un turno sì");
+  caso("Sete (Vena): ogni Detonazione di Sangue cura anche 1d4", () => {
+    const s = scontro({ sigilli: 1 }); lancia("sete", s, ctx()); eq(s.sete, true);
+    const c = ctx({ dadi: [15, 2, 2, 3, 4] }); const r = lancia("ebollizione", s, c); eq(ev(r, "seteCura")[0].d, 4);
   });
-  caso("Catena di Glifi: 2d6 e 2 Sigilli se colpisce", () => {
-    const s = scontro(), c = ctx({ dadi: [15, 3, 4] }); lancia("catena_glifi", s, c); eq(s.pv, 73); eq(s.sigilli, 2);
+  caso("Copie: Riflessi ne crea 2 (massimo 3, 4 con Velo); un colpo che ti andrebbe a segno tira d(Copie+1): con 1 prende te", () => {
+    const s = scontro(); lancia("riflessi", s, ctx()); eq(s.copie, 2); lancia("riflessi", s, ctx()); eq(s.copie, 3, "massimo 3");
+    const t = scontro(); lancia("riflessi", t, ctx({ scuolaVia: "illusione" })); lancia("riflessi", t, ctx({ scuolaVia: "illusione" })); eq(t.copie, 4, "Velo: 4");
+    let r = C.colpoSubito(s, ctx({ dadi: [3] }), false, 8); eq([r.annullato, r.danno, s.copie], [true, 0, 2]);
+    eq(s.sigilli, 1, "combo: la Copia distrutta incide 1 Ferita");
+    r = C.colpoSubito(s, ctx({ dadi: [1] }), false, 8); eq([r.annullato, r.danno, s.copie], [false, 8, 2]);
   });
-  caso("Sigillo del Silenzio: Senza attacchi speciali 2; sui boss Indebolito 2; 1 Sigillo sempre", () => {
-    let s = scontro(), c = ctx({ dadi: [3] }); lancia("sigillo_silenzio", s, c); eq(s.eff.silenzio, 2); eq(s.sigilli, 1);
-    s = scontro(); c = ctx({ boss: true }); lancia("sigillo_silenzio", s, c); eq(s.eff.silenzio || 0, 0); eq(s.eff.debole, 2); eq(s.sigilli, 1);
+  caso("Dardo Fantasma: 1d8 psichico e +1 Copia se colpisce; Frantumare: 1d8 per Copia senza tiro, 1 mana per Copia, con 3 Frastornato (boss: Sbilanciato)", () => {
+    let s = scontro(), c = ctx({ dadi: [15, 5] }); lancia("dardo_fantasma", s, c); eq([s.pv, s.copie], [75, 1]);
+    eq(M.disponibile(inc("frantumare"), scontro(), ctx()).ok, false, "senza Copie");
+    s = scontro({ copie: 3 }); c = ctx({ dadi: [2, 3, 4, 2] }); lancia("frantumare", s, c); eq([s.pv, s.copie, c.mana], [80 - 9, 0, 3]); eq(s.eff.frastornato, 1);
+    s = scontro({ copie: 3 }); c = ctx({ boss: true, dadi: [2, 3, 4] }); lancia("frantumare", s, c); eq(s.eff.sbilanciato, 1);
   });
-  caso("Disfare: scarica il Soffio pronto, scioglie la Presa, 1 Sigillo", () => {
-    const s = scontro(), c = ctx(); lancia("disfare", s, c); eq(s.soffioPronto, false); eq(s.presaUsata, true); eq(s.sigilli, 1);
+  caso("Passo Sfasato: difesa che aspetta il primo colpo, 0 danni e +1 Copia; non due turni di fila", () => {
+    const s = scontro(), c = ctx(); lancia("passo_sfasato", s, c);
+    for (let i = 0; i < 2; i++) { C.colpoMancato(s, c); C.fineTurnoNemico(s); C.inizioTurnoPg(s, c); }
+    s.difesaBloccata = false;
+    const r = C.colpoSubito(s, c, false, 9); eq([r.danno, s.copie, s.assorbe], [0, 1, null]);
+    const t = scontro(); lancia("passo_sfasato", t, ctx()); C.inizioTurnoPg(t, {}); eq(M.disponibile(inc("passo_sfasato"), t, ctx()).ok, false);
   });
-  caso("Risonanza: 2d8 + 1d8 per Sigillo, i Sigilli restano; critico raddoppia i dadi", () => {
-    let s = scontro({ sigilli: 2 }), c = ctx({ dadi: [15, 4, 5, 6, 2] }); lancia("risonanza", s, c); eq(s.pv, 80 - 9 - 8); eq(s.sigilli, 2);
-    s = scontro({ sigilli: 1 }); c = ctx({ dadi: [20, 1, 1, 1, 1, 2, 3] }); lancia("risonanza", s, c); /* critico: 4d8 + 2d8 */ eq(s.pv, 80 - 4 - 5, "critico"); eq(s.sigilli, 1);
+  caso("Dado Truccato: il nemico tira 2d20 e tiene il peggiore, 3 turni (boss 2)", () => {
+    const s = scontro(); lancia("dado_truccato", s, ctx()); eq(s.eff.truccato, 3); eq(C.tiroAttaccoNem(s, ctx({ dadi: [17, 6] })).d, 6);
+    const b = scontro(); lancia("dado_truccato", b, ctx({ boss: true })); eq(b.eff.truccato, 2);
   });
-  caso("Prigione di Rune: Bloccato 2 se fallisce; sui boss Sbilanciato 2 e 1 Sigillo", () => {
-    let s = scontro(), c = ctx({ dadi: [3] }); lancia("prigione_rune", s, c); eq(s.eff.bloccato, 2);
-    s = scontro(); c = ctx({ boss: true }); lancia("prigione_rune", s, c); eq(s.eff.sbilanciato, 2); eq(s.sigilli, 1); eq(s.eff.bloccato || 0, 0);
+  caso("Terrore Illusorio: 2d8 senza tiro, Impaurito 2 se fallisce, metà danni se resiste", () => {
+    let s = scontro(), c = ctx({ dadi: [5, 6, 3] }); lancia("terrore_illusorio", s, c); eq(s.pv, 69); eq(s.eff.paura, 2);
+    s = scontro(); c = ctx({ dadi: [5, 6, 19] }); lancia("terrore_illusorio", s, c); eq(s.pv, 75); eq(s.eff.paura || 0, 0);
   });
-  caso("Occhio del Tomo: critico con 19-20 e ogni critico incide 2 Sigilli", () => {
-    const s = scontro(), c = ctx({ dadi: [] }); lancia("occhio_tomo", s, c); eq(s.eff.occhio, 3);
-    const c2 = ctx({ dadi: [19, 1, 1, 1] }); const r = lancia("dardo_arcano", s, c2); /* 19: critico, 2d8 */ eq(ev(r, "colpo")[0].crit, true);
-    eq(s.sigilli, 1 + 2, "1 del dardo + 2 del critico");
+  caso("Teatro di Specchi: Copie al massimo; ogni Copia distrutta esplode 1d6 su chi l'ha colpita", () => {
+    const s = scontro(); lancia("teatro_specchi", s, ctx()); eq(s.copie, 3);
+    const r = C.colpoSubito(s, ctx({ dadi: [4, 5] }), false, 9); eq(r.danno, 0); eq(s.pv, 75);
   });
-  caso("Parola Vera: 4d8 senza tiro, una volta per riposo, −4 ai tiri salvezza del nemico", () => {
-    const s = scontro(), c = ctx({ dadi: [2, 3, 4, 5, 7] }); /* 14 danni, poi salvezza 7 contro CD 12 */
-    lancia("parola_vera", s, c); eq(s.pv, 66); eq(s.eff.parola, 2); eq(c.usate.parola_vera, true);
-    eq(M.disponibile(inc("parola_vera"), s, c).motivo, "giaUsataRiposo");
-    const c2 = ctx({ dadi: [1, 9], modTs: 0, cd: 12 }); lancia("marchio_arcano", s, c2); /* 9 − 4 = 5: fallisce anche se tirerebbe 9+3? CD 12, 9+0 = 9 comunque */
-    eq(s.eff.esposto, 2);
-    const s2 = scontro({ eff: { parola: 2 } }), c3 = ctx({ dadi: [1, 14], cd: 12 }); lancia("marchio_arcano", s2, c3); eq(s2.eff.esposto, 2, "14 −4 = 10 < 12: fallisce");
-    const s3 = scontro(), c4 = ctx({ dadi: [1, 14], cd: 12 }); lancia("marchio_arcano", s3, c4); eq(s3.eff.esposto || 0, 0, "senza Parola 14 supera");
+  caso("Vie di Velo: Il Doppio (+1d6 con 2 Copie), Sala degli Specchi (−1 a colpirti per Copia), Nessuno è Qui (nessun colpo, una per riposo)", () => {
+    let s = scontro({ copie: 2 }); lancia("il_doppio", s, ctx()); let r = lancia("dardo_fantasma", s, ctx({ dadi: [15, 3, 4] })); eq(ev(r, "doppioColpo")[0].d, 4);
+    s = scontro({ copie: 1 }); s.eff.doppio = 3; r = lancia("stilo_cremisi", s, ctx({ dadi: [15, 3] })); eq(ev(r, "doppioColpo").length, 0, "con 1 Copia no");
+    s = scontro({ copie: 1 }); lancia("sala_specchi", s, ctx()); eq(C.modAttaccoNem(s), -2);
+    s = scontro(); const c = ctx(); lancia("nessuno_qui", s, c); eq(s.copie, 3); r = C.colpoSubito(s, c, false, 12); eq([r.danno, r.annullato], [0, true]);
+    eq(M.disponibile(inc("nessuno_qui"), scontro(), c).ok, false, "una per riposo");
   });
-  caso("Tomo Proibito: −1 salute mentale, Arcano a −2 (minimo 1) e 1 Sigillo in più", () => {
-    const s = scontro(), c = ctx(); const r = lancia("tomo_proibito", s, c); eq(s.eff.tomo, 3); eq(c.mente, 1); eq(r.costo, 8);
-    eq(M.costo(inc("catena_glifi"), s), 3, "5 − 2"); eq(M.costo(inc("scopri_carte"), s), 1, "minimo 1"); eq(M.costo(inc("pugno_forza"), s), 2, "la Forza non cambia");
-    lancia("scopri_carte", s, ctx()); eq(s.sigilli, 2, "1 + 1 extra");
-    const s2 = scontro({ eff: { tomo: 3 } }); lancia("pugno_forza", s2, ctx({ dadi: [15, 4] })); eq(s2.sigilli || 0, 0, "la Forza non incide in più");
+  caso("Smascherare: a inizio turno un boss tira Mente; se riesce distrugge 1 Copia (Velo −2); i comuni no", () => {
+    let s = scontro({ copie: 2 }); let e = M.inizioTurnoNemico(s, ctx({ boss: true, dadi: [15] })); eq(s.copie, 1); eq(e[1].k, "smascherata");
+    s = scontro({ copie: 2 }); M.inizioTurnoNemico(s, ctx({ boss: true, dadi: [3] })); eq(s.copie, 2);
+    s = scontro({ copie: 2 }); M.inizioTurnoNemico(s, ctx({ boss: true, scuolaVia: "illusione", dadi: [13] })); eq(s.copie, 2, "13 − 2 = 11 contro 12");
+    s = scontro({ copie: 2 }); M.inizioTurnoNemico(s, ctx({ dadi: [] })); eq(s.copie, 2);
+    eq(M.haTick(scontro({ copie: 1 })), true);
   });
-  caso("Sigillo Assoluto: Sigilli al massimo e Bloccato 2; sui boss Indebolito e Sbilanciato 2", () => {
-    let s = scontro(), c = ctx({ dadi: [3] }); lancia("sigillo_assoluto", s, c); eq(s.sigilli, 3); eq(s.eff.bloccato, 2);
-    s = scontro(); c = ctx({ boss: true }); lancia("sigillo_assoluto", s, c); eq(s.sigilli, 2); eq(s.eff.debole, 2); eq(s.eff.sbilanciato, 2);
-  });
-
-  /* ================= Detonazione ================= */
-  caso("Detonazione: +1d6 per Sigillo, consuma i Sigilli, recupera 1 mana per Sigillo (03/11)", () => {
-    let s = scontro({ sigilli: 2 }), c = ctx({ dadi: [15, 6, 4, 2] }); /* pugno 1d10 = 6, poi 2d6 = 4+2 */
-    const r = lancia("pugno_forza", s, c); eq(s.pv, 80 - 6 - 6); eq(s.sigilli, 0); eq(c.mana, 2, "2 Sigilli: 2 mana");
-    eq(ev(r, "detona")[0].bonus, 6);
-    s = scontro({ sigilli: 3 }); c = ctx({ dadi: [15, 6, 1, 1, 1] }); lancia("pugno_forza", s, c); eq(c.mana, 3, "3 Sigilli: 3 mana, niente doppio");
-  });
-  caso("Detonazione sui boss: il massimo è 2 Sigilli", () => {
-    const s = scontro({ sigilli: 2 }), c = ctx({ boss: true, dadi: [15, 6, 1, 1] }); lancia("pugno_forza", s, c); eq(c.mana, 2, "2 Sigilli su un boss = massimo");
-  });
-  caso("Il recupero non dipende dal livello: 1 Sigillo = 1 mana (03/11)", () => {
-    [1, 2, 3, 4, 5].forEach((liv, i) => {
-      const s = scontro({ sigilli: 1 }), c = ctx({ liv, dadi: [15, 6, 3] }); lancia("pugno_forza", s, c); eq(c.mana, 1, "livello " + liv);
-    });
-  });
-  caso("Senza Sigilli non c'è Detonazione: né danno né mana", () => {
-    const s = scontro(), c = ctx({ dadi: [15, 6] }); const r = lancia("pugno_forza", s, c); eq(c.mana, 0); eq(s.pv, 74); eq(ev(r, "detonaVuota").length, 1);
-  });
-  caso("Un attacco mancato non fa detonare", () => {
-    const s = scontro({ sigilli: 2 }), c = ctx({ dadi: [2] }); lancia("pugno_forza", s, c); eq(s.sigilli, 2); eq(c.mana, 0);
-  });
-  caso("Il critico di un incantesimo di Forza incide 1 Sigillo dopo la Detonazione", () => {
-    const s = scontro({ sigilli: 2 }), c = ctx({ dadi: [20, 6, 2, 1, 1] }); /* critico: 2d10 = 6+2, poi 2d6 */
-    lancia("pugno_forza", s, c); eq(s.sigilli, 1, "esplosi i 2, poi 1 nuovo");
-  });
-  caso("Spinta: 1d6 senza tiro, Sbilanciato 1 se fallisce il tiro, Detonazione comunque", () => {
-    const s = scontro({ sigilli: 1 }), c = ctx({ dadi: [4, 3, 5] }); lancia("spinta", s, c); /* 4 danni, salvezza 3, detonazione 5 */
-    eq(s.pv, 80 - 4 - 5); eq(s.eff.sbilanciato, 1); eq(c.mana, 1);
-    const s2 = scontro({ sigilli: 1 }), c2 = ctx({ dadi: [4, 18, 5] }); lancia("spinta", s2, c2); eq(s2.eff.sbilanciato || 0, 0); eq(c2.mana, 1, "detona anche se resiste");
-  });
-  caso("Scudo: +2 CA per 3 turni (effetto 'scudo', 03/11)", () => { const s = scontro(), c = ctx(); lancia("scudo", s, c); eq(s.eff.scudo, 3); const t = scontro(); lancia("scudo_fede", t, ctx()); eq(t.eff.scudo, 3, "anche lo Scudo della Fede"); });
-  caso("Ariete: 2d6, Sbilanciato 2 se colpisce, Detonazione", () => {
-    const s = scontro({ sigilli: 1 }), c = ctx({ dadi: [15, 2, 3, 6] }); lancia("ariete", s, c); eq(s.eff.sbilanciato, 2); eq(s.pv, 80 - 5 - 6);
-  });
-  caso("Onda d'Urto: 2d4, il Soffio pronto si perde se fallisce il tiro, Detonazione", () => {
-    const s = scontro({ sigilli: 1 }), c = ctx({ dadi: [2, 3, 4, 3] }); lancia("onda_urto", s, c); eq(s.soffioPronto, false); eq(s.pv, 80 - 5 - 3);
-    const s2 = scontro({ soffioPronto: true }), c2 = ctx({ dadi: [1, 1, 18] }); lancia("onda_urto", s2, c2); eq(s2.soffioPronto, true, "resiste");
-  });
-  caso("Barriera Cinetica: 0 danni e 1d6 forza a chi colpisce; vale una volta", () => {
-    const s = scontro(), c = ctx({ dadi: [5, 4] }); lancia("barriera_cinetica", s, c);
-    const sub = C.colpoSubito(s, c, false, 9); eq(sub.danno, 0); eq(sub.annullato, true); eq(s.pv, 75, "1d6 = 5 al nemico");
-    const sub2 = C.colpoSubito(s, c, false, 9); eq(sub2.danno, 9, "il secondo colpo passa");
-  });
-  caso("Implosione: serve almeno 1 Sigillo; 2d6 per Sigillo; 1 mana per Sigillo", () => {
-    const s0 = scontro(); eq(M.disponibile(inc("implosione"), s0, ctx()).motivo, "senzaSigilli");
-    const s = scontro({ sigilli: 2 }), c = ctx({ liv: 3, dadi: [1, 2, 3, 4] }); const r = lancia("implosione", s, c); eq(s.pv, 70); eq(s.sigilli, 0); eq(c.mana, 2, "2 Sigilli: 2");
-    const s3 = scontro({ sigilli: 3 }), c3 = ctx({ liv: 3, dadi: [1, 1, 1, 1, 1, 1] }); lancia("implosione", s3, c3); eq(c3.mana, 3, "3 Sigilli: 3");
-  });
-  caso("Pressione: Indebolito 2 e 1d6 forza all'inizio dei suoi turni", () => {
-    const s = scontro({ sigilli: 0 }), c = ctx({ dadi: [3] }); lancia("pressione", s, c); eq(s.eff.debole, 2); eq(s.eff.pressione, 2);
-    const t = M.inizioTurnoNemico(s, ctx({ dadi: [4] })); eq(s.pv, 76); eq(t[0].k, "pressioneTick");
-    C.fineTurnoNemico(s); M.inizioTurnoNemico(s, ctx({ dadi: [2] })); eq(s.pv, 74); C.fineTurnoNemico(s); eq(M.inizioTurnoNemico(s, ctx()).length, 0, "finita");
-  });
-  caso("Muro di Forza: 2 turni", () => { const s = scontro(), c = ctx(); lancia("muro_forza", s, c); eq(s.eff.muro, 2); });
-  caso("Maglio Invisibile: 3d8, critico 19-20, Detonazione", () => {
-    const s = scontro({ sigilli: 1 }), c = ctx({ dadi: [19, 1, 2, 3, 4, 5, 6, 1, 2, 3] }); /* 19 critico: 6d8 poi 1d6 */
-    lancia("maglio_invisibile", s, c); eq(s.pv, 80 - 21 - 1, "6 dadi + detonazione");
-  });
-  caso("Gravità: Bloccato 1 e Sbilanciato 2 se fallisce; sui boss Sbilanciato 2 e Indebolito 1", () => {
-    let s = scontro(), c = ctx({ dadi: [3] }); lancia("gravita", s, c); eq(s.eff.bloccato, 1); eq(s.eff.sbilanciato, 2);
-    s = scontro(); c = ctx({ boss: true }); lancia("gravita", s, c); eq(s.eff.bloccato || 0, 0); eq(s.eff.sbilanciato, 2); eq(s.eff.debole, 2, "durata comune");
-  });
-  caso("Respingere: ogni colpo fa 0 e torna 1d6, fino al tuo turno", () => {
-    const s = scontro(), c = ctx({ dadi: [3, 2] }); lancia("respingere", s, c);
-    eq(C.colpoSubito(s, c, false, 8).danno, 0); eq(C.colpoSubito(s, c, false, 8).danno, 0); eq(s.pv, 75);
-    C.inizioTurnoPg(s, c); eq(s.assorbe, null);
-  });
-  caso("Singolarità: una volta per riposo, 3d6 per Sigillo + Mente, sempre doppia", () => {
-    const s = scontro({ sigilli: 1 }), c = ctx({ liv: 5, dadi: [2, 3, 4] }); lancia("singolarita", s, c); eq(s.pv, 80 - 9 - 3); eq(c.mana, 2, "1 Sigillo × 2");
-    eq(M.disponibile(inc("singolarita"), scontro({ sigilli: 1 }), c).motivo, "giaUsataRiposo");
-  });
-  caso("Invulnerabilità: una volta per riposo, dura fino al tuo turno", () => {
-    const s = scontro(), c = ctx(); lancia("invulnerabilita", s, c); eq(s.eff.invuln, 1); eq(M.disponibile(inc("invulnerabilita"), s, c).ok, false);
-  });
-  caso("Cataclisma: 3 colpi 1d8, ognuno fa detonare 1 Sigillo, una sola Detonazione per il mana", () => {
-    const s = scontro({ sigilli: 2 }), c = ctx({ liv: 5, dadi: [15, 4, 6, 15, 3, 5, 15, 2] }); /* 3 colpi a segno; Sigilli: solo 2 */
-    lancia("cataclisma", s, c); eq(s.pv, 80 - (4 + 6) - (3 + 5) - 2); eq(s.sigilli, 0); eq(c.mana, 2, "2 Sigilli consumati: 2 mana");
-    const s2 = scontro({ sigilli: 4 }), c2 = ctx({ liv: 5, dadi: [15, 1, 1, 15, 1, 1, 15, 1, 1] }); lancia("cataclisma", s2, c2); eq(c2.mana, 3, "3 colpi, 3 Sigilli consumati: 3 mana");
-  });
-
-  /* ================= Vie ================= */
-  caso("Colpo Demolitore: 2d8, Detonazione con 1d8 per Sigillo, poi ogni Detonazione fa Sbilanciato 1", () => {
-    const s = scontro({ sigilli: 1 }), c = ctx({ liv: 3, dadi: [15, 3, 4, 8, 15, 2] }); /* 2d8 = 7, poi 1d8 = 8 */
-    lancia("colpo_demolitore", s, c); eq(s.pv, 80 - 7 - 8); eq(s.demolitore, true); eq(s.eff.sbilanciato, 1);
-    s.eff.sbilanciato = 0; s.sigilli = 1; lancia("pugno_forza", s, ctx({ dadi: [15, 2, 3] })); eq(s.eff.sbilanciato, 1, "ogni Detonazione, anche delle altre");
-  });
-  caso("Spezzare il Vincolo: Indebolito 3 e CA −2 per tutto lo scontro se fallisce; boss: Indebolito 2", () => {
-    let s = scontro(), c = ctx({ dadi: [3] }); lancia("spezzare_vincolo", s, c); eq(s.eff.debole, 2, "durata comune"); eq(s.caMeno, 2); eq(C.malusCA(s), 2);
-    s = scontro(); c = ctx({ dadi: [3], boss: true }); lancia("spezzare_vincolo", s, c); eq(s.eff.debole, 2, "tetto boss");
-    s = scontro(); c = ctx({ dadi: [18] }); lancia("spezzare_vincolo", s, c); eq(s.caMeno || 0, 0);
-  });
-  caso("Crollo Arcano: serve un Sigillo; 2d10 per Sigillo; se il nemico cade recuperi il mana speso", () => {
-    eq(M.disponibile(inc("crollo_arcano"), scontro(), ctx()).motivo, "senzaSigilli");
-    const s = scontro({ sigilli: 2, pv: 20 }), c = ctx({ liv: 5, dadi: [10, 9, 8, 7] }); const r = lancia("crollo_arcano", s, c); eq(s.pv <= 0, true); eq(c.mana, 9, "rimborso del costo");
-    const s2 = scontro({ sigilli: 1 }), c2 = ctx({ liv: 5, dadi: [1, 1] }); lancia("crollo_arcano", s2, c2); eq(c2.mana, 0, "il nemico vive: nessun rimborso");
-  });
-  caso("Filo di Rune: 2 Sigilli; il nemico ha −1 per colpirti per ogni Sigillo (03/11)", () => {
-    const s = scontro(), c = ctx(); lancia("filo_rune", s, c); eq(s.sigilli, 2); eq(C.modAttaccoNem(s), -2);
-    s.sigilli = 1; eq(C.modAttaccoNem(s), -1, "con 1 Sigillo −1");
-  });
-  caso("Ricamo di Rune: Senza attacchi speciali + Esposto 2; il prossimo incantesimo costa 2 in meno", () => {
-    let s = scontro(), c = ctx({ dadi: [3] }); lancia("ricamo_rune", s, c); eq(s.eff.silenzio, 2); eq(s.eff.esposto, 2); eq(s.scontoInc, 2);
-    eq(M.costo(inc("pugno_forza"), s), 1, "2 − 2, minimo 1"); const r = lancia("pugno_forza", s, ctx({ dadi: [2] })); eq(r.costo, 1); eq(s.scontoInc, 0, "usato");
-    s = scontro(); c = ctx({ boss: true }); lancia("ricamo_rune", s, c); eq(s.eff.silenzio || 0, 0); eq(s.eff.debole, 2); eq(s.eff.esposto, 2);
-  });
-  caso("Quiete Assoluta: gli incantesimi d'Arcano costano un Sigillo invece del mana; senza Sigilli si paga", () => {
-    const s = scontro({ sigilli: 2 }), c = ctx(); lancia("quiete_assoluta", s, c); eq(s.eff.quiete, 3);
-    eq(M.costo(inc("catena_glifi"), s), 0); const r = lancia("catena_glifi", s, ctx({ dadi: [15, 1, 1] })); eq(r.costo, 0); eq(s.sigilli, 2 - 1 + 2 > 3 ? 3 : 2 - 1 + 2, "spende 1 e ne incide 2");
-    const v = scontro({ eff: { quiete: 3 } }); eq(M.costo(inc("catena_glifi"), v), 5, "senza Sigilli si paga");
-    eq(M.costo(inc("pugno_forza"), s), 2, "la Forza paga sempre");
-  });
-
-  /* ================= Cose trasversali ================= */
-  caso("Un incantesimo costa il suo mana; il critico raddoppia i dadi", () => {
-    const s = scontro(), c = ctx({ dadi: [20, 3, 4] }); const r = lancia("dardo_arcano", s, c); eq(r.costo, 2); eq(s.pv, 80 - 7);
-  });
-  caso("Esposto allarga il critico degli incantesimi (19-20)", () => {
-    const s = scontro({ eff: { esposto: 2 } }), c = ctx({ dadi: [19, 2, 3] }); const r = lancia("dardo_arcano", s, c); eq(ev(r, "colpo")[0].crit, true);
-  });
-  caso("Sbilanciato abbassa la CA del nemico per gli attacchi magici", () => {
-    const s = scontro({ eff: { sbilanciato: 2 }, }), c = ctx({ dadi: [8, 1], caBase: 12 }); /* 8+3 = 11 contro CA 10 */
-    const r = lancia("dardo_arcano", s, c); eq(ev(r, "colpo")[0].ok, true);
-  });
-  caso("Ogni evento che i testi devono mostrare ha un testo", () => {
-    const s = scontro({ sigilli: 3 });
-    ["dardo_arcano", "scopri_carte", "runa_arma", "marchio_arcano", "stasi", "specchio_rune", "catena_glifi", "sigillo_silenzio", "disfare", "risonanza", "prigione_rune", "occhio_tomo", "parola_vera", "tomo_proibito", "sigillo_assoluto",
-      "pugno_forza", "spinta", "scudo", "ariete", "onda_urto", "barriera_cinetica", "implosione", "pressione", "muro_forza", "maglio_invisibile", "gravita", "respingere", "singolarita", "invulnerabilita", "cataclisma",
-      "colpo_demolitore", "spezzare_vincolo", "crollo_arcano", "filo_rune", "ricamo_rune", "quiete_assoluta"].forEach(id => {
-      const st = scontro({ sigilli: 3 }), c = ctx({ liv: 5 }); c.tira = (d) => (d === 20 ? 15 : 2); c.s = st;
-      const r = M.lancia(inc(id), st, c);
-      r.eventi.filter(e => !["colpo", "ts", "stato", "immune", "resiste"].includes(e.k)).forEach(e => vero(M.testo(e) !== null || e.k === "scontoInc", `${id}: evento senza testo: ${e.k}`));
-    });
+  caso("Un incantesimo costa il suo mana; il critico raddoppia i dadi; Esposto allarga il critico; Sbilanciato abbassa la CA", () => {
+    let s = scontro(), c = ctx({ dadi: [20, 3, 4] }); let r = lancia("stilo_cremisi", s, c); eq(r.costo, 1); eq(s.pv, 80 - 7);
+    s = scontro({ eff: { esposto: 2 } }); c = ctx({ dadi: [19, 2, 3] }); r = lancia("stilo_cremisi", s, c); eq(ev(r, "colpo")[0].crit, true);
+    s = scontro({ eff: { sbilanciato: 2 } }); c = ctx({ dadi: [8, 1], caBase: 12 }); r = lancia("stilo_cremisi", s, c); eq(ev(r, "colpo")[0].ok, true);
   });
 
 
@@ -462,16 +342,16 @@
   caso("Avvizzito: 1d6 dove indicato sostituisce 1d4; sui boss dura al massimo 3 turni", () => {
     const s = scontro(), c = ctx({ liv: 5, boss: true }); C.metti(s, c, "avvizzito", 5); eq(s.eff.avvizzito, 3);
   });
-  caso("Combo (03/11): etichette e avvisi «combo pronta»", () => {
+  caso("Combo: etichette e avvisi «combo pronta» (Ferite, Copie, Bilancia)", () => {
     const tg = (id) => M.etichette(inc(id)).join("|");
-    vero(/Incide/.test(tg("dardo_arcano")), "il Dardo incide"); vero(/Detona/.test(tg("pugno_forza")), "il Pugno detona");
-    vero(/Consuma i Sigilli/.test(tg("implosione")), "Implosione consuma"); vero(/Vita \+1/.test(tg("dardo_luce"))); vero(/Negromanzia \+1/.test(tg("tocco_avvizzente")));
-    vero(/→ 0/.test(tg("giudizio"))); vero(/Difesa/.test(tg("specchio_rune")));
-    eq(M.comboPronta(inc("pugno_forza"), scontro(), ctx({ liv: 2 })).ok, false, "senza Sigilli niente da far esplodere");
-    vero(/al massimo/.test(M.comboPronta(inc("pugno_forza"), scontro({ sigilli: 3 }), ctx({ liv: 2 })).t));
-    eq(M.comboPronta(inc("pugno_forza"), scontro({ sigilli: 3 }), ctx({ liv: 4 })).ok, true);
-    vero(!/al massimo/.test(M.comboPronta(inc("pugno_forza"), scontro({ sigilli: 3 }), ctx({ liv: 4 })).t), "dal livello 4 il massimo è 4");
-    eq(M.comboPronta(inc("dardo_arcano"), scontro({ sigilli: 3 }), ctx({ liv: 2 })).ok, false, "Sigilli nuovi persi");
+    vero(/Incide Ferite/.test(tg("stilo_cremisi"))); vero(/Detona le Ferite/.test(tg("cuore_spezzato"))); vero(/Mana o salute/.test(tg("stilo_cremisi")));
+    vero(/Crea Copie/.test(tg("riflessi"))); vero(/Detona le Copie/.test(tg("frantumare"))); vero(/Non consuma l'azione/.test(tg("condensazione")));
+    vero(/Vita \+1/.test(tg("dardo_luce"))); vero(/Negromanzia \+1/.test(tg("tocco_avvizzente"))); vero(/→ 0/.test(tg("giudizio"))); vero(/Difesa/.test(tg("passo_sfasato")));
+    eq(M.comboPronta(inc("ebollizione"), scontro(), ctx({ liv: 2 })).ok, false, "senza Ferite solo il colpo");
+    vero(/al massimo/.test(M.comboPronta(inc("ebollizione"), scontro({ sigilli: 3 }), ctx({ liv: 2 })).t));
+    eq(M.comboPronta(inc("stilo_cremisi"), scontro({ sigilli: 3 }), ctx({ liv: 2 })).ok, false, "Ferite nuove perse");
+    eq(M.comboPronta(inc("frantumare"), scontro(), ctx()).ok, false); vero(/Frastornato/.test(M.comboPronta(inc("frantumare"), scontro({ copie: 3 }), ctx()).t));
+    eq(M.comboPronta(inc("riflessi"), scontro({ copie: 3 }), ctx()).ok, false, "Copie al massimo");
     vero(/Crepuscolo/.test(M.comboPronta(inc("tocco_avvizzente"), scontro({ bilancia: 3 }), ctx()).t));
     vero(/Crepuscolo/.test(M.comboPronta(inc("dardo_luce"), scontro({ bilancia: -3 }), ctx()).t));
     eq(M.comboPronta(inc("dardo_luce"), scontro({ bilancia: -3, eff: { furiaCinerea: 2 } }), ctx()), null, "Furia Cinerea blocca la Bilancia");
@@ -479,21 +359,10 @@
   });
 
   caso("04/11: potenziamenti della via (la via è la scuola)", () => {
-    eq(M.scuolaDellaVia("Sapiente", "guendalina"), "arcano"); eq(M.scuolaDellaVia("Sapiente", "aldo"), "forza");
+    eq(M.scuolaDellaVia("Sapiente", "guendalina"), "illusione"); eq(M.scuolaDellaVia("Sapiente", "aldo"), "sangue"); /* 04/11 sera */
     eq(M.scuolaDellaVia("Accolito", "guendalina"), "luce"); eq(M.scuolaDellaVia("Accolito", "aldo"), "ombra");
     eq(M.scuolaDellaVia("Soldato", "aldo"), null); eq(M.scuolaDellaVia("Sapiente", null), null);
-    /* Sutura: Sigilli pieni anche sui boss */
-    eq(C.sigilliMax({ boss: true, liv: 3 }), 2); eq(C.sigilliMax({ boss: true, liv: 3, scuolaVia: "arcano" }), 3);
-    eq(C.sigilliMax({ boss: true, liv: 4, scuolaVia: "arcano" }), 4); eq(C.sigilliMax({ boss: true, liv: 3, scuolaVia: "forza" }), 2);
-    /* Sutura: Rune che bruciano, +1 per Sigillo già presente (Dardo Arcano: d20, 1d8) */
-    const s0 = scontro({ sigilli: 2 }), r0 = lancia("dardo_arcano", s0, ctx({ liv: 3, scuolaVia: "arcano", dadi: [15, 5] }));
-    eq(ev(r0, "runeBruciano")[0].n, 2); eq(s0.pv, 80 - 5 - 2);
-    const s0b = scontro({ sigilli: 2 }); lancia("dardo_arcano", s0b, ctx({ liv: 3, dadi: [15, 5] })); eq(s0b.pv, 75, "senza la via niente bonus");
-    /* Frattura: Detonazione con d8 */
-    const s1 = scontro({ sigilli: 2 }), r1 = lancia("pugno_forza", s1, ctx({ liv: 3, scuolaVia: "forza", dadi: [15, 4, 7, 8] }));
-    eq(ev(r1, "detona")[0].dado, 8, "Detonazione d8"); eq(ev(r1, "detona")[0].bonus, 15);
-    const s2 = scontro({ sigilli: 2 }), r2 = lancia("pugno_forza", s2, ctx({ liv: 3, dadi: [15, 4, 5, 6] }));
-    eq(ev(r2, "detona")[0].dado, 6, "senza la via d6");
+    eq(Object.keys(M.POTENZIAMENTI_VIA).sort(), ["illusione", "luce", "ombra", "sangue"]);
     /* Brace: Rigenerazione 4 turni */
     const s3 = scontro(); lancia("voto_luce", s3, ctx({ liv: 3, scuolaVia: "luce" })); eq(s3.eff.rigen, 4);
     const s4 = scontro(); lancia("voto_luce", s4, ctx({ liv: 3 })); eq(s4.eff.rigen, 3);

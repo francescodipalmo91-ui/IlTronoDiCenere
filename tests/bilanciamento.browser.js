@@ -191,18 +191,18 @@ caso("29/10: foresta con immagine e testo nuovi; cripta con Ettore e senza", asy
   eq(await page.evaluate(() => { usate.ettore = "scontro"; const a = vista("cripta").img.src; usate.ettore = "morto"; return [a, vista("cripta").img.src]; }), ["immagini/house/cripta_ettore.webp", "immagini/house/cripta.webp"]);
   eq(errori, [], "errori"); await chiudi();
 });
-caso("29/10: la vulnerabilità alla forza vale anche per la Spinta (senza tiro), solo sul dado base", async (b) => {
+caso("29/10: la vulnerabilità alla scuola vale anche senza tiro (dal 04/11 sera la Frusta Cremisi del Sangue), solo sul dado base", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA());
-  const r = await page.evaluate(() => { const C = window.MagiaCombattimento, inc = MAGIA.INCANTESIMI.find(i => i.id === "spinta"), s = { pv: 50, pvMax: 50, eff: {}, effMax: {} };
+  const r = await page.evaluate(() => { const C = window.MagiaCombattimento, inc = MAGIA.INCANTESIMI.find(i => i.id === "frusta_cremisi"), s = { pv: 50, pvMax: 50, eff: {}, effMax: {} };
     const q = [4, 5, 20]; const ctx = { tira: (d) => q.shift() || 1, liv: 1, modAtt: 3, modDanno: 3, boss: true, cd: 12, modTs: 0, ca: () => 10, piuDadiVuln: 1, manaPiu: () => 0, dannoMente: (n) => n };
     C.lancia(inc, s, ctx); return s.pv; });
-  eq(r, 50 - 4 - 5, "2d6 invece di 1d6");
+  eq(r, 50 - 4 - 5, "2d4 invece di 1d4");
   eq(errori, [], "errori"); await chiudi();
 });
-caso("29/10: Ettore attaccato a sorpresa perde il primo turno a recuperare i pugnali; vulnerabile a contundente, forza e negromanzia (mappa del 03/11)", async (b) => {
+caso("29/10: Ettore attaccato a sorpresa perde il primo turno a recuperare i pugnali; vulnerabile a contundente, illusione e negromanzia (04/11 sera)", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ livello: 2 }), PARTITA({ livello: 2, luogo: "cripta", usate: { riposo: "sbloccato", ettore: "incontrato", ettore_sorpreso: true, ettore_disarmato: true } }));
   await page.evaluate(() => { luogo = "cripta"; avviaScontroEttore(); }); await aspettaTurnoPg(page);
-  eq(await page.evaluate(() => [scontro.disarmato, usate.ettore_disarmato, dadiVuln("Ombra"), dadiVuln("Arcano"), dadiVuln("Luce"), dadiVuln("Forza")]), [true, false, 1, 1, 0, 0]);
+  eq(await page.evaluate(() => [scontro.disarmato, usate.ettore_disarmato, dadiVuln("Ombra"), dadiVuln("Illusione"), dadiVuln("Luce"), dadiVuln("Sangue")]), [true, false, 1, 1, 0, 0]);
   await page.evaluate(() => { scontro.tuoTurno = false; turnoNemScontro(); });
   await aspettaTurnoPg(page);
   vero(/recuperarli/.test(await diario(page)), "manca il turno perso");

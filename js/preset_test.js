@@ -22,7 +22,7 @@ window.PresetTest = (() => {
   const PG = {
     guerriero: { nome: "Guerriero", dado: 10, base: { vig: 15, agi: 12, men: 10, spi: 11 }, umano: { vig: 1, agi: 1, spi: 1 }, armatura: "pesante", arma: 0, scudo: true, risorsa: "Punti furia (10 + mod Vigore)" },
     sciamano:  { nome: "Sciamano",  dado: 8,  base: { vig: 11, agi: 15, men: 10, spi: 12 }, umano: { agi: 1, vig: 1, spi: 1 }, armatura: "media",   arma: 4, scudo: false, risorsa: "Punti natura (10 + mod Agilità)" },
-    arcanista: { nome: "Arcanista", dado: 6,  base: { vig: 10, agi: 13, men: 15, spi: 10 }, umano: { men: 2, agi: 1 },         armatura: "leggera", arma: 2, scudo: false, risorsa: "Mana (10 + mod Mente)", scuola: "forza" },
+    arcanista: { nome: "Arcanista", dado: 6,  base: { vig: 10, agi: 13, men: 15, spi: 10 }, umano: { men: 2, agi: 1 },         armatura: "leggera", arma: 2, scudo: false, risorsa: "Mana (10 + mod Mente)", scuola: "sangue" },
     monaco:    { nome: "Monaco",    dado: 8,  base: { vig: 11, agi: 11, men: 10, spi: 16 }, umano: { spi: 1, vig: 1, agi: 1 }, armatura: "media",   arma: 0, scudo: true, risorsa: "Punti fede (10 + mod Spirito)", scuola: "luce" }
   };
   /* bonus di razza letti da Regole.RAZZE (chiavi Vigore, Agilità, Mente, Spirito) */

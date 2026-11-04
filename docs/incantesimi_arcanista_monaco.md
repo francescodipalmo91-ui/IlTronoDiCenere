@@ -93,22 +93,31 @@ Note:
 
 ## 2bis. Arcanista — Sangue e Illusione (BOZZA del 4 novembre, sostituisce Arcano e Forza)
 
-**Perché:** Arcano e Forza erano due metà della stessa combo (l'Arcano incide, la Forza detona) e chi sceglieva una sola scuola restava zoppo. **Regola per le nuove scuole: ognuna vince da sola, la combo tra le due è solo un bonus.** La Detonazione resta, ma dentro ogni scuola. Decisi da Francesco: coppia Sangue/Illusione, **solo mana per entrambe** (niente costo in salute, troppo debilitante), vie **Vena** (Aldo, Sangue) e **Velo** (Guendalina, Illusione). Numeri da provare nella serie prima del codice definitivo. La sezione 2 (Arcano e Forza) resta come storico finché il codice non cambia.
+**Perché:** Arcano e Forza erano due metà della stessa combo (l'Arcano incide, la Forza detona) e chi sceglieva una sola scuola restava zoppo. **Regola per le nuove scuole: ognuna vince da sola, la combo tra le due è solo un bonus.** La Detonazione resta, ma dentro ogni scuola. Decisi da Francesco: coppia Sangue/Illusione, Sangue in mana o salute (rivisto nel pomeriggio), Illusione solo mana, vie **Vena** (Aldo, Sangue) e **Velo** (Guendalina, Illusione). Numeri da provare nella serie prima del codice definitivo. La sezione 2 (Arcano e Forza) resta come storico finché il codice non cambia.
 
-### Sangue: le Ferite
-- **Ferite** sul nemico: al massimo 3, 2 sui boss (3 con la via Vena). Le incidono gli incantesimi di Sangue; l'**Ebollizione** le fa esplodere e cura.
-- **Sangue che chiama:** sotto metà salute gli incantesimi di Sangue fanno +1 dado di danno.
-- Identità (senza costo in salute): il Sangue si cura solo con le Detonazioni e rende di più da ferito. Distinto dalla Negromanzia del Monaco, che ruba vita col tocco e nel tempo.
+### Sangue: le Ferite (rivisto il 4 novembre pomeriggio, stile ispirato a Choso di Jujutsu Kaisen, con nomi nostri)
 
-| Liv | Mana | Incantesimo | Effetto |
+**Regole del Sangue (DECISE):**
+1. **Mana o salute, a scelta, 1 a 1.**
+2. **Sangue versato:** pagato in salute, +1 dado di danno.
+3. **Soglia:** si paga in salute solo restando sopra metà della salute massima (freno contro il colpo caricato di Enea).
+4. **Sangue che chiama:** sotto metà salute, +1 dado. Il Sangue fa sempre un dado in più: o lo versi o sei già ferito.
+5. **Risucchio:** un quarto del danno degli incantesimi di Sangue (per eccesso) ti cura.
+6. **Coagulo (cura diretta):** quando un colpo ti toglie salute recuperi subito un quarto del danno (per eccesso), se nello scontro hai già versato sangue almeno una volta.
+
+**Ferite:** il tuo sangue dentro il nemico, velenoso. Al massimo 3, 2 sui boss (3 con Vena). L'Ebollizione le fa scoppiare.
+
+| Liv | Costo | Incantesimo | Effetto |
 |---|---|---|---|
-| 1 | 1 | Lama di Sangue | Attacco magico 1d8; se colpisce, 1 Ferita |
-| 1 | 2 | Salasso | Senza tiro, 1d4; TS Vigore → Sanguinante 2; 1 Ferita in ogni caso |
-| 2 | 2 | Patto Cremisi | Per 3 turni i colpi d'arma fanno +1d4 e incidono 1 Ferita |
+| 1 | 1 | Stilo Cremisi | Attacco magico 1d8 (il d10 resta solo ad alcune armi); se colpisce, 1 Ferita |
+| 1 | 2 | Frusta Cremisi | Senza tiro, 1d4; TS Vigore → Sanguinamento (durata standard); 1 Ferita in ogni caso |
+| 2 | 2 | Lama Coagulata | Per 3 turni l'arma fa +1d4 e incide 1 Ferita a ogni colpo |
 | 2 | 3 | **Ebollizione** (Detonazione) | Attacco magico 2d6; consuma le Ferite: +1d6 e ti curi 2 per Ferita |
-| 3 | 4 | Vincolo di Sangue | TS Vigore → per 3 turni il nemico subisce metà del danno che subisci tu |
-| 4 | 6 | Emorragia | Per 3 turni, a inizio turno del nemico, 1d4 per Ferita (non le consuma) |
+| 3 | 3 | Condensazione | Non consuma l'azione (una per turno): il prossimo incantesimo di Sangue fa +2 dadi. Combo: Condensazione + Stilo = colpo a piena pressione |
+| 4 | 5 | Sangue in Piena | Per 3 turni +2 a colpire e ai danni (arma e Sangue); il Coagulo cura metà invece di un quarto |
 | 5 | 8 | Cuore Spezzato (Detonazione) | Consuma tutte le Ferite: 2d8 per Ferita senza tiro; ti curi della metà del danno fatto |
+
+**Rischio principale: troppa cura** (Risucchio, Coagulo, Ebollizione, Cuore Spezzato). Differenza col Monaco: il Sangue si cura solo combattendo e dopo aver versato sangue. Correttivo pronto: Coagulo una volta per turno del nemico.
 
 ### Illusione: le Copie
 - **Copie** su di te: al massimo 3 (4 con la via Velo). Quando un attacco ti colpirebbe, si tira un dado da (copie + 1): con 1 colpisce te, altrimenti distrugge una copia e non subisci danno.
@@ -132,9 +141,9 @@ Note:
 | | **Vena** (Aldo, Sangue) | **Velo** (Guendalina, Illusione) |
 |---|---|---|
 | Potenziamento | Ferite piene anche sui boss; Ebollizione cura 3 per Ferita | 4 copie; i boss smascherano con −2 |
-| Liv 3 | Fiume Rosso (3 mana): 2 Ferite senza tiro | Il Doppio: con 2+ copie, per 3 turni gli attacchi magici fanno +1d6 |
+| Liv 3 | Fiume Rosso (3, mana o salute): 2 Ferite senza tiro | Il Doppio: con 2+ copie, per 3 turni gli attacchi magici fanno +1d6 |
 | Liv 4 | Sete: per tutto lo scontro ogni Detonazione cura anche 1d4 | Sala degli Specchi: il nemico ha −1 per colpirti per ogni copia |
-| Liv 5 | Ultima Goccia (9 mana, una per riposo): consuma tutte le Ferite, 3d10 per Ferita senza tiro | Nessuno è qui: per 2 turni non puoi essere bersagliato, poi copie al massimo |
+| Liv 5 | Ultima Goccia (9, mana o salute, una per riposo): consuma tutte le Ferite, 3d10 per Ferita senza tiro | Nessuno è qui: per 2 turni non puoi essere bersagliato, poi copie al massimo |
 
 ### Vulnerabilità (proposta, al posto di Arcano e Forza)
 - **Sangue:** Enea, Dafne.
@@ -142,7 +151,7 @@ Note:
 
 ### Rischi da misurare
 1. Copie troppo forti (3 copie = 75% dei colpi evitati): correttivo pronto, massimo 2 copie.
-2. Senza costo in salute il Sangue perde il «paga»: verificare che resti diverso dalla Negromanzia.
+2. Cura del Sangue contro cura del Monaco: misurare.
 3. Sanguinante del Salasso vicino al ramo taglio del Guerriero: va bene, è uno stato condiviso.
 
 ## 3. Monaco — Vita e Negromanzia (ex Luce e Ombra)

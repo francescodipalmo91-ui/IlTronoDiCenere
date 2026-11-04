@@ -1,6 +1,6 @@
 /* Serie automatica di scontri nella pagina di test (stesso motore della sala di prova): percentuale di vittorie per classe e caso.
    Uso: python3 -m http.server 8765 --bind 127.0.0.1, poi  N=150 node strumenti/serie_scontri.js
-   Opzioni: CONTROLLO=1 (04/11: Arcano puro che prepara Stasi e Sigillo del Silenzio), PORT (porta del server, predefinita 8765), MISTO=1 (04/11: prepara metà e metà tra le due scuole), VIA=scuola (04/11: incantatori con la via della loro scuola dal livello 3), N (scontri per caso), SOLO_ENEA=1 (solo Enea col fermaglio), CLASSI=guerriero,monaco. Equipaggiamento e preparazione rispettano le regole di classe (03/11). Il giocatore automatico è pessimista: confronta le versioni, non leggere i numeri come assoluti. */
+   Opzioni: VERSA=0 (04/11 sera: Sangue sempre in mana), PORT (porta del server, predefinita 8765), MISTO=1 (04/11: prepara metà e metà tra le due scuole), VIA=scuola (04/11: incantatori con la via della loro scuola dal livello 3), N (scontri per caso), SOLO_ENEA=1 (solo Enea col fermaglio), CLASSI=guerriero,monaco. Equipaggiamento e preparazione rispettano le regole di classe (03/11). Il giocatore automatico è pessimista: confronta le versioni, non leggere i numeri come assoluti. */
 const { chromium } = require('playwright');
 const N = Number(process.env.N || 300);
 const MEDIO = process.env.BOT !== 'vecchio'; /* 03/11: predefinito il giocatore medio che gioca le combo; BOT=vecchio per il confronto */
@@ -15,12 +15,12 @@ const CLASSI = process.env.CLASSI ? process.env.CLASSI.split(',') : ['guerriero'
 (async () => {
   const b = await chromium.launch(); const p = await b.newPage(); const err = [];
   p.on('pageerror', e => err.push(e.message));
-  await p.goto(`http://127.0.0.1:${process.env.PORT || 8765}/test.html`); if (process.env.MISTO) await p.evaluate(() => { window.PREP_MISTO = true; }); if (process.env.CONTROLLO) await p.evaluate(() => { window.PREP_CONTROLLO = true; }); /* 04/11: Arcano puro di controllo (Stasi, Sigillo del Silenzio) */ /* 04/11: giocatore misto, metà e metà tra le scuole */ /* 03/11: PORT per più serie in parallelo (ognuna su una copia dei file, così le modifiche in corso non si mescolano) */ await p.waitForTimeout(800);
+  await p.goto(`http://127.0.0.1:${process.env.PORT || 8765}/test.html`); if (process.env.MISTO) await p.evaluate(() => { window.PREP_MISTO = true; }); if (process.env.VERSA !== '0') await p.evaluate(() => { window.VERSA_AUTO = true; }); /* 04/11 sera: il Sangue si paga in salute quando si può (VERSA=0 per pagare sempre in mana) */ /* 04/11: giocatore misto, metà e metà tra le scuole */ /* 03/11: PORT per più serie in parallelo (ognuna su una copia dei file, così le modifiche in corso non si mescolano) */ await p.waitForTimeout(800);
   const righe = [];
   for (const c of CASI) for (const cl of CLASSI) {
     await p.selectOption('#pLiv', String(c.liv)); await p.selectOption('#pClasse', cl); if (process.env.SCUOLA && (cl === 'arcanista' || cl === 'monaco')) await p.selectOption('#pScuola', process.env.SCUOLA.split(',')[cl === 'arcanista' ? 0 : 1] || process.env.SCUOLA);
-    /* 04/11: VIA=scuola → dal livello 3 gli incantatori prendono la via della loro scuola preferita (Guendalina per Arcano e Vita, Aldo per Forza e Negromanzia) */
-    if (process.env.VIA === 'scuola' && c.liv >= 3 && (cl === 'arcanista' || cl === 'monaco')) { const sc = await p.$eval('#pScuola', x => x.value); await p.selectOption('#pVia', sc === 'arcano' || sc === 'luce' ? 'guendalina' : 'aldo'); }
+    /* 04/11: VIA=scuola → dal livello 3 gli incantatori prendono la via della loro scuola preferita (Guendalina per Illusione e Vita, Aldo per Sangue e Negromanzia) */
+    if (process.env.VIA === 'scuola' && c.liv >= 3 && (cl === 'arcanista' || cl === 'monaco')) { const sc = await p.$eval('#pScuola', x => x.value); await p.selectOption('#pVia', sc === 'illusione' || sc === 'luce' ? 'guendalina' : 'aldo'); }
     else if (c.liv >= 3) await p.selectOption('#pVia', '');
     await p.selectOption('#nTipo', c.nem); if (c.pv) await p.fill('#nPv', String(c.pv));
     if (c.nem === 'enea') { await p.setChecked('#nFermaglio', c.fermaglio); await p.selectOption('#nEneaLato', c.lato); await p.selectOption('#nEneaMossa', 'casuale'); }
@@ -46,8 +46,10 @@ const CLASSI = process.env.CLASSI ? process.env.CLASSI.split(',') : ['guerriero'
             if (s && s.carica === 'vera' && clicca(righe.filter(o => /Difesa/.test(o.c)).map(o => o.x))) continue;
             if (clicca(righe.filter(o => /Combo pronta/.test(o.c)).map(o => o.x))) continue;
             const sig = Number(s && s.sigilli) || 0;
-            if (sig >= 2 && clicca(righe.filter(o => /da far esplodere/.test(o.c)).map(o => o.x))) continue;
-            if (clicca(righe.filter(o => /Incide/.test(o.c) && !/vanno persi|Difesa/.test(o.c)).sort((a, b) => /\dd\d/.test(b.r.querySelector('.eff').textContent) - /\dd\d/.test(a.r.querySelector('.eff').textContent) || Math.random() - 0.5).map(o => o.x))) continue; /* prima chi incide e fa danno */
+            if (sig >= 2 && clicca(righe.filter(o => /da far (esplodere|scoppiare)/.test(o.c)).map(o => o.x))) continue;
+            const cp = Number(s && s.copie) || 0; /* 04/11 sera: l'Illusione tiene almeno 2 Copie */
+            if (cp < 2 && clicca(righe.filter(o => /Crea Copie/.test(o.c) && !/al massimo|Difesa/.test(o.c)).map(o => o.x))) continue;
+            if (clicca(righe.filter(o => /Incide/.test(o.c) && !/vanno pers|Difesa/.test(o.c)).sort((a, b) => /\dd\d/.test(b.r.querySelector('.eff').textContent) - /\dd\d/.test(a.r.querySelector('.eff').textContent) || Math.random() - 0.5).map(o => o.x))) continue; /* prima chi incide e fa danno */
             if (clicca(righe.filter(o => /Porta la Bilancia|Giudizio con/.test(o.c)).map(o => o.x))) continue;
             const altri = lista('#svTec button[data-tec]').concat(righe.filter(o => !/Difesa|Serve almeno|solo il colpo/.test(o.c) && !cura.includes(o)).map(o => o.x));
             if (clicca(altri.sort(() => Math.random() - 0.5).slice(0, 3))) continue;

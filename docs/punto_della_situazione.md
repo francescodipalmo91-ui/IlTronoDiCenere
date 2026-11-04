@@ -63,7 +63,8 @@ Metodo: punto per punto, prima le cose leggere; zip dei file modificati solo a f
 ## Punti aperti, in ordine di priorità
 
 **Subito (in corso il 3 novembre)**
-0. **Dopo il nuovo schema (4 novembre):** (a) l'Arcano puro non ha ancora un terreno dove rende di più (condizione della scelta B); (b) potenziamenti della via timidi, da rivedere con i tratti di classe; (c) Enea sotto l'80% per tutti gli incantatori: ritaratura per tutte le classi.
+0. **4 novembre sera — Arcanista rifatto (Sangue e Illusione, vie Vena e Velo):** nel codice, serie e vulnerabilità in bilanciamento_nemici_oggetti.md. Da decidere: Illusione ~15 punti sopra il Sangue contro Enea (correttivo pronto: 2 Copie). I punti sull'Arcano qui sotto sono superati.
+0. **Dopo il nuovo schema (4 novembre, superato la sera):** (a) l'Arcano puro non ha ancora un terreno dove rende di più (condizione della scelta B); (b) potenziamenti della via timidi, da rivedere con i tratti di classe; (c) Enea sotto l'80% per tutti gli incantatori: ritaratura per tutte le classi.
 0. **Arcanista con Arcano principale** troppo debole (Ettore 44% contro 80% con Forza principale): le combo sono tra due scuole ma l'altra ha un solo posto. Proposte da provare con la serie: (1) un Sigillo inciso oltre il massimo rende 1 mana (massimo 1 per turno); (2) un incantesimo d'Arcano di danno al livello 2 (es. Marchio Arcano + 1d6); (3) in riserva, 2 posti all'altra scuola dal livello 3. Cambiare la meccanica sconsigliato per ora.
 0b. **Enea tarato (3 novembre):** salute 32, niente +2 in Furia; l'80% vale con la via giusta (vulnerabilità), senza si sta al 55-65%. Tabella in bilanciamento, «Taratura di Enea».
 0d. **Arcano principale: prossimo passo** (Sigilli 2 sui boss, controlli ridotti a ripieghi; 37-45% contro Enea anche con la vulnerabilità).

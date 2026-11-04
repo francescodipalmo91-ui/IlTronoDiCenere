@@ -1,5 +1,5 @@
 /* =====================================================================
-   MAGIA IN COMBATTIMENTO — gli incantesimi dell'Arcanista (Arcano e Forza), senza interfaccia.
+   MAGIA IN COMBATTIMENTO — gli incantesimi dell'Arcanista (Sangue e Illusione, dal 04/11 sera; prima Arcano e Forza) e del Monaco, senza interfaccia.
    Lo usano gioco.html, la sala di prova (tutorial.html?prova) e i test (tests/magia_combattimento.test.js).
    Stessa filosofia di js/combattimento.js: i dati sono in js/magia.js, le regole stanno qui, i testi li mostra chi disegna.
 
@@ -13,22 +13,26 @@
    Regole (docs/incantesimi_arcanista_monaco.md):
    - attacco magico = d20 + mod Mente contro la CA; dal 28/10 il danno aggiunge il modificatore (ctx.modDanno), come le armi il Vigore; critico = doppio dei dadi
    - tiro salvezza del nemico: d20 + suo Vigore contro 8 + Mente + livello; i boss ignorano i controlli e usano il ripiego del testo
-   - Sigilli (Arcano): massimo 3, 2 sui boss, per tutto lo scontro
-   - Detonazione (Forza): consuma tutti i Sigilli, +1d6 per Sigillo; recupero di 1 mana per Sigillo (03/11; Singolarità 2 per Sigillo);
-     senza Sigilli non c'è niente da far esplodere (né danno né recupero)
-   - un critico con un incantesimo di Forza incide 1 Sigillo (dopo l'eventuale Detonazione)
+   - 04/11 sera, SANGUE (docs/incantesimi_arcanista_monaco.md, 2bis): Ferite sul nemico (campo s.sigilli, massimi di Combattimento.sigilliMax: 3, 2 sui boss,
+     pieni con la via Vena). Si paga in mana o in salute 1 a 1 (ctx.versato: lo decide e lo paga chi chiama, solo restando sopra metà salute: puoVersare).
+     Versato = +1 dado; Sangue che chiama (sotto metà salute, ctx.pvPg / ctx.pvMaxPg) = +1 dado; Risucchio: un quarto del danno del Sangue ti cura;
+     Coagulo (in Combattimento.colpoSubito): dopo aver versato sangue, ogni colpo subito ti rende un quarto del danno. Detonazioni: Ebollizione, Cuore Spezzato, Ultima Goccia.
+   - ILLUSIONE: Copie sul personaggio (s.copie, Combattimento.copie/copieMax: 3, 4 con Velo); Frantumare le fa esplodere e rende 1 mana per Copia;
+     i boss «smascherano»: a inizio turno TS di Mente, se riesce distrugge 1 Copia (Velo: −2). Combo: ogni Copia distrutta incide 1 Ferita.
    - le difese che consumano l'azione non si usano due turni di fila
-   - 04/11, potenziamenti della via (ctx.scuolaVia = scuola potenziata, dal livello 3; vedi scuolaDellaVia):
-     Sutura (Arcano): Sigilli pieni anche sui boss (Combattimento.sigilliMax) e Rune che bruciano (+1 danno per Sigillo già presente); Frattura (Forza): Detonazione con d8 al posto di d6
-     (d10 per Colpo Demolitore); Brace (Vita): la Rigenerazione dura 1 turno in più; Cenere (Negromanzia): Avvizzito con un dado più grande
+   - potenziamenti della via (ctx.scuolaVia = scuola potenziata, dal livello 3; vedi scuolaDellaVia): Vena (Sangue): Ferite piene sui boss, Ebollizione cura 3 per Ferita;
+     Velo (Illusione): 4 Copie, i boss smascherano con −2; Brace (Vita): la Rigenerazione dura 1 turno in più; Cenere (Negromanzia): Avvizzito con un dado più grande
    ===================================================================== */
 (function (root) {
   const C = root.Combattimento || (typeof require === "function" ? require("./combattimento.js") : null);
   const R = root.Regole || {};
   const RECUPERO = R.IRA_PER_COLPO || [1, 1, 2, 2, 3];
-  const UNA_PER_RIPOSO = ["parola_vera", "singolarita", "invulnerabilita", "alba_eterna", "notte_senza_fine"];
-  const DIFESE = ["specchio_rune", "barriera_cinetica", "respingere", "santuario"];       /* consumano l'azione: mai due turni di fila */
-  const SERVONO_SIGILLI = ["implosione", "singolarita", "crollo_arcano"];     /* senza Sigilli non hanno niente da consumare */
+  const UNA_PER_RIPOSO = ["ultima_goccia", "nessuno_qui", "alba_eterna", "notte_senza_fine"];
+  const DIFESE = ["passo_sfasato", "santuario"];       /* consumano l'azione: mai due turni di fila */
+  const SERVONO_SIGILLI = ["cuore_spezzato", "ultima_goccia"];     /* senza Ferite non hanno niente da consumare (nome storico: i Sigilli sono diventati le Ferite) */
+  const SERVONO_COPIE = ["frantumare"];
+  const GRATUITE = ["condensazione"];                  /* non consumano l'azione (una per turno) */
+  const RISUCCHIO_NO = ["cuore_spezzato"];             /* cura già la metà del danno: niente Risucchio in più */
 
   const tiraDadi = (ctx, n, d) => Array.from({ length: n }, () => ctx.tira(d));
   const somma = (a) => a.reduce((x, y) => x + y, 0);
@@ -38,20 +42,23 @@
   /* costo reale adesso: Tomo Proibito −2 (minimo 1) e Ricamo di Rune −2 sul prossimo; Quiete Assoluta: un Sigillo al posto del mana */
   /* 03/11: tratto di classe dell'Arcanista, «Pozzo Arcano» (ctx.pozzo = grado 0-3: 1 dal livello 1, 2 dal 2, 3 dal 4).
      I: se in un tuo turno non lanci incantesimi, all'inizio del turno dopo recuperi 1 mana.
-     II: Specchio di Rune e Barriera Cinetica costano 1 in meno.
+     II: la difesa dell'Arcanista (dal 04/11 sera Passo Sfasato) costa 1 in meno.
      III: il primo incantesimo di ogni scontro non costa mana. */
-  const POZZO_SCONTO = ["specchio_rune", "barriera_cinetica"];
+  const POZZO_SCONTO = ["passo_sfasato"];
   const gradoPozzo = (liv) => (liv >= 4 ? 3 : liv >= 2 ? 2 : 1);
   function costo(inc, s, ctx) {
-    const arc = inc.scuola === "arcano", pozzo = Number(ctx && ctx.pozzo) || 0;
+    const pozzo = Number(ctx && ctx.pozzo) || 0;
     let c = Number(inc.costo) || 0;
     if (pozzo >= 2 && POZZO_SCONTO.includes(inc.id)) c = Math.max(1, c - 1);
     if (pozzo >= 3 && s && !s.pozzoGratis) return 0;
-    if (arc && attivo(s, "tomo")) c = Math.max(1, c - 2);
-    if (s && s.scontoInc) c = Math.max(1, c - s.scontoInc);
-    if (arc && attivo(s, "quiete") && C.sigilli(s) > 0) c = 0;
     if (inc.scuola === "ombra" && attivo(s, "notte")) c = Math.max(1, c - 2); /* Notte Senza Fine */
     return c;
+  }
+  /* 04/11 sera: si può pagare in salute? Solo il Sangue, solo restando sopra metà della salute massima (ctx.pvPg / ctx.pvMaxPg) */
+  function puoVersare(inc, s, ctx) {
+    if (!inc || inc.scuola !== "sangue" || !ctx || !(Number(ctx.pvMaxPg) > 0)) return false;
+    const c = costo(inc, s, ctx);
+    return c > 0 && Number(ctx.pvPg) - c > Number(ctx.pvMaxPg) / 2;
   }
   /* si può lanciare adesso? (prima di spendere il mana) */
   function disponibile(inc, s, ctx) {
@@ -59,6 +66,8 @@
     if (DIFESE.includes(inc.id) && s && s.difesaBloccata) return { ok: false, motivo: "difesaDiFila" };
     if (inc.id === "seconda_vita" && s && s.secondaUsata) return { ok: false, motivo: "giaUsataScontro" };
     if (SERVONO_SIGILLI.includes(inc.id) && C.sigilli(s) < 1) return { ok: false, motivo: "senzaSigilli" };
+    if (SERVONO_COPIE.includes(inc.id) && C.copie(s) < 1) return { ok: false, motivo: "senzaCopie" };
+    if (GRATUITE.includes(inc.id) && s && s.condensOra) return { ok: false, motivo: "unaPerTurno" };
     return { ok: true };
   }
 
@@ -68,8 +77,8 @@
     if (!disp.ok) return { eventi: [{ k: disp.motivo }], costo: 0, rifiutata: true };
     s.incQuestoTurno = true; /* Pozzo Arcano, grado I */
     if ((Number(ctx && ctx.pozzo) || 0) >= 3) s.pozzoGratis = true; /* grado III: il primo dello scontro era gratis */
-    const E = [], arc = inc.scuola === "arcano", forza = inc.scuola === "forza";
-    const c = costo(inc, s, ctx), tomoAttivo = arc && attivo(s, "tomo");
+    const E = [], sang = inc.scuola === "sangue", illu = inc.scuola === "illusione";
+    const c = costo(inc, s, ctx);
     /* ---- Monaco: la Bilancia (+ Luce, − Ombra) ---- */
     const luce = inc.scuola === "luce", ombra = inc.scuola === "ombra", mon = luce || ombra;
     const bil = Number(s.bilancia) || 0, bloccata = attivo(s, "furiaCinerea");
@@ -78,12 +87,14 @@
     const piu = crep ? 1 : 0;                                                          /* +1 dado di danno o cura */
     const piuD = piu + (velo ? 1 : 0) + (ombra && attivo(s, "furiaCinerea") ? 1 : 0);          /* sul danno: anche Velo e Furia Cinerea */
     const pv0 = s.pv;
-    const runeVive = arc && ctx.scuolaVia === "arcano" ? C.sigilli(s) : 0; /* 04/11: Sutura, «Rune che bruciano»: i Sigilli già presenti */
-    const occhio = attivo(s, "occhio");
+    /* ---- Sangue: dadi in più (versato o già ferito, Condensazione) ---- */
+    const versato = sang && !!ctx.versato, chiama = sang && !versato && Number(ctx.pvMaxPg) > 0 && Number(ctx.pvPg) < Number(ctx.pvMaxPg) / 2;
+    if (versato) { s.versato = true; E.push({ k: "versato", n: c }); }
+    else if (chiama) E.push({ k: "sangueChiama" });
+    const condens = sang && inc.id !== "condensazione" && Number(s.condens) > 0 ? Number(s.condens) : 0;
+    if (condens) { s.condens = 0; E.push({ k: "condensUsata", n: condens }); }
+    const piuS = (versato || chiama ? 1 : 0) + condens;                               /* dadi in più sul danno del Sangue */
     let crits = 0, rimborso = false;
-
-    if (s.scontoInc) { E.push({ k: "scontoInc", n: Number(inc.costo) - c }); s.scontoInc = 0; }
-    if (arc && attivo(s, "quiete") && c === 0 && Number(inc.costo) > 0) { s.sigilli = C.sigilli(s) - 1; E.push({ k: "quieteSigillo", tot: s.sigilli }); }
     if (DIFESE.includes(inc.id)) s.difesaUsata = true;
     if (UNA_PER_RIPOSO.includes(inc.id) && ctx.segnaPerRiposo) ctx.segnaPerRiposo(inc.id);
 
@@ -93,9 +104,16 @@
     const fx = (k, n) => E.push(C.metti(s, ctx, k, n));
     const vivo = () => s.pv > 0;
     const hit = (o) => {
-      const r = C.colpo(s, ctx, { ...o, critDa: (o && o.critDa) || (occhio ? 19 : undefined) });
-      E.push(r); if (r.crit) crits++; return r;
+      const r = C.colpo(s, ctx, { ...o, scuola: inc.scuola });
+      E.push(r); if (r.crit) crits++;
+      if (r.ok && vivo() && attivo(s, "doppio") && C.copie(s) >= 2) { const x = ctx.tira(6); s.pv -= x; E.push({ k: "doppioColpo", d: x }); } /* Il Doppio (Velo) */
+      return r;
     };
+    /* Illusione: Copie sul personaggio */
+    const copieMax = C.copieMax(ctx);
+    const crea = (n) => { const prima = C.copie(s), dopo = Math.min(copieMax, prima + n); s.copie = dopo; E.push({ k: "copie", n: dopo - prima, perse: n - (dopo - prima), tot: dopo, max: copieMax }); };
+    /* Sangue: Detonazione delle Ferite con cura (Ebollizione), Sete della via Vena */
+    const sete = () => { if (s.sete && ctx.cura) { const d = ctx.tira(4), f = ctx.cura(d); E.push({ k: "seteCura", d, fatto: f }); } };
     /* tiro salvezza: la Parola Vera toglie 4 ai tiri del nemico */
     const salva = () => C.ts({ ...ctx, modTs: ctx.modTs - (attivo(s, "parola") ? 4 : 0) - (attivo(s, "paura") ? 2 : 0) });
     /* effetti con tiro salvezza; sui boss i controlli non si tirano nemmeno (e si usa il ripiego) */
@@ -110,23 +128,11 @@
       return conTS(mappa);
     };
     const diretto = (n, dado, extra) => { /* danno senza tiro per colpire */
-      n += ctx.piuDadiVuln || 0; /* 29/10: la vulnerabilità alla forza vale anche senza tiro, solo sul dado base (non sui Sigilli) */
+      n += ctx.piuDadiVuln || 0; /* 29/10: la vulnerabilità vale anche senza tiro, solo sul dado base */
       const tiri = tiraDadi(ctx, n, dado), pieno = Math.max(1, somma(tiri) + (extra || 0)), danno = ctx.dimezza ? Math.max(1, Math.floor(pieno / 2)) : pieno; /* 01/11: resistenza alla scuola */
       s.pv -= danno; E.push({ k: "diretto", n, dado, tiri, mm: extra || 0, danno, ...(ctx.dimezza ? { meta: true } : {}) }); return danno;
     };
     const recuperaMana = (mana) => (ctx.manaPiu ? ctx.manaPiu(mana) : mana);
-    /* Detonazione: consuma tutti i Sigilli, +dado per Sigillo, recupero della tabella (doppio con il massimo) */
-    const detona = (o) => {
-      o = o || {};
-      const n = C.sigilli(s);
-      if (n < 1) { E.push({ k: "detonaVuota" }); return 0; }
-      const dado = (o.dado || 6) + (ctx.scuolaVia === "forza" ? 2 : 0), tiri = tiraDadi(ctx, n, dado), bonus = somma(tiri), max = n >= sigMax;
-      s.pv -= bonus; s.sigilli = 0;
-      const mana = recuperaMana(n * (o.doppia ? 2 : 1)); /* 03/11 (Francesco): 1 mana per Sigillo, come nel documento; niente più tabella per livello */
-      E.push({ k: "detona", n, dado, tiri, bonus, max, mana });
-      if (s.demolitore) fx("sbilanciato", 1);
-      return n;
-    };
     const dopoColpo = (r, fn) => { if (r.ok) { fn(); } return r; };
     /* ---- strumenti del Monaco ---- */
     const dannoMente = (n) => (ctx.dannoMente ? ctx.dannoMente(n) : n);
@@ -147,112 +153,58 @@
     };
 
     switch (inc.id) {
-      /* ================= Arcano ================= */
-      case "dardo_arcano": dopoColpo(hit({ dado: 8 }), () => ink(1)); break;
-      case "scopri_carte": s.svelata = true; E.push({ k: "svelata" }); ink(1); break;
-      case "runa_arma": s.eff.runa = 3; s.effMax.runa = 3; E.push({ k: "runa", turni: 3 }); break;
-      case "marchio_arcano": diretto(1, 6, 0); if (vivo()) conTS({ esposto: 2 }); ink(1); break; /* 03/11 (proposta 2, in prova): 1d6 arcano senza tiro, l'Arcano principale ha un danno al livello 2 */
-      case "stasi": controlloORipiego({ bloccato: 1 }, () => ink(2)); break;
-      case "specchio_rune": s.assorbe = { tipo: "specchio", n: 0 }; E.push({ k: "difesaPronta", tipo: "specchio" }); break;
-      case "catena_glifi": dopoColpo(hit({ dado: 6, piuDadi: 1 }), () => ink(2)); break;
-      case "sigillo_silenzio": controlloORipiego({ silenzio: 2 }, () => fx("debole", 2)); ink(1); break;
-      case "disfare": s.soffioPronto = false; s.presaUsata = true; E.push({ k: "disfatto" }); ink(1); break;
-      case "risonanza": {
-        const n = C.sigilli(s), r = hit({ dado: 8, piuDadi: 1 });
-        if (r.ok && n > 0) { const tiri = tiraDadi(ctx, n * (r.crit ? 2 : 1), 8), danno = somma(tiri); s.pv -= danno; E.push({ k: "risonanza", n, tiri, danno }); }
+      /* ================= Sangue (04/11 sera) ================= */
+      case "stilo_cremisi": dopoColpo(hit({ dado: 8, piuDadi: piuS }), () => ink(1)); break;
+      case "frusta_cremisi": { diretto(1 + piuS, 4, 0); if (vivo()) { const z = salva(); E.push(z); if (z.ok) E.push({ k: "resiste" }); else E.push(C.sanguina(s, ctx, 4, 2)); } ink(1); break; } /* Sanguinamento con la durata standard del gioco */
+      case "lama_coagulata": s.eff.lama = 3; s.effMax.lama = 3; E.push({ k: "lama", turni: 3 }); break;
+      case "ebollizione": {
+        const r = hit({ dado: 6, piuDadi: 1 + piuS }), n = C.sigilli(s);
+        if (r.ok && n > 0) {
+          const tiri = tiraDadi(ctx, n, 6), bonus = somma(tiri); s.pv -= bonus; s.sigilli = 0;
+          const per = ctx.scuolaVia === "sangue" ? 3 : 2, f = ctx.cura ? ctx.cura(per * n) : per * n;
+          E.push({ k: "ebolle", n, tiri, bonus, per, fatto: f }); sete();
+        } else if (r.ok) E.push({ k: "detonaVuota" });
         break;
       }
-      case "prigione_rune": controlloORipiego({ bloccato: 2 }, () => { fx("sbilanciato", 2); ink(1); }); break;
-      case "occhio_tomo": s.eff.occhio = 3; s.effMax.occhio = 3; E.push({ k: "occhio", turni: 3 }); break;
-      case "parola_vera": {
-        diretto(4, 8, 0);
-        s.eff.parola = 2; s.effMax.parola = 2; E.push({ k: "parola", turni: 2 });
-        break;
-      }
-      case "tomo_proibito": {
-        s.eff.tomo = 3; s.effMax.tomo = 3;
-        const d = ctx.dannoMente ? ctx.dannoMente(1) : 1;
-        E.push({ k: "tomo", turni: 3, mente: d });
-        break;
-      }
-      case "sigillo_assoluto": {
-        ink(sigMax);
-        controlloORipiego({ bloccato: 2 }, () => { fx("debole", 2); fx("sbilanciato", 2); });
-        break;
-      }
-
-      /* ================= Forza ================= */
-      case "pugno_forza": dopoColpo(hit({ dado: 8 }), () => detona()); break; /* 03/11: da 1d10 a 1d8, come il Dardo Arcano */
-      case "spinta": diretto(1, 6, 0); conTS({ sbilanciato: 1 }); detona(); break;
-      case "scudo": s.eff.scudo = 3; s.effMax.scudo = 3; E.push({ k: "scudoMagico", turni: 3 }); break; /* 03/11: da 2 a 3 turni */
-      case "ariete": dopoColpo(hit({ dado: 6, piuDadi: 1 }), () => { fx("sbilanciato", 2); detona(); }); break;
-      case "onda_urto": {
-        diretto(2, 4, 0);
-        const z = salva(); E.push(z);
-        if (z.ok) E.push({ k: "resiste" }); else { s.soffioPronto = false; E.push({ k: "soffioPerso" }); }
-        detona();
-        break;
-      }
-      case "barriera_cinetica": s.assorbe = { tipo: "barriera", n: 0 }; E.push({ k: "difesaPronta", tipo: "barriera" }); break;
-      case "implosione": {
-        const n = C.sigilli(s), tiri = tiraDadi(ctx, 2 * n, 6), danno = somma(tiri);
+      case "condensazione": s.condens = 2; s.condensOra = true; E.push({ k: "condensazione", n: 2 }); break;
+      case "sangue_in_piena": s.eff.piena = 3; s.effMax.piena = 3; E.push({ k: "piena", turni: 3 }); break;
+      case "cuore_spezzato": case "ultima_goccia": {
+        const n = C.sigilli(s), nd = inc.id === "cuore_spezzato" ? 2 : 3, dado = inc.id === "cuore_spezzato" ? 8 : 10;
+        const tiri = tiraDadi(ctx, nd * n + piuS + (ctx.piuDadiVuln || 0), dado), pieno = Math.max(1, somma(tiri)), danno = ctx.dimezza ? Math.max(1, Math.floor(pieno / 2)) : pieno;
         s.pv -= danno; s.sigilli = 0;
-        const mana = recuperaMana(n);
-        E.push({ k: "consumo", n, nd: 2, dado: 6, tiri, mm: 0, danno, mana });
-        if (s.demolitore) fx("sbilanciato", 1);
+        E.push({ k: "consumo", n, nd, dado, tiri, mm: 0, danno, mana: 0, ferite: true });
+        if (inc.id === "cuore_spezzato") curaFissa(Math.floor(danno / 2));
+        sete();
         break;
       }
-      case "pressione": if (conTS({ debole: 2, pressione: 2 })) { /* gli stati sono già applicati */ } detona(); break;
-      case "muro_forza": s.eff.muro = 2; s.effMax.muro = 2; E.push({ k: "muro", turni: 2 }); break;
-      case "maglio_invisibile": dopoColpo(hit({ dado: 8, piuDadi: 2, critDa: 19 }), () => detona()); break;
-      case "gravita": {
-        if (ctx.boss) { E.push({ k: "immune", s: "bloccato" }); fx("sbilanciato", 2); fx("debole", 1); }
-        else conTS({ bloccato: 1, sbilanciato: 2 });
-        break;
-      }
-      case "respingere": s.assorbe = { tipo: "respingere", n: 0 }; E.push({ k: "difesaPronta", tipo: "respingere" }); break;
-      case "singolarita": {
-        const n = C.sigilli(s), tiri = tiraDadi(ctx, 3 * n, 6), danno = Math.max(1, somma(tiri) + ctx.modAtt);
-        s.pv -= danno; s.sigilli = 0;
-        const mana = recuperaMana(n * 2); /* Singolarità: 2 mana per Sigillo */
-        E.push({ k: "consumo", n, nd: 3, dado: 6, tiri, mm: ctx.modAtt, danno, mana });
-        if (s.demolitore) fx("sbilanciato", 1);
-        break;
-      }
-      case "invulnerabilita": s.eff.invuln = 1; s.effMax.invuln = 1; E.push({ k: "invuln" }); break;
-      case "cataclisma": {
-        let consumati = 0, bonus = 0; 
-        for (let i = 0; i < 3 && vivo(); i++) {
-          const r = hit({ dado: 8 });
-          if (r.ok && C.sigilli(s) > 0) { const t = ctx.tira(6); s.sigilli -= 1; consumati++; bonus += t; s.pv -= t; E.push({ k: "detonaUno", d: t, restano: s.sigilli }); }
-        }
-        if (consumati > 0) {
-          const mana = recuperaMana(consumati);
-          E.push({ k: "detonaTotale", n: consumati, bonus, mana });
-          if (s.demolitore) fx("sbilanciato", 1);
-        }
-        break;
-      }
+      /* ================= Via Vena (Aldo): Sangue ================= */
+      case "fiume_rosso": ink(2); break;
+      case "sete": s.sete = true; E.push({ k: "sete" }); break;
 
-      /* ================= Via Frattura (Aldo): Forza ================= */
-      case "colpo_demolitore": dopoColpo(hit({ dado: 8, piuDadi: 1 }), () => { s.demolitore = true; E.push({ k: "demolitore" }); detona({ dado: 8 }); }); break;
-      case "spezzare_vincolo": if (conTS({ debole: 3 })) { s.caMeno = 2; E.push({ k: "caMeno", n: 2 }); } break;
-      case "crollo_arcano": {
-        const n = C.sigilli(s), tiri = tiraDadi(ctx, 2 * n, 10), danno = somma(tiri);
-        s.pv -= danno; s.sigilli = 0;
-        E.push({ k: "consumo", n, nd: 2, dado: 10, tiri, mm: 0, danno, mana: 0 });
-        if (s.pv <= 0) { const m = recuperaMana(Number(inc.costo) || 0); rimborso = true; E.push({ k: "rimborso", mana: m }); }
+      /* ================= Illusione (04/11 sera) ================= */
+      case "riflessi": crea(2); break;
+      case "dardo_fantasma": dopoColpo(hit({ dado: 8 }), () => crea(1)); break;
+      case "passo_sfasato": s.assorbe = { tipo: "passo", n: 0 }; E.push({ k: "difesaPronta", tipo: "passo" }); break;
+      case "frantumare": {
+        const n = C.copie(s); s.copie = 0;
+        diretto(n, 8, 0);
+        const mana = recuperaMana(n); E.push({ k: "frantuma", n, mana });
+        if (n >= 3 && vivo()) { if (ctx.boss) fx("sbilanciato", 1); else fx("frastornato", 1); }
         break;
       }
-
-      /* ================= Via Sutura (Guendalina): Arcano ================= */
-      case "filo_rune": ink(2); s.filo = true; E.push({ k: "filo" }); break;
-      case "ricamo_rune":
-        if (ctx.boss) { E.push({ k: "immune", s: "silenzio" }); fx("debole", 2); fx("esposto", 2); } /* sui boss niente tiro: Indebolito ed Esposto */
-        else conTS({ silenzio: 2, esposto: 2 });
-        s.scontoInc = 2; E.push({ k: "prossimoSconto", n: 2 });
+      case "dado_truccato": { const t = ctx.boss ? 2 : 3; s.eff.truccato = t; s.effMax.truccato = t; E.push({ k: "truccato", turni: t }); break; }
+      case "terrore_illusorio": {
+        const tiri = tiraDadi(ctx, 2 + (ctx.piuDadiVuln || 0), 8), pieno = somma(tiri), z = salva(); E.push(z);
+        let danno = Math.max(1, z.ok ? Math.floor(pieno / 2) : pieno); if (ctx.dimezza) danno = Math.max(1, Math.floor(danno / 2));
+        s.pv -= danno; E.push({ k: "diretto", n: 2 + (ctx.piuDadiVuln || 0), dado: 8, tiri, mm: 0, danno, meta: z.ok });
+        if (!z.ok && vivo()) fx("paura", 2); else if (z.ok) E.push({ k: "resiste" });
         break;
-      case "quiete_assoluta": s.eff.quiete = 3; s.effMax.quiete = 3; E.push({ k: "quiete", turni: 3 }); break;
+      }
+      case "teatro_specchi": crea(copieMax); s.eff.teatro = 3; s.effMax.teatro = 3; E.push({ k: "teatro", turni: 3 }); break;
+      /* ================= Via Velo (Guendalina): Illusione ================= */
+      case "il_doppio": s.eff.doppio = 3; s.effMax.doppio = 3; E.push({ k: "doppio", turni: 3 }); break;
+      case "sala_specchi": crea(1); s.salaSpecchi = true; E.push({ k: "salaSpecchi" }); break;
+      case "nessuno_qui": crea(copieMax); s.eff.nessuno = 2; s.effMax.nessuno = 2; E.push({ k: "nessuno", turni: 2 }); break;
 
       /* ================= Luce ================= */
       case "dardo_luce": { const r = hit({ dado: 8, piuDadi: piu }); if (r.ok) { if (r.crit && vivo()) fx("accecato", 1); } break; }
@@ -362,24 +314,24 @@
         E.push({ k: "respiroAlba", zenit: nuova > 0, d: t, n, fatto });
       }
     }
-    /* 04/11: Sutura, «Rune che bruciano»: un incantesimo d'Arcano che fa danno fa +1 per ogni Sigillo che il nemico aveva già */
-    if (runeVive > 0 && s.pv < pv0 && s.pv > 0) { s.pv -= runeVive; E.push({ k: "runeBruciano", n: runeVive }); }
-    /* Sigilli che arrivano dopo l'incantesimo: critico di Forza (1), Occhio del Tomo (2 per critico), Tomo Proibito (1 sull'Arcano) */
-    const dopo = crits * ((forza ? 1 : 0) + (occhio ? 2 : 0));
-    if (dopo > 0) ink(dopo);
-    if (tomoAttivo && inc.id !== "tomo_proibito") ink(1);
-    return { eventi: E, costo: c, rimborso };
+    /* 04/11 sera, Risucchio del Sangue: un quarto del danno inflitto (per eccesso) ti cura */
+    if (sang && !RISUCCHIO_NO.includes(inc.id) && pv0 - s.pv > 0 && ctx.cura) { const n = Math.ceil((pv0 - s.pv) / 4), f = ctx.cura(n); if (f > 0) E.push({ k: "risucchio", n, fatto: f }); }
+    return { eventi: E, costo: c, rimborso, gratuita: GRATUITE.includes(inc.id) };
   }
 
-  /* inizio del turno del nemico: Pressione (1d6 forza) */
+  /* inizio del turno del nemico: Aura Vitale, Avvizzito; 04/11 sera: i boss smascherano le Copie (TS di Mente, Velo −2) */
   function inizioTurnoNemico(s, ctx) {
     const E = [];
+    if (ctx && ctx.boss && C.copie(s) > 0) {
+      const z = C.ts({ ...ctx, attrTs: "Mente", modTs: (ctx.modTsDi ? ctx.modTsDi("Mente") : ctx.modTs) - (ctx.scuolaVia === "illusione" ? 2 : 0) }); E.push(z);
+      if (z.ok) { s.copie = C.copie(s) - 1; E.push({ k: "smascherata", restano: s.copie }); } else E.push({ k: "nonSmaschera" });
+    }
     if (attivo(s, "pressione")) { const d = ctx.tira(6); s.pv -= d; E.push({ k: "pressioneTick", d }); }
     if (attivo(s, "corona")) { const d = ctx.tira(6); s.pv -= d; E.push({ k: "coronaTick", d }); }
     if (attivo(s, "avvizzito")) { const dado = Number(s.avvizzitoDado) || 4, d = ctx.tira(dado); s.pv -= d; E.push({ k: "avvizzitoTick", d, dado }); }
     return E;
   }
-  const haTick = (s) => attivo(s, "pressione") || attivo(s, "corona") || attivo(s, "avvizzito");
+  const haTick = (s) => attivo(s, "pressione") || attivo(s, "corona") || attivo(s, "avvizzito") || C.copie(s) > 0;
   /* bonus ai tuoi tiri salvezza (Soffio): Aureola +1, Cerchio del Focolare +2 */
   const bonusTsPg = (s) => ((Number(s && s.bilancia) || 0) >= 2 ? 1 : 0) + (attivo(s, "cerchio") ? 2 : 0);
   /* Seconda Vita: il primo colpo che ti porterebbe a 0 ti lascia a 1 e ti cura 2d6 (la cura la applica chi chiama, dopo il danno) */
@@ -399,10 +351,13 @@
   /* 03/11: etichette delle combo, per leggere a colpo d'occhio cosa prepara cosa (gioco e pagina di test) */
   function etichette(inc) {
     const e = (inc.effetto && inc.effetto.it) || "", t = [];
-    const consuma = SERVONO_SIGILLI.includes(inc.id) || /Consuma tutti i Sigilli/.test(e);
-    if (consuma) t.push(T("Consuma i Sigilli", "Spends Seals"));
-    else if (/Detonazione/.test(e)) t.push(T("Detona", "Detonates"));
-    if (!consuma && /Sigill/.test(e) && !/Detonazione/.test(e) && inc.id !== "quiete_assoluta") t.push(T("Incide Sigilli", "Carves Seals"));
+    const consuma = SERVONO_SIGILLI.includes(inc.id) || /[Cc]onsuma (tutte )?le Ferite/.test(e);
+    if (consuma) t.push(T("Detona le Ferite", "Bursts the Wounds"));
+    else if (/Ferit/.test(e)) t.push(T("Incide Ferite", "Carves Wounds"));
+    if (SERVONO_COPIE.includes(inc.id)) t.push(T("Detona le Copie", "Bursts the Copies"));
+    else if (/Copi/.test(e) && inc.scuola === "illusione") t.push(T("Crea Copie", "Creates Copies"));
+    if (inc.scuola === "sangue") t.push(T("Mana o salute", "Mana or health"));
+    if (GRATUITE.includes(inc.id)) t.push(T("Non consuma l'azione", "Does not use your action"));
     if (inc.scuola === "luce" || inc.scuola === "ombra") {
       if (inc.id === "giudizio") t.push(T("Bilancia → 0", "Balance → 0"));
       else if (inc.id === "abbraccio_vuoto" || inc.id === "furia_cinerea") t.push(T("Bilancia → Negromanzia 3", "Balance → Necromancy 3"));
@@ -415,13 +370,25 @@
   function comboPronta(inc, s, ctx) {
     if (!s || !inc || !inc.scuola) return null;
     const sig = C.sigilli(s), max = C.sigilliMax(ctx), e = (inc.effetto && inc.effetto.it) || "";
-    const detona = /Detonazione/.test(e) || SERVONO_SIGILLI.includes(inc.id) || /Consuma tutti i Sigilli/.test(e);
-    if (detona) {
-      if (sig <= 0) return SERVONO_SIGILLI.includes(inc.id) || /Consuma tutti i Sigilli/.test(e) ? { ok: false, t: T("Serve almeno 1 Sigillo: prima incidi", "Needs at least 1 Seal: carve first") } : { ok: false, t: T("Nessun Sigillo: solo il colpo, niente Detonazione", "No Seal: just the hit, no Detonation") };
-      if (sig >= max) return { ok: true, t: T(`Combo pronta: Sigilli al massimo (${sig}), ${sig} mana`, `Combo ready: Seals at the maximum (${sig}), ${sig} mana`) };
-      return { ok: true, t: T(`${sig} ${sig === 1 ? "Sigillo" : "Sigilli"} da far esplodere`, `${sig} ${sig === 1 ? "Seal" : "Seals"} to burst`) };
+    /* Sangue: le Ferite */
+    if (inc.scuola === "sangue") {
+      const detona = SERVONO_SIGILLI.includes(inc.id) || inc.id === "ebollizione";
+      if (detona) {
+        if (sig <= 0) return SERVONO_SIGILLI.includes(inc.id) ? { ok: false, t: T("Serve almeno 1 Ferita: prima incidi", "Needs at least 1 Wound: carve first") } : { ok: false, t: T("Nessuna Ferita: solo il colpo", "No Wound: just the hit") };
+        if (sig >= max) return { ok: true, t: T(`Combo pronta: Ferite al massimo (${sig})`, `Combo ready: Wounds at the maximum (${sig})`) };
+        return { ok: true, t: T(`${sig} ${sig === 1 ? "Ferita" : "Ferite"} da far scoppiare`, `${sig} ${sig === 1 ? "Wound" : "Wounds"} to burst`) };
+      }
+      if (inc.id === "stilo_cremisi" && Number(s.condens) > 0) return { ok: true, t: T("Combo pronta: colpo a piena pressione (+2 dadi)", "Combo ready: full-pressure shot (+2 dice)") };
+      if (/Ferit/.test(e) && sig >= max) return { ok: false, t: T("Ferite già al massimo: quelle nuove vanno perse", "Wounds already at the maximum: new ones are lost") };
+      return null;
     }
-    if (/Sigill/.test(e) && inc.scuola === "arcano" && sig >= max) return { ok: false, t: T("Sigilli già al massimo: quelli nuovi vanno persi", "Seals already at the maximum: new ones are lost") };
+    /* Illusione: le Copie */
+    if (inc.scuola === "illusione") {
+      const cp = C.copie(s), cmax = C.copieMax(ctx);
+      if (SERVONO_COPIE.includes(inc.id)) return cp <= 0 ? { ok: false, t: T("Serve almeno 1 Copia: prima creale", "Needs at least 1 Copy: create them first") } : cp >= 3 ? { ok: true, t: T(`Combo pronta: ${cp} Copie, ${cp} mana e Frastornato`, `Combo ready: ${cp} Copies, ${cp} mana and Dazed`) } : { ok: true, t: T(`${cp} ${cp === 1 ? "Copia" : "Copie"} da far esplodere`, `${cp} ${cp === 1 ? "Copy" : "Copies"} to burst`) };
+      if (/Copi/.test(e) && inc.id !== "il_doppio" && cp >= cmax) return { ok: false, t: T("Copie già al massimo", "Copies already at the maximum") };
+      return null;
+    }
     const bil = Number(s.bilancia) || 0, ferma = attivo(s, "furiaCinerea");
     if (!ferma && inc.scuola === "ombra" && bil === 3) return { ok: true, t: T("Combo pronta: dallo Zenit è un Crepuscolo (+1 dado, recuperi fede)", "Combo ready: from Zenith it is a Twilight (+1 die, you recover faith)") };
     if (!ferma && inc.scuola === "luce" && bil === -3) return { ok: true, t: T("Combo pronta: dal Nadir è un Crepuscolo (+1 dado, fede doppia)", "Combo ready: from Nadir it is a Twilight (+1 die, double faith)") };
@@ -452,7 +419,7 @@
   function inizioTurnoPozzo(s, ctx) {
     const pozzo = Number(ctx && ctx.pozzo) || 0, E = [];
     if (pozzo >= 1 && s.pozzoTurni > 0 && !s.incQuestoTurno && ctx.manaPiu) { const n = ctx.manaPiu(1); if (n > 0) E.push({ k: "pozzo", n }); }
-    s.pozzoTurni = (Number(s.pozzoTurni) || 0) + 1; s.incQuestoTurno = false;
+    s.pozzoTurni = (Number(s.pozzoTurni) || 0) + 1; s.incQuestoTurno = false; s.condensOra = false; /* 04/11 sera: la Condensazione torna disponibile */
     return E;
   }
   /* ---------- testi (IT/EN): una riga per evento. I colpi, i tiri salvezza e gli stati li scrive già chi mostra lo scontro ---------- */
@@ -461,19 +428,50 @@
   const rombi = (n, max) => "◆".repeat(Math.max(0, Math.min(n, max))) + "◇".repeat(Math.max(0, max - n)); /* 03/11: Sigilli leggibili a colpo d'occhio */
   function testo(e) {
     switch (e.k) {
-      case "sigilli":
-        if (e.n <= 0 && e.perse > 0) return T(`Sigilli già al massimo: ${rombi(e.tot, e.max)} ${e.tot} su ${e.max}, quello nuovo va perso.`, `Seals already at the maximum: ${rombi(e.tot, e.max)} ${e.tot} of ${e.max}, the new one is lost.`);
-        return T(`Incidi ${e.n === 1 ? "1 Sigillo" : e.n + " Sigilli"} sul nemico: ${rombi(e.tot, e.max)} ${e.tot} su ${e.max}.`, `You carve ${e.n === 1 ? "1 Seal" : e.n + " Seals"} on the enemy: ${rombi(e.tot, e.max)} ${e.tot} of ${e.max}.`)
-          + (e.tot >= e.max ? T(" Sigilli al massimo: falli esplodere.", " Seals at the maximum: burst them.") : "") + (e.perse > 0 ? T(" Il resto va perso.", " The rest is lost.") : "");
+      case "sigilli": /* 04/11 sera: i Sigilli sono diventati le Ferite del Sangue */
+        if (e.n <= 0 && e.perse > 0) return T(`Ferite già al massimo: ${rombi(e.tot, e.max)} ${e.tot} su ${e.max}, quella nuova va persa.`, `Wounds already at the maximum: ${rombi(e.tot, e.max)} ${e.tot} of ${e.max}, the new one is lost.`);
+        return T(`Il tuo sangue entra nel nemico: ${e.n === 1 ? "1 Ferita" : e.n + " Ferite"}, ${rombi(e.tot, e.max)} ${e.tot} su ${e.max}.`, `Your blood enters the enemy: ${e.n === 1 ? "1 Wound" : e.n + " Wounds"}, ${rombi(e.tot, e.max)} ${e.tot} of ${e.max}.`)
+          + (e.tot >= e.max ? T(" Ferite al massimo: falle scoppiare.", " Wounds at the maximum: burst them.") : "") + (e.perse > 0 ? T(" Il resto va perso.", " The rest is lost.") : "");
+      case "copie":
+        if (e.n <= 0) return T(`Copie già al massimo (${e.tot} su ${e.max}).`, `Copies already at the maximum (${e.tot} of ${e.max}).`);
+        return T(`${e.n === 1 ? "Una Copia di te prende forma" : e.n + " Copie di te prendono forma"}: ${rombi(e.tot, e.max)} ${e.tot} su ${e.max}.`, `${e.n === 1 ? "A Copy of you takes shape" : e.n + " Copies of you take shape"}: ${rombi(e.tot, e.max)} ${e.tot} of ${e.max}.`);
+      case "versato": return T(`Paghi col tuo sangue: −${e.n} salute, +1 dado.`, `You pay with your blood: −${e.n} health, +1 die.`);
+      case "sangueChiama": return T("Il sangue chiama: sei sotto metà salute, +1 dado.", "Blood calls: you are below half health, +1 die.");
+      case "condensazione": return T(`Condensi il sangue: il prossimo incantesimo di Sangue fa +${e.n} dadi.`, `You condense your blood: your next Blood spell deals +${e.n} dice.`);
+      case "condensUsata": return T(`Sangue condensato: +${e.n} dadi.`, `Condensed blood: +${e.n} dice.`);
+      case "lama": return T(`Il sangue si indurisce sulla lama per ${e.turni} turni: +1d4 e ogni colpo a segno incide 1 Ferita.`, `Blood hardens on the blade for ${e.turni} turns: +1d4 and every hit carves 1 Wound.`);
+      case "lamaColpo": return T(`Lama coagulata: +${e.d} danni.`, `Clotted blade: +${e.d} damage.`);
+      case "ebolle": return T(`Il sangue ribolle: ${e.n} ${e.n === 1 ? "Ferita scoppia" : "Ferite scoppiano"}, +${e.n}d6 [${e.tiri.join("+")}] = ${e.bonus} danni; ti curi di ${e.fatto} (${e.per} per Ferita).`, `The blood boils: ${e.n} ${e.n === 1 ? "Wound bursts" : "Wounds burst"}, +${e.n}d6 [${e.tiri.join("+")}] = ${e.bonus} damage; you heal ${e.fatto} (${e.per} per Wound).`);
+      case "piena": return T(`Per ${e.turni} turni +2 a colpire e ai danni con l'arma e con il Sangue; il Coagulo cura metà del colpo.`, `For ${e.turni} turns +2 to hit and damage with your weapon and with Blood; Clotting heals half the blow.`);
+      case "sete": return T("Per tutto lo scontro ogni Detonazione di Sangue ti cura anche 1d4.", "For the whole fight every Blood Detonation also heals you 1d4.");
+      case "seteCura": return T(`Sete: 1d4 [${e.d}], ti curi di ${e.fatto}.`, `Thirst: 1d4 [${e.d}], you heal ${e.fatto}.`);
+      case "risucchio": return T(`Risucchio: ti curi di ${e.fatto}.`, `Drain: you heal ${e.fatto}.`);
+      case "coagulo": return T(`Coagulo: la ferita si chiude, recuperi ${e.fatto} salute.`, `Clotting: the wound closes, you recover ${e.fatto} health.`);
+      case "frantuma": return T(`Frantumi ${e.n} ${e.n === 1 ? "Copia" : "Copie"}.${e.mana ? ` Recuperi ${e.mana} mana.` : ""}`, `You shatter ${e.n} ${e.n === 1 ? "Copy" : "Copies"}.${e.mana ? ` You recover ${e.mana} mana.` : ""}`);
+      case "truccato": return T(`Per ${e.turni} turni il nemico tira due d20 per colpirti e tiene il peggiore.`, `For ${e.turni} turns the enemy rolls two d20 to hit you and keeps the worse.`);
+      case "teatro": return T(`Per ${e.turni} turni ogni Copia distrutta esplode su chi l'ha colpita.`, `For ${e.turni} turns every destroyed Copy bursts on whoever struck it.`);
+      case "teatroScoppio": return T(`La Copia esplode: ${e.d} danni psichici.`, `The Copy bursts: ${e.d} psychic damage.`);
+      case "doppio": return T(`Per ${e.turni} turni, con almeno 2 Copie, i tuoi attacchi magici a segno fanno +1d6 psichico.`, `For ${e.turni} turns, with at least 2 Copies, your spell attacks that hit deal +1d6 psychic.`);
+      case "doppioColpo": return T(`Il tuo doppio colpisce con te: +${e.d} psichici.`, `Your double strikes with you: +${e.d} psychic.`);
+      case "salaSpecchi": return T("Per tutto lo scontro il nemico ha −1 per colpirti per ogni Copia.", "For the whole fight the enemy has −1 to hit you for every Copy.");
+      case "nessuno": return T(`Per ${e.turni} turni nessun colpo ti raggiunge (il Soffio sì).`, `For ${e.turni} turns no blow reaches you (the Breath does).`);
+      case "nessunoQui": return T("Nessuno è qui: il colpo trova solo aria.", "No one is here: the blow finds only air.");
+      case "copiaColpita": return T(`Colpisce una Copia (d${e.n + 1}: ${e.d}): svanisce, ${e.restano === 1 ? "ne resta 1" : "ne restano " + e.restano}.`, `It strikes a Copy (d${e.n + 1}: ${e.d}): it vanishes, ${e.restano} left.`);
+      case "copiaMancata": return T(`Tra le Copie trova te (d${e.n + 1}: 1).`, `Among the Copies it finds you (d${e.n + 1}: 1).`);
+      case "passoSfasato": return T(`Passo Sfasato: il colpo ti attraversa, resta una Copia dove eri (${e.copie}).`, `Phase Step: the blow passes through you, a Copy stays where you were (${e.copie}).`);
+      case "smascherata": return T(`Il nemico smaschera una Copia: ${e.restano === 1 ? "ne resta 1" : "ne restano " + e.restano}.`, `The enemy sees through a Copy: ${e.restano} left.`);
+      case "nonSmaschera": return T("Il nemico non distingue le Copie da te.", "The enemy cannot tell the Copies from you.");
+      case "senzaCopie": return T("Serve almeno 1 Copia.", "You need at least 1 Copy.");
+      case "unaPerTurno": return T("Una sola volta per turno.", "Only once per turn.");
       case "diretto": return T(`Danno senza tiro: ${dadi(e)} = ${e.danno}${e.meta ? " (dimezzato)" : ""}.`, `Damage with no roll: ${dadi(e)} = ${e.danno}${e.meta ? " (halved)" : ""}.`);
       case "detona":
         return T(`Detonazione: ${e.n} ${e.n === 1 ? "Sigillo" : "Sigilli"} esplodono, +${e.n}d${e.dado} [${e.tiri.join("+")}] = ${e.bonus} danni.`, `Detonation: ${e.n} ${e.n === 1 ? "Seal" : "Seals"} burst, +${e.n}d${e.dado} [${e.tiri.join("+")}] = ${e.bonus} damage.`)
           + (e.mana ? T(` Recuperi ${e.mana} mana.`, ` You recover ${e.mana} mana.`) : "");
-      case "detonaVuota": return T("Nessun Sigillo da far esplodere: niente Detonazione.", "No Seal to burst: no Detonation.");
+      case "detonaVuota": return T("Nessuna Ferita da far scoppiare: solo il colpo.", "No Wound to burst: just the hit.");
       case "detonaUno": return T(`Un Sigillo esplode: +1d6 [${e.d}] (ne restano ${e.restano}).`, `A Seal bursts: +1d6 [${e.d}] (${e.restano} left).`);
       case "detonaTotale": return T(`I tre colpi contano come una Detonazione: ${e.n} Sigilli, ${e.bonus} danni in più.` + (e.mana ? ` Recuperi ${e.mana} mana.` : ""), `The three blows count as one Detonation: ${e.n} Seals, ${e.bonus} extra damage.` + (e.mana ? ` You recover ${e.mana} mana.` : ""));
       case "consumo":
-        return T(`Consumi ${e.n} ${e.n === 1 ? "Sigillo" : "Sigilli"}: ${dadi(e)} = ${e.danno} danni.`, `You spend ${e.n} ${e.n === 1 ? "Seal" : "Seals"}: ${dadi(e)} = ${e.danno} damage.`) + (e.mana ? T(` Recuperi ${e.mana} mana.`, ` You recover ${e.mana} mana.`) : "");
+        return T(`Fai scoppiare ${e.n} ${e.n === 1 ? "Ferita" : "Ferite"}: ${e.tiri.length}d${e.dado} [${e.tiri.join("+")}] = ${e.danno} danni.`, `You burst ${e.n} ${e.n === 1 ? "Wound" : "Wounds"}: ${e.tiri.length}d${e.dado} [${e.tiri.join("+")}] = ${e.danno} damage.`) + (e.mana ? T(` Recuperi ${e.mana} mana.`, ` You recover ${e.mana} mana.`) : "");
       case "risonanza": return T(`Risonanza: +${e.n}d8 [${e.tiri.join("+")}] = ${e.danno} danni, i Sigilli restano.`, `Resonance: +${e.n}d8 [${e.tiri.join("+")}] = ${e.danno} damage, the Seals remain.`);
       case "svelata": return T("La scheda del nemico si apre davanti a te.", "The enemy's sheet opens before you.");
       case "runa": return T(`Una runa corre sull'arma per ${e.turni} turni: il dado sale di un passo e ogni colpo a segno incide 1 Sigillo.`, `A rune runs along the weapon for ${e.turni} turns: the die goes up a step and every hit carves 1 Seal.`);
@@ -481,6 +479,7 @@
       case "parola": return T(`Il nemico ha −4 ai tiri salvezza per ${e.turni} turni.`, `The enemy has −4 on saving throws for ${e.turni} turns.`);
       case "tomo": return T(`Il Tomo ti costa ${e.mente} di salute mentale (non letale). Per ${e.turni} turni gli incantesimi d'Arcano costano 2 in meno (minimo 1) e incidono 1 Sigillo in più.`, `The Tome costs you ${e.mente} mental health (non-lethal). For ${e.turni} turns Arcane spells cost 2 less (minimum 1) and carve 1 extra Seal.`);
       case "difesaPronta": return {
+        passo: T("Il prossimo colpo che ti andrebbe a segno ti attraverserà, e lascerà al tuo posto una Copia.", "The next blow that would hit you will pass through you, leaving a Copy in your place."),
         specchio: T("Il primo colpo che ti va a segno, anche più avanti nello scontro, farà metà danni e inciderà 1 Sigillo su chi ti ha colpito.", "The first blow that hits you, even later in the fight, does half damage and carves 1 Seal on whoever hit you."),
         barriera: T("Il primo colpo che subisci farà 0 danni e chi ti colpisce subirà 1d6 forza.", "The first blow you take does 0 damage and whoever hits you takes 1d6 force."),
         respingere: T("Fino al tuo turno ogni colpo fa 0 danni e restituisce 1d6 forza.", "Until your turn every blow does 0 damage and returns 1d6 force.")
@@ -549,16 +548,16 @@
       case "giaUsataRiposo": return T("Già usato dall'ultimo riposo.", "Already used since the last rest.");
       case "difesaDiFila": return T("Non puoi usare due turni di fila un incantesimo che consuma l'azione.", "You cannot use a spell that takes your action two turns in a row.");
       case "runeBruciano": return T(`Le rune bruciano: +${e.n} ${e.n === 1 ? "danno" : "danni"} (Sutura).`, `The runes burn: +${e.n} damage (Suture).`);
-      case "senzaSigilli": return T("Servono almeno 1 Sigillo sul nemico.", "You need at least 1 Seal on the enemy.");
+      case "senzaSigilli": return T("Serve almeno 1 Ferita sul nemico.", "You need at least 1 Wound on the enemy.");
       default: return null;
     }
   }
 
   /* 04/11: la via di prestigio è la scuola. classe = "Sapiente" | "Accolito", via = "aldo" | "guendalina" → scuola potenziata (o null).
-     Si legge dalle abilità della via in MAGIA.VIE: Aldo → Forza / Negromanzia, Guendalina → Arcano / Vita. */
+     Si legge dalle abilità della via in MAGIA.VIE: Aldo → Sangue / Negromanzia, Guendalina → Illusione / Vita. */
   const POTENZIAMENTI_VIA = {
-    arcano: { it: "Sigilli pieni anche sui boss; Rune che bruciano: +1 danno per Sigillo già presente", en: "Full Seals even on bosses; Burning Runes: +1 damage per Seal already there" },
-    forza: { it: "Detonazione con d8 al posto di d6", en: "Detonation with d8 instead of d6" },
+    sangue: { it: "Ferite piene anche sui boss; l'Ebollizione cura 3 per Ferita invece di 2", en: "Full Wounds even on bosses; Boiling Blood heals 3 per Wound instead of 2" },
+    illusione: { it: "fino a 4 Copie; i boss smascherano con −2", en: "up to 4 Copies; bosses see through them at −2" },
     luce: { it: "la Rigenerazione dura 1 turno in più", en: "Regeneration lasts 1 more turn" },
     ombra: { it: "Avvizzito con un dado più grande (1d4 → 1d6)", en: "Withered with a bigger die (1d4 → 1d6)" }
   };
@@ -567,7 +566,16 @@
     const v = MG.VIE.find(x => x.via === via && MG.CLASSI[classe].includes(x.scuola));
     return v ? v.scuola : null;
   }
-  const API = { POTENZIAMENTI_VIA, scuolaDellaVia, UNA_PER_RIPOSO, DIFESE, SERVONO_SIGILLI, POZZO_SCONTO, etichette, comboPronta, gradoPozzo, gradoTratto: gradoPozzo, inizioTurnoPozzo, inizioTurnoMonaco, sottoMetaMonaco, recupero, costo, disponibile, lancia, inizioTurnoNemico, haTick, bonusTsPg, secondaVita, scaduti, testo };
+  /* 04/11 sera: colpi d'arma con la Lama Coagulata (+1d4 e 1 Ferita); da chiamare dopo un colpo d'arma a segno */
+  function suColpoArma(s, ctx) {
+    if (!attivo(s, "lama") || !(s.pv > 0)) return [];
+    const d = ctx.tira(4); s.pv -= d; return [{ k: "lamaColpo", d }, C.incidi(s, ctx, 1)];
+  }
+  /* 04/11 sera: Coagulo, da chiamare dopo che il danno del colpo è stato applicato (solo se il personaggio è in piedi) */
+  function coagula(n, ctx) { if (!(n > 0) || !ctx || !ctx.cura) return []; const f = ctx.cura(n); return f > 0 ? [{ k: "coagulo", n, fatto: f }] : []; }
+  /* 04/11 sera: a inizio del tuo turno la Condensazione torna disponibile */
+  function inizioTurnoArcanista(s) { if (s) s.condensOra = false; }
+  const API = { POTENZIAMENTI_VIA, scuolaDellaVia, UNA_PER_RIPOSO, DIFESE, SERVONO_SIGILLI, SERVONO_COPIE, GRATUITE, POZZO_SCONTO, puoVersare, suColpoArma, coagula, inizioTurnoArcanista, etichette, comboPronta, gradoPozzo, gradoTratto: gradoPozzo, inizioTurnoPozzo, inizioTurnoMonaco, sottoMetaMonaco, recupero, costo, disponibile, lancia, inizioTurnoNemico, haTick, bonusTsPg, secondaVita, scaduti, testo };
   root.MagiaCombattimento = API;
   if (typeof module !== "undefined" && module.exports) module.exports = API;
 })(typeof window !== "undefined" ? window : globalThis);

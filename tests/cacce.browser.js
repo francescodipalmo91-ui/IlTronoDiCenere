@@ -64,7 +64,7 @@ caso("Cacce: finestre per fermaglio; ★ con lo studio di Aldo nel diario e nell
   await page.evaluate(() => accettaCaccia("bruto"));
   eq(await page.evaluate(() => [usate.cc_stato, usate.cc_preda]), ["attiva", "bruto"]);
   await page.waitForFunction(() => document.getElementById("diario").textContent.includes("Studio di Aldo"), null, { timeout: 15000 });
-  vero((await diario(page)).includes("vulnerabile a arcano; resistente a contundente"), "nota di Aldo");
+  vero((await diario(page)).includes("vulnerabile a illusione; resistente a contundente"), "nota di Aldo");
   vero((await page.evaluate(() => document.getElementById("missioni").textContent)).includes("Studio di Aldo"), "nota nelle Missioni");
   eq(await page.evaluate(() => [cacciaQui("giardino"), cacciaQui("pineta")]), [true, false], "★ in giardino");
   eq(errori, [], "errori in console"); await chiudi();

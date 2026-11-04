@@ -215,7 +215,7 @@
       ["Perforante", { it: "Armi perforanti", en: "Piercing weapons" }, { aldo: { it: "Punta", en: "Point" }, guendalina: { it: "Mira", en: "Aim" } }],
       ["Scudo", { it: "Scudo", en: "Shield" }, { aldo: { it: "Marea", en: "Tide" }, guendalina: { it: "Scoglio", en: "Reef" } }]
     ];
-    const viaTit = (n) => (EN ? "Path of the " : "Via ") + (EN ? n.en : ({ Lama: "della Lama", Guardia: "della Guardia", Martello: "del Martello", Incudine: "dell'Incudine", Punta: "della Punta", Mira: "della Mira", Marea: "della Marea", Scoglio: "dello Scoglio", Frattura: "della Frattura", Sutura: "della Sutura", Cenere: "della Cenere", Brace: "della Brace" }[n.it] || n.it));
+    const viaTit = (n) => (EN ? "Path of the " : "Via ") + (EN ? n.en : ({ Lama: "della Lama", Guardia: "della Guardia", Martello: "del Martello", Incudine: "dell'Incudine", Punta: "della Punta", Mira: "della Mira", Marea: "della Marea", Scoglio: "dello Scoglio", Vena: "della Vena", Velo: "del Velo", Cenere: "della Cenere", Brace: "della Brace" }[n.it] || n.it));
     const ramiGuerriero = RAMI.map(([tipo, nome, vie]) => {
       const base = TEC.filter(t => t.tipo === tipo && !t.via);
       const via = (k) => TEC.filter(t => t.tipo === tipo && t.via === k);
@@ -241,7 +241,7 @@
       it: {
         torna: "← Pagina iniziale", titolo: "Regolamento", sotto: "Le regole del gioco, da consultare quando vuoi.",
         parte: "Parte", capitolo: "Capitolo", apri: "Apri tutto", chiudi: "Comprimi",
-        desc: ["Come dare ordini al personaggio e leggere le risposte del gioco.", "Il tiro del d20, la difficoltà e cosa costa fallire.", "Le nove abilità, come si calcolano e quando servono.", "Il fuoco, le razioni e il conto dei giorni.", "Cosa succede a zero salute e cosa logora la mente.", "Tre posti, condivisi tra computer e telefono.", "Le quattro caratteristiche e quella con cui combatti.", "Bonus di razza, dado vita, salute e risorse al primo livello.", "Esperienza, soglie e cosa guadagni a ogni livello.", "Iniziativa, attacco, danno, critico e Classe armatura.", "Come il nemico resiste ai tuoi effetti.", "Gli effetti che durano qualche turno, su di te e sui nemici.", "Nemici temibili, vulnerabilità, abilità e fuga.", "Le cacce del maggiordomo, gli agguati fuori casa, il fermaglio.", "Tre scontri raccontati turno per turno.", "Risorsa, posti, tratti e vie: ciò che vale per tutte le classi.", "Arma e furia: logorare, stordire, trafiggere, parare.", "Veleni, trappole e corteccia, un turno dopo l'altro.", "Incidere Sigilli con l'Arcano, farli esplodere con la Forza.", "La Bilancia tra Vita e Negromanzia."],
+        desc: ["Come dare ordini al personaggio e leggere le risposte del gioco.", "Il tiro del d20, la difficoltà e cosa costa fallire.", "Le nove abilità, come si calcolano e quando servono.", "Il fuoco, le razioni e il conto dei giorni.", "Cosa succede a zero salute e cosa logora la mente.", "Tre posti, condivisi tra computer e telefono.", "Le quattro caratteristiche e quella con cui combatti.", "Bonus di razza, dado vita, salute e risorse al primo livello.", "Esperienza, soglie e cosa guadagni a ogni livello.", "Iniziativa, attacco, danno, critico e Classe armatura.", "Come il nemico resiste ai tuoi effetti.", "Gli effetti che durano qualche turno, su di te e sui nemici.", "Nemici temibili, vulnerabilità, abilità e fuga.", "Le cacce del maggiordomo, gli agguati fuori casa, il fermaglio.", "Tre scontri raccontati turno per turno.", "Risorsa, posti, tratti e vie: ciò che vale per tutte le classi.", "Arma e furia: logorare, stordire, trafiggere, parare.", "Veleni, trappole e corteccia, un turno dopo l'altro.", "Ferite col Sangue, Copie con l'Illusione: ognuna si fa esplodere.", "La Bilancia tra Vita e Negromanzia."],
         parti: [["Come si gioca", [0, 1, 2, 3, 4, 5]], ["Il personaggio", [6, 7, 8]], ["Combattimento", [9, 10, 11, 12, 13, 14]], ["Le classi", [15, 16, 17, 18, 19]]],
         sezioni: [
           /* 0 */ ["Scrivere le azioni ed esplorare", `
@@ -385,7 +385,7 @@
             <div class="scroll"><table><tr><th>Caratteristica</th><th>Resiste a</th></tr>
               <tr><td>Vigore</td><td>veleni, sanguinamento, colpi fisici</td></tr>
               <tr><td>Agilità</td><td>effetti che sbilanciano o immobilizzano</td></tr>
-              <tr><td>Mente</td><td>incantesimi di Forza e d'Arcano, finte</td></tr>
+              <tr><td>Mente</td><td>incantesimi di Sangue e d'Illusione, finte</td></tr>
               <tr><td>Spirito</td><td>incantesimi di Vita e di Negromanzia, paura</td></tr>
             </table></div>`],
           /* 11 */ ["Stati", `
@@ -407,7 +407,7 @@
             <p class="esempio">Su di te, Sbilanciato, Frastornato, Stordito e Inibito arrivano solo da alcune prede delle cacce, per 2 turni.</p>
             <h3>Durata e cumulo</h3>
             <ul>
-              <li>Uno stato nuovo dello stesso tipo <b>rinnova la durata</b>, non si somma. Stati diversi si sommano: Sanguinamento, Avvelenato e Avvizzito fanno danno insieme. Le eccezioni (Incrinatura, Sigilli, Cariche) sono spiegate nelle classi.</li>
+              <li>Uno stato nuovo dello stesso tipo <b>rinnova la durata</b>, non si somma. Stati diversi si sommano: Sanguinamento, Avvelenato e Avvizzito fanno danno insieme. Le eccezioni (Incrinatura, Ferite, Copie, Cariche) sono spiegate nelle classi.</li>
               <li>Gli stati che infliggi al nemico contano <b>i suoi turni</b>. I potenziamenti delle tue azioni (Runa sull'Arma, Voto di Vita, Occhio del Tomo…) contano <b>i tuoi turni</b> dopo il lancio: «per 3 turni» vuol dire i tuoi prossimi 3 turni.</li>
               <li>Tutti gli stati finiscono con lo scontro.</li>
               <li>Le creature di cenere non sanguinano; quelle di fuoco non si ustionano.</li>
@@ -416,7 +416,7 @@
             <p>Gli elisir comuni (con le parti degli animali e le erbe) curano uno stato. Gli elisir rari (con la sola parte di una creatura di cenere) rendono immuni a quello stato per tutto lo scontro, bevuti prima o durante: un nemico che vede fallire il suo stato non ci riprova. Ne porti al massimo 2 per stato.</p>`],
           /* 12 */ ["Avversari", `
             <h3>Avversari temibili</h3>
-            <p>Gli avversari più temibili (i guardiani e pochi altri) non subiscono gli effetti che tolgono azioni o attacchi: Frastornato, Stordito, Inibito. Al loro posto molte tecniche e incantesimi hanno un <b>ripiego</b>, indicato tra parentesi nel testo. Su di loro gli altri stati durano al massimo 2 turni (Avvizzito 3), e cariche e Sigilli arrivano al massimo a 2.</p>
+            <p>Gli avversari più temibili (i guardiani e pochi altri) non subiscono gli effetti che tolgono azioni o attacchi: Frastornato, Stordito, Inibito. Al loro posto molte tecniche e incantesimi hanno un <b>ripiego</b>, indicato tra parentesi nel testo. Su di loro gli altri stati durano al massimo 2 turni (Avvizzito 3), e cariche e Ferite arrivano al massimo a 2.</p>
             <h3>Vulnerabilità e resistenze</h3>
             <p>Molti nemici sono vulnerabili a un tipo di danno: taglio, contundente, perforante, arcano, forza, vita, negromanzia, veleno o fuoco. Contro di loro quel danno ha <b>un dado in più</b>, oppure un effetto dura un turno in più. Altri resistono a un tipo di danno e ne subiscono metà.</p>
             <p>Ogni guardiano ha un punto debole per ogni classe: un tipo d'arma per il Guerriero, una scuola per l'Arcanista e una per il Monaco, e a volte il sottobosco dello Sciamano. Scoprirlo prima dello scontro e prepararsi (arma, incantesimi preparati) fa una grande differenza. Esplorando e parlando con gli abitanti della casa puoi saperne di più.</p>
@@ -458,12 +458,13 @@
             <div class="turno"><b>Turno del nemico.</b> Sanguina e perde 2. Ti attacca e ti colpisce: perdi 5 salute, ma guadagni 1 furia (11).</div>
             <div class="turno"><b>Turno 2.</b> Per risparmiare furia attacchi con l'arma, gratis. Tiri 20: critico! Colpisci di sicuro e tiri 2d6 + 3: fai 10. Il critico ti dà anche 2 furia (13).</div>
             <p class="esempio">La furia sale quando ti colpiscono: il Guerriero non teme di prendere colpi, teme di restare a secco.</p>
-            <h3>Arcanista d'Arcano, con un posto di Forza</h3>
-            <p class="esempio">Livello 1, Mente 16 (+3), 13 mana. Contro lo stesso nemico.</p>
-            <div class="turno"><b>Turno 1.</b> Dardo Arcano (2 mana, restano 11). Tiri 11: 11 + 3 = 14, colpisci. 1d8 + 3: fai 5 + 3 = 8, e incidi 1 Sigillo ◆◇◇.</div>
-            <div class="turno"><b>Turno 2.</b> Scopri Carte (1 mana, restano 10). Vedi la scheda del nemico e incidi il secondo Sigillo, senza tiro ◆◆◇.</div>
-            <div class="turno"><b>Turno 3.</b> Pugno di Forza (2 mana, restano 8). Tiri 14: 17, colpisci. 1d8 + 3 fa 6 + 3, e la Detonazione consuma i 2 Sigilli: +2d6, esce 7. Totale 16 danni, e ti restituisce 2 mana, uno per Sigillo (10).</div>
-            <p class="esempio">L'Arcanista prepara e poi colpisce: più Sigilli incide, più fa male e più mana recupera, ma il nemico intanto attacca.</p>
+            <h3>Arcanista di Sangue</h3>
+            <p class="esempio">Livello 2, Mente 16 (+3), 18 mana, 20 di salute. Contro lo stesso nemico.</p>
+            <div class="turno"><b>Turno 1.</b> Stilo Cremisi, pagato col sangue: 1 salute (19, sei sopra metà) e +1 dado. Tiri 11: 11 + 3 = 14, colpisci. 2d8 + 3: 4 + 5 + 3 = 12, e il tuo sangue entra nel nemico: 1 Ferita ◆◇◇. Il Risucchio ti cura di un quarto: 3 (20).</div>
+            <div class="turno"><b>Turno del nemico.</b> Ti colpisce per 6 (14). Hai già versato sangue: il Coagulo te ne rende un quarto, 2 (16).</div>
+            <div class="turno"><b>Turno 2.</b> Frusta Cremisi (2 mana, restano 16). 1d4 senza tiro: 3, il nemico sanguina e prende la seconda Ferita ◆◆◇. Risucchio 1 (17).</div>
+            <div class="turno"><b>Turno 3.</b> Ebollizione (3 mana, restano 13). Tiri 14: colpisci, 2d6 + 3 fa 10, e le 2 Ferite scoppiano: +2d6, esce 8. Totale 18 danni; ti curi di 2 per Ferita e del Risucchio: torni a 20.</div>
+            <p class="esempio">Il Sangue incide e poi fa scoppiare, curandosi mentre combatte; l'Illusione invece crea Copie che prendono i colpi al tuo posto e poi le fa esplodere, recuperando mana.</p>
             <h3>Monaco di Negromanzia, con un posto di Vita</h3>
             <p class="esempio">Livello 2, Spirito 16 (+3), 18 punti fede. La Bilancia parte da 0.</p>
             <div class="turno"><b>Turno 1.</b> Avvizzire (3 fede, restano 15). Il nemico fallisce il tiro salvezza: è Avvizzito per 3 turni. Bilancia: Negromanzia 1.</div>
@@ -477,7 +478,7 @@
             <p>Ogni classe ha una risorsa: <b>furia</b> (Guerriero), <b>natura</b> (Sciamano), <b>mana</b> (Arcanista), <b>fede</b> (Monaco). Tecniche e incantesimi la consumano; l'attacco con l'arma è sempre gratuito, così quando la risorsa finisce si combatte comunque. Una tecnica o un incantesimo che manca il bersaglio costa lo stesso.</p>
             <ul>
               <li>Al livello 1: ${R.RISORSA_BASE} + mod. della caratteristica di classe; a ogni livello + mod. + il nuovo livello.</li>
-              <li>Si ricarica riposando (1d4 + livello) e, durante lo scontro, ognuna a modo suo. La tabella base del recupero è ${recupero()}: la usano furia, natura e fede; il mana si recupera con i Sigilli.</li>
+              <li>Si ricarica riposando (1d4 + livello) e, durante lo scontro, ognuna a modo suo. La tabella base del recupero è ${recupero()}: la usano furia, natura e fede; il mana si recupera facendo esplodere le Copie.</li>
             </ul>
             <h3>Tecniche e incantesimi preparati</h3>
             <ul>
@@ -555,31 +556,38 @@
             <h3>Tecniche</h3>
             ${tecnicheSciamano}`],
           /* 18 */ ["Arcanista", `
-            <p>Lo studioso: legge l'avversario e lo smonta con due scuole che lavorano in coppia. L'<b>Arcano</b> incide Sigilli sul nemico, la <b>Forza</b> li fa esplodere.</p>
-            <dl class="scheda"><div><dt>Attributo</dt><dd>Mente</dd></div><div><dt>Risorsa</dt><dd>mana</dd></div><div><dt>Dado vita</dt><dd>d6</dd></div><div><dt>Armature</dt><dd>leggere</dd></div></dl>
-            <h3>Come combatte: Sigilli e Detonazione</h3>
+            <p>Lo studioso di arti proibite. Due scuole, e ognuna basta a sé stessa: il <b>Sangue</b> ferisce dall'interno e ti cura mentre combatti, l'<b>Illusione</b> ti moltiplica perché i colpi trovino solo copie. Prepararle insieme dà un piccolo bonus, non è obbligatorio.</p>
+            <dl class="scheda"><div><dt>Attributo</dt><dd>Mente</dd></div><div><dt>Risorsa</dt><dd>mana (il Sangue anche salute)</dd></div><div><dt>Dado vita</dt><dd>d6</dd></div><div><dt>Armature</dt><dd>leggere</dd></div></dl>
+            <h3>Sangue: Ferite</h3>
             <ol>
-              <li><b>Incidi</b>: gli incantesimi d'Arcano lasciano Sigilli sul nemico (◆). Durano tutto lo scontro, al massimo ${MG ? MG.SIGILLI_MAX : 3} (${MG ? MG.SIGILLI_MAX_BOSS : 2} sugli avversari temibili), uno in più dal livello 4. Il critico di un incantesimo di Forza incide anche 1 Sigillo.</li>
-              <li><b>Fai esplodere</b>: gli incantesimi di Forza con la scritta <i>Detonazione</i> consumano tutti i Sigilli, +1d6 di danno per Sigillo.</li>
-              <li><b>Recupera</b>: ogni Detonazione ti restituisce <b>1 mana per Sigillo</b> (Singolarità 2). Senza Sigilli non c'è niente da far esplodere: niente danno in più e niente mana.</li>
+              <li><b>Incidi</b>: gli incantesimi di Sangue lasciano Ferite nel nemico (◆), il tuo sangue dentro di lui. Durano tutto lo scontro, al massimo ${MG ? MG.SIGILLI_MAX : 3} (${MG ? MG.SIGILLI_MAX_BOSS : 2} sugli avversari temibili), una in più dal livello 4.</li>
+              <li><b>Fai scoppiare</b>: Ebollizione e Cuore Spezzato consumano le Ferite per fare più danno e ti curano.</li>
+              <li><b>Paga col sangue</b>: ogni incantesimo di Sangue si può pagare in salute invece che in mana, 1 a 1, solo se resti sopra metà della salute massima. Pagato così fa <b>+1 dado</b>. Sotto metà salute il Sangue fa comunque +1 dado (il sangue chiama), ma si paga in mana.</li>
+              <li><b>Risucchio</b>: un quarto del danno dei tuoi incantesimi di Sangue ti cura.</li>
+              <li><b>Coagulo</b>: dopo che in uno scontro hai pagato col sangue almeno una volta, ogni colpo che subisci ti rende subito un quarto del danno.</li>
             </ol>
-            <p>Sotto ogni incantesimo il gioco ti dice cosa fa per la combinazione («Incide Sigilli», «Detona») e, durante lo scontro, quando è pronta («Combo pronta: Sigilli al massimo»).</p>
-            <p class="nota">Chi prepara incantesimi d'Arcano e di Forza insieme spende meno: si incide e poi si detona. Chi prepara una sola scuola funziona lo stesso, ma rende meno.</p>
+            <h3>Illusione: Copie</h3>
+            <ol>
+              <li><b>Crea</b>: gli incantesimi d'Illusione creano Copie di te, al massimo 3. Quando un colpo ti andrebbe a segno si tira un dado da (Copie + 1): con 1 colpisce te, altrimenti distrugge una Copia e non subisci danno. Il Soffio colpisce comunque.</li>
+              <li><b>Smascherare</b>: a inizio turno un avversario temibile prova a smascherarle (tiro salvezza di Mente): se riesce ne distrugge una.</li>
+              <li><b>Fai esplodere</b>: Frantumare consuma le Copie, fa danno per ognuna e ti restituisce <b>1 mana per Copia</b>.</li>
+            </ol>
+            <p>Bonus tra le due scuole: ogni Copia distrutta incide 1 Ferita su chi l'ha colpita. Sotto ogni incantesimo il gioco ti dice cosa fa («Incide Ferite», «Crea Copie», «Detona le Ferite», «Mana o salute») e, durante lo scontro, quando la combinazione è pronta.</p>
             <h3>Risorsa e recupero</h3>
-            <p>Il mana si recupera solo facendo esplodere i Sigilli (e con il Pozzo Arcano, sotto). È il cuore della classe: chi incide e poi detona spende molto meno.</p>
+            <p>Il mana si recupera facendo esplodere le Copie (e con il Pozzo Arcano, sotto). Il Sangue si paga anche con la salute e la salute la riprende combattendo.</p>
             <h3>Preparazione: scuole libere</h3>
-            <p>Gli incantesimi si scelgono liberamente tra le due scuole, di qualsiasi livello sbloccato: non c'è una scuola principale. Al livello 3 la via di prestigio decide quale scuola viene potenziata (sotto).</p>
+            <p>Gli incantesimi si scelgono liberamente tra le due scuole, di qualsiasi livello sbloccato. Al livello 3 la via di prestigio decide quale scuola viene potenziata (sotto).</p>
             <h3>Tratto di classe: Pozzo Arcano</h3>
             <div class="scroll"><table><tr><th>Livello</th><th>Effetto</th></tr>
               <tr><td class="n">1</td><td>se in un tuo turno non lanci incantesimi, al turno dopo recuperi 1 mana</td></tr>
-              <tr><td class="n">2</td><td>Specchio di Rune e Barriera Cinetica costano 1 in meno</td></tr>
+              <tr><td class="n">2</td><td>Passo Sfasato costa 1 in meno</td></tr>
               <tr><td class="n">4</td><td>il primo incantesimo di ogni scontro non costa mana</td></tr>
             </table></div>
             <h3>Vie di prestigio</h3>
             <p>La via di prestigio è la tua scuola: oltre alle sue tre abilità, potenzia gli incantesimi di quella scuola. Quelli dell'altra restano tutti disponibili.</p>
             <div class="scroll"><table><tr><th>Via</th><th>Scuola</th><th>Potenziamento</th></tr>
-              <tr><td>Frattura</td><td>Forza</td><td>la Detonazione tira d8 al posto di d6</td></tr>
-              <tr><td>Sutura</td><td>Arcano</td><td>Sigilli al massimo pieno anche sugli avversari temibili; ogni incantesimo d'Arcano che ferisce fa +1 danno per ogni Sigillo già presente</td></tr>
+              <tr><td>Vena</td><td>Sangue</td><td>Ferite al massimo pieno anche sugli avversari temibili; l'Ebollizione cura 3 per Ferita invece di 2</td></tr>
+              <tr><td>Velo</td><td>Illusione</td><td>fino a 4 Copie; gli avversari temibili le smascherano con −2</td></tr>
             </table></div>
             <h3>Incantesimi</h3>
             ${tendineScuole("Sapiente")}`],
@@ -623,7 +631,7 @@
       en: {
         torna: "← Home page", titolo: "Rules", sotto: "The rules of the game, to look up whenever you like.",
         parte: "Part", capitolo: "Chapter", apri: "Expand all", chiudi: "Collapse",
-        desc: ["How to give your character orders and read the game's answers.", "The d20 roll, the difficulty and the cost of failing.", "The nine skills, how they are worked out and when they help.", "Fire, rations and the count of days.", "What happens at zero health and what wears the mind down.", "Three slots, shared between computer and phone.", "The four attributes and the one you fight with.", "Race bonuses, hit die, health and resources at level 1.", "Experience, thresholds and what you gain at each level.", "Initiative, attack, damage, critical hits and Armor class.", "How the enemy resists your effects.", "Effects that last a few turns, on you and on enemies.", "Fearsome foes, vulnerabilities, abilities and fleeing.", "The butler's hunts, ambushes outside the house, the clasp.", "Three fights told turn by turn.", "Resource, slots, traits and paths: what every class shares.", "Weapon and fury: wear down, stun, pierce, parry.", "Poisons, traps and bark, one turn after another.", "Carve Seals with Arcane, burst them with Force.", "The Balance between Life and Necromancy."],
+        desc: ["How to give your character orders and read the game's answers.", "The d20 roll, the difficulty and the cost of failing.", "The nine skills, how they are worked out and when they help.", "Fire, rations and the count of days.", "What happens at zero health and what wears the mind down.", "Three slots, shared between computer and phone.", "The four attributes and the one you fight with.", "Race bonuses, hit die, health and resources at level 1.", "Experience, thresholds and what you gain at each level.", "Initiative, attack, damage, critical hits and Armor class.", "How the enemy resists your effects.", "Effects that last a few turns, on you and on enemies.", "Fearsome foes, vulnerabilities, abilities and fleeing.", "The butler's hunts, ambushes outside the house, the clasp.", "Three fights told turn by turn.", "Resource, slots, traits and paths: what every class shares.", "Weapon and fury: wear down, stun, pierce, parry.", "Poisons, traps and bark, one turn after another.", "Wounds with Blood, Copies with Illusion: each one bursts.", "The Balance between Life and Necromancy."],
         parti: [["How to play", [0, 1, 2, 3, 4, 5]], ["Your character", [6, 7, 8]], ["Combat", [9, 10, 11, 12, 13, 14]], ["The classes", [15, 16, 17, 18, 19]]],
         sezioni: [
           /* 0 */ ["Writing actions and exploring", `
@@ -767,7 +775,7 @@
             <div class="scroll"><table><tr><th>Attribute</th><th>Resists</th></tr>
               <tr><td>Vigour</td><td>poisons, bleeding, physical blows</td></tr>
               <tr><td>Agility</td><td>effects that unbalance or immobilise</td></tr>
-              <tr><td>Mind</td><td>Force and Arcane spells, feints</td></tr>
+              <tr><td>Mind</td><td>Blood and Illusion spells, feints</td></tr>
               <tr><td>Spirit</td><td>Life and Necromancy spells, fear</td></tr>
             </table></div>`],
           /* 11 */ ["Conditions", `
@@ -789,7 +797,7 @@
             <p class="esempio">On you, Off-balance, Dazed, Stunned and Inhibited only come from some hunt prey, for 2 turns.</p>
             <h3>Duration and stacking</h3>
             <ul>
-              <li>A new condition of the same kind <b>renews the duration</b>, it does not stack. Different conditions stack: Bleeding, Poisoned and Withered all deal damage together. The exceptions (Cracks, Seals, Charges) are explained in the classes.</li>
+              <li>A new condition of the same kind <b>renews the duration</b>, it does not stack. Different conditions stack: Bleeding, Poisoned and Withered all deal damage together. The exceptions (Cracks, Wounds, Copies, Charges) are explained in the classes.</li>
               <li>Conditions you inflict on the enemy count <b>its turns</b>. Boosts to your own actions (Rune on the Weapon, Vow of Life, Eye of the Tome…) count <b>your turns</b> after casting: “for 3 turns” means your next 3 turns.</li>
               <li>All conditions end with the fight.</li>
               <li>Ash creatures do not bleed; fire creatures do not burn.</li>
@@ -798,7 +806,7 @@
             <p>Common elixirs (made with animal parts and herbs) cure one condition. Rare elixirs (made with just a part of an ash creature) make you immune to that condition for the whole fight, drunk before or during it: an enemy that sees its condition fail does not try again. You carry at most 2 per condition.</p>`],
           /* 12 */ ["Foes", `
             <h3>Fearsome foes</h3>
-            <p>The most fearsome foes (the guardians and a few others) are not affected by effects that take away actions or attacks: Dazed, Stunned, Inhibited. Instead, many techniques and spells have a <b>fallback</b>, shown in brackets in the text. On them other conditions last at most 2 turns (Withered 3), and charges and Seals go up to 2 at most.</p>
+            <p>The most fearsome foes (the guardians and a few others) are not affected by effects that take away actions or attacks: Dazed, Stunned, Inhibited. Instead, many techniques and spells have a <b>fallback</b>, shown in brackets in the text. On them other conditions last at most 2 turns (Withered 3), and charges and Wounds go up to 2 at most.</p>
             <h3>Vulnerabilities and resistances</h3>
             <p>Many enemies are vulnerable to a damage type: slashing, bludgeoning, piercing, arcane, force, life, necromancy, poison or fire. Against them that damage gets <b>one extra die</b>, or an effect lasts one turn longer. Others resist a damage type and take half.</p>
             <p>Every guardian has a weak point for every class: a weapon type for the Warrior, a school for the Arcanist and one for the Monk, and sometimes the Shaman's undergrowth. Finding it out before the fight and preparing for it (weapon, prepared spells) makes a big difference. Exploring and talking with the people of the house can tell you more.</p>
@@ -840,12 +848,13 @@
             <div class="turno"><b>Enemy turn.</b> It bleeds and loses 2. It attacks and hits you: you lose 5 health, but gain 1 fury (11).</div>
             <div class="turno"><b>Turn 2.</b> To save fury you attack with your weapon, for free. You roll 20: critical! You hit for sure and roll 2d6 + 3: 10 damage. The critical also gives you 2 fury (13).</div>
             <p class="esempio">Fury rises when you get hit: the Warrior does not fear taking blows, he fears running dry.</p>
-            <h3>Arcane Arcanist, with one Force slot</h3>
-            <p class="esempio">Level 1, Mind 16 (+3), 13 mana. Against the same enemy.</p>
-            <div class="turno"><b>Turn 1.</b> Arcane Bolt (2 mana, 11 left). You roll 11: 11 + 3 = 14, you hit. 1d8 + 3: 5 + 3 = 8, and you carve 1 Seal ◆◇◇.</div>
-            <div class="turno"><b>Turn 2.</b> Reveal Cards (1 mana, 10 left). You see the enemy's sheet and carve the second Seal, no roll ◆◆◇.</div>
-            <div class="turno"><b>Turn 3.</b> Force Fist (2 mana, 8 left). You roll 14: 17, you hit. 1d8 + 3 makes 6 + 3, and the Detonation spends the 2 Seals: +2d6, you roll 7. 16 damage in all, and you get 2 mana back, one per Seal (10).</div>
-            <p class="esempio">The Arcanist prepares, then strikes: the more Seals carved, the harder it hits and the more mana comes back, but the enemy keeps attacking meanwhile.</p>
+            <h3>Blood Arcanist</h3>
+            <p class="esempio">Level 2, Mind 16 (+3), 18 mana, 20 health. Against the same enemy.</p>
+            <div class="turno"><b>Turn 1.</b> Crimson Stylus, paid with blood: 1 health (19, you are above half) and +1 die. You roll 11: 11 + 3 = 14, you hit. 2d8 + 3: 4 + 5 + 3 = 12, and your blood enters the enemy: 1 Wound ◆◇◇. Drain heals you a quarter: 3 (20).</div>
+            <div class="turno"><b>Enemy turn.</b> It hits you for 6 (14). You have already shed blood: Clotting gives back a quarter, 2 (16).</div>
+            <div class="turno"><b>Turn 2.</b> Crimson Lash (2 mana, 16 left). 1d4 with no roll: 3, the enemy bleeds and takes the second Wound ◆◆◇. Drain 1 (17).</div>
+            <div class="turno"><b>Turn 3.</b> Boiling Blood (3 mana, 13 left). You roll 14: you hit, 2d6 + 3 makes 10, and the 2 Wounds burst: +2d6, you roll 8. 18 damage in all; you heal 2 per Wound plus Drain: back to 20.</div>
+            <p class="esempio">Blood carves, then bursts, healing as it fights; Illusion instead creates Copies that take blows in your place, then shatters them to recover mana.</p>
             <h3>Necromancer Monk, with one Life slot</h3>
             <p class="esempio">Level 2, Spirit 16 (+3), 18 faith points. The Balance starts at 0.</p>
             <div class="turno"><b>Turn 1.</b> Wither (3 faith, 15 left). The enemy fails its saving throw: it is Withered for 3 turns. Balance: Necromancy 1.</div>
@@ -859,7 +868,7 @@
             <p>Every class has a resource: <b>fury</b> (Warrior), <b>nature</b> (Shaman), <b>mana</b> (Arcanist), <b>faith</b> (Monk). Techniques and spells spend it; attacking with your weapon is always free, so when the resource runs out you can still fight. A technique or spell that misses costs the same.</p>
             <ul>
               <li>At level 1: ${R.RISORSA_BASE} + class attribute mod.; at each level + mod. + the new level.</li>
-              <li>It recharges with rest (1d4 + level) and, during a fight, each in its own way. The base recovery table is ${recupero()}: fury, nature and faith use it; mana comes back through Seals.</li>
+              <li>It recharges with rest (1d4 + level) and, during a fight, each in its own way. The base recovery table is ${recupero()}: fury, nature and faith use it; mana comes back by shattering Copies.</li>
             </ul>
             <h3>Prepared techniques and spells</h3>
             <ul>
@@ -937,31 +946,38 @@
             <h3>Techniques</h3>
             ${tecnicheSciamano}`],
           /* 18 */ ["Arcanist", `
-            <p>The scholar: reads the foe and takes it apart with two schools that work as a pair. <b>Arcane</b> carves Seals on the enemy, <b>Force</b> makes them burst.</p>
-            <dl class="scheda"><div><dt>Attribute</dt><dd>Mind</dd></div><div><dt>Resource</dt><dd>mana</dd></div><div><dt>Hit die</dt><dd>d6</dd></div><div><dt>Armour</dt><dd>light</dd></div></dl>
-            <h3>How he fights: Seals and Detonation</h3>
+            <p>The scholar of forbidden arts. Two schools, each enough on its own: <b>Blood</b> wounds from within and heals you as you fight, <b>Illusion</b> multiplies you so blows find only copies. Preparing both gives a small bonus, it is not required.</p>
+            <dl class="scheda"><div><dt>Attribute</dt><dd>Mind</dd></div><div><dt>Resource</dt><dd>mana (Blood also health)</dd></div><div><dt>Hit die</dt><dd>d6</dd></div><div><dt>Armour</dt><dd>light</dd></div></dl>
+            <h3>Blood: Wounds</h3>
             <ol>
-              <li><b>Carve</b>: Arcane spells leave Seals on the enemy (◆). They last the whole fight, at most ${MG ? MG.SIGILLI_MAX : 3} (${MG ? MG.SIGILLI_MAX_BOSS : 2} on fearsome foes), one more from level 4. The critical of a Force spell also carves 1 Seal.</li>
-              <li><b>Burst</b>: Force spells marked <i>Detonation</i> spend all the Seals, +1d6 damage per Seal.</li>
-              <li><b>Recover</b>: every Detonation gives you back <b>1 mana per Seal</b> (Singularity 2). With no Seals there is nothing to burst: no extra damage and no mana.</li>
+              <li><b>Carve</b>: Blood spells leave Wounds in the enemy (◆), your blood inside it. They last the whole fight, at most ${MG ? MG.SIGILLI_MAX : 3} (${MG ? MG.SIGILLI_MAX_BOSS : 2} on fearsome foes), one more from level 4.</li>
+              <li><b>Burst</b>: Boiling Blood and Broken Heart spend the Wounds for more damage and heal you.</li>
+              <li><b>Pay with blood</b>: every Blood spell can be paid with health instead of mana, 1 for 1, only if you stay above half your maximum health. Paid this way it deals <b>+1 die</b>. Below half health Blood still deals +1 die (blood calls), but you pay with mana.</li>
+              <li><b>Drain</b>: a quarter of your Blood spells' damage heals you.</li>
+              <li><b>Clotting</b>: once you have paid with blood at least once in a fight, every blow you take gives back a quarter of its damage at once.</li>
             </ol>
-            <p>Under every spell the game tells you what it does for the combo (“Carves Seals”, “Detonates”) and, during the fight, when it is ready (“Combo ready: Seals at the maximum”).</p>
-            <p class="nota">Preparing Arcane and Force spells together costs less: carve, then detonate. Preparing a single school still works, but yields less.</p>
+            <h3>Illusion: Copies</h3>
+            <ol>
+              <li><b>Create</b>: Illusion spells create Copies of you, at most 3. When a blow would hit you, roll a die of (Copies + 1): on a 1 it hits you, otherwise it destroys a Copy and you take no damage. The Breath still hits.</li>
+              <li><b>See through</b>: at the start of its turn a fearsome foe tries to see through them (Mind saving throw): on a success it destroys one.</li>
+              <li><b>Burst</b>: Shatter spends your Copies, deals damage for each and gives back <b>1 mana per Copy</b>.</li>
+            </ol>
+            <p>Bonus between the schools: every destroyed Copy carves 1 Wound on whoever struck it. Under every spell the game tells you what it does (“Carves Wounds”, “Creates Copies”, “Bursts the Wounds”, “Mana or health”) and, during the fight, when the combo is ready.</p>
             <h3>Resource and recovery</h3>
-            <p>Mana comes back only by bursting Seals (and with the Arcane Well, below). It is the heart of the class: carving and then detonating costs far less.</p>
+            <p>Mana comes back by shattering Copies (and with the Arcane Well, below). Blood can also be paid with health, and you win health back by fighting.</p>
             <h3>Preparation: free schools</h3>
-            <p>Spells are chosen freely from the two schools, of any unlocked level: there is no main school. At level 3 your prestige path decides which school is empowered (below).</p>
+            <p>Spells are chosen freely from the two schools, of any unlocked level. At level 3 your prestige path decides which school is empowered (below).</p>
             <h3>Class trait: Arcane Well</h3>
             <div class="scroll"><table><tr><th>Level</th><th>Effect</th></tr>
               <tr><td class="n">1</td><td>if you cast no spell on your turn, you recover 1 mana the turn after</td></tr>
-              <tr><td class="n">2</td><td>Rune Mirror and Kinetic Barrier cost 1 less</td></tr>
+              <tr><td class="n">2</td><td>Phase Step costs 1 less</td></tr>
               <tr><td class="n">4</td><td>the first spell of every fight costs no mana</td></tr>
             </table></div>
             <h3>Prestige paths</h3>
             <p>Your prestige path is your school: besides its three abilities, it empowers that school's spells. The other school's spells stay available.</p>
             <div class="scroll"><table><tr><th>Path</th><th>School</th><th>Empowerment</th></tr>
-              <tr><td>Fracture</td><td>Force</td><td>Detonation rolls d8 instead of d6</td></tr>
-              <tr><td>Suture</td><td>Arcane</td><td>full Seal maximum even against fearsome foes; every Arcane spell that wounds deals +1 damage per Seal already there</td></tr>
+              <tr><td>Vein</td><td>Blood</td><td>full Wound maximum even against fearsome foes; Boiling Blood heals 3 per Wound instead of 2</td></tr>
+              <tr><td>Veil</td><td>Illusion</td><td>up to 4 Copies; fearsome foes see through them at −2</td></tr>
             </table></div>
             <h3>Spells</h3>
             ${tendineScuole("Sapiente")}`],

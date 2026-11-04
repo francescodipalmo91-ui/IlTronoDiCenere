@@ -2,11 +2,12 @@
    MAGIA — scuole dell'Arcanista (Arcano, Forza) e del Monaco (Luce, Ombra), livelli 1-5, con le vie di prestigio.
    Progetto in docs/incantesimi_arcanista_monaco.md (decisioni del 25/10/2026).
 
-   STATO (25/10/2026): lo leggono regolamento, creazione e scheda di gioco (scuola principale, posti, preparazione al riposo, via di prestigio).
+   STATO (25/10/2026): lo leggono regolamento, creazione e scheda di gioco (posti, preparazione al riposo, via di prestigio).
    Combattimento dell'Arcanista (Sigilli, Detonazione, Arcano e Forza, vie Frattura e Sutura): js/magia_combattimento.js. Anche il Monaco (Bilancia, Crepuscolo, Luce e Ombra).
    js/incantesimi.js (vecchio sistema) cancellato il 03/11; in gioco.html tolto anche il suo ramo di combattimento.
 
-   - scuola principale scelta in creazione (come l'arma per il Guerriero); l'altra scuola dà 1 posto in più, di qualsiasi livello
+   - 04/11: niente scuola principale; posti liberi tra le due scuole (POSTI_ALTRA_SCUOLA resta come «1 posto in più»);
+     dal livello 3 la via di prestigio potenzia la sua scuola (MagiaCombattimento.scuolaDellaVia, POTENZIAMENTI_VIA)
    - posti come le tecniche: Regole.TECNICHE_PER_LIVELLO (2, 2, 1, 1, 1)
    - via: "aldo" | "guendalina" → abilità della via di prestigio (dal livello 3), sempre pronte, non occupano posti
    - costo in mana (Arcanista) o fede (Monaco)

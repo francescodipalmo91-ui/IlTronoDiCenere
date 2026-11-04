@@ -301,7 +301,7 @@ caso("Gioco: salita al livello 3 — furia + mod Vigore + livello e avviso della
   eq(await page.evaluate(() => risorsaPg().max), 39, "13, 18, 24, 31, 39");
   const d = await diario(page); vero(/mod\. Vigore \+3 \+ livello 3 → \+6/.test(d), "manca la riga della furia"); vero(/scegliere una via di prestigio/.test(d), "manca l'avviso della via"); await chiudi();
 });
-/* Arcanista con le scuole di js/magia.js: scuola principale Arcano, un incantesimo di Forza */
+/* Arcanista con le scuole di js/magia.js: due incantesimi d'Arcano e uno di Forza (04/11: la scuola principale non c'è più; «scuola» resta nei salvataggi vecchi) */
 const ARC = (o) => PG(Object.assign({ classe: "Sapiente", scuola: "arcano", statistiche: { Vigore: 10, "Agilità": 12, Mente: 16, Spirito: 12 }, statisticheBase: { Vigore: 10, "Agilità": 12, Mente: 16, Spirito: 12 },
   modificatori: { Vigore: 0, "Agilità": 1, Mente: 3, Spirito: 1 }, tiroDado: { dado: 6, valore: 4 }, mana: 13, risorsa: null, tecniche: [], incantesimi: ["dardo_arcano", "scopri_carte", "pugno_forza"],
   equipaggiamento: { arma: "Bastone", armaDanno: "1d6", armaTipoDanno: "Contundente", armaMani: 2, armatura: "Armatura leggera", armaturaCA: 2, malusAgilita: 0, scudo: null, dotazione: [] } }, o || {}));
@@ -312,17 +312,18 @@ caso("Gioco: anche il mana dell'Arcanista cresce di mod Mente + livello, senza d
   eq(await page.evaluate(() => manaMax()), 39, "13, 18, 24, 31, 39 come la furia");
   vero(/mod\. Mente \+3 \+ livello 3 → \+6/.test(await diario(page)), "manca la riga del mana"); eq(errori, [], "errori"); await chiudi();
 });
-caso("Gioco: Arcanista — capacità di classe, posti per livello e quote per scuola nella preparazione", async (b) => {
-  const { page, errori, chiudi } = await apri(b, "gioco.html", ARC(), PARTITA({ livello: 3, usate: { riposo: "sbloccato" } }));
-  eq(await page.evaluate(() => listaIncantesimi().map(i => i.id)), ["luce", "dardo_arcano", "scopri_carte", "pugno_forza"], "la Luce non occupa posti");
+caso("Gioco: Arcanista — capacità di classe, posti per livello, scuole libere e scuola potenziata dalla via", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", ARC({ scuola: null }), PARTITA({ livello: 3, usate: { riposo: "sbloccato", via: "guendalina" } }));
+  eq(await page.evaluate(() => listaIncantesimi().filter(i => !i.via).map(i => i.id)), ["luce", "dardo_arcano", "scopri_carte", "pugno_forza"], "la Luce non occupa posti");
   eq(await page.evaluate(() => [incTotale(), incLiberi()]), [6, 3], "5 + 1 posti, 3 liberi");
+  eq(await page.evaluate(() => scuolaPotenziata()), "arcano", "Sutura potenzia l'Arcano");
   await page.evaluate(() => apriPreparazione(false));
   const box = '#prepBox input[name="inc"]';
-  vero(await page.$eval(`${box}[value="spinta"]`, c => c.disabled), "l'altra scuola ha un solo posto: la seconda è bloccata");
+  vero(/potenziata dalla via Sutura/.test(await page.$eval("#prepBox", x => x.textContent)), "manca l'etichetta della scuola potenziata");
+  vero(!(await page.$eval(`${box}[value="spinta"]`, c => c.disabled)), "04/11: niente quote per scuola, la Forza è libera");
   vero(await page.$eval("#prepBox button.primario", c => c.disabled), "non si conferma con posti vuoti");
-  for (const id of ["marchio_arcano", "stasi", "specchio_rune"]) await page.check(`${box}[value="${id}"]`);
-  vero(await page.$eval(`${box}[value="runa_arma"]`, c => c.disabled), "la scuola principale ha 5 posti: la sesta è bloccata");
-  vero(await page.$$eval(`${box}[value="implosione"]`, l => l.length) === 1 && await page.$eval(`${box}[value="implosione"]`, c => c.disabled), "tutta la Forza resta bloccata");
+  for (const id of ["spinta", "ariete", "marchio_arcano"]) await page.check(`${box}[value="${id}"]`);
+  vero(await page.$eval(`${box}[value="runa_arma"]`, c => c.disabled), "6 posti pieni: il settimo è bloccato");
   vero(!(await page.$eval("#prepBox button.primario", c => c.disabled)), "6 scelte: si conferma"); await page.click("#prepBox button.primario");
   eq((await page.evaluate(() => usate.incPreparati)).length, 6); eq(await page.evaluate(() => incLiberi()), 0); eq(errori, [], "errori"); await chiudi();
 });
@@ -936,15 +937,15 @@ caso("Creazione: il Guerriero vede subito tutte le tecniche, armi separate dallo
   eq(await page.$$eval('#lista-tecniche input[name="tecnica"]:not(:disabled)', cs => cs.map(c => c.value)), ["polso", "morso_acciaio", "pomolo"]);
   eq(errori, [], "errori"); await chiudi();
 });
-caso("Creazione: l'Arcanista vede subito gli incantesimi di entrambe le scuole, non selezionabili finché non sceglie", async (b) => {
+caso("Creazione: l'Arcanista sceglie 3 incantesimi liberamente tra le due scuole (04/11, niente scuola principale)", async (b) => {
   const { page, errori, chiudi } = await apri(b, "creazione.html");
   await page.check('input[name="classe"][value="Sapiente"]', { force: true });
-  const tot = await page.$$eval('input[name="incantesimo"]', e => e.length);
-  vero(tot >= 6, "gli incantesimi devono essere visibili subito: " + tot);
-  eq(await page.$$eval('input[name="incantesimo"]:not(:disabled)', e => e.length), 0);
-  const primo = await page.$eval('input[name="scuola"]', e => e.value);
-  await page.check(`input[name="scuola"][value="${primo}"]`, { force: true });
-  vero(await page.$$eval('input[name="incantesimo"]:not(:disabled)', e => e.length) > 0, "dopo la scelta si sbloccano");
+  eq(await page.$$eval('input[name="scuola"]', e => e.length), 0, "la scelta della scuola non c'è più");
+  eq(await page.$$eval('input[name="incantesimo"]:not(:disabled)', e => e.length), 6, "tutti e 6 gli incantesimi di livello 1 sono sceglibili");
+  for (const id of ["pugno_forza", "spinta", "scudo"]) await page.check(`input[name="incantesimo"][value="${id}"]`, { force: true });
+  vero(await page.$eval('input[name="incantesimo"][value="dardo_arcano"]', c => c.disabled), "tre scelti (anche tutti di Forza): il quarto è bloccato");
+  await page.uncheck('input[name="incantesimo"][value="scudo"]', { force: true });
+  vero(!(await page.$eval('input[name="incantesimo"][value="dardo_arcano"]', c => c.disabled)), "tolto uno, si riapre");
   eq(errori, [], "errori"); await chiudi();
 });
 

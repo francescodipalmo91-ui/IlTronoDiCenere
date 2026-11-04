@@ -1,6 +1,6 @@
 /* Serie automatica di scontri nella pagina di test (stesso motore della sala di prova): percentuale di vittorie per classe e caso.
    Uso: python3 -m http.server 8765 --bind 127.0.0.1, poi  N=150 node strumenti/serie_scontri.js
-   Opzioni: PORT (porta del server, predefinita 8765), N (scontri per caso), SOLO_ENEA=1 (solo Enea col fermaglio), CLASSI=guerriero,monaco. Equipaggiamento e preparazione rispettano le regole di classe (03/11). Il giocatore automatico è pessimista: confronta le versioni, non leggere i numeri come assoluti. */
+   Opzioni: PORT (porta del server, predefinita 8765), VIA=scuola (04/11: incantatori con la via della loro scuola dal livello 3), N (scontri per caso), SOLO_ENEA=1 (solo Enea col fermaglio), CLASSI=guerriero,monaco. Equipaggiamento e preparazione rispettano le regole di classe (03/11). Il giocatore automatico è pessimista: confronta le versioni, non leggere i numeri come assoluti. */
 const { chromium } = require('playwright');
 const N = Number(process.env.N || 300);
 const MEDIO = process.env.BOT !== 'vecchio'; /* 03/11: predefinito il giocatore medio che gioca le combo; BOT=vecchio per il confronto */
@@ -19,6 +19,9 @@ const CLASSI = process.env.CLASSI ? process.env.CLASSI.split(',') : ['guerriero'
   const righe = [];
   for (const c of CASI) for (const cl of CLASSI) {
     await p.selectOption('#pLiv', String(c.liv)); await p.selectOption('#pClasse', cl); if (process.env.SCUOLA && (cl === 'arcanista' || cl === 'monaco')) await p.selectOption('#pScuola', process.env.SCUOLA.split(',')[cl === 'arcanista' ? 0 : 1] || process.env.SCUOLA);
+    /* 04/11: VIA=scuola → dal livello 3 gli incantatori prendono la via della loro scuola preferita (Guendalina per Arcano e Vita, Aldo per Forza e Negromanzia) */
+    if (process.env.VIA === 'scuola' && c.liv >= 3 && (cl === 'arcanista' || cl === 'monaco')) { const sc = await p.$eval('#pScuola', x => x.value); await p.selectOption('#pVia', sc === 'arcano' || sc === 'luce' ? 'guendalina' : 'aldo'); }
+    else if (c.liv >= 3) await p.selectOption('#pVia', '');
     await p.selectOption('#nTipo', c.nem);
     if (c.nem === 'enea') { await p.setChecked('#nFermaglio', c.fermaglio); await p.selectOption('#nEneaLato', c.lato); await p.selectOption('#nEneaMossa', 'casuale'); }
     const r = await p.evaluate(([N, MEDIO]) => {

@@ -4944,11 +4944,11 @@
           serieTit: "Abilità della via", serieGuida: "Scegli quale serie della tua via preparare fino al prossimo riposo. Quelle dello scudo si usano solo con lo scudo imbracciato.",
           serie: { arma: (tipo) => `Dell'arma (${tipo})`, scudo: "Dello scudo" }, tipoArma: { Tagliente: "taglio", Contundente: "contundente", Perforante: "perforante" },
           scelta: (n) => `Hai scelto la via: ${n}.`, conferma: "Scegli per sempre", abilita: "abilità della via" },
-        inc: { capacita: "Capacità di classe", preparati: (n, m) => `Incantesimi preparati (${n}/${m})`, principale: "scuola principale", altra: "altra scuola",
+        inc: { capacita: "Capacità di classe", preparati: (n, m) => `Incantesimi preparati (${n}/${m})`, potenziata: (v) => `potenziata dalla via ${v}`,
           postiVuoti: (n) => n === 1 ? "1 posto libero" : `${n} posti liberi`, scegli: "Scegli", nessuna: "Nessun incantesimo sbloccato disponibile per questi posti.",
           nuovoPosto: (l) => `Livello ${l}: nuovi incantesimi sbloccati e un nuovo posto da riempire (nella sezione Incantesimi).`, viaSblocco: "Livello 3: ora puoi scegliere una via di prestigio (nella sezione Incantesimi).",
           viaGuida: "La via ti dà un'abilità al livello 3, una al 4 e una al 5, sempre pronte e senza occupare posti. La scelta è definitiva.",
-          guidaPrep: (tot, p, a) => `Scegli ${tot} incantesimi tra quelli sbloccati: al massimo ${p} della scuola principale e ${a} dell'altra scuola.`, max: (n) => `al massimo ${n}` },
+          guidaPrep: (tot) => `Scegli ${tot} incantesimi tra quelli sbloccati, liberamente tra le due scuole.` },
         investiga: { domanda: "Come vuoi investigare?", cerca: "Cerco attivamente nella stanza (Indagare)", sensi: "Uso i sensi: vista, udito, olfatto (Percezione)" },
         speciali: (n, max) => `Tecniche speciali (${n}/${max})`, altrePiuTardi: (n) => `${n === 1 ? "1 posto libero" : n + " posti liberi"}: altre tecniche si sbloccano salendo di livello o imbracciando lo scudo.`, postiVuoti: (n) => n === 1 ? "1 posto libero" : `${n} posti liberi`,
         prep: { btnTec: "Prepara tecniche", btnInc: "Prepara incantesimi", nonOra: "Non ora", titoloTec: "Prepara le tecniche", titoloInc: "Prepara gli incantesimi",
@@ -5030,11 +5030,11 @@
           serieTit: "Path abilities", serieGuida: "Choose which set of your path to prepare until your next rest. The shield's work only with the shield on your arm.",
           serie: { arma: (tipo) => `Weapon (${tipo})`, scudo: "Shield" }, tipoArma: { Tagliente: "slashing", Contundente: "bludgeoning", Perforante: "piercing" },
           scelta: (n) => `You have chosen the path: ${n}.`, conferma: "Choose for good", abilita: "path ability" },
-        inc: { capacita: "Class ability", preparati: (n, m) => `Prepared spells (${n}/${m})`, principale: "main school", altra: "other school",
+        inc: { capacita: "Class ability", preparati: (n, m) => `Prepared spells (${n}/${m})`, potenziata: (v) => `empowered by the ${v} path`,
           postiVuoti: (n) => n === 1 ? "1 free slot" : `${n} free slots`, scegli: "Choose", nessuna: "No unlocked spell is available for these slots.",
           nuovoPosto: (l) => `Level ${l}: new spells unlocked and a new slot to fill (in the Spells section).`, viaSblocco: "Level 3: you can now choose a prestige path (in the Spells section).",
           viaGuida: "The path gives you one ability at level 3, one at 4 and one at 5, always ready and taking no slots. The choice is permanent.",
-          guidaPrep: (tot, p, a) => `Choose ${tot} spells among those unlocked: at most ${p} from your main school and ${a} from the other school.`, max: (n) => `at most ${n}` },
+          guidaPrep: (tot) => `Choose ${tot} spells among those unlocked, freely from the two schools.` },
         investiga: { domanda: "How do you want to investigate?", cerca: "I search the room actively (Investigation)", sensi: "I use my senses: sight, hearing, smell (Perception)" },
         speciali: (n, max) => `Special techniques (${n}/${max})`, altrePiuTardi: (n) => `${n === 1 ? "1 free slot" : n + " free slots"}: more techniques unlock as you level up or take up a shield.`, postiVuoti: (n) => n === 1 ? "1 free slot" : `${n} free slots`,
         prep: { btnTec: "Prepare techniques", btnInc: "Prepare spells", nonOra: "Not now", titoloTec: "Prepare your techniques", titoloInc: "Prepare your spells",
@@ -6273,7 +6273,7 @@
     try { pg = JSON.parse(localStorage.getItem("personaggio")); } catch (e) {}
     if (!pg || !pg.classe) { pg = null; window.location.replace("index.html"); }
     else if (!pg.equipaggiamento) { pg = null; window.location.replace("index.html"); }
-    else if (window.MAGIA && window.MAGIA.CLASSI[pg.classe] && !pg.scuola) { pg = null; window.location.replace("index.html"); } /* creato con il vecchio sistema di incantesimi: la pagina iniziale lo segnala */
+    else if (window.MAGIA && window.MAGIA.CLASSI[pg.classe] && [].concat(pg.incantesimi || []).some(x => !window.MAGIA.INCANTESIMI.some(i => i.id === (x && x.id || x)))) { pg = null; window.location.replace("index.html"); } /* creato con il vecchio sistema di incantesimi (04/11: la scuola principale non c'è più, si controllano gli id) */
 
     /* =====================================================================
        REVISIONE ATTRIBUTI E ABILITÀ
@@ -6355,8 +6355,9 @@
     /* mana (Sapiente e Accolito): il massimo viene dalla creazione (più la crescita di livello), quello speso fa parte della partita */
     const manaMax = () => (pg.mana != null ? Number(pg.mana) + crescitaPg().risorsa : null);
     /* ---------- Incantesimi (Arcanista e Monaco): le scuole di js/magia.js ----------
-       pg.scuola = scuola principale, pg.incantesimi = id scelti in creazione, usate.incPreparati = id cambiati riposando.
-       Posti: come le tecniche (2, 4, 5, 6, 7 della scuola principale) più 1 dell'altra scuola, di qualsiasi livello sbloccato.
+       pg.incantesimi = id scelti in creazione, usate.incPreparati = id cambiati riposando.
+       04/11: niente scuola principale. Posti come le tecniche (2, 4, 5, 6, 7) più 1, liberi tra le due scuole e di qualsiasi
+       livello sbloccato; la via di prestigio (livello 3) potenzia la sua scuola (js/magia_combattimento.js, potenziamenti della via).
        La capacità di classe (Luce / Lume Arcano) non occupa posti. */
     const MG = window.MAGIA;
     const MC_GRADO_POZZO = (l) => (window.MagiaCombattimento ? window.MagiaCombattimento.gradoPozzo(l) : 0); /* 03/11: Pozzo Arcano */
@@ -6364,14 +6365,15 @@
     let capLuceCache = null;
     const capLuce = () => capLuceCache || (capLuceCache = { id: "luce", costo: MG.CAPACITA[pg.classe].costo, nome: MG.CAPACITA[pg.classe].nome, effetto: MG.CAPACITA[pg.classe].effetto, capacita: true });
     const postiPrinc = () => Regole.TECNICHE_PER_LIVELLO.slice(0, Math.max(1, Math.min(5, livelloPg()))).reduce((a, b) => a + b, 0);
-    const quotaInc = (sc) => sc === pg.scuola ? postiPrinc() : MG.POSTI_ALTRA_SCUOLA;
     const incTotale = () => postiPrinc() + MG.POSTI_ALTRA_SCUOLA;
+    /* 04/11: la scuola potenziata dalla via di prestigio (Aldo → Forza / Negromanzia, Guendalina → Arcano / Vita), null prima del livello 3 */
+    const scuolaPotenziata = () => (incantatore() && livelloPg() >= 3 && viaPg() && window.MagiaCombattimento ? window.MagiaCombattimento.scuolaDellaVia(pg.classe, viaPg()) : null);
     const idIncPreparati = () => (typeof usate !== "undefined" && Array.isArray(usate.incPreparati) ? usate.incPreparati : [].concat(pg.incantesimi || [])).map(x => typeof x === "string" ? x : x && x.id).filter(Boolean);
     const incPreparati = () => idIncPreparati().map(id => MG.INCANTESIMI.find(i => i.id === id)).filter(i => i && MG.CLASSI[pg.classe].includes(i.scuola));
     const incSbloccati = () => MG.INCANTESIMI.filter(i => MG.CLASSI[pg.classe].includes(i.scuola) && i.liv <= livelloPg());
     const incLiberi = () => Math.max(0, incTotale() - incPreparati().length);
     const incVia = () => { const v = incantatore() && livelloPg() >= 3 ? viaPg() : null; return v ? MG.VIE.filter(x => x.via === v && MG.CLASSI[pg.classe].includes(x.scuola) && x.liv <= livelloPg()).sort((a, b) => a.liv - b.liv) : []; };
-    const listaIncantesimi = () => (incantatore() && pg.scuola) ? [capLuce(), ...incPreparati(), ...incVia()] : [];
+    const listaIncantesimi = () => incantatore() ? [capLuce(), ...incPreparati(), ...incVia()] : [];
     const nomeInc = (inc) => Lingua.t(inc.nome) || inc.id || "";
     const nomiInc = (inc) => (inc.nome && typeof inc.nome === "object" ? Object.values(inc.nome) : [inc.nome, inc.id]).filter(Boolean).map(String);
     const manaAttuale = () => Math.max(0, manaMax() - (pg.manaUsato || 0));
@@ -6483,7 +6485,7 @@
       if (pg.livello >= LIVELLO_MAX) righe.push(RG.livello.massimo);
       if (haTecniche() && TEC.some(t => t.liv === pg.livello && t.tipo !== "Utilita" && !t.via && tecDellaClasse(t))) righe.push(RT.nuovoPosto(pg.livello));
       if (haTecniche() && pg.livello === 3 && !viaPg()) righe.push(RT.via.sblocco);
-      if (incantatore() && pg.scuola) { righe.push(RT.inc.nuovoPosto(pg.livello)); if (pg.livello === 3 && !viaPg()) righe.push(RT.inc.viaSblocco); }
+      if (incantatore()) { righe.push(RT.inc.nuovoPosto(pg.livello)); if (pg.livello === 3 && !viaPg()) righe.push(RT.inc.viaSblocco); }
       aggiungi({ tipo: "narra", box: "cap", fuori: true, esito: RG.livello.titolo(pg.livello), esitoRighe: righe, righe: [] });
       disegnaScheda(); modificato();
     }
@@ -6844,7 +6846,7 @@
       if (corteccia) rigaNatura("pelle", CB.effNomi.corteccia, `${corteccia}/${SCI.scudoMax({ liv: livelloPg() })}`, "dif");
       if (trappola) rigaNatura("bulbo", CB.effNomi.trappola, nomeTec(TEC.find(x => x.id === trappola) || { nome: { it: trappola, en: trappola } }), "off");
       if (sigilli) { /* Sigilli dell'Arcanista: incisi sul nemico, durano tutto lo scontro */
-        const max = CMB.sigilliMax({ boss: bossNem(), liv: livelloPg() });
+        const max = CMB.sigilliMax({ boss: bossNem(), liv: livelloPg(), scuolaVia: scuolaPotenziata() });
         const dt = document.createElement("dt"); dt.className = "eff-nome"; dt.append(medaglione("sigilli"), document.createTextNode(CB.effNomi.sigilli));
         const dd = document.createElement("dd"); dd.className = "eff-dur mal";
         const pall = document.createElement("span"); pall.className = "rombi"; pall.setAttribute("aria-hidden", "true");
@@ -7050,7 +7052,7 @@
 
     /* ---------- Preparazione: tecniche (Guerriero) e incantesimi (Arcanista, Monaco) ----------
        Si cambia riposando; un posto ancora vuoto (nuovo livello) si può riempire subito. */
-    const prepIncantesimi = () => incantatore() && !!pg.scuola;
+    const prepIncantesimi = () => incantatore();
     const haPreparazione = () => haTecniche() || prepIncantesimi();
     function apriPreparazione(soloVuoti) {
       if (scontro) return sist(RT.soloScontro.replace(/.*/, RT.prep.soloRiposo));
@@ -7091,10 +7093,10 @@
       if (prepIncantesimi()) {
         const att = incPreparati().map(x => x.id);
         max = incTotale();
-        box.append(el("h2", "", P.titoloInc), el("p", "guida", RT.inc.guidaPrep(max, postiPrinc(), MG.POSTI_ALTRA_SCUOLA)));
-        const fs = el("fieldset");
-        [pg.scuola, MG.CLASSI[pg.classe].find(sk => sk !== pg.scuola)].forEach((sk, n) => {
-          fs.append(el("p", "guida", `${Lingua.t(MG.NOMI_SCUOLE[sk])} — ${n === 0 ? RT.inc.principale : RT.inc.altra} (${RT.inc.max(quotaInc(sk))})`));
+        box.append(el("h2", "", P.titoloInc), el("p", "guida", RT.inc.guidaPrep(max)));
+        const fs = el("fieldset"), scPot = scuolaPotenziata();
+        MG.CLASSI[pg.classe].forEach(sk => {
+          fs.append(el("p", "guida", Lingua.t(MG.NOMI_SCUOLE[sk]) + (sk === scPot ? ` — ${RT.inc.potenziata(Lingua.t(MG.NOMI_VIE[pg.classe][viaPg()]))}` : "")));
           incSbloccati().filter(i => i.scuola === sk).sort((x, y) => x.liv - y.liv).forEach(inc => {
             const lab = el("label"), c = el("input"); c.type = "checkbox"; c.name = "inc"; c.value = inc.id; c.dataset.scuola = sk; c.checked = att.includes(inc.id);
             if (soloVuoti && c.checked) { c.disabled = true; c.dataset.fissa = "1"; } /* fuori dal riposo si riempiono solo i posti vuoti */
@@ -7106,7 +7108,7 @@
       }
       const controlla = () => {
         const inc = [...box.querySelectorAll('input[name="inc"]')], sc = inc.filter(c => c.checked).length;
-        inc.forEach(c => { if (c.dataset.fissa) return; const sk = c.dataset.scuola; c.disabled = !c.checked && (sc >= max || inc.filter(x => x.checked && x.dataset.scuola === sk).length >= quotaInc(sk)); });
+        inc.forEach(c => { if (!c.dataset.fissa) c.disabled = !c.checked && sc >= max; });
         const tec = [...box.querySelectorAll('input[name="tec"]')], st = tec.filter(c => c.checked).length;
         const scelteT = tec.filter(c => c.checked).map(c => TEC.find(x => x.id === c.value)).filter(Boolean);
         tec.forEach(c => { if (!c.dataset.fissa) c.disabled = !c.checked && (st >= maxT || !aggiungibile(scelteT, TEC.find(x => x.id === c.value))); }); /* quote: 2 di livello 1, 2 di livello 2, 1 per gli altri */
@@ -10708,7 +10710,7 @@
       /* 01/11: primaria Mente (la pazzia lucida del cacciatore di taglie: il conteggio, il calcolo), Spirito volutamente basso.
          Mente 12 dà +1 come prima il Vigore 12: tiro per colpire invariato (+1 + attacco 2 = +3). Il danno resta dannoBonus 3 */
       esploratore: { ca: 13, dadoVita: 8, dannoDado: 4, xp: 400, attacco: 1, attacchi: 2, tipoDanno: "Tagliente", boss: true, livello: 2, pvFissi: 30, pa: 8, ettore: true, primaria: "Mente",
-        statFisse: { Vigore: 10, "Agilità": 13, Mente: 13, Spirito: 8 }, dannoBonus: 1, /* 02/11: il ladro calcolatore, due pugnali 1d4 + 1 (Mente 13 = +1, per colpire +2: con +3 gli incantatori perdevano 9-12 punti nella simulazione) */ vulnerabile: ["Contundente", "Forza", "Ombra"] /* 03/11: mappa bilanciata, una vulnerabilità per classe */, /* 29/10: luce e contundente */ /* 28/10: Vigore 12 (la gamba), +3 per colpire, spada 1d6 + 3, CD 11 */ /* boss: niente effetti di controllo, durate brevi, niente esecuzione */ /* custode del fermaglio: 400 PE, gli stessi se risparmiato */ probPresa: 0, probSoffio: 0, soffio: null, ritratto: "immagini/nemici/Ettore.webp" } /* immagine da aggiungere */
+        statFisse: { Vigore: 10, "Agilità": 13, Mente: 13, Spirito: 8 }, dannoBonus: 1, /* 02/11: il ladro calcolatore, due pugnali 1d4 + 1 (Mente 13 = +1, per colpire +2: con +3 gli incantatori perdevano 9-12 punti nella simulazione) */ vulnerabile: ["Contundente", "Arcano", "Ombra"] /* 04/11: regola delle armature, senza armatura pesante → Arcano (prima Forza) */ /* 03/11: mappa bilanciata, una vulnerabilità per classe */, /* 29/10: luce e contundente */ /* 28/10: Vigore 12 (la gamba), +3 per colpire, spada 1d6 + 3, CD 11 */ /* boss: niente effetti di controllo, durate brevi, niente esecuzione */ /* custode del fermaglio: 400 PE, gli stessi se risparmiato */ probPresa: 0, probSoffio: 0, soffio: null, ritratto: "immagini/nemici/Ettore.webp" } /* immagine da aggiungere */
     };
     /* boss: Guendalina, Aldo, il sovrano, Adele, i guardiani dei fermagli e i due mastini speciali (campo boss in NEMICI) */
     /* resistenze: resiste: ["veleno"] dimezza i danni da veleno dello Sciamano (da mettere a Dafne e al sovrano quando avranno la loro voce qui) */
@@ -11748,7 +11750,7 @@
     function ctxIncantesimo() {
       const m = mod(statPg(ATTR_INC[pg.classe] || "Mente"));
       return {
-        ...ctxTecnica(), modAtt: m + malusStatoAtt(), modDanno: m, dado: 6, cd: cdIncantesimi(),
+        ...ctxTecnica(), modAtt: m + malusStatoAtt(), modDanno: m, dado: 6, cd: cdIncantesimi(), scuolaVia: scuolaPotenziata(), /* 04/11: potenziamento della via */
         pozzo: pg.classe === "Sapiente" ? MC_GRADO_POZZO(livelloPg()) : 0, /* 03/11: Pozzo Arcano, tratto dell'Arcanista */ attrTs: attrTsPg(), modTs: modTsNem(attrTsPg()), modTsDi: modTsNem,
         cura: (n) => curaPgN(n), pvMancanti: () => Math.max(0, pvMaxPg() - pvPg()), dannoCorpo: (n) => { const [a, b] = dannoCorpoNonLetale(n); return a - b; },
         manaPiu: (n) => { const r = Math.min(n, pg.manaUsato || 0); pg.manaUsato = (pg.manaUsato || 0) - r; return r; },

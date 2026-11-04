@@ -188,7 +188,21 @@ Perché funziona nel gioco:
 
 ## 4. Vie di prestigio (dal livello 3)
 
-> **Dal 4 novembre la via è la scuola** (storia, sezione 10c). Niente più scuola principale in creazione: fino al livello 3 gli incantesimi si scelgono liberamente tra le due scuole, al livello 3 la via decide quale scuola viene potenziata (Aldo → Forza / Negromanzia, Guendalina → Arcano / Vita). I potenziamenti della via devono agire sulla **meccanica** della scuola (per l'Arcano, per esempio, Sigilli 3 sui boss), non solo sui numeri. Da progettare: i potenziamenti, cosa succede al posto «dell'altra scuola», e i tratti di classe (aiuti ai livelli 1-2, potenziamenti ai livelli 3-5).
+> **Dal 4 novembre la via è la scuola** (storia, sezione 10c). Niente più scuola principale in creazione: fino al livello 3 gli incantesimi si scelgono liberamente tra le due scuole, al livello 3 la via decide quale scuola viene potenziata (Aldo → Forza / Negromanzia, Guendalina → Arcano / Vita). I potenziamenti della via devono agire sulla **meccanica** della scuola (per l'Arcano, per esempio, Sigilli 3 sui boss), non solo sui numeri. Da progettare: i tratti di classe (aiuti ai livelli 1-2, potenziamenti ai livelli 3-5).
+
+### Potenziamenti della via (DECISO il 4 novembre, proposta A; numeri da provare)
+La via tiene le sue **3 abilità** (livelli 3, 4, 5, fuori dai posti) e in più **potenzia la sua scuola** con una regola sulla meccanica. Niente viene chiuso: gli incantesimi dell'altra scuola restano tutti disponibili, senza potenziamento. Scartata la proposta B (i chiudi-combo di livello 5 solo con la via): toglieva scelta a chi gioca misto, pesava su un solo posto e non sistemava la meccanica dell'Arcano.
+
+| Classe | Via | Scuola | Potenziamento (codice: `ctx.scuolaVia`) |
+|---|---|---|---|
+| Arcanista | Sutura (Guendalina) | Arcano | Sigilli al massimo pieno anche sui boss (3, 4 dal livello 4) |
+| Arcanista | Frattura (Aldo) | Forza | Detonazione con d8 al posto di d6 (Colpo Demolitore d10) |
+| Monaco | Brace (Guendalina) | Vita | la Rigenerazione dura 4 turni invece di 3 |
+| Monaco | Cenere (Aldo) | Negromanzia | Avvizzito con un dado più grande (1d4 → 1d6, 1d6 → 1d8) |
+
+- **Posti:** 2, 4, 5, 6, 7 + 1, tutti liberi tra le due scuole (il vecchio «1 posto dell'altra scuola» diventa un posto in più).
+- **In gioco:** nella preparazione al riposo la scuola della via porta l'etichetta «potenziata dalla via …»; nella sala di prova e nella pagina di test anche il testo del potenziamento.
+- **Da coordinare con i tratti di classe:** il tratto potenzia la classe, la via potenzia la scuola.
 
 Stessa scelta del Guerriero (`sceglieVia("aldo")` / `sceglieVia("guendalina")`), una abilità per livello (3, 4, 5), attiva, fuori dai posti. Costi 5, 7, 9. Il legame con la storia:
 - **Aldo** è il servitore del re, duro e senza pietà: le sue vie spingono la scuola "violenta" (Forza, Ombra).

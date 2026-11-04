@@ -478,6 +478,26 @@
     eq(M.comboPronta(inc("dardo_luce"), scontro(), ctx()), null);
   });
 
+  caso("04/11: potenziamenti della via (la via è la scuola)", () => {
+    eq(M.scuolaDellaVia("Sapiente", "guendalina"), "arcano"); eq(M.scuolaDellaVia("Sapiente", "aldo"), "forza");
+    eq(M.scuolaDellaVia("Accolito", "guendalina"), "luce"); eq(M.scuolaDellaVia("Accolito", "aldo"), "ombra");
+    eq(M.scuolaDellaVia("Soldato", "aldo"), null); eq(M.scuolaDellaVia("Sapiente", null), null);
+    /* Sutura: Sigilli pieni anche sui boss */
+    eq(C.sigilliMax({ boss: true, liv: 3 }), 2); eq(C.sigilliMax({ boss: true, liv: 3, scuolaVia: "arcano" }), 3);
+    eq(C.sigilliMax({ boss: true, liv: 4, scuolaVia: "arcano" }), 4); eq(C.sigilliMax({ boss: true, liv: 3, scuolaVia: "forza" }), 2);
+    /* Frattura: Detonazione con d8 */
+    const s1 = scontro({ sigilli: 2 }), r1 = lancia("pugno_forza", s1, ctx({ liv: 3, scuolaVia: "forza", dadi: [15, 4, 7, 8] }));
+    eq(ev(r1, "detona")[0].dado, 8, "Detonazione d8"); eq(ev(r1, "detona")[0].bonus, 15);
+    const s2 = scontro({ sigilli: 2 }), r2 = lancia("pugno_forza", s2, ctx({ liv: 3, dadi: [15, 4, 5, 6] }));
+    eq(ev(r2, "detona")[0].dado, 6, "senza la via d6");
+    /* Brace: Rigenerazione 4 turni */
+    const s3 = scontro(); lancia("voto_luce", s3, ctx({ liv: 3, scuolaVia: "luce" })); eq(s3.eff.rigen, 4);
+    const s4 = scontro(); lancia("voto_luce", s4, ctx({ liv: 3 })); eq(s4.eff.rigen, 3);
+    /* Cenere: Avvizzito 1d6 al posto di 1d4 */
+    const s5 = scontro(); lancia("avvizzire", s5, ctx({ liv: 3, scuolaVia: "ombra", dadi: [2] })); eq(s5.avvizzitoDado, 6);
+    const s6 = scontro(); lancia("avvizzire", s6, ctx({ liv: 3, dadi: [2] })); eq(s6.avvizzitoDado, 4);
+  });
+
   function esegui() {
     return casi.map(({ nome, fn }) => { try { fn(); return { nome, ok: true }; } catch (e) { return { nome, ok: false, errore: e.message }; } });
   }

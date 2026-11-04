@@ -84,7 +84,8 @@
   /* Sigilli dell'Arcanista: incisi dall'Arcano, fatti esplodere dalla Forza. Durano tutto lo scontro; massimo 3 (2 sui boss).
      03/11: dal livello 4 uno in più (4, sui boss 3), per crescere senza moltiplicare troppo gli incantesimi «per Sigillo» */
   const SIGILLI_MAX = 3, SIGILLI_MAX_BOSS = 2, SIGILLI_LIV_BONUS = 4;
-  const sigilliMax = (ctx) => (ctx && ctx.boss ? SIGILLI_MAX_BOSS : SIGILLI_MAX) + (ctx && Number(ctx.liv) >= SIGILLI_LIV_BONUS ? 1 : 0);
+  /* 04/11: con la via di Guendalina (Sutura, Arcano potenziato) anche sui boss il massimo è quello pieno (ctx.scuolaVia === "arcano") */
+  const sigilliMax = (ctx) => (ctx && ctx.boss && ctx.scuolaVia !== "arcano" ? SIGILLI_MAX_BOSS : SIGILLI_MAX) + (ctx && Number(ctx.liv) >= SIGILLI_LIV_BONUS ? 1 : 0);
   const sigilli = (s) => Math.max(0, Number(s && s.sigilli) || 0);
   function incidi(s, ctx, n) {
     const prima = sigilli(s), max = sigilliMax(ctx), dopo = Math.min(max, prima + n);

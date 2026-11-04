@@ -18,6 +18,9 @@
      senza Sigilli non c'è niente da far esplodere (né danno né recupero)
    - un critico con un incantesimo di Forza incide 1 Sigillo (dopo l'eventuale Detonazione)
    - le difese che consumano l'azione non si usano due turni di fila
+   - 04/11, potenziamenti della via (ctx.scuolaVia = scuola potenziata, dal livello 3; vedi scuolaDellaVia):
+     Sutura (Arcano): Sigilli pieni anche sui boss (Combattimento.sigilliMax); Frattura (Forza): Detonazione con d8 al posto di d6
+     (d10 per Colpo Demolitore); Brace (Vita): la Rigenerazione dura 1 turno in più; Cenere (Negromanzia): Avvizzito con un dado più grande
    ===================================================================== */
 (function (root) {
   const C = root.Combattimento || (typeof require === "function" ? require("./combattimento.js") : null);
@@ -116,7 +119,7 @@
       o = o || {};
       const n = C.sigilli(s);
       if (n < 1) { E.push({ k: "detonaVuota" }); return 0; }
-      const dado = o.dado || 6, tiri = tiraDadi(ctx, n, dado), bonus = somma(tiri), max = n >= sigMax;
+      const dado = (o.dado || 6) + (ctx.scuolaVia === "forza" ? 2 : 0), tiri = tiraDadi(ctx, n, dado), bonus = somma(tiri), max = n >= sigMax;
       s.pv -= bonus; s.sigilli = 0;
       const mana = recuperaMana(n * (o.doppia ? 2 : 1)); /* 03/11 (Francesco): 1 mana per Sigillo, come nel documento; niente più tabella per livello */
       E.push({ k: "detona", n, dado, tiri, bonus, max, mana });
@@ -132,10 +135,12 @@
       const mancano = ctx.pvMancanti ? ctx.pvMancanti() : tot, fatto = ctx.cura ? ctx.cura(tot) : tot;
       E.push({ k: "guarigione", n: n + piu, dado, tiri, mm: (bonus || 0) + (aureola ? 2 : 0) + (extra || 0), tot, fatto }); return { tot, fatto, eccesso: Math.max(0, tot - mancano) };
     };
+    const rigenTurni = () => 3 + (ctx.scuolaVia === "luce" ? 1 : 0); /* 04/11: Brace, la Rigenerazione dura 1 turno in più */
     const curaFissa = (tot) => { const fatto = ctx.cura ? ctx.cura(tot) : tot; E.push({ k: "guarigione", n: 0, dado: 0, tiri: [], mm: 0, tot, fatto }); return fatto; };
     const dannoSpirito = (n, dado) => diretto(n + piuD, dado, 0);
     const avvizzisci = (dado, turni) => { /* Avvizzito: 1d4 (1d6 dove indicato) all'inizio del turno del nemico */
       const gia = attivo(s, "avvizzito");
+      if (ctx.scuolaVia === "ombra") dado = Math.min(12, dado + 2); /* 04/11: Cenere */
       s.avvizzitoDado = gia ? Math.max(Number(s.avvizzitoDado) || 4, dado) : dado;
       const e = C.metti(s, ctx, "avvizzito", turni); e.dado = s.avvizzitoDado; E.push(e);
     };
@@ -258,7 +263,7 @@
         if (r.ok) { if (vivo()) { if (ctx.boss) diretto(1, 6, 0); else conTS({ frastornato: 1 }); } }
         break;
       }
-      case "voto_luce": s.eff.voto = 3; s.effMax.voto = 3; s.eff.rigen = 3; s.effMax.rigen = 3; E.push({ k: "voto", turni: 3 }); break; /* 03/11: Voto di Vita, Rigenerazione al posto di «cura 1 per colpo» */
+      case "voto_luce": s.eff.voto = 3; s.effMax.voto = 3; s.eff.rigen = s.effMax.rigen = rigenTurni(); E.push({ k: "voto", turni: 3 }); break; /* 03/11: Voto di Vita, Rigenerazione al posto di «cura 1 per colpo» */
       case "raggio_mattino": {
         const tiri = tiraDadi(ctx, 2 + piu, 8), pieno = somma(tiri), z = salva(); E.push(z);
         const danno = Math.max(1, z.ok ? Math.floor(pieno / 2) : pieno); s.pv -= danno; 
@@ -268,7 +273,7 @@
       case "purificazione": s.presaUsata = true; E.push({ k: "liberato" }); guarisci(1, 6, 0); break;
       case "lancia_sole": { const r = hit({ dado: 8, piuDadi: 2 + piu }); if (r.ok) { if (vivo()) conTS({ accecato: 2 }); } break; }
       case "corona_raggi": s.eff.corona = 3; s.effMax.corona = 3; E.push({ k: "corona", turni: 3 }); break;
-      case "grazia": guarisci(1, 8, ctx.modAtt); s.eff.rigen = 3; s.effMax.rigen = 3; E.push({ k: "rigenInizia", turni: 3 }); s.eff.scudo = 2; s.effMax.scudo = 2; E.push({ k: "scudoMagico", turni: 2 }); break; /* 03/11: cura spalmata */
+      case "grazia": guarisci(1, 8, ctx.modAtt); s.eff.rigen = s.effMax.rigen = rigenTurni(); E.push({ k: "rigenInizia", turni: rigenTurni() }); s.eff.scudo = 2; s.effMax.scudo = 2; E.push({ k: "scudoMagico", turni: 2 }); break; /* 03/11: cura spalmata */
       case "alba_eterna": {
         diretto(4 + piu, 8, 0); fx("accecato", 2);
         curaFissa(Math.floor((pv0 - s.pv) / 2)); break;
@@ -545,7 +550,20 @@
     }
   }
 
-  const API = { UNA_PER_RIPOSO, DIFESE, SERVONO_SIGILLI, POZZO_SCONTO, etichette, comboPronta, gradoPozzo, gradoTratto: gradoPozzo, inizioTurnoPozzo, inizioTurnoMonaco, sottoMetaMonaco, recupero, costo, disponibile, lancia, inizioTurnoNemico, haTick, bonusTsPg, secondaVita, scaduti, testo };
+  /* 04/11: la via di prestigio è la scuola. classe = "Sapiente" | "Accolito", via = "aldo" | "guendalina" → scuola potenziata (o null).
+     Si legge dalle abilità della via in MAGIA.VIE: Aldo → Forza / Negromanzia, Guendalina → Arcano / Vita. */
+  const POTENZIAMENTI_VIA = {
+    arcano: { it: "Sigilli pieni anche sui boss", en: "Full Seals even on bosses" },
+    forza: { it: "Detonazione con d8 al posto di d6", en: "Detonation with d8 instead of d6" },
+    luce: { it: "la Rigenerazione dura 1 turno in più", en: "Regeneration lasts 1 more turn" },
+    ombra: { it: "Avvizzito con un dado più grande (1d4 → 1d6)", en: "Withered with a bigger die (1d4 → 1d6)" }
+  };
+  function scuolaDellaVia(classe, via) {
+    const MG = root.MAGIA; if (!MG || !via || !MG.CLASSI[classe]) return null;
+    const v = MG.VIE.find(x => x.via === via && MG.CLASSI[classe].includes(x.scuola));
+    return v ? v.scuola : null;
+  }
+  const API = { POTENZIAMENTI_VIA, scuolaDellaVia, UNA_PER_RIPOSO, DIFESE, SERVONO_SIGILLI, POZZO_SCONTO, etichette, comboPronta, gradoPozzo, gradoTratto: gradoPozzo, inizioTurnoPozzo, inizioTurnoMonaco, sottoMetaMonaco, recupero, costo, disponibile, lancia, inizioTurnoNemico, haTick, bonusTsPg, secondaVita, scaduti, testo };
   root.MagiaCombattimento = API;
   if (typeof module !== "undefined" && module.exports) module.exports = API;
 })(typeof window !== "undefined" ? window : globalThis);

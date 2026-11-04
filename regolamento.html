@@ -564,11 +564,11 @@
               <li><b>Recupera</b>: ogni Detonazione ti restituisce <b>1 mana per Sigillo</b> (Singolarità 2). Senza Sigilli non c'è niente da far esplodere: niente danno in più e niente mana.</li>
             </ol>
             <p>Sotto ogni incantesimo il gioco ti dice cosa fa per la combinazione («Incide Sigilli», «Detona») e, durante lo scontro, quando è pronta («Combo pronta: Sigilli al massimo»).</p>
-            <p class="nota">Se scegli l'Arcano come scuola principale, usa il posto della Forza per un incantesimo che detona. Chi prepara una sola scuola funziona lo stesso, ma rende meno.</p>
+            <p class="nota">Chi prepara incantesimi d'Arcano e di Forza insieme spende meno: si incide e poi si detona. Chi prepara una sola scuola funziona lo stesso, ma rende meno.</p>
             <h3>Risorsa e recupero</h3>
             <p>Il mana si recupera solo facendo esplodere i Sigilli (e con il Pozzo Arcano, sotto). È il cuore della classe: chi incide e poi detona spende molto meno.</p>
-            <h3>Preparazione: scuola principale</h3>
-            <p>In creazione scegli la scuola principale, come il Guerriero sceglie l'arma: i posti vanno agli incantesimi sbloccati di quella scuola, più ${MG ? MG.POSTI_ALTRA_SCUOLA : 1} posto dell'altra, di qualsiasi livello. Se cambi scuola principale, vale dal livello successivo.</p>
+            <h3>Preparazione: scuole libere</h3>
+            <p>Gli incantesimi si scelgono liberamente tra le due scuole, di qualsiasi livello sbloccato: non c'è una scuola principale. Al livello 3 la via di prestigio decide quale scuola viene potenziata (sotto).</p>
             <h3>Tratto di classe: Pozzo Arcano</h3>
             <div class="scroll"><table><tr><th>Livello</th><th>Effetto</th></tr>
               <tr><td class="n">1</td><td>se in un tuo turno non lanci incantesimi, al turno dopo recuperi 1 mana</td></tr>
@@ -576,7 +576,11 @@
               <tr><td class="n">4</td><td>il primo incantesimo di ogni scontro non costa mana</td></tr>
             </table></div>
             <h3>Vie di prestigio</h3>
-            <p>La Frattura spinge la Forza e le esplosioni, la Sutura l'Arcano e il controllo.</p>
+            <p>La via di prestigio è la tua scuola: oltre alle sue tre abilità, potenzia gli incantesimi di quella scuola. Quelli dell'altra restano tutti disponibili.</p>
+            <div class="scroll"><table><tr><th>Via</th><th>Scuola</th><th>Potenziamento</th></tr>
+              <tr><td>Frattura (Aldo)</td><td>Forza</td><td>la Detonazione tira d8 al posto di d6</td></tr>
+              <tr><td>Sutura (Guendalina)</td><td>Arcano</td><td>Sigilli al massimo pieno anche sugli avversari temibili</td></tr>
+            </table></div>
             <h3>Incantesimi</h3>
             ${tendineScuole("Sapiente")}`],
           /* 19 */ ["Monaco", `
@@ -598,8 +602,8 @@
             </ul>
             <h3>Risorsa e recupero</h3>
             <p>La fede torna con il Crepuscolo: ${recupero()}, il doppio se parti da Nadir. Alcuni incantesimi di Negromanzia ne restituiscono altra.</p>
-            <h3>Preparazione: scuola principale</h3>
-            <p>Come per l'Arcanista: i posti vanno alla scuola principale, più ${MG ? MG.POSTI_ALTRA_SCUOLA : 1} posto dell'altra. Tenere almeno un incantesimo dell'altra scuola serve a chiudere il Crepuscolo.</p>
+            <h3>Preparazione: scuole libere</h3>
+            <p>Come per l'Arcanista: gli incantesimi si scelgono liberamente tra le due scuole. Tenerne di entrambe serve a chiudere il Crepuscolo.</p>
             <h3>Tratto di classe: Respiro dell'Equilibrio</h3>
             <div class="scroll"><table><tr><th>Livello</th><th>Effetto</th></tr>
               <tr><td class="n">1</td><td>con la Bilancia in Vita i colpi che subisci fanno 1 danno in meno (minimo 1); in Negromanzia i tuoi attacchi con l'arma fanno 1 danno in più</td></tr>
@@ -607,7 +611,11 @@
               <tr><td class="n">4</td><td>una volta per scontro, la prima volta che scendi sotto metà salute: con la Brace la Bilancia torna a 0 e ti curi di 1d6 + mod. Spirito; con la Cenere il tuo prossimo incantesimo di Negromanzia ti cura di tutto il danno che infligge</td></tr>
             </table></div>
             <h3>Vie di prestigio</h3>
-            <p>La Cenere spinge la Negromanzia e il rancore, la Brace la Vita e le cure.</p>
+            <p>La via di prestigio è la tua scuola: oltre alle sue tre abilità, potenzia gli incantesimi di quella scuola. Quelli dell'altra restano tutti disponibili.</p>
+            <div class="scroll"><table><tr><th>Via</th><th>Scuola</th><th>Potenziamento</th></tr>
+              <tr><td>Cenere (Aldo)</td><td>Negromanzia</td><td>Avvizzito con un dado più grande (1d4 → 1d6)</td></tr>
+              <tr><td>Brace (Guendalina)</td><td>Vita</td><td>la Rigenerazione dura 1 turno in più</td></tr>
+            </table></div>
             <h3>Incantesimi</h3>
             ${tendineScuole("Accolito")}`]
         ]
@@ -938,11 +946,11 @@
               <li><b>Recover</b>: every Detonation gives you back <b>1 mana per Seal</b> (Singularity 2). With no Seals there is nothing to burst: no extra damage and no mana.</li>
             </ol>
             <p>Under every spell the game tells you what it does for the combo (“Carves Seals”, “Detonates”) and, during the fight, when it is ready (“Combo ready: Seals at the maximum”).</p>
-            <p class="nota">If you choose Arcane as your main school, use the Force slot for a spell that detonates. Preparing a single school still works, but yields less.</p>
+            <p class="nota">Preparing Arcane and Force spells together costs less: carve, then detonate. Preparing a single school still works, but yields less.</p>
             <h3>Resource and recovery</h3>
             <p>Mana comes back only by bursting Seals (and with the Arcane Well, below). It is the heart of the class: carving and then detonating costs far less.</p>
-            <h3>Preparation: main school</h3>
-            <p>At creation you choose your main school, as the Warrior chooses his weapon: your slots go to the unlocked spells of that school, plus ${MG ? MG.POSTI_ALTRA_SCUOLA : 1} slot from the other, of any level. If you change main school, it applies from the next level.</p>
+            <h3>Preparation: free schools</h3>
+            <p>Spells are chosen freely from the two schools, of any unlocked level: there is no main school. At level 3 your prestige path decides which school is empowered (below).</p>
             <h3>Class trait: Arcane Well</h3>
             <div class="scroll"><table><tr><th>Level</th><th>Effect</th></tr>
               <tr><td class="n">1</td><td>if you cast no spell on your turn, you recover 1 mana the turn after</td></tr>
@@ -950,7 +958,11 @@
               <tr><td class="n">4</td><td>the first spell of every fight costs no mana</td></tr>
             </table></div>
             <h3>Prestige paths</h3>
-            <p>Fracture pushes Force and explosions, Suture pushes Arcane and control.</p>
+            <p>Your prestige path is your school: besides its three abilities, it empowers that school's spells. The other school's spells stay available.</p>
+            <div class="scroll"><table><tr><th>Path</th><th>School</th><th>Empowerment</th></tr>
+              <tr><td>Fracture (Aldo)</td><td>Force</td><td>Detonation rolls d8 instead of d6</td></tr>
+              <tr><td>Suture (Guendalina)</td><td>Arcane</td><td>full Seal maximum even against fearsome foes</td></tr>
+            </table></div>
             <h3>Spells</h3>
             ${tendineScuole("Sapiente")}`],
           /* 19 */ ["Monk", `
@@ -972,8 +984,8 @@
             </ul>
             <h3>Resource and recovery</h3>
             <p>Faith returns with the Twilight: ${recupero()}, double if you start from Nadir. Some Necromancy spells give back more.</p>
-            <h3>Preparation: main school</h3>
-            <p>As for the Arcanist: slots go to the main school, plus ${MG ? MG.POSTI_ALTRA_SCUOLA : 1} slot from the other. Keeping at least one spell of the other school lets you close the Twilight.</p>
+            <h3>Preparation: free schools</h3>
+            <p>As for the Arcanist: spells are chosen freely from the two schools. Keeping some of both lets you close the Twilight.</p>
             <h3>Class trait: Breath of Balance</h3>
             <div class="scroll"><table><tr><th>Level</th><th>Effect</th></tr>
               <tr><td class="n">1</td><td>with the Balance on Life the blows you take deal 1 less damage (minimum 1); on Necromancy your weapon attacks deal 1 extra damage</td></tr>
@@ -981,7 +993,11 @@
               <tr><td class="n">4</td><td>once per fight, the first time you drop below half health: with Ember the Balance returns to 0 and you heal 1d6 + Spirit mod.; with Ash your next Necromancy spell heals you for all the damage it deals</td></tr>
             </table></div>
             <h3>Prestige paths</h3>
-            <p>Ash pushes Necromancy and grudge, Ember pushes Life and healing.</p>
+            <p>Your prestige path is your school: besides its three abilities, it empowers that school's spells. The other school's spells stay available.</p>
+            <div class="scroll"><table><tr><th>Path</th><th>School</th><th>Empowerment</th></tr>
+              <tr><td>Ash (Aldo)</td><td>Necromancy</td><td>Withered with a bigger die (1d4 → 1d6)</td></tr>
+              <tr><td>Ember (Guendalina)</td><td>Life</td><td>Regeneration lasts 1 more turn</td></tr>
+            </table></div>
             <h3>Spells</h3>
             ${tendineScuole("Accolito")}`]
         ]

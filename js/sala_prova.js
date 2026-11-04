@@ -34,7 +34,7 @@
   /* 03/11: limiti di classe come in creazione.html. Le armi «da battaglia» solo al Guerriero; armature per classe; lo scudo occupa una mano */
   const ARMATURE_OK = { guerriero: ["nessuna", "leggera", "media", "pesante"], sciamano: ["nessuna", "leggera", "media"], arcanista: ["nessuna", "leggera"], monaco: ["nessuna", "leggera", "media"] };
   const armaOk = (classe, i) => classe === "guerriero" || !/da battaglia/.test(ARMI[i].nome);
-  /* incantesimi preparati (03/11): posti della scuola principale come le tecniche (2, 4, 5, 6, 7) più 1 dell'altra scuola, come in gioco */
+  /* incantesimi preparati: posti come le tecniche (2, 4, 5, 6, 7) più 1, come in gioco (04/11: liberi tra le due scuole, niente scuola principale) */
   const preparatiInc = new Set();
   const postiPrincInc = (liv) => [2, 2, 1, 1, 1].slice(0, Math.max(1, Math.min(5, liv))).reduce((a, b) => a + b, 0);
   /* gli stessi valori di NEMICI in gioco.html */
@@ -42,7 +42,7 @@
     mastino: { nome: "Mastino infernale (comune)", ca: 10, dadoVita: 6, dannoDado: 4, attacco: 1, boss: false, probPresa: 0.6, probSoffio: 0.4, soffio: { cd: 12, dadi: 2, dado: 6, ricarica: 5 }, arma: false },
     /* 01/11: caratteristica primaria dei guardiani (attacco): Ettore Mente con Spirito volutamente basso, Enea Spirito */
     /* 02/11: Ettore ladro, due pugnali 1d4 + 1 (in gioco anche il conteggio, Lama nel fianco e «L'ho già vista»; qui solo i due attacchi) */
-    ettore: { nome: "Ettore (boss)", ca: 13, pv: 30, vigore: 10, stat: { Vigore: 10, "Agilità": 13, Mente: 13, Spirito: 8 }, primaria: "Mente", dadoVita: 8, dannoDado: 4, dannoBonus: 1, attacchi: 2, nomeArma: "Pugnale", attacco: 1, boss: true, probPresa: 0, probSoffio: 0, soffio: null, arma: true, resa: true, vuln: ["Contundente", "Forza", "Ombra"] },
+    ettore: { nome: "Ettore (boss)", ca: 13, pv: 30, vigore: 10, stat: { Vigore: 10, "Agilità": 13, Mente: 13, Spirito: 8 }, primaria: "Mente", dadoVita: 8, dannoDado: 4, dannoBonus: 1, attacchi: 2, nomeArma: "Pugnale", attacco: 1, boss: true, probPresa: 0, probSoffio: 0, soffio: null, arma: true, resa: true, vuln: ["Contundente", "Arcano", "Ombra"] /* 04/11: Arcano al posto di Forza */ },
     /* 30/10, PROPOSTA: bilanciamento_nemici_oggetti.md, sezione 5c */
     /* 02/11: barbaro nano, primaria Vigore; «Sottobosco»: con lo Sciamano gli stati durano 1 turno in più, in furia il veleno ha un dado in più */
     enea: { nome: "Enea (boss, argento)", ca: 13, pv: 32, vigore: 14, stat: { Vigore: 14, "Agilità": 10, Mente: 10, Spirito: 12 }, primaria: "Vigore", attaccoFisso: 4 /* Vigore 14 (+2) + 2 */, pa: 9, boss: true, enea: true, arma: true, vuln: ["Perforante", "Arcano", "Luce", "Sottobosco"] },
@@ -57,7 +57,8 @@
   const sciamano = () => !!pg && pg.classe === "sciamano" && !!S; /* tecniche della natura e punti natura */
   const risorsa = () => (arcanista() ? (monaco() ? "fede" : "mana") : sciamano() ? "natura" : "furia");
   const SCUOLE = () => (monaco() ? ["luce", "ombra"] : ["arcano", "forza"]);
-  const scuolaPrinc = () => { const v = $("pScuola") && $("pScuola").value; return SCUOLE().includes(v) ? v : SCUOLE()[0]; }; /* 03/11: pagina di test */
+  const scuolaPrinc = () => { const v = $("pScuola") && $("pScuola").value; return SCUOLE().includes(v) ? v : SCUOLE()[0]; }; /* 04/11: scuola preferita della preparazione automatica (non è più una regola) */
+  const scuolaVia = () => (pg && pg.via && arcanista() ? M.scuolaDellaVia(monaco() ? "Accolito" : "Sapiente", pg.via) : null); /* 04/11: scuola potenziata dalla via */
 
   /* ---------- dadi: coda truccata, poi caso ---------- */
   const coda = [];
@@ -101,7 +102,7 @@
     const c = ctxBase();
     if (arcanista()) Object.assign(c, {
       pozzo: monaco() ? 0 : M.gradoPozzo(pg.liv), /* 03/11: Pozzo Arcano, tratto dell'Arcanista */
-      respiro: monaco() ? M.gradoTratto(pg.liv) : 0, via: pg.via, /* 03/11: Respiro dell'Equilibrio, tratto del Monaco */
+      respiro: monaco() ? M.gradoTratto(pg.liv) : 0, via: pg.via, scuolaVia: scuolaVia(), /* 04/11: potenziamento della via */ /* 03/11: Respiro dell'Equilibrio, tratto del Monaco */
       modAtt: pg.modM, modDanno: pg.modM, cd: 8 + pg.modM + pg.liv, attrTs: monaco() ? "Spirito" : "Mente", modTs: modTsSala(monaco() ? "Spirito" : "Mente"), /* 01/11: TS contro Mente (Arcanista) o Spirito (Monaco) */ dado: s && C.attivo(s, "runa") ? passoDado(pg.arma.dado) : pg.arma.dado,
       manaPiu: (n) => { const r = Math.min(n, pg.furiaMax - pg.furia); pg.furia += r; return r; }, dannoMente: (n) => n,
       cura: (n) => { const f = Math.min(n, pg.pvMax - pg.pv); pg.pv += f; return f; }, pvMancanti: () => pg.pvMax - pg.pv, dannoCorpo: (n) => { const f = Math.min(n, pg.pv - 1); pg.pv -= f; return f; }
@@ -507,7 +508,7 @@
     return att.map(k => [k === "sanguina" ? (Number(s.sangueDado) === 6 ? "Emorragia 1d6" : "Sanguinamento 1d4") + (s.marchio ? " · marchiato" : "") : k === "avvelenato" ? (Number(s.velenoDado) === 6 ? "Tossina 1d6" : "Avvelenato 1d4") : NOMI_EFF[k] + (k === "esposto" && s.segno ? " · segnato" : "") + (k === "rivest" && s.rivest ? " · " + s.rivest : ""), C.perScontro(s.eff[k]) ? "tutto lo scontro" : durata(s.eff[k])]);
   }
   const bilanciaTesto = () => { const v = (s && s.bilancia) || 0; return v === 0 ? "equilibrio" : v > 0 ? `Vita ${v}${v === 3 ? " · Zenit" : v === 2 ? " · Aureola" : ""}` : `Negromanzia ${-v}${v === -3 ? " · Nadir" : v === -2 ? " · Coro" : ""}`; };
-  const sigilliNem = () => { if (!s || !C.sigilli(s)) return []; const n = C.sigilli(s), max = C.sigilliMax({ boss: nem.boss, liv: pg.liv }); return [["Sigilli (tutto lo scontro)", `${"◆".repeat(n)}${"◇".repeat(Math.max(0, max - n))} ${n} su ${max}${n >= max ? " · al massimo: Detonazione doppia" : ""}`]]; }; /* 03/11 */
+  const sigilliNem = () => { if (!s || !C.sigilli(s)) return []; const n = C.sigilli(s), max = C.sigilliMax({ boss: nem.boss, liv: pg.liv, scuolaVia: scuolaVia() }); return [["Sigilli (tutto lo scontro)", `${"◆".repeat(n)}${"◇".repeat(Math.max(0, max - n))} ${n} su ${max}${n >= max ? " · al massimo: Detonazione doppia" : ""}`]]; }; /* 03/11 */
   const crepeNem = () => { if (!s || !C.crepe(s)) return []; const max = C.crepeMax({ boss: nem.boss }); return [["Incrinatura" + (s.sigillo && C.crepe(s) >= max ? " · sigillo" : ""), `${C.crepe(s)}/${max} cariche (−${C.crepe(s)} CA)`]]; };
   function disegna() {
     if (!pg) pg = leggiPg();
@@ -535,11 +536,11 @@
     lista.append(el("h4", { text: sciamano() ? "Tecniche della natura sbloccate (con qualsiasi arma)" : `Tecniche sbloccate (${pg.arma.tipo.toLowerCase()}${pg.scudo ? " + scudo" : ""})` }));
     opzioni().forEach(t => riga(t, "base"));
     if (pg.liv >= 3) { lista.append(el("h4", { text: pg.via ? `Via di ${pg.via === "aldo" ? (sciamano() ? "Aldo — Signore delle Spore Putride" : "Aldo — Lama del Guardiano") : (sciamano() ? "Guendalina — Custode dei Boschi Sacri" : "Guendalina — Veglia")}, serie ${pg.serie === "scudo" ? "dello scudo" : "dell'arma"} (non occupa posti${dellaVia().length ? "" : "; nessuna abilità per quest'arma"})` : "Via di prestigio: nessuna scelta" })); dellaVia().forEach(t => riga(t, "via")); }
-    if (arcanista()) { /* classica: tutti gli incantesimi sbloccati; pagina di test (03/11): scuola principale e posti come in gioco */
-      const prepInc = !!window.LAYOUT_TEST, princ = prepInc ? scuolaPrinc() : null, maxP = postiPrincInc(pg.liv), quota = (sc) => (sc === princ ? maxP : 1);
-      $("svPosti").textContent = prepInc ? `Incantesimi preparati: ${preparatiInc.size} / ${maxP + 1} (${maxP} della scuola principale, 1 dell'altra; si cambiano al riposo). Il costo si paga in ${monaco() ? "punti fede" : "mana"}.` : "Tutti gli incantesimi sbloccati sono usabili (la preparazione ai posti non si prova qui). Il costo si paga in " + (monaco() ? "punti fede" : "mana") + ".";
+    if (arcanista()) { /* classica: tutti gli incantesimi sbloccati; pagina di test: posti come in gioco (04/11: liberi tra le due scuole) */
+      const prepInc = !!window.LAYOUT_TEST, maxP = postiPrincInc(pg.liv);
+      $("svPosti").textContent = prepInc ? `Incantesimi preparati: ${preparatiInc.size} / ${maxP + 1} (liberi tra le due scuole; si cambiano al riposo). Il costo si paga in ${monaco() ? "punti fede" : "mana"}.` : "Tutti gli incantesimi sbloccati sono usabili (la preparazione ai posti non si prova qui). Il costo si paga in " + (monaco() ? "punti fede" : "mana") + ".";
       lista.replaceChildren();
-      const sc2 = prepInc ? [princ, SCUOLE().find(x => x !== princ)] : SCUOLE(), sblocc = MG.INCANTESIMI.filter(i => sc2.includes(i.scuola) && i.liv <= pg.liv), NS = { arcano: "Arcano", forza: "Forza", luce: "Vita", ombra: "Negromanzia" };
+      const sc2 = SCUOLE(), sblocc = MG.INCANTESIMI.filter(i => sc2.includes(i.scuola) && i.liv <= pg.liv), NS = { arcano: "Arcano", forza: "Forza", luce: "Vita", ombra: "Negromanzia" };
       const rigaInc = (inc, etichetta) => {
         const costoR = s ? M.costo(inc, s, ctx()) : inc.costo;
         const usata = M.UNA_PER_RIPOSO.includes(inc.id) && perRiposo[inc.id];
@@ -550,15 +551,14 @@
         let chkI = null;
         if (prepInc && etichetta !== "via") {
           chkI = el("input", { type: "checkbox", title: "Prepara", onchange: (e) => { if (e.target.checked) preparatiInc.add(inc.id); else preparatiInc.delete(inc.id); disegna(); } });
-          const nSc = [...preparatiInc].filter(id => (MG.INCANTESIMI.find(x => x.id === id) || {}).scuola === inc.scuola).length;
-          chkI.checked = preparatiInc.has(inc.id); chkI.disabled = !chkI.checked && (preparatiInc.size >= maxP + 1 || nSc >= quota(inc.scuola));
+          chkI.checked = preparatiInc.has(inc.id); chkI.disabled = !chkI.checked && preparatiInc.size >= maxP + 1;
         }
         const tg = M.etichette ? M.etichette(inc) : [], cp = s && M.comboPronta ? M.comboPronta(inc, s, ctx()) : null; /* 03/11: combo */
         lista.append(el("div", { class: "tec" + (prep ? "" : " spenta") }, el("span", { class: "sx" }, chkI, el("b", { text: inc.nome.it }), el("small", { text: ` liv. ${inc.liv} · ${costoR} ${monaco() ? "fede" : "mana"}${M.UNA_PER_RIPOSO.includes(inc.id) ? " · una per riposo" : ""}${etichetta ? " · " + etichetta : ""}` })), b,
           tg.length || cp ? el("p", { class: "combo" }, tg.length ? el("span", { class: "tag", text: tg.join(" · ") }) : null, cp ? el("span", { class: cp.ok ? "pronta" : "inutile", text: (tg.length ? " — " : "") + cp.t }) : null) : null,
           el("p", { class: "eff", text: inc.effetto.it })));
       };
-      sc2.forEach((sc, n) => { lista.append(el("h4", { text: NS[sc] + (prepInc ? (n === 0 ? ` — scuola principale (${maxP} posti)` : " — altra scuola (1 posto)") : "") })); sblocc.filter(i => i.scuola === sc).forEach(i => rigaInc(i)); });
+      sc2.forEach((sc) => { lista.append(el("h4", { text: NS[sc] + (sc === scuolaVia() ? ` — potenziata dalla via: ${M.POTENZIAMENTI_VIA[sc].it}` : "") })); sblocc.filter(i => i.scuola === sc).forEach(i => rigaInc(i)); });
       if (pg.liv >= 3) {
         lista.append(el("h4", { text: pg.via ? `Via ${monaco() ? (pg.via === "aldo" ? "Cenere (Negromanzia)" : "Brace (Vita)") : (pg.via === "aldo" ? "Frattura (Forza)" : "Sutura (Arcano)")}` : "Via di prestigio: sceglila nel pannello a sinistra" }));
         if (pg.via) MG.VIE.filter(v => v.via === pg.via && sc2.includes(v.scuola) && v.liv <= pg.liv).forEach(i => rigaInc(i, "via"));
@@ -679,7 +679,7 @@
           campo("Intuizione (bonus)", num("pInt", 1, -5, 15)),
           campo("Via di prestigio (liv. 3+)", sel("pVia", [["", "nessuna"], ["aldo", "Aldo"], ["guendalina", "Guendalina"]], "")),
           campo("Serie della via (Guerriero con scudo)", sel("pSerie", [["arma", "dell'arma"], ["scudo", "dello scudo"]], "arma")),
-          el("div", { id: "rScuola" }, campo("Scuola principale", sel("pScuola", [["arcano", "Arcano"], ["forza", "Forza"]], "forza"))))));
+          el("div", { id: "rScuola" }, campo("Scuola preferita (preparazione automatica)", sel("pScuola", [["arcano", "Arcano"], ["forza", "Forza"]], "forza"))))));
 
     const cardNem = lato("nem", "Nemico", "tNemSotto", () => { applicaPresetNem(); aggiornaPg(); },
       el("div", { class: "stato" }, el("h3", { text: "In scontro" }), barraEl("bNemPv", "Salute"), barraEl("bNemPa", "Punti abilità"), el("dl", { id: "svNem" })),

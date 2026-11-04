@@ -202,7 +202,7 @@ caso("29/10: la vulnerabilità alla forza vale anche per la Spinta (senza tiro),
 caso("29/10: Ettore attaccato a sorpresa perde il primo turno a recuperare i pugnali; vulnerabile a contundente, forza e negromanzia (mappa del 03/11)", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ livello: 2 }), PARTITA({ livello: 2, luogo: "cripta", usate: { riposo: "sbloccato", ettore: "incontrato", ettore_sorpreso: true, ettore_disarmato: true } }));
   await page.evaluate(() => { luogo = "cripta"; avviaScontroEttore(); }); await aspettaTurnoPg(page);
-  eq(await page.evaluate(() => [scontro.disarmato, usate.ettore_disarmato, dadiVuln("Ombra"), dadiVuln("Forza"), dadiVuln("Luce")]), [true, false, 1, 1, 0]);
+  eq(await page.evaluate(() => [scontro.disarmato, usate.ettore_disarmato, dadiVuln("Ombra"), dadiVuln("Arcano"), dadiVuln("Luce"), dadiVuln("Forza")]), [true, false, 1, 1, 0, 0]);
   await page.evaluate(() => { scontro.tuoTurno = false; turnoNemScontro(); });
   await aspettaTurnoPg(page);
   vero(/recuperarli/.test(await diario(page)), "manca il turno perso");

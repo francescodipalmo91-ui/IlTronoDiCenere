@@ -1130,7 +1130,7 @@ caso("Cripta: discesa furtiva riuscita, scelta tra farsi avanti e colpire; il co
 caso("Ettore: livello 2 fisso (30 salute, 8 punti abilità, 400 PE), crescita oltre il livello 2, vulnerabile a contundente e luce", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "cripta", usate: { riposo: "sbloccato", ettore: "scontro" } }));
   await page.evaluate(() => { luogo = "cripta"; avviaScontro("esploratore", { ctx: "ettore", testi: "esploratore", primo: "pg" }); }); await aspettaTurnoPg(page);
-  eq(await page.evaluate(() => [scontro.pvMax, scontro.paMax, scontro.stat.Vigore, scontro.stat.Spirito, NEMICI.esploratore.xp, dadiVuln("Contundente"), dadiVuln("Luce"), dadiVuln("Forza")]), [30, 8, 10, 8, 400, 1, 0, 1], "Vigore 10 (02/11: ladro); contundente, forza e negromanzia (03/11)");
+  eq(await page.evaluate(() => [scontro.pvMax, scontro.paMax, scontro.stat.Vigore, scontro.stat.Spirito, NEMICI.esploratore.xp, dadiVuln("Contundente"), dadiVuln("Luce"), dadiVuln("Forza"), dadiVuln("Arcano")]), [30, 8, 10, 8, 400, 1, 0, 0, 1], "Vigore 10 (02/11: ladro); contundente, arcano e negromanzia (04/11, regola delle armature)");
   vero(await page.evaluate(() => document.getElementById("vitaliNem").textContent.includes(ET.scontro.pa) || !scontro.svelata), "punti abilità nella scheda");
   await page.evaluate(() => { scontro.svelata = true; disegnaNemico(); });
   vero(await page.evaluate(() => document.getElementById("vitaliNem").textContent.includes("8 / 8") && document.getElementById("specNem").textContent.includes(ET.scontro.abilita[1][0])), "scheda con punti abilità e abilità");

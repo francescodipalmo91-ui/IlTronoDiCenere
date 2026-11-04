@@ -195,13 +195,14 @@ La via tiene le sue **3 abilità** (livelli 3, 4, 5, fuori dai posti) e in più 
 
 | Classe | Via | Scuola | Potenziamento (codice: `ctx.scuolaVia`) |
 |---|---|---|---|
-| Arcanista | Sutura (Guendalina) | Arcano | Sigilli al massimo pieno anche sui boss (3, 4 dal livello 4) |
+| Arcanista | Sutura (Guendalina) | Arcano | Sigilli al massimo pieno anche sui boss (3, 4 dal livello 4); **Rune che bruciano**: un incantesimo d'Arcano che ferisce fa +1 danno per ogni Sigillo già presente |
 | Arcanista | Frattura (Aldo) | Forza | Detonazione con d8 al posto di d6 (Colpo Demolitore d10) |
 | Monaco | Brace (Guendalina) | Vita | la Rigenerazione dura 4 turni invece di 3 |
 | Monaco | Cenere (Aldo) | Negromanzia | Avvizzito con un dado più grande (1d4 → 1d6, 1d6 → 1d8) |
 
 - **Posti:** 2, 4, 5, 6, 7 + 1, tutti liberi tra le due scuole (il vecchio «1 posto dell'altra scuola» diventa un posto in più).
 - **In gioco:** nella preparazione al riposo la scuola della via porta l'etichetta «potenziata dalla via …»; nella sala di prova e nella pagina di test anche il testo del potenziamento.
+- **Risultati (serie del 4 novembre, bilanciamento):** potenziamenti timidi; l'Arcano puro resta uno stile più difficile (scelta B), a condizione che abbia un terreno dove rende di più (oggi non ce l'ha).
 - **Da coordinare con i tratti di classe:** il tratto potenzia la classe, la via potenzia la scuola.
 
 Stessa scelta del Guerriero (`sceglieVia("aldo")` / `sceglieVia("guendalina")`), una abilità per livello (3, 4, 5), attiva, fuori dai posti. Costi 5, 7, 9. Il legame con la storia:

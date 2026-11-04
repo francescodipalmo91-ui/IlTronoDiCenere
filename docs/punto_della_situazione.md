@@ -58,11 +58,12 @@ Metodo: punto per punto, prima le cose leggere; zip dei file modificati solo a f
 - **Regola delle armature:** Forza contro i corazzati (Atena, sovrano con l'armatura), Arcano contro gli altri; Ettore da forza ad arcano; sovrano con doppia debolezza.
 - **La coscienza e Aldo:** uccidere un guardiano gli dà presa sul personaggio (si apre, tono complice, verso il finale A); risparmiare tiene Aldo freddo ed evasivo e dà fiducia a Guendalina e ai figli. La via resta libera per tutti.
 - **Tratti di classe:** un grado per livello, aiuti 1-2, potenziamenti 3-5.
+- **Nel codice (4 novembre):** niente scuola principale (creazione, scheda, preparazione al riposo, sala e pagina di test, regolamento IT/EN); potenziamenti della via (Sutura: Sigilli pieni sui boss + Rune che bruciano; Frattura: Detonazione d8; Brace: Rigenerazione 4 turni; Cenere: Avvizzito un dado in più), etichetta «potenziata dalla via» al riposo; Ettore vulnerabile all'Arcano. Serie: giocatore misto (`MISTO=1`), via della scuola (`VIA=scuola`), casi a scelta (`CASI=mastino:2`). Risultati in bilanciamento, «Serie del 4 novembre».
 
 ## Punti aperti, in ordine di priorità
 
 **Subito (in corso il 3 novembre)**
-0. **Nuovo schema via = scuola (4 novembre):** progettare i potenziamenti della via sulla meccanica (Arcano: Sigilli 3 sui boss?), togliere la scuola principale da creazione, scheda e test, rifare la serie. Sostituisce le proposte per l'Arcano principale qui sotto.
+0. **Dopo il nuovo schema (4 novembre):** (a) l'Arcano puro non ha ancora un terreno dove rende di più (condizione della scelta B); (b) potenziamenti della via timidi, da rivedere con i tratti di classe; (c) Enea sotto l'80% per tutti gli incantatori: ritaratura per tutte le classi.
 0. **Arcanista con Arcano principale** troppo debole (Ettore 44% contro 80% con Forza principale): le combo sono tra due scuole ma l'altra ha un solo posto. Proposte da provare con la serie: (1) un Sigillo inciso oltre il massimo rende 1 mana (massimo 1 per turno); (2) un incantesimo d'Arcano di danno al livello 2 (es. Marchio Arcano + 1d6); (3) in riserva, 2 posti all'altra scuola dal livello 3. Cambiare la meccanica sconsigliato per ora.
 0b. **Enea tarato (3 novembre):** salute 32, niente +2 in Furia; l'80% vale con la via giusta (vulnerabilità), senza si sta al 55-65%. Tabella in bilanciamento, «Taratura di Enea».
 0d. **Arcano principale: prossimo passo** (Sigilli 2 sui boss, controlli ridotti a ripieghi; 37-45% contro Enea anche con la vulnerabilità).

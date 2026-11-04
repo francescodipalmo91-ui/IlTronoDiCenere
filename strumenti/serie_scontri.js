@@ -10,7 +10,7 @@ const CASI0 = [
   { nem: 'enea', liv: 3, fermaglio: false, lato: 'casuale' },
   { nem: 'enea', liv: 3, fermaglio: true, lato: 'maglio' },
 ];
-const CASI = process.env.SOLO_ENEA ? [{ nem: 'enea', liv: 3, fermaglio: true, lato: 'casuale' }] : CASI0;
+const CASI = process.env.CASI ? process.env.CASI.split(',').map(x => { const [nem, liv] = x.split(':'); return { nem, liv: Number(liv) || 1 }; }) /* 04/11: CASI=mastino:2,mastino:3 */ : process.env.SOLO_ENEA ? [{ nem: 'enea', liv: 3, fermaglio: true, lato: 'casuale' }] : CASI0;
 const CLASSI = process.env.CLASSI ? process.env.CLASSI.split(',') : ['guerriero', 'sciamano', 'arcanista', 'monaco'];
 (async () => {
   const b = await chromium.launch(); const p = await b.newPage(); const err = [];

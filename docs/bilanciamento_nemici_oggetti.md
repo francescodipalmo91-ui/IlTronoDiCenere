@@ -896,3 +896,25 @@ Prossimo: l'Arcano principale (Sigilli al massimo 2 sui boss, controlli d'Arcano
 
 **Tratti di classe:** un grado per livello, aiuti 1-2 e potenziamenti 3-5 (da progettare per le quattro classi).
 
+### Serie del 4 novembre (via = scuola, scuole libere; 150 scontri per caso, ±7)
+
+Arcanista e Monaco, giocatore medio; «Enea» = fermaglio casuale / nascosto casuale / fermaglio maglio. Ettore (liv. 2) è già vulnerabile all'Arcano.
+
+| Preparazione | Via (dal liv. 3) | Ettore | Enea |
+|---|---|---|---|
+| Arcanista, quasi solo Arcano | nessuna | 71% | 31 / 47 / 43% |
+| Arcanista, quasi solo Arcano | Sutura (Sigilli pieni + Rune che bruciano) | 75% | 35 / 49 / 46% |
+| Arcanista, misto (metà e metà) | nessuna | 82% | 61 / 63 / 48% |
+| Arcanista, misto | Sutura | 81% | 59 / 65 / 55% |
+| Arcanista, quasi solo Forza | nessuna | 89% | 51 / 63 / 67% |
+| Arcanista, quasi solo Forza | Frattura | 85% | 55 / 66 / 66% |
+| Monaco, Vita | nessuna / Brace | 95 / 87% | 70-80 / 73-80% |
+| Monaco, Negromanzia | nessuna / Cenere | 93 / 89% | 53-65 / 57-68% |
+
+Mastino comune (liv. 2 / liv. 3), con la via della scuola: Arcano puro 86 / 100% (4,8 / 3,9 turni, salute residua 63 / 74%), misto 90 / 98%, Forza pura 96 / 98% (3,2 / 3,3 turni, 78 / 80%).
+
+- **Le scuole libere risolvono l'Arcano principale:** il misto rende quanto la Forza.
+- **I potenziamenti della via sono timidi** (0-5 punti, Rune che bruciano +4-8): da rivedere con i tratti di classe.
+- **Arcano puro = stile più difficile (scelta B di Francesco, 4 novembre), a tre condizioni:** che sia detto chiaramente (regolamento, descrizione della via, Guendalina); che abbia un terreno dove rende di più; che non scenda sotto ~60% contro Enea. **La seconda oggi non è soddisfatta:** contro il mastino l'Arcano puro non rende di più, anzi è più lento. Limite: il giocatore automatico usa poco i controlli.
+- **Enea sotto l'80% per tutti gli incantatori anche con la vulnerabilità:** ritaratura di Enea da fare per tutte le classi insieme.
+

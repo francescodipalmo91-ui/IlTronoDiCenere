@@ -1,4 +1,4 @@
-# Punto della situazione — 3 novembre 2026
+# Punto della situazione — 4 novembre 2026
 
 Da leggere all'inizio di una nuova conversazione. Repo: francescodipalmo91-ui/IlTronoDiCenere, ramo **main**. Linee guida: `storia_casa_vespera.md` e `bilanciamento_nemici_oggetti.md` (identiche nel progetto e in `docs/` nel repo). Copia locale di Francesco: `C:\Users\franc\OneDrive\Desktop\IlTronoDiCenere`. Test: `npm test` (il test nel browser dello Sciamano va lanciato senza limite di tempo o a pezzi con `SOLO=…`).
 
@@ -53,9 +53,16 @@ Metodo: punto per punto, prima le cose leggere; zip dei file modificati solo a f
 - **Verifiche:** ponytail-audit e impeccable da GitHub (resoconto in PONYTAIL_AUDIT.md, seconda passata); tolti il vecchio `js/incantesimi.js` e il suo ramo in gioco.html; titoli di creazione in ordine; Stordito non salta più Rigenerazione, Pozzo, Linfa e Spirito; test aggiornati, tutti verdi.
 - **Restano dall'audit:** dati di Enea in un posto solo (quando entra nel gioco), bot che conta Runa sull'Arma come danno, testi narrativi del vecchio sistema (~60 righe).
 
+## 4 novembre (decisioni, documenti aggiornati; codice da fare)
+- **La via di prestigio è la scuola**, al livello 3 (storia 10c): fino al 3 incantesimi liberi tra le due scuole, niente scuola principale in creazione; stesso schema per tutte le classi. Ettore (livello 2) su una curva sola.
+- **Regola delle armature:** Forza contro i corazzati (Atena, sovrano con l'armatura), Arcano contro gli altri; Ettore da forza ad arcano; sovrano con doppia debolezza.
+- **La coscienza e Aldo:** uccidere un guardiano gli dà presa sul personaggio (si apre, tono complice, verso il finale A); risparmiare tiene Aldo freddo ed evasivo e dà fiducia a Guendalina e ai figli. La via resta libera per tutti.
+- **Tratti di classe:** un grado per livello, aiuti 1-2, potenziamenti 3-5.
+
 ## Punti aperti, in ordine di priorità
 
 **Subito (in corso il 3 novembre)**
+0. **Nuovo schema via = scuola (4 novembre):** progettare i potenziamenti della via sulla meccanica (Arcano: Sigilli 3 sui boss?), togliere la scuola principale da creazione, scheda e test, rifare la serie. Sostituisce le proposte per l'Arcano principale qui sotto.
 0. **Arcanista con Arcano principale** troppo debole (Ettore 44% contro 80% con Forza principale): le combo sono tra due scuole ma l'altra ha un solo posto. Proposte da provare con la serie: (1) un Sigillo inciso oltre il massimo rende 1 mana (massimo 1 per turno); (2) un incantesimo d'Arcano di danno al livello 2 (es. Marchio Arcano + 1d6); (3) in riserva, 2 posti all'altra scuola dal livello 3. Cambiare la meccanica sconsigliato per ora.
 0b. **Enea tarato (3 novembre):** salute 32, niente +2 in Furia; l'80% vale con la via giusta (vulnerabilità), senza si sta al 55-65%. Tabella in bilanciamento, «Taratura di Enea».
 0d. **Arcano principale: prossimo passo** (Sigilli 2 sui boss, controlli ridotti a ripieghi; 37-45% contro Enea anche con la vulnerabilità).

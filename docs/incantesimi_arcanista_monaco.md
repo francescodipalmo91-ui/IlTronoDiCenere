@@ -188,6 +188,8 @@ Perché funziona nel gioco:
 
 ## 4. Vie di prestigio (dal livello 3)
 
+> **Dal 4 novembre la via è la scuola** (storia, sezione 10c). Niente più scuola principale in creazione: fino al livello 3 gli incantesimi si scelgono liberamente tra le due scuole, al livello 3 la via decide quale scuola viene potenziata (Aldo → Forza / Negromanzia, Guendalina → Arcano / Vita). I potenziamenti della via devono agire sulla **meccanica** della scuola (per l'Arcano, per esempio, Sigilli 3 sui boss), non solo sui numeri. Da progettare: i potenziamenti, cosa succede al posto «dell'altra scuola», e i tratti di classe (aiuti ai livelli 1-2, potenziamenti ai livelli 3-5).
+
 Stessa scelta del Guerriero (`sceglieVia("aldo")` / `sceglieVia("guendalina")`), una abilità per livello (3, 4, 5), attiva, fuori dai posti. Costi 5, 7, 9. Il legame con la storia:
 - **Aldo** è il servitore del re, duro e senza pietà: le sue vie spingono la scuola "violenta" (Forza, Ombra).
 - **Guendalina** è fedele ad Adele, che era un'incantatrice e nei secoli ha imparato la concentrazione: le sue vie spingono la scuola "paziente" (Arcano, Luce).
@@ -286,13 +288,14 @@ Effetto, come deciso: **+1 dado di danno** oppure **condizione +1 turno**.
 |---|---|---|---|
 | Mastini (tutti) | Luce | Condizione +1 turno (Accecato più lungo) | Niente dado in più: sono i nemici più frequenti, il Monaco di Luce sarebbe sempre avvantaggiato |
 | Avventurieri delle cacce comuni | Ombra | +1 dado | Menti fresche e fragili in una casa che opprime |
-| Ettore (bronzo, cripta) | **Contundente + Forza + Ombra** (03/11) | +1 dado | Corpo leggero, la spinta lo scaraventa; gli spiriti delle sue prede (negromanzia) |
+| Ettore (bronzo, cripta) | **Contundente + Arcano + Negromanzia** (04/11; prima Forza) | +1 dado | Senza armatura: le rune lo prendono in pieno; gli spiriti delle sue prede (negromanzia) |
 | Enea (argento, cimitero) | **Perforante + Arcano + Luce + Sottobosco** (03/11) | +1 dado (Sottobosco: stati +1 turno) | Armatura sbrecciata; le rune spezzano una volontà incrinata; il dio che l'ha abbandonato |
 | Dafne (oro, foresta) | **Taglio + Arcano + Vita** (03/11) | +1 dado | Serve Aldo più da vicino degli altri: la vita la brucia; resiste al veleno |
 | Atena (platino, sottotetto) | **Contundente + Forza + Ombra + Sottobosco** (03/11) | +1 dado | Il ghiaccio si spezza; la corruzione che la divora |
-| Sovrano | **Resiste all'Ombra** (metà danni); vulnerabile a tutto oltre la soglia del Retaggio | +1 dado a ogni danno | Vedi sezione 9 |
+| Sovrano | **Forza** finché l'armatura di cenere regge, **Arcano** quando cade (04/11); **resiste alla Negromanzia** (metà danni); vulnerabile a tutto oltre la soglia del Retaggio | +1 dado | Vedi sezione 9; da conciliare con la soglia del Retaggio |
 
 - **Mappa bilanciata (DECISA il 3 novembre):** ogni guardiano ha una vulnerabilità per il Guerriero (un ramo d'arma), una per l'Arcanista (una scuola) e una per il Monaco (una scuola); il Sottobosco su due guardiani. Conteggi: Forza 2, Arcano 2, Vita 2, Negromanzia 2; ogni ramo d'arma almeno una volta. Sostituisce la tabella del 25 ottobre e la frase «forza, come tutti i guardiani dei fermagli».
+- **Regola delle armature (DECISA il 4 novembre):** la Forza spacca le armature, l'Arcano colpisce chi non le ha. Corazzati (armatura pesante): **Atena** (armatura naturale completa) e il **sovrano** (armatura di cenere); tutti gli altri guardiani sono vulnerabili all'Arcano. Conteggi nuovi: **Arcano 3** (Ettore, Enea, Dafne) + sovrano scoperto, **Forza 1** (Atena) + sovrano corazzato. Squilibrio voluto: la vulnerabilità compensa la meccanica più debole dell'Arcano. **Da verificare con la serie**: se la via di Guendalina sistema anche la meccanica dell'Arcano, l'Arcano rischia di diventare la scelta migliore fino al platino.
 - Gli **Appunti di Guendalina** tornano utili: rivelano la vulnerabilità del guardiano successivo.
 - Le vulnerabilità dei guardiani sono una proposta, si possono scambiare.
 

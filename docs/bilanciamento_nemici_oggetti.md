@@ -345,7 +345,7 @@ Il lupo normale è stato abbassato: con 11 di salute e 1d6 + 1 dava il 15% di sc
 - **Il conteggio:** conta ogni pugnale, quindi il dodicesimo colpo arriva intorno al sesto turno, dentro la durata di uno scontro. Abbassato a **vantaggio e +1d6** (prima +1d8). Resta chi gli fa perdere il conto (sotto metà salute, frastornato, stordito).
 - **Lama nel fianco** (2 PA, al posto del Fendente sporco): al secondo pugnale, se il primo è andato a segno, paga 2 punti (tenendo da parte i 3 delle braci); se anche il secondo va a segno, TS Vigore CD 11 contro Sanguinamento.
 - **«L'ho già vista»** (gratis): dalla seconda volta che il personaggio usa la stessa tecnica o lo stesso incantesimo d'attacco, Ettore ha +2 alla CA contro quell'attacco. Le difese non contano. Spinge a variare invece di ripetere la mossa migliore.
-- **Invariati:** Colpo basso (ora con un pugnale), Le braci, La gamba, vulnerabilità a luce e contundente (dal 3 novembre: contundente, forza, ombra), perde il primo turno se sorpreso (a recuperare i pugnali).
+- **Invariati:** Colpo basso (ora con un pugnale), Le braci, La gamba, vulnerabilità a luce e contundente (dal 3 novembre: contundente, forza, ombra; **dal 4 novembre: contundente, arcano, negromanzia**, regola delle armature), perde il primo turno se sorpreso (a recuperare i pugnali).
 - **Bottino se ucciso:** «Pugnale del conteggio», 1d4 + livello tagliente, una mano; ogni terzo colpo a segno con l'arma nello stesso scontro +1d4. Diverso dal Pugnale della Biscia di Isotta, che fa solo danno.
 - **Simulazione del 2 novembre** (modello di duello tarato sulle percentuali del 28 ottobre senza consiglio, 20.000 scontri; vale il confronto, non il numero assoluto):
 
@@ -792,7 +792,7 @@ Dati e testi in `js/cacce.js` (`CacceComuni`), uniti alle PREDE di `gioco.html`.
 
 ## Tratti di classe (DECISO il 3 novembre)
 
-Una passiva per classe in tre gradi, ai livelli 1, 2 e 4 (i livelli 3 e 5 sono della via di prestigio). Più forte per le classi fragili, leggera per le altre.
+Una passiva per classe in tre gradi, ai livelli 1, 2 e 4 (i livelli 3 e 5 sono della via di prestigio). **Dal 4 novembre da rivedere:** un grado a ogni livello, aiuti ai livelli 1-2 e potenziamenti ai livelli 3-5 (dopo la via); il recupero di risorsa su pochi scalini, per non tradire il «sempre alle strette». Più forte per le classi fragili, leggera per le altre.
 
 | Classe | Tratto | Grado I (liv. 1) | Grado II (liv. 2) | Grado III (liv. 4) |
 |---|---|---|---|---|
@@ -876,4 +876,23 @@ L'Arcano principale resta 20 punti sotto la Forza anche ora che Enea è vulnerab
 | Monaco, Negromanzia | 85% | 61% | 67% | 63% | no |
 
 Prossimo: l'Arcano principale (Sigilli al massimo 2 sui boss, controlli d'Arcano ridotti a ripieghi).
+
+## Decisioni del 4 novembre
+
+**La via di prestigio è la scuola** (storia 10c, incantesimi sezione 4). Fino al livello 3 incantesimi liberi tra le due scuole, niente scuola principale in creazione; al livello 3 la via (Aldo o Guendalina) potenzia una scuola. Stesso schema per tutte le classi (il Guerriero resta legato all'arma impugnata). Ettore, al livello 2, si tara su una curva sola. La via resta al livello 3: con la via al 2 Ettore tornerebbe a dipendere dalla via.
+
+**Vulnerabilità dei guardiani, regola delle armature:** la Forza spacca le armature pesanti, l'Arcano colpisce chi non le ha.
+
+| Guardiano | Vulnerabile a | Prima (3 novembre) |
+|---|---|---|
+| Ettore | contundente, **arcano**, negromanzia | contundente, forza, negromanzia |
+| Enea | perforante, arcano, vita, sottobosco | invariato |
+| Dafne | taglio, arcano, vita | invariato |
+| Atena (armatura naturale completa) | contundente, forza, negromanzia, sottobosco | invariato |
+| Sovrano (armatura di cenere) | **forza** con l'armatura integra o incrinata, **arcano** quando cade; resiste alla negromanzia | vulnerabile a tutto oltre la soglia del Retaggio |
+
+- Arcano su 3 guardiani, Forza su 1: squilibrio voluto per compensare la meccanica più debole dell'Arcano; da misurare con la serie dopo i potenziamenti della via.
+- **Da conciliare:** la doppia debolezza del sovrano e la soglia del Retaggio (oggi le reliquie anticipano una vulnerabilità a tutto). Proposta: le reliquie anticipano la caduta dell'armatura, cioè il passaggio da Forza ad Arcano.
+
+**Tratti di classe:** un grado per livello, aiuti 1-2 e potenziamenti 3-5 (da progettare per le quattro classi).
 

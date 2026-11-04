@@ -33,7 +33,7 @@ Gli altri stati sono quelli che il gioco ha già: Indebolito, Sbilanciato, Espos
 
 ---
 
-## 2. Arcanista — Arcano e Forza
+## 2. Arcanista — Arcano e Forza (da sostituire: vedi 2bis)
 
 ### Meccanica: i Sigilli
 
@@ -90,6 +90,60 @@ Note:
 - **Implosione** con 3 Sigilli: 6d6 (media 21) e ti restituisce 3 mana, quindi costa 3 netti. È il premio per aver preparato.
 
 ---
+
+## 2bis. Arcanista — Sangue e Illusione (BOZZA del 4 novembre, sostituisce Arcano e Forza)
+
+**Perché:** Arcano e Forza erano due metà della stessa combo (l'Arcano incide, la Forza detona) e chi sceglieva una sola scuola restava zoppo. **Regola per le nuove scuole: ognuna vince da sola, la combo tra le due è solo un bonus.** La Detonazione resta, ma dentro ogni scuola. Decisi da Francesco: coppia Sangue/Illusione, **solo mana per entrambe** (niente costo in salute, troppo debilitante), vie **Vena** (Aldo, Sangue) e **Velo** (Guendalina, Illusione). Numeri da provare nella serie prima del codice definitivo. La sezione 2 (Arcano e Forza) resta come storico finché il codice non cambia.
+
+### Sangue: le Ferite
+- **Ferite** sul nemico: al massimo 3, 2 sui boss (3 con la via Vena). Le incidono gli incantesimi di Sangue; l'**Ebollizione** le fa esplodere e cura.
+- **Sangue che chiama:** sotto metà salute gli incantesimi di Sangue fanno +1 dado di danno.
+- Identità (senza costo in salute): il Sangue si cura solo con le Detonazioni e rende di più da ferito. Distinto dalla Negromanzia del Monaco, che ruba vita col tocco e nel tempo.
+
+| Liv | Mana | Incantesimo | Effetto |
+|---|---|---|---|
+| 1 | 1 | Lama di Sangue | Attacco magico 1d8; se colpisce, 1 Ferita |
+| 1 | 2 | Salasso | Senza tiro, 1d4; TS Vigore → Sanguinante 2; 1 Ferita in ogni caso |
+| 2 | 2 | Patto Cremisi | Per 3 turni i colpi d'arma fanno +1d4 e incidono 1 Ferita |
+| 2 | 3 | **Ebollizione** (Detonazione) | Attacco magico 2d6; consuma le Ferite: +1d6 e ti curi 2 per Ferita |
+| 3 | 4 | Vincolo di Sangue | TS Vigore → per 3 turni il nemico subisce metà del danno che subisci tu |
+| 4 | 6 | Emorragia | Per 3 turni, a inizio turno del nemico, 1d4 per Ferita (non le consuma) |
+| 5 | 8 | Cuore Spezzato (Detonazione) | Consuma tutte le Ferite: 2d8 per Ferita senza tiro; ti curi della metà del danno fatto |
+
+### Illusione: le Copie
+- **Copie** su di te: al massimo 3 (4 con la via Velo). Quando un attacco ti colpirebbe, si tira un dado da (copie + 1): con 1 colpisce te, altrimenti distrugge una copia e non subisci danno.
+- **Smascherare:** a inizio turno un boss fa un TS di Mente; se riesce distrugge 1 copia.
+- **Frantumare** fa esplodere le copie e rende 1 mana per copia (come il recupero della vecchia Detonazione).
+
+| Liv | Mana | Incantesimo | Effetto |
+|---|---|---|---|
+| 1 | 1 | Riflessi | Crei 2 copie |
+| 1 | 1 | Dardo Fantasma | Attacco magico 1d8 psichico; se colpisce, +1 copia |
+| 2 | 2 | Passo Sfasato | Difesa, consuma l'azione: il prossimo colpo a segno ti manca, +1 copia |
+| 2 | 3 | **Frantumare** (Detonazione) | Consuma le copie: 1d8 psichico per copia senza tiro, 1 mana per copia; con 3 copie Frastornato 1 (boss: Sbilanciato 1) |
+| 3 | 3 | Dado Truccato | Per 3 turni il nemico tira due d20 per colpire e tiene il peggiore (boss 2 turni) |
+| 4 | 5 | Terrore Illusorio | 2d8 psichico; TS Mente → Impaurito 2 (metà danno se resiste) |
+| 5 | 8 | Teatro di Specchi | Copie al massimo; per 3 turni ogni copia distrutta esplode con 1d6 su chi l'ha colpita |
+
+**Combo tra le scuole (bonus):** ogni copia distrutta incide 1 Ferita su chi l'ha colpita.
+
+### Vie
+
+| | **Vena** (Aldo, Sangue) | **Velo** (Guendalina, Illusione) |
+|---|---|---|
+| Potenziamento | Ferite piene anche sui boss; Ebollizione cura 3 per Ferita | 4 copie; i boss smascherano con −2 |
+| Liv 3 | Fiume Rosso (3 mana): 2 Ferite senza tiro | Il Doppio: con 2+ copie, per 3 turni gli attacchi magici fanno +1d6 |
+| Liv 4 | Sete: per tutto lo scontro ogni Detonazione cura anche 1d4 | Sala degli Specchi: il nemico ha −1 per colpirti per ogni copia |
+| Liv 5 | Ultima Goccia (9 mana, una per riposo): consuma tutte le Ferite, 3d10 per Ferita senza tiro | Nessuno è qui: per 2 turni non puoi essere bersagliato, poi copie al massimo |
+
+### Vulnerabilità (proposta, al posto di Arcano e Forza)
+- **Sangue:** Enea, Dafne.
+- **Illusione:** Ettore (pazzia e conteggio), Atena, sovrano. Il sovrano **resiste al Sangue** (niente sangue vivo, mente spezzata dal lutto).
+
+### Rischi da misurare
+1. Copie troppo forti (3 copie = 75% dei colpi evitati): correttivo pronto, massimo 2 copie.
+2. Senza costo in salute il Sangue perde il «paga»: verificare che resti diverso dalla Negromanzia.
+3. Sanguinante del Salasso vicino al ramo taglio del Guerriero: va bene, è uno stato condiviso.
 
 ## 3. Monaco — Vita e Negromanzia (ex Luce e Ombra)
 

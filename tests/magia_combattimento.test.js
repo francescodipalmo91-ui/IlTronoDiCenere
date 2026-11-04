@@ -485,6 +485,10 @@
     /* Sutura: Sigilli pieni anche sui boss */
     eq(C.sigilliMax({ boss: true, liv: 3 }), 2); eq(C.sigilliMax({ boss: true, liv: 3, scuolaVia: "arcano" }), 3);
     eq(C.sigilliMax({ boss: true, liv: 4, scuolaVia: "arcano" }), 4); eq(C.sigilliMax({ boss: true, liv: 3, scuolaVia: "forza" }), 2);
+    /* Sutura: Rune che bruciano, +1 per Sigillo già presente (Dardo Arcano: d20, 1d8) */
+    const s0 = scontro({ sigilli: 2 }), r0 = lancia("dardo_arcano", s0, ctx({ liv: 3, scuolaVia: "arcano", dadi: [15, 5] }));
+    eq(ev(r0, "runeBruciano")[0].n, 2); eq(s0.pv, 80 - 5 - 2);
+    const s0b = scontro({ sigilli: 2 }); lancia("dardo_arcano", s0b, ctx({ liv: 3, dadi: [15, 5] })); eq(s0b.pv, 75, "senza la via niente bonus");
     /* Frattura: Detonazione con d8 */
     const s1 = scontro({ sigilli: 2 }), r1 = lancia("pugno_forza", s1, ctx({ liv: 3, scuolaVia: "forza", dadi: [15, 4, 7, 8] }));
     eq(ev(r1, "detona")[0].dado, 8, "Detonazione d8"); eq(ev(r1, "detona")[0].bonus, 15);

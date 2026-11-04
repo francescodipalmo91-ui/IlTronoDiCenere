@@ -776,6 +776,14 @@
       if (!pg) return;
       if (arcanista()) {
         const princ = scuolaPrinc(), altra = SCUOLE().find(x => x !== princ), sb = (sc) => mescola(MG.INCANTESIMI.filter(i => i.scuola === sc && i.liv <= pg.liv).sort((a, b) => casuale ? 0 : b.liv - a.liv));
+        if (casuale === "combo" && window.PREP_MISTO) { /* 04/11: giocatore «misto» — scuole libere: alterna gli incantesimi che fanno danno delle due scuole, poi una difesa */
+          const danno = (i) => /\dd\d/.test(i.effetto.it) && !/[Cc]ura|ti curi/.test(i.effetto.it), tot = postiPrincInc(pg.liv) + 1;
+          const per = (sc) => MG.INCANTESIMI.filter(i => i.scuola === sc && i.liv <= pg.liv && danno(i)).sort((a, b) => b.liv - a.liv || Math.random() - 0.5);
+          const a1 = per(princ), a2 = per(altra), dif = MG.INCANTESIMI.filter(i => SCUOLE().includes(i.scuola) && i.liv <= pg.liv && M.DIFESE.includes(i.id)).sort((a, b) => a.costo - b.costo)[0];
+          const lista = []; for (let k = 0; lista.length < tot - (dif && tot > 3 ? 1 : 0) && (a1[k] || a2[k]); k++) { if (a1[k]) lista.push(a1[k]); if (a2[k]) lista.push(a2[k]); }
+          lista.slice(0, tot - (dif && tot > 3 ? 1 : 0)).forEach(i => preparatiInc.add(i.id)); if (dif && tot > 3) preparatiInc.add(dif.id);
+          return;
+        }
         if (casuale === "combo") { /* 03/11: come un giocatore medio — nella scuola principale gli incantesimi che fanno danno e una difesa, nell'altra il più economico che fa danno (serve alle combo) */
           const danno = (i) => /\dd\d/.test(i.effetto.it) && !/[Cc]ura|ti curi/.test(i.effetto.it), lista = MG.INCANTESIMI.filter(i => i.scuola === princ && i.liv <= pg.liv);
           const dif = lista.filter(i => M.DIFESE.includes(i.id)).sort((a, b) => a.costo - b.costo)[0];

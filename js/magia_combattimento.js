@@ -19,7 +19,7 @@
    - un critico con un incantesimo di Forza incide 1 Sigillo (dopo l'eventuale Detonazione)
    - le difese che consumano l'azione non si usano due turni di fila
    - 04/11, potenziamenti della via (ctx.scuolaVia = scuola potenziata, dal livello 3; vedi scuolaDellaVia):
-     Sutura (Arcano): Sigilli pieni anche sui boss (Combattimento.sigilliMax); Frattura (Forza): Detonazione con d8 al posto di d6
+     Sutura (Arcano): Sigilli pieni anche sui boss (Combattimento.sigilliMax) e Rune che bruciano (+1 danno per Sigillo già presente); Frattura (Forza): Detonazione con d8 al posto di d6
      (d10 per Colpo Demolitore); Brace (Vita): la Rigenerazione dura 1 turno in più; Cenere (Negromanzia): Avvizzito con un dado più grande
    ===================================================================== */
 (function (root) {
@@ -78,6 +78,7 @@
     const piu = crep ? 1 : 0;                                                          /* +1 dado di danno o cura */
     const piuD = piu + (velo ? 1 : 0) + (ombra && attivo(s, "furiaCinerea") ? 1 : 0);          /* sul danno: anche Velo e Furia Cinerea */
     const pv0 = s.pv;
+    const runeVive = arc && ctx.scuolaVia === "arcano" ? C.sigilli(s) : 0; /* 04/11: Sutura, «Rune che bruciano»: i Sigilli già presenti */
     const occhio = attivo(s, "occhio");
     let crits = 0, rimborso = false;
 
@@ -361,6 +362,8 @@
         E.push({ k: "respiroAlba", zenit: nuova > 0, d: t, n, fatto });
       }
     }
+    /* 04/11: Sutura, «Rune che bruciano»: un incantesimo d'Arcano che fa danno fa +1 per ogni Sigillo che il nemico aveva già */
+    if (runeVive > 0 && s.pv < pv0 && s.pv > 0) { s.pv -= runeVive; E.push({ k: "runeBruciano", n: runeVive }); }
     /* Sigilli che arrivano dopo l'incantesimo: critico di Forza (1), Occhio del Tomo (2 per critico), Tomo Proibito (1 sull'Arcano) */
     const dopo = crits * ((forza ? 1 : 0) + (occhio ? 2 : 0));
     if (dopo > 0) ink(dopo);
@@ -545,6 +548,7 @@
       case "giaUsataScontro": return T("Già usato in questo scontro.", "Already used in this fight.");
       case "giaUsataRiposo": return T("Già usato dall'ultimo riposo.", "Already used since the last rest.");
       case "difesaDiFila": return T("Non puoi usare due turni di fila un incantesimo che consuma l'azione.", "You cannot use a spell that takes your action two turns in a row.");
+      case "runeBruciano": return T(`Le rune bruciano: +${e.n} ${e.n === 1 ? "danno" : "danni"} (Sutura).`, `The runes burn: +${e.n} damage (Suture).`);
       case "senzaSigilli": return T("Servono almeno 1 Sigillo sul nemico.", "You need at least 1 Seal on the enemy.");
       default: return null;
     }
@@ -553,7 +557,7 @@
   /* 04/11: la via di prestigio è la scuola. classe = "Sapiente" | "Accolito", via = "aldo" | "guendalina" → scuola potenziata (o null).
      Si legge dalle abilità della via in MAGIA.VIE: Aldo → Forza / Negromanzia, Guendalina → Arcano / Vita. */
   const POTENZIAMENTI_VIA = {
-    arcano: { it: "Sigilli pieni anche sui boss", en: "Full Seals even on bosses" },
+    arcano: { it: "Sigilli pieni anche sui boss; Rune che bruciano: +1 danno per Sigillo già presente", en: "Full Seals even on bosses; Burning Runes: +1 damage per Seal already there" },
     forza: { it: "Detonazione con d8 al posto di d6", en: "Detonation with d8 instead of d6" },
     luce: { it: "la Rigenerazione dura 1 turno in più", en: "Regeneration lasts 1 more turn" },
     ombra: { it: "Avvizzito con un dado più grande (1d4 → 1d6)", en: "Withered with a bigger die (1d4 → 1d6)" }

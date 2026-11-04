@@ -116,7 +116,9 @@
     #abilita label:hover .tip, #abilita label:has(input:focus-visible) .tip,
     #dotazione label:hover .tip, #dotazione label:has(input:focus-visible) .tip,
     #lista-incantesimi label:hover .tip, #lista-incantesimi label:has(input:focus-visible) .tip,
-    #lista-incantesimi2 label:hover .tip, #lista-incantesimi2 label:has(input:focus-visible) .tip,
+    #lista-incantesimi2 label:hover .tip, #lista-incantesimi2 label:has(input:focus-visible) .tip { display: block; }
+    /* ATTENZIONE: la lista qui sopra deve chiudersi con «{ display: block; }». Togliendo l'ultima voce (scelta-scuola il 3/11, un'altra il 26/10)
+       la chiusura è sparita due volte e tutti i banner a scomparsa si sono spenti. Lo controlla il test di fumo (passaggio del mouse su una razza). */
     #lista-incantesimi label.chiusa, #lista-incantesimi2 label.chiusa { opacity: 0.55; cursor: not-allowed; }
     .tip .effetto { display: block; margin-top: 0.3rem; font-weight: 600; }
     .punti { color: var(--muted); margin: 0 0 0.75rem; }

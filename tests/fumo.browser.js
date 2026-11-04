@@ -64,6 +64,16 @@ const PAGINE = [
         if (dopo <= prima) r.errori.push(`il comando «${p.comando}» non ha prodotto niente nel diario`);
       }
 
+      /* creazione: passando il mouse su una voce deve comparire il banner a scomparsa (la regola CSS si è rotta due volte) */
+      if (p.url === "creazione.html" && vista === "pc") {
+        const voce = page.locator("#razze label").first();
+        if (await voce.count()) {
+          await voce.hover(); await page.waitForTimeout(150);
+          const visibile = await voce.evaluate(l => { const t = l.querySelector(".tip"); return !!t && getComputedStyle(t).display !== "none"; });
+          if (!visibile) r.errori.push("creazione: il banner a scomparsa non compare al passaggio del mouse (regola CSS dei .tip rotta?)");
+        } else r.errori.push("creazione: nessuna voce in #razze per provare il banner");
+      }
+
       /* pagina più larga dello schermo = scorrimento orizzontale sul telefono */
       const larg = await page.evaluate(() => ({ doc: document.documentElement.scrollWidth, vista: window.innerWidth }));
       if (larg.doc > larg.vista + 1) r.sborda = `${larg.doc}px su ${larg.vista}px`;

@@ -735,7 +735,7 @@ caso("Sala di prova: Arcanista — le Copie prendono il colpo al posto tuo e inc
   await page.selectOption("#pClasse", "arcanista"); await page.selectOption("#pLiv", "2"); await page.check("#nMorso"); await page.evaluate(() => { Math.random = () => 0.99; });
   await page.fill("#nPv", "200"); await page.dispatchEvent("#nPv", "change"); await page.click("#svNuovo");
   const pv0 = await page.evaluate(() => SalaProva.stato().pg.pv);
-  await page.evaluate(() => SalaProva.accoda(1, 20, 3, 3, 2)); await page.click('[data-inc="riflessi"]'); /* ricarica soffio, attacco 20 (critico: due d4), dado delle Copie 2: prende una Copia */
+  await page.evaluate(() => SalaProva.accoda(20, 3, 3, 2)); await page.click('[data-inc="riflessi"]'); /* attacco 20 (critico: due d4), dado delle Copie 2: prende una Copia */
   const st = await page.evaluate(() => SalaProva.stato()); eq(st.s.copie, 1, "una Copia distrutta"); eq(st.s.sigilli, 1, "la Copia incide una Ferita"); eq(st.pg.pv, pv0, "nessun danno");
   vero(/Colpisce una Copia/.test(await page.textContent("#svLog")), "manca la Copia nel diario"); eq(errori, [], "errori"); await chiudi();
 });

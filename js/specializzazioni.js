@@ -6,7 +6,7 @@
    Ogni potere: { nome, tipo: "volonta" | "scontro" | "giornaliero", liv, testo }
    Ogni specializzazione: { nome, volonta: [3 fissi], scontro: [3, se ne scelgono 2], giornalieri: [2, se ne sceglie 1],
                             livelli: { 3: giornaliero, 4: per scontro, 5: giornaliero finale } }
-   Blocco 2 (08/11/2026): Guerriero, Sciamano, Arcanista. Le altre classi entrano con i loro poteri, una alla volta.
+   Blocco 2 (08/11/2026): tutte e quattro le classi, otto specializzazioni.
    ===================================================================== */
 (function (root) {
   const POTERI = {
@@ -90,7 +90,35 @@
     dado_truccato: { nome: "Dado truccato", tipo: "giornaliero", liv: 1, testo: "Per 3 turni il nemico tira due d20 per colpire e tiene il peggiore (2 turni sui boss)." },
     teatro_di_specchi: { nome: "Teatro di specchi", tipo: "giornaliero", liv: 3, testo: "Copie al massimo; per 3 turni ogni Copia distrutta esplode con 1d6 su chi l'ha colpita." },
     specchio_rotto: { nome: "Specchio rotto", tipo: "scontro", liv: 4, testo: "Nasce una Copia; la prossima Copia distrutta rimanda al nemico il danno pieno del colpo (metà sui boss)." },
-    grande_inganno: { nome: "Il Grande Inganno", tipo: "giornaliero", liv: 5, testo: "Consumi tutte le Copie (almeno 1): 2d10 + Mente per Copia, senza tiro per colpire; per 2 turni il nemico tira due d20 per colpire e tiene il peggiore." }
+    grande_inganno: { nome: "Il Grande Inganno", tipo: "giornaliero", liv: 5, testo: "Consumi tutte le Copie (almeno 1): 2d10 + Mente per Copia, senza tiro per colpire; per 2 turni il nemico tira due d20 per colpire e tiene il peggiore." },
+    /* ---- Monaco: in comune ---- */
+    tocco_lenitivo: { nome: "Tocco lenitivo", tipo: "scontro", liv: 1, testo: "Costa l'azione: ti curi di 1/4 della salute massima e togli uno stato." },
+
+    /* ---- Monaco Purificatore (il fuoco sacro brucia la maledizione: ignora le resistenze al fuoco) ---- */
+    colpo_consacrato: { nome: "Colpo consacrato", tipo: "volonta", liv: 1, testo: "Dado dell'arma + Spirito; applica Scottato al posto dello stato dell'arma; +1d4 contro i nemici maledetti." },
+    marchio_del_rogo: { nome: "Marchio del rogo", tipo: "volonta", liv: 1, testo: "Solo 1d6, applica Indebolito; se il bersaglio è Scottato, la bruciatura dura 1 turno in più." },
+    aura_purificante: { nome: "Aura purificante", tipo: "volonta", liv: 1, testo: "+2 CA fino al tuo turno; il primo stato che subiresti viene bruciato via." },
+    rogo: { nome: "Rogo", tipo: "scontro", liv: 1, testo: "Attacco con un dado in più, aggrava la bruciatura." },
+    arma_benedetta: { nome: "Arma benedetta", tipo: "scontro", liv: 1, testo: "Per 3 turni la tua arma fa +1d4 e ogni colpo a segno applica Scottato, oltre allo stato dell'arma." },
+    fiamma_calda: { nome: "Fiamma calda", tipo: "scontro", liv: 1, testo: "Costa l'azione: ti curi 1d8 + Spirito; fino al tuo turno chi ti colpisce diventa Scottato." },
+    pira: { nome: "Pira", tipo: "giornaliero", liv: 1, testo: "3d8 + Spirito, aggrava la bruciatura; se era già Ustionato, Esposto per 3 turni." },
+    fuoco_che_cura: { nome: "Fuoco che cura", tipo: "giornaliero", liv: 1, testo: "Ti curi 3d8 + Spirito; la cura in eccesso colpisce il nemico come danno di fuoco sacro (l'eco di Adele)." },
+    consacrazione: { nome: "Consacrazione", tipo: "giornaliero", liv: 3, testo: "Per 3 turni non subisci stati; ogni stato che il nemico ti applicherebbe gli si ritorce contro come Scottato (se è già Scottato, aggrava)." },
+    martello_del_giudizio: { nome: "Martello del giudizio", tipo: "scontro", liv: 4, testo: "Attacco con l'arma con un dado in più; aggrava insieme la bruciatura e lo stato dell'arma." },
+    rogo_purificatore: { nome: "Rogo purificatore", tipo: "giornaliero", liv: 5, testo: "4d8 + Spirito senza tiro per colpire, aggrava la bruciatura e bruci via tutti i tuoi stati; se il bersaglio era già Ustionato, la bruciatura dura fino a fine scontro." },
+
+    /* ---- Monaco Ossomante (placche d'ossa: massimo 3, ognuna assorbe 3 + 1 per livello oltre il primo; Gabbia d'ossa su 19-20) ---- */
+    lancia_d_ossa: { nome: "Lancia d'ossa", tipo: "volonta", liv: 1, testo: "Dado del focus + Spirito; critico con 19-20." },
+    spine_d_ossa: { nome: "Spine d'ossa", tipo: "volonta", liv: 1, testo: "Solo 1d6, applica Indebolito; nasce una placca." },
+    armatura_d_ossa: { nome: "Armatura d'ossa", tipo: "volonta", liv: 1, testo: "Strappi le ossa al nemico: 1d4 senza tiro per colpire, +2 CA fino al tuo turno, nasce una placca." },
+    spirito_d_ossa: { nome: "Spirito d'ossa", tipo: "scontro", liv: 1, testo: "Spendi tutte le placche (almeno 1): 1d8 + Spirito per placca, senza tiro per colpire." },
+    lama_d_osso: { nome: "Lama d'osso", tipo: "scontro", liv: 1, testo: "Spendi 1 placca: attacco con l'arma con due dadi in più; se colpisce, la placca torna." },
+    barricata_di_costole: { nome: "Barricata di costole", tipo: "scontro", liv: 1, testo: "Costa l'azione: placche al massimo; il prossimo attacco del nemico ha −2 per colpire." },
+    prigione_d_ossa: { nome: "Prigione d'ossa", tipo: "giornaliero", liv: 1, testo: "TS Vigore → Stordito (sui boss Indebolito); in ogni caso Esposto per 3 turni." },
+    armatura_del_sepolcro: { nome: "Armatura del sepolcro", tipo: "giornaliero", liv: 1, testo: "Per 3 turni, all'inizio di ogni tuo turno, placche al massimo." },
+    armatura_spezzata: { nome: "Armatura spezzata", tipo: "giornaliero", liv: 3, testo: "Per lo scontro, ogni placca che si spezza fa 1d6 a chi l'ha colpita." },
+    decrepitezza: { nome: "Decrepitezza", tipo: "scontro", liv: 4, testo: "TS Vigore → Indebolito ed Esposto insieme; nasce una placca." },
+    armata_dei_morti: { nome: "Armata dei morti", tipo: "giornaliero", liv: 5, testo: "Le ossa dei morti di Casa Vespera si sollevano: 4d8 + Spirito senza tiro per colpire, +1d8 per ogni placca (consumate); Stordito (sui boss Indebolito)." }
   };
 
   const SPEC = {
@@ -131,6 +159,19 @@
         nome: "Illusione", volonta: ["dardo_fantasma", "sussurro_illusorio", "riflessi"],
         scontro: ["frantumare", "labirinto", "sdoppiamento"], giornalieri: ["incubo", "dado_truccato"],
         livelli: { 3: "teatro_di_specchi", 4: "specchio_rotto", 5: "grande_inganno" }
+      }
+    },
+    Accolito: {
+      classe: { potere: "tocco_lenitivo", tratti: { 1: "ultimo_servizio", 4: "eredita_sepolcro" } },
+      purificatore: {
+        nome: "Purificatore", volonta: ["colpo_consacrato", "marchio_del_rogo", "aura_purificante"],
+        scontro: ["rogo", "arma_benedetta", "fiamma_calda"], giornalieri: ["pira", "fuoco_che_cura"],
+        livelli: { 3: "consacrazione", 4: "martello_del_giudizio", 5: "rogo_purificatore" }
+      },
+      ossomante: {
+        nome: "Ossomante", volonta: ["lancia_d_ossa", "spine_d_ossa", "armatura_d_ossa"],
+        scontro: ["spirito_d_ossa", "lama_d_osso", "barricata_di_costole"], giornalieri: ["prigione_d_ossa", "armatura_del_sepolcro"],
+        livelli: { 3: "armatura_spezzata", 4: "decrepitezza", 5: "armata_dei_morti" }
       }
     }
   };

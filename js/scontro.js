@@ -33,10 +33,19 @@
   /* esito: { ok } condiviso dentro lo stesso potere (un TS solo per potere) */
   function statoSu(att, dif, modo, ctx, id, esito, extra) {
     const k = id || statoArma(att); if (!k) return [];
+    pronto(dif);
+    /* Consacrazione (Purificatore): niente stati; ogni stato ti ritorna contro come Scottato (aggrava se c'è già) */
+    if (dif.buff.consacrazione && att !== dif) {
+      return [{ k: "consacrato", stato: k }, ...(att.pv > 0 ? P.aggrava(att, "scottato", { fonte: fonteDi(dif), tira: ctx.tira, tipo: "fuoco_sacro" }) : [])];
+    }
+    /* Aura purificante: il primo stato che subiresti brucia via */
+    if (dif.buff.aura && att !== dif) { delete dif.buff.aura; return [{ k: "purificato", stato: k }]; }
     return (modo === "aggrava" ? P.aggrava : P.applica)(dif, k, { fonte: fonteDi(att), tira: ctx.tira, esito, turni: durataDi(att, k), tipo: tipoStato(att, k), ...(extra || {}) });
   }
   /* il sanguinamento dell'Arcanista del Sangue è di tipo sangue (vale per le vulnerabilità) */
-  const tipoStato = (att, k) => (k === "sanguinante" && att.spec === "sangue" ? "sangue" : undefined);
+  const tipoStato = (att, k) => (k === "sanguinante" && att.spec === "sangue" ? "sangue" : k === "scottato" && att.spec === "purificatore" ? "fuoco_sacro" : undefined);
+  const PLACCHE_MAX = 3;
+  const riduzionePlacca = (b) => 3 + Math.max(0, (b.liv || 1) - 1);
   /* Legame del sottobosco (Sciamano, tratto I): i veleni durano 4 turni */
   const durataDi = (att, k) => (k === "intossicato" && (att.tratti || []).includes("legame_sottobosco") ? 4 : undefined);
   const durataPiena = (att, k) => durataDi(att, k) || P.durataBase(k);
@@ -51,7 +60,8 @@
     const auto = !!o.autoCrit;
     /* Dado truccato / Il Grande Inganno: chi attacca tira due d20 e tiene il peggiore */
     const d = auto ? null : att.svantaggio > 0 ? Math.min(ctx.tira(20), ctx.tira(20)) : ctx.tira(20);
-    const tot = auto ? null : d + mAtt(att, o) - P.malusColpire(att);
+    const malusBarr = !o.contrattacco && att.malusProssimo ? att.malusProssimo : 0; if (malusBarr) att.malusProssimo = 0; /* Barricata di costole */
+    const tot = auto ? null : d + mAtt(att, o) - P.malusColpire(att) - malusBarr;
     const soglia = Math.min(o.critDa || 20, o.focus ? 20 : critBaseArma(att), P.sogliaCritContro(dif));
     const crit = auto || d >= soglia, ok = auto || d >= soglia || tot > ca(dif); /* come nel gioco: il totale deve superare la CA */
     const ev = { k: "attacco", da: att.nome, a: dif.nome, nome: o.nome || null, d, tot, ca: ca(dif), crit: ok && crit, ok, danno: 0 };
@@ -74,6 +84,7 @@
     const nd = base * (ev.crit ? 2 : 1), tiri = tiraDadi(ctx, nd, dado);
     let lordo = somma(tiri) + (o.soloDado ? 0 : mDanno(att, o)) + (o.bonusDanno || 0);
     if (o.dadoExtra) { const x = ctx.tira(o.dadoExtra); lordo += x; ev.extra = x; } /* es. Dardo fantasma: +1d4 con una Copia, solo se colpisce */
+    if (att.buff.benedetta && !o.focus && !o.contrattacco) { const x = ctx.tira(4); lordo += x; ev.benedetta = x; } /* Arma benedetta */
     if (dif.marchio && att.marchia) { const x = ctx.tira(4); lordo += x; ev.marchio = x; }                /* Marchio della preda */
     if ((att.tratti || []).includes("furia") && P.vacillante(att)) { lordo += 2; ev.furia = 2; }        /* Furia: da Vacillante +2 */
     if ((att.tratti || []).includes("radici_profonde") && P.grave(dif, "intossicato")) { const x = ctx.tira(4); lordo += x; ev.radici = x; } /* Radici profonde */
@@ -83,6 +94,9 @@
     E.push(...danneggia(dif, lordo, o.tipo || (att.arma && att.arma.tipo), ev, ctx));
     dopo.forEach(f => { if (att.pv > 0) E.push(...f()); });
     if (piena && dif.pv > 0) E.push(...statoSu(att, dif, "aggrava", ctx, "sanguinante"));
+    if (att.buff.benedetta && !o.focus && !o.contrattacco && dif.pv > 0) E.push(...statoSu(att, dif, "applica", ctx, "scottato"));
+    /* Gabbia d'ossa: 19-20 naturale con Lancia o Spine d'ossa → Stordito (sui boss Indebolito) */
+    if (o.gabbia && d >= 19 && dif.pv > 0) { E.push({ k: "gabbia" }); E.push(...statoSu(att, dif, "applica", ctx, "stordito")); }
     /* Muffa che dilaga: ogni colpo a segno applica Intossicato, o allunga di 1 turno il veleno in corso */
     if (att.buff.muffa && !o.contrattacco && dif.pv > 0) E.push(...(P.ha(dif, "intossicato") ? [P.allunga(dif, "intossicato", 1)] : statoSu(att, dif, "applica", ctx, "intossicato")));
     if (dif.pv > 0) E.push(...reazioneColpito(att, dif, ctx));
@@ -100,6 +114,12 @@
         dopo.push(() => { const e = { k: "specchioRotto" }; return [e, ...danneggia(att, x, "illusione", e, ctx)]; }); }
     }
     if (dif.buff.ali) { lordo = meta(lordo); ev.ali = true; dopo.push(() => statoSu(dif, att, "aggrava", ctx, "sanguinante")); }
+    if (dif.buff.eredita) { lordo = meta(lordo); ev.eredita = true; } /* Eredità del sepolcro */
+    /* Placche d'ossa: una si spezza e riduce il danno di 3 + 1 per livello oltre il primo */
+    if (dif.placche > 0) {
+      dif.placche--; const r = riduzionePlacca(dif); lordo = Math.max(0, lordo - r); ev.placca = { riduce: r, restano: dif.placche };
+      if (dif.buff.spezzata) dopo.push(() => { const x = ctx.tira(6), e = { k: "placcaSpezzata", tiri: [x] }; return [e, ...danneggia(att, x, "ossa", e, ctx)]; });
+    }
     return lordo;
   }
   /* il danno passa per le vulnerabilità e per le protezioni del difensore (Ultimo baluardo) */
@@ -108,10 +128,16 @@
     let n = P.modificaDanno(dif, tipo, lordo).danno;
     const bal = dif.buff.baluardo;
     if (bal && !bal.salvato && n >= dif.pv && dif.pv > 0) { bal.salvato = true; n = dif.pv - 1; E.push({ k: "baluardo" }); }
+    /* Ultimo servizio (Monaco, tratto I): una volta al giorno, a 0 resti a 1 e ti curi 1d6 + Spirito */
+    let servizio = false;
+    if (n >= dif.pv && dif.pv > 0 && (dif.tratti || []).includes("ultimo_servizio") && !dif.usati.giorno.ultimo_servizio) {
+      dif.usati.giorno.ultimo_servizio = true; n = dif.pv - 1; servizio = true;
+    }
     const r = P.subisci(dif, n, null); /* il tipo è già stato contato */
     if (ev) { ev.danno = r.danno; ev.tipo = tipo; if (n !== lordo) ev.lordo = lordo; }
     dif.dannoSubitoTurno = (dif.dannoSubitoTurno || 0) + r.danno;
     if (bal && r.danno > 0) { dif.prossimiDadi = Math.min(3, (dif.prossimiDadi || 0) + 1); }
+    if (servizio) { const x = ctx.tira(6) + ((dif.mod && dif.mod.Spirito) || 0); E.push({ ...cura(dif, x), k: "ultimoServizio" }); }
     /* Vincolo di sangue: il bersaglio vincolato subisce anche la metà del danno che subisci tu */
     const vi = dif.buff.vincolo;
     if (vi && r.danno > 0 && vi.su.pv > 0) { const e = { k: "vincolo" }; E.push(e, ...danneggia(vi.su, meta(r.danno), null, e, ctx)); }
@@ -162,6 +188,7 @@
     dif.colpitoUltimo = true;
     if (dif.buff.pelle) E.push(...statoSu(dif, att, "applica", ctx, "intossicato")); /* Pelle di corteccia */
     if (dif.buff.crosta) E.push(...statoSu(dif, att, "applica", ctx, "sanguinante")); /* Crosta */
+    if (dif.buff.fiammaCalda) E.push(...statoSu(dif, att, "applica", ctx, "scottato")); /* Fiamma calda */
     /* Pozzo arcano: la prima volta per turno nemico che vieni colpito recuperi 1 salute (2 dal livello 4) */
     if ((dif.tratti || []).includes("pozzo_arcano") && !dif.pozzoUsato) { dif.pozzoUsato = true; E.push({ ...cura(dif, dif.liv >= 4 ? 2 : 1), k: "pozzo" }); }
     if (dif.buff.rappresaglia) E.push(...contrattacco(dif, att, ctx, "applica"));
@@ -208,6 +235,8 @@
       if (avv.pv > 0) E.push(...statoSu(b, avv, "aggrava", ctx, "intossicato"));
       if (--sc.cariche <= 0) delete b.buff.sciame;
     }
+    /* Armatura del sepolcro: all'inizio dei tuoi 3 turni, placche al massimo */
+    if (b.buff.sepolcro) { b.placche = PLACCHE_MAX; E.push({ k: "placche", tot: b.placche }); if (--b.buff.sepolcro.cariche <= 0) delete b.buff.sepolcro; }
     /* Costellazione rossa: all'inizio dei tuoi 3 turni una sfera fa 1d6 e applica Sanguinante; la terza aggrava */
     if (b.buff.costellazione && avv && avv.pv > 0) {
       const co = b.buff.costellazione, d = ctx.tira(6), ev = { k: "sfera", n: 4 - co.cariche, tiri: [d] };
@@ -226,7 +255,7 @@
   }
   /* fine scontro: tornano i poteri per scontro, spariscono effetti e stati; il riposo ricarica i giornalieri */
   function fineScontro(b) { pronto(b); b.usati.scontro = {}; b.buff = {}; b.stati = {}; b.prossimiDadi = 0; b.marchio = false; b.marchia = false; b.immStordito = 0; b.nonCarica = 0; b.pronto = null;
-    b.bulbo = null; b.velenoPerenne = false; b.pestilenzaTurni = 0; b.copie = 0; b.specchio = false; b.svantaggio = 0; b.scintillaUsata = false;
+    b.bulbo = null; b.velenoPerenne = false; b.pestilenzaTurni = 0; b.copie = 0; b.specchio = false; b.svantaggio = 0; b.scintillaUsata = false; b.placche = 0; b.malusProssimo = 0;
     if (b.bonusTsBase != null) { b.bonusTs = b.bonusTsBase; delete b.bonusTsBase; } }
   function riposo(b) { pronto(b); b.usati.giorno = {}; }
 
@@ -244,6 +273,7 @@
     if (p.tipo === "giornaliero" && b.usati.giorno[id]) return { ok: false, motivo: "giaUsatoGiorno" };
     if (id === "bevi_elisir" && !(b.elisir > 0)) return { ok: false, motivo: "senzaElisir" };
     if (id === "grande_inganno" && !(b.copie > 0)) return { ok: false, motivo: "senzaCopie" };
+    if ((id === "spirito_d_ossa" || id === "lama_d_osso") && !(b.placche > 0)) return { ok: false, motivo: "senzaPlacche" };
     return { ok: true };
   }
 
@@ -268,6 +298,8 @@
     if (p.tipo === "scontro") att.usati.scontro[id] = true;
     if (p.tipo === "giornaliero") att.usati.giorno[id] = true;
     E.push({ k: "potere", id, nome: p.nome, tipo: p.tipo });
+    /* Eredità del sepolcro (Monaco, tratto II): dopo un giornaliero, fino al tuo turno dimezzi i danni che subisci */
+    if (p.tipo === "giornaliero" && (att.tratti || []).includes("eredita_sepolcro")) E.push(buff(att, "eredita", { finoAlTurno: true }));
     /* Sangue versato: sopra il 50%, una volta per turno, 3 salute per +1 dado; da Vacillante il dado è gratis */
     let extra = 0;
     if (att.spec === "sangue" && SANGUE_DANNO.includes(id)) {
@@ -282,6 +314,7 @@
       const t = tiraDadi(ctx, n + prendiExtra(), dado), e = { k: "dannoFisso", nome: id, tiri: t, dado };
       E.push(e, ...danneggia(dif, Math.max(1, somma(t) + Number(conMod || 0) * mDanno(att, { focus: true })), tipo, e, ctx)); return e;
     };
+    const placca = (n) => { att.placche = Math.min(PLACCHE_MAX, (att.placche || 0) + n); E.push({ k: "placche", tot: att.placche }); };
     const copia = (n) => { att.copie = Math.min(COPIE_MAX, (att.copie || 0) + n); E.push({ k: "copia", tot: att.copie }); };
     const esito = {}; /* un TS solo per potere */
     const stato = (modo, k, extra2) => E.push(...statoSu(att, dif, modo, ctx, k, esito, extra2));
@@ -461,6 +494,52 @@
         const n = att.copie; att.copie = 0; E.push({ k: "copieConsumate", n });
         fisso(2 * n, 10, n, "illusione");
         dif.svantaggio = Math.max(dif.svantaggio || 0, 2); E.push({ k: "svantaggio", turni: dif.svantaggio });
+        break;
+      }
+      /* ---- Monaco: in comune ---- */
+      case "tocco_lenitivo": { E.push(...curaDiClasse(att)); const k = Object.keys(att.stati).find(x => P.ha(att, x)); if (k) E.push(P.togli(att, k)); break; }
+
+      /* ---- Monaco Purificatore (fuoco sacro) ---- */
+      case "colpo_consacrato": r = atk({ dadoExtra: dif.maledetto ? 4 : 0 }); if (r.ok && vivo()) stato("applica", "scottato"); break;
+      case "marchio_del_rogo": {
+        r = atk({ dado: 6, n: 1, soloDado: true, tipo: "fuoco_sacro" });
+        if (r.ok && vivo()) { stato("applica", "indebolito"); if (P.ha(dif, "scottato")) E.push(P.allunga(dif, "scottato", 1)); }
+        break;
+      }
+      case "aura_purificante": E.push(buff(att, "aura", { ca: 2, finoAlTurno: true })); break;
+      case "rogo": r = atk({ piuDadi: 1 }); if (r.ok && vivo()) stato("aggrava", "scottato"); break;
+      case "arma_benedetta": E.push(buff(att, "benedetta", { turni: 4 })); break; /* i tuoi 3 turni successivi */
+      case "fiamma_calda": E.push(cura(att, ctx.tira(8) + (att.modClasse || 0)), buff(att, "fiammaCalda", { finoAlTurno: true })); break;
+      case "pira": { const era = P.grave(dif, "scottato"); fisso(3, 8, 1, "fuoco_sacro"); if (vivo()) { stato("aggrava", "scottato"); if (era) stato("applica", "esposto"); } break; }
+      case "fuoco_che_cura": {
+        const t = tiraDadi(ctx, 3, 8), tot = somma(t) + (att.modClasse || 0), c = cura(att, tot), eccesso = tot - c.n;
+        E.push({ ...c, tiri: t });
+        if (eccesso > 0) { const e = { k: "ecoDiAdele", eccesso }; E.push(e, ...danneggia(dif, eccesso, "fuoco_sacro", e, ctx)); }
+        break;
+      }
+      case "consacrazione": E.push(buff(att, "consacrazione", { turni: 3 })); break;
+      case "martello_del_giudizio": r = atk({ piuDadi: 1 }); if (r.ok && vivo()) { stato("aggrava", "scottato"); if (vivo()) stato("aggrava"); } break;
+      case "rogo_purificatore": {
+        const era = P.grave(dif, "scottato");
+        fisso(4, 8, 1, "fuoco_sacro"); E.push(...P.togliTutti(att));
+        if (vivo()) { stato("aggrava", "scottato"); if (era && P.ha(dif, "scottato")) { dif.stati.scottato.turni = 99; E.push({ k: "finoAFineScontro", stato: "scottato" }); } }
+        break;
+      }
+
+      /* ---- Monaco Ossomante (placche d'ossa) ---- */
+      case "lancia_d_ossa": atk({ focus: true, tipo: "ossa", critDa: 19, gabbia: true }); break;
+      case "spine_d_ossa": r = atk({ focus: true, dado: 6, soloDado: true, tipo: "ossa", gabbia: true }); if (r.ok && vivo()) stato("applica", "indebolito"); placca(1); break;
+      case "armatura_d_ossa": fisso(1, 4, 0, "ossa"); E.push(buff(att, "armaturaOssa", { ca: 2, finoAlTurno: true })); placca(1); break;
+      case "spirito_d_ossa": { const n = att.placche; att.placche = 0; E.push({ k: "placcheSpese", n }); fisso(n, 8, n, "ossa"); break; }
+      case "lama_d_osso": att.placche--; r = atk({ piuDadi: 2 }); if (r.ok) placca(1); break;
+      case "barricata_di_costole": att.placche = PLACCHE_MAX; dif.malusProssimo = 2; E.push({ k: "placche", tot: att.placche }, { k: "barricata" }); break;
+      case "prigione_d_ossa": stato("applica", "stordito"); if (vivo()) E.push(...P.applica(dif, "esposto", { senzaTs: true })); break;
+      case "armatura_del_sepolcro": E.push(buff(att, "sepolcro", { cariche: 3 })); break;
+      case "armatura_spezzata": E.push(buff(att, "spezzata", {})); break;
+      case "decrepitezza": stato("applica", "indebolito"); stato("applica", "esposto"); placca(1); break;
+      case "armata_dei_morti": {
+        const n = att.placche || 0; att.placche = 0; E.push({ k: "placcheSpese", n });
+        fisso(4 + n, 8, 1, "ossa"); if (vivo()) stato("applica", "stordito");
         break;
       }
       default: E.push({ k: "nonImplementato", id });

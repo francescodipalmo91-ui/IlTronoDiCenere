@@ -26,9 +26,10 @@
   const somma = (a) => a.reduce((x, y) => x + y, 0);
 
   /* ---------- Applicare lo stato dell'arma ---------- */
-  function statoSu(att, dif, modo, ctx, id) {
+  /* esito: { ok } condiviso dentro lo stesso potere (un TS solo per potere) */
+  function statoSu(att, dif, modo, ctx, id, esito) {
     const k = id || statoArma(att); if (!k) return [];
-    return (modo === "aggrava" ? P.aggrava : P.applica)(dif, k, { fonte: fonteDi(att), tira: ctx.tira });
+    return (modo === "aggrava" ? P.aggrava : P.applica)(dif, k, { fonte: fonteDi(att), tira: ctx.tira, esito });
   }
 
   /* ---------- L'attacco ----------
@@ -149,7 +150,8 @@
     if (p.tipo === "giornaliero") att.usati.giorno[id] = true;
     E.push({ k: "potere", id, nome: p.nome, tipo: p.tipo });
     const atk = (o) => { const r = attacco(att, dif, { nome: id, ...o }, ctx); E.push(...r.eventi); return r; };
-    const stato = (modo, k) => E.push(...statoSu(att, dif, modo, ctx, k));
+    const esito = {}; /* un TS solo per potere */
+    const stato = (modo, k) => E.push(...statoSu(att, dif, modo, ctx, k, esito));
     const vivo = () => dif.pv > 0;
     const vac = P.vacillante(dif);
     let r;

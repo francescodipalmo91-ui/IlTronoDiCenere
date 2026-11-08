@@ -90,9 +90,14 @@
     /* sui boss lo stordimento diventa Indebolito */
     if (id === "stordito" && b.boss) { E.push({ k: "convertito", da: "stordito", a: "indebolito" }); return E.concat(applica(b, "indebolito", { ...o, turni: undefined })); }
     if (id === "stordito" && immuneStordito(b)) { E.push({ k: "immune", stato: id, motivo: "dopoStordimento" }); return E; }
+    /* un TS solo per potere: chi lo ha già tirato passa l'esito (o.esito = { ok }) e gli stati successivi lo riusano */
     if (!o.senzaTs) {
-      const z = tiroSalvezza(b, id, o.fonte, o.tira); E.push(z);
-      if (z.ok) { E.push({ k: "resiste", stato: id }); return E; }
+      if (o.esito && o.esito.ok != null) { if (o.esito.ok) { E.push({ k: "resiste", stato: id, giaTirato: true }); return E; } }
+      else {
+        const z = tiroSalvezza(b, id, o.fonte, o.tira); E.push(z);
+        if (o.esito) o.esito.ok = z.ok;
+        if (z.ok) { E.push({ k: "resiste", stato: id }); return E; }
+      }
     }
     E.push(metti(b, id, 1, o));
     return E;

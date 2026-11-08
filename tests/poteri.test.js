@@ -59,6 +59,11 @@
     ["sanguinante", "intossicato", "scottato"].forEach(id => P.applica(b, id, { fonte, tira: t }));
     vero(P.ha(b, "sanguinante") && P.ha(b, "intossicato") && P.ha(b, "scottato"));
   });
+  caso("Un TS solo per potere: l'esito si riusa per il secondo stato", () => {
+    const b = pg(), esito = {}, t = dadi([3]);
+    P.applica(b, "sanguinante", { fonte, tira: t, esito }); P.applica(b, "esposto", { fonte, tira: t, esito });
+    vero(P.ha(b, "sanguinante") && P.ha(b, "esposto")); eq(esito.ok, false);
+  });
   caso("Applica: Impaurito dura 2 turni", () => { const b = pg(); P.applica(b, "impaurito", { fonte, tira: dadi([1]) }); eq(b.stati.impaurito.turni, 2); });
   caso("Applica: durata personalizzata (Legame del sottobosco, veleni 4 turni)", () => { const b = pg(); P.applica(b, "intossicato", { fonte, tira: dadi([1]), turni: 4 }); eq(b.stati.intossicato.turni, 4); });
   caso("Applica: immunità dichiarata (La lanterna → Impaurito) senza tiro", () => {

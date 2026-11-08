@@ -123,8 +123,10 @@
     eq(g.pv, 26); eq(n.pv, 18); vero(P.ha(n, "sanguinante")); fine(c);
   });
   caso("Rintocco: stato dell'arma + Indebolito, +2 CA anche se manca", () => {
-    const g = guerriero(), n = nemico(), c = ctx([10, 1, 2, 2]);
+    const g = guerriero(), n = nemico(), c = ctx([10, 1, 2]); /* un TS solo per i due stati */
     S.usa(g, n, "rintocco", c); vero(P.ha(n, "sanguinante") && P.ha(n, "indebolito")); eq(S.ca(g), 18); fine(c);
+    const n2 = nemico(), c2 = ctx([10, 1, 15]); S.usa(guerriero(), n2, "rintocco", c2);
+    vero(!P.ha(n2, "sanguinante") && !P.ha(n2, "indebolito"), "TS riuscito: nessuno dei due"); fine(c2);
   });
   caso("Veglia di ferro: +2 CA e +4 TS per 3 turni; In guardia contrattacca anche se colpito, e aggrava", () => {
     const g = guerriero(), n = nemico({ stati: { sanguinante: { liv: 1, turni: 3, tipo: "taglio" } } });

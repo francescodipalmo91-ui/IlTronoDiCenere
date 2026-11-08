@@ -51,7 +51,13 @@
     soffio_di_cenere: { nome: "Soffio di cenere", k: "soffio", n: 2, dado: 6, applica: ["indebolito", "scottato"] },
     ringhio_della_soglia: { nome: "Ringhio della soglia", k: "ts", applica: ["impaurito"] },
     spallata_corazzata: A("Spallata corazzata", { soloDado: true, applica: ["indebolito"] }),
-    carica_di_ferro: A("Carica di ferro", { piuDadi: 1, applica: ["stordito"], carica: true })
+    carica_di_ferro: A("Carica di ferro", { piuDadi: 1, applica: ["stordito"], carica: true }),
+    /* nemico generico (cacce comuni e avventurieri, finché non hanno i loro poteri): solo l'attacco base */
+    attacco_base: A("Attacco"),
+    /* Ettore, PROVVISORIO (08/11, in attesa della sezione 8d): due pugnali, sanguinamento, colpo al conteggio */
+    due_pugnali: A("Due pugnali"),
+    lama_nel_fianco: A("Lama nel fianco", { soloDado: true, applica: ["sanguinante"] }),
+    colpo_al_conteggio: A("Colpo al conteggio", { piuDadi: 1, aggrava: ["sanguinante"] })
   };
 
   const CENERE = { fuoco: "res", contundente: "vuln" }, BRACE = { fuoco: "res", perforante: "vuln" };
@@ -77,6 +83,9 @@
     mastino: N({ nome: "Mastino", liv: 1, pv: 13, ca: 10, att: 2, danno: [1, 4, 1], volonta: ["morso", "presa"], scontro: ["soffio_infuocato"], res: MASTINO, maledetto: true }),
     mastino_secondo_piano: N({ nome: "Mastino del secondo piano", liv: 2, pv: 18, ca: 11, att: 3, danno: [1, 6, 1], volonta: ["morso", "presa"], scontro: ["soffio_infuocato_2"], res: MASTINO, maledetto: true, daMisurare: "statistiche proposte" }),
     /* gruppo 4, élite: annunciano i poteri per scontro un turno prima */
+    /* guardiani PROVVISORI (08/11): statistiche di oggi, poteri semplici; si rifanno con la sezione 8d */
+    ettore: N({ nome: "Ettore", liv: 2, pv: 30, ca: 13, att: 3, danno: [2, 4, 1], volonta: ["due_pugnali", "lama_nel_fianco"], scontro: ["colpo_al_conteggio"],
+      res: { taglio: "vuln", illusione: "vuln", veleno: "vuln" }, maledetto: true, boss: true, daMisurare: "PROVVISORIO: poteri da rifare con la sezione 8d" }),
     mastino_della_soglia: N({ nome: "Mastino della soglia di Adele", liv: 4, pv: 30, ca: 13, att: 5, danno: [1, 6, 2], volonta: ["morso", "presa", "ceneri_sul_pelo"],
       scontro: ["soffio_di_cenere", "ringhio_della_soglia"], res: { ...MASTINO, illusione: "vuln" }, maledetto: true, elite: true, daMisurare: "statistiche stimate (10-20% di sconfitte)" }),
     mastino_corazzato: N({ nome: "Mastino corazzato", liv: 5, pv: 40, ca: 15, caVacillante: 13, att: 6, danno: [1, 8, 3], volonta: ["morso", "presa", "spallata_corazzata"],
@@ -88,12 +97,20 @@
     const d = NEMICI[id]; if (!d) throw new Error("nemico sconosciuto: " + id);
     return S.preparaScontro(Object.assign({
       id, nome: d.nome, liv: d.liv, pv: d.pv, pvMax: d.pv, caBase: d.ca, caVacillante: d.caVacillante, modAtt: d.att, modDanno: d.danno[2], modClasse: d.att,
-      arma: { n: d.danno[0], dado: d.danno[1], tipo: null }, mod: {}, res: d.res || {}, resStati: d.resStati, maledetto: !!d.maledetto, boss: false,
+      arma: { n: d.danno[0], dado: d.danno[1], tipo: null }, mod: {}, res: d.res || {}, resStati: d.resStati, maledetto: !!d.maledetto, boss: !!d.boss,
       volonta: d.volonta, scontro: d.scontro, elite: !!d.elite, fuggeAlTurno: d.fuggeAlTurno || 0,
       rune: !!d.rune, turno: 0, stati: {}, buff: {}
     }, o || {}));
   }
 
+  /* nemico generico dalle statistiche del gioco (cacce comuni, avventurieri): solo l'attacco base, nessuno stato */
+  function creaGenerico(o) {
+    return S.preparaScontro({
+      id: o.id || "generico", nome: o.nome || "Nemico", liv: o.liv || 1, pv: o.pv, pvMax: o.pv, caBase: o.ca || 10, modAtt: o.att || 0, modDanno: (o.danno && o.danno[2]) || 0, modClasse: o.att || 0,
+      arma: { n: (o.danno && o.danno[0]) || 1, dado: (o.danno && o.danno[1]) || 4, tipo: null }, mod: {}, res: o.res || {}, maledetto: !!o.maledetto, boss: !!o.boss,
+      volonta: ["attacco_base"], scontro: [], elite: false, fuggeAlTurno: 0, rune: false, turno: 0, stati: {}, buff: {}, generico: true
+    });
+  }
   /* lo stato principale che il nemico cerca di mettere (quello del suo secondo a volontà) */
   const statoFirma = (n) => { const p = POTERI[n.volonta[1]]; return p && (p.applica || p.aggrava || [])[0]; };
   const usato = (n, id) => !!(n.usati && n.usati.scontro[id]);
@@ -188,7 +205,7 @@
   /* la regola con cui sceglie, in parole (8c) */
   const REGOLA_SCELTA = "Primo turno: il suo secondo a volontà (lo stato). Poi il per scontro, quando lo stato è già su di te; altrimenti alterna gli a volontà. Gli élite annunciano il per scontro un turno prima e quel turno attaccano comunque. Impaurito: solo a volontà. Caccia al ferito e Silenzio della casa gli impediscono di caricare.";
 
-  const API = { POTERI, NEMICI, crea, scegli, agisci, esegui, statoRune, descrivi, REGOLA_SCELTA };
+  const API = { POTERI, NEMICI, crea, creaGenerico, scegli, agisci, esegui, statoRune, descrivi, REGOLA_SCELTA };
   root.Nemici = API;
   if (typeof module !== "undefined" && module.exports) module.exports = API;
 })(typeof window !== "undefined" ? window : globalThis);

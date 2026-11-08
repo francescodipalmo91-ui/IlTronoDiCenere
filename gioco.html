@@ -13,6 +13,11 @@
   <script src="js/combattimento.js"></script>
   <script src="js/magia_combattimento.js"></script>
   <script src="js/sciamano.js"></script>
+  <script src="js/poteri.js"></script>
+  <script src="js/specializzazioni.js"></script>
+  <script src="js/scontro.js"></script>
+  <script src="js/nemici.js"></script>
+  <script src="js/racconto.js"></script>
   <script src="js/cacce.js"></script>
   <script src="js/lingua.js"></script>
   <script src="js/volume.js"></script>
@@ -426,6 +431,22 @@
     #barraScontro { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.3rem 1rem; margin-bottom: 0.8rem;
       padding: 0.55rem 0.9rem; border: 1px solid var(--nem-line); border-radius: 0.5rem; background: var(--nem-bg); font-size: 0.97rem; }
     #barraScontro[hidden] { display: none; }
+    /* 08/11: barra dei poteri del motore nuovo (seleziona → descrizione → usa) */
+    #barraScontro .pot-barra { width: 100%; }
+    #barraScontro .pot-gruppo { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; margin: 0.15rem 0; }
+    #barraScontro .pot-gruppo > span { font-size: 0.8em; opacity: 0.75; min-width: 6.5rem; }
+    #barraScontro .pot-btn { padding: 0.3rem 0.6rem; font: inherit; font-size: 0.92em; border-radius: 6px; border: 1px solid var(--line); background: var(--tip-bg); color: var(--text); cursor: pointer; }
+    #barraScontro .pot-btn.sel { border-color: var(--gold); }
+    #barraScontro .pot-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    #barraScontro .pot-det { margin-top: 0.4rem; padding: 0.45rem 0.6rem; border: 1px solid var(--line); border-radius: 6px; font-size: 0.92em; }
+    #barraScontro .pot-det button { margin-top: 0.35rem; font-weight: 600; }
+    #schedaNem .pot-nem { margin: 0.3rem 0; font-size: 0.92em; }
+    #schedaNem .pot-nem b { display: block; }
+    #schedaNem .pot-nem.annunciato { color: var(--nem); }
+    #schedaNem .pot-nem.usato { opacity: 0.55; }
+    .avviso-vecchio { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; padding: 16px; }
+    .avviso-vecchio > div { max-width: 34rem; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 1.2rem 1.4rem; }
+    .avviso-vecchio a { display: inline-block; margin: 0.6rem 0.8rem 0 0; }
     #barraScontro b { color: var(--nem); }
     #barraScontro .cond { color: var(--muted); font-style: italic; flex: 1 1 14rem; }
     #barraScontro .turno { font-weight: 600; white-space: nowrap; }
@@ -11546,6 +11567,7 @@
       $n("subNem").textContent = scoperta ? CB.sotto : CB.sottoVelato;
       const r = n.pv / n.pvMax;
       $n("condNem").textContent = CB.cond[n.pv <= 0 ? 3 : r > 0.66 ? 0 : r > 0.33 ? 1 : 2];
+      if (n.N) return disegnaNemicoNuovo(n, $n); /* 08/11: scheda dal motore nuovo */
       const vit = $n("vitaliNem"); vit.replaceChildren();
       riga(vit, CB.salute, scoperta ? `${Math.max(0, n.pv)} / ${n.pvMax}` : ig);
       riga(vit, CB.ca, scoperta ? String(caNem()) : ig);
@@ -11582,6 +11604,7 @@
 
     /* barra sopra la casella di testo: nemico, condizione, turno ed effetti attivi */
     function barraScontro() { /* il riquadro sopra la casella di testo non si mostra più: gli effetti attivi stanno nella scheda */
+      if (motoreNuovo()) return barraPoteri(); /* 08/11: con il motore nuovo è la barra dei poteri */
       const b = document.getElementById("barraScontro");
       b.hidden = true; b.replaceChildren();
       disegnaNemico(); disegnaVitali();
@@ -11618,6 +11641,11 @@
       if (opz.conta) scontro.conta = opz.conta; /* Ettore dalla rivincita: «eravamo arrivati a tre» */
       if (opz.soffioScarico) scontro.soffioPronto = false;
       ultimoNemico = null;
+      if (motoreNuovo()) { /* 08/11: lo scontro lo decide il motore nuovo; il gioco tiene narrazione, musica, resa, fuga, vittoria */
+        scontro.N = { pg: combattentePg(), nem: combattenteNem(id) };
+        if (opz.caMod) scontro.N.nem.caBase += opz.caMod;
+        scontro.pv = scontro.pvMax = scontro.N.nem.pv; scontro.svelata = true;
+      }
       MusicaScontro.avvia();
       if (puoFuggire() && !usate.hint_fuga) { usate.hint_fuga = true; salvaUsate(); setTimeout(() => sist(FUGA_TX().suggerimento), 50); } /* 28/10: la fuga esiste */
       const a = statPg("Agilità"), b = stat["Agilità"];
@@ -11625,8 +11653,9 @@
       if (a !== b) scontro.primo = a > b ? "pg" : "nem";
       else { let x, y; do { x = tira(20); y = tira(20); } while (x === y); testo += CB.pari(x, y) + " "; scontro.primo = x > y ? "pg" : "nem"; }
       if (opz.primo) scontro.primo = opz.primo; /* sorpresa: chi sorprende agisce per primo */
-      const inc = listaIncantesimi().find(i => i.id !== "luce");
-      aggiungi({ tipo: "prova", titolo: CB.manualeTit, dati: [], righe: CB.manuale(modAttaccoPg(), "1d" + dadoArmaPg(false), inc ? nomeInc(inc) : "") });
+      if (motoreNuovo()) aggiungi({ tipo: "prova", titolo: CB.manualeTit, dati: [], righe: ["Nel tuo turno scegli un potere nella barra sopra la casella di testo (o scrivi il suo nome) e premi «Usa». I poteri del nemico sono nella sua scheda."] });
+      else { const inc = listaIncantesimi().find(i => i.id !== "luce");
+      aggiungi({ tipo: "prova", titolo: CB.manualeTit, dati: [], righe: CB.manuale(modAttaccoPg(), "1d" + dadoArmaPg(false), inc ? nomeInc(inc) : "") }); }
       sist(opz.primo ? (opz.sorpresa || "").trim() : testo + (scontro.primo === "pg" ? CB.iniziaPg : CB.iniziaNem)); /* sorpresa: niente tiro d'iniziativa */
       if (scontro.primo === "pg") turnoPgScontro();
       else { barraScontro(); stato(true, CB.attesa); setTimeout(turnoNemScontro, pausaScontro()); }
@@ -11646,6 +11675,7 @@
     }
     const esitoBreve = (e) => e.replace(/[.!]+$/, "").toLowerCase();
     function turnoPgScontro() {
+      if (scontro && scontro.N) return turnoPgNuovo();
       if (!scontro) return;
       if (scontro.primo === "pg") apriTurno();
       scontro.tuoTurno = true; scontro.cambio = false; scontro.frontaleUsato = false; scontro.difesaUltima = false;
@@ -11674,6 +11704,7 @@
       barraScontro(); stato(false, CB.placeholder);
     }
     function fineAzionePgScontro() {
+      if (scontro && scontro.N) return fineAzioneNuovo();
       scontro.tuoTurno = false;
       fineTurnoPgStati(); /* Indebolito e Accecato scendono dopo la tua azione */
       barraScontro();
@@ -12049,6 +12080,7 @@
     }
 
     function turnoNemScontro() {
+      if (scontro && scontro.N) return turnoNemNuovo();
       if (!scontro) return;
       if (scontro.primo === "nem") apriTurno();
       scontro.tuoTurno = false; barraScontro();
@@ -12440,6 +12472,7 @@
     /* azioni scritte durante lo scontro */
     function gestisciScontro(t) {
       if (!scontro || !scontro.tuoTurno) return;
+      if (scontro.N) return gestisciScontroNuovo(t);
       /* incantesimo: «lancio dardo di ghiaccio»; i nomi che si confondono con altro (scudo, luce, stop) richiedono un verbo */
       const verboInc = /incantesim|\bspell\b|\blanci\w*|\bcast\w*|\bevoc\w*|\binvoc\w*/.test(t);
       const ambigui = ["scudo", "shield", "luce", "light", "stop"];
@@ -12481,7 +12514,189 @@
       if (/\b(torn\w*|esc[oi]\w*|scapp\w*|fugg\w*|indietro|back|leave|flee|run)\b/.test(t)) return fugaScontro(); /* 28/10: la fuga */
       sist(CB.nonCapisco);
     }
+    /* ===================== MOTORE NUOVO (08/11, ramo riscrittura) =====================
+       Il motore (js/poteri.js, scontro.js, nemici.js, specializzazioni.js) decide lo scontro; qui restano narrazione,
+       musica, resa di Ettore e degli avventurieri, fuga, pozioni, vittoria e sconfitta. La salute si sincronizza a ogni passo:
+       il nemico vive nel motore (scontro.pv lo copia), il personaggio nel gioco (pg.dannoFisico) e nel motore durante il turno. */
+    const MotP = window.Poteri, MotS = window.Scontro, MotSP = window.SPECIALIZZAZIONI, MotN = window.Nemici, MotR = window.Racconto;
+    const motoreNuovo = () => !!(pg && pg.motore === 2 && MotS && MotN);
+    /* i nemici del gioco → quelli del motore; gli altri (cacce comuni, avventurieri) diventano un nemico generico con le statistiche di oggi */
+    const MAPPA_NEMICI = { mastino: "mastino", esploratore: "ettore", ratto: "ratto_di_cenere", corvo: "corvo_di_brace", cinghiale: "cinghiale_di_brace", lupo: "lupo_di_cenere",
+      cervo: "cervo", cinghiale_bosco: "cinghiale", vipera: "vipera", ratto_comune: "ratto", corvo_comune: "corvo", lupo_comune: "lupo" };
+    const TIPI_ARMA_MOT = { Tagliente: "taglio", Contundente: "contundente", Perforante: "perforante" };
+    function combattentePg() {
+      const liv = livelloPg(), st = (a) => Number(pg.statistiche && pg.statistiche[a]) || 10;
+      const m = { Vigore: mod(st("Vigore")), "Agilità": mod(st("Agilità")), Mente: mod(st("Mente")), Spirito: mod(st("Spirito")) };
+      const via = liv >= 3 && (usate.via === "aldo" || usate.via === "guendalina") ? usate.via : null;
+      const tipo = TIPI_ARMA_MOT[(arma && arma.tipoDanno) || eqPg().armaTipoDanno] || "contundente";
+      return MotS.preparaScontro({
+        nome: "Tu", classe: pg.classe, spec: pg.spec, liv, mod: m, modClasse: modAttaccoPg(), pv: pvPg(), pvMax: pvMaxPg(),
+        caBase: Number(caAttuale()) || 10, arma: { dado: dadoArmaPg(false), tipo, bonus: bonusArmaPg() }, scudo: !!scudo, focus: { dado: 8, bonus: 0 }, via,
+        poteri: MotSP.poteriAlLivello(pg.classe, pg.spec, pg.scelte || [], liv), tratti: MotSP.trattiAlLivello(pg.classe, liv), stati: {},
+        usati: { scontro: {}, giorno: Object.fromEntries((pg.giornalieriUsati || []).map(k => [k, true])) }, elisir: Number(pg.elisir) || 0
+      });
+    }
+    function combattenteNem(id) {
+      const D = NEMICI[id] || {}, k = MAPPA_NEMICI[id], nome = (CB && CB.nome) || id;
+      if (k && MotN.NEMICI[k]) return MotN.crea(k, { nome });
+      return MotN.creaGenerico({ id, nome, liv: Number(D.livello) || 1, pv: Number(D.pvFissi) || 10, ca: Number(D.ca) || 10, att: Number(D.attacco) || 0,
+        danno: [Math.max(1, Number(D.attacchi) || 1), Number(D.dannoDado) || 4, Number(D.dannoBonus) || 0], boss: !!D.boss });
+    }
+    /* la salute: prima di ogni passo del motore il personaggio prende quella del gioco (pozioni), dopo il gioco prende quella del motore */
+    function primaDelMotore() { if (scontro && scontro.N) scontro.N.pg.pv = pvPg(); }
+    function sincronizzaMotore() {
+      const M = scontro && scontro.N; if (!M) return;
+      scontro.pv = M.nem.pv;
+      pg.dannoFisico = Math.max(0, pvMaxPg() - Math.max(0, M.pg.pv));
+      pg.giornalieriUsati = Object.keys(M.pg.usati.giorno || {}).filter(k => M.pg.usati.giorno[k]); /* tornano al riposo */
+      pg.elisir = Number(M.pg.elisir) || 0;
+      modificato(); disegnaVitali();
+    }
+    /* il racconto degli eventi (js/racconto.js) nel diario: le righe consecutive dello stesso lato in un solo riquadro */
+    function narraMotore(eventi) {
+      let box = null, righe = [];
+      const chiudi = () => { if (righe.length) aggiungi({ tipo: "narra", box, righe }); righe = []; };
+      (eventi || []).forEach(e => {
+        if (!e) return;
+        const [testo, cls] = MotR.racconta(e), b = /\bnem\b/.test(cls) ? "nem" : /\bbene\b/.test(cls) ? "ok" : "mia";
+        if (b !== box) { chiudi(); box = b; }
+        righe.push(testo);
+      });
+      chiudi();
+    }
+    function turnoPgNuovo() {
+      if (!scontro) return;
+      if (scontro.primo === "pg") apriTurno();
+      const M = scontro.N;
+      scontro.tuoTurno = true; scontro.cambio = false;
+      primaDelMotore(); narraMotore(MotS.inizioTurno(M.pg, M.nem, { tira })); sincronizzaMotore();
+      if (scontro.pv <= 0) { scontro.tuoTurno = false; barraScontro(); return setTimeout(vittoriaScontro, pausaScontro() / 2); }
+      if (pvPg() <= 0) { scontro.tuoTurno = false; barraScontro(); return setTimeout(sconfittaScontro, pausaScontro() / 2); }
+      if (!MotP.puoAgire(M.pg)) { segnaTurno("Stordito"); return fineAzioneNuovo(); }
+      barraScontro(); stato(false, CB.placeholder);
+    }
+    function usaPotereNuovo(id) {
+      if (!scontro || !scontro.tuoTurno || !scontro.N) return;
+      const M = scontro.N, P0 = MotSP.POTERI[id], d = MotS.disponibile(M.pg, id);
+      if (!d.ok) return sist(`Non puoi usare ${P0 ? P0.nome : id} adesso.`);
+      primaDelMotore();
+      const sv = document.getElementById("sangueVersato"), r = MotS.usa(M.pg, M.nem, id, { tira }, { sangueVersato: !!(sv && sv.checked) });
+      segnaTurno(P0.nome); narraMotore(r.eventi); sincronizzaMotore(); scuotiNemico();
+      fineAzioneNuovo();
+    }
+    function fineAzioneNuovo() {
+      const M = scontro.N;
+      scontro.tuoTurno = false;
+      primaDelMotore(); narraMotore(MotS.fineTurno(M.pg)); sincronizzaMotore(); barraScontro();
+      if (scontro.pv <= 0) return setTimeout(vittoriaScontro, pausaScontro() / 2);
+      if (pvPg() <= 0) return setTimeout(sconfittaScontro, pausaScontro() / 2);
+      if (scontro.ctx === "ettore" && !scontro.resa && !(Number(usate.ettore_sconfitte) > 0) && scontro.pv <= Math.ceil(scontro.pvMax / 3)) { scontro.resa = true; return setTimeout(resaEttore, pausaScontro() / 2); }
+      if (resaPossibile()) { scontro.resa = true; return setTimeout(resaAvventuriero, pausaScontro() / 2); }
+      stato(true, CB.attesa);
+      setTimeout(turnoNemScontro, pausaScontro());
+    }
+    function turnoNemNuovo() {
+      if (!scontro) return;
+      if (scontro.primo === "nem") apriTurno();
+      const M = scontro.N;
+      scontro.tuoTurno = false; barraScontro();
+      primaDelMotore(); narraMotore(MotS.inizioTurno(M.nem, M.pg, { tira })); sincronizzaMotore();
+      if (scontro.pv <= 0) return setTimeout(vittoriaScontro, pausaScontro() / 2);
+      if (pvPg() <= 0) return setTimeout(sconfittaScontro, pausaScontro() / 2);
+      const r = MotN.agisci(M.nem, M.pg, { tira });
+      if (M.nem.fuggito) { narraMotore(r.eventi); return fugaAnimale(); }
+      const pn = r.scelta && MotN.POTERI[r.scelta.id];
+      segnaTurno(pn ? pn.nome : "Stordito");
+      narraMotore(r.eventi);
+      if (r.eventi.some(e => e && e.k === "attacco" && e.ok && e.a === "Tu")) scuotiScheda();
+      narraMotore(MotS.fineTurno(M.nem)); sincronizzaMotore(); barraScontro();
+      if (scontro.pv <= 0) return setTimeout(vittoriaScontro, pausaScontro() / 2);
+      if (scontro.ctx === "aldo" && pvPg() <= (usate.aldo_soglia != null ? Number(usate.aldo_soglia) : Math.floor(pvMaxPg() / 2))) return setTimeout(interrompiAldo, pausaScontro() / 2);
+      if (pvPg() <= 0) return setTimeout(sconfittaScontro, pausaScontro() / 2);
+      setTimeout(turnoPgScontro, pausaScontro() * 0.7);
+    }
+    function gestisciScontroNuovo(t) {
+      const M = scontro.N;
+      const nomi = M.pg.poteri.map(id => [norm(MotSP.POTERI[id].nome), id]).sort((x, y) => y[0].length - x[0].length);
+      const trovato = nomi.find(([n]) => t.includes(n));
+      if (trovato) return usaPotereNuovo(trovato[1]);
+      if (/\b(attacc\w*|colpi\w*|ferisc\w*|attack\w*|hit|strike)\b/.test(t)) return usaPotereNuovo(MotS.offesaDi(M.pg));
+      if (/\b(bev\w*|bere|pozion\w*|curarmi|drink\w*|potion|quaff)\b/.test(t)) {
+        if (M.pg.poteri.includes("bevi_elisir") && /elisir|infuso/.test(t)) return usaPotereNuovo("bevi_elisir");
+        const it = bevandaDa(t); if (!it) return sist(CB.nessunaPozione);
+        return beviScontro(it);
+      }
+      if (/\b(torn\w*|esc[oi]\w*|scapp\w*|fugg\w*|indietro|back|leave|flee|run)\b/.test(t)) return fugaScontro();
+      if (ha(t, "guarda")) return aggiungi({ tipo: "narra", righe: [CB.guarda] });
+      sist("Scegli un potere nella barra sopra la casella di testo, oppure scrivi il suo nome.");
+    }
+    /* barra dei poteri: tutti i tuoi poteri, divisi per tipo; un clic seleziona e mostra la descrizione, «Usa» lo esegue */
+    function barraPoteri() {
+      const b = document.getElementById("barraScontro"), M = scontro && scontro.N;
+      if (!M || !scontro.tuoTurno) { b.hidden = true; b.replaceChildren(); disegnaNemico(); disegnaVitali(); return; }
+      b.hidden = false; b.replaceChildren();
+      const box = document.createElement("div"); box.className = "pot-barra";
+      const disp = (id) => MotS.disponibile(M.pg, id), motivi = { giaUsatoScontro: "già usato in questo scontro", giaUsatoGiorno: "già usato oggi: riposa", impaurito: "sei Impaurito: solo a volontà", senzaElisir: "niente elisir", senzaCopie: "nessuna Copia", senzaPlacche: "nessuna placca" };
+      if (!scontro.potSel || !M.pg.poteri.includes(scontro.potSel) || !disp(scontro.potSel).ok) scontro.potSel = M.pg.poteri.find(id => disp(id).ok) || M.pg.poteri[0];
+      [["volonta", "A volontà"], ["scontro", "Per scontro"], ["giornaliero", "Giornalieri"]].forEach(([tipo, titolo]) => {
+        const ids = M.pg.poteri.filter(id => MotSP.POTERI[id].tipo === tipo); if (!ids.length) return;
+        const g = document.createElement("div"); g.className = "pot-gruppo";
+        const s0 = document.createElement("span"); s0.textContent = titolo; g.append(s0);
+        ids.forEach(id => {
+          const x = document.createElement("button"); x.type = "button"; x.className = "pot-btn" + (id === scontro.potSel ? " sel" : "");
+          x.textContent = MotSP.POTERI[id].nome; x.disabled = !disp(id).ok; x.title = MotSP.POTERI[id].testo;
+          x.addEventListener("click", () => { scontro.potSel = id; barraPoteri(); });
+          x.addEventListener("dblclick", () => usaPotereNuovo(id));
+          g.append(x);
+        });
+        box.append(g);
+      });
+      const P0 = MotSP.POTERI[scontro.potSel], d = disp(scontro.potSel), det = document.createElement("div"); det.className = "pot-det";
+      const tit = document.createElement("b"); tit.textContent = P0.nome + " — ";
+      const tx = document.createElement("span"); tx.textContent = P0.testo + (d.ok ? "" : ` (${motivi[d.motivo] || d.motivo})`);
+      det.append(tit, tx);
+      if (M.pg.spec === "sangue") { const l = document.createElement("label"); l.style.display = "block"; l.innerHTML = `<input type="checkbox" id="sangueVersato"> Sangue versato (3 salute per un dado in più, sopra il 50%)`; det.append(l); }
+      const u = document.createElement("button"); u.type = "button"; u.textContent = "Usa " + P0.nome; u.disabled = !d.ok;
+      u.addEventListener("click", () => usaPotereNuovo(scontro.potSel));
+      det.append(document.createElement("br"), u); box.append(det);
+      const st = document.createElement("div"); st.className = "pot-gruppo"; st.style.marginTop = "0.3rem";
+      const stati = Object.keys(M.pg.stati || {}).filter(k => MotP.ha(M.pg, k)).map(k => `${MotP.nomeStato(k, M.pg.stati[k].liv)} ${M.pg.stati[k].turni}`);
+      const extra = [M.pg.copie ? `Copie ${M.pg.copie}` : "", M.pg.placche ? `Placche ${M.pg.placche}` : "", M.pg.classe === "Forestiero" ? `Elisir ${M.pg.elisir || 0}` : ""].filter(Boolean);
+      st.textContent = `Su di te: ${stati.length ? stati.join(", ") : "nessuno stato"}${extra.length ? " · " + extra.join(" · ") : ""} · CA ${MotS.ca(M.pg)}`;
+      box.append(st);
+      b.append(box);
+      disegnaNemico(); disegnaVitali();
+    }
+    /* scheda del nemico dal motore nuovo: numeri veri, stati, resistenze, poteri con descrizione, usato/annunciato, rune */
+    function disegnaNemicoNuovo(n, $n) {
+      const E = n.N.nem, vit = $n("vitaliNem"), st = $n("statNem"), at = $n("attNem"), sp = $n("specNem");
+      vit.replaceChildren(); st.replaceChildren(); at.replaceChildren(); sp.replaceChildren();
+      riga(vit, CB.salute, `${Math.max(0, E.pv)} / ${E.pvMax}${MotP.vacillante(E) ? " · Vacillante" : ""}`);
+      riga(vit, CB.ca, String(MotS.ca(E)));
+      const stati = Object.keys(E.stati || {}).filter(k => MotP.ha(E, k)).map(k => `${MotP.nomeStato(k, E.stati[k].liv)} ${E.stati[k].turni >= 99 ? "∞" : E.stati[k].turni}`);
+      riga(vit, "Stati", stati.length ? stati.join(", ") : "nessuno");
+      $n("titStatNem").textContent = "Caratteristiche"; $n("titAttNem").textContent = "A volontà"; $n("titSpecNem").textContent = "Per scontro";
+      const dl = document.createElement("dl");
+      riga(dl, "Livello", String(E.liv)); riga(dl, "Attacco", `+${E.modAtt}`); riga(dl, "Danno", `${E.arma.n}d${E.arma.dado}${E.modDanno ? " + " + E.modDanno : ""}`);
+      if (E.maledetto) riga(dl, "Maledetto", "sì (fiamma azzurra)");
+      const res = Object.entries(E.res || {}).map(([t, r]) => `${MotR.NOMI_DANNO[t] || t} ${MotR.RES[r]}`);
+      riga(dl, "Resistenze", res.length ? res.join(", ") : "neutro a tutto");
+      const ru = MotN.statoRune(E); if (ru) riga(dl, "Rune", ru.map(x => (x.accesa ? (x.pulsaVeloce ? "◉" : "●") : "○")).join(" "));
+      st.append(dl);
+      const voce = (box, id, extra, cls) => { const p = document.createElement("p"); p.className = "pot-nem" + (cls ? " " + cls : ""); const b = document.createElement("b"); b.textContent = MotN.POTERI[id].nome + (extra ? ` (${extra})` : ""); const x = document.createElement("span"); x.textContent = MotN.descrivi(id, E); p.append(b, x); box.append(p); };
+      E.volonta.forEach(id => voce(at, id, E.ultimo === id ? "usato nell'ultimo turno" : ""));
+      E.scontro.forEach(id => { const ann = E.pronto === id, us = E.usati && E.usati.scontro[id]; voce(sp, id, ann ? "annunciato: colpirà al prossimo turno" : us ? "già usato" : "disponibile", ann ? "annunciato" : us ? "usato" : ""); });
+      if (!E.scontro.length) { const v = document.createElement("p"); v.className = "vuoto"; v.textContent = "Nessuno."; sp.append(v); }
+    }
+    /* personaggi creati prima del motore nuovo: vanno ricreati */
+    function avvisoPersonaggioVecchio() {
+      const d = document.createElement("div"); d.className = "avviso-vecchio"; d.setAttribute("role", "alertdialog");
+      d.innerHTML = `<div><h2>Personaggio da ricreare</h2><p>Questo personaggio è stato creato con le vecchie regole (furia, mana, tecniche e incantesimi). Il combattimento ora usa i nuovi poteri: crea un nuovo personaggio per giocare.</p><a href="creazione.html">Crea un nuovo personaggio</a><a href="index.html">Torna all'inizio</a></div>`;
+      document.body.append(d);
+    }
+
     /* ---------- Avvio ---------- */
+    if (pg && pg.motore !== 2) avvisoPersonaggioVecchio();
     if (pg) {
       document.getElementById("completa").open = true; /* su telefono la scheda completa sta nel pannello laterale */
 

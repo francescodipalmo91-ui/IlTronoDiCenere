@@ -9,6 +9,7 @@
   <script src="js/regole.js"></script>
   <script src="js/magia.js"></script>
   <script src="js/tecniche.js"></script>
+  <script src="js/specializzazioni.js"></script>
   <script src="js/lingua.js"></script>
   <link rel="stylesheet" href="tema.css">
   <style>
@@ -66,6 +67,14 @@
     .razze { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
     .razze label { margin: 0; cursor: pointer; }
     .opzioni { display: grid; gap: 0.5rem; }
+    /* 08/11: poteri del motore nuovo — carte con nome e descrizione */
+    .carte-pot { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.5rem; margin: 0 0 0.9rem; }
+    .carta-pot { display: block; border: 1px solid var(--line, #444); border-radius: 8px; padding: 0.5rem 0.65rem; cursor: pointer; margin: 0; }
+    .carta-pot input { margin-right: 0.4rem; }
+    .carta-pot small { display: block; opacity: 0.8; font-size: 0.85em; margin-top: 0.2rem; line-height: 1.35; }
+    .carta-pot:has(input:checked) { border-color: var(--gold, #e6e6e6); background: rgba(255, 255, 255, 0.05); }
+    .pot-fissi { font-size: 0.9em; opacity: 0.85; margin: 0 0 0.9rem; }
+    .pot-fissi li { margin: 0.2rem 0; }
     .opzioni label { cursor: pointer; margin: 0; }
     .razze input, .opzioni input { position: absolute; width: 1px; height: 1px; opacity: 0; }
     .razze span { display: block; text-align: center; padding: 0.5rem 0.75rem; border: 2px solid var(--line); border-radius: 0.5rem; }
@@ -234,22 +243,12 @@
 
           </section>
 
-          <section id="incantesimi" aria-labelledby="t-incantesimi" hidden>
-            <h2 class="sez" id="t-incantesimi" style="margin-top:0" data-t="incantesimi">Incantesimi</h2>
-            <p class="guida" style="margin:0 0 0.75rem" id="guida-incantesimi"></p>
-            <h3 class="sub" id="t-inc1"></h3>
-            <div class="opzioni" id="lista-incantesimi" role="group" aria-labelledby="t-inc1"></div>
-            <h3 class="sub" id="t-inc2"></h3>
-            <div class="opzioni" id="lista-incantesimi2" role="group" aria-labelledby="t-inc2"></div>
-            <p class="guida" id="cap-classe-inc" style="margin-top:0.9rem"></p>
-            <p class="nota-riposo" data-t="notaRiposo"></p>
-          </section>
-
-          <section id="tecniche" aria-labelledby="t-tecniche" hidden>
-            <h2 class="sez" id="t-tecniche" style="margin-top:0" data-t="tecnicheTit">Tecniche speciali lv 1</h2>
-            <p class="guida" style="margin:0 0 0.75rem" id="guida-tecniche"></p>
-            <div class="opzioni" id="lista-tecniche" role="group" aria-labelledby="t-tecniche"></div>
-            <p class="nota-riposo" data-t="notaRiposoTec"></p>
+          <section id="poteri" aria-labelledby="t-poteri" hidden>
+            <h2 class="sez" id="t-poteri" style="margin-top:0">Poteri</h2>
+            <p class="guida" style="margin:0 0 0.75rem">La specializzazione si sceglie ora e non si cambia più. Al livello 1 scegli un potere per scontro e un giornaliero; a ogni livello sceglierai di nuovo. Le scelte sono definitive.</p>
+            <h3 class="sub" id="h-spec">Specializzazione</h3>
+            <div class="carte-pot" id="lista-spec" role="radiogroup" aria-labelledby="h-spec"></div>
+            <div id="pot-dettaglio"></div>
           </section>
         </div>
 
@@ -449,7 +448,7 @@
     const MANA_BASE = R_.RISORSA_BASE, MG = window.MAGIA;
     const POSTI_PRINC = R_.TECNICHE_PER_LIVELLO[0], POSTI_ALTRA = MG ? MG.POSTI_ALTRA_SCUOLA : 1;
     const ATTR_MANA = R_.ATTR_MAGIA; /* attributo del mana: Mente per l'Arcanista, Spirito per il Monaco */
-    const usaMagia = () => !!(MG && classe && MG.CLASSI[classe]);
+    const usaMagia = () => false; /* 08/11: motore nuovo, niente incantesimi né mana */
     /* risorsa di Guerriero e Sciamano, calcolata come il mana: 10 + modificatore (si ricarica solo riposando) */
     const RISORSA_CLASSE = R_.RISORSA_MARZIALE;
     const incantesimiScelti = () => usaMagia() ? [...document.querySelectorAll('input[name="incantesimo"]:checked')].map(c => MG.INCANTESIMI.find(i => i.id === c.value)).filter(Boolean) : [];
@@ -467,6 +466,7 @@
     };
     function disegnaIncantesimi() {
       const sez = $("incantesimi"), magia = usaMagia();
+      if (!sez) return; /* 08/11: sezione tolta con il motore nuovo */
       sez.hidden = !magia;
       document.querySelector(".pagina").classList.toggle("magia", magia);
       if (!magia) { chiaveInc = null; return; }
@@ -486,7 +486,43 @@
     const TECNICHE = window.TECNICHE || [], TEC_BASE = R_.MAX_TECNICHE, TEC_SCUDO = R_.TECNICHE_SCUDO;
     const maxTecniche = () => TEC_BASE + (scudoScelto() && classe === "Soldato" ? TEC_SCUDO : 0); /* 2, oppure 3 con lo scudo (solo il Guerriero) */
     const sciamano = () => classe === "Forestiero";
-    const usaTecniche = () => (classe === "Soldato" || sciamano()) && TECNICHE.length > 0;
+    const usaTecniche = () => false; /* 08/11: motore nuovo, niente tecniche né risorse */
+
+    /* ---------- Poteri del motore nuovo (08/11): specializzazione e scelte del livello 1 (js/specializzazioni.js) ---------- */
+    const SP = window.SPECIALIZZAZIONI;
+    let spec = null, chiavePot = null;
+    const scelteL1 = { scontro: null, giornaliero: null };
+    const tipoNome = { volonta: "a volontà", scontro: "per scontro", giornaliero: "giornaliero" };
+    const cartaPot = (name, id, checked) => `<label class="carta-pot"><input type="radio" name="${name}" value="${id}"${checked ? " checked" : ""}><b>${SP.POTERI[id].nome}</b> <span class="nota">${tipoNome[SP.POTERI[id].tipo]}</span><small>${SP.POTERI[id].testo}</small></label>`;
+    const sceltePoteri = () => (spec && scelteL1.scontro && scelteL1.giornaliero ? [scelteL1.scontro, scelteL1.giornaliero] : []);
+    const poteriOk = () => !!spec && SP.sceltaValida(classe, spec, sceltePoteri(), 1).ok;
+    function disegnaPoteri() {
+      const sez = $("poteri"); sez.hidden = !classe || !SP || !SP.SPEC[classe];
+      if (sez.hidden) return;
+      document.querySelector(".pagina").classList.add("magia");
+      const cl = SP.SPEC[classe], specs = Object.keys(cl).filter(k => k !== "classe");
+      if (chiavePot !== classe) { /* nuova classe: le sue due specializzazioni */
+        chiavePot = classe; spec = null; scelteL1.scontro = scelteL1.giornaliero = null;
+        Sicuro.html($("lista-spec"), specs.map(k => `<label class="carta-pot"><input type="radio" name="spec" value="${k}"><b>${cl[k].nome}</b><small>${cl[k].descr || ""}</small></label>`).join(""));
+        $("lista-spec").querySelectorAll("input").forEach(r => r.addEventListener("change", () => { spec = r.value; scelteL1.scontro = scelteL1.giornaliero = null; aggiorna(); }));
+      }
+      const det = $("pot-dettaglio");
+      if (!spec) { Sicuro.html(det, `<p class="guida">Scegli una specializzazione per vedere i suoi poteri.</p>`); return; }
+      const s = cl[spec], cp = SP.POTERI[cl.classe.potere], t1 = SP.TRATTI[cl.classe.tratti[1]], t2 = SP.TRATTI[cl.classe.tratti[2]];
+      const iniziali = s.volonta.filter(id => id !== s.volontaDopo);
+      Sicuro.html(det, `<h3 class="sub">Hai da subito</h3><ul class="pot-fissi">
+          ${iniziali.map(id => `<li><b>${SP.POTERI[id].nome}</b> (a volontà): ${SP.POTERI[id].testo}</li>`).join("")}
+          <li><b>${cp.nome}</b> (potere di classe, ${tipoNome[cp.tipo]}): ${cp.testo}</li>
+          <li><b>${t1.nome}</b> (tratto): ${t1.testo}</li></ul>
+        <h3 class="sub">Livello 1 · scegli il potere per scontro</h3>
+        <div class="carte-pot">${s.scontro.map(id => cartaPot("pot-scontro", id, scelteL1.scontro === id)).join("")}</div>
+        <h3 class="sub">Livello 1 · scegli il giornaliero</h3>
+        <div class="carte-pot">${s.giornalieri.map(id => cartaPot("pot-giorn", id, scelteL1.giornaliero === id)).join("")}</div>
+        <p class="guida">Più avanti: al livello 2 ${SP.POTERI[s.volontaDopo].nome} o un altro potere per scontro, e il tratto ${t2.nome}; al livello 5 ${SP.POTERI[s.fissi.finale].nome}.</p>`);
+      det.querySelectorAll('input[name="pot-scontro"]').forEach(r => r.addEventListener("change", () => { scelteL1.scontro = r.value; aggiorna(); }));
+      det.querySelectorAll('input[name="pot-giorn"]').forEach(r => r.addEventListener("change", () => { scelteL1.giornaliero = r.value; aggiorna(); }));
+      const sp = $("lista-spec").querySelector(`input[value="${spec}"]`); if (sp) sp.checked = true;
+    }
     let chiaveTecniche = null;
     const opzioniTec = () => {
       if (sciamano()) return TECNICHE.filter(x => x.liv === 1 && x.classe === "Forestiero" && !x.via); /* le tecniche della natura non dipendono dall'arma */
@@ -496,6 +532,7 @@
     const tecNecessarie = () => Math.min(maxTecniche(), opzioniTec().length);
     function disegnaTecniche() {
       const sez = $("tecniche"), si = usaTecniche();
+      if (!sez) return; /* 08/11: sezione tolta con il motore nuovo */
       sez.hidden = !si;
       if (si) document.querySelector(".pagina").classList.add("magia");
       const opz = si ? opzioniTec() : [];
@@ -552,10 +589,11 @@
     const dotazioneScelta = () => [...document.querySelectorAll('input[name="dotazione"]:checked')].map(c => DOTAZIONE[c.value]);
 
     /* ---------- Costruzione liste ---------- */
-    const CAPACITA_CLASSE = {
-      Soldato: { it: "Mente incrollabile: dopo una prova fallita puoi spendere 1 punto furia per un tiro salvezza (d20 + mod Vigore + livello, CD 10); se lo superi non perdi salute mentale.", en: "Unshakeable Mind: after a failed check you may spend 1 fury point on a saving throw (d20 + Vigour mod + level, DC 10); on a success you lose no mental health." },
-      Forestiero: { it: "Mente incrollabile: dopo una prova fallita puoi spendere 1 punto natura per un tiro salvezza (d20 + mod Spirito + livello, CD 10); se lo superi non perdi salute mentale.", en: "Unshakeable Mind: after a failed check you may spend 1 nature point on a saving throw (d20 + Spirit mod + level, DC 10); on a success you lose no mental health." }
-    };
+    /* 08/11: potere di classe e tratto I dal catalogo del motore nuovo (niente più furia e natura) */
+    const CAPACITA_CLASSE = Object.fromEntries(Object.keys(window.SPECIALIZZAZIONI ? window.SPECIALIZZAZIONI.SPEC : {}).map(k => {
+      const c = window.SPECIALIZZAZIONI.SPEC[k].classe, p = window.SPECIALIZZAZIONI.POTERI[c.potere], tr = window.SPECIALIZZAZIONI.TRATTI[c.tratti[1]];
+      const testo = `${p.nome}: ${p.testo} ${tr.nome}: ${tr.testo}`; return [k, { it: testo, en: testo }];
+    }));
     /* 01/11: caratteristica di classe con la sua motivazione */
     const MOTIVO_CLASSE = {
       Soldato: { it: "Temprato da mille battaglie: è un combattente addestrato e mette tutta la sua forza in ogni colpo.", en: "Tempered by a thousand battles: a trained fighter who puts all his strength into every blow." },
@@ -742,7 +780,8 @@
       /* mana: solo Sapiente e Accolito */
       disegnaIncantesimi();
       const magia = usaMagia(), ris = RISORSA_CLASSE[classe], attrMana = ris ? ris.attr : (ATTR_MANA[classe] || "Mente"), modMe = modDi(attrMana);
-      $("mana-box").hidden = !magia && !ris;
+      $("mana-box").hidden = true; /* 08/11: niente risorse nel motore nuovo */
+      disegnaPoteri();
       $("mana-t").textContent = ris ? t[ris.id] : classe === "Accolito" ? t.fede : t.mana;
       $("mana-v").textContent = MANA_BASE + modMe;
       $("mana-f").textContent = `${MANA_BASE} ${segno(modMe)} (${t.modAttr(N("attributi", attrMana))})`;
@@ -765,6 +804,8 @@
       if (dot.length < MAX_DOTAZIONE) manca.push(m.dot(MAX_DOTAZIONE - dot.length));
       if (magia && nInc < incNecessari()) manca.push(t.mancaInc(incNecessari() - nInc));
       if (usaTecniche() && arma && nTec < tecNecessarie()) manca.push(t.mancaTec(tecNecessarie() - nTec));
+      if (classe && !spec) manca.push("la specializzazione");
+      else if (classe && !poteriOk()) manca.push("i poteri del livello 1");
       if (ritrattiN > 0 && !immagine) manca.push(m.ritratto);
       $("crea").disabled = manca.length > 0;
       $("avviso").textContent = manca.length ? t.ancora + manca.join(", ") + "." : "";
@@ -842,7 +883,7 @@
       const arma = armaScelta(), arm = armaturaScelta(), dot = dotazioneScelta(), sc = scudoScelto();
       if (!razza || !classe || tiro === null || puntiTotali() - spesi(-1) !== 0 ||
           abilitaScelte().length !== MAX_ABILITA || !arma || !arm || dot.length !== MAX_DOTAZIONE || (ritrattiN > 0 && !immagine) ||
-          (usaMagia() && !incScuolaOk()) || (usaTecniche() && tecnicheScelte().length < tecNecessarie())) return;
+          (usaMagia() && !incScuolaOk()) || (usaTecniche() && tecnicheScelte().length < tecNecessarie()) || !poteriOk()) return;
 
       const base = Object.fromEntries(NOMI.map((n, i) => [n, totale(i)]));
       const stat = { ...base }; /* l'arma non modifica il Vigore: dà il dado di danno */
@@ -856,11 +897,13 @@
         puntiVita: PV_BASE + tiro + mod(stat.Vigore),
         saluteMentale: PV_BASE + tiro + mod(stat.Spirito),
         classeArmatura: CA_BASE + arm.ca + (sc ? SCUDO.ca : 0), /* comprende lo scudo, se scelto; il bonus di Agilità si calcola in gioco */
-        mana: usaMagia() ? MANA_BASE + mod(stat[ATTR_MANA[classe]]) : null, /* solo Sapiente (Mente) e Accolito (Spirito) */
-        risorsa: RISORSA_CLASSE[classe] ? { id: RISORSA_CLASSE[classe].id, max: MANA_BASE + mod(stat[RISORSA_CLASSE[classe].attr]) } : null, /* punti furia (Guerriero) o punti natura (Sciamano) */
+        mana: null, risorsa: null, /* 08/11: niente risorse nel motore nuovo */
         scuola: null, /* 04/11: niente scuola principale; la scuola potenziata la decide la via di prestigio */
         incantesimi: incantesimiScelti().map(inc => inc.id), /* id di js/magia.js: nomi, costi ed effetti si leggono da lì */
-        tecniche: tecnicheScelte(), /* tecniche speciali del Guerriero */
+        tecniche: [], /* 08/11: vecchio sistema, vuoto */
+        motore: 2, /* 08/11: personaggio del motore nuovo (js/poteri.js, scontro.js, specializzazioni.js) */
+        spec, /* specializzazione: si sceglie qui e non si cambia */
+        scelte: sceltePoteri(), /* poteri scelti, nell'ordine dei livelli (livello 1: per scontro, giornaliero) */
         modalita: (document.querySelector('input[name="modalita"]:checked') || {}).value === "difficile" ? "difficile" : "facile", /* 28/10: facile (si riparte dal salvataggio) o difficile (morte permanente) */
         abilita: abilitaScelte().map(([n, a]) => ({ nome: n, attributo: a, valore: valoreAbilita(a) + LIVELLO })),
         equipaggiamento: {

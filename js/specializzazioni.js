@@ -121,16 +121,28 @@
     armata_dei_morti: { nome: "Armata dei morti", tipo: "giornaliero", liv: 5, testo: "Le ossa dei morti di Casa Vespera si sollevano: 4d8 + Spirito senza tiro per colpire, +1d8 per ogni placca (consumate); Stordito (sui boss Indebolito)." }
   };
 
+  /* i tratti di classe (grado I al livello 1, grado II al livello 2) */
+  const TRATTI = {
+    mente_incrollabile: { nome: "Mente incrollabile", testo: "Una volta al giorno annulli il danno mentale di una prova fallita." },
+    furia: { nome: "Furia", testo: "Da Vacillante i tuoi attacchi fanno +2 danni." },
+    legame_sottobosco: { nome: "Legame del sottobosco", testo: "I tuoi veleni durano 4 turni; +1 erba quando raccogli." },
+    radici_profonde: { nome: "Radici profonde", testo: "Contro un bersaglio Avvelenato i tuoi attacchi fanno +1d4." },
+    pozzo_arcano: { nome: "Pozzo arcano", testo: "La prima volta per turno nemico che vieni colpito recuperi 1 salute (2 dal livello 4)." },
+    ultima_scintilla: { nome: "Ultima scintilla", testo: "Una volta per scontro, quando diventi Vacillante, recuperi un potere per scontro già usato." },
+    ultimo_servizio: { nome: "Ultimo servizio", testo: "Una volta al giorno, quando scendi a 0 salute, resti a 1 e ti curi 1d6 + Spirito." },
+    eredita_sepolcro: { nome: "Eredità del sepolcro", testo: "Dopo un potere giornaliero, fino al tuo turno dimezzi i danni che subisci." }
+  };
+
   const SPEC = {
     Soldato: {
       classe: { potere: "secondo_vento", tratti: { 1: "mente_incrollabile", 2: "furia" } },
       esecutore: {
-        nome: "Esecutore", volontaDopo: "guardia_feroce", volonta: ["colpo_poderoso", "colpo_di_mestiere", "guardia_feroce"],
+        nome: "Esecutore", descr: "Logora con lo stato dell'arma e finisce i nemici Vacillanti.", volontaDopo: "guardia_feroce", volonta: ["colpo_poderoso", "colpo_di_mestiere", "guardia_feroce"],
         scontro: ["spezza_guardia", "colpo_crudele", "caccia_al_ferito"], giornalieri: ["assalto_implacabile", "colpo_del_boia"],
         fissi: { giornaliero: "marchio_della_preda", scontro: "ferita_riaperta", finale: "sentenza" }
       },
       sentinella: {
-        nome: "Sentinella", volontaDopo: "colpo_di_mestiere", volonta: ["colpo_di_guardia", "colpo_di_mestiere", "in_guardia"],
+        nome: "Sentinella", descr: "Incassa, contrattacca e toglie al nemico i suoi colpi migliori.", volontaDopo: "colpo_di_mestiere", volonta: ["colpo_di_guardia", "colpo_di_mestiere", "in_guardia"],
         scontro: ["ritorsione", "rintocco", "rappresaglia"], giornalieri: ["veglia_di_ferro", "rivalsa"],
         fissi: { giornaliero: "ultimo_baluardo", scontro: "spezza_carica", finale: "silenzio_della_casa" }
       }
@@ -138,12 +150,12 @@
     Forestiero: {
       classe: { potere: "bevi_elisir", tratti: { 1: "legame_sottobosco", 2: "radici_profonde" } },
       spore: {
-        nome: "Spore", volontaDopo: "pelle_di_corteccia", volonta: ["puntura_di_mandragora", "tappeto_di_micelio", "pelle_di_corteccia"],
+        nome: "Spore", descr: "Il veleno che uccide: logoramento puro, il veleno diventa danno.", volontaDopo: "pelle_di_corteccia", volonta: ["puntura_di_mandragora", "tappeto_di_micelio", "pelle_di_corteccia"],
         scontro: ["spore_del_morbo", "muffa_che_dilaga", "esalazione"], giornalieri: ["cuore_di_tossina", "sciame_putrido"],
         fissi: { giornaliero: "pestilenza", scontro: "cisti_parassita", finale: "marea_di_putrefazione" }
       },
       linfa: {
-        nome: "Linfa", volontaDopo: "corteccia_viva", volonta: ["puntura_di_mandragora", "tappeto_di_micelio", "corteccia_viva"],
+        nome: "Linfa", descr: "Il veleno che ti tiene in piedi: si cura solo avvelenando (Balsamo della linfa).", volontaDopo: "corteccia_viva", volonta: ["puntura_di_mandragora", "tappeto_di_micelio", "corteccia_viva"],
         scontro: ["baccello_esplosivo", "linfa_amara", "radici_avvolgenti"], giornalieri: ["fioritura_del_parassita", "cuore_di_linfa"],
         fissi: { giornaliero: "linfa_perenne", scontro: "purga", finale: "rinascita_del_sottobosco" }
       }
@@ -151,12 +163,12 @@
     Sapiente: {
       classe: { potere: "coagulo", tratti: { 1: "pozzo_arcano", 2: "ultima_scintilla" } },
       sangue: {
-        nome: "Sangue", volontaDopo: "crosta", volonta: ["stilo_cremisi", "frusta_cremisi", "crosta"],
+        nome: "Sangue", descr: "Logoramento con il sanguinamento; si cura combattendo (Sangue versato).", volontaDopo: "crosta", volonta: ["stilo_cremisi", "frusta_cremisi", "crosta"],
         scontro: ["ebollizione", "meteora_di_sangue", "ali_cremisi"], giornalieri: ["cuore_spezzato", "sangue_in_piena"],
         fissi: { giornaliero: "vincolo_di_sangue", scontro: "costellazione_rossa", finale: "marea_cremisi" }
       },
       illusione: {
-        nome: "Illusione", volontaDopo: "riflessi", volonta: ["dardo_fantasma", "sussurro_illusorio", "riflessi"],
+        nome: "Illusione", descr: "Inganna il nemico con le Copie, che alla fine diventano danno.", volontaDopo: "riflessi", volonta: ["dardo_fantasma", "sussurro_illusorio", "riflessi"],
         scontro: ["frantumare", "labirinto", "sdoppiamento"], giornalieri: ["incubo", "dado_truccato"],
         fissi: { giornaliero: "teatro_di_specchi", scontro: "specchio_rotto", finale: "grande_inganno" }
       }
@@ -164,12 +176,12 @@
     Accolito: {
       classe: { potere: "tocco_lenitivo", tratti: { 1: "ultimo_servizio", 2: "eredita_sepolcro" } },
       purificatore: {
-        nome: "Purificatore", volontaDopo: "aura_purificante", volonta: ["colpo_consacrato", "marchio_del_rogo", "aura_purificante"],
+        nome: "Purificatore", descr: "Fuoco sacro che brucia la maledizione; benedice l'arma e combatte in mischia.", volontaDopo: "aura_purificante", volonta: ["colpo_consacrato", "marchio_del_rogo", "aura_purificante"],
         scontro: ["rogo", "arma_benedetta", "fiamma_calda"], giornalieri: ["pira", "fuoco_che_cura"],
         fissi: { giornaliero: "consacrazione", scontro: "martello_del_giudizio", finale: "rogo_purificatore" }
       },
       ossomante: {
-        nome: "Ossomante", volontaDopo: "armatura_d_ossa", volonta: ["lancia_d_ossa", "spine_d_ossa", "armatura_d_ossa"],
+        nome: "Ossomante", descr: "Accumula placche d'ossa attorno all'armatura e le scarica come armi.", volontaDopo: "armatura_d_ossa", volonta: ["lancia_d_ossa", "spine_d_ossa", "armatura_d_ossa"],
         scontro: ["spirito_d_ossa", "lama_d_osso", "barricata_di_costole"], giornalieri: ["prigione_d_ossa", "armatura_del_sepolcro"],
         fissi: { giornaliero: "armatura_spezzata", scontro: "decrepitezza", finale: "armata_dei_morti" }
       }
@@ -256,7 +268,7 @@
   /* tutti i poteri di una specializzazione (per i controlli) */
   const tuttiDi = (s) => [...s.volonta, ...s.scontro, ...s.giornalieri, s.fissi.giornaliero, s.fissi.scontro, s.fissi.finale];
 
-  const API = { POTERI, SPEC, SCALA, LIV, quantiScontroScelti, opzioniLivello, sceltaValida, poteriAlLivello, trattiAlLivello, tuttiDi, livelloDi };
+  const API = { POTERI, SPEC, TRATTI, SCALA, LIV, quantiScontroScelti, opzioniLivello, sceltaValida, poteriAlLivello, trattiAlLivello, tuttiDi, livelloDi };
   root.SPECIALIZZAZIONI = API;
   if (typeof module !== "undefined" && module.exports) module.exports = API;
 })(typeof window !== "undefined" ? window : globalThis);

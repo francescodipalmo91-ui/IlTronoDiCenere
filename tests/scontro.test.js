@@ -134,7 +134,8 @@
     S.usa(g, n, "in_guardia", ctx([]));
     const c = ctx([19, 1, 10, 1]); S.attacco(n, g, {}, c); /* 19 + 2 = 21 > 20: colpito; contrattacco */
     eq(n.stati.sanguinante.liv, 2); fine(c);
-    S.fineTurno(g); S.fineTurno(g); eq(g.bonusTs, 4); S.fineTurno(g); eq([g.bonusTs, S.ca(g)], [0, 18], "Veglia scaduta (In guardia resta fino al tuo turno)");
+    const vuoto = ctx([]); S.inizioTurno(g, n, vuoto); eq([g.bonusTs, S.ca(g)], [4, 18], "In guardia finita, Veglia ancora attiva");
+    S.inizioTurno(g, n, vuoto); eq(g.bonusTs, 4); S.inizioTurno(g, n, vuoto); eq([g.bonusTs, S.ca(g)], [0, 16], "Veglia scaduta dopo 3 turni del nemico");
   });
   caso("Rivalsa: + metà del danno subito nell'ultimo turno del nemico (tutto da Vacillante)", () => {
     const g = guerriero({ dannoSubitoTurno: 9 }), n = nemico(), c = ctx([10, 1, 2]);

@@ -29,8 +29,11 @@
   /* esito: { ok } condiviso dentro lo stesso potere (un TS solo per potere) */
   function statoSu(att, dif, modo, ctx, id, esito) {
     const k = id || statoArma(att); if (!k) return [];
-    return (modo === "aggrava" ? P.aggrava : P.applica)(dif, k, { fonte: fonteDi(att), tira: ctx.tira, esito });
+    return (modo === "aggrava" ? P.aggrava : P.applica)(dif, k, { fonte: fonteDi(att), tira: ctx.tira, esito, turni: durataDi(att, k) });
   }
+  /* Legame del sottobosco (Sciamano, tratto I): i veleni durano 4 turni */
+  const durataDi = (att, k) => (k === "intossicato" && (att.tratti || []).includes("legame_sottobosco") ? 4 : undefined);
+  const durataPiena = (att, k) => durataDi(att, k) || P.durataBase(k);
 
   /* ---------- L'attacco ----------
      o: { piuDadi, soloDado, doppiDadi, autoCrit, bonusDanno, tipo, critDa, nome, contrattacco }
@@ -38,6 +41,7 @@
   function attacco(att, dif, o, ctx) {
     pronto(att); pronto(dif); o = o || {};
     const E = [];
+    if (!o.contrattacco) { E.push(...scattaTrappole(att, dif, ctx)); if (att.pv <= 0) return { ok: false, crit: false, eventi: E, ev: null }; }
     const auto = !!o.autoCrit;
     const d = auto ? null : ctx.tira(20);
     const tot = auto ? null : d + mAtt(att) - P.malusColpire(att);
@@ -62,8 +66,11 @@
     let lordo = somma(tiri) + (o.soloDado ? 0 : mDanno(att)) + (o.bonusDanno || 0);
     if (dif.marchio && att.marchia) { const x = ctx.tira(4); lordo += x; ev.marchio = x; }                /* Marchio della preda */
     if ((att.tratti || []).includes("furia") && P.vacillante(att)) { lordo += 2; ev.furia = 2; }        /* Furia: da Vacillante +2 */
+    if ((att.tratti || []).includes("radici_profonde") && P.grave(dif, "intossicato")) { const x = ctx.tira(4); lordo += x; ev.radici = x; } /* Radici profonde */
     Object.assign(ev, { nd, dado, tiri });
     E.push(...danneggia(dif, Math.max(1, lordo), o.tipo || (att.arma && att.arma.tipo), ev, ctx));
+    /* Muffa che dilaga: ogni colpo a segno applica Intossicato, o allunga di 1 turno il veleno in corso */
+    if (att.buff.muffa && !o.contrattacco && dif.pv > 0) E.push(...(P.ha(dif, "intossicato") ? [P.allunga(dif, "intossicato", 1)] : statoSu(att, dif, "applica", ctx, "intossicato")));
     if (dif.pv > 0) E.push(...reazioneColpito(att, dif, ctx));
     return { ok: true, crit: ev.crit, eventi: E, ev };
   }
@@ -89,8 +96,25 @@
     if (c.ok && att.pv > 0 && modo) E.push(...statoSu(dif, att, modo, ctx));
     return E;
   }
+  /* trappole dello Sciamano: scattano al prossimo attacco del nemico, prima del tiro */
+  function scattaTrappole(att, dif, ctx) {
+    const E = [];
+    if (dif.buff.cisti) { /* Cisti parassita: aggrava il veleno e gli fa subito un turno di veleno */
+      delete dif.buff.cisti; E.push({ k: "trappola", id: "cisti_parassita" });
+      E.push(...statoSu(dif, att, "aggrava", ctx, "intossicato"));
+      const t = P.tick(att, "intossicato", ctx.tira); if (t) E.push(t);
+    }
+    if (dif.buff.baccello && att.pv > 0) { /* Baccello esplosivo: aggrava il veleno ed Esposto (un TS solo) */
+      delete dif.buff.baccello; E.push({ k: "trappola", id: "baccello_esplosivo" });
+      const esito = {}; E.push(...statoSu(dif, att, "aggrava", ctx, "intossicato", esito), ...statoSu(dif, att, "applica", ctx, "esposto", esito));
+    }
+    return E;
+  }
   function reazioneMancato(att, dif, ctx) {
     const E = [];
+    if (dif.buff.cortecciaViva && P.ha(att, "intossicato")) { /* Corteccia viva: il veleno torna a durata piena */
+      att.stati.intossicato.turni = Math.max(att.stati.intossicato.turni, durataPiena(dif, "intossicato")); E.push({ k: "rinnovato", stato: "intossicato" });
+    }
     if (dif.buff.guardiaFeroce) E.push(...contrattacco(dif, att, ctx, "applica"));
     else if (dif.buff.inGuardia) E.push(...contrattacco(dif, att, ctx, dif.buff.veglia ? "aggrava" : null));
     return E;
@@ -98,6 +122,7 @@
   function reazioneColpito(att, dif, ctx) {
     const E = [];
     dif.colpitoUltimo = true;
+    if (dif.buff.pelle) E.push(...statoSu(dif, att, "applica", ctx, "intossicato")); /* Pelle di corteccia */
     if (dif.buff.rappresaglia) E.push(...contrattacco(dif, att, ctx, "applica"));
     else if (dif.buff.inGuardia && dif.buff.veglia) E.push(...contrattacco(dif, att, ctx, "aggrava"));
     return E;
@@ -105,20 +130,51 @@
 
   /* ---------- Turni ---------- */
   /* inizio del tuo turno: danni continuativi, scadono le difese «fino al tuo turno»; l'avversario dimentica cosa ti ha fatto */
+  /* Gli effetti «per N turni» scendono all'inizio del tuo turno: turni = N copre N turni del nemico.
+     Quelli che contano i TUOI turni successivi (Muffa che dilaga) partono da N + 1. */
   function inizioTurno(b, avv, ctx) {
     pronto(b);
-    Object.keys(b.buff).forEach(k => { if (b.buff[k].finoAlTurno) delete b.buff[k]; });
-    if (avv) { avv.colpitoUltimo = false; avv.dannoSubitoTurno = 0; }
-    return P.inizioTurno(b, ctx.tira);
+    Object.keys(b.buff).forEach(k => { const x = b.buff[k]; if (x.finoAlTurno || (x.turni > 0 && --x.turni === 0)) delete b.buff[k]; });
+    if (!b.buff.veglia && b.bonusTsBase != null) { b.bonusTs = b.bonusTsBase; delete b.bonusTsBase; }
+    if (avv) { pronto(avv); avv.colpitoUltimo = false; avv.dannoSubitoTurno = 0; }
+    const E = P.inizioTurno(b, ctx.tira);
+    /* Balsamo della linfa: ogni turno di veleno sul nemico cura lo Sciamano della Linfa (1, 2 se Avvelenato; doppio con Cuore di linfa) */
+    E.filter(e => e.k === "tick" && e.stato === "intossicato").forEach(t => {
+      if (!avv || avv.spec !== "linfa" || avv.pv <= 0) return;
+      const n = (P.grave(b, "intossicato") ? 2 : 1) * (avv.buff.cuoreLinfa ? 2 : 1);
+      E.push({ ...cura(avv, n), k: "balsamo" });
+      const lp = avv.buff.linfaPerenne; /* Linfa perenne: il veleno dura 1 turno in più, massimo 3 volte */
+      if (lp && lp.usi < 3 && P.ha(b, "intossicato")) { lp.usi++; E.push(P.allunga(b, "intossicato", 1)); }
+    });
+    /* Fioritura del parassita: 1d6 a ogni turno del nemico; al terzo esplode per 2d6 e aggrava il veleno */
+    if (b.bulbo && b.pv > 0) {
+      const bu = b.bulbo; bu.n++;
+      const d = ctx.tira(6), ev = { k: "bulbo", n: bu.n, tiri: [d] }; E.push(ev, ...danneggia(b, d, "veleno", ev, ctx));
+      if (bu.n >= 3 && b.pv > 0) {
+        const t = [ctx.tira(6), ctx.tira(6)], ev2 = { k: "bulboEsplode", tiri: t };
+        E.push(ev2, ...danneggia(b, somma(t), "veleno", ev2, ctx));
+        if (b.pv > 0) E.push(...statoSu(bu.da, b, "aggrava", ctx, "intossicato"));
+        b.bulbo = null;
+      }
+    }
+    /* Sciame putrido: all'inizio dei tuoi 3 turni successivi, 1d6 senza tiro e il veleno applicato (o aggravato) */
+    if (b.buff.sciame && avv && avv.pv > 0) {
+      const sc = b.buff.sciame, d = ctx.tira(6), ev = { k: "sciame", tiri: [d] };
+      E.push(ev, ...danneggia(avv, d, "veleno", ev, ctx));
+      if (avv.pv > 0) E.push(...statoSu(b, avv, "aggrava", ctx, "intossicato"));
+      if (--sc.cariche <= 0) delete b.buff.sciame;
+    }
+    return E;
   }
   function fineTurno(b) {
     pronto(b);
-    Object.keys(b.buff).forEach(k => { const x = b.buff[k]; if (x.turni > 0 && --x.turni === 0) delete b.buff[k]; });
     if (b.nonCarica > 0) b.nonCarica--;
+    if (b.velenoPerenne) b.pestilenzaTurni = (b.pestilenzaTurni || 0) + 1; /* turni passati dall'inizio di Pestilenza */
     return P.fineTurno(b);
   }
   /* fine scontro: tornano i poteri per scontro, spariscono effetti e stati; il riposo ricarica i giornalieri */
   function fineScontro(b) { pronto(b); b.usati.scontro = {}; b.buff = {}; b.stati = {}; b.prossimiDadi = 0; b.marchio = false; b.marchia = false; b.immStordito = 0; b.nonCarica = 0; b.pronto = null;
+    b.bulbo = null; b.velenoPerenne = false; b.pestilenzaTurni = 0;
     if (b.bonusTsBase != null) { b.bonusTs = b.bonusTsBase; delete b.bonusTsBase; } }
   function riposo(b) { pronto(b); b.usati.giorno = {}; }
 
@@ -134,6 +190,7 @@
     if (p.tipo !== "volonta" && P.soloAVolonta(b)) return { ok: false, motivo: "impaurito" };
     if (p.tipo === "scontro" && b.usati.scontro[id]) return { ok: false, motivo: "giaUsatoScontro" };
     if (p.tipo === "giornaliero" && b.usati.giorno[id]) return { ok: false, motivo: "giaUsatoGiorno" };
+    if (id === "bevi_elisir" && !(b.elisir > 0)) return { ok: false, motivo: "senzaElisir" };
     return { ok: true };
   }
 
@@ -213,16 +270,68 @@
         dif.nonCarica = Math.max(dif.nonCarica || 0, 2); if (dif.pronto) { E.push({ k: "caricaSpezzata", cosa: dif.pronto }); dif.pronto = null; }
         E.push(buff(att, "silenzio", { ca: 2, turni: 3 }));
         break;
+      /* ---- Sciamano: in comune ---- */
+      case "bevi_elisir": att.elisir--; E.push(cura(att, Math.max(1, Math.floor(att.pvMax / 4)))); break; /* PROVVISORIO: 1/4 della salute */
+      case "puntura_di_mandragora": r = atk({}); if (r.ok && vivo()) stato("applica", "intossicato"); break;
+      case "tappeto_di_micelio":
+        r = atk({ soloDado: true });
+        if (r.ok && vivo()) { stato("applica", "indebolito"); if (P.ha(dif, "intossicato")) E.push(P.allunga(dif, "intossicato", 1)); }
+        break;
+
+      /* ---- Sciamano delle Spore ---- */
+      case "pelle_di_corteccia": E.push(buff(att, "pelle", { ca: 2, finoAlTurno: true })); break;
+      case "spore_del_morbo": case "linfa_amara": r = atk({ piuDadi: 1 }); if (r.ok && vivo()) stato("aggrava", "intossicato"); break;
+      case "muffa_che_dilaga": E.push(buff(att, "muffa", { turni: 4 })); break; /* i tuoi 3 turni successivi */
+      case "esalazione": /* senza tiro per colpire: un TS Vigore → Indebolito e Stordito (sui boss Indebolito); Intossicato in ogni caso */
+        stato("applica", "indebolito"); stato("applica", "stordito");
+        E.push(...P.applica(dif, "intossicato", { senzaTs: true, turni: durataDi(att, "intossicato") }));
+        break;
+      case "cuore_di_tossina": {
+        stato("aggrava", "intossicato");
+        if (P.ha(dif, "intossicato")) {
+          const n = dif.velenoPerenne ? Math.min(5, dif.pestilenzaTurni || 0) : dif.stati.intossicato.turni;
+          E.push({ k: "cuoreTossina", turni: n });
+          for (let i = 0; i < n && vivo(); i++) { const t = P.tick(dif, "intossicato", ctx.tira); if (t) E.push(t); }
+          if (vivo()) { dif.stati.intossicato.liv = 2; dif.stati.intossicato.turni = durataPiena(att, "intossicato"); }
+        }
+        break;
+      }
+      case "sciame_putrido": E.push(buff(att, "sciame", { cariche: 3 })); break;
+      case "pestilenza": dif.velenoPerenne = true; dif.pestilenzaTurni = 0; E.push({ k: "pestilenza" }); break;
+      case "cisti_parassita": E.push(buff(att, "cisti", {})); break;
+      case "marea_di_putrefazione":
+        stato("aggrava", "intossicato");
+        if (P.ha(dif, "intossicato")) { dif.stati.intossicato.doppio = vac ? 4 : 3; E.push({ k: "marea", turni: dif.stati.intossicato.doppio }); }
+        break;
+
+      /* ---- Sciamano della Linfa ---- */
+      case "corteccia_viva": E.push(buff(att, "cortecciaViva", { ca: 2, finoAlTurno: true })); break;
+      case "baccello_esplosivo": E.push(buff(att, "baccello", {})); break;
+      case "radici_avvolgenti":
+        stato("applica", "indebolito"); if (P.ha(dif, "intossicato")) E.push(P.allunga(dif, "intossicato", 1));
+        E.push(buff(att, "radici", { ca: 2, finoAlTurno: true }));
+        break;
+      case "fioritura_del_parassita": dif.bulbo = { n: 0, da: att }; E.push({ k: "bulboPiantato" }); break;
+      case "cuore_di_linfa": stato("aggrava", "intossicato"); E.push(buff(att, "cuoreLinfa", { turni: 3 })); break;
+      case "linfa_perenne": E.push(buff(att, "linfaPerenne", { usi: 0 })); break;
+      case "purga": stato("aggrava", "intossicato"); E.push(...P.togliTutti(att)); break;
+      case "rinascita_del_sottobosco": {
+        stato("aggrava", "intossicato"); E.push(...P.togliTutti(att));
+        if (P.ha(dif, "intossicato")) {
+          const s0 = dif.stati.intossicato; s0.turni = Math.max(s0.turni, durataPiena(att, "intossicato"));
+          const dado = P.STATI.intossicato.dado[s0.liv - 1], t = tiraDadi(ctx, s0.turni, dado);
+          E.push({ ...cura(att, somma(t)), tiri: t });
+        }
+        break;
+      }
       default: E.push({ k: "nonImplementato", id });
     }
-    /* Veglia di ferro scaduta: il bonus ai TS torna quello di prima (lo gestisce fineTurno tramite pulisciTs) */
-    return { eventi: E };
+      return { eventi: E };
   }
-  /* il bonus ai TS di Veglia dura quanto il buff */
-  const _fine = fineTurno;
-  function fineTurnoConTs(b) { const E = _fine(b); if (!b.buff.veglia && b.bonusTsBase != null) { b.bonusTs = b.bonusTsBase; delete b.bonusTsBase; } return E; }
+  /* Infuso (Sciamano, al riposo): un elisir di salute, massimo 2 portati (3 con Mani che curano, via di Guendalina dal 4) */
+  function preparaInfuso(b) { const max = b.via === "guendalina" && b.liv >= 4 ? 3 : 2; b.elisir = Math.min(max, (b.elisir || 0) + 1); return b.elisir; }
 
-  const API = { STATO_ARMA, statoArma, ca, attacco, usa, disponibile, inizioTurno, fineTurno: fineTurnoConTs, fineScontro, riposo };
+  const API = { STATO_ARMA, statoArma, ca, attacco, usa, disponibile, inizioTurno, fineTurno, fineScontro, riposo, preparaInfuso };
   root.Scontro = API;
   if (typeof module !== "undefined" && module.exports) module.exports = API;
 })(typeof window !== "undefined" ? window : globalThis);

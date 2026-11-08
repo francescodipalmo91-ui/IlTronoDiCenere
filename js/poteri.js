@@ -77,7 +77,8 @@
     const prima = b.stati[id], turni = o.turni || durataBase(id);
     const lv = Math.max(liv, prima && prima.turni > 0 ? prima.liv : 1);
     const tipo = o.tipo || (prima && prima.turni > 0 && prima.tipo) || (STATI[id] || {}).tipo;
-    b.stati[id] = { liv: lv, turni: Math.max(turni, prima && prima.turni > 0 && prima.liv === lv ? prima.turni : 0), ...(tipo ? { tipo } : {}) };
+    const extra = prima && prima.turni > 0 && prima.doppio > 0 ? { doppio: prima.doppio } : {}; /* Marea: il doppio dei dadi sopravvive al rinnovo */
+    b.stati[id] = { liv: lv, turni: Math.max(turni, prima && prima.turni > 0 && prima.liv === lv ? prima.turni : 0), ...(tipo ? { tipo } : {}), ...extra };
     return { k: "stato", stato: id, nome: nomeStato(id, lv), liv: lv, turni: b.stati[id].turni, rinnovato: !!(prima && prima.turni > 0) };
   }
 
@@ -149,15 +150,17 @@
 
   /* ---------- Turno di chi porta gli stati ---------- */
   /* inizio del turno: i danni continuativi (uno per famiglia; famiglie diverse si sommano) */
+  /* un turno di danno continuativo (anche fuori dal turno: Cisti parassita, Cuore di tossina). doppio > 0 = il doppio dei dadi (Marea) */
+  function tick(b, id, tira) {
+    const s = st(b, id); if (!s || !STATI[id].dado) return null;
+    const dado = STATI[id].dado[s.liv - 1], n = s.doppio > 0 ? 2 : 1, tiri = Array.from({ length: n }, () => tira(dado)), d = tiri.reduce((a, x) => a + x, 0);
+    const ev = subisci(b, d, s.tipo);
+    return { ...ev, k: "tick", stato: id, nome: nomeStato(id, s.liv), dado, d, ...(n > 1 ? { tiri } : {}) };
+  }
   function inizioTurno(b, tira) {
     prepara(b);
     const E = [];
-    ["sanguinante", "scottato", "intossicato"].forEach(id => {
-      const s = st(b, id); if (!s) return;
-      const dado = STATI[id].dado[s.liv - 1], d = tira(dado);
-      const ev = subisci(b, d, s.tipo);
-      E.push({ ...ev, k: "tick", stato: id, nome: nomeStato(id, s.liv), dado, d });
-    });
+    ["sanguinante", "scottato", "intossicato"].forEach(id => { const e = tick(b, id, tira); if (e) E.push(e); });
     if (!puoAgire(b)) E.push({ k: "perdeAzione", stato: "stordito" });
     return E;
   }
@@ -168,6 +171,8 @@
     if (b.immStordito > 0) b.immStordito--;
     Object.keys(b.stati).forEach(id => {
       const s = b.stati[id]; if (!(s.turni > 0)) return;
+      if (s.doppio > 0) s.doppio--;
+      if (id === "intossicato" && b.velenoPerenne) return; /* Pestilenza: il veleno non scade */
       s.turni--;
       if (s.turni === 0) {
         E.push({ k: "scade", stato: id, nome: nomeStato(id, s.liv) });
@@ -180,7 +185,7 @@
   const API = {
     DURATA, DURATA_IMPAURITO, DURATA_STORDITO, IMMUNITA_STORDITO, CD_BASE, CONFIG, STATI, TIPI,
     nomeStato, ha, grave, vacillante, malusCA, malusColpire, sogliaCritContro, puoAgire, soloAVolonta, immuneStordito,
-    cd, tiroSalvezza, applica, aggrava, allunga, togli, togliTutti, modificaDanno, subisci, inizioTurno, fineTurno
+    cd, tiroSalvezza, applica, aggrava, tick, durataBase, allunga, togli, togliTutti, modificaDanno, subisci, inizioTurno, fineTurno
   };
   root.Poteri = API;
   if (typeof module !== "undefined" && module.exports) module.exports = API;

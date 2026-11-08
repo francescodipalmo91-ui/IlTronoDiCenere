@@ -4,7 +4,7 @@
   "description": "Strumenti di verifica del gioco (non servono per giocare: il gioco resta statico)",
   "scripts": {
     "test": "npm run test:regole && npm run lint && npm run coerenza",
-    "test:regole": "node tests/combattimento.test.js && node tests/magia_combattimento.test.js && node tests/sciamano.test.js && node tests/cloud.test.js && node tests/poteri.test.js && node tests/scontro.test.js",
+    "test:regole": "node tests/combattimento.test.js && node tests/magia_combattimento.test.js && node tests/sciamano.test.js && node tests/cloud.test.js && node tests/poteri.test.js && node tests/scontro.test.js && node tests/scontro_sciamano.test.js",
     "test:browser": "node tests/fumo.browser.js && node tests/esterni.browser.js && node tests/bilanciamento.browser.js && node tests/sciamano.browser.js && node tests/combattimento.browser.js && node tests/livelli.browser.js && node tests/cacce.browser.js",
     "lint": "node strumenti/lint_pagine.mjs && html-validate \"*.html\"",
     "coerenza": "node strumenti/coerenza_docs.mjs",

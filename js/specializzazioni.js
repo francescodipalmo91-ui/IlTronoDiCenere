@@ -6,7 +6,7 @@
    Ogni potere: { nome, tipo: "volonta" | "scontro" | "giornaliero", liv, testo }
    Ogni specializzazione: { nome, volonta: [3 fissi], scontro: [3, se ne scelgono 2], giornalieri: [2, se ne sceglie 1],
                             livelli: { 3: giornaliero, 4: per scontro, 5: giornaliero finale } }
-   Blocco 2 (08/11/2026): Guerriero. Le altre classi entrano con i loro poteri, una alla volta.
+   Blocco 2 (08/11/2026): Guerriero, Sciamano. Le altre classi entrano con i loro poteri, una alla volta.
    ===================================================================== */
 (function (root) {
   const POTERI = {
@@ -36,7 +36,33 @@
     rivalsa: { nome: "Rivalsa", tipo: "giornaliero", liv: 1, testo: "Attacco + metà del danno subito dall'ultimo turno del nemico (tutto se sei Vacillante); aggrava lo stato dell'arma." },
     ultimo_baluardo: { nome: "Ultimo baluardo", tipo: "giornaliero", liv: 3, testo: "Per 3 turni, la prima volta che un colpo ti porterebbe a 0 resti a 1; ogni colpo che subisci dà +1 dado al tuo prossimo attacco (massimo 3)." },
     spezza_carica: { nome: "Spezza-carica", tipo: "scontro", liv: 4, testo: "Attacco con un dado in più; se il nemico ha un colpo caricato o un attacco speciale pronto, lo perde e diventa Indebolito; altrimenti aggrava lo stato dell'arma." },
-    silenzio_della_casa: { nome: "Silenzio della casa", tipo: "giornaliero", liv: 5, testo: "Attacco con due dadi in più che aggrava lo stato dell'arma; per 2 turni il nemico non può caricare né usare attacchi speciali; per 3 turni +2 CA." }
+    silenzio_della_casa: { nome: "Silenzio della casa", tipo: "giornaliero", liv: 5, testo: "Attacco con due dadi in più che aggrava lo stato dell'arma; per 2 turni il nemico non può caricare né usare attacchi speciali; per 3 turni +2 CA." },
+    /* ---- Sciamano: in comune ---- */
+    bevi_elisir: { nome: "Bevi un elisir (Infuso)", tipo: "volonta", liv: 1, testo: "Costa l'azione: bevi un elisir preparato al riposo e ti curi (PROVVISORIO: 1/4 della salute massima)." },
+    puntura_di_mandragora: { nome: "Puntura di mandragora", tipo: "volonta", liv: 1, testo: "Dado dell'arma + Agilità, applica Intossicato." },
+    tappeto_di_micelio: { nome: "Tappeto di micelio", tipo: "volonta", liv: 1, testo: "Solo il dado dell'arma, applica Indebolito; se il bersaglio è Intossicato, il veleno dura 1 turno in più." },
+
+    /* ---- Sciamano delle Spore ---- */
+    pelle_di_corteccia: { nome: "Pelle di corteccia", tipo: "volonta", liv: 1, testo: "+2 CA fino al tuo turno; chi ti colpisce diventa Intossicato." },
+    spore_del_morbo: { nome: "Spore del morbo", tipo: "scontro", liv: 1, testo: "Attacco con un dado in più, aggrava il veleno." },
+    muffa_che_dilaga: { nome: "Muffa che dilaga", tipo: "scontro", liv: 1, testo: "Per 3 turni ogni tuo colpo a segno applica Intossicato e allunga di 1 turno il veleno in corso." },
+    esalazione: { nome: "Esalazione", tipo: "scontro", liv: 1, testo: "Senza tiro per colpire: TS Vigore → Indebolito e Stordito (sui boss Indebolito); applica Intossicato in ogni caso." },
+    cuore_di_tossina: { nome: "Cuore di tossina", tipo: "giornaliero", liv: 1, testo: "Aggrava il veleno, poi il bersaglio subisce subito tutti i turni che gli restano; il veleno riparte da capo, grave. Con Pestilenza: tanti turni quanti ne sono passati dal suo inizio, massimo 5." },
+    sciame_putrido: { nome: "Sciame putrido", tipo: "giornaliero", liv: 1, testo: "Per i tuoi 3 turni successivi, all'inizio del turno uno sciame fa 1d6 senza tiro per colpire e applica il veleno (o lo aggrava)." },
+    pestilenza: { nome: "Pestilenza", tipo: "giornaliero", liv: 3, testo: "Per lo scontro il veleno sul bersaglio non scade." },
+    cisti_parassita: { nome: "Cisti parassita", tipo: "scontro", liv: 4, testo: "Trappola: al prossimo attacco del nemico, aggrava il veleno e gli fa subito un turno di veleno." },
+    marea_di_putrefazione: { nome: "Marea di putrefazione", tipo: "giornaliero", liv: 5, testo: "Aggrava il veleno; per 3 turni fa il doppio dei dadi (4 turni se il bersaglio è Vacillante)." },
+
+    /* ---- Sciamano della Linfa ---- */
+    corteccia_viva: { nome: "Corteccia viva", tipo: "volonta", liv: 1, testo: "+2 CA fino al tuo turno; se il nemico ti manca, il veleno su di lui torna a durata piena." },
+    baccello_esplosivo: { nome: "Baccello esplosivo", tipo: "scontro", liv: 1, testo: "Trappola: al prossimo attacco del nemico scoppia, aggrava il veleno ed Esposto." },
+    linfa_amara: { nome: "Linfa amara", tipo: "scontro", liv: 1, testo: "Attacco con un dado in più, aggrava il veleno." },
+    radici_avvolgenti: { nome: "Radici avvolgenti", tipo: "scontro", liv: 1, testo: "Costa l'azione: il nemico diventa Indebolito, il veleno su di lui dura 1 turno in più e +2 CA fino al tuo turno." },
+    fioritura_del_parassita: { nome: "Fioritura del parassita", tipo: "giornaliero", liv: 1, testo: "Bulbo per 3 turni: 1d6 a ogni turno del nemico, oltre al veleno; al terzo turno esplode per 2d6 e aggrava il veleno." },
+    cuore_di_linfa: { nome: "Cuore di linfa", tipo: "giornaliero", liv: 1, testo: "Aggrava il veleno; per 3 turni il Balsamo cura il doppio." },
+    linfa_perenne: { nome: "Linfa perenne", tipo: "giornaliero", liv: 3, testo: "Per lo scontro, ogni volta che il Balsamo ti cura, il veleno sul nemico dura 1 turno in più (massimo 3 volte)." },
+    purga: { nome: "Purga", tipo: "scontro", liv: 4, testo: "Aggrava il veleno e togli tutti i tuoi stati." },
+    rinascita_del_sottobosco: { nome: "Rinascita del sottobosco", tipo: "giornaliero", liv: 5, testo: "Aggrava il veleno e lo riporta a durata piena; togli tutti i tuoi stati e ti curi di un dado del veleno per ogni turno rimasto." }
   };
 
   const SPEC = {
@@ -51,6 +77,19 @@
         nome: "Sentinella", volonta: ["colpo_di_guardia", "colpo_di_mestiere", "in_guardia"],
         scontro: ["ritorsione", "rintocco", "rappresaglia"], giornalieri: ["veglia_di_ferro", "rivalsa"],
         livelli: { 3: "ultimo_baluardo", 4: "spezza_carica", 5: "silenzio_della_casa" }
+      }
+    },
+    Forestiero: {
+      classe: { potere: "bevi_elisir", tratti: { 1: "legame_sottobosco", 4: "radici_profonde" } },
+      spore: {
+        nome: "Spore", volonta: ["puntura_di_mandragora", "tappeto_di_micelio", "pelle_di_corteccia"],
+        scontro: ["spore_del_morbo", "muffa_che_dilaga", "esalazione"], giornalieri: ["cuore_di_tossina", "sciame_putrido"],
+        livelli: { 3: "pestilenza", 4: "cisti_parassita", 5: "marea_di_putrefazione" }
+      },
+      linfa: {
+        nome: "Linfa", volonta: ["puntura_di_mandragora", "tappeto_di_micelio", "corteccia_viva"],
+        scontro: ["baccello_esplosivo", "linfa_amara", "radici_avvolgenti"], giornalieri: ["fioritura_del_parassita", "cuore_di_linfa"],
+        livelli: { 3: "linfa_perenne", 4: "purga", 5: "rinascita_del_sottobosco" }
       }
     }
   };

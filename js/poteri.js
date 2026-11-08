@@ -155,7 +155,9 @@
   function tick(b, id, tira) {
     const s = st(b, id); if (!s || !STATI[id].dado) return null;
     const dado = STATI[id].dado[s.liv - 1], n = s.doppio > 0 ? 2 : 1, tiri = Array.from({ length: n }, () => tira(dado)), d = tiri.reduce((a, x) => a + x, 0);
-    const ev = subisci(b, d, s.tipo);
+    /* resStati: resistenza al solo danno continuativo di uno stato (es. creature di cenere: sanguinamento dimezzato) */
+    const dd = b.resStati && b.resStati[id] === "res" ? Math.ceil(d / 2) : d;
+    const ev = subisci(b, dd, s.tipo);
     return { ...ev, k: "tick", stato: id, nome: nomeStato(id, s.liv), dado, d, ...(n > 1 ? { tiri } : {}) };
   }
   function inizioTurno(b, tira) {

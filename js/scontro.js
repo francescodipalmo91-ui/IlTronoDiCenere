@@ -25,7 +25,8 @@
   const meta = (n) => Math.ceil(n / 2); /* le metà si arrotondano per eccesso, come le resistenze */
   const COPIE_MAX = 3;
   const buffCA = (b) => Object.values(b.buff || {}).reduce((t, x) => t + (Number(x.ca) || 0), 0);
-  const ca = (b) => (b.caBase || 10) + buffCA(b) - P.malusCA(b);
+  /* caVacillante: armatura che cede da Vacillante (mastino corazzato: la runa del petto si spegne, 15 → 13) */
+  const ca = (b) => (P.vacillante(b) && b.caVacillante != null ? b.caVacillante : (b.caBase || 10)) + buffCA(b) - P.malusCA(b);
   const tiraDadi = (ctx, n, d) => Array.from({ length: n }, () => ctx.tira(d));
   const somma = (a) => a.reduce((x, y) => x + y, 0);
 
@@ -100,7 +101,7 @@
     if (o.gabbia && d >= 19 && dif.pv > 0) { E.push({ k: "gabbia" }); E.push(...statoSu(att, dif, "applica", ctx, "stordito")); }
     /* Muffa che dilaga: ogni colpo a segno applica Intossicato, o allunga di 1 turno il veleno in corso */
     if (att.buff.muffa && !o.contrattacco && dif.pv > 0) E.push(...(P.ha(dif, "intossicato") ? [P.allunga(dif, "intossicato", 1)] : statoSu(att, dif, "applica", ctx, "intossicato")));
-    if (dif.pv > 0) E.push(...reazioneColpito(att, dif, ctx));
+    if (dif.pv > 0) E.push(...reazioneColpito(att, dif, ctx, o));
     return { ok: true, crit: ev.crit, eventi: E, ev };
   }
 
@@ -125,6 +126,7 @@
   }
   /* il danno passa per le vulnerabilità e per le protezioni del difensore (Ultimo baluardo) */
   function danneggia(dif, lordo, tipo, ev, ctx) {
+    pronto(dif);
     const E = [];
     let n = P.modificaDanno(dif, tipo, lordo).danno;
     const bal = dif.buff.baluardo;
@@ -189,8 +191,9 @@
     else if (dif.buff.inGuardia) E.push(...contrattacco(dif, att, ctx, dif.buff.veglia ? "aggrava" : null));
     return E;
   }
-  function reazioneColpito(att, dif, ctx) {
+  function reazioneColpito(att, dif, ctx, o) {
     const E = [];
+    if (dif.buff.ceneri && !(o && o.focus)) E.push(...statoSu(dif, att, "applica", ctx, "scottato")); /* Ceneri sul pelo: chi lo colpisce in mischia */
     dif.colpitoUltimo = true;
     if (dif.buff.pelle) E.push(...statoSu(dif, att, "applica", ctx, "intossicato")); /* Pelle di corteccia */
     if (dif.buff.crosta) E.push(...statoSu(dif, att, "applica", ctx, "sanguinante")); /* Crosta */
@@ -578,7 +581,7 @@
   /* Infuso (Sciamano, al riposo): un elisir di salute, massimo 2 portati (3 con Mani che curano, via di Guendalina dal 4) */
   function preparaInfuso(b) { const max = b.via === "guendalina" && b.liv >= 4 ? 3 : 2; b.elisir = Math.min(max, (b.elisir || 0) + 1); return b.elisir; }
 
-  const API = { STATO_ARMA, statoArma, ca, attacco, usa, disponibile, inizioTurno, fineTurno, fineScontro, riposo, preparaInfuso, preparaScontro, offesaDi };
+  const API = { STATO_ARMA, statoArma, ca, attacco, usa, disponibile, inizioTurno, fineTurno, fineScontro, riposo, preparaInfuso, preparaScontro, offesaDi, statoSu, danneggia, fonteDi };
   root.Scontro = API;
   if (typeof module !== "undefined" && module.exports) module.exports = API;
 })(typeof window !== "undefined" ? window : globalThis);

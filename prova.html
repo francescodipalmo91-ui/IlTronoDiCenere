@@ -20,14 +20,34 @@
   h1 { font: 600 20px var(--t); margin: 0; color: var(--gold); }
   h2 { font: 600 15px var(--t); margin: 0 0 8px; letter-spacing: .04em; }
   .nota { color: var(--muted); font-size: 13px; }
-  main { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 16px; max-width: 1400px; margin: 0 auto; }
-  section { background: var(--pan); border: 1px solid var(--line); border-radius: 8px; padding: 12px; min-width: 0; }
+  main { display: grid; grid-template-columns: 310px minmax(0, 1fr) 310px; grid-template-areas: "lpg centro lnem" "test test test"; gap: 12px; padding: 12px 16px; max-width: 1700px; margin: 0 auto; }
+  .centro { grid-area: centro; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-content: start; min-width: 0; }
+  .centro .largo { grid-column: 1 / -1; }
+  #latoPg { grid-area: lpg; } #latoNem { grid-area: lnem; }
+  aside { position: sticky; top: 8px; align-self: start; max-height: calc(100vh - 16px); overflow-y: auto; }
+  #latoPg { border-color: #2c3b52; } #latoNem { border-color: #5a2a25; }
+  .voce { display: block; width: 100%; text-align: left; margin: 3px 0; padding: 6px 8px; }
+  .voce .tipo { float: right; font-size: 11px; color: var(--muted); }
+  .voce small { display: block; font-size: 12px; color: var(--muted); }
+  .voce.sel { border-color: var(--gold); background: #2e2e2e; }
+  .voce.spento { opacity: .55; }
+  .voce.annunciato { border-color: var(--ko); }
+  .dettaglio { border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; margin: 6px 0 10px; background: #121212; }
+  .dettaglio h3 { font: 600 15px var(--t); margin: 0 0 4px; color: var(--gold); }
+  .dettaglio p { margin: 4px 0; }
+  .dettaglio .usa { width: 100%; margin-top: 6px; font-weight: 600; padding: 8px; }
+  .prossima { border: 1px dashed var(--ko); border-radius: 6px; padding: 6px 8px; margin: 6px 0; }
+  section, aside { background: var(--pan); border: 1px solid var(--line); border-radius: 8px; padding: 12px; min-width: 0; }
   #pgBox { border-color: #2c3b52; background: var(--pg-bg); }
   #nemBox { border-color: #5a2a25; background: var(--nem-bg); }
-  #azioni, #registroBox { grid-column: span 1; }
-  #testBox { grid-column: 1 / -1; }
-  @media (max-width: 860px) { main { grid-template-columns: 1fr; padding: 12px 16px; } }
+  #testBox { grid-area: test; }
+  @media (max-width: 1150px) {
+    main { grid-template-columns: 1fr; grid-template-areas: "centro" "lpg" "lnem" "test"; }
+    .centro { grid-template-columns: 1fr; }
+    aside { position: static; max-height: none; }
+  }
   label { display: inline-flex; gap: 6px; align-items: center; margin: 2px 10px 2px 0; }
+  select { max-width: 100%; }
   select, input[type=number] { background: #101010; color: var(--text); border: 1px solid var(--line); border-radius: 4px; padding: 3px 5px; font: inherit; }
   input[type=number] { width: 56px; }
   button { background: #262626; color: var(--text); border: 1px solid #4a4a4a; border-radius: 6px; padding: 6px 10px; font: inherit; cursor: pointer; }
@@ -55,7 +75,7 @@
   .poteri { display: flex; flex-wrap: wrap; gap: 6px; }
   .poteri button { text-align: left; max-width: 100%; }
   .poteri button small { display: block; color: var(--muted); font-size: 12px; max-width: 320px; }
-  #registro { height: 520px; overflow-y: auto; font-size: 14px; background: #0f0f0f; border: 1px solid var(--line); border-radius: 6px; padding: 8px; }
+  #registro { height: 440px; overflow-y: auto; font-size: 14px; background: #0f0f0f; border: 1px solid var(--line); border-radius: 6px; padding: 8px; }
   #registro p { margin: 2px 0; }
   .pg { color: var(--pg); } .nem { color: var(--ko); } .sis { color: var(--muted); } .bene { color: var(--ok); } .turno { color: var(--gold); border-top: 1px solid var(--line); padding-top: 4px; margin-top: 6px !important; }
   .esito { font-weight: 600; }
@@ -68,6 +88,15 @@
   <span class="nota">Riscrittura del 08/11/2026 · js/poteri.js, scontro.js, specializzazioni.js, nemici.js · nessun file del gioco viene toccato</span>
 </header>
 <main>
+  <aside id="latoPg">
+    <h2 class="pg">I tuoi poteri</h2>
+    <div id="dettaglioPg"></div>
+    <div class="riga" id="opzioni"></div>
+    <div id="poteri"></div>
+    <div class="riga"><button type="button" id="passa">Passa il turno</button></div>
+  </aside>
+
+  <div class="centro">
   <section id="pgBox">
     <h2 class="pg">Personaggio</h2>
     <div class="riga">
@@ -98,23 +127,7 @@
     <div id="nemScheda"></div>
   </section>
 
-  <section id="azioni">
-    <h2>Il tuo turno</h2>
-    <div class="riga" id="opzioni"></div>
-    <div id="poteri"></div>
-    <div class="riga"><button type="button" id="passa">Passa il turno</button></div>
-    <div class="scelte">
-      <h3 style="font:600 13px var(--t);color:var(--muted);margin:4px 0">Simulazione rapida</h3>
-      <div class="riga">
-        <label>Scontri <input type="number" id="simN" value="200" min="10" max="2000" style="width:70px"></label>
-        <button type="button" id="simula">Simula con il giocatore automatico</button>
-      </div>
-      <div class="nota">Il giocatore automatico usa: per scontro appena può, giornaliero quando il nemico è Vacillante, poi l'offesa a volontà. Riposa prima di ogni scontro. Serve solo per un'idea grezza.</div>
-      <div id="simEsito"></div>
-    </div>
-  </section>
-
-  <section id="registroBox">
+  <section id="registroBox" class="largo">
     <h2>Registro</h2>
     <div id="registro" aria-live="polite"></div>
     <div class="riga"><button type="button" id="scarica">Scarica il registro (.txt)</button><button type="button" id="pulisci">Pulisci</button></div>
@@ -125,6 +138,28 @@
       <div class="nota">Cartella consigliata: <code>PROVA_riscrittura\log_scontri</code>. Ogni scontro giocato a mano si salva da solo alla fine (anche se lo interrompi con «Nuovo scontro»). Le simulazioni non si registrano.</div>
     </div>
   </section>
+
+  <section id="azioni" class="largo">
+    <div>
+      <h3 style="font:600 13px var(--t);color:var(--muted);margin:4px 0">Simulazione rapida</h3>
+      <div class="riga">
+        <label>Scontri <input type="number" id="simN" value="200" min="10" max="2000" style="width:70px"></label>
+        <button type="button" id="simula">Simula con il giocatore automatico</button>
+      </div>
+      <div class="nota">Il giocatore automatico usa: per scontro appena può, giornaliero quando il nemico è Vacillante, poi l'offesa a volontà. Riposa prima di ogni scontro. Serve solo per un'idea grezza.</div>
+      <div id="simEsito"></div>
+    </div>
+  </section>
+
+  </div>
+
+  <aside id="latoNem">
+    <h2 class="nem">Poteri del nemico</h2>
+    <div id="prossimaNem"></div>
+    <div id="dettaglioNem"></div>
+    <div id="poteriNem"></div>
+    <details><summary class="nota">Come sceglie il potere</summary><p class="nota" id="regolaNem"></p></details>
+  </aside>
 
   <section id="testBox">
     <h2>Test automatici del motore nuovo</h2>
@@ -251,31 +286,84 @@
       ${rune ? `<p>${rune.map(r => `<span class="runa ${r.accesa ? "on" : ""} ${r.pulsaVeloce ? "veloce" : ""}" title="${r.potere === "armatura" ? "Runa del petto: si spegne da Vacillante (CA 15 → 13)" : N.POTERI[r.potere].nome}"></span>`).join("")}</p>` : ""}
       ${nem.pronto ? `<p class="nem"><b>Sta preparando: ${N.POTERI[nem.pronto].nome}</b></p>` : ""}
       <p>${res}</p>
-      <p class="nota">A volontà: ${nem.volonta.map(id => N.POTERI[id].nome).join(", ")} · Per scontro: ${nem.scontro.map(id => N.POTERI[id].nome + (nem.usati.scontro[id] ? " (usato)" : "")).join(", ") || "—"}</p>
       ${d.daMisurare ? `<p class="nota">Da misurare: ${d.daMisurare}</p>` : ""}`;
   }
-  function pannelloPoteri() {
-    const box = $("poteri"); box.innerHTML = "";
+  /* ---------- scheda laterale: i tuoi poteri (seleziona → descrizione → usa) ---------- */
+  let selPg = null, selNem = null;
+  const MOTIVI = { giaUsatoScontro: "già usato in questo scontro", giaUsatoGiorno: "già usato oggi: riposa", impaurito: "sei Impaurito: solo a volontà", senzaElisir: "niente elisir", senzaCopie: "nessuna Copia", senzaPlacche: "nessuna placca", nonPreparato: "non preparato" };
+  const POTERI_CLASSE = ["secondo_vento", "bevi_elisir", "coagulo", "tocco_lenitivo"];
+  const FOCUS = ["stilo_cremisi", "dardo_fantasma", "lancia_d_ossa", "sussurro_illusorio", "spine_d_ossa"];
+  function contestoPg(id) {
+    const p = SP.POTERI[id], righe = [], sa = S.statoArma(pg);
+    const bonusA = pg.modClasse + (pg.arma.bonus || 0), bonusF = pg.modClasse + (pg.focus.bonus || 0), caN = nem ? S.ca(nem) : null;
+    if (FOCUS.includes(id)) righe.push(`Con il focus: tiro d20 + ${bonusF}${caN != null ? ` contro CA ${caN}` : ""}, danno 1d8 + ${bonusF}.`);
+    else if (/attacc|dado dell'arma|Attacco/i.test(p.testo)) righe.push(`Con ${pg.arma.nome}: tiro d20 + ${bonusA}${caN != null ? ` contro CA ${caN}` : ""}, danno 1d${pg.arma.dado} + ${bonusA}${pg.arma.tipo === "perforante" ? ", critico 19-20" : ""}.`);
+    if (/stato dell'arma/.test(p.testo) && sa) righe.push(`Stato della tua arma: ${P.nomeStato(sa, 1)} → aggravato ${P.nomeStato(sa, 2)}.`);
+    if (/TS|Indebolito|Esposto|Stordito|Sanguinante|Intossicato|Scottato|Impaurito|veleno|sanguinamento|bruciatura/.test(p.testo)) righe.push(`Chi subisce i tuoi stati tira contro CD ${P.cd(pg)} (un tiro solo per potere).`);
+    if (POTERI_CLASSE.includes(id)) righe.push("Potere di classe.");
+    return righe;
+  }
+  function latoPg() {
+    const box = $("poteri"), det = $("dettaglioPg"); box.innerHTML = "";
     $("opzioni").innerHTML = pg && pg.spec === "sangue" ? `<label title="Sopra il 50% della salute, una volta per turno: 3 salute per un dado in più. Da Vacillante il dado è gratis."><input type="checkbox" id="sangueVersato"> Sangue versato (3 salute, +1 dado)</label>` : "";
-    if (!pg) return;
+    if (!pg) { det.innerHTML = `<p class="nota">Crea il personaggio: qui compaiono i suoi poteri.</p>`; $("passa").disabled = true; return; }
     const attivo = !finito && pg.pv > 0;
+    if (!selPg || !pg.poteri.includes(selPg)) selPg = pg.poteri.find(id => S.disponibile(pg, id).ok) || pg.poteri[0];
     ["volonta", "scontro", "giornaliero"].forEach(tipo => {
       const ids = pg.poteri.filter(id => SP.POTERI[id].tipo === tipo); if (!ids.length) return;
       const g = document.createElement("div"); g.className = "gruppo"; g.innerHTML = `<h3>${NOMI_TIPO[tipo]}</h3>`;
-      const r = document.createElement("div"); r.className = "poteri";
       ids.forEach(id => {
         const p = SP.POTERI[id], disp = S.disponibile(pg, id), b = document.createElement("button");
-        const motivo = { giaUsatoScontro: "già usato in questo scontro", giaUsatoGiorno: "già usato oggi: riposa", impaurito: "sei Impaurito", senzaElisir: "niente elisir", senzaCopie: "nessuna Copia", senzaPlacche: "nessuna placca" }[disp.motivo];
-        b.innerHTML = `${p.nome}${p.liv > 1 ? ` <span class="nota">(liv. ${p.liv})</span>` : ""}<small>${motivo ? "— " + motivo : p.testo}</small>`;
-        b.disabled = !attivo || !disp.ok; b.title = p.testo;
-        b.addEventListener("click", () => turnoPg(id));
-        r.append(b);
+        b.type = "button"; b.className = `voce${id === selPg ? " sel" : ""}${disp.ok ? "" : " spento"}`;
+        b.innerHTML = `${p.nome}${p.liv > 1 ? ` <span class="nota">liv. ${p.liv}</span>` : ""}${POTERI_CLASSE.includes(id) ? ` <span class="nota">classe</span>` : ""}<small>${disp.ok ? "pronto" : MOTIVI[disp.motivo] || disp.motivo}</small>`;
+        b.addEventListener("click", () => { selPg = id; latoPg(); });
+        b.addEventListener("dblclick", () => { if (attivo && S.disponibile(pg, id).ok) turnoPg(id); });
+        g.append(b);
       });
-      g.append(r); box.append(g);
+      box.append(g);
     });
+    const p = SP.POTERI[selPg], disp = S.disponibile(pg, selPg);
+    det.innerHTML = `<div class="dettaglio"><h3>${p.nome}</h3>
+      <p class="nota">${NOMI_TIPO[p.tipo].replace(/i$/, "o").replace("A volontà", "A volontà")}${p.liv > 1 ? ` · dal livello ${p.liv}` : ""}</p>
+      <p>${p.testo}</p>${contestoPg(selPg).map(r => `<p class="nota">${r}</p>`).join("")}
+      <p class="${disp.ok ? "bene" : "nem"}">${disp.ok ? (attivo ? "Pronto." : "Pronto (inizia uno scontro per usarlo).") : MOTIVI[disp.motivo] || disp.motivo}</p>
+      <button type="button" class="usa" id="usaPg" ${attivo && disp.ok ? "" : "disabled"}>Usa ${p.nome}</button></div>`;
+    $("usaPg").addEventListener("click", () => turnoPg(selPg));
     $("passa").disabled = !attivo;
   }
-  const ridisegna = () => { schedaPg(); schedaNem(); pannelloPoteri(); };
+
+  /* ---------- scheda laterale: i poteri del nemico ---------- */
+  function latoNem() {
+    $("regolaNem").textContent = N.REGOLA_SCELTA;
+    const lista = $("poteriNem"), det = $("dettaglioNem"), pr = $("prossimaNem"); lista.innerHTML = ""; pr.innerHTML = "";
+    if (!nem) { det.innerHTML = `<p class="nota">Scegli un nemico e inizia uno scontro: qui vedi tutti i suoi poteri.</p>`; return; }
+    const ids = [...nem.volonta, ...nem.scontro];
+    if (!selNem || !ids.includes(selNem)) selNem = nem.pronto || ids[0];
+    /* anteprima della prossima mossa: la stessa scelta del motore, su una copia (solo nella sala di prova) */
+    if (!finito) {
+      let testo;
+      if (!P.puoAgire(nem)) testo = "È stordito: salterà il turno.";
+      else { const c = structuredClone(nem); c.turno = (nem.turno || 0) + 1; const sc = N.scegli(c, pg);
+        testo = sc.id === "fuga" ? "Fuggirà." : `${N.POTERI[sc.id].nome}${sc.eseguiAnnunciato ? " (il colpo annunciato)" : ""}${sc.annuncia ? ` e annuncerà ${N.POTERI[sc.annuncia].nome}` : ""}.`; }
+      pr.innerHTML = `<div class="prossima"><b>Al prossimo turno:</b> ${testo}<br><span class="nota">Anteprima solo nella sala di prova.</span></div>`;
+    }
+    [["A volontà", nem.volonta], ["Per scontro (una volta)", nem.scontro]].forEach(([titolo, gruppo]) => {
+      if (!gruppo.length) return;
+      const g = document.createElement("div"); g.className = "gruppo"; g.innerHTML = `<h3>${titolo}</h3>`;
+      gruppo.forEach(id => {
+        const usato = nem.scontro.includes(id) && nem.usati.scontro[id], ann = nem.pronto === id, b = document.createElement("button");
+        const st = ann ? "annunciato: colpirà al prossimo turno" : usato ? "già usato" : nem.ultimo === id ? "usato nell'ultimo turno" : "disponibile";
+        b.type = "button"; b.className = `voce${id === selNem ? " sel" : ""}${usato && !ann ? " spento" : ""}${ann ? " annunciato" : ""}`;
+        b.innerHTML = `${N.POTERI[id].nome}<small>${st}</small>`;
+        b.addEventListener("click", () => { selNem = id; latoNem(); });
+        g.append(b);
+      });
+      lista.append(g);
+    });
+    const p = N.POTERI[selNem], tipo = nem.scontro.includes(selNem) ? (nem.elite ? "Per scontro · si annuncia un turno prima" : "Per scontro") : "A volontà";
+    det.innerHTML = `<div class="dettaglio"><h3>${p.nome}</h3><p class="nota">${tipo}</p><p>${N.descrivi(selNem, nem)}</p></div>`;
+  }
+  const ridisegna = () => { schedaPg(); schedaNem(); latoPg(); latoNem(); };
 
   /* ---------- registro ---------- */
   function log(testo, cls) {
@@ -516,6 +604,8 @@
   /* ---------- pulsanti ---------- */
   $("crea").addEventListener("click", () => { const p = creaPg(); if (!p) return; pg = p; finito = true; nem = null; log(`Personaggio creato: ${CLASSI[pg.classe].nome} ${SP.SPEC[pg.classe][pg.spec].nome}, livello ${pg.liv}, salute ${pg.pvMax}, CA ${pg.caBase}. Poteri: ${pg.poteri.map(id => SP.POTERI[id].nome).join(", ")}.`, "pg"); ridisegna(); });
   $("nuovo").addEventListener("click", iniziaScontro);
+  /* scegliendo il nemico, fuori dallo scontro, la sua scheda compare subito (per leggere i poteri prima di combattere) */
+  $("nemico").addEventListener("change", () => { if (finito) { nem = N.crea($("nemico").value); selNem = null; ridisegna(); } });
   $("riposa").addEventListener("click", () => { if (!pg) return; S.riposo(pg); pg.pv = pg.pvMax; pg.stati = {}; if (pg.classe === "Forestiero") S.preparaInfuso(pg); log("Riposi: salute piena, giornalieri di nuovo disponibili" + (pg.classe === "Forestiero" ? `, elisir ${pg.elisir}` : "") + ".", "bene"); ridisegna(); });
   $("passa").addEventListener("click", () => { if (!finito) { if (LOG) LOG.azione("passa"); log("Passi il turno.", "pg"); fineTuo(); } });
   if (LOG) { $("logCartella").addEventListener("click", () => LOG.scegli()); $("logScarica").addEventListener("click", () => LOG.scaricaTutti()); LOG.carica(); }
@@ -529,7 +619,7 @@
     const l = document.createElement("a"); l.href = url; l.download = nome; l.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
   });
 
-  aggiornaSpec(); ridisegna();
+  aggiornaSpec(); nem = N.crea($("nemico").value); ridisegna();
   log("Sala di prova del motore nuovo. 1) Scegli classe, specializzazione, poteri e livello, poi «Crea il personaggio». 2) Scegli il nemico e «Nuovo scontro». Tu agisci per primo; il nemico risponde da solo.", "sis");
 })();
 </script>

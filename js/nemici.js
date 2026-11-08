@@ -125,6 +125,7 @@
     const sc = scegli(n, pg), E = [];
     if (sc.annuncia) { n.pronto = sc.annuncia; n.usati.scontro[sc.annuncia] = true; E.push({ k: "annuncio", chi: n.nome, potere: sc.annuncia, nome: POTERI[sc.annuncia].nome }); }
     if (sc.eseguiAnnunciato) n.pronto = null;
+    n.ultimo = sc.id;
     E.push(...esegui(n, pg, sc.id, ctx));
     return { eventi: E, scelta: sc };
   }
@@ -161,7 +162,33 @@
       { potere: "armatura", accesa: !P.vacillante(n), pulsaVeloce: false }];
   }
 
-  const API = { POTERI, NEMICI, crea, scegli, agisci, esegui, statoRune };
+  /* Descrizione di un potere ricavata dai dati (stessa fonte del codice: non può andare fuori sincrono).
+     n = il nemico creato (per i numeri veri: attacco, danno, CD); senza n la descrizione resta generica. */
+  const ATTR_TS = (k) => (P.STATI[k] || {}).ts || "Vigore";
+  function descrivi(id, n) {
+    const p = POTERI[id]; if (!p) return "";
+    const cd = n ? `CD ${P.cd({ liv: n.liv, modClasse: n.modClasse })}` : "CD del nemico";
+    const dado = n ? `${n.arma.n}d${n.arma.dado}` : "il suo dado";
+    const parti = [];
+    if (p.k === "attacco") {
+      const nd = p.piuDadi ? (n ? `${n.arma.n + p.piuDadi}d${n.arma.dado}` : "un dado in più") : dado;
+      parti.push(`Attacco (d20 ${n ? "+ " + n.modAtt : ""} contro la tua CA): ${nd}${p.soloDado ? " (solo il dado)" : n && n.modDanno ? " + " + n.modDanno : ""}.`);
+    }
+    if (p.k === "soffio") parti.push(`Senza tiro per colpire: ${p.n}d${p.dado} di fuoco.`);
+    if (p.k === "ts") parti.push("Nessun danno.");
+    if (p.k === "difesa") parti.push("Fino al suo prossimo turno, chi lo colpisce in mischia diventa Scottato (tuo TS Agilità). Gli incantesimi con il focus no.");
+    if (p.k === "fuga") parti.push("Scappa: lo scontro finisce senza vincitore.");
+    const se = p.k === "attacco" ? "Se colpisce, " : "";
+    (p.aggrava || []).forEach(k => parti.push(`${se ? se + "aggrava" : "Aggrava"} ${P.nomeStato(k, 1)}: se ce l'hai già diventa ${P.nomeStato(k, 2)} (senza tiro salvezza), altrimenti te lo applica (TS ${ATTR_TS(k)}, ${cd}).`));
+    const ap = p.applica || [];
+    if (ap.length) parti.push(`${p.aggrava ? "Poi " : se}applica ${ap.map(k => P.nomeStato(k, 1) + (k === "stordito" ? " (perdi l'azione)" : "")).join(" e ")} (tuo TS ${ATTR_TS(ap[0])}, ${cd}${ap.length > 1 || (p.aggrava || []).length ? ", un tiro solo per tutto il potere" : ""}).`);
+    if (p.carica) parti.push("Colpo caricato: distrugge tutte le Copie dell'Illusione.");
+    return parti.join(" ");
+  }
+  /* la regola con cui sceglie, in parole (8c) */
+  const REGOLA_SCELTA = "Primo turno: il suo secondo a volontà (lo stato). Poi il per scontro, quando lo stato è già su di te; altrimenti alterna gli a volontà. Gli élite annunciano il per scontro un turno prima e quel turno attaccano comunque. Impaurito: solo a volontà. Caccia al ferito e Silenzio della casa gli impediscono di caricare.";
+
+  const API = { POTERI, NEMICI, crea, scegli, agisci, esegui, statoRune, descrivi, REGOLA_SCELTA };
   root.Nemici = API;
   if (typeof module !== "undefined" && module.exports) module.exports = API;
 })(typeof window !== "undefined" ? window : globalThis);

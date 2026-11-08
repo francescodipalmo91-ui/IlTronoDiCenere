@@ -142,7 +142,7 @@
       dif.usati.giorno.ultimo_servizio = true; n = dif.pv - 1; servizio = true;
     }
     const r = P.subisci(dif, n, null); /* il tipo è già stato contato */
-    if (ev) { ev.danno = r.danno; ev.tipo = tipo; if (n !== lordo) ev.lordo = lordo; }
+    if (ev) { ev.danno = r.danno; ev.tipo = tipo; ev.su = dif.nome; if (n !== lordo) ev.lordo = lordo; }
     dif.dannoSubitoTurno = (dif.dannoSubitoTurno || 0) + r.danno;
     if (bal && r.danno > 0) { dif.prossimiDadi = Math.min(3, (dif.prossimiDadi || 0) + 1); }
     if (servizio) { const x = ctx.tira(6) + ((dif.mod && dif.mod.Spirito) || 0); E.push({ ...cura(dif, x), k: "ultimoServizio" }); }
@@ -306,7 +306,7 @@
     const p = potere(id), E = [];
     if (p.tipo === "scontro") att.usati.scontro[id] = true;
     if (p.tipo === "giornaliero") att.usati.giorno[id] = true;
-    E.push({ k: "potere", id, nome: p.nome, tipo: p.tipo });
+    E.push({ k: "potere", chi: att.nome, id, nome: p.nome, tipo: p.tipo, ...(opz.gratis ? { gratis: true } : {}) });
     /* Eredità del sepolcro (Monaco, tratto II): dopo un giornaliero, fino al tuo turno dimezzi i danni che subisci */
     if (p.tipo === "giornaliero" && (att.tratti || []).includes("eredita_sepolcro")) E.push(buff(att, "eredita", { finoAlTurno: true }));
     /* Sangue versato: sopra il 50%, una volta per turno, 3 salute per +1 dado; da Vacillante il dado è gratis */

@@ -185,10 +185,15 @@
     return E;
   }
 
+  /* ogni evento dice su chi cade (per il registro): giocatore e nemici usano le stesse funzioni */
+  const conChi = (f) => (b, ...a) => { const r = f(b, ...a), seg = (e) => (e && typeof e === "object" && !e.su ? { su: b.nome, ...e } : e); return Array.isArray(r) ? r.map(seg) : seg(r); };
+
   const API = {
     DURATA, DURATA_IMPAURITO, DURATA_STORDITO, IMMUNITA_STORDITO, CD_BASE, CONFIG, STATI, TIPI,
     nomeStato, ha, grave, vacillante, malusCA, malusColpire, sogliaCritContro, puoAgire, soloAVolonta, immuneStordito,
-    cd, tiroSalvezza, applica, aggrava, tick, durataBase, allunga, togli, togliTutti, modificaDanno, subisci, inizioTurno, fineTurno
+    cd, durataBase, modificaDanno, subisci,
+    tiroSalvezza: conChi(tiroSalvezza), applica: conChi(applica), aggrava: conChi(aggrava), tick: conChi(tick), allunga: conChi(allunga),
+    togli: conChi(togli), togliTutti: conChi(togliTutti), inizioTurno: conChi(inizioTurno), fineTurno: conChi(fineTurno)
   };
   root.Poteri = API;
   if (typeof module !== "undefined" && module.exports) module.exports = API;

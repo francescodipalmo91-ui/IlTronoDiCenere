@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sala di prova — motore nuovo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  /* palette «Cenere» del gioco (tema.css); blu = tu, rosso = il nemico */
+  :root {
+    color-scheme: dark;
+    --bg: #141414; --pan: #1b1b1b; --text: #d6d6d6; --muted: #9a9a9a; --line: #333;
+    --gold: #e6e6e6; --ok: #8fbf7a; --ko: #e0705f; --pg: #8fb3e0; --pg-bg: #161c25; --nem-bg: #251716;
+    --f: "Lora", Georgia, serif; --t: "Cinzel", Georgia, serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.45 var(--f); }
+  header { padding: 12px 16px; border-bottom: 1px solid var(--line); display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+  h1 { font: 600 20px var(--t); margin: 0; color: var(--gold); }
+  h2 { font: 600 15px var(--t); margin: 0 0 8px; letter-spacing: .04em; }
+  .nota { color: var(--muted); font-size: 13px; }
+  main { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 16px; max-width: 1400px; margin: 0 auto; }
+  section { background: var(--pan); border: 1px solid var(--line); border-radius: 8px; padding: 12px; min-width: 0; }
+  #pgBox { border-color: #2c3b52; background: var(--pg-bg); }
+  #nemBox { border-color: #5a2a25; background: var(--nem-bg); }
+  #azioni, #registroBox { grid-column: span 1; }
+  #testBox { grid-column: 1 / -1; }
+  @media (max-width: 860px) { main { grid-template-columns: 1fr; padding: 12px 16px; } }
+  label { display: inline-flex; gap: 6px; align-items: center; margin: 2px 10px 2px 0; }
+  select, input[type=number] { background: #101010; color: var(--text); border: 1px solid var(--line); border-radius: 4px; padding: 3px 5px; font: inherit; }
+  input[type=number] { width: 56px; }
+  button { background: #262626; color: var(--text); border: 1px solid #4a4a4a; border-radius: 6px; padding: 6px 10px; font: inherit; cursor: pointer; }
+  button:hover:not(:disabled) { border-color: var(--gold); }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .riga { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 6px 0; }
+  .scelte { border-top: 1px solid var(--line); margin-top: 8px; padding-top: 6px; }
+  .scelte div { margin: 3px 0; }
+  .barra { height: 10px; background: #0d0d0d; border: 1px solid var(--line); border-radius: 5px; overflow: hidden; margin: 4px 0; }
+  .barra i { display: block; height: 100%; background: var(--ok); transition: width .2s; }
+  .barra.vac i { background: #d8a24a; }
+  .barra.giu i { background: var(--ko); }
+  .chip { display: inline-block; font-size: 12px; padding: 1px 7px; border-radius: 10px; border: 1px solid #555; margin: 2px 4px 2px 0; }
+  .chip.grave { border-color: var(--ko); color: var(--ko); }
+  .chip.buff { border-color: var(--ok); color: var(--ok); }
+  .chip.vuln { border-color: var(--ok); color: var(--ok); } .chip.res { border-color: #d89a4a; color: #d89a4a; } .chip.imm { border-color: var(--ko); color: var(--ko); }
+  .maledetto { color: #7fb4ff; }
+  .runa { display: inline-block; width: 14px; height: 14px; border-radius: 50%; margin-right: 6px; background: #2a3a4a; border: 1px solid #3c5670; vertical-align: middle; }
+  .runa.on { background: #5fb6ff; box-shadow: 0 0 6px #5fb6ff; animation: pulsa 2.4s ease-in-out infinite; }
+  .runa.veloce { animation-duration: .6s; }
+  @keyframes pulsa { 50% { opacity: .45; } }
+  @media (prefers-reduced-motion: reduce) { .runa.on { animation: none; } }
+  .gruppo { margin: 8px 0; }
+  .gruppo h3 { font: 600 13px var(--t); color: var(--muted); margin: 0 0 4px; }
+  .poteri { display: flex; flex-wrap: wrap; gap: 6px; }
+  .poteri button { text-align: left; max-width: 100%; }
+  .poteri button small { display: block; color: var(--muted); font-size: 12px; max-width: 320px; }
+  #registro { height: 520px; overflow-y: auto; font-size: 14px; background: #0f0f0f; border: 1px solid var(--line); border-radius: 6px; padding: 8px; }
+  #registro p { margin: 2px 0; }
+  .pg { color: var(--pg); } .nem { color: var(--ko); } .sis { color: var(--muted); } .bene { color: var(--ok); } .turno { color: var(--gold); border-top: 1px solid var(--line); padding-top: 4px; margin-top: 6px !important; }
+  .esito { font-weight: 600; }
+  #test pre { white-space: pre-wrap; font-size: 13px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Sala di prova — motore nuovo</h1>
+  <span class="nota">Riscrittura del 08/11/2026 · js/poteri.js, scontro.js, specializzazioni.js, nemici.js · nessun file del gioco viene toccato</span>
+</header>
+<main>
+  <section id="pgBox">
+    <h2 class="pg">Personaggio</h2>
+    <div class="riga">
+      <label>Classe <select id="classe"></select></label>
+      <label>Razza <select id="razza"></select></label>
+      <label>Specializzazione <select id="spec"></select></label>
+      <label>Livello <select id="liv"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
+      <label>Via <select id="via"><option value="">nessuna</option><option value="aldo">Aldo, la caccia</option><option value="guendalina">Guendalina, il focolare</option></select></label>
+    </div>
+    <div class="riga">
+      <label>Arma <select id="arma"></select></label>
+      <label>bonus +<input type="number" id="armaBonus" value="0" min="0" max="4"></label>
+      <label><input type="checkbox" id="scudo"> Scudo (+1 CA)</label>
+      <label>Focus d8 +<input type="number" id="focusBonus" value="0" min="0" max="4"></label>
+    </div>
+    <div class="scelte" id="scelte"></div>
+    <div class="riga"><button type="button" id="crea">Crea il personaggio (salute piena)</button><span class="nota" id="creaNota"></span></div>
+    <div id="pgScheda"></div>
+  </section>
+
+  <section id="nemBox">
+    <h2 class="nem">Nemico</h2>
+    <div class="riga">
+      <label><select id="nemico"></select></label>
+      <button type="button" id="nuovo">Nuovo scontro</button>
+      <button type="button" id="riposa" title="Salute piena, giornalieri di nuovo disponibili, un elisir in più per lo Sciamano">Riposa</button>
+    </div>
+    <div id="nemScheda"></div>
+  </section>
+
+  <section id="azioni">
+    <h2>Il tuo turno</h2>
+    <div class="riga" id="opzioni"></div>
+    <div id="poteri"></div>
+    <div class="riga"><button type="button" id="passa">Passa il turno</button></div>
+    <div class="scelte">
+      <h3 style="font:600 13px var(--t);color:var(--muted);margin:4px 0">Simulazione rapida</h3>
+      <div class="riga">
+        <label>Scontri <input type="number" id="simN" value="200" min="10" max="2000" style="width:70px"></label>
+        <button type="button" id="simula">Simula con il giocatore automatico</button>
+      </div>
+      <div class="nota">Il giocatore automatico usa: per scontro appena può, giornaliero quando il nemico è Vacillante, poi l'offesa a volontà. Riposa prima di ogni scontro. Serve solo per un'idea grezza.</div>
+      <div id="simEsito"></div>
+    </div>
+  </section>
+
+  <section id="registroBox">
+    <h2>Registro</h2>
+    <div id="registro" aria-live="polite"></div>
+    <div class="riga"><button type="button" id="scarica">Scarica il registro (.txt)</button><button type="button" id="pulisci">Pulisci</button></div>
+  </section>
+
+  <section id="testBox">
+    <h2>Test automatici del motore nuovo</h2>
+    <div class="riga"><button type="button" id="eseguiTest">Esegui tutti i test</button><span class="nota">Gli stessi di <code>npm test</code>, qui nel browser.</span></div>
+    <div id="test"></div>
+  </section>
+</main>
+
+<script src="js/regole.js"></script>
+<script src="js/preset_test.js"></script>
+<script src="js/poteri.js"></script>
+<script src="js/specializzazioni.js"></script>
+<script src="js/scontro.js"></script>
+<script src="js/nemici.js"></script>
+<script src="tests/poteri.test.js"></script>
+<script src="tests/scontro.test.js"></script>
+<script src="tests/scontro_sciamano.test.js"></script>
+<script src="tests/scontro_arcanista.test.js"></script>
+<script src="tests/scontro_monaco.test.js"></script>
+<script src="tests/scontro_vie.test.js"></script>
+<script src="tests/nemici.test.js"></script>
+<script>
+(() => {
+  const P = window.Poteri, S = window.Scontro, SP = window.SPECIALIZZAZIONI, N = window.Nemici, PR = window.PresetTest, R = window.Regole;
+  const $ = (id) => document.getElementById(id);
+  const tira = (d) => 1 + Math.floor(Math.random() * d), ctx = { tira };
+  const mod = (v) => Math.floor((v - 10) / 2);
+
+  /* classi: chiave interna di Regole, preset di test.html, specializzazioni */
+  const CLASSI = { Soldato: { nome: "Guerriero", preset: "guerriero" }, Forestiero: { nome: "Sciamano", preset: "sciamano" }, Sapiente: { nome: "Arcanista", preset: "arcanista" }, Accolito: { nome: "Monaco", preset: "monaco" } };
+  const ARMI = [
+    { nome: "Spada corta (taglio d6)", dado: 6, tipo: "taglio" }, { nome: "Ascia da battaglia (taglio d8, 2 mani)", dado: 8, tipo: "taglio", dueMani: true },
+    { nome: "Bastone (contundente d6, 2 mani)", dado: 6, tipo: "contundente", dueMani: true }, { nome: "Martello da battaglia (contundente d8)", dado: 8, tipo: "contundente" },
+    { nome: "Mazza chiodata (perforante d6)", dado: 6, tipo: "perforante" }, { nome: "Piccone da battaglia (perforante d8, 2 mani)", dado: 8, tipo: "perforante", dueMani: true }
+  ];
+  const NOMI_TIPO = { volonta: "A volontà", scontro: "Per scontro", giornaliero: "Giornalieri" };
+  const NOMI_TRATTI = { mente_incrollabile: "Mente incrollabile (fuori scontro)", furia: "Furia", legame_sottobosco: "Legame del sottobosco", radici_profonde: "Radici profonde",
+    pozzo_arcano: "Pozzo arcano", ultima_scintilla: "Ultima scintilla", ultimo_servizio: "Ultimo servizio", eredita_sepolcro: "Eredità del sepolcro" };
+  const RES = { vuln: "✓ vulnerabile", res: "✗ resistente", imm: "⛔ immune" };
+  const NOMI_DANNO = { taglio: "taglio", contundente: "contundente", perforante: "perforante", sangue: "sangue", illusione: "illusione", fuoco: "fuoco", fuoco_sacro: "fuoco sacro", ossa: "ossa", veleno: "veleno" };
+
+  let pg = null, nem = null, turno = 0, finito = true;
+  const righe = [];
+
+  /* ---------- pannello del personaggio ---------- */
+  Object.entries(CLASSI).forEach(([k, c]) => $("classe").add(new Option(c.nome, k)));
+  PR.RAZZE.forEach(r => $("razza").add(new Option(r, r)));
+  ARMI.forEach((a, i) => $("arma").add(new Option(a.nome, i)));
+  Object.entries(N.NEMICI).forEach(([k, n]) => $("nemico").add(new Option(`${n.nome} (liv. ${n.liv}${n.elite ? ", élite" : ""})`, k)));
+
+  function aggiornaSpec() {
+    const cl = SP.SPEC[$("classe").value], sel = $("spec"), prima = sel.value; sel.innerHTML = "";
+    Object.keys(cl).filter(k => k !== "classe").forEach(k => sel.add(new Option(cl[k].nome, k)));
+    if ([...sel.options].some(o => o.value === prima)) sel.value = prima;
+    const pr = PR.PG[CLASSI[$("classe").value].preset];
+    $("arma").value = pr.arma; $("scudo").checked = pr.scudo;
+    aggiornaScelte();
+  }
+  function aggiornaScelte() {
+    const s = SP.SPEC[$("classe").value][$("spec").value], box = $("scelte"), liv = +$("liv").value;
+    const nomeP = (id) => SP.POTERI[id].nome, testo = (id) => SP.POTERI[id].testo;
+    box.innerHTML = `<div class="nota">A volontà (fissi): ${s.volonta.map(nomeP).join(" · ")}</div>
+      <div><b>Per scontro (scegline 2):</b> ${s.scontro.map((id, i) => `<label title="${testo(id)}"><input type="checkbox" name="sc" value="${id}" ${i < 2 ? "checked" : ""}> ${nomeP(id)}</label>`).join("")}</div>
+      <div><b>Giornaliero (scegline 1):</b> ${s.giornalieri.map((id, i) => `<label title="${testo(id)}"><input type="radio" name="gi" value="${id}" ${i === 0 ? "checked" : ""}> ${nomeP(id)}</label>`).join("")}</div>
+      <div class="nota">Livelli 3-5 (fissi): ${[3, 4, 5].map(l => `${l}: ${nomeP(s.livelli[l])}${l <= liv ? "" : " (non ancora)"}`).join(" · ")}</div>`;
+    box.querySelectorAll("input[name=sc]").forEach(c => c.addEventListener("change", () => {
+      const sel = [...box.querySelectorAll("input[name=sc]:checked")];
+      if (sel.length > 2) c.checked = false;
+    }));
+    $("via").disabled = liv < 3; if (liv < 3) $("via").value = "";
+  }
+  $("classe").addEventListener("change", aggiornaSpec);
+  $("spec").addEventListener("change", aggiornaScelte);
+  $("liv").addEventListener("change", aggiornaScelte);
+  $("arma").addEventListener("change", () => { if (ARMI[+$("arma").value].dueMani) $("scudo").checked = false; });
+  $("scudo").addEventListener("change", () => { if ($("scudo").checked && ARMI[+$("arma").value].dueMani) { $("scudo").checked = false; log("Un'arma a due mani esclude lo scudo.", "sis"); } });
+
+  /* il personaggio dalle stesse regole di test.html (js/preset_test.js) */
+  function creaPg() {
+    const classe = $("classe").value, spec = $("spec").value, liv = +$("liv").value, razza = $("razza").value;
+    const scelti = [...document.querySelectorAll("input[name=sc]:checked"), ...document.querySelectorAll("input[name=gi]:checked")].map(i => i.value);
+    const v = SP.sceltaValida(classe, spec, scelti);
+    if (!v.ok) { $("creaNota").textContent = "Scegli 2 poteri per scontro e 1 giornaliero."; return null; }
+    $("creaNota").textContent = "";
+    const pr = PR.pg(CLASSI[classe].preset, liv, razza), arma = ARMI[+$("arma").value], scudo = $("scudo").checked && !arma.dueMani;
+    const caratt = { Vigore: pr.vig, "Agilità": pr.agi, Mente: pr.men, Spirito: pr.spi };
+    const m = Object.fromEntries(Object.entries(caratt).map(([k, x]) => [k, mod(x)]));
+    const ca = PR.ca(PR.PG[CLASSI[classe].preset].armatura, pr.agi, scudo);
+    const p = {
+      nome: "Tu", classe, spec, liv, razza, caratt, mod: m, modClasse: m[R.ATTR_CLASSE[classe]], pv: pr.pv, pvMax: pr.pv, caBase: ca,
+      arma: { dado: arma.dado, tipo: arma.tipo, bonus: +$("armaBonus").value || 0, nome: arma.nome }, scudo,
+      focus: { dado: 8, bonus: +$("focusBonus").value || 0 }, via: liv >= 3 ? $("via").value || null : null,
+      poteri: SP.poteriAlLivello(classe, spec, scelti, liv), tratti: SP.trattiAlLivello(classe, liv), stati: {}, elisir: classe === "Forestiero" ? 2 : 0
+    };
+    return S.preparaScontro(p);
+  }
+
+  /* ---------- schede ---------- */
+  const barra = (b) => { const pc = Math.max(0, b.pv) / b.pvMax * 100; return `<div class="barra ${b.pv <= 0 ? "giu" : P.vacillante(b) ? "vac" : ""}"><i style="width:${pc}%"></i></div>`; };
+  const statiChip = (b) => Object.keys(b.stati || {}).filter(k => P.ha(b, k)).map(k => { const s = b.stati[k]; return `<span class="chip ${s.liv === 2 ? "grave" : ""}">${P.nomeStato(k, s.liv)} ${s.turni >= 99 ? "∞" : s.turni}${s.doppio > 0 ? " ×2" : ""}</span>`; }).join("") || `<span class="nota">nessuno stato</span>`;
+  const NOMI_BUFF = { guardiaFeroce: "Guardia feroce", inGuardia: "In guardia", ritorsione: "Ritorsione", rintocco: "Rintocco", rappresaglia: "Rappresaglia", veglia: "Veglia di ferro",
+    baluardo: "Ultimo baluardo", silenzio: "Silenzio della casa", pelle: "Pelle di corteccia", muffa: "Muffa che dilaga", sciame: "Sciame putrido", cisti: "Cisti parassita",
+    cortecciaViva: "Corteccia viva", baccello: "Baccello esplosivo", radici: "Radici avvolgenti", cuoreLinfa: "Cuore di linfa", linfaPerenne: "Linfa perenne", crosta: "Crosta",
+    ali: "Ali cremisi", piena: "Sangue in piena", vincolo: "Vincolo di sangue", costellazione: "Costellazione rossa", riflessi: "Riflessi", sdoppiamento: "Sdoppiamento", teatro: "Teatro di specchi",
+    aura: "Aura purificante", benedetta: "Arma benedetta", fiammaCalda: "Fiamma calda", consacrazione: "Consacrazione", armaturaOssa: "Armatura d'ossa", sepolcro: "Armatura del sepolcro",
+    spezzata: "Armatura spezzata", eredita: "Eredità del sepolcro", soglia: "La soglia di casa", ceneri: "Ceneri sul pelo" };
+  const buffChip = (b) => Object.keys(b.buff || {}).map(k => { const x = b.buff[k]; const d = x.finoAlTurno ? "fino al tuo turno" : x.turni ? `${x.turni}` : x.cariche ? `${x.cariche}×` : ""; return `<span class="chip buff">${NOMI_BUFF[k] || k}${d ? " " + d : ""}</span>`; }).join("");
+  function schedaPg() {
+    if (!pg) { $("pgScheda").innerHTML = `<p class="nota">Crea il personaggio.</p>`; return; }
+    const c = pg.caratt, extra = [pg.copie ? `Copie ${pg.copie}/3` : "", pg.placche ? `Placche ${pg.placche}/3 (−${3 + pg.liv - 1})` : "", pg.classe === "Forestiero" ? `Elisir ${pg.elisir}` : "", pg.marchia ? "Marchio della preda" : "", pg.prossimiDadi ? `+${pg.prossimiDadi} dadi al prossimo attacco` : ""].filter(Boolean).join(" · ");
+    $("pgScheda").innerHTML = `<p><b>${CLASSI[pg.classe].nome} ${SP.SPEC[pg.classe][pg.spec].nome}</b>, ${pg.razza}, livello ${pg.liv}${pg.via ? `, via di ${pg.via === "aldo" ? "Aldo" : "Guendalina"}` : ""}</p>
+      <p class="nota">Vigore ${c.Vigore} · Agilità ${c["Agilità"]} · Mente ${c.Mente} · Spirito ${c.Spirito} — caratteristica di classe ${R.ATTR_CLASSE[pg.classe]} (+${pg.modClasse}), CD dei tuoi stati ${P.cd(pg)}</p>
+      <p>Salute <b>${Math.max(0, pg.pv)} / ${pg.pvMax}</b>${P.vacillante(pg) ? " · <b style='color:#d8a24a'>Vacillante</b>" : ""} · CA <b>${S.ca(pg)}</b>${pg.bonusTs ? ` · TS +${pg.bonusTs}` : ""}</p>${barra(pg)}
+      <div>${statiChip(pg)} ${buffChip(pg)}</div>${extra ? `<p class="nota">${extra}</p>` : ""}
+      <p class="nota">Tratti: ${pg.tratti.map(t => NOMI_TRATTI[t] || t).join(", ")} · Arma: ${pg.arma.nome}${pg.arma.bonus ? " +" + pg.arma.bonus : ""}${pg.scudo ? " e scudo" : ""}</p>`;
+  }
+  function schedaNem() {
+    if (!nem) { $("nemScheda").innerHTML = `<p class="nota">Scegli un nemico e premi «Nuovo scontro».</p>`; return; }
+    const d = N.NEMICI[nem.id], res = Object.entries(nem.res || {}).map(([t, r]) => `<span class="chip ${r}">${NOMI_DANNO[t] || t} ${RES[r]}</span>`).join("") || `<span class="nota">neutro a tutto</span>`;
+    const rune = N.statoRune(nem);
+    $("nemScheda").innerHTML = `<p><b>${nem.nome}</b>, livello ${nem.liv}${nem.maledetto ? ` · <span class="maledetto">🔥 Maledetto</span>` : ""}${nem.elite ? " · élite" : ""}${nem.fuggito ? " · <b>fuggito</b>" : ""}</p>
+      <p>Salute <b>${Math.max(0, nem.pv)} / ${nem.pvMax}</b>${P.vacillante(nem) ? " · <b style='color:#d8a24a'>Vacillante</b>" : ""} · CA <b>${S.ca(nem)}</b> · attacco +${nem.modAtt} · danno ${nem.arma.n}d${nem.arma.dado}${nem.modDanno ? " + " + nem.modDanno : ""}</p>${barra(nem)}
+      <div>${statiChip(nem)} ${buffChip(nem)}</div>
+      ${rune ? `<p>${rune.map(r => `<span class="runa ${r.accesa ? "on" : ""} ${r.pulsaVeloce ? "veloce" : ""}" title="${r.potere === "armatura" ? "Runa del petto: si spegne da Vacillante (CA 15 → 13)" : N.POTERI[r.potere].nome}"></span>`).join("")}</p>` : ""}
+      ${nem.pronto ? `<p class="nem"><b>Sta preparando: ${N.POTERI[nem.pronto].nome}</b></p>` : ""}
+      <p>${res}</p>
+      <p class="nota">A volontà: ${nem.volonta.map(id => N.POTERI[id].nome).join(", ")} · Per scontro: ${nem.scontro.map(id => N.POTERI[id].nome + (nem.usati.scontro[id] ? " (usato)" : "")).join(", ") || "—"}</p>
+      ${d.daMisurare ? `<p class="nota">Da misurare: ${d.daMisurare}</p>` : ""}`;
+  }
+  function pannelloPoteri() {
+    const box = $("poteri"); box.innerHTML = "";
+    $("opzioni").innerHTML = pg && pg.spec === "sangue" ? `<label title="Sopra il 50% della salute, una volta per turno: 3 salute per un dado in più. Da Vacillante il dado è gratis."><input type="checkbox" id="sangueVersato"> Sangue versato (3 salute, +1 dado)</label>` : "";
+    if (!pg) return;
+    const attivo = !finito && pg.pv > 0;
+    ["volonta", "scontro", "giornaliero"].forEach(tipo => {
+      const ids = pg.poteri.filter(id => SP.POTERI[id].tipo === tipo); if (!ids.length) return;
+      const g = document.createElement("div"); g.className = "gruppo"; g.innerHTML = `<h3>${NOMI_TIPO[tipo]}</h3>`;
+      const r = document.createElement("div"); r.className = "poteri";
+      ids.forEach(id => {
+        const p = SP.POTERI[id], disp = S.disponibile(pg, id), b = document.createElement("button");
+        const motivo = { giaUsatoScontro: "già usato in questo scontro", giaUsatoGiorno: "già usato oggi: riposa", impaurito: "sei Impaurito", senzaElisir: "niente elisir", senzaCopie: "nessuna Copia", senzaPlacche: "nessuna placca" }[disp.motivo];
+        b.innerHTML = `${p.nome}${p.liv > 1 ? ` <span class="nota">(liv. ${p.liv})</span>` : ""}<small>${motivo ? "— " + motivo : p.testo}</small>`;
+        b.disabled = !attivo || !disp.ok; b.title = p.testo;
+        b.addEventListener("click", () => turnoPg(id));
+        r.append(b);
+      });
+      g.append(r); box.append(g);
+    });
+    $("passa").disabled = !attivo;
+  }
+  const ridisegna = () => { schedaPg(); schedaNem(); pannelloPoteri(); };
+
+  /* ---------- registro ---------- */
+  function log(testo, cls) {
+    righe.push(testo);
+    const p = document.createElement("p"); p.className = cls || ""; p.textContent = testo; $("registro").append(p); $("registro").scrollTop = 1e9;
+  }
+  const lato = (nome) => (nome === "Tu" ? "pg" : "nem");
+  const dadiTesto = (t) => (t && t.length ? ` (${t.join(" + ")})` : "");
+  const turni = (n) => (n >= 99 ? "fino a fine scontro" : n === 1 ? "1 turno" : `${n} turni`);
+  const danno = (e) => `${e.danno} ${e.danno === 1 ? "danno" : "danni"}${e.tipo ? " di " + (NOMI_DANNO[e.tipo] || e.tipo) : ""}${e.lordo != null && e.lordo !== e.danno ? ` (da ${e.lordo})` : ""}${e.res ? ` [${RES[e.res]}]` : ""}`;
+  const a = (nome) => (nome === "Tu" ? "a te" : `a ${nome}`);
+  function racconta(e) {
+    const su = e.su, sul = su === "Tu" ? "Sei" : `${su} è`;
+    switch (e.k) {
+      case "potere": return [`${e.chi === "Tu" ? "Usi" : e.chi + " usa"} ${e.nome}${e.gratis ? " (gratis)" : ""}.`, lato(e.chi)];
+      case "poterNemico": return [`${e.chi}: ${e.nome}.`, "nem"];
+      case "attacco": {
+        const chi = e.da === "Tu" ? "Tu" : e.da, pre = e.contrattacco ? "Contrattacco: " : "";
+        if (e.d == null) return [`${pre}${chi} → colpo sicuro e critico: ${danno(e)}${dadiTesto(e.tiri)}.`, lato(e.da)];
+        const esito = e.ok ? (e.crit ? "CRITICO" : "colpisce") : "manca";
+        const note = [e.annullato ? "annullato da Ritorsione" : "", e.copie ? `colpisce una Copia (ne restano ${e.copie.restano})` : "", e.placca ? `una placca assorbe ${e.placca.riduce}` : "", e.ali ? "Ali cremisi dimezzano" : "", e.eredita ? "Eredità del sepolcro dimezza" : "", e.soglia ? "La soglia di casa dimezza" : "",
+          e.marchio ? `marchio +${e.marchio}` : "", e.radici ? `radici +${e.radici}` : "", e.extra ? `+${e.extra}` : "", e.benedetta ? `benedetta +${e.benedetta}` : "", e.furia ? "Furia +2" : ""].filter(Boolean).join(", ");
+        return [`${pre}${chi} → d20 ${e.d} = ${e.tot} contro CA ${e.ca}: ${esito}${e.ok && !e.annullato ? `, ${danno(e)}${dadiTesto(e.tiri)}` : ""}${note ? ` — ${note}` : ""}.`, lato(e.da)];
+      }
+      case "ts": return [`${su === "Tu" ? "Il tuo" : "Di " + su + ", il"} tiro salvezza su ${e.attr}: d20 ${e.d} + ${e.m} = ${e.tot} contro CD ${e.cd} → ${e.ok ? "resiste" : "fallisce"}.`, "sis"];
+      case "stato": return [`${sul} ${e.nome} (${turni(e.turni)})${e.rinnovato ? ", rinnovato" : ""}.`, su === "Tu" ? "nem" : "bene"];
+      case "aggravato": return [`Lo stato peggiora: ${e.nome}.`, su === "Tu" ? "nem" : "bene"];
+      case "resiste": return [`${su === "Tu" ? "Resisti" : su + " resiste"}${e.giaTirato ? " (stesso tiro salvezza)" : ""}.`, "sis"];
+      case "immune": return [`${sul} immune a ${P.nomeStato(e.stato, 1)}${e.motivo === "dopoStordimento" ? " (appena stordito)" : ""}.`, "sis"];
+      case "convertito": return [`Sui boss lo stordimento diventa Indebolito.`, "sis"];
+      case "tick": return [`${su === "Tu" ? "Subisci" : su + " subisce"} ${e.nome}: ${danno(e)}${dadiTesto(e.tiri)}.`, su === "Tu" ? "nem" : "bene"];
+      case "perdeAzione": return [`${(e.chi || e.su) === "Tu" ? "Sei stordito: perdi il turno" : (e.chi || e.su) + " è stordito e perde il turno"}.`, "sis"];
+      case "scade": return [`${su === "Tu" ? "Su di te" : "Su " + su} finisce ${e.nome}.`, "sis"];
+      case "buff": return [`Effetto attivo: ${NOMI_BUFF[e.id] || e.id}${e.ca ? ` (+${e.ca} CA)` : ""}.`, "sis"];
+      case "cura": case "balsamo": case "piena": case "pozzo": case "ultimoServizio":
+        return [`${e.chi === "Tu" ? "Ti curi" : e.chi + " si cura"} di ${e.n}${{ balsamo: " (Balsamo della linfa)", piena: " (Sangue in piena)", pozzo: " (Pozzo arcano)", ultimoServizio: " (Ultimo servizio: resti in piedi)" }[e.k] || ""}${dadiTesto(e.tiri)}.`, "bene"];
+      case "vacillante": return [`${e.chi === "Tu" ? "Sei Vacillante" : e.chi + " è Vacillante"}!`, "esito " + (e.chi === "Tu" ? "nem" : "bene")];
+      case "abbattuto": return [`${e.chi === "Tu" ? "Cadi" : e.chi + " cade"}.`, "esito " + (e.chi === "Tu" ? "nem" : "bene")];
+      case "dannoFisso": return [`${e.su} subisce ${danno(e)}${dadiTesto(e.tiri)}, senza tiro per colpire.`, lato(e.su === "Tu" ? "x" : "Tu")];
+      case "soffio": return [`Il soffio ti investe: ${danno(e)}${dadiTesto(e.tiri)}, senza tiro per colpire.`, "nem"];
+      case "sciame": case "sfera": case "bulbo": case "bulboEsplode": case "copiaEsplode": case "specchioRotto": case "placcaSpezzata": case "vincolo": case "ecoDiAdele":
+        return [`${{ sciame: "Lo sciame", sfera: "Una sfera della costellazione", bulbo: "Il bulbo", bulboEsplode: "Il bulbo esplode", copiaEsplode: "La Copia esplode", specchioRotto: "Lo specchio rotto rimanda il colpo", placcaSpezzata: "La placca spezzata ferisce", vincolo: "Il vincolo di sangue", ecoDiAdele: "L'eco di Adele (cura in eccesso)" }[e.k]}: ${e.su} subisce ${danno(e)}${dadiTesto(e.tiri)}.`, e.su === "Tu" ? "nem" : "bene"];
+      case "annuncio": return [`⚠ ${e.chi} prepara ${e.nome}: colpirà al prossimo turno.`, "nem esito"];
+      case "runaSpenta": return [`Una runa si spegne.`, "sis"];
+      case "caricaSpezzata": return [`Il colpo preparato è spezzato!`, "bene esito"];
+      case "nonCarica": return [`Il nemico non può caricare al prossimo turno.`, "bene"];
+      case "fuga": return [`${e.chi} fugge.`, "sis esito"];
+      case "trappola": return [`Scatta la trappola: ${SP.POTERI[e.id].nome}!`, "bene"];
+      case "copia": return [`Copie: ${e.tot}.`, "pg"];
+      case "copieConsumate": return [`Consumi ${e.n} Copie.`, "pg"];
+      case "placche": return [`Placche d'ossa: ${e.tot}.`, "pg"];
+      case "placcheSpese": return [`Spendi ${e.n} placche.`, "pg"];
+      case "sangueVersato": return [e.costo ? `Sangue versato: paghi 3 salute per un dado in più.` : `Sangue versato: da Vacillante il dado in più è gratis.`, "pg"];
+      case "occhioDelCacciatore": return [`Occhio del cacciatore: il doppio dei dadi.`, "pg"];
+      case "senzaScampo": return [`Senza scampo: attacco gratuito!`, "pg esito"];
+      case "sogliaDiCasa": return [`La soglia di casa: il colpo fa metà danno, +2 CA per 2 turni.`, "bene"];
+      case "ultimaScintilla": return [`Ultima scintilla: ${SP.POTERI[e.potere].nome} torna disponibile.`, "bene"];
+      case "baluardo": return [`Ultimo baluardo: resti a 1.`, "bene"];
+      case "ritorsione": return [`Ritorsione: il colpo non fa nulla.`, "bene"];
+      case "purificato": return [`L'aura brucia via ${P.nomeStato(e.stato, 1)}.`, "bene"];
+      case "consacrato": return [`Consacrazione: ${P.nomeStato(e.stato, 1)} ti scivola via e si ritorce contro.`, "bene"];
+      case "gabbia": return [`Gabbia d'ossa!`, "pg"];
+      case "marchio": return [`Il bersaglio è marchiato per lo scontro.`, "pg"];
+      case "svantaggio": return [`Il nemico tira due d20 e tiene il peggiore per ${turni(e.turni)}.`, "pg"];
+      case "pestilenza": return [`Pestilenza: il veleno non scadrà.`, "pg"];
+      case "marea": return [`Il veleno tira il doppio dei dadi per ${turni(e.turni)}.`, "pg"];
+      case "cuoreTossina": return [`Il veleno colpisce ${e.turni} volte.`, "pg"];
+      case "bulboPiantato": return [`Un bulbo germoglia sul nemico.`, "pg"];
+      case "barricata": return [`Il prossimo attacco del nemico ha −2.`, "pg"];
+      case "allungato": return [`${P.nomeStato(e.stato, 1)} dura ${e.n} turno in più (${e.turni}).`, "sis"];
+      case "tolto": return [`${su === "Tu" ? "Ti liberi di" : su + " perde"} ${P.nomeStato(e.stato, 1)}.`, "sis"];
+      case "rinnovato": return [`${P.nomeStato(e.stato, 2)} rinnovato.`, "sis"];
+      case "finoAFineScontro": return [`La bruciatura durerà fino a fine scontro.`, "pg"];
+      default: return [`(${e.k})`, "sis"];
+    }
+  }
+  const scrivi = (eventi) => (eventi || []).forEach(e => { if (!e) return; const [t, c] = racconta(e); log(t, c); });
+
+  /* ---------- turni ---------- */
+  function iniziaScontro() {
+    if (!pg) { pg = creaPg(); if (!pg) return; }
+    S.fineScontro(pg); S.preparaScontro(pg);
+    nem = N.crea($("nemico").value); turno = 0; finito = false;
+    log(`══ Nuovo scontro: ${CLASSI[pg.classe].nome} ${SP.SPEC[pg.classe][pg.spec].nome} (liv. ${pg.liv}, salute ${pg.pv}/${pg.pvMax}) contro ${nem.nome} (liv. ${nem.liv}, salute ${nem.pv}) ══`, "turno");
+    inizioTuo();
+  }
+  function controllaFine() {
+    if (finito) return true;
+    if (nem.pv <= 0) { finito = true; log(`Vittoria: ${nem.nome} è sconfitto in ${turno} turni.`, "bene esito"); }
+    else if (nem.fuggito) { finito = true; log(`Fine: ${nem.nome} è fuggito.`, "sis esito"); }
+    else if (pg.pv <= 0) { finito = true; log(`Sconfitta al turno ${turno}.`, "nem esito"); }
+    return finito;
+  }
+  function inizioTuo() {
+    turno++; log(`— Turno ${turno} —`, "turno");
+    scrivi(S.inizioTurno(pg, nem, ctx));
+    if (controllaFine()) return ridisegna();
+    if (!P.puoAgire(pg)) { S.fineTurno(pg); turnoNemico(); return; }
+    ridisegna();
+  }
+  function turnoPg(id) {
+    if (finito) return;
+    const opz = { sangueVersato: !!($("sangueVersato") && $("sangueVersato").checked) };
+    const r = S.usa(pg, nem, id, ctx, opz);
+    if (r.rifiutato) { log(`Non puoi usare ${SP.POTERI[id].nome} adesso.`, "sis"); return; }
+    scrivi(r.eventi); fineTuo();
+  }
+  function fineTuo() { scrivi(S.fineTurno(pg)); if (controllaFine()) return ridisegna(); turnoNemico(); }
+  function turnoNemico() {
+    scrivi(S.inizioTurno(nem, pg, ctx));
+    if (!controllaFine()) { scrivi(N.agisci(nem, pg, ctx).eventi); scrivi(S.fineTurno(nem)); }
+    if (controllaFine()) return ridisegna();
+    inizioTuo();
+  }
+
+  /* ---------- simulazione ---------- */
+  function scegliBot(p, n) {
+    const disp = (id) => S.disponibile(p, id).ok, mie = p.poteri;
+    const g = mie.filter(id => SP.POTERI[id].tipo === "giornaliero" && disp(id));
+    if (g.length && P.vacillante(n)) return g[0];
+    const sc = mie.filter(id => SP.POTERI[id].tipo === "scontro" && disp(id) && !["secondo_vento", "coagulo", "tocco_lenitivo"].includes(id));
+    if (sc.length) return sc[0];
+    const cura = ["secondo_vento", "coagulo", "tocco_lenitivo"].find(id => mie.includes(id) && disp(id));
+    if (cura && P.vacillante(p)) return cura;
+    const off = S.offesaDi(p); return disp(off) ? off : mie.find(disp);
+  }
+  function simula() {
+    const base = creaPg(); if (!base) return;
+    const n0 = $("nemico").value, tot = Math.max(10, Math.min(2000, +$("simN").value || 200));
+    let vinti = 0, fughe = 0, turniTot = 0, saluteRimasta = 0;
+    for (let i = 0; i < tot; i++) {
+      const p = creaPg(), n = N.crea(n0); let t = 0;
+      while (p.pv > 0 && n.pv > 0 && !n.fuggito && t++ < 60) {
+        S.inizioTurno(p, n, ctx);
+        if (p.pv > 0 && n.pv > 0 && P.puoAgire(p)) S.usa(p, n, scegliBot(p, n), ctx, { sangueVersato: p.pv > p.pvMax * 0.75 });
+        S.fineTurno(p); if (n.pv <= 0) break;
+        S.inizioTurno(n, p, ctx); if (n.pv > 0) N.agisci(n, p, ctx); S.fineTurno(n);
+      }
+      if (n.pv <= 0 && p.pv > 0) { vinti++; saluteRimasta += p.pv / p.pvMax; } else if (n.fuggito) fughe++;
+      turniTot += t;
+    }
+    const pct = (x) => Math.round(x / tot * 100), pv = pct(vinti), pf = pct(fughe);
+    $("simEsito").innerHTML = `<p><b>${CLASSI[base.classe].nome} ${SP.SPEC[base.classe][base.spec].nome} liv. ${base.liv}</b> contro <b>${N.NEMICI[n0].nome}</b>: vittorie <b>${pv}%</b>${fughe ? `, fughe ${pf}%` : ""}, sconfitte ${100 - pv - pf}% · turni medi ${(turniTot / tot).toFixed(1)} · salute media rimasta a chi vince ${vinti ? Math.round(saluteRimasta / vinti * 100) : 0}%</p>`;
+    log(`Simulazione: ${$("simEsito").textContent}`, "sis");
+  }
+
+  /* ---------- test ---------- */
+  function eseguiTest() {
+    const suite = [["Stati e tiri salvezza", "TestPoteri"], ["Guerriero", "TestScontro"], ["Sciamano", "TestScontroSciamano"], ["Arcanista", "TestScontroArcanista"], ["Monaco", "TestScontroMonaco"], ["Vie", "TestScontroVie"], ["Nemici", "TestNemici"]];
+    let ok = 0, tot = 0; const out = [];
+    suite.forEach(([nome, k]) => {
+      const es = window[k].esegui(), ko = es.filter(e => !e.ok);
+      ok += es.length - ko.length; tot += es.length;
+      out.push(`${ko.length ? "✗" : "✓"} ${nome}: ${es.length - ko.length} / ${es.length}` + ko.map(e => `\n    ERRORE ${e.nome}\n      → ${e.errore}`).join(""));
+    });
+    $("test").innerHTML = `<p class="${ok === tot ? "bene" : "nem"} esito">${ok} / ${tot} superati</p><pre></pre>`;
+    $("test").querySelector("pre").textContent = out.join("\n");
+  }
+
+  /* ---------- pulsanti ---------- */
+  $("crea").addEventListener("click", () => { const p = creaPg(); if (!p) return; pg = p; finito = true; nem = null; log(`Personaggio creato: ${CLASSI[pg.classe].nome} ${SP.SPEC[pg.classe][pg.spec].nome}, livello ${pg.liv}, salute ${pg.pvMax}, CA ${pg.caBase}. Poteri: ${pg.poteri.map(id => SP.POTERI[id].nome).join(", ")}.`, "pg"); ridisegna(); });
+  $("nuovo").addEventListener("click", iniziaScontro);
+  $("riposa").addEventListener("click", () => { if (!pg) return; S.riposo(pg); pg.pv = pg.pvMax; pg.stati = {}; if (pg.classe === "Forestiero") S.preparaInfuso(pg); log("Riposi: salute piena, giornalieri di nuovo disponibili" + (pg.classe === "Forestiero" ? `, elisir ${pg.elisir}` : "") + ".", "bene"); ridisegna(); });
+  $("passa").addEventListener("click", () => { if (!finito) { log("Passi il turno.", "pg"); fineTuo(); } });
+  $("simula").addEventListener("click", simula);
+  $("eseguiTest").addEventListener("click", eseguiTest);
+  $("pulisci").addEventListener("click", () => { righe.length = 0; $("registro").innerHTML = ""; });
+  $("scarica").addEventListener("click", () => {
+    const d = new Date(), nome = `registro_${d.toISOString().slice(0, 16).replace(/[:T]/g, "-")}.txt`;
+    const url = URL.createObjectURL(new Blob([righe.join("\n")], { type: "text/plain;charset=utf-8" }));
+    const l = document.createElement("a"); l.href = url; l.download = nome; l.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+  });
+
+  aggiornaSpec(); ridisegna();
+  log("Sala di prova del motore nuovo. 1) Scegli classe, specializzazione, poteri e livello, poi «Crea il personaggio». 2) Scegli il nemico e «Nuovo scontro». Tu agisci per primo; il nemico risponde da solo.", "sis");
+})();
+</script>
+</body>
+</html>

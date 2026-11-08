@@ -34,6 +34,7 @@
   function statoSu(att, dif, modo, ctx, id, esito, extra) {
     const k = id || statoArma(att); if (!k) return [];
     pronto(dif);
+    if (att.senzaStati) return []; /* Senza scampo: l'attacco gratuito non applica stati */
     /* Consacrazione (Purificatore): niente stati; ogni stato ti ritorna contro come Scottato (aggrava se c'è già) */
     if (dif.buff.consacrazione && att !== dif) {
       return [{ k: "consacrato", stato: k }, ...(att.pv > 0 ? P.aggrava(att, "scottato", { fonte: fonteDi(dif), tira: ctx.tira, tipo: "fuoco_sacro" }) : [])];
@@ -128,6 +129,11 @@
     let n = P.modificaDanno(dif, tipo, lordo).danno;
     const bal = dif.buff.baluardo;
     if (bal && !bal.salvato && n >= dif.pv && dif.pv > 0) { bal.salvato = true; n = dif.pv - 1; E.push({ k: "baluardo" }); }
+    /* La soglia di casa (via di Guendalina, 5): una volta per scontro il colpo che ti renderebbe Vacillante fa metà danno, +2 CA per 2 turni */
+    if (dif.via === "guendalina" && dif.liv >= 5 && !dif.sogliaUsata && !P.vacillante(dif) && dif.pv - n > 0 && dif.pv - n < dif.pvMax / 2) {
+      dif.sogliaUsata = true; n = meta(n); dif.buff.soglia = { ca: 2, turni: 2 }; E.push({ k: "sogliaDiCasa" });
+      if (ev) ev.soglia = true;
+    }
     /* Ultimo servizio (Monaco, tratto I): una volta al giorno, a 0 resti a 1 e ti curi 1d6 + Spirito */
     let servizio = false;
     if (n >= dif.pv && dif.pv > 0 && (dif.tratti || []).includes("ultimo_servizio") && !dif.usati.giorno.ultimo_servizio) {
@@ -255,7 +261,7 @@
   }
   /* fine scontro: tornano i poteri per scontro, spariscono effetti e stati; il riposo ricarica i giornalieri */
   function fineScontro(b) { pronto(b); b.usati.scontro = {}; b.buff = {}; b.stati = {}; b.prossimiDadi = 0; b.marchio = false; b.marchia = false; b.immStordito = 0; b.nonCarica = 0; b.pronto = null;
-    b.bulbo = null; b.velenoPerenne = false; b.pestilenzaTurni = 0; b.copie = 0; b.specchio = false; b.svantaggio = 0; b.scintillaUsata = false; b.placche = 0; b.malusProssimo = 0;
+    b.bulbo = null; b.velenoPerenne = false; b.pestilenzaTurni = 0; b.copie = 0; b.specchio = false; b.svantaggio = 0; b.scintillaUsata = false; b.placche = 0; b.malusProssimo = 0; b.occhioUsato = false; b.senzaScampoUsato = false; b.sogliaUsata = false;
     if (b.bonusTsBase != null) { b.bonusTs = b.bonusTsBase; delete b.bonusTsBase; } }
   function riposo(b) { pronto(b); b.usati.giorno = {}; }
 
@@ -306,12 +312,17 @@
       if (P.vacillante(att)) { extra = 1; E.push({ k: "sangueVersato", costo: 0 }); }
       else if (opz.sangueVersato && att.pv > att.pvMax / 2 && !att.sangueVersatoTurno) { att.pv -= 3; att.sangueVersatoTurno = true; extra = 1; E.push({ k: "sangueVersato", costo: 3 }); }
     }
-    const prendiExtra = () => { const x = extra; extra = 0; return x; };
-    const atk = (o) => { const r = attacco(att, dif, { nome: id, ...o, piuDadi: ((o && o.piuDadi) || 0) + prendiExtra() }, ctx); E.push(...r.eventi); return r; };
+    /* Via di Aldo: Occhio del cacciatore (3) = il primo potere che fa danno nello scontro tira il doppio dei dadi;
+       Odore del sangue (4) = contro un Vacillante i poteri a volontà fanno un dado in più */
+    const aldo = att.via === "aldo";
+    const occhio = () => { if (aldo && att.liv >= 3 && !att.occhioUsato) { att.occhioUsato = true; E.push({ k: "occhioDelCacciatore" }); return true; } return false; };
+    const odore = () => (aldo && att.liv >= 4 && p.tipo === "volonta" && P.vacillante(dif) ? 1 : 0);
+    const prendiExtra = () => { const x = extra + odore(); extra = 0; return x; };
+    const atk = (o) => { const doppio = occhio() || (o && o.doppiDadi); const r = attacco(att, dif, { nome: id, ...o, doppiDadi: doppio, piuDadi: ((o && o.piuDadi) || 0) + prendiExtra() }, ctx); E.push(...r.eventi); return r; };
     /* danno senza tiro per colpire: n dadi (+ dado extra) + modificatore */
     /* conMod: quante volte si somma il modificatore (Frantumare e Il Grande Inganno: una per Copia) */
     const fisso = (n, dado, conMod, tipo) => {
-      const t = tiraDadi(ctx, n + prendiExtra(), dado), e = { k: "dannoFisso", nome: id, tiri: t, dado };
+      const t = tiraDadi(ctx, (n + prendiExtra()) * (occhio() ? 2 : 1), dado), e = { k: "dannoFisso", nome: id, tiri: t, dado };
       E.push(e, ...danneggia(dif, Math.max(1, somma(t) + Number(conMod || 0) * mDanno(att, { focus: true })), tipo, e, ctx)); return e;
     };
     const placca = (n) => { att.placche = Math.min(PLACCHE_MAX, (att.placche || 0) + n); E.push({ k: "placche", tot: att.placche }); };
@@ -544,12 +555,30 @@
       }
       default: E.push({ k: "nonImplementato", id });
     }
-      return { eventi: E };
+      /* Senza scampo (via di Aldo, 5): la prima volta nello scontro che il nemico diventa Vacillante, attacco gratuito con il
+       potere a volontà di offesa della specializzazione, che non applica stati */
+    if (!vac && P.vacillante(dif) && aldo && att.liv >= 5 && !att.senzaScampoUsato && !opz.gratis) {
+      att.senzaScampoUsato = true; E.push({ k: "senzaScampo" });
+      const off = offesaDi(att);
+      if (off) { att.senzaStati = true; try { E.push(...usa(att, dif, off, ctx, { gratis: true }).eventi); } finally { att.senzaStati = false; } }
+    }
+    return { eventi: E };
+  }
+  /* il potere a volontà di offesa (il primo della specializzazione) */
+  function offesaDi(b) {
+    const cl = Object.values(CATALOGO.SPEC || {}).find(c => c[b.spec]);
+    return cl ? cl[b.spec].volonta[0] : null;
+  }
+  /* inizio scontro: La lanterna (via di Guendalina, 3) = immune a Impaurito e +2 a tutti i tiri salvezza */
+  function preparaScontro(b) {
+    pronto(b); b.immuni = b.immuni || [];
+    if (b.via === "guendalina" && b.liv >= 3) { if (!b.immuni.includes("impaurito")) b.immuni.push("impaurito"); b.bonusTs = Math.max(b.bonusTs || 0, 2); }
+    return b;
   }
   /* Infuso (Sciamano, al riposo): un elisir di salute, massimo 2 portati (3 con Mani che curano, via di Guendalina dal 4) */
   function preparaInfuso(b) { const max = b.via === "guendalina" && b.liv >= 4 ? 3 : 2; b.elisir = Math.min(max, (b.elisir || 0) + 1); return b.elisir; }
 
-  const API = { STATO_ARMA, statoArma, ca, attacco, usa, disponibile, inizioTurno, fineTurno, fineScontro, riposo, preparaInfuso };
+  const API = { STATO_ARMA, statoArma, ca, attacco, usa, disponibile, inizioTurno, fineTurno, fineScontro, riposo, preparaInfuso, preparaScontro, offesaDi };
   root.Scontro = API;
   if (typeof module !== "undefined" && module.exports) module.exports = API;
 })(typeof window !== "undefined" ? window : globalThis);

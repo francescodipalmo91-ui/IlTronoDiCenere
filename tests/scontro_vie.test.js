@@ -40,10 +40,10 @@
     const g = guerriero({ via: "aldo", liv: 5, occhioUsato: true }), n = nemico({ pv: 22 }), c = ctx([10, 1, 2]);
     const r = S.usa(g, n, "colpo_di_mestiere", c); /* 22 − 1 = 21: non ancora Vacillante (sotto 20) */
     eq(ev(r, "senzaScampo").length, 0); fine(c);
-    const g2 = guerriero({ via: "aldo", liv: 5, occhioUsato: true }), n2 = nemico({ pv: 22 }), c2 = ctx([10, 3, 10, 1]);
-    const r2 = S.usa(g2, n2, "colpo_poderoso", c2); /* 22 − 6 = 16: Vacillante → Colpo poderoso gratis, 1 + 3 = 4 */
-    eq(ev(r2, "senzaScampo").length, 1); eq(n2.pv, 12); vero(!P.ha(n2, "sanguinante")); fine(c2);
-    const c3 = ctx([10, 1]); eq(ev(S.usa(g2, n2, "colpo_poderoso", c3), "senzaScampo").length, 0, "una volta per scontro"); fine(c3);
+    const g2 = guerriero({ via: "aldo", liv: 5, occhioUsato: true }), n2 = nemico({ pv: 22 }), c2 = ctx([10, 3, 10, 1, 1]);
+    const r2 = S.usa(g2, n2, "colpo_poderoso", c2); /* 22 − 6 = 16: Vacillante → Colpo poderoso gratis; al 5 vale anche Odore del sangue: 2 dadi, 1 + 1 + 3 = 5 */
+    eq(ev(r2, "senzaScampo").length, 1); eq(n2.pv, 11); vero(!P.ha(n2, "sanguinante")); fine(c2);
+    const c3 = ctx([10, 1, 1]); eq(ev(S.usa(g2, n2, "colpo_poderoso", c3), "senzaScampo").length, 0, "una volta per scontro"); fine(c3);
   });
 
   /* ===== Guendalina, il focolare ===== */

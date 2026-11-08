@@ -37,6 +37,10 @@
   .carta input { margin-right: 6px; }
   .carta small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
   .carta:has(input:checked) { border-color: var(--gold); background: #262626; }
+  .gia { margin: 2px 0 4px; font-size: 12px; color: var(--muted); }
+  .gia summary { cursor: pointer; }
+  .gia ul { margin: 4px 0 4px 18px; padding: 0; }
+  .gia li { margin: 2px 0; }
   .livScelta { font: 600 13px var(--t); color: var(--gold); margin-top: 8px; }
   .dettaglio { border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; margin: 6px 0 10px; background: #121212; }
   .dettaglio h3 { font: 600 15px var(--t); margin: 0 0 4px; color: var(--gold); }
@@ -236,6 +240,12 @@
     });
     return { presi, punti };
   }
+  /* i poteri che hai già al momento di una scelta: a volontà del livello, scelte precedenti, potere di classe; con descrizione */
+  function giaPosseduti(classe, spec, presiPrima, liv) {
+    const ids = SP.poteriAlLivello(classe, spec, presiPrima, liv);
+    const tipo = { volonta: "a volontà", scontro: "per scontro", giornaliero: "giornaliero" };
+    return `<details class="gia" open><summary>Hai già ${ids.length} poteri (tocca per chiudere)</summary><ul>${ids.map(id => `<li><b>${SP.POTERI[id].nome}</b> · ${tipo[SP.POTERI[id].tipo]} — ${SP.POTERI[id].testo}</li>`).join("")}</ul></details>`;
+  }
   function aggiornaScelte() {
     const classe = $("classe").value, spec = $("spec").value, s = SP.SPEC[classe][spec], box = $("scelte"), liv = +$("liv").value;
     const nomeP = (id) => SP.POTERI[id].nome, [v, sc, gi] = SP.SCALA[liv], { presi, punti } = sceltePg();
@@ -243,7 +253,8 @@
     const lasciati = liv >= 4 ? [...s.scontro, s.fissi.scontro, ...s.giornalieri, s.fissi.giornaliero].filter(id => !presi.includes(id)) : [];
     box.innerHTML = `<div class="nota"><b>Al livello ${liv}: ${v} a volontà · ${sc} per scontro · ${gi} giornalier${gi === 1 ? "o" : "i"}</b> (più il potere di classe)</div>
       <div class="nota">A volontà: ${s.volonta.filter(id => id !== s.volontaDopo).map(nomeP).join(" · ")} · ${nomeP(s.volontaDopo)} dal livello 2${ora(2)} · finale al livello 5: ${nomeP(s.fissi.finale)}${ora(5)}</div>
-      ${punti.map(o => `<div class="livScelta">Livello ${o.livello} · scegli il ${NOMI_SCELTA[o.tipo]}</div>
+      ${punti.map((o, i) => `<div class="livScelta">Livello ${o.livello} · scegli il ${NOMI_SCELTA[o.tipo]}</div>
+        ${giaPosseduti(classe, spec, presi.slice(0, i), o.livello)}
         <div class="carte">${o.opzioni.map(id => `<label class="carta"><input type="radio" name="${o.chiave}" value="${id}" ${scelteFatte[o.chiave] === id ? "checked" : ""}><b>${nomeP(id)}</b>${SP.livelloDi(classe, spec, id) > 1 ? ` <span class="nota">(del livello ${SP.livelloDi(classe, spec, id)})</span>` : ""}<small>${SP.POTERI[id].testo}</small></label>`).join("")}</div>`).join("")}
       ${lasciati.length ? `<div class="nota">Lasciati per sempre: ${lasciati.map(nomeP).join(", ")}</div>` : ""}
       <div class="nota">Nella sala di prova puoi cambiare le scelte; nel gioco saranno definitive.</div>`;

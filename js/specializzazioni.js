@@ -184,22 +184,53 @@
   const LIV = { terzoVolonta: 2, secondoScontro: 3, fissi: 4, finale: 5 };
   const quantiScontroScelti = (liv) => (liv >= LIV.secondoScontro ? 2 : 1);
 
-  /* scelta dei poteri: 1 per scontro su 3 (2 dal livello 3) e 1 giornaliero su 2, dentro la propria specializzazione */
+  /* SCELTE DOPPIE (decise l'08/11/2026): a ogni livello che porta un potere da scegliere, il giocatore sceglie tra le opzioni a video
+     (potere e descrizione) e non può più cambiare. Le coppie mettono sempre un potere di base contro uno del suo livello:
+       1 (creazione): per scontro 1 su 3 · giornaliero 1 su 2
+       2: nessuna scelta (terzo a volontà, tratto II)
+       3: per scontro, uno dei due rimasti
+       4: per scontro, quello rimasto o il fisso del 4 · giornaliero, quello rimasto o il fisso (ex livello 3)
+       5: nessuna scelta, arriva il giornaliero finale
+     Un potere per scontro e un giornaliero non arrivano mai: li sceglie il giocatore lasciandoli. */
+  const base = (s, tipo) => (tipo === "scontro" ? s.scontro : s.giornalieri);
+  const fissoDi = (s, tipo) => (tipo === "scontro" ? s.fissi.scontro : s.fissi.giornaliero);
+  /* le scelte da fare a un livello, date quelle già fatte: [{ livello, tipo, opzioni: [id…] }] */
+  function opzioniLivello(classe, spec, scelti, liv) {
+    const s = SPEC[classe] && SPEC[classe][spec]; if (!s) return [];
+    const presi = new Set(scelti || []), resto = (tipo) => base(s, tipo).filter(id => !presi.has(id));
+    if (liv === 1) return [{ livello: 1, tipo: "scontro", opzioni: [...s.scontro] }, { livello: 1, tipo: "giornaliero", opzioni: [...s.giornalieri] }];
+    if (liv === LIV.secondoScontro) return [{ livello: 3, tipo: "scontro", opzioni: resto("scontro") }];
+    if (liv === LIV.fissi) return ["scontro", "giornaliero"].map(tipo => ({ livello: 4, tipo, opzioni: [...resto(tipo), fissoDi(s, tipo)] }));
+    return [];
+  }
+  /* rigioca le scelte livello per livello: valida se a ogni scelta c'è esattamente un potere tra le opzioni di quel momento.
+     scelti: { 1: { scontro, giornaliero }, 3: { scontro }, 4: { scontro, giornaliero } } oppure l'elenco piatto nell'ordine delle scelte */
   function sceltaValida(classe, spec, scelti, liv) {
     const s = SPEC[classe] && SPEC[classe][spec]; if (!s) return { ok: false, motivo: "specializzazione" };
-    const sc = (scelti || []).filter(id => s.scontro.includes(id)), gi = (scelti || []).filter(id => s.giornalieri.includes(id));
-    const estranei = (scelti || []).filter(id => !s.scontro.includes(id) && !s.giornalieri.includes(id));
+    liv = liv || 1;
+    const lista = Array.isArray(scelti) ? scelti : Object.keys(scelti || {}).sort().flatMap(l => Object.values(scelti[l]));
+    const ammessi = new Set([...s.scontro, ...s.giornalieri, s.fissi.scontro, s.fissi.giornaliero]);
+    const estranei = lista.filter(id => !ammessi.has(id));
     if (estranei.length) return { ok: false, motivo: "estranei", estranei };
-    if (new Set(sc).size !== quantiScontroScelti(liv || 1)) return { ok: false, motivo: "scontro", servono: quantiScontroScelti(liv || 1) };
-    if (new Set(gi).size !== 1) return { ok: false, motivo: "giornalieri" };
-    return { ok: true };
+    if (new Set(lista).size !== lista.length) return { ok: false, motivo: "doppione" };
+    /* l'elenco è nell'ordine delle scelte: a ogni scelta vale il primo potere ancora libero che è tra le opzioni */
+    const presi = [], restano = [...lista];
+    for (let l = 1; l <= liv; l++) {
+      for (const o of opzioniLivello(classe, spec, presi, l)) {
+        const k = restano.findIndex(id => o.opzioni.includes(id));
+        if (k < 0) return { ok: false, motivo: "manca", livello: l, tipo: o.tipo, opzioni: o.opzioni };
+        presi.push(restano[k]); restano.splice(k, 1);
+      }
+    }
+    if (restano.length) return { ok: false, motivo: "inAnticipo", poteri: restano };
+    return { ok: true, scelti: presi };
   }
-  /* i poteri che il personaggio ha a un livello: a volontà (il terzo dal 2), i suoi scelti, i fissi del 4 e del 5, il potere di classe */
+  /* i poteri che il personaggio ha a un livello: a volontà (il terzo dal 2), le sue scelte, il finale al 5, il potere di classe */
   function poteriAlLivello(classe, spec, scelti, liv) {
     const c = SPEC[classe], s = c && c[spec]; if (!s) return [];
     const volonta = s.volonta.filter(id => id !== s.volontaDopo || liv >= LIV.terzoVolonta);
-    const fissi = [...(liv >= LIV.fissi ? [s.fissi.scontro, s.fissi.giornaliero] : []), ...(liv >= LIV.finale ? [s.fissi.finale] : [])];
-    return [...volonta, ...(scelti || []), ...fissi, c.classe.potere];
+    const lista = Array.isArray(scelti) ? scelti : Object.values(scelti || {}).flatMap(x => Object.values(x));
+    return [...volonta, ...lista, ...(liv >= LIV.finale ? [s.fissi.finale] : []), c.classe.potere];
   }
   const trattiAlLivello = (classe, liv) => { const t = (SPEC[classe] && SPEC[classe].classe.tratti) || {}; return Object.keys(t).filter(l => +l <= liv).map(l => t[l]); };
   /* il livello a cui un potere arriva in QUELLA specializzazione (Colpo di mestiere: 1 per l'Esecutore, 2 per la Sentinella) */
@@ -213,7 +244,7 @@
   /* tutti i poteri di una specializzazione (per i controlli) */
   const tuttiDi = (s) => [...s.volonta, ...s.scontro, ...s.giornalieri, s.fissi.giornaliero, s.fissi.scontro, s.fissi.finale];
 
-  const API = { POTERI, SPEC, SCALA, LIV, quantiScontroScelti, sceltaValida, poteriAlLivello, trattiAlLivello, tuttiDi, livelloDi };
+  const API = { POTERI, SPEC, SCALA, LIV, quantiScontroScelti, opzioniLivello, sceltaValida, poteriAlLivello, trattiAlLivello, tuttiDi, livelloDi };
   root.SPECIALIZZAZIONI = API;
   if (typeof module !== "undefined" && module.exports) module.exports = API;
 })(typeof window !== "undefined" ? window : globalThis);

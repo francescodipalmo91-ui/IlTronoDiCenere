@@ -31,12 +31,13 @@ Leggere questo per primo. Dettaglio completo: `claude/riscrittura_meccaniche.md`
 | 1 | 2 | 1 (scelto su 3) | 1 (scelto su 2) | potere di classe, tratto I |
 | 2 | 3 | 1 | 1 | il terzo a volontà, **tratto II** (spostato dal 4) |
 | 3 | 3 | 2 | 1 | il secondo per scontro, **scelto al livello 3** tra i due rimasti; via di prestigio |
-| 4 | 3 | 3 | 2 | per scontro fisso + giornaliero fisso (l'ex «livello 3») ; secondo bonus della via |
+| 4 | 3 | 3 | 2 | per scontro: il rimasto o il fisso; giornaliero: il rimasto o il fisso (l'ex «livello 3»); secondo bonus della via |
 | 5 | 3 | 3 | 3 | giornaliero finale; terzo bonus della via |
 
   - A volontà che arriva al livello 2: la **difesa** (Guardia feroce, Pelle di corteccia, Corteccia viva, Crosta, Riflessi, Aura purificante, Armatura d'ossa); per la **Sentinella** *Colpo di mestiere* (la difesa *In guardia* è la sua identità). Proposta di Claude, Francesco non l'ha ancora confermata.
   - Motivo: ogni livello porta qualcosa e si impara un pezzo alla volta. Simulazione al livello 1 contro i nemici comuni: nessuna differenza apprezzabile (97-100% di vittorie in entrambi gli schemi). **Da misurare**: Enea con un giornaliero in meno al livello 3.
-  - Nel codice: `js/specializzazioni.js` (`SCALA`, `volontaDopo`, `fissi`, `livelloDi`), test «Scala 08/11».
+  - **Scelte doppie (DECISE l'08/11/2026, obiezioni 1A 2A 3A 4B 5A 6A):** a ogni livello che porta una scelta, il giocatore sceglie a video tra potere e descrizione; **nessun cambio** nel gioco (nella sala di prova sì). Coppie sempre «di base contro del livello»: livello 1 per scontro 1 su 3 e giornaliero 1 su 2; livello 2 nessuna (Claude: confermare); livello 3 uno dei due per scontro rimasti; livello 4 per scontro rimasto **o** fisso del 4, giornaliero rimasto **o** fisso (ex livello 3); livello 5 finale **fisso**. Un per scontro e un giornaliero restano fuori per sempre: li sceglie il giocatore. La schermata mostra solo potere e descrizione (niente riga «funziona con…»). Le percentuali dei boss devono valere anche per la build peggiore, al massimo 10 punti sotto l'obiettivo.
+  - Nel codice: `js/specializzazioni.js` (`SCALA`, `volontaDopo`, `fissi`, `opzioniLivello`, `sceltaValida` che rigioca le scelte, `livelloDi`), test «Scala 08/11» e «Scelte doppie»; nella sala di prova le carte delle scelte per livello.
 - Per scontro = una volta per scontro. Specializzazione scelta in creazione, mai cambiabile.
 - Vie (livello 3-5, uguali per tutti, niente poteri): **Aldo, la caccia** (Occhio del cacciatore / Odore del sangue / Senza scampo); **Guendalina, il focolare** (La lanterna / Mani che curano / La soglia di casa).
 - Meccaniche firma: Sangue versato (Sangue); Copie a metà danno + Indebolito (Illusione); Balsamo della linfa (Linfa); placche d'ossa 3 × (3 + livello − 1), generate solo da Spine e Armatura d'ossa, Gabbia d'ossa su 19-20 (Ossomante); fuoco sacro che ignora le immunità al fuoco (Purificatore).

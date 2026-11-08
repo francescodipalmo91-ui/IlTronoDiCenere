@@ -32,6 +32,12 @@
   .voce.sel { border-color: var(--gold); background: #2e2e2e; }
   .voce.spento { opacity: .55; }
   .voce.annunciato { border-color: var(--ko); }
+  .carte { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 6px; margin: 4px 0 8px; }
+  .carta { display: block; border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; cursor: pointer; background: #121212; margin: 0; }
+  .carta input { margin-right: 6px; }
+  .carta small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .carta:has(input:checked) { border-color: var(--gold); background: #262626; }
+  .livScelta { font: 600 13px var(--t); color: var(--gold); margin-top: 8px; }
   .dettaglio { border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; margin: 6px 0 10px; background: #121212; }
   .dettaglio h3 { font: 600 15px var(--t); margin: 0 0 4px; color: var(--gold); }
   .dettaglio p { margin: 4px 0; }
@@ -218,25 +224,30 @@
     $("arma").value = pr.arma; $("scudo").checked = pr.scudo;
     aggiornaScelte();
   }
+  /* scelte doppie (08/11): a ogni livello che porta una scelta, le opzioni a video con la descrizione.
+     Nella sala di prova si possono cambiare; nel gioco saranno definitive. scelteFatte: { "1-scontro": id, … } */
+  const scelteFatte = {};
+  const NOMI_SCELTA = { scontro: "potere per scontro", giornaliero: "giornaliero" };
+  function sceltePg() { /* rigioca le scelte fino al livello selezionato: [id…] nell'ordine */
+    const classe = $("classe").value, spec = $("spec").value, liv = +$("liv").value, presi = [], punti = [];
+    for (let l = 1; l <= liv; l++) SP.opzioniLivello(classe, spec, presi, l).forEach(o => {
+      const k = `${l}-${o.tipo}`; if (!o.opzioni.includes(scelteFatte[k])) scelteFatte[k] = o.opzioni[0];
+      presi.push(scelteFatte[k]); punti.push({ ...o, chiave: k });
+    });
+    return { presi, punti };
+  }
   function aggiornaScelte() {
-    const s = SP.SPEC[$("classe").value][$("spec").value], box = $("scelte"), liv = +$("liv").value;
-    const nomeP = (id) => SP.POTERI[id].nome, testo = (id) => SP.POTERI[id].testo;
-    const nSc = SP.quantiScontroScelti(liv), [v, sc, gi] = SP.SCALA[liv];
-    const prima = [...box.querySelectorAll("input[name=sc]:checked")].map(i => i.value).filter(id => s.scontro.includes(id));
-    const spunta = (prima.length ? prima : [s.scontro[0]]).slice(0, nSc);
-    const aggiunto = spunta.length < nSc ? s.scontro.find(id => !spunta.includes(id)) : null; /* livello 3: il secondo si sceglie ora */
-    if (aggiunto) spunta.push(aggiunto);
+    const classe = $("classe").value, spec = $("spec").value, s = SP.SPEC[classe][spec], box = $("scelte"), liv = +$("liv").value;
+    const nomeP = (id) => SP.POTERI[id].nome, [v, sc, gi] = SP.SCALA[liv], { presi, punti } = sceltePg();
     const ora = (l) => (l <= liv ? "" : " (non ancora)");
+    const lasciati = liv >= 4 ? [...s.scontro, s.fissi.scontro, ...s.giornalieri, s.fissi.giornaliero].filter(id => !presi.includes(id)) : [];
     box.innerHTML = `<div class="nota"><b>Al livello ${liv}: ${v} a volontà · ${sc} per scontro · ${gi} giornalier${gi === 1 ? "o" : "i"}</b> (più il potere di classe)</div>
-      <div class="nota">A volontà: ${s.volonta.filter(id => id !== s.volontaDopo).map(nomeP).join(" · ")} · ${nomeP(s.volontaDopo)} dal livello 2${ora(2)}</div>
-      <div><b>Per scontro (scegline ${nSc}${liv < 3 ? "; il secondo al livello 3" : ""}):</b> ${s.scontro.map(id => `<label title="${testo(id)}"><input type="checkbox" name="sc" value="${id}" ${spunta.includes(id) ? "checked" : ""}> ${nomeP(id)}</label>`).join("")}</div>
-      ${aggiunto && prima.length ? `<div class="bene">Livello 3: secondo potere per scontro, spuntato ${nomeP(aggiunto)}. Cambialo se vuoi.</div>` : ""}
-      <div><b>Giornaliero (scegline 1):</b> ${s.giornalieri.map((id, i) => `<label title="${testo(id)}"><input type="radio" name="gi" value="${id}" ${i === 0 ? "checked" : ""}> ${nomeP(id)}</label>`).join("")}</div>
-      <div class="nota">Fissi: livello 4 ${nomeP(s.fissi.scontro)} e ${nomeP(s.fissi.giornaliero)}${ora(4)} · livello 5 ${nomeP(s.fissi.finale)}${ora(5)}</div>`;
-    box.querySelectorAll("input[name=sc]").forEach(c => c.addEventListener("change", () => {
-      const sel = [...box.querySelectorAll("input[name=sc]:checked")];
-      if (sel.length > nSc) c.checked = false;
-    }));
+      <div class="nota">A volontà: ${s.volonta.filter(id => id !== s.volontaDopo).map(nomeP).join(" · ")} · ${nomeP(s.volontaDopo)} dal livello 2${ora(2)} · finale al livello 5: ${nomeP(s.fissi.finale)}${ora(5)}</div>
+      ${punti.map(o => `<div class="livScelta">Livello ${o.livello} · scegli il ${NOMI_SCELTA[o.tipo]}</div>
+        <div class="carte">${o.opzioni.map(id => `<label class="carta"><input type="radio" name="${o.chiave}" value="${id}" ${scelteFatte[o.chiave] === id ? "checked" : ""}><b>${nomeP(id)}</b>${SP.livelloDi(classe, spec, id) > 1 ? ` <span class="nota">(del livello ${SP.livelloDi(classe, spec, id)})</span>` : ""}<small>${SP.POTERI[id].testo}</small></label>`).join("")}</div>`).join("")}
+      ${lasciati.length ? `<div class="nota">Lasciati per sempre: ${lasciati.map(nomeP).join(", ")}</div>` : ""}
+      <div class="nota">Nella sala di prova puoi cambiare le scelte; nel gioco saranno definitive.</div>`;
+    box.querySelectorAll(".carta input").forEach(r => r.addEventListener("change", () => { scelteFatte[r.name] = r.value; aggiornaScelte(); }));
     $("via").disabled = liv < 3; if (liv < 3) $("via").value = "";
   }
   $("classe").addEventListener("change", aggiornaSpec);
@@ -248,9 +259,9 @@
   /* il personaggio dalle stesse regole di test.html (js/preset_test.js) */
   function creaPg() {
     const classe = $("classe").value, spec = $("spec").value, liv = +$("liv").value, razza = $("razza").value;
-    const scelti = [...document.querySelectorAll("input[name=sc]:checked"), ...document.querySelectorAll("input[name=gi]:checked")].map(i => i.value);
+    const scelti = sceltePg().presi;
     const v = SP.sceltaValida(classe, spec, scelti, liv);
-    if (!v.ok) { $("creaNota").textContent = `Scegli ${SP.quantiScontroScelti(liv)} ${SP.quantiScontroScelti(liv) === 1 ? "potere" : "poteri"} per scontro e 1 giornaliero.`; return null; }
+    if (!v.ok) { $("creaNota").textContent = "Scelte non valide: " + v.motivo; return null; }
     $("creaNota").textContent = "";
     const pr = PR.pg(CLASSI[classe].preset, liv, razza), arma = ARMI[+$("arma").value], scudo = $("scudo").checked && !arma.dueMani;
     const caratt = { Vigore: pr.vig, "Agilità": pr.agi, Mente: pr.men, Spirito: pr.spi };

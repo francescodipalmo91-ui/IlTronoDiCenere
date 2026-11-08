@@ -118,6 +118,12 @@
     <h2>Registro</h2>
     <div id="registro" aria-live="polite"></div>
     <div class="riga"><button type="button" id="scarica">Scarica il registro (.txt)</button><button type="button" id="pulisci">Pulisci</button></div>
+    <div class="scelte">
+      <h3 style="font:600 13px var(--t);color:var(--muted);margin:4px 0">Log degli scontri (uno per file)</h3>
+      <div class="riga"><button type="button" id="logCartella">Scegli la cartella dei log</button><button type="button" id="logScarica">Scarica tutti i log (.jsonl)</button></div>
+      <div class="nota" id="logStato"></div>
+      <div class="nota">Cartella consigliata: <code>PROVA_riscrittura\log_scontri</code>. Ogni scontro giocato a mano si salva da solo alla fine (anche se lo interrompi con «Nuovo scontro»). Le simulazioni non si registrano.</div>
+    </div>
   </section>
 
   <section id="testBox">
@@ -273,7 +279,7 @@
 
   /* ---------- registro ---------- */
   function log(testo, cls) {
-    righe.push(testo);
+    righe.push(testo); if (typeof LOG !== "undefined" && LOG) LOG.riga(testo);
     const p = document.createElement("p"); p.className = cls || ""; p.textContent = testo; $("registro").append(p); $("registro").scrollTop = 1e9;
   }
   const lato = (nome) => (nome === "Tu" ? "pg" : "nem");
@@ -348,19 +354,96 @@
   }
   const scrivi = (eventi) => (eventi || []).forEach(e => { if (!e) return; const [t, c] = racconta(e); log(t, c); });
 
+  /* ---------- log degli scontri su file (come js/registro_scontri.js di test.html, formato v2 per il motore nuovo) ----------
+     Un file JSON per scontro: { v: 2, motore, id, inizio, fine, esito, turni, pg, nem, azioni[], diario[] }
+     azioni[i] = { t, id (o "passa"), sangueVersato?, prima: { pv, pvMax, nPv, nPvMax, statiPg, statiNem, copie, placche, nemPronto, vacPg, vacNem }, scelte: [poteri usabili] }
+     Cartella scelta una volta (Chrome la ricorda); senza permesso i log restano nel browser (ultimi 200) e si scaricano col pulsante. */
+  const LOG = (() => {
+    if (navigator.webdriver) return null; /* pagina guidata da Playwright: niente log */
+    const LS = "registroProvaNuovo", DB = "registroProvaNuovo";
+    let cartella = null, permesso = "assente", corrente = null, ultimo = null;
+    const idb = (fn) => new Promise((ok, ko) => {
+      const r = indexedDB.open(DB, 1);
+      r.onupgradeneeded = () => r.result.createObjectStore("kv");
+      r.onsuccess = () => { const tx = r.result.transaction("kv", "readwrite"), q = fn(tx.objectStore("kv")); tx.oncomplete = () => ok(q && q.result); tx.onerror = () => ko(tx.error); };
+      r.onerror = () => ko(r.error);
+    });
+    const supporta = () => typeof window.showDirectoryPicker === "function";
+    const stato = (msg) => {
+      let n = 0; try { n = JSON.parse(localStorage.getItem(LS) || "[]").length; } catch (e) { n = 0; }
+      $("logStato").textContent = (msg ? msg + " · " : "") + (!supporta() ? "Questo browser non scrive nelle cartelle: usa «Scarica tutti i log» (meglio Chrome o Edge)." :
+        !cartella ? "Nessuna cartella scelta." : permesso === "granted" ? `Cartella: ${cartella.name}.` : `Cartella ${cartella.name}: serve di nuovo il permesso (si chiede al prossimo clic su «Nuovo scontro»).`) + ` Log nel browser: ${n}.`;
+    };
+    async function carica() {
+      if (supporta()) { try { cartella = await idb(st => st.get("cartella")) || null; if (cartella) permesso = await cartella.queryPermission({ mode: "readwrite" }); } catch (e) { cartella = null; } }
+      stato();
+    }
+    async function scegli() {
+      if (!supporta()) return stato();
+      try {
+        cartella = await window.showDirectoryPicker({ id: "log_prova_nuovo", mode: "readwrite" });
+        await idb(st => st.put(cartella, "cartella")); permesso = "granted"; stato();
+        if (ultimo) salva(ultimo);
+      } catch (e) { if (e && e.name !== "AbortError") stato("Cartella non disponibile: " + e.message); }
+    }
+    function chiediPermesso() { /* dentro un clic */
+      if (!cartella || permesso === "granted") return;
+      cartella.requestPermission({ mode: "readwrite" }).then(p => { permesso = p; stato(); if (p === "granted" && ultimo) salva(ultimo); }).catch(() => {});
+    }
+    const due = (n) => String(n).padStart(2, "0");
+    const nomeFile = (r) => { const d = new Date(r.inizio); return `${d.getFullYear()}-${due(d.getMonth() + 1)}-${due(d.getDate())}_${due(d.getHours())}${due(d.getMinutes())}${due(d.getSeconds())}_${CLASSI[r.pg.classe].nome.toLowerCase()}-${r.pg.spec}${r.pg.liv}_${r.nem.id}.json`; };
+    async function salva(r) {
+      ultimo = r;
+      try { const a = JSON.parse(localStorage.getItem(LS) || "[]").filter(x => x.id !== r.id); a.push(r); localStorage.setItem(LS, JSON.stringify(a.slice(-200))); } catch (e) { /* storage pieno o bloccato */ }
+      if (!cartella || permesso !== "granted") return stato();
+      try { const f = await cartella.getFileHandle(nomeFile(r), { create: true }), w = await f.createWritable(); await w.write(JSON.stringify(r, null, 1)); await w.close(); stato(`Salvato: ${nomeFile(r)}`); }
+      catch (e) { stato("Scrittura fallita: " + e.message + " (il log resta nel browser)"); }
+    }
+    function scaricaTutti() {
+      let a = []; try { a = JSON.parse(localStorage.getItem(LS) || "[]"); } catch (e) { a = []; }
+      if (!a.length) return stato("Nessun log da scaricare.");
+      const url = URL.createObjectURL(new Blob([a.map(x => JSON.stringify(x)).join("\n")], { type: "application/json" }));
+      const l = document.createElement("a"); l.href = url; l.download = `log_prova_nuovo_${new Date().toISOString().slice(0, 10)}.jsonl`; l.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+    const statiDi = (b) => Object.keys(b.stati || {}).filter(k => P.ha(b, k)).map(k => P.nomeStato(k, b.stati[k].liv) + " " + b.stati[k].turni);
+    function inizia(p, n) {
+      chiediPermesso();
+      corrente = { v: 2, motore: "riscrittura 08/11/2026", id: Date.now().toString(36), inizio: new Date().toISOString(), fine: null, esito: null, turni: 0,
+        pg: { classe: p.classe, nomeClasse: CLASSI[p.classe].nome, spec: p.spec, liv: p.liv, razza: p.razza, via: p.via, pv: p.pv, pvMax: p.pvMax, ca: p.caBase, arma: p.arma.nome, bonusArma: p.arma.bonus, focus: p.focus.bonus, scudo: p.scudo, poteri: p.poteri, tratti: p.tratti, caratt: p.caratt, giornalieriGiaUsati: Object.keys(p.usati.giorno || {}) },
+        nem: { id: n.id, nome: n.nome, liv: n.liv, pvMax: n.pvMax, ca: n.caBase }, azioni: [], diario: [] };
+    }
+    function azione(id, opz) {
+      if (!corrente) return;
+      corrente.azioni.push({ t: turno, id, ...(opz && opz.sangueVersato ? { sangueVersato: true } : {}),
+        prima: { pv: pg.pv, pvMax: pg.pvMax, nPv: nem.pv, nPvMax: nem.pvMax, statiPg: statiDi(pg), statiNem: statiDi(nem), copie: pg.copie || 0, placche: pg.placche || 0, nemPronto: nem.pronto || null, vacPg: P.vacillante(pg), vacNem: P.vacillante(nem) },
+        scelte: pg.poteri.filter(x => S.disponibile(pg, x).ok) });
+    }
+    const riga = (t) => { if (corrente) corrente.diario.push(t); };
+    function chiudi(esito) {
+      if (!corrente) return;
+      Object.assign(corrente, { fine: new Date().toISOString(), esito, turni: turno, pvFinePg: Math.max(0, pg.pv), pvFineNem: Math.max(0, nem.pv) });
+      const r = corrente; corrente = null; salva(r);
+    }
+    return { carica, scegli, scaricaTutti, inizia, azione, riga, chiudi, aperto: () => !!corrente };
+  })();
+
   /* ---------- turni ---------- */
   function iniziaScontro() {
     if (!pg) { pg = creaPg(); if (!pg) return; }
+    if (LOG && LOG.aperto()) LOG.chiudi("interrotto");
     S.fineScontro(pg); S.preparaScontro(pg);
     nem = N.crea($("nemico").value); turno = 0; finito = false;
+    if (LOG) LOG.inizia(pg, nem);
     log(`══ Nuovo scontro: ${CLASSI[pg.classe].nome} ${SP.SPEC[pg.classe][pg.spec].nome} (liv. ${pg.liv}, salute ${pg.pv}/${pg.pvMax}) contro ${nem.nome} (liv. ${nem.liv}, salute ${nem.pv}) ══`, "turno");
     inizioTuo();
   }
   function controllaFine() {
     if (finito) return true;
-    if (nem.pv <= 0) { finito = true; log(`Vittoria: ${nem.nome} è sconfitto in ${turno} turni.`, "bene esito"); }
-    else if (nem.fuggito) { finito = true; log(`Fine: ${nem.nome} è fuggito.`, "sis esito"); }
-    else if (pg.pv <= 0) { finito = true; log(`Sconfitta al turno ${turno}.`, "nem esito"); }
+    let esito = null;
+    if (nem.pv <= 0) { esito = "vittoria"; log(`Vittoria: ${nem.nome} è sconfitto in ${turno} turni.`, "bene esito"); }
+    else if (nem.fuggito) { esito = "fuga"; log(`Fine: ${nem.nome} è fuggito.`, "sis esito"); }
+    else if (pg.pv <= 0) { esito = "sconfitta"; log(`Sconfitta al turno ${turno}.`, "nem esito"); }
+    if (esito) { finito = true; if (LOG) LOG.chiudi(esito); }
     return finito;
   }
   function inizioTuo() {
@@ -373,6 +456,7 @@
   function turnoPg(id) {
     if (finito) return;
     const opz = { sangueVersato: !!($("sangueVersato") && $("sangueVersato").checked) };
+    if (LOG && S.disponibile(pg, id).ok) LOG.azione(id, opz);
     const r = S.usa(pg, nem, id, ctx, opz);
     if (r.rifiutato) { log(`Non puoi usare ${SP.POTERI[id].nome} adesso.`, "sis"); return; }
     scrivi(r.eventi); fineTuo();
@@ -433,7 +517,9 @@
   $("crea").addEventListener("click", () => { const p = creaPg(); if (!p) return; pg = p; finito = true; nem = null; log(`Personaggio creato: ${CLASSI[pg.classe].nome} ${SP.SPEC[pg.classe][pg.spec].nome}, livello ${pg.liv}, salute ${pg.pvMax}, CA ${pg.caBase}. Poteri: ${pg.poteri.map(id => SP.POTERI[id].nome).join(", ")}.`, "pg"); ridisegna(); });
   $("nuovo").addEventListener("click", iniziaScontro);
   $("riposa").addEventListener("click", () => { if (!pg) return; S.riposo(pg); pg.pv = pg.pvMax; pg.stati = {}; if (pg.classe === "Forestiero") S.preparaInfuso(pg); log("Riposi: salute piena, giornalieri di nuovo disponibili" + (pg.classe === "Forestiero" ? `, elisir ${pg.elisir}` : "") + ".", "bene"); ridisegna(); });
-  $("passa").addEventListener("click", () => { if (!finito) { log("Passi il turno.", "pg"); fineTuo(); } });
+  $("passa").addEventListener("click", () => { if (!finito) { if (LOG) LOG.azione("passa"); log("Passi il turno.", "pg"); fineTuo(); } });
+  if (LOG) { $("logCartella").addEventListener("click", () => LOG.scegli()); $("logScarica").addEventListener("click", () => LOG.scaricaTutti()); LOG.carica(); }
+  else { $("logStato").textContent = "Pagina guidata da un test automatico: log spenti."; }
   $("simula").addEventListener("click", simula);
   $("eseguiTest").addEventListener("click", eseguiTest);
   $("pulisci").addEventListener("click", () => { righe.length = 0; $("registro").innerHTML = ""; });

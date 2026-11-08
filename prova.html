@@ -20,7 +20,7 @@
   h1 { font: 600 20px var(--t); margin: 0; color: var(--gold); }
   h2 { font: 600 15px var(--t); margin: 0 0 8px; letter-spacing: .04em; }
   .nota { color: var(--muted); font-size: 13px; }
-  main { display: grid; grid-template-columns: 310px minmax(0, 1fr) 310px; grid-template-areas: "lpg centro lnem" "test test test"; gap: 12px; padding: 12px 16px; max-width: 1700px; margin: 0 auto; }
+  main { display: grid; grid-template-columns: 310px minmax(0, 1fr) 310px; grid-template-areas: "lpg centro lnem"; gap: 12px; padding: 12px 16px; max-width: 1700px; margin: 0 auto; }
   .centro { grid-area: centro; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-content: start; min-width: 0; }
   .centro .largo { grid-column: 1 / -1; }
   #latoPg { grid-area: lpg; } #latoNem { grid-area: lnem; }
@@ -40,9 +40,8 @@
   section, aside { background: var(--pan); border: 1px solid var(--line); border-radius: 8px; padding: 12px; min-width: 0; }
   #pgBox { border-color: #2c3b52; background: var(--pg-bg); }
   #nemBox { border-color: #5a2a25; background: var(--nem-bg); }
-  #testBox { grid-area: test; }
   @media (max-width: 1150px) {
-    main { grid-template-columns: 1fr; grid-template-areas: "centro" "lpg" "lnem" "test"; }
+    main { grid-template-columns: 1fr; grid-template-areas: "centro" "lpg" "lnem"; }
     .centro { grid-template-columns: 1fr; }
     aside { position: static; max-height: none; }
   }
@@ -151,6 +150,11 @@
     </div>
   </section>
 
+  <section id="testBox" class="largo">
+    <h2>Test automatici del motore nuovo</h2>
+    <div class="riga"><button type="button" id="eseguiTest">Esegui tutti i test</button><span class="nota">Gli stessi di <code>npm test</code>, qui nel browser.</span></div>
+    <div id="test"></div>
+  </section>
   </div>
 
   <aside id="latoNem">
@@ -161,11 +165,7 @@
     <details><summary class="nota">Come sceglie il potere</summary><p class="nota" id="regolaNem"></p></details>
   </aside>
 
-  <section id="testBox">
-    <h2>Test automatici del motore nuovo</h2>
-    <div class="riga"><button type="button" id="eseguiTest">Esegui tutti i test</button><span class="nota">Gli stessi di <code>npm test</code>, qui nel browser.</span></div>
-    <div id="test"></div>
-  </section>
+
 </main>
 
 <script src="js/regole.js"></script>
@@ -221,13 +221,21 @@
   function aggiornaScelte() {
     const s = SP.SPEC[$("classe").value][$("spec").value], box = $("scelte"), liv = +$("liv").value;
     const nomeP = (id) => SP.POTERI[id].nome, testo = (id) => SP.POTERI[id].testo;
-    box.innerHTML = `<div class="nota">A volontà (fissi): ${s.volonta.map(nomeP).join(" · ")}</div>
-      <div><b>Per scontro (scegline 2):</b> ${s.scontro.map((id, i) => `<label title="${testo(id)}"><input type="checkbox" name="sc" value="${id}" ${i < 2 ? "checked" : ""}> ${nomeP(id)}</label>`).join("")}</div>
+    const nSc = SP.quantiScontroScelti(liv), [v, sc, gi] = SP.SCALA[liv];
+    const prima = [...box.querySelectorAll("input[name=sc]:checked")].map(i => i.value).filter(id => s.scontro.includes(id));
+    const spunta = (prima.length ? prima : [s.scontro[0]]).slice(0, nSc);
+    const aggiunto = spunta.length < nSc ? s.scontro.find(id => !spunta.includes(id)) : null; /* livello 3: il secondo si sceglie ora */
+    if (aggiunto) spunta.push(aggiunto);
+    const ora = (l) => (l <= liv ? "" : " (non ancora)");
+    box.innerHTML = `<div class="nota"><b>Al livello ${liv}: ${v} a volontà · ${sc} per scontro · ${gi} giornalier${gi === 1 ? "o" : "i"}</b> (più il potere di classe)</div>
+      <div class="nota">A volontà: ${s.volonta.filter(id => id !== s.volontaDopo).map(nomeP).join(" · ")} · ${nomeP(s.volontaDopo)} dal livello 2${ora(2)}</div>
+      <div><b>Per scontro (scegline ${nSc}${liv < 3 ? "; il secondo al livello 3" : ""}):</b> ${s.scontro.map(id => `<label title="${testo(id)}"><input type="checkbox" name="sc" value="${id}" ${spunta.includes(id) ? "checked" : ""}> ${nomeP(id)}</label>`).join("")}</div>
+      ${aggiunto && prima.length ? `<div class="bene">Livello 3: secondo potere per scontro, spuntato ${nomeP(aggiunto)}. Cambialo se vuoi.</div>` : ""}
       <div><b>Giornaliero (scegline 1):</b> ${s.giornalieri.map((id, i) => `<label title="${testo(id)}"><input type="radio" name="gi" value="${id}" ${i === 0 ? "checked" : ""}> ${nomeP(id)}</label>`).join("")}</div>
-      <div class="nota">Livelli 3-5 (fissi): ${[3, 4, 5].map(l => `${l}: ${nomeP(s.livelli[l])}${l <= liv ? "" : " (non ancora)"}`).join(" · ")}</div>`;
+      <div class="nota">Fissi: livello 4 ${nomeP(s.fissi.scontro)} e ${nomeP(s.fissi.giornaliero)}${ora(4)} · livello 5 ${nomeP(s.fissi.finale)}${ora(5)}</div>`;
     box.querySelectorAll("input[name=sc]").forEach(c => c.addEventListener("change", () => {
       const sel = [...box.querySelectorAll("input[name=sc]:checked")];
-      if (sel.length > 2) c.checked = false;
+      if (sel.length > nSc) c.checked = false;
     }));
     $("via").disabled = liv < 3; if (liv < 3) $("via").value = "";
   }
@@ -241,8 +249,8 @@
   function creaPg() {
     const classe = $("classe").value, spec = $("spec").value, liv = +$("liv").value, razza = $("razza").value;
     const scelti = [...document.querySelectorAll("input[name=sc]:checked"), ...document.querySelectorAll("input[name=gi]:checked")].map(i => i.value);
-    const v = SP.sceltaValida(classe, spec, scelti);
-    if (!v.ok) { $("creaNota").textContent = "Scegli 2 poteri per scontro e 1 giornaliero."; return null; }
+    const v = SP.sceltaValida(classe, spec, scelti, liv);
+    if (!v.ok) { $("creaNota").textContent = `Scegli ${SP.quantiScontroScelti(liv)} ${SP.quantiScontroScelti(liv) === 1 ? "potere" : "poteri"} per scontro e 1 giornaliero.`; return null; }
     $("creaNota").textContent = "";
     const pr = PR.pg(CLASSI[classe].preset, liv, razza), arma = ARMI[+$("arma").value], scudo = $("scudo").checked && !arma.dueMani;
     const caratt = { Vigore: pr.vig, "Agilità": pr.agi, Mente: pr.men, Spirito: pr.spi };
@@ -315,7 +323,8 @@
       ids.forEach(id => {
         const p = SP.POTERI[id], disp = S.disponibile(pg, id), b = document.createElement("button");
         b.type = "button"; b.className = `voce${id === selPg ? " sel" : ""}${disp.ok ? "" : " spento"}`;
-        b.innerHTML = `${p.nome}${p.liv > 1 ? ` <span class="nota">liv. ${p.liv}</span>` : ""}${POTERI_CLASSE.includes(id) ? ` <span class="nota">classe</span>` : ""}<small>${disp.ok ? "pronto" : MOTIVI[disp.motivo] || disp.motivo}</small>`;
+        const lv = SP.livelloDi(pg.classe, pg.spec, id) || 1;
+        b.innerHTML = `${p.nome}${lv > 1 ? ` <span class="nota">liv. ${lv}</span>` : ""}${POTERI_CLASSE.includes(id) ? ` <span class="nota">classe</span>` : ""}<small>${disp.ok ? "pronto" : MOTIVI[disp.motivo] || disp.motivo}</small>`;
         b.addEventListener("click", () => { selPg = id; latoPg(); });
         b.addEventListener("dblclick", () => { if (attivo && S.disponibile(pg, id).ok) turnoPg(id); });
         g.append(b);
@@ -324,7 +333,7 @@
     });
     const p = SP.POTERI[selPg], disp = S.disponibile(pg, selPg);
     det.innerHTML = `<div class="dettaglio"><h3>${p.nome}</h3>
-      <p class="nota">${NOMI_TIPO[p.tipo].replace(/i$/, "o").replace("A volontà", "A volontà")}${p.liv > 1 ? ` · dal livello ${p.liv}` : ""}</p>
+      <p class="nota">${NOMI_TIPO[p.tipo].replace(/i$/, "o").replace("A volontà", "A volontà")}${(SP.livelloDi(pg.classe, pg.spec, selPg) || 1) > 1 ? ` · dal livello ${SP.livelloDi(pg.classe, pg.spec, selPg)}` : ""}</p>
       <p>${p.testo}</p>${contestoPg(selPg).map(r => `<p class="nota">${r}</p>`).join("")}
       <p class="${disp.ok ? "bene" : "nem"}">${disp.ok ? (attivo ? "Pronto." : "Pronto (inizia uno scontro per usarlo).") : MOTIVI[disp.motivo] || disp.motivo}</p>
       <button type="button" class="usa" id="usaPg" ${attivo && disp.ok ? "" : "disabled"}>Usa ${p.nome}</button></div>`;

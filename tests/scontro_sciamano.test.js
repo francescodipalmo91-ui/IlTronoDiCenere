@@ -143,9 +143,9 @@
 
   caso("Catalogo: ogni potere dello Sciamano è implementato e la scelta di creazione funziona", () => {
     const sp = SP.SPEC.Forestiero, ids = new Set([sp.classe.potere]);
-    ["spore", "linfa"].forEach(k => { const x = sp[k]; [...x.volonta, ...x.scontro, ...x.giornalieri, ...Object.values(x.livelli)].forEach(i => ids.add(i)); });
+    ["spore", "linfa"].forEach(k => { const x = sp[k]; SP.tuttiDi(x).forEach(i => ids.add(i)); });
     ids.forEach(id => { const r = S.usa(sciamano({ elisir: 1 }), nemico({ pv: 99, pvMax: 99 }), id, { tira: (d) => Math.min(d, 10) }); eq(ev(r, "nonImplementato").length, 0, id); });
-    eq(SP.sceltaValida("Forestiero", "linfa", ["baccello_esplosivo", "linfa_amara", "cuore_di_linfa"]).ok, true);
+    eq(SP.sceltaValida("Forestiero", "linfa", ["baccello_esplosivo", "linfa_amara", "cuore_di_linfa"], 3).ok, true);
     eq(SP.sceltaValida("Forestiero", "linfa", ["spore_del_morbo", "linfa_amara", "cuore_di_linfa"]).motivo, "estranei");
   });
 

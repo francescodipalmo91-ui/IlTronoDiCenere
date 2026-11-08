@@ -176,20 +176,40 @@
   caso("Poteri preparati: un potere fuori dalla lista è rifiutato", () => {
     const g = guerriero({ poteri: ["colpo_poderoso"] }); eq(S.disponibile(g, "colpo_crudele").motivo, "nonPreparato");
   });
-  caso("Scelta di creazione: 2 per scontro su 3, 1 giornaliero su 2, solo della propria specializzazione", () => {
-    eq(SP.sceltaValida("Soldato", "esecutore", ["spezza_guardia", "colpo_crudele", "colpo_del_boia"]).ok, true);
-    eq(SP.sceltaValida("Soldato", "esecutore", ["spezza_guardia", "colpo_del_boia"]).motivo, "scontro");
-    eq(SP.sceltaValida("Soldato", "esecutore", ["spezza_guardia", "colpo_crudele", "rivalsa"]).motivo, "estranei");
+  caso("Scelta: 1 per scontro su 3 fino al livello 2, 2 dal livello 3; 1 giornaliero su 2; solo della propria specializzazione", () => {
+    eq(SP.sceltaValida("Soldato", "esecutore", ["spezza_guardia", "colpo_del_boia"], 1).ok, true);
+    eq(SP.sceltaValida("Soldato", "esecutore", ["spezza_guardia", "colpo_crudele", "colpo_del_boia"], 2).motivo, "scontro", "due per scontro al livello 2: troppi");
+    eq(SP.sceltaValida("Soldato", "esecutore", ["spezza_guardia", "colpo_crudele", "colpo_del_boia"], 3).ok, true);
+    eq(SP.sceltaValida("Soldato", "esecutore", ["spezza_guardia", "colpo_del_boia"], 3).servono, 2);
+    eq(SP.sceltaValida("Soldato", "esecutore", ["spezza_guardia", "rivalsa"], 1).motivo, "estranei");
   });
-  caso("Poteri al livello: a volontà + scelti + fissi dei livelli 3-5 + potere di classe; tratti 1 e 4", () => {
-    const l3 = SP.poteriAlLivello("Soldato", "sentinella", ["ritorsione", "rintocco", "rivalsa"], 3);
-    eq(l3.length, 8); vero(l3.includes("ultimo_baluardo") && !l3.includes("spezza_carica") && l3.includes("secondo_vento"));
-    eq(SP.poteriAlLivello("Soldato", "sentinella", ["ritorsione", "rintocco", "rivalsa"], 5).length, 10);
-    eq(SP.trattiAlLivello("Soldato", 4), ["mente_incrollabile", "furia"]);
+  caso("Scala 08/11: 2-1-1, 3-1-1, 3-2-1, 3-3-2, 3-3-3 per tutte le 8 specializzazioni (più il potere di classe)", () => {
+    Object.entries(SP.SPEC).forEach(([classe, cl]) => Object.keys(cl).filter(k => k !== "classe").forEach(spec => {
+      const x = cl[spec];
+      [1, 2, 3, 4, 5].forEach(liv => {
+        const scelti = [x.scontro[0], ...(liv >= 3 ? [x.scontro[1]] : []), x.giornalieri[0]];
+        eq(SP.sceltaValida(classe, spec, scelti, liv).ok, true, `${spec} ${liv}`);
+        const pot = SP.poteriAlLivello(classe, spec, scelti, liv).filter(id => id !== cl.classe.potere);
+        const n = ["volonta", "scontro", "giornaliero"].map(t => pot.filter(id => SP.POTERI[id].tipo === t).length);
+        eq(n, SP.SCALA[liv], `${spec} livello ${liv}`);
+      });
+    }));
+  });
+  caso("Al livello 1 manca la difesa (alla Sentinella Colpo di mestiere); i fissi arrivano al 4 e al 5; tratto II al livello 2", () => {
+    const l1 = SP.poteriAlLivello("Soldato", "sentinella", ["ritorsione", "rivalsa"], 1);
+    vero(l1.includes("in_guardia") && !l1.includes("colpo_di_mestiere"));
+    vero(SP.poteriAlLivello("Soldato", "sentinella", ["ritorsione", "rivalsa"], 2).includes("colpo_di_mestiere"));
+    vero(!SP.poteriAlLivello("Sapiente", "illusione", ["labirinto", "incubo"], 1).includes("riflessi"));
+    const l3 = SP.poteriAlLivello("Soldato", "esecutore", ["spezza_guardia", "colpo_crudele", "colpo_del_boia"], 3);
+    vero(!l3.includes("marchio_della_preda") && !l3.includes("ferita_riaperta"), "niente fissi al 3");
+    const l4 = SP.poteriAlLivello("Soldato", "esecutore", ["spezza_guardia", "colpo_crudele", "colpo_del_boia"], 4);
+    vero(l4.includes("marchio_della_preda") && l4.includes("ferita_riaperta") && !l4.includes("sentenza"));
+    eq([SP.livelloDi("Soldato", "sentinella", "colpo_di_mestiere"), SP.livelloDi("Soldato", "esecutore", "colpo_di_mestiere"), SP.livelloDi("Soldato", "esecutore", "marchio_della_preda")], [2, 1, 4]);
+    eq(SP.trattiAlLivello("Soldato", 1), ["mente_incrollabile"]); eq(SP.trattiAlLivello("Soldato", 2), ["mente_incrollabile", "furia"]);
   });
   caso("Catalogo: ogni potere del Guerriero è implementato", () => {
     const s = SP.SPEC.Soldato, ids = new Set([s.classe.potere]);
-    ["esecutore", "sentinella"].forEach(k => { const x = s[k]; [...x.volonta, ...x.scontro, ...x.giornalieri, ...Object.values(x.livelli)].forEach(i => ids.add(i)); });
+    ["esecutore", "sentinella"].forEach(k => { const x = s[k]; SP.tuttiDi(x).forEach(i => ids.add(i)); });
     ids.forEach(id => { const r = S.usa(guerriero(), nemico({ pv: 99, pvMax: 99 }), id, { tira: (d) => Math.min(d, 10) }); eq(ev(r, "nonImplementato").length, 0, id); });
   });
 

@@ -1,4 +1,4 @@
-# Riepilogo della riscrittura (per Claude) — stato al 08/11/2026
+# Riepilogo della riscrittura (per Claude) — stato al 08/11/2026 (pomeriggio)
 
 Leggere questo per primo. Dettaglio completo: `claude/riscrittura_meccaniche.md` (sezioni 0-9).
 **Codice: motore nuovo scritto il 08/11/2026 (blocchi 1-3), isolato dal vecchio e non ancora collegato al gioco.** Sezione «Codice» in fondo.
@@ -8,6 +8,7 @@ Leggere questo per primo. Dettaglio completo: `claude/riscrittura_meccaniche.md`
 2. **8c gruppo 5 (PROSSIMO: vulnerabilità fatte il 06/11, restano personaggi e poteri):** le otto cacce (★ 2/1, ★★ 2/2, ★★★ 3/2), dati in `bilanciamento_nemici_oggetti.md` («Le otto cacce comuni»: le vulnerabilità usano ancora Arcano/Forza/Luce/Ombra, da rimappare).
 3. **8d guardiani** (Ettore, Enea, Dafne, Atena) e **8e sovrano**, con poteri a volontà/per scontro/giornalieri a soglie; più le pergamene (quali, dove, quale prova).
 4. **Allineare i documenti** (mastino a due teste → mastino corazzato in `storia_casa_vespera.md` e `bilanciamento_nemici_oggetti.md`) (`storia_casa_vespera.md`, `bilanciamento_nemici_oggetti.md`, `incantesimi_arcanista_monaco.md`, `punto_della_situazione.md`) e `docs/` nel repo GitHub. Elenco contraddizioni in riscrittura, fine sezione 8a.
+4b. **Riscrittura, sezioni 0, 2 e tabelle «Livelli 3-5»:** riportare la scala dell'08/11 (qui sotto, «Schema delle classi»).
 5. **Regolamento** Base / Facoltative; **codice**: collegare il motore nuovo a `test.html` (sala di prova veritiera), creazione, scheda e `gioco.html`; zip dei file modificati a fine blocco.
 
 ## Metodo di Francesco (rispettarlo)
@@ -23,7 +24,19 @@ Leggere questo per primo. Dettaglio completo: `claude/riscrittura_meccaniche.md`
 | Arcanista (Mente) | Sangue | Illusione | Coagulo | Pozzo arcano | Ultima scintilla |
 | Monaco (Spirito) | Purificatore | Ossomante | Tocco lenitivo | Ultimo servizio | Eredità del sepolcro |
 
-- Livello 1: 3 a volontà fissi; 3 per scontro (sceglie 2); 2 giornalieri (sceglie 1). Livelli 3/4/5: giornaliero / per scontro / giornaliero finale fissi. Livello 5 = 3/3/3.
+- **Scala dei poteri (DECISA l'08/11/2026, prevale sulle sezioni 0 e 2 della riscrittura e sulle tabelle «Livelli 3-5» delle specializzazioni):**
+
+| Livello | A volontà | Per scontro | Giornalieri | Cosa arriva |
+|---|---|---|---|---|
+| 1 | 2 | 1 (scelto su 3) | 1 (scelto su 2) | potere di classe, tratto I |
+| 2 | 3 | 1 | 1 | il terzo a volontà, **tratto II** (spostato dal 4) |
+| 3 | 3 | 2 | 1 | il secondo per scontro, **scelto al livello 3** tra i due rimasti; via di prestigio |
+| 4 | 3 | 3 | 2 | per scontro fisso + giornaliero fisso (l'ex «livello 3») ; secondo bonus della via |
+| 5 | 3 | 3 | 3 | giornaliero finale; terzo bonus della via |
+
+  - A volontà che arriva al livello 2: la **difesa** (Guardia feroce, Pelle di corteccia, Corteccia viva, Crosta, Riflessi, Aura purificante, Armatura d'ossa); per la **Sentinella** *Colpo di mestiere* (la difesa *In guardia* è la sua identità). Proposta di Claude, Francesco non l'ha ancora confermata.
+  - Motivo: ogni livello porta qualcosa e si impara un pezzo alla volta. Simulazione al livello 1 contro i nemici comuni: nessuna differenza apprezzabile (97-100% di vittorie in entrambi gli schemi). **Da misurare**: Enea con un giornaliero in meno al livello 3.
+  - Nel codice: `js/specializzazioni.js` (`SCALA`, `volontaDopo`, `fissi`, `livelloDi`), test «Scala 08/11».
 - Per scontro = una volta per scontro. Specializzazione scelta in creazione, mai cambiabile.
 - Vie (livello 3-5, uguali per tutti, niente poteri): **Aldo, la caccia** (Occhio del cacciatore / Odore del sangue / Senza scampo); **Guendalina, il focolare** (La lanterna / Mani che curano / La soglia di casa).
 - Meccaniche firma: Sangue versato (Sangue); Copie a metà danno + Indebolito (Illusione); Balsamo della linfa (Linfa); placche d'ossa 3 × (3 + livello − 1), generate solo da Spine e Armatura d'ossa, Gabbia d'ossa su 19-20 (Ossomante); fuoco sacro che ignora le immunità al fuoco (Purificatore).
@@ -88,5 +101,7 @@ Commit da `a593729` a `f9e1044`. Il motore nuovo è **isolato** dal vecchio (com
 13. Élite: il turno dell'annuncio attaccano comunque con un a volontà; il potere annunciato è già speso (Spezza-carica lo fa perdere e spegne la runa).
 14. Ceneri sul pelo: a volontà difensivo (fino al suo turno), vale contro gli attacchi in mischia, non contro il focus.
 15. Senza scampo: usa il primo a volontà della specializzazione (l'offesa); scatta solo sui tuoi poteri, non sui danni continuativi.
+
+**Sala di prova (`prova.html`, anche in `PROVA_riscrittura` sul PC):** schede laterali dei poteri (tuoi: seleziona, descrizione, usa; nemico: descrizione dai dati, usato/annunciato, anteprima della prossima mossa), log di ogni scontro in `log_scontri` (JSON v2) e riassunto con `node analisi_prova.mjs`.
 
 **Prossimi passi del codice:** collegare il motore a `test.html` (sala di prova veritiera, con il registro degli scontri), poi creazione e scheda (specializzazione e scelte), poi `gioco.html`; togliere il vecchio motore solo quando il nuovo è in gioco. Guardiani e sovrano (8d-8e) e cacce (gruppo 5) dopo le decisioni.

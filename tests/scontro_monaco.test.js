@@ -139,16 +139,16 @@
 
   caso("Catalogo: ogni potere del Monaco è implementato e la scelta di creazione funziona", () => {
     const sp = SP.SPEC.Accolito, ids = new Set([sp.classe.potere]);
-    ["purificatore", "ossomante"].forEach(k => { const x = sp[k]; [...x.volonta, ...x.scontro, ...x.giornalieri, ...Object.values(x.livelli)].forEach(i => ids.add(i)); });
+    ["purificatore", "ossomante"].forEach(k => { const x = sp[k]; SP.tuttiDi(x).forEach(i => ids.add(i)); });
     ids.forEach(id => { const r = S.usa(ossomante({ placche: 1 }), nemico({ pv: 99, pvMax: 99 }), id, { tira: (d) => Math.min(d, 10) }); eq(ev(r, "nonImplementato").length, 0, id); });
-    eq(SP.sceltaValida("Accolito", "ossomante", ["spirito_d_ossa", "lama_d_osso", "prigione_d_ossa"]).ok, true);
+    eq(SP.sceltaValida("Accolito", "ossomante", ["spirito_d_ossa", "lama_d_osso", "prigione_d_ossa"], 3).ok, true);
   });
   caso("Tutte le classi: 8 specializzazioni, ognuna 3 + 3 + 2 + 3 poteri, tutti nel catalogo", () => {
     let n = 0;
     Object.values(SP.SPEC).forEach(cl => Object.keys(cl).filter(k => k !== "classe").forEach(k => {
       const x = cl[k]; n++;
-      eq([x.volonta.length, x.scontro.length, x.giornalieri.length, Object.keys(x.livelli).length], [3, 3, 2, 3], x.nome);
-      [...x.volonta, ...x.scontro, ...x.giornalieri, ...Object.values(x.livelli)].forEach(id => vero(SP.POTERI[id], "manca " + id));
+      eq([x.volonta.length, x.scontro.length, x.giornalieri.length, Object.keys(x.fissi).length], [3, 3, 2, 3], x.nome);
+      SP.tuttiDi(x).forEach(id => vero(SP.POTERI[id], "manca " + id));
     }));
     eq(n, 8);
   });

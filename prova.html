@@ -231,7 +231,7 @@
   /* scelte doppie (08/11): a ogni livello che porta una scelta, le opzioni a video con la descrizione.
      Nella sala di prova si possono cambiare; nel gioco saranno definitive. scelteFatte: { "1-scontro": id, … } */
   const scelteFatte = {};
-  const NOMI_SCELTA = { scontro: "potere per scontro", giornaliero: "giornaliero" };
+  const NOMI_SCELTA = { scontro: "scegli il potere per scontro", giornaliero: "scegli il giornaliero", libera: "scegli la strada: il terzo a volontà o un potere per scontro", volonta: "arriva l'a volontà che ti manca" };
   function sceltePg() { /* rigioca le scelte fino al livello selezionato: [id…] nell'ordine */
     const classe = $("classe").value, spec = $("spec").value, liv = +$("liv").value, presi = [], punti = [];
     for (let l = 1; l <= liv; l++) SP.opzioniLivello(classe, spec, presi, l).forEach(o => {
@@ -248,15 +248,18 @@
   }
   function aggiornaScelte() {
     const classe = $("classe").value, spec = $("spec").value, s = SP.SPEC[classe][spec], box = $("scelte"), liv = +$("liv").value;
-    const nomeP = (id) => SP.POTERI[id].nome, [v, sc, gi] = SP.SCALA[liv], { presi, punti } = sceltePg();
+    const nomeP = (id) => SP.POTERI[id].nome, { presi, punti } = sceltePg();
+    const ora_ = SP.poteriAlLivello(classe, spec, presi, liv).filter(id => id !== SP.SPEC[classe].classe.potere);
+    const [v, sc, gi] = ["volonta", "scontro", "giornaliero"].map(t => ora_.filter(id => SP.POTERI[id].tipo === t).length);
     const ora = (l) => (l <= liv ? "" : " (non ancora)");
     const lasciati = liv >= 4 ? [...s.scontro, s.fissi.scontro, ...s.giornalieri, s.fissi.giornaliero].filter(id => !presi.includes(id)) : [];
+    const avviso = liv >= 3 && !presi.includes(s.volontaDopo) ? `<div class="nem">Strada d'attacco: niente ${nomeP(s.volontaDopo)} fino al livello 4, e il fisso per scontro del livello 4 è perso.</div>` : "";
     box.innerHTML = `<div class="nota"><b>Al livello ${liv}: ${v} a volontà · ${sc} per scontro · ${gi} giornalier${gi === 1 ? "o" : "i"}</b> (più il potere di classe)</div>
-      <div class="nota">A volontà: ${s.volonta.filter(id => id !== s.volontaDopo).map(nomeP).join(" · ")} · ${nomeP(s.volontaDopo)} dal livello 2${ora(2)} · finale al livello 5: ${nomeP(s.fissi.finale)}${ora(5)}</div>
-      ${punti.map((o, i) => `<div class="livScelta">Livello ${o.livello} · scegli il ${NOMI_SCELTA[o.tipo]}</div>
+      <div class="nota">A volontà di partenza: ${s.volonta.filter(id => id !== s.volontaDopo).map(nomeP).join(" · ")} · ${nomeP(s.volontaDopo)} a scelta dal livello 2 (al più tardi arriva al 4) · finale al livello 5: ${nomeP(s.fissi.finale)}${ora(5)}</div>
+      ${punti.map((o, i) => `<div class="livScelta">Livello ${o.livello} · ${NOMI_SCELTA[o.tipo]}</div>
         ${giaPosseduti(classe, spec, presi.slice(0, i), o.livello)}
-        <div class="carte">${o.opzioni.map(id => `<label class="carta"><input type="radio" name="${o.chiave}" value="${id}" ${scelteFatte[o.chiave] === id ? "checked" : ""}><b>${nomeP(id)}</b>${SP.livelloDi(classe, spec, id) > 1 ? ` <span class="nota">(del livello ${SP.livelloDi(classe, spec, id)})</span>` : ""}<small>${SP.POTERI[id].testo}</small></label>`).join("")}</div>`).join("")}
-      ${lasciati.length ? `<div class="nota">Lasciati per sempre: ${lasciati.map(nomeP).join(", ")}</div>` : ""}
+        <div class="carte">${o.opzioni.map(id => `<label class="carta"><input type="radio" name="${o.chiave}" value="${id}" ${scelteFatte[o.chiave] === id ? "checked" : ""}><b>${nomeP(id)}</b> <span class="nota">${{ volonta: "a volontà", scontro: "per scontro", giornaliero: "giornaliero" }[SP.POTERI[id].tipo]}</span>${SP.livelloDi(classe, spec, id) > 1 ? ` <span class="nota">(del livello ${SP.livelloDi(classe, spec, id)})</span>` : ""}<small>${SP.POTERI[id].testo}</small></label>`).join("")}</div>`).join("")}
+      ${avviso}${lasciati.length ? `<div class="nota">Lasciati per sempre: ${lasciati.map(nomeP).join(", ")}</div>` : ""}
       <div class="nota">Nella sala di prova puoi cambiare le scelte; nel gioco saranno definitive.</div>`;
     box.querySelectorAll(".carta input").forEach(r => r.addEventListener("change", () => { scelteFatte[r.name] = r.value; aggiornaScelte(); }));
     $("via").disabled = liv < 3; if (liv < 3) $("via").value = "";

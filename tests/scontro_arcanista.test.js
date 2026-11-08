@@ -160,7 +160,7 @@
     const sp = SP.SPEC.Sapiente, ids = new Set([sp.classe.potere]);
     ["sangue", "illusione"].forEach(k => { const x = sp[k]; SP.tuttiDi(x).forEach(i => ids.add(i)); });
     ids.forEach(id => { const r = S.usa(illusionista({ copie: 1 }), nemico({ pv: 99, pvMax: 99 }), id, { tira: (d) => Math.min(d, 10) }); eq(ev(r, "nonImplementato").length, 0, id); });
-    eq(SP.sceltaValida("Sapiente", "illusione", ["frantumare", "labirinto", "incubo"], 3).ok, true);
+    eq(SP.sceltaValida("Sapiente", "illusione", ["frantumare", "labirinto", "incubo"], 2).ok, true);
     eq(SP.sceltaValida("Sapiente", "sangue", ["frantumare", "ebollizione", "cuore_spezzato"]).motivo, "estranei");
   });
 

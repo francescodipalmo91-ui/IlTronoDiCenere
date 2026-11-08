@@ -187,10 +187,13 @@
   /* SCELTE DOPPIE (decise l'08/11/2026): a ogni livello che porta un potere da scegliere, il giocatore sceglie tra le opzioni a video
      (potere e descrizione) e non può più cambiare. Le coppie mettono sempre un potere di base contro uno del suo livello:
        1 (creazione): per scontro 1 su 3 · giornaliero 1 su 2
-       2: nessuna scelta (terzo a volontà, tratto II)
-       3: per scontro, uno dei due rimasti
-       4: per scontro, quello rimasto o il fisso del 4 · giornaliero, quello rimasto o il fisso (ex livello 3)
+       2 (strada libera, opzione A del 08/11): il terzo a volontà OPPURE uno dei due per scontro rimasti
+       3: una delle due carte rimaste tra quelle del livello 2
+       4: si completa a 3 a volontà · 3 per scontro · 2 giornalieri: l'a volontà mancante arriva da solo (chi ha corso sui
+          per scontro); se resta uno spazio per scontro, il rimasto o il fisso del 4; giornaliero, il rimasto o il fisso (ex livello 3)
        5: nessuna scelta, arriva il giornaliero finale
+     Al livello 2 e 3 la forma cambia con la strada (3-1-1 o 2-2-1; 3-2-1 o 2-3-1); dal 4 è uguale per tutti.
+     Chi prende i due per scontro al 2 e al 3 perde per sempre il fisso per scontro del 4.
      Un potere per scontro e un giornaliero non arrivano mai: li sceglie il giocatore lasciandoli. */
   const base = (s, tipo) => (tipo === "scontro" ? s.scontro : s.giornalieri);
   const fissoDi = (s, tipo) => (tipo === "scontro" ? s.fissi.scontro : s.fissi.giornaliero);
@@ -199,8 +202,16 @@
     const s = SPEC[classe] && SPEC[classe][spec]; if (!s) return [];
     const presi = new Set(scelti || []), resto = (tipo) => base(s, tipo).filter(id => !presi.has(id));
     if (liv === 1) return [{ livello: 1, tipo: "scontro", opzioni: [...s.scontro] }, { livello: 1, tipo: "giornaliero", opzioni: [...s.giornalieri] }];
-    if (liv === LIV.secondoScontro) return [{ livello: 3, tipo: "scontro", opzioni: resto("scontro") }];
-    if (liv === LIV.fissi) return ["scontro", "giornaliero"].map(tipo => ({ livello: 4, tipo, opzioni: [...resto(tipo), fissoDi(s, tipo)] }));
+    const terzoV = presi.has(s.volontaDopo) ? [] : [s.volontaDopo];
+    if (liv === 2 || liv === 3) return [{ livello: liv, tipo: "libera", opzioni: [...terzoV, ...resto("scontro")] }];
+    if (liv === LIV.fissi) {
+      const punti = [];
+      if (terzoV.length) punti.push({ livello: 4, tipo: "volonta", opzioni: terzoV });                  /* arriva da solo */
+      const sc = [...s.scontro, s.fissi.scontro].filter(id => presi.has(id)).length;
+      if (sc < 3) punti.push({ livello: 4, tipo: "scontro", opzioni: [...resto("scontro"), s.fissi.scontro] });
+      punti.push({ livello: 4, tipo: "giornaliero", opzioni: [...resto("giornaliero"), s.fissi.giornaliero] });
+      return punti;
+    }
     return [];
   }
   /* rigioca le scelte livello per livello: valida se a ogni scelta c'è esattamente un potere tra le opzioni di quel momento.
@@ -209,7 +220,7 @@
     const s = SPEC[classe] && SPEC[classe][spec]; if (!s) return { ok: false, motivo: "specializzazione" };
     liv = liv || 1;
     const lista = Array.isArray(scelti) ? scelti : Object.keys(scelti || {}).sort().flatMap(l => Object.values(scelti[l]));
-    const ammessi = new Set([...s.scontro, ...s.giornalieri, s.fissi.scontro, s.fissi.giornaliero]);
+    const ammessi = new Set([s.volontaDopo, ...s.scontro, ...s.giornalieri, s.fissi.scontro, s.fissi.giornaliero]);
     const estranei = lista.filter(id => !ammessi.has(id));
     if (estranei.length) return { ok: false, motivo: "estranei", estranei };
     if (new Set(lista).size !== lista.length) return { ok: false, motivo: "doppione" };
@@ -225,11 +236,12 @@
     if (restano.length) return { ok: false, motivo: "inAnticipo", poteri: restano };
     return { ok: true, scelti: presi };
   }
-  /* i poteri che il personaggio ha a un livello: a volontà (il terzo dal 2), le sue scelte, il finale al 5, il potere di classe */
+  /* i poteri che il personaggio ha a un livello: i due a volontà di partenza, le sue scelte (compreso il terzo a volontà,
+     se l'ha preso), il finale al 5, il potere di classe */
   function poteriAlLivello(classe, spec, scelti, liv) {
     const c = SPEC[classe], s = c && c[spec]; if (!s) return [];
-    const volonta = s.volonta.filter(id => id !== s.volontaDopo || liv >= LIV.terzoVolonta);
     const lista = Array.isArray(scelti) ? scelti : Object.values(scelti || {}).flatMap(x => Object.values(x));
+    const volonta = s.volonta.filter(id => id !== s.volontaDopo);
     return [...volonta, ...lista, ...(liv >= LIV.finale ? [s.fissi.finale] : []), c.classe.potere];
   }
   const trattiAlLivello = (classe, liv) => { const t = (SPEC[classe] && SPEC[classe].classe.tratti) || {}; return Object.keys(t).filter(l => +l <= liv).map(l => t[l]); };

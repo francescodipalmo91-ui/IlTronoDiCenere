@@ -139,7 +139,7 @@
   });
   caso("Rivalsa: + metà del danno subito nell'ultimo turno del nemico (tutto da Vacillante)", () => {
     const g = guerriero({ dannoSubitoTurno: 9 }), n = nemico(), c = ctx([10, 1, 2]);
-    S.usa(g, n, "rivalsa", c); eq(n.pv, 12); fine(c);
+    S.usa(g, n, "rivalsa", c); eq(n.pv, 11, "metà di 9 per eccesso = 5"); fine(c);
     const g2 = guerriero({ pv: 10, dannoSubitoTurno: 9 }), n2 = nemico({ pv: 30, pvMax: 30 }), c2 = ctx([10, 1, 2]);
     S.usa(g2, n2, "rivalsa", c2); eq(n2.pv, 17); fine(c2);
   });

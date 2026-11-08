@@ -62,8 +62,9 @@
 
   /* ---------- Tiro salvezza (simmetria totale) ---------- */
   const cd = (fonte) => CD_BASE + (Number(fonte && fonte.modClasse) || 0) + (Number(fonte && fonte.liv) || 0);
-  function tiroSalvezza(b, id, fonte, tira) {
-    const attr = (STATI[id] || {}).ts || "Vigore";
+  /* attr: caratteristica imposta dal potere (Labirinto: Stordito con TS di Mente; Vincolo di sangue: Spirito) */
+  function tiroSalvezza(b, id, fonte, tira, attrImposto) {
+    const attr = attrImposto || (STATI[id] || {}).ts || "Vigore";
     const m = mod(b, attr) + (Number(b.liv) || 0) + (Number(b.bonusTs) || 0);
     const d = tira(20), tot = d + m, CD = cd(fonte);
     return { k: "ts", stato: id, attr, d, m, tot, cd: CD, ok: tot >= CD };
@@ -95,7 +96,7 @@
     if (!o.senzaTs) {
       if (o.esito && o.esito.ok != null) { if (o.esito.ok) { E.push({ k: "resiste", stato: id, giaTirato: true }); return E; } }
       else {
-        const z = tiroSalvezza(b, id, o.fonte, o.tira); E.push(z);
+        const z = tiroSalvezza(b, id, o.fonte, o.tira, o.attr); E.push(z);
         if (o.esito) o.esito.ok = z.ok;
         if (z.ok) { E.push({ k: "resiste", stato: id }); return E; }
       }

@@ -6,7 +6,7 @@
    Ogni potere: { nome, tipo: "volonta" | "scontro" | "giornaliero", liv, testo }
    Ogni specializzazione: { nome, volonta: [3 fissi], scontro: [3, se ne scelgono 2], giornalieri: [2, se ne sceglie 1],
                             livelli: { 3: giornaliero, 4: per scontro, 5: giornaliero finale } }
-   Blocco 2 (08/11/2026): Guerriero, Sciamano. Le altre classi entrano con i loro poteri, una alla volta.
+   Blocco 2 (08/11/2026): Guerriero, Sciamano, Arcanista. Le altre classi entrano con i loro poteri, una alla volta.
    ===================================================================== */
 (function (root) {
   const POTERI = {
@@ -62,7 +62,35 @@
     cuore_di_linfa: { nome: "Cuore di linfa", tipo: "giornaliero", liv: 1, testo: "Aggrava il veleno; per 3 turni il Balsamo cura il doppio." },
     linfa_perenne: { nome: "Linfa perenne", tipo: "giornaliero", liv: 3, testo: "Per lo scontro, ogni volta che il Balsamo ti cura, il veleno sul nemico dura 1 turno in più (massimo 3 volte)." },
     purga: { nome: "Purga", tipo: "scontro", liv: 4, testo: "Aggrava il veleno e togli tutti i tuoi stati." },
-    rinascita_del_sottobosco: { nome: "Rinascita del sottobosco", tipo: "giornaliero", liv: 5, testo: "Aggrava il veleno e lo riporta a durata piena; togli tutti i tuoi stati e ti curi di un dado del veleno per ogni turno rimasto." }
+    rinascita_del_sottobosco: { nome: "Rinascita del sottobosco", tipo: "giornaliero", liv: 5, testo: "Aggrava il veleno e lo riporta a durata piena; togli tutti i tuoi stati e ti curi di un dado del veleno per ogni turno rimasto." },
+    /* ---- Arcanista: in comune ---- */
+    coagulo: { nome: "Coagulo", tipo: "scontro", liv: 1, testo: "Costa l'azione: ti curi di 1/4 della salute massima, +1d6 se il nemico ha uno stato." },
+
+    /* ---- Arcanista del Sangue (Sangue versato: sopra il 50%, una volta per turno, 3 salute per +1 dado; da Vacillante gratis) ---- */
+    stilo_cremisi: { nome: "Stilo cremisi", tipo: "volonta", liv: 1, testo: "Dado del focus + Mente, applica Sanguinante." },
+    frusta_cremisi: { nome: "Frusta cremisi", tipo: "volonta", liv: 1, testo: "Solo 1d4 senza tiro per colpire, applica Indebolito; se il bersaglio è Sanguinante, il sanguinamento dura 1 turno in più." },
+    crosta: { nome: "Crosta", tipo: "volonta", liv: 1, testo: "+2 CA fino al tuo turno; chi ti colpisce diventa Sanguinante." },
+    ebollizione: { nome: "Ebollizione", tipo: "scontro", liv: 1, testo: "Attacco con un dado in più, aggrava il sanguinamento; se è già Emorragia, ti curi 1d6." },
+    meteora_di_sangue: { nome: "Meteora di sangue", tipo: "scontro", liv: 1, testo: "Attacco con un dado in più, Esposto; critico con 19-20 se il bersaglio sanguina." },
+    ali_cremisi: { nome: "Ali cremisi", tipo: "scontro", liv: 1, testo: "Costa l'azione: fino al tuo turno ogni colpo che subisci fa metà danno e aggrava il sanguinamento di chi ti colpisce." },
+    cuore_spezzato: { nome: "Cuore spezzato", tipo: "giornaliero", liv: 1, testo: "Aggrava il sanguinamento, poi il bersaglio subisce subito il doppio dei turni che gli restano e lo stato finisce; ti curi della metà del danno." },
+    sangue_in_piena: { nome: "Sangue in piena", tipo: "giornaliero", liv: 1, testo: "Per 3 turni i tuoi attacchi fanno un dado in più e ogni colpo a segno aggrava il sanguinamento; ogni volta che il nemico subisce l'Emorragia ti curi 1." },
+    vincolo_di_sangue: { nome: "Vincolo di sangue", tipo: "giornaliero", liv: 3, testo: "TS Spirito → per 3 turni il bersaglio subisce anche la metà del danno che subisci tu (escluso Sangue versato)." },
+    costellazione_rossa: { nome: "Costellazione rossa", tipo: "scontro", liv: 4, testo: "Per i tuoi 3 turni successivi, all'inizio del turno una sfera fa 1d6 e applica Sanguinante; la terza aggrava." },
+    marea_cremisi: { nome: "Marea cremisi", tipo: "giornaliero", liv: 5, testo: "4d8 + Mente senza tiro per colpire, aggrava il sanguinamento; se è già Emorragia, la durata raddoppia (6 turni)." },
+
+    /* ---- Arcanista dell'Illusione (Copie: massimo 3; un colpo su di te colpisce una Copia: metà danno, la Copia svanisce, chi l'ha colpita è Indebolito) ---- */
+    dardo_fantasma: { nome: "Dardo fantasma", tipo: "volonta", liv: 1, testo: "Dado del focus + Mente; +1d4 se hai almeno una Copia." },
+    sussurro_illusorio: { nome: "Sussurro illusorio", tipo: "volonta", liv: 1, testo: "Solo 1d6, applica Indebolito; se il bersaglio era già Indebolito, nasce una Copia." },
+    riflessi: { nome: "Riflessi", tipo: "volonta", liv: 1, testo: "+2 CA fino al tuo turno; se il nemico ti manca, nasce una Copia." },
+    frantumare: { nome: "Frantumare", tipo: "scontro", liv: 1, testo: "Consumi tutte le Copie: 1d8 + Mente per Copia, senza tiro per colpire; con 3 Copie anche Esposto." },
+    labirinto: { nome: "Labirinto", tipo: "scontro", liv: 1, testo: "TS Mente → Stordito (sui boss Indebolito); nasce una Copia." },
+    sdoppiamento: { nome: "Sdoppiamento", tipo: "scontro", liv: 1, testo: "Costa l'azione: nascono 2 Copie e +2 CA fino al tuo turno." },
+    incubo: { nome: "Incubo", tipo: "giornaliero", liv: 1, testo: "2d8 + Mente, +1d8 per Copia senza consumarle; TS Spirito → Impaurito." },
+    dado_truccato: { nome: "Dado truccato", tipo: "giornaliero", liv: 1, testo: "Per 3 turni il nemico tira due d20 per colpire e tiene il peggiore (2 turni sui boss)." },
+    teatro_di_specchi: { nome: "Teatro di specchi", tipo: "giornaliero", liv: 3, testo: "Copie al massimo; per 3 turni ogni Copia distrutta esplode con 1d6 su chi l'ha colpita." },
+    specchio_rotto: { nome: "Specchio rotto", tipo: "scontro", liv: 4, testo: "Nasce una Copia; la prossima Copia distrutta rimanda al nemico il danno pieno del colpo (metà sui boss)." },
+    grande_inganno: { nome: "Il Grande Inganno", tipo: "giornaliero", liv: 5, testo: "Consumi tutte le Copie (almeno 1): 2d10 + Mente per Copia, senza tiro per colpire; per 2 turni il nemico tira due d20 per colpire e tiene il peggiore." }
   };
 
   const SPEC = {
@@ -90,6 +118,19 @@
         nome: "Linfa", volonta: ["puntura_di_mandragora", "tappeto_di_micelio", "corteccia_viva"],
         scontro: ["baccello_esplosivo", "linfa_amara", "radici_avvolgenti"], giornalieri: ["fioritura_del_parassita", "cuore_di_linfa"],
         livelli: { 3: "linfa_perenne", 4: "purga", 5: "rinascita_del_sottobosco" }
+      }
+    },
+    Sapiente: {
+      classe: { potere: "coagulo", tratti: { 1: "pozzo_arcano", 4: "ultima_scintilla" } },
+      sangue: {
+        nome: "Sangue", volonta: ["stilo_cremisi", "frusta_cremisi", "crosta"],
+        scontro: ["ebollizione", "meteora_di_sangue", "ali_cremisi"], giornalieri: ["cuore_spezzato", "sangue_in_piena"],
+        livelli: { 3: "vincolo_di_sangue", 4: "costellazione_rossa", 5: "marea_cremisi" }
+      },
+      illusione: {
+        nome: "Illusione", volonta: ["dardo_fantasma", "sussurro_illusorio", "riflessi"],
+        scontro: ["frantumare", "labirinto", "sdoppiamento"], giornalieri: ["incubo", "dado_truccato"],
+        livelli: { 3: "teatro_di_specchi", 4: "specchio_rotto", 5: "grande_inganno" }
       }
     }
   };

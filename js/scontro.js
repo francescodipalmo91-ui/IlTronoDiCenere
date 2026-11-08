@@ -18,8 +18,12 @@
 
   const pronto = (b) => { b.buff = b.buff || {}; b.usati = b.usati || { scontro: {}, giorno: {} }; b.stati = b.stati || {}; return b; };
   const fonteDi = (b) => ({ liv: b.liv, modClasse: b.modClasse || 0 });
-  const mAtt = (b) => (b.modAtt != null ? b.modAtt : b.modClasse || 0) + ((b.arma && b.arma.bonus) || 0);
-  const mDanno = (b) => (b.modDanno != null ? b.modDanno : b.modClasse || 0) + ((b.arma && b.arma.bonus) || 0);
+  /* il bonus +N è dell'arma, o del focus per gli incantesimi che lo usano (Stilo cremisi, Dardo fantasma, Lancia d'ossa…) */
+  const bonusEq = (b, o) => (o && o.focus ? (b.focus && b.focus.bonus) || 0 : (b.arma && b.arma.bonus) || 0);
+  const mAtt = (b, o) => (b.modAtt != null ? b.modAtt : b.modClasse || 0) + bonusEq(b, o);
+  const mDanno = (b, o) => (b.modDanno != null ? b.modDanno : b.modClasse || 0) + bonusEq(b, o);
+  const meta = (n) => Math.ceil(n / 2); /* le metà si arrotondano per eccesso, come le resistenze */
+  const COPIE_MAX = 3;
   const buffCA = (b) => Object.values(b.buff || {}).reduce((t, x) => t + (Number(x.ca) || 0), 0);
   const ca = (b) => (b.caBase || 10) + buffCA(b) - P.malusCA(b);
   const tiraDadi = (ctx, n, d) => Array.from({ length: n }, () => ctx.tira(d));
@@ -27,10 +31,12 @@
 
   /* ---------- Applicare lo stato dell'arma ---------- */
   /* esito: { ok } condiviso dentro lo stesso potere (un TS solo per potere) */
-  function statoSu(att, dif, modo, ctx, id, esito) {
+  function statoSu(att, dif, modo, ctx, id, esito, extra) {
     const k = id || statoArma(att); if (!k) return [];
-    return (modo === "aggrava" ? P.aggrava : P.applica)(dif, k, { fonte: fonteDi(att), tira: ctx.tira, esito, turni: durataDi(att, k) });
+    return (modo === "aggrava" ? P.aggrava : P.applica)(dif, k, { fonte: fonteDi(att), tira: ctx.tira, esito, turni: durataDi(att, k), tipo: tipoStato(att, k), ...(extra || {}) });
   }
+  /* il sanguinamento dell'Arcanista del Sangue è di tipo sangue (vale per le vulnerabilità) */
+  const tipoStato = (att, k) => (k === "sanguinante" && att.spec === "sangue" ? "sangue" : undefined);
   /* Legame del sottobosco (Sciamano, tratto I): i veleni durano 4 turni */
   const durataDi = (att, k) => (k === "intossicato" && (att.tratti || []).includes("legame_sottobosco") ? 4 : undefined);
   const durataPiena = (att, k) => durataDi(att, k) || P.durataBase(k);
@@ -43,9 +49,10 @@
     const E = [];
     if (!o.contrattacco) { E.push(...scattaTrappole(att, dif, ctx)); if (att.pv <= 0) return { ok: false, crit: false, eventi: E, ev: null }; }
     const auto = !!o.autoCrit;
-    const d = auto ? null : ctx.tira(20);
-    const tot = auto ? null : d + mAtt(att) - P.malusColpire(att);
-    const soglia = Math.min(o.critDa || 20, critBaseArma(att), P.sogliaCritContro(dif));
+    /* Dado truccato / Il Grande Inganno: chi attacca tira due d20 e tiene il peggiore */
+    const d = auto ? null : att.svantaggio > 0 ? Math.min(ctx.tira(20), ctx.tira(20)) : ctx.tira(20);
+    const tot = auto ? null : d + mAtt(att, o) - P.malusColpire(att);
+    const soglia = Math.min(o.critDa || 20, o.focus ? 20 : critBaseArma(att), P.sogliaCritContro(dif));
     const crit = auto || d >= soglia, ok = auto || d >= soglia || tot > ca(dif); /* come nel gioco: il totale deve superare la CA */
     const ev = { k: "attacco", da: att.nome, a: dif.nome, nome: o.nome || null, d, tot, ca: ca(dif), crit: ok && crit, ok, danno: 0 };
     if (o.contrattacco) ev.contrattacco = true;
@@ -59,22 +66,42 @@
       if (c.ok && att.pv > 0) E.push(...statoSu(dif, att, "aggrava", ctx));
       return { ok: true, crit: ev.crit, eventi: E, ev, annullato: true };
     }
-    const dado = (att.arma && att.arma.dado) || 4;
-    const base = ((att.arma && att.arma.n) || 1) * (o.doppiDadi ? 2 : 1) + (o.piuDadi || 0) + (att.prossimiDadi || 0);
+    const piena = att.buff.piena && !o.contrattacco ? 1 : 0; /* Sangue in piena: un dado in più */
+    const dado = o.dado || (o.focus ? (att.focus && att.focus.dado) || 8 : (att.arma && att.arma.dado) || 4);
+    const nBase = o.n || (o.focus ? 1 : (att.arma && att.arma.n) || 1);
+    const base = nBase * (o.doppiDadi ? 2 : 1) + (o.piuDadi || 0) + (att.prossimiDadi || 0) + piena;
     if (att.prossimiDadi) { ev.dadiBaluardo = att.prossimiDadi; att.prossimiDadi = 0; }
     const nd = base * (ev.crit ? 2 : 1), tiri = tiraDadi(ctx, nd, dado);
-    let lordo = somma(tiri) + (o.soloDado ? 0 : mDanno(att)) + (o.bonusDanno || 0);
+    let lordo = somma(tiri) + (o.soloDado ? 0 : mDanno(att, o)) + (o.bonusDanno || 0);
+    if (o.dadoExtra) { const x = ctx.tira(o.dadoExtra); lordo += x; ev.extra = x; } /* es. Dardo fantasma: +1d4 con una Copia, solo se colpisce */
     if (dif.marchio && att.marchia) { const x = ctx.tira(4); lordo += x; ev.marchio = x; }                /* Marchio della preda */
     if ((att.tratti || []).includes("furia") && P.vacillante(att)) { lordo += 2; ev.furia = 2; }        /* Furia: da Vacillante +2 */
     if ((att.tratti || []).includes("radici_profonde") && P.grave(dif, "intossicato")) { const x = ctx.tira(4); lordo += x; ev.radici = x; } /* Radici profonde */
     Object.assign(ev, { nd, dado, tiri });
-    E.push(...danneggia(dif, Math.max(1, lordo), o.tipo || (att.arma && att.arma.tipo), ev, ctx));
+    const dopo = [];
+    lordo = difese(att, dif, Math.max(1, lordo), o, ctx, ev, dopo);
+    E.push(...danneggia(dif, lordo, o.tipo || (att.arma && att.arma.tipo), ev, ctx));
+    dopo.forEach(f => { if (att.pv > 0) E.push(...f()); });
+    if (piena && dif.pv > 0) E.push(...statoSu(att, dif, "aggrava", ctx, "sanguinante"));
     /* Muffa che dilaga: ogni colpo a segno applica Intossicato, o allunga di 1 turno il veleno in corso */
     if (att.buff.muffa && !o.contrattacco && dif.pv > 0) E.push(...(P.ha(dif, "intossicato") ? [P.allunga(dif, "intossicato", 1)] : statoSu(att, dif, "applica", ctx, "intossicato")));
     if (dif.pv > 0) E.push(...reazioneColpito(att, dif, ctx));
     return { ok: true, crit: ev.crit, eventi: E, ev };
   }
 
+  /* Copie dell'Illusione e Ali cremisi: cambiano il danno di un colpo a segno; i loro effetti sull'attaccante vengono dopo il danno */
+  function difese(att, dif, lordo, o, ctx, ev, dopo) {
+    if (dif.copie > 0) {
+      const tutte = !!(o.carica || o.area), n = tutte ? dif.copie : 1, pieno = lordo;
+      dif.copie -= n; lordo = meta(lordo); ev.copie = { distrutte: n, restano: dif.copie };
+      if (!tutte) dopo.push(() => statoSu(dif, att, "applica", ctx, "indebolito"));      /* chi colpisce una Copia è Indebolito */
+      if (dif.buff.teatro) dopo.push(() => { const t = tiraDadi(ctx, n, 6), e = { k: "copiaEsplode", tiri: t }; return [e, ...danneggia(att, somma(t), "illusione", e, ctx)]; });
+      if (dif.specchio) { const x = att.boss ? meta(pieno) : pieno; dif.specchio = false; /* il colpo pieno (prima della metà) torna indietro */
+        dopo.push(() => { const e = { k: "specchioRotto" }; return [e, ...danneggia(att, x, "illusione", e, ctx)]; }); }
+    }
+    if (dif.buff.ali) { lordo = meta(lordo); ev.ali = true; dopo.push(() => statoSu(dif, att, "aggrava", ctx, "sanguinante")); }
+    return lordo;
+  }
   /* il danno passa per le vulnerabilità e per le protezioni del difensore (Ultimo baluardo) */
   function danneggia(dif, lordo, tipo, ev, ctx) {
     const E = [];
@@ -85,7 +112,17 @@
     if (ev) { ev.danno = r.danno; ev.tipo = tipo; if (n !== lordo) ev.lordo = lordo; }
     dif.dannoSubitoTurno = (dif.dannoSubitoTurno || 0) + r.danno;
     if (bal && r.danno > 0) { dif.prossimiDadi = Math.min(3, (dif.prossimiDadi || 0) + 1); }
-    if (r.vacillanteOra) E.push({ k: "vacillante", chi: dif.nome });
+    /* Vincolo di sangue: il bersaglio vincolato subisce anche la metà del danno che subisci tu */
+    const vi = dif.buff.vincolo;
+    if (vi && r.danno > 0 && vi.su.pv > 0) { const e = { k: "vincolo" }; E.push(e, ...danneggia(vi.su, meta(r.danno), null, e, ctx)); }
+    if (r.vacillanteOra) {
+      E.push({ k: "vacillante", chi: dif.nome });
+      /* Ultima scintilla: una volta per scontro, diventando Vacillante recuperi un potere per scontro già usato */
+      if ((dif.tratti || []).includes("ultima_scintilla") && !dif.scintillaUsata) {
+        const id = Object.keys(dif.usati.scontro).find(k => dif.usati.scontro[k]);
+        if (id) { dif.scintillaUsata = true; delete dif.usati.scontro[id]; E.push({ k: "ultimaScintilla", potere: id }); }
+      }
+    }
     if (r.abbattuto) E.push({ k: "abbattuto", chi: dif.nome });
     return E;
   }
@@ -112,6 +149,7 @@
   }
   function reazioneMancato(att, dif, ctx) {
     const E = [];
+    if (dif.buff.riflessi) { dif.copie = Math.min(COPIE_MAX, (dif.copie || 0) + 1); E.push({ k: "copia", tot: dif.copie }); } /* Riflessi */
     if (dif.buff.cortecciaViva && P.ha(att, "intossicato")) { /* Corteccia viva: il veleno torna a durata piena */
       att.stati.intossicato.turni = Math.max(att.stati.intossicato.turni, durataPiena(dif, "intossicato")); E.push({ k: "rinnovato", stato: "intossicato" });
     }
@@ -123,6 +161,9 @@
     const E = [];
     dif.colpitoUltimo = true;
     if (dif.buff.pelle) E.push(...statoSu(dif, att, "applica", ctx, "intossicato")); /* Pelle di corteccia */
+    if (dif.buff.crosta) E.push(...statoSu(dif, att, "applica", ctx, "sanguinante")); /* Crosta */
+    /* Pozzo arcano: la prima volta per turno nemico che vieni colpito recuperi 1 salute (2 dal livello 4) */
+    if ((dif.tratti || []).includes("pozzo_arcano") && !dif.pozzoUsato) { dif.pozzoUsato = true; E.push({ ...cura(dif, dif.liv >= 4 ? 2 : 1), k: "pozzo" }); }
     if (dif.buff.rappresaglia) E.push(...contrattacco(dif, att, ctx, "applica"));
     else if (dif.buff.inGuardia && dif.buff.veglia) E.push(...contrattacco(dif, att, ctx, "aggrava"));
     return E;
@@ -136,8 +177,11 @@
     pronto(b);
     Object.keys(b.buff).forEach(k => { const x = b.buff[k]; if (x.finoAlTurno || (x.turni > 0 && --x.turni === 0)) delete b.buff[k]; });
     if (!b.buff.veglia && b.bonusTsBase != null) { b.bonusTs = b.bonusTsBase; delete b.bonusTsBase; }
-    if (avv) { pronto(avv); avv.colpitoUltimo = false; avv.dannoSubitoTurno = 0; }
+    if (avv) { pronto(avv); avv.colpitoUltimo = false; avv.dannoSubitoTurno = 0; avv.pozzoUsato = false; }
+    b.sangueVersatoTurno = false;
     const E = P.inizioTurno(b, ctx.tira);
+    /* Sangue in piena: ogni volta che il nemico subisce l'Emorragia ti curi 1 */
+    E.filter(e => e.k === "tick" && e.stato === "sanguinante" && e.nome === "Emorragia").forEach(() => { if (avv && avv.buff.piena && avv.pv > 0) E.push({ ...cura(avv, 1), k: "piena" }); });
     /* Balsamo della linfa: ogni turno di veleno sul nemico cura lo Sciamano della Linfa (1, 2 se Avvelenato; doppio con Cuore di linfa) */
     E.filter(e => e.k === "tick" && e.stato === "intossicato").forEach(t => {
       if (!avv || avv.spec !== "linfa" || avv.pv <= 0) return;
@@ -164,17 +208,25 @@
       if (avv.pv > 0) E.push(...statoSu(b, avv, "aggrava", ctx, "intossicato"));
       if (--sc.cariche <= 0) delete b.buff.sciame;
     }
+    /* Costellazione rossa: all'inizio dei tuoi 3 turni una sfera fa 1d6 e applica Sanguinante; la terza aggrava */
+    if (b.buff.costellazione && avv && avv.pv > 0) {
+      const co = b.buff.costellazione, d = ctx.tira(6), ev = { k: "sfera", n: 4 - co.cariche, tiri: [d] };
+      E.push(ev, ...danneggia(avv, d, "sangue", ev, ctx));
+      if (avv.pv > 0) E.push(...statoSu(b, avv, co.cariche === 1 ? "aggrava" : "applica", ctx, "sanguinante"));
+      if (--co.cariche <= 0) delete b.buff.costellazione;
+    }
     return E;
   }
   function fineTurno(b) {
     pronto(b);
+    if (b.svantaggio > 0) b.svantaggio--;
     if (b.nonCarica > 0) b.nonCarica--;
     if (b.velenoPerenne) b.pestilenzaTurni = (b.pestilenzaTurni || 0) + 1; /* turni passati dall'inizio di Pestilenza */
     return P.fineTurno(b);
   }
   /* fine scontro: tornano i poteri per scontro, spariscono effetti e stati; il riposo ricarica i giornalieri */
   function fineScontro(b) { pronto(b); b.usati.scontro = {}; b.buff = {}; b.stati = {}; b.prossimiDadi = 0; b.marchio = false; b.marchia = false; b.immStordito = 0; b.nonCarica = 0; b.pronto = null;
-    b.bulbo = null; b.velenoPerenne = false; b.pestilenzaTurni = 0;
+    b.bulbo = null; b.velenoPerenne = false; b.pestilenzaTurni = 0; b.copie = 0; b.specchio = false; b.svantaggio = 0; b.scintillaUsata = false;
     if (b.bonusTsBase != null) { b.bonusTs = b.bonusTsBase; delete b.bonusTsBase; } }
   function riposo(b) { pronto(b); b.usati.giorno = {}; }
 
@@ -191,31 +243,55 @@
     if (p.tipo === "scontro" && b.usati.scontro[id]) return { ok: false, motivo: "giaUsatoScontro" };
     if (p.tipo === "giornaliero" && b.usati.giorno[id]) return { ok: false, motivo: "giaUsatoGiorno" };
     if (id === "bevi_elisir" && !(b.elisir > 0)) return { ok: false, motivo: "senzaElisir" };
+    if (id === "grande_inganno" && !(b.copie > 0)) return { ok: false, motivo: "senzaCopie" };
     return { ok: true };
   }
 
   const cura = (b, n) => { const prima = b.pv; b.pv = Math.min(b.pvMax, b.pv + n); return { k: "cura", chi: b.nome, n: b.pv - prima }; };
   const buff = (b, id, x) => { b.buff[id] = x; return { k: "buff", id, ...x }; };
+  /* potere di classe: 1/4 della salute; Mani che curano (via di Guendalina dal 4) 1/3 e toglie uno stato */
+  function curaDiClasse(b) {
+    const mani = b.via === "guendalina" && b.liv >= 4, E = [cura(b, Math.max(1, Math.floor(b.pvMax / (mani ? 3 : 4))))];
+    if (mani) { const k = Object.keys(b.stati).find(x => P.ha(b, x)); if (k) E.push(P.togli(b, k)); }
+    return E;
+  }
+  /* poteri dell'Arcanista del Sangue che fanno danno (Sangue versato) */
+  const SANGUE_DANNO = ["stilo_cremisi", "frusta_cremisi", "ebollizione", "meteora_di_sangue", "marea_cremisi"];
 
   /* ---------- I poteri ---------- */
-  function usa(att, dif, id, ctx) {
-    pronto(att); pronto(dif);
+  /* opz: { sangueVersato: true } per pagare 3 salute e avere un dado in più (Arcanista del Sangue, sopra il 50%) */
+  function usa(att, dif, id, ctx, opz) {
+    pronto(att); pronto(dif); opz = opz || {};
     const disp = disponibile(att, id);
     if (!disp.ok) return { eventi: [{ k: disp.motivo, potere: id }], rifiutato: true };
     const p = potere(id), E = [];
     if (p.tipo === "scontro") att.usati.scontro[id] = true;
     if (p.tipo === "giornaliero") att.usati.giorno[id] = true;
     E.push({ k: "potere", id, nome: p.nome, tipo: p.tipo });
-    const atk = (o) => { const r = attacco(att, dif, { nome: id, ...o }, ctx); E.push(...r.eventi); return r; };
+    /* Sangue versato: sopra il 50%, una volta per turno, 3 salute per +1 dado; da Vacillante il dado è gratis */
+    let extra = 0;
+    if (att.spec === "sangue" && SANGUE_DANNO.includes(id)) {
+      if (P.vacillante(att)) { extra = 1; E.push({ k: "sangueVersato", costo: 0 }); }
+      else if (opz.sangueVersato && att.pv > att.pvMax / 2 && !att.sangueVersatoTurno) { att.pv -= 3; att.sangueVersatoTurno = true; extra = 1; E.push({ k: "sangueVersato", costo: 3 }); }
+    }
+    const prendiExtra = () => { const x = extra; extra = 0; return x; };
+    const atk = (o) => { const r = attacco(att, dif, { nome: id, ...o, piuDadi: ((o && o.piuDadi) || 0) + prendiExtra() }, ctx); E.push(...r.eventi); return r; };
+    /* danno senza tiro per colpire: n dadi (+ dado extra) + modificatore */
+    /* conMod: quante volte si somma il modificatore (Frantumare e Il Grande Inganno: una per Copia) */
+    const fisso = (n, dado, conMod, tipo) => {
+      const t = tiraDadi(ctx, n + prendiExtra(), dado), e = { k: "dannoFisso", nome: id, tiri: t, dado };
+      E.push(e, ...danneggia(dif, Math.max(1, somma(t) + Number(conMod || 0) * mDanno(att, { focus: true })), tipo, e, ctx)); return e;
+    };
+    const copia = (n) => { att.copie = Math.min(COPIE_MAX, (att.copie || 0) + n); E.push({ k: "copia", tot: att.copie }); };
     const esito = {}; /* un TS solo per potere */
-    const stato = (modo, k) => E.push(...statoSu(att, dif, modo, ctx, k, esito));
+    const stato = (modo, k, extra2) => E.push(...statoSu(att, dif, modo, ctx, k, esito, extra2));
     const vivo = () => dif.pv > 0;
     const vac = P.vacillante(dif);
     let r;
     switch (id) {
       /* ---- in comune ---- */
       case "colpo_di_mestiere": r = atk({ soloDado: true }); if (r.ok && vivo()) stato("applica"); break;
-      case "secondo_vento": E.push(cura(att, Math.max(1, Math.floor(att.pvMax / ((att.via === "guendalina" && att.liv >= 4) ? 3 : 4))))); break;
+      case "secondo_vento": E.push(...curaDiClasse(att)); break;
 
       /* ---- Esecutore ---- */
       case "colpo_poderoso": atk({ bonusDanno: Object.keys(dif.stati || {}).some(k => P.ha(dif, k)) ? 2 : 0 }); break;
@@ -253,8 +329,8 @@
         att.bonusTs = att.bonusTsBase + 4; att.buff.veglia.ts = 4;
         break;
       case "rivalsa": {
-        const sub = att.dannoSubitoTurno || 0, extra = P.vacillante(att) ? sub : Math.floor(sub / 2);
-        r = atk({ bonusDanno: extra }); if (r.ok && vivo()) stato("aggrava");
+        const sub = att.dannoSubitoTurno || 0, piu = P.vacillante(att) ? sub : meta(sub);
+        r = atk({ bonusDanno: piu }); if (r.ok && vivo()) stato("aggrava");
         break;
       }
       case "ultimo_baluardo": E.push(buff(att, "baluardo", { turni: 3 })); break;
@@ -322,6 +398,69 @@
           const dado = P.STATI.intossicato.dado[s0.liv - 1], t = tiraDadi(ctx, s0.turni, dado);
           E.push({ ...cura(att, somma(t)), tiri: t });
         }
+        break;
+      }
+      /* ---- Arcanista: in comune ---- */
+      case "coagulo": E.push(...curaDiClasse(att)); if (Object.keys(dif.stati).some(k => P.ha(dif, k))) { const x = ctx.tira(6); E.push(cura(att, x)); } break;
+
+      /* ---- Arcanista del Sangue ---- */
+      case "stilo_cremisi": r = atk({ focus: true, tipo: "sangue" }); if (r.ok && vivo()) stato("applica", "sanguinante"); break;
+      case "frusta_cremisi": fisso(1, 4, false, "sangue"); if (vivo()) { stato("applica", "indebolito"); if (P.ha(dif, "sanguinante")) E.push(P.allunga(dif, "sanguinante", 1)); } break;
+      case "crosta": E.push(buff(att, "crosta", { ca: 2, finoAlTurno: true })); break;
+      case "ebollizione": {
+        const era = P.grave(dif, "sanguinante");
+        r = atk({ focus: true, tipo: "sangue", piuDadi: 1 });
+        if (r.ok && vivo()) { stato("aggrava", "sanguinante"); if (era) { const x = ctx.tira(6); E.push(cura(att, x)); } }
+        break;
+      }
+      case "meteora_di_sangue": r = atk({ focus: true, tipo: "sangue", piuDadi: 1, critDa: P.ha(dif, "sanguinante") ? 19 : 20 }); if (r.ok && vivo()) stato("applica", "esposto"); break;
+      case "ali_cremisi": E.push(buff(att, "ali", { finoAlTurno: true })); break;
+      case "cuore_spezzato": {
+        stato("aggrava", "sanguinante");
+        if (P.ha(dif, "sanguinante")) {
+          const n = dif.stati.sanguinante.turni * 2; let tot = 0;
+          for (let i = 0; i < n && vivo(); i++) { const t = P.tick(dif, "sanguinante", ctx.tira); if (t) { E.push(t); tot += t.danno; } }
+          E.push(P.togli(dif, "sanguinante") || { k: "tolto", stato: "sanguinante" }); E.push(cura(att, meta(tot)));
+        }
+        break;
+      }
+      case "sangue_in_piena": E.push(buff(att, "piena", { turni: 4 })); break; /* i tuoi 3 turni successivi */
+      case "vincolo_di_sangue": {
+        const z = P.tiroSalvezza(dif, null, fonteDi(att), ctx.tira, "Spirito"); E.push(z);
+        if (!z.ok) E.push(buff(att, "vincolo", { turni: 3, su: dif })); else E.push({ k: "resiste" });
+        break;
+      }
+      case "costellazione_rossa": E.push(buff(att, "costellazione", { cariche: 3 })); break;
+      case "marea_cremisi": {
+        const era = P.grave(dif, "sanguinante");
+        fisso(4, 8, true, "sangue"); if (vivo()) { stato("aggrava", "sanguinante"); if (era && P.ha(dif, "sanguinante")) dif.stati.sanguinante.turni = 6; }
+        break;
+      }
+
+      /* ---- Arcanista dell'Illusione ---- */
+      case "dardo_fantasma": atk({ focus: true, tipo: "illusione", dadoExtra: att.copie > 0 ? 4 : 0 }); break;
+      case "sussurro_illusorio": {
+        const era = P.ha(dif, "indebolito");
+        r = atk({ focus: true, dado: 6, soloDado: true, tipo: "illusione" });
+        if (r.ok && vivo()) { stato("applica", "indebolito"); if (era) copia(1); }
+        break;
+      }
+      case "riflessi": E.push(buff(att, "riflessi", { ca: 2, finoAlTurno: true })); break;
+      case "frantumare": {
+        const n = att.copie || 0; att.copie = 0; E.push({ k: "copieConsumate", n });
+        if (n) { fisso(n, 8, n, "illusione"); if (n >= 3 && vivo()) stato("applica", "esposto"); }
+        break;
+      }
+      case "labirinto": stato("applica", "stordito", { attr: "Mente" }); copia(1); break;
+      case "sdoppiamento": copia(2); E.push(buff(att, "sdoppiamento", { ca: 2, finoAlTurno: true })); break;
+      case "incubo": fisso(2 + (att.copie || 0), 8, true, "illusione"); if (vivo()) stato("applica", "impaurito"); break;
+      case "dado_truccato": dif.svantaggio = Math.max(dif.svantaggio || 0, dif.boss ? 2 : 3); E.push({ k: "svantaggio", turni: dif.svantaggio }); break;
+      case "teatro_di_specchi": att.copie = COPIE_MAX; E.push({ k: "copia", tot: att.copie }, buff(att, "teatro", { turni: 3 })); break;
+      case "specchio_rotto": copia(1); att.specchio = true; break;
+      case "grande_inganno": {
+        const n = att.copie; att.copie = 0; E.push({ k: "copieConsumate", n });
+        fisso(2 * n, 10, n, "illusione");
+        dif.svantaggio = Math.max(dif.svantaggio || 0, 2); E.push({ k: "svantaggio", turni: dif.svantaggio });
         break;
       }
       default: E.push({ k: "nonImplementato", id });

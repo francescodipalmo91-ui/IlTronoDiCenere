@@ -6374,7 +6374,7 @@
     const GIORNI_LOGORIO = 10;
     const logorio = () => { try { return Math.max(0, Number(usate && usate.logorio) || 0); } catch (e) { return 0; } };
     /* mana (Sapiente e Accolito): il massimo viene dalla creazione (più la crescita di livello), quello speso fa parte della partita */
-    const manaMax = () => (pg.mana != null ? Number(pg.mana) + crescitaPg().risorsa : null);
+    const manaMax = () => (!motoreNuovo() && pg.mana != null ? Number(pg.mana) + crescitaPg().risorsa : null); /* 08/11: niente mana nel motore nuovo */
     /* ---------- Incantesimi (Arcanista e Monaco): le scuole di js/magia.js ----------
        pg.incantesimi = id scelti in creazione, usate.incPreparati = id cambiati riposando.
        04/11: niente scuola principale. Posti come le tecniche (2, 4, 5, 6, 7) più 1, liberi tra le due scuole e di qualsiasi
@@ -6382,7 +6382,7 @@
        La capacità di classe (Luce / Lume Arcano) non occupa posti. */
     const MG = window.MAGIA;
     const MC_GRADO_POZZO = (l) => (window.MagiaCombattimento ? window.MagiaCombattimento.gradoPozzo(l) : 0); /* 03/11: Pozzo Arcano */
-    const incantatore = () => !!(MG && pg && MG.CLASSI[pg.classe]);
+    const incantatore = () => !motoreNuovo() && !!(MG && pg && MG.CLASSI[pg.classe]); /* 08/11: niente incantesimi nel motore nuovo */
     let capLuceCache = null;
     const capLuce = () => capLuceCache || (capLuceCache = { id: "luce", costo: MG.CAPACITA[pg.classe].costo, nome: MG.CAPACITA[pg.classe].nome, effetto: MG.CAPACITA[pg.classe].effetto, capacita: true });
     const postiPrinc = () => Regole.TECNICHE_PER_LIVELLO.slice(0, Math.max(1, Math.min(5, livelloPg()))).reduce((a, b) => a + b, 0);
@@ -6423,6 +6423,7 @@
     function saluteMaxPg() { return (Number(pg.puntiVita ?? pg.saluteFisica) || 0) + crescita.salute; }
     /* punti furia / punti natura: { id, max } oppure null (anche per i personaggi creati prima di questa regola) */
     function risorsaPg() {
+      if (motoreNuovo()) return null; /* 08/11: niente furia né natura nel motore nuovo */
       const c = RISORSA_CLASSE[pg && pg.classe]; if (!c) return null;
       const base = (pg.risorsa && Number(pg.risorsa.max)) || (10 + mod(Number(pg.statistiche && pg.statistiche[c.attr]) || 10));
       return { id: c.id, max: base + crescita.risorsa };
@@ -6496,7 +6497,7 @@
       crescita.salute += ts.v; crescita.mente += tm.v;
       const righe = [RG.livello.salute(dv, ts, prima.s, saluteMaxPg()), RG.livello.mente(dv, tm, prima.m, maxMentali())];
       const attrR = (RISORSA_CLASSE[pg.classe] || {}).attr || ATTR_RISORSA_MAGIA[pg.classe];
-      if (prima.r != null && attrR) { /* tutte le risorse (furia, natura, mana, fede): + mod dell'attributo + nuovo livello, senza dado */
+      if (!motoreNuovo() && prima.r != null && attrR) { /* tutte le risorse (furia, natura, mana, fede): + mod dell'attributo + nuovo livello, senza dado */
         const mA = st(attrR), nl = livelloPg() + 1, v = Combattimento.crescitaFuria(mA, nl); crescita.risorsa += v;
         const ora = manaMax() != null ? manaMax() : risorsaPg().max;
         righe.push(RG.livello.risorsaFuria(nomeRisorsa(), mA, nl, v, prima.r, ora, Lingua.nome("attributi", attrR)));
@@ -6504,6 +6505,7 @@
       pg.livello = livelloPg() + 1;
       righe.push(RG.livello.abilita(pg.livello), RG.livello.prove((pg.livello - 1) * R_.CD_PER_LIVELLO));
       if (pg.livello >= LIVELLO_MAX) righe.push(RG.livello.massimo);
+      if (motoreNuovo()) { righe.push("Al riposo scegli i poteri del nuovo livello (le scelte sono definitive)."); if (pg.livello === 2) righe.push("Tratto: " + MotSP.TRATTI[MotSP.SPEC[pg.classe].classe.tratti[2]].nome + "."); if (pg.livello === 3 && !viaPg()) righe.push("Puoi scegliere la via di prestigio di Aldo o di Guendalina nella sezione Poteri."); }
       if (haTecniche() && TEC.some(t => t.liv === pg.livello && t.tipo !== "Utilita" && !t.via && tecDellaClasse(t))) righe.push(RT.nuovoPosto(pg.livello));
       if (haTecniche() && pg.livello === 3 && !viaPg()) righe.push(RT.via.sblocco);
       if (incantatore()) { righe.push(RT.inc.nuovoPosto(pg.livello)); if (pg.livello === 3 && !viaPg()) righe.push(RT.inc.viaSblocco); }
@@ -6764,11 +6766,12 @@
       riga(vit, U.classeArmatura, String(caAttuale()));
       { const st = Object.keys(statiPg()).filter(haStato); if (st.length) riga(vit, BT.statiTit, st.map(k => `${BT.stati[k].nome} (${BT.turni(Number(statiPg()[k]))})`).join(", "), "stati"); } /* stati alterati: turni rimasti (28/10) */
       { const pr = protezionePg(); if (pr && BT.stati[pr.stato]) riga(vit, BT.protTit, BT.protVoce(BT.stati[pr.stato].nome), "stati"); } /* elisir di protezione attivo */
-      const magia = manaMax() != null || cdIncantesimi() != null || risorsaPg() != null;
+      const magia = motoreNuovo() || manaMax() != null || cdIncantesimi() != null || risorsaPg() != null;
       if (magia) sep("sep-spazio");
       if (manaMax() != null) riga(vit, U.mana, `${manaAttuale()} / ${manaMax()}`, "mana");
       if (risorsaPg()) riga(vit, nomeRisorsa(), `${risorsaAttuale()} / ${risorsaPg().max}`, "risorsa"); /* punti furia o punti natura */
-      if (cdIncantesimi() != null) riga(vit, CB.cdInc, String(cdIncantesimi()), "cdinc");
+      if (motoreNuovo()) { riga(vit, "CD dei tuoi stati", String(8 + modAttaccoPg() + livelloPg()), "cdinc"); if (pg.classe === "Forestiero") riga(vit, "Elisir (Infuso)", String(Number(pg.elisir) || 0), "cdinc"); }
+      else if (cdIncantesimi() != null) riga(vit, CB.cdInc, String(cdIncantesimi()), "cdinc");
       if (scontro && pg.classe === "Accolito") riga(vit, Lingua.t({ it: "Bilancia", en: "Balance" }), nomeBilancia(Number(scontro.bilancia) || 0), "cdinc");
       const sc = (() => { try { return scontro; } catch (e) { return null; } })();
       if (sc) righeEffetti(vit, sc, EFF_PG, sep);
@@ -6923,6 +6926,7 @@
 
     /* Tendina degli incantesimi: capacità di classe, incantesimi preparati, posti liberi e via di prestigio */
     function disegnaIncantesimi() {
+      if (motoreNuovo()) { document.getElementById("incantesimiBox").hidden = true; return; }
       const lista = listaIncantesimi();
       document.getElementById("incantesimiBox").hidden = !lista.length;
       const box = document.getElementById("incantesimi");
@@ -6995,6 +6999,7 @@
     function disegnaTecniche() {
       const box = document.getElementById("tecniche"), sez = document.getElementById("tecnicheBox");
       if (!box) return;
+      if (motoreNuovo()) return disegnaPoteriScheda(box, sez);
       sez.hidden = !haTecniche();
       if (!haTecniche()) return;
       document.getElementById("tecnicheTit").textContent = RT.tecniche;
@@ -7057,7 +7062,7 @@
     }
     /* Scelta della via (PROVVISORIA: da spostare nei dialoghi con Aldo e Guendalina). Si sceglie una volta sola. */
     function sceglieVia(v) {
-      if (viaPg() || !["aldo", "guendalina"].includes(v) || livelloPg() < 3 || !(haTecniche() || incantatore())) return false;
+      if (viaPg() || !["aldo", "guendalina"].includes(v) || livelloPg() < 3 || !(motoreNuovo() || haTecniche() || incantatore())) return false;
       usate.via = v; salvaUsate(); disegnaTecniche(); disegnaIncantesimi();
       fuoriDallaTendina(() => aggiungi({ tipo: "sistema", box: "cap", righe: [RT.via.scelta(nomeViaPg(v))] }));
       return true;
@@ -7783,7 +7788,8 @@
     function curaRiposo(conDigiuno) {
       const ris = risorsaPg();
       const pieno = !(pg.dannoFisico > 0) && !(pg.dannoMentale > 0) && !(pg.manaUsato > 0 && manaMax() != null) && !(pg.risorsaUsata > 0 && ris) && !Object.keys(statiPg()).length; /* con uno stato alterato si può sempre riposare */
-      if (pieno && !livelliPronti()) return null; /* 01/11: con un livello in attesa si può riposare anche al pieno */
+      const ricarica = motoreNuovo() && ((pg.giornalieriUsati || []).length > 0 || (pg.classe === "Forestiero" && (Number(pg.elisir) || 0) < (viaPg() === "guendalina" && livelloPg() >= 4 ? 3 : 2))); /* 08/11: si riposa anche per i giornalieri e l'Infuso */
+      if (pieno && !livelliPronti() && !ricarica) return null; /* 01/11: con un livello in attesa si può riposare anche al pieno */
       let scorta = razioni();
       if (scorta <= 0 && !conDigiuno) return { fame: true };
       const R = RG.riposo, righe = [];
@@ -7829,6 +7835,7 @@
         salvaUsate(); aggiornaFuoco();
         const B = A2.braciere, ore = Math.ceil(Math.max(0, usate.braciere_fine - Date.now()) / ORA_FUOCO);
         aggiungi({ tipo: "narra", box: "ok", ...cura, righe: [...B.dorme, ...B.sveglia, ore ? B.ore(ore) : testoBraciereSpento()[0]] });
+        riposoMotore();
         return offriPreparazione();
       }
       if (luogo === "cripta") return aggiungi({ tipo: "narra", righe: testoBraciereSpento() });
@@ -7846,6 +7853,7 @@
       ultimoRiposoTesto = vr;
       aggiungi({ tipo: "narra", box: "ok", ...cura, righe: [...Q.riposo.dormeVar[vr], ...(eterno ? Q.riposo.svegliaCucina : Q.riposo.sveglia)] });
       disegnaMissioni();
+      riposoMotore();
       offriPreparazione();
     }
     function offriPreparazione() { /* chiamata solo dopo un riposo riuscito */
@@ -7853,6 +7861,7 @@
       if (usate.pineta_erbe === "ok" || usate.pineta_cerca === "ok") { delete usate.pineta_erbe; delete usate.pineta_cerca; salvaUsate(); } /* il sottobosco si può cercare di nuovo */
       aggiornaEquip(); modificato(); /* la borsa dei veleni non si riempie più al riposo: gli ingredienti si trovano nella foresta (27/10) */ /* Cataclisma del Filo Rovinato torna disponibile */
       if (livelliPronti()) return crescitaAlRiposo(offriPreparazione); /* 01/11: il livello si applica al primo riposo utile */
+      if (motoreNuovo()) return sceltePendenti(); /* 08/11: le scelte dei poteri del livello */
       if (!haPreparazione() || finePartita) return;
       scelte([
         { testo: haTecniche() ? RT.prep.btnTec : RT.prep.btnInc, fn: () => { chiudiScelte(); apriPreparazione(false); } },
@@ -11861,7 +11870,7 @@
        ===================================================================== */
     const TEC = window.TECNICHE || [], CMB = window.Combattimento, SCI = window.Sciamano;
     const sciamano = () => !!(pg && pg.classe === "Forestiero" && SCI); /* Sciamano: tecniche della natura (js/sciamano.js), punti natura */
-    const haTecniche = () => !!(pg && (pg.classe === "Soldato" || sciamano()) && TEC.length);
+    const haTecniche = () => !motoreNuovo() && !!(pg && (pg.classe === "Soldato" || sciamano()) && TEC.length); /* 08/11: niente tecniche nel motore nuovo */
     const tecDellaClasse = (t) => (sciamano() ? t.classe === "Forestiero" : !t.classe); /* il Guerriero non vede quelle dello Sciamano e viceversa */
     const costoTec = (n) => (sciamano() ? RT.costoNatura(n) : RT.costo(n));
     const nomeTec = (t) => Lingua.t(t.nome);
@@ -11869,7 +11878,7 @@
     const tipoOk = (t) => t.tipo === "Utilita" || t.tipo === "Natura" || (t.tipo === "Scudo" ? !!scudo : t.tipo === tipoArmaInMano()); /* lo Sciamano usa le sue con qualsiasi arma */
     const scudoPosti = () => !sciamano() && !!scudo; /* il posto in più dello scudo è del Guerriero */
     const maxTecniche = () => CMB.slotTecniche(livelloPg(), scudoPosti()); /* 2, 4, 5, 6, 7 (+1 con lo scudo) */
-    const viaPg = () => ((haTecniche() || incantatore()) && livelloPg() >= 3 && (usate.via === "aldo" || usate.via === "guendalina")) ? usate.via : null;
+    const viaPg = () => ((motoreNuovo() || haTecniche() || incantatore()) && livelloPg() >= 3 && (usate.via === "aldo" || usate.via === "guendalina")) ? usate.via : null;
     const nomeViaPg = (v) => incantatore() ? Lingua.t(MG.NOMI_VIE[pg.classe][v]) : sciamano() ? RT.via.nomiNatura[v] : RT.via.nomi[v];
     const tipoArmaVia = () => tipoArmaInMano() || eqPg().armaTipoDanno; /* le abilità della via cambiano con il tipo d'arma */
     /* serie della via preparata al riposo: quella dell'arma o quella dello scudo (usate.viaSerie) */
@@ -12519,7 +12528,7 @@
        musica, resa di Ettore e degli avventurieri, fuga, pozioni, vittoria e sconfitta. La salute si sincronizza a ogni passo:
        il nemico vive nel motore (scontro.pv lo copia), il personaggio nel gioco (pg.dannoFisico) e nel motore durante il turno. */
     const MotP = window.Poteri, MotS = window.Scontro, MotSP = window.SPECIALIZZAZIONI, MotN = window.Nemici, MotR = window.Racconto;
-    const motoreNuovo = () => !!(pg && pg.motore === 2 && MotS && MotN);
+    function motoreNuovo() { return !!(pg && pg.motore === 2 && window.Scontro && window.Nemici); } /* dichiarazione: vale anche prima di questa riga */
     /* i nemici del gioco → quelli del motore; gli altri (cacce comuni, avventurieri) diventano un nemico generico con le statistiche di oggi */
     const MAPPA_NEMICI = { mastino: "mastino", esploratore: "ettore", ratto: "ratto_di_cenere", corvo: "corvo_di_brace", cinghiale: "cinghiale_di_brace", lupo: "lupo_di_cenere",
       cervo: "cervo", cinghiale_bosco: "cinghiale", vipera: "vipera", ratto_comune: "ratto", corvo_comune: "corvo", lupo_comune: "lupo" };
@@ -12688,6 +12697,72 @@
       E.scontro.forEach(id => { const ann = E.pronto === id, us = E.usati && E.usati.scontro[id]; voce(sp, id, ann ? "annunciato: colpirà al prossimo turno" : us ? "già usato" : "disponibile", ann ? "annunciato" : us ? "usato" : ""); });
       if (!E.scontro.length) { const v = document.createElement("p"); v.className = "vuoto"; v.textContent = "Nessuno."; sp.append(v); }
     }
+    /* riposo (08/11): tornano i giornalieri; lo Sciamano prepara un elisir (Infuso: massimo 2, 3 con Mani che curano) */
+    function riposoMotore() {
+      if (!motoreNuovo()) return;
+      const righe = [];
+      if ((pg.giornalieriUsati || []).length) righe.push("I tuoi poteri giornalieri sono di nuovo pronti.");
+      pg.giornalieriUsati = [];
+      if (pg.classe === "Forestiero") {
+        const max = viaPg() === "guendalina" && livelloPg() >= 4 ? 3 : 2, prima = Number(pg.elisir) || 0;
+        pg.elisir = Math.min(max, prima + 1);
+        righe.push(pg.elisir > prima ? `Infuso: prepari un elisir (${pg.elisir} / ${max}).` : `Infuso: porti già il massimo di elisir (${max}).`);
+      }
+      salvaSchedaPg(); modificato(); disegnaScheda();
+      if (righe.length) aggiungi({ tipo: "sistema", box: "cap", righe });
+    }
+    /* scelte dei poteri del livello (08/11): si rigiocano le scelte fatte; alla prima che manca la si propone.
+       Le opzioni arrivano con la descrizione, insieme ai poteri che hai già. Le scelte sono definitive. */
+    function sceltePendenti() {
+      if (!motoreNuovo() || scontro) return;
+      const liv = livelloPg(), fatte = [...(pg.scelte || [])], presi = [];
+      for (let l = 1; l <= liv; l++) {
+        for (const o of MotSP.opzioniLivello(pg.classe, pg.spec, presi, l)) {
+          const k = fatte.findIndex(id => o.opzioni.includes(id));
+          if (k >= 0) { presi.push(fatte[k]); fatte.splice(k, 1); continue; }
+          return proponiScelta(o, presi);
+        }
+      }
+      if (fatte.length || presi.length !== (pg.scelte || []).length) { pg.scelte = presi; salvaSchedaPg(); } /* scelte in più (vecchie prove): si tengono quelle valide */
+    }
+    function proponiScelta(o, presi) {
+      const nomeP = (id) => MotSP.POTERI[id].nome, tipo = { volonta: "a volontà", scontro: "per scontro", giornaliero: "giornaliero" };
+      const prendi = (id) => {
+        pg.scelte = [...presi, id]; salvaSchedaPg(); modificato(); disegnaScheda();
+        aggiungi({ tipo: "sistema", box: "cap", righe: [`Livello ${o.livello}: ${nomeP(id)} (${tipo[MotSP.POTERI[id].tipo]}). Scelta definitiva.`] });
+        setTimeout(sceltePendenti, 300);
+      };
+      if (o.opzioni.length === 1) return prendi(o.opzioni[0]); /* l'a volontà che mancava arriva da solo al livello 4 */
+      const gia = MotSP.poteriAlLivello(pg.classe, pg.spec, presi, o.livello);
+      const titolo = { scontro: "scegli il potere per scontro", giornaliero: "scegli il giornaliero", libera: "scegli la strada: il terzo a volontà o un potere per scontro" }[o.tipo] || "scegli";
+      aggiungi({ tipo: "narra", box: "cap", righe: [
+        `Livello ${o.livello}: ${titolo}. La scelta è definitiva.`,
+        "Hai già: " + gia.map(id => `${nomeP(id)} (${tipo[MotSP.POTERI[id].tipo]})`).join(", ") + ".",
+        ...o.opzioni.map(id => `• ${nomeP(id)} (${tipo[MotSP.POTERI[id].tipo]}${MotSP.livelloDi(pg.classe, pg.spec, id) > 1 ? ", del livello " + MotSP.livelloDi(pg.classe, pg.spec, id) : ""}): ${MotSP.POTERI[id].testo}`)
+      ] });
+      scelte(o.opzioni.map(id => ({ testo: nomeP(id), fn: () => { chiudiScelte(); prendi(id); } })));
+    }
+    /* scheda: la sezione «Poteri» (al posto di Tecniche) — tutti i tuoi poteri con la descrizione, i tratti, la via */
+    function disegnaPoteriScheda(box, sez) {
+      sez.hidden = false; document.getElementById("tecnicheTit").textContent = "Poteri";
+      box.replaceChildren();
+      const liv = livelloPg(), ids = MotSP.poteriAlLivello(pg.classe, pg.spec, pg.scelte || [], liv), usati = new Set(pg.giornalieriUsati || []);
+      const tipo = { volonta: "a volontà", scontro: "per scontro", giornaliero: "giornaliero" };
+      const voce = (nome, sotto, testo) => {
+        const d = document.createElement("details"); d.className = "oggetto";
+        const su = document.createElement("summary"); su.textContent = nome + (sotto ? " · " + sotto : "");
+        const p = document.createElement("p"); p.textContent = testo; p.style.margin = "0.2rem 0 0.4rem"; p.style.fontSize = "0.9em";
+        d.append(su, p); box.append(d);
+      };
+      const sp = MotSP.SPEC[pg.classe][pg.spec];
+      const t0 = document.createElement("p"); t0.className = "livello"; t0.textContent = `${sp.nome} — ${sp.descr || ""}`; box.append(t0);
+      ["volonta", "scontro", "giornaliero"].forEach(tp => ids.filter(id => MotSP.POTERI[id].tipo === tp).forEach(id => voce(MotSP.POTERI[id].nome, tipo[tp] + (usati.has(id) ? " (usato oggi)" : ""), MotSP.POTERI[id].testo)));
+      MotSP.trattiAlLivello(pg.classe, liv).forEach(k => voce(MotSP.TRATTI[k].nome, "tratto", MotSP.TRATTI[k].testo));
+      if (liv >= 3 && !viaPg()) { /* via di prestigio: provvisorio finché non ci sono i dialoghi di Aldo e Guendalina */
+        const p = document.createElement("p"); p.textContent = "Via di prestigio (provvisorio, poi dai dialoghi): "; box.append(p);
+        [["aldo", "Aldo, la caccia"], ["guendalina", "Guendalina, il focolare"]].forEach(([v, n]) => { const b = document.createElement("button"); b.type = "button"; b.className = "btn-sec"; b.textContent = n; b.style.margin = "0 0.4rem 0.4rem 0"; b.addEventListener("click", () => sceglieVia(v)); box.append(b); });
+      } else if (viaPg()) voce("Via di " + (viaPg() === "aldo" ? "Aldo, la caccia" : "Guendalina, il focolare"), "via di prestigio", viaPg() === "aldo" ? "Occhio del cacciatore (3), Odore del sangue (4), Senza scampo (5)." : "La lanterna (3), Mani che curano (4), La soglia di casa (5).");
+    }
     /* personaggi creati prima del motore nuovo: vanno ricreati */
     function avvisoPersonaggioVecchio() {
       const d = document.createElement("div"); d.className = "avviso-vecchio"; d.setAttribute("role", "alertdialog");
@@ -12715,6 +12790,7 @@
       }
       mostraStanza(luogo);
       riprendiDialoghi();
+      if (motoreNuovo()) setTimeout(sceltePendenti, 1200); /* 08/11: scelte di livello rimaste in sospeso */
       if (luogo === "cantina" && usate.cantina_cane === "apparso") avviaScontro("mastino"); /* partita salvata durante lo scontro: si ricomincia */
       if (luogo === "sala_ballo" && usate.aldo_scontro === "in_corso") setTimeout(mastinoAldo, 600); /* scontro con i mastini di Aldo */
       if (luogo === "cripta") entraCripta();

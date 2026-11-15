@@ -2130,7 +2130,7 @@
         sblocco: {
           riposo: ["Nuova capacità sbloccata: Riposo",
             "Puoi riposare accanto a un fuoco caldo, dalle fiamme arancioni: per ora qui in cucina e nella sala da conversazione. Scrivi «riposo» oppure usa il pulsante «Riposa» nella scheda, alla voce «Capacità».",
-            "Ogni riposo dura un giorno: consumi fino a 1d4 razioni di Adele e recuperi 1d4 + livello su tutte le risorse (salute fisica, salute mentale e punti arcano, fede, furia o natura). Guendalina cucina 2 razioni al giorno (scorta massima 10). Il focolare della cucina non si spegne mai: qui puoi riposare quante volte vuoi, anche senza razioni (recuperi solo 1 punto). Gli altri fuochi invece si consumano: dopo il riposo le fiamme diventano azzurre e fredde."],
+            "Ogni riposo dura un giorno: consumi fino a 1d4 razioni di Adele e recuperi 1d4 + livello su salute fisica e salute mentale, e tornano i poteri giornalieri. Guendalina cucina 2 razioni al giorno (scorta massima 10). Il focolare della cucina non si spegne mai: qui puoi riposare quante volte vuoi, anche senza razioni (recuperi solo 1 punto). Gli altri fuochi invece si consumano: dopo il riposo le fiamme diventano azzurre e fredde."],
           missione: ["Missione accettata: «Ciò che giace nell'Alto»",
             "Scendi in cantina, recupera la vecchia scaletta di legno e riportala a Guendalina, qui in cucina.",
             "La cantina si raggiunge dalla stanza di servizio, oltre la porta a sinistra della cucina: scrivi ad esempio «vado nella stanza di servizio» e poi «scendo in cantina». Laggiù è buio e girano i guardiani del Signore: muoviti in silenzio e non correre.",
@@ -2356,7 +2356,7 @@
         sblocco: {
           riposo: ["New ability unlocked: Rest",
             "You can rest by a warm fire, one with orange flames: for now here in the kitchen and in the drawing room. Write “rest” or use the “Rest” button on your sheet, under “Abilities”.",
-            "Each rest lasts a day: you eat up to 1d4 of Adele's rations and recover 1d4 + level on all your resources (physical health, mental health and arcane, faith, fury or nature points). Guendalina cooks 2 rations a day (up to 10 in store). The kitchen hearth never goes out: here you can rest as many times as you like, even without rations (you only recover 1 point). Other fires are spent instead: after you rest, their flames turn blue and cold."],
+            "Each rest lasts a day: you eat up to 1d4 of Adele's rations and recover 1d4 + level on physical and mental health, and your daily powers come back. Guendalina cooks 2 rations a day (up to 10 in store). The kitchen hearth never goes out: here you can rest as many times as you like, even without rations (you only recover 1 point). Other fires are spent instead: after you rest, their flames turn blue and cold."],
           missione: ["Quest accepted: “What Lies Up High”",
             "Go down to the cellar, retrieve the old wooden step-ladder and bring it back to Guendalina, here in the kitchen.",
             "The cellar is reached from the service room, beyond the door on the left of the kitchen: write for example “I go to the service room” and then “I go down to the cellar”. It is dark down there and the Master's guardians roam: move silently and do not run.",
@@ -8810,18 +8810,19 @@
        Ogni caccia completata dà una scelta (due se Aldo è stato battuto con i mastini).
        Valgono gli stessi limiti di classe della creazione del personaggio. Le armi incantate restano sigillate. */
     const ARMERIA = [
-      { cat: "armi", nome: "Spada corta", tipo: "arma", danno: "1d6", tipoDanno: "Tagliente", mani: 1 },
-      { cat: "armi", nome: "Mazza chiodata", tipo: "arma", danno: "1d6", tipoDanno: "Perforante", mani: 1 },
-      { cat: "armi", nome: "Bastone", tipo: "arma", danno: "1d6", tipoDanno: "Contundente", mani: 2 },
-      { cat: "armi", nome: "Martello da battaglia", tipo: "arma", danno: "1d8", tipoDanno: "Contundente", mani: 1 },
-      { cat: "armi", nome: "Ascia da battaglia", tipo: "arma", danno: "1d8", tipoDanno: "Tagliente", mani: 2 },
-      { cat: "armi", nome: "Piccone da battaglia", tipo: "arma", danno: "1d8", tipoDanno: "Perforante", mani: 2 },
+      /* 15/11: le sei armi comuni a griglia più il bastone (arma e focus), come nella creazione */
+      { cat: "armi", nome: "Spada", tipo: "arma", danno: "1d6", tipoDanno: "Tagliente", mani: 1 },
+      { cat: "armi", nome: "Spadone", tipo: "arma", danno: "1d8", tipoDanno: "Tagliente", mani: 2 },
+      { cat: "armi", nome: "Mazza ferrata", tipo: "arma", danno: "1d6", tipoDanno: "Contundente", mani: 1 },
+      { cat: "armi", nome: "Maglio", tipo: "arma", danno: "1d8", tipoDanno: "Contundente", mani: 2 },
+      { cat: "armi", nome: "Pugnale", tipo: "arma", danno: "1d6", tipoDanno: "Perforante", mani: 1 },
+      { cat: "armi", nome: "Tridente", tipo: "arma", danno: "1d8", tipoDanno: "Perforante", mani: 2 },
+      { cat: "armi", nome: "Bastone", tipo: "arma", danno: "1d8", tipoDanno: "Contundente", mani: 2 },
       { cat: "armature", nome: "Armatura leggera", tipo: "armatura", ca: 2, malus: 0 },
       { cat: "armature", nome: "Armatura media", tipo: "armatura", ca: 3, malus: 1 },
       { cat: "armature", nome: "Armatura pesante", tipo: "armatura", ca: 4, malus: 2 },
       { cat: "scudi", nome: "Scudo", tipo: "scudo", ca: 1, malus: 1 },
       { cat: "dotazione", nome: "Pozione di cura", tipo: "dotazione", usi: 1 },
-      { cat: "dotazione", nome: "Pozione di essenza", tipo: "dotazione", usi: 1 },
       { cat: "dotazione", nome: "Torcia", tipo: "dotazione", usi: 5, impugnabile: true },
       { cat: "dotazione", nome: "Ampolla di fuoco", tipo: "dotazione", usi: 1 },
       { cat: "dotazione", nome: "Corda e rampino", tipo: "dotazione" },
@@ -12540,7 +12541,7 @@
       const tipo = TIPI_ARMA_MOT[(arma && arma.tipoDanno) || eqPg().armaTipoDanno] || "contundente";
       return MotS.preparaScontro({
         nome: "Tu", classe: pg.classe, spec: MotSP.ALIAS[pg.spec] || pg.spec, liv, mod: m, modClasse: modAttaccoPg(), pv: pvPg(), pvMax: pvMaxPg(),
-        caBase: Number(caAttuale()) || 10, arma: { dado: dadoArmaPg(false), tipo, bonus: bonusArmaPg() }, scudo: !!scudo,
+        caBase: Number(caAttuale()) || 10, arma: { dado: dadoArmaPg(false), tipo, bonus: bonusArmaPg(), ...(arma && Number(arma.mani) === 2 ? { dueMani: true } : {}), ...(arma && /^Bastone/.test(arma.nome || "") ? { eFocus: true } : {}) }, scudo: !!scudo, /* 15/11: due mani tolgono il focus, tranne il bastone */
         focus: pg.classe !== "Soldato" && !scudo ? { dado: 8, bonus: 0 } : null, via, /* 15/11: focus solo degli incantatori, in mano secondaria (lo scudo lo esclude) */
         poteri: MotSP.poteriAlLivello(pg.classe, pg.spec, pg.scelte || [], liv), tratti: MotSP.trattiAlLivello(pg.classe, liv), stati: {},
         usati: { scontro: {}, giorno: Object.fromEntries((pg.giornalieriUsati || []).map(k => [k, true])) }, elisir: Number(pg.elisir) || 0

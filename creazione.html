@@ -291,7 +291,7 @@
         statistiche: "Statistiche", punti: "Punti da distribuire:", su: "su",
         thAttributo: "Attributo", thUtilizzo: "Utilizzo", thRazza: "Razza", thMod: "Mod", thValore: "Valore",
         abilita: "Abilità", guidaAbilita: "Scegline quattro. Il valore è il modificatore dell'attributo collegato; le abilità scelte aggiungono anche il livello del personaggio.",
-        equipaggiamento: "Equipaggiamento", arma: "Arma", armatura: "Armatura", scudo: "Scudo", dotazione: "Dotazione", guidaDotazione: "Scegline tre.",
+        equipaggiamento: "Equipaggiamento", arma: "Arma", armatura: "Armatura", scudo: "Scudo", dotazione: "Dotazione", guidaDotazione: "Parti con tutto questo.",
         dadoVita: "Dado vita", saluteFisica: "Salute fisica", saluteMentale: "Salute mentale", classeArmatura: "Classe armatura", entra: "Entra nel dungeon",
         sceglineUna: "Scegline una.", nonDisponibili: (c) => ` Alcune non sono disponibili per la classe ${c}.`,
         guidaScudo: "Facoltativo. Occupa una mano.", scudoNo: "Facoltativo. Non si può usare con un'arma a due mani.",
@@ -301,9 +301,9 @@
         diminuisci: (n) => `Diminuisci ${n}`, aumenta: (n) => `Aumenta ${n}`,
         punti4: `+${Regole.RAZZE.Umano.punti} punti attributo da assegnare a scelta del giocatore`,
         tipoDanno: "Tipo di danno", mani: "Mani", testoMani: (n) => `${n} ${n === 1 ? "mano" : "mani"}`, dannoTit: (t) => `Danno ${t}`,
-        notaDueMani: "Un'arma a due mani occupa entrambe le mani: per usare altri oggetti, come la torcia, dovrai prima riporla. Non si può usare insieme allo scudo.",
+        notaDueMani: "Un'arma a due mani occupa entrambe le mani: niente scudo, e per Sciamano, Arcanista e Monaco niente focus (tranne il bastone, che è arma e focus insieme). Per usare la torcia dovrai prima riporla.",
         notaScudo: "Occupa una mano: non si può usare con un'arma a due mani, e per tenere la torcia dovrai prima riporlo.",
-        modLotta: "modificatore di classe", attrClasse: "Caratteristica", attrClasseNota: "Vale per tiro per colpire e danno di tutti i tuoi attacchi (arma, tecniche, incantesimi) e per la tua risorsa.", malusAgilita: "Malus Agilità", bonusAgilita: "Bonus Agilità max", infoScudo: "+1 classe armatura · malus Agilità −1",
+        modLotta: "modificatore di classe", attrClasse: "Caratteristica", attrClasseNota: "Vale per il tiro per colpire e il danno dei tuoi attacchi e poteri (una volta per attacco) e per la difficoltà degli stati che applichi.", malusAgilita: "Malus Agilità", bonusAgilita: "Bonus Agilità max", infoScudo: "+1 classe armatura · malus Agilità −1",
         utilizzi: (n) => (n > 1 ? `${n} utilizzi` : "1 utilizzo"), riutilizzabile: "Riutilizzabile",
         manca: { razza: "la razza", classe: "la classe", tiro: "il tiro dei punti vita", punti: (n) => `${n} punti attributo da distribuire`, abilita: (n) => `${n} abilità`, arma: "un'arma", armatura: "un'armatura", ritratto: "il ritratto", dot: (n) => `${n} ${n === 1 ? "oggetto" : "oggetti"} di dotazione` },
         ancora: "Ancora da fare: ", pronto: (n) => `${n} è pronto a entrare nel dungeon.`,
@@ -322,7 +322,7 @@
         statistiche: "Attributes", punti: "Points to assign:", su: "of",
         thAttributo: "Attribute", thUtilizzo: "Used for", thRazza: "Race", thMod: "Mod", thValore: "Value",
         abilita: "Skills", guidaAbilita: "Choose four. The value is the modifier of the linked attribute; the skills you choose also add the character's level.",
-        equipaggiamento: "Equipment", arma: "Weapon", armatura: "Armor", scudo: "Shield", dotazione: "Gear", guidaDotazione: "Choose three.",
+        equipaggiamento: "Equipment", arma: "Weapon", armatura: "Armor", scudo: "Shield", dotazione: "Gear", guidaDotazione: "You start with all of this.",
         dadoVita: "Hit die", saluteFisica: "Physical health", saluteMentale: "Mental health", classeArmatura: "Armor class", entra: "Enter the dungeon",
         sceglineUna: "Choose one.", nonDisponibili: (c) => ` Some are not available to the ${c} class.`,
         guidaScudo: "Optional. Takes up one hand.", scudoNo: "Optional. Cannot be used with a two-handed weapon.",
@@ -332,9 +332,9 @@
         diminuisci: (n) => `Decrease ${n}`, aumenta: (n) => `Increase ${n}`,
         punti4: `+${Regole.RAZZE.Umano.punti} attribute points to assign as the player chooses`,
         tipoDanno: "Damage type", mani: "Hands", testoMani: (n) => `${n} ${n === 1 ? "hand" : "hands"}`, dannoTit: (t) => `${t} damage`,
-        notaDueMani: "A two-handed weapon takes up both hands: to use other items, such as the torch, you will first have to put it away. It cannot be used together with the shield.",
+        notaDueMani: "A two-handed weapon takes up both hands: no shield, and for Shaman, Arcanist and Monk no focus (except the staff, which is weapon and focus at once). To use the torch you will first have to put it away.",
         notaScudo: "Takes up one hand: it cannot be used with a two-handed weapon, and to hold the torch you will first have to put it away.",
-        modLotta: "class modifier", attrClasse: "Class attribute", attrClasseNota: "Used for the attack and damage rolls of all your attacks (weapon, techniques, spells) and for your resource.", malusAgilita: "Agility penalty", bonusAgilita: "Max Agility bonus", infoScudo: "+1 armor class · Agility penalty −1",
+        modLotta: "class modifier", attrClasse: "Class attribute", attrClasseNota: "Used for the attack and damage rolls of your attacks and powers (once per attack) and for the difficulty of the conditions you inflict.", malusAgilita: "Agility penalty", bonusAgilita: "Max Agility bonus", infoScudo: "+1 armor class · Agility penalty −1",
         utilizzi: (n) => (n > 1 ? `${n} uses` : "1 use"), riutilizzabile: "Reusable",
         manca: { razza: "the race", classe: "the class", tiro: "the hit point roll", punti: (n) => `${n} attribute points to assign`, abilita: (n) => `${n} ${n === 1 ? "skill" : "skills"}`, arma: "a weapon", armatura: "an armor", ritratto: "the portrait", dot: (n) => `${n} gear ${n === 1 ? "item" : "items"}` },
         ancora: "Still to do: ", pronto: (n) => `${n} is ready to enter the dungeon.`,
@@ -408,22 +408,23 @@
         en: "Caused by pointed weapons and thrusts focused on a tiny point of impact. Piercing damage exploits gaps in armor to penetrate deep, directly damaging vital organs and nerve centres. It is the deadliest form of attack against targets protected by heavy armor or thick natural defences."
       }
     };
-    /* PROVVISORIO: danno di mazza chiodata e piccone da battaglia scelto da me */
+    /* 15/11: le sei armi comuni a griglia (decisione del 14/11: tre tipi × una o due mani, nomi provvisori) più il bastone,
+       che è arma e focus insieme (due mani, d8). Scelta libera delle armi per tutte le classi (13/11). */
     const ARMI = [
-      { nome: "Spada corta", danno: "1d6", tipo: "Tagliente", mani: 1 },
-      { nome: "Ascia da battaglia", danno: "1d8", tipo: "Tagliente", mani: 2 },
-      { nome: "Bastone", danno: "1d6", tipo: "Contundente", mani: 2 },
-      { nome: "Martello da battaglia", danno: "1d8", tipo: "Contundente", mani: 1 },
-      { nome: "Mazza chiodata", danno: "1d6", tipo: "Perforante", mani: 1 },
-      { nome: "Piccone da battaglia", danno: "1d8", tipo: "Perforante", mani: 2 }
+      { nome: "Spada", danno: "1d6", tipo: "Tagliente", mani: 1 },
+      { nome: "Spadone", danno: "1d8", tipo: "Tagliente", mani: 2 },
+      { nome: "Mazza ferrata", danno: "1d6", tipo: "Contundente", mani: 1 },
+      { nome: "Maglio", danno: "1d8", tipo: "Contundente", mani: 2 },
+      { nome: "Pugnale", danno: "1d6", tipo: "Perforante", mani: 1 },
+      { nome: "Tridente", danno: "1d8", tipo: "Perforante", mani: 2 },
+      { nome: "Bastone", danno: "1d8", tipo: "Contundente", mani: 2, focus: true }
     ];
-    /* Le armi con il descrittore "da battaglia" sono riservate al Soldato */
-    const ARMI_COMUNI = ARMI.filter(a => !/da battaglia/i.test(a.nome)).map(a => a.nome);
-    /* Limiti di equipaggiamento per classe: se manca una voce, la classe può scegliere tutto */
+    /* Limiti di armatura per classe (le armi sono libere). ⚠ Il malus per l'armatura sopra la propria categoria (13/11) non è ancora
+       nel motore: finché non c'è, restano i limiti di prima. */
     const LIMITI_CLASSI = {
-      Forestiero: { armi: ARMI_COMUNI, armature: ["Armatura leggera", "Armatura media"] },
-      Sapiente: { armi: ARMI_COMUNI, armature: ["Armatura leggera"] },
-      Accolito: { armi: ARMI_COMUNI, armature: ["Armatura leggera", "Armatura media"] }
+      Forestiero: { armature: ["Armatura leggera", "Armatura media"] },
+      Sapiente: { armature: ["Armatura leggera"] },
+      Accolito: { armature: ["Armatura leggera", "Armatura media"] }
     };
     /* malus: penalità alle abilità che usano Agilità (il risultato può diventare negativo) */
     const ARMATURE = [
@@ -436,11 +437,9 @@
     /* senza "usi" = oggetto riutilizzabile; le descrizioni stanno in lingua.js */
     const DOTAZIONE = [
       { nome: "Pozione di cura", usi: 1 },
-      { nome: "Pozione di essenza", usi: 1 }, /* recupera la risorsa della classe: punti arcano, fede, furia o natura */
       { nome: "Torcia", usi: 5, impugnabile: true },
-      { nome: "Piede di porco" },
-      { nome: "Borsa dei veleni", usi: 3, solo: "Forestiero" } /* solo lo Sciamano: 3 dosi di punti natura; si riempie con gli ingredienti della foresta */
-    ];
+      { nome: "Piede di porco" }
+    ]; /* 15/11: tolte Pozione di essenza e Borsa dei veleni (risorse del vecchio sistema): la dotazione è data tutta, senza scelta */
 
     /* ---------- Incantesimi (Arcanista e Monaco): le scuole di js/magia.js ----------
        04/11: niente scuola principale. Al livello 1 si preparano 3 incantesimi di livello 1, liberamente tra le due scuole;
@@ -765,13 +764,8 @@
       const nAb = abilitaScelte().length;
       document.querySelectorAll('input[name="abilita"]').forEach(c => { c.disabled = !c.checked && nAb >= MAX_ABILITA; });
 
-      document.querySelectorAll('input[name="dotazione"]').forEach(c => { /* la borsa dei veleni è solo dello Sciamano */
-        const solo = DOTAZIONE[c.value].solo, nascosta = !!solo && solo !== classe;
-        c.closest("label").hidden = nascosta;
-        if (nascosta && c.checked) c.checked = false;
-      });
       const arma = armaScelta(), arm = armaturaScelta(), dot = dotazioneScelta(), sc = scudoScelto();
-      document.querySelectorAll('input[name="dotazione"]').forEach(c => { c.disabled = !c.checked && dot.length >= MAX_DOTAZIONE; });
+      document.querySelectorAll('input[name="dotazione"]').forEach(c => { c.checked = true; c.disabled = true; }); /* dotazione data tutta */
 
       const segno = (n) => (n < 0 ? "−" : "+") + " " + Math.abs(n);
       const modC = modDi("Vigore"), modM = modDi("Spirito");

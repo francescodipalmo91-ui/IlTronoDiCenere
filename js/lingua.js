@@ -22,6 +22,7 @@
     oggetti: {
       "Spada corta": "Shortsword", "Ascia da battaglia": "Battleaxe", Bastone: "Quarterstaff",
       "Martello da battaglia": "Warhammer", "Mazza chiodata": "Morningstar", "Piccone da battaglia": "War pick",
+      Spada: "Sword", Spadone: "Greatsword", "Mazza ferrata": "Flanged mace", Maglio: "Maul", Pugnale: "Dagger", Tridente: "Trident",
       "Retaggio del Padrone": "The Master's Legacy",
       "Armatura leggera": "Light armor", "Armatura media": "Medium armor", "Armatura pesante": "Heavy armor",
       Scudo: "Shield",

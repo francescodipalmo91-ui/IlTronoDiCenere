@@ -1,0 +1,271 @@
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Il Trono di Cenere — Oggetti</title><style>
+:root{--carta:#f4ecd8;--carta-2:#ebdfbf;--inchiostro:#2b2118;--rosso:#7a1f1b;--bronzo:#8a6a3a;--bronzo-testo:#6a4e22;--riga:#e0d1aa;--sfondo:#cdbf9c}
+*{box-sizing:border-box}
+html{scroll-padding-top:56px;-webkit-text-size-adjust:100%;scrollbar-color:var(--bronzo) var(--sfondo)}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+body{margin:0;background:var(--sfondo);font-family:Georgia,"Book Antiqua",Palatino,serif;color:var(--inchiostro);line-height:1.45;font-size:15px}
+::selection{background:rgb(122 31 27 / .22)}
+a{text-underline-offset:.18em}
+nav{position:sticky;top:0;background:#2b2118;color:#efe4c8;z-index:5;font-variant:small-caps;letter-spacing:.08em;display:flex;justify-content:flex-start;overflow-x:auto;white-space:nowrap}
+nav a{color:#efe4c8;padding:13px 14px;text-decoration:none;min-height:44px}
+nav a:hover{color:#fff;text-decoration:underline}
+nav a:focus-visible{outline:2px solid #efe4c8;outline-offset:-4px;text-decoration:underline}
+.classe{max-width:1100px;margin:24px auto;background:var(--carta);padding:28px 36px 20px;box-shadow:0 2px 12px rgb(0 0 0 / .3);border:1px solid #b9a77c}
+.cols{column-count:2;column-gap:36px;orphans:3;widows:3}
+.folio{display:flex;justify-content:space-between;margin-top:22px;padding-top:6px;border-top:1px solid var(--bronzo);font-variant:small-caps;font-size:12.5px;letter-spacing:.1em;color:var(--bronzo-testo)}
+h1,h2,h3,h4{text-wrap:balance}
+h1{font-variant:small-caps;color:var(--rosso);font-size:34px;line-height:1.15;margin:0 0 10px;letter-spacing:.03em;column-span:all;border-bottom:2px solid var(--rosso)}
+h2{font-variant:small-caps;color:var(--rosso);font-size:21px;line-height:1.2;margin:22px 0 6px;border-bottom:1px solid var(--bronzo);break-after:avoid;letter-spacing:.03em}
+h3{font-variant:small-caps;color:var(--rosso);font-size:16px;margin:14px 0 2px;break-after:avoid}
+h4{margin:12px 0 0;font-size:15px;font-variant:small-caps;font-weight:bold;break-after:avoid}
+p{margin:2px 0 7px;text-align:justify;hyphens:auto;text-wrap:pretty}
+p.lead{font-size:15.5px}
+p.lead::first-letter{font-size:2.6em;float:left;line-height:.85;padding:3px 6px 0 0;color:var(--rosso);font-variant:normal}
+p.note{font-size:13px;color:#4f402d;margin-bottom:4px}
+.tw{margin:12px 0 14px;overflow-x:auto}
+.tw.span{column-span:all}
+table.lvl{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums;background:#fbf6e8;border:2px solid var(--rosso)}
+.tw:not(.span){break-inside:avoid}
+table.lvl caption{font-variant:small-caps;font-weight:bold;text-align:left;color:var(--rosso);padding:5px 8px;font-size:15px;caption-side:top;background:#fbf6e8;border:2px solid var(--rosso);border-bottom:0}
+table.lvl th{background:#e8dcc0;font-variant:small-caps;text-align:left;padding:5px 8px;border-bottom:1px solid var(--bronzo);font-size:12.5px;letter-spacing:.03em}
+table.lvl td{padding:5px 8px;border-bottom:1px solid var(--riga);vertical-align:top}
+table.lvl tr:nth-child(even) td{background:#f1e7cb}
+@media(max-width:800px){
+ .cols{column-count:1}.classe{padding:18px 16px 14px;margin:12px auto}
+ p{text-align:left;hyphens:manual}h1{font-size:28px}
+}
+@media print{
+ nav{display:none}body{background:#fff}
+ .classe{box-shadow:none;margin:0;max-width:none;break-before:page}
+ .tw{overflow:visible}
+}
+.todo{background:#f6e3b8;border-left:4px solid var(--rosso);padding:6px 10px;margin:8px 0;font-size:13.5px;break-inside:avoid}
+.stato{display:inline-block;font-size:12px;padding:0 6px;border:1px solid var(--bronzo);background:#fbf6e8;font-variant:small-caps;letter-spacing:.04em}
+.cols>p.lead{column-span:all}
+td a,table a{color:var(--rosso)}
+.r0{color:#4f402d}.r1{color:#2f6b2a;font-weight:bold}.r2{color:#1f4f8a;font-weight:bold}.r3{color:#7a1f1b;font-weight:bold}
+</style></head><body><nav aria-label="Capitoli"><a href="#panoramica">Panoramica</a><a href="#regole">Regole</a><a href="#armi">Armi</a><a href="#armature">Armature</a><a href="#accessori">Accessori</a><a href="#set">Set</a><a href="#consumabili">Consumabili</a><a href="#bottino">Bottino</a><a href="#loot">Loot casuale</a><a href="#aperti">Aperti</a></nav><main>
+
+<section class="classe" id="panoramica"><div class="cols"><h1>Oggetti del Trono di Cenere</h1>
+<p class="lead">Il manuale di tutto ciò che puoi indossare, impugnare o portare dentro e fuori Casa Vespera: armi, armature, scudi, elmi, guanti, stivali, mantelli, accessori, i due set e gli elisir. Quattro rarità: Comune, Non comune, Raro, Leggendario. Per ogni oggetto trovi bonus, potere, chi lo lascia e quali classi lo usano.</p>
+<div class="tw span"><table class="lvl"><caption>La scala delle rarità</caption><tr><th scope="col">Rarità</th><th scope="col">Bonus</th><th scope="col">Poteri dell'oggetto</th><th scope="col">Come si ottiene</th></tr>
+<tr><td class="r0">Comune</td><td>+0</td><td>nessuno</td><td>creazione, rastrelliere di Aldo, foresta, bottega di Guendalina</td></tr>
+<tr><td class="r1">Non comune</td><td>+1</td><td>nessuno</td><td>armeria di Aldo subito, finestra del bronzo</td></tr>
+<tr><td class="r2">Raro</td><td>+2</td><td>1 per scontro</td><td>armeria dopo l'argento, finestra dell'argento</td></tr>
+<tr><td class="r3">Leggendario</td><td>+3</td><td>1 giornaliero</td><td>finestre di oro e platino, i due set. Mai in vendita</td></tr></table></div>
+<div class="tw span"><table class="lvl"><caption>Tutti gli oggetti in un colpo d'occhio</caption><tr><th scope="col">Rarità</th><th scope="col">Armi (taglio · contundente · perforante · focus)</th><th scope="col">Armature e scudo</th><th scope="col">Elmo, guanti, stivali, mantello</th><th scope="col">Accessori</th></tr>
+<tr><td class="r0">Comune</td><td>arma di creazione per tipo; focus di base</td><td>armature di base; scudo base</td><td>—</td><td>—</td></tr>
+<tr><td class="r1">Non comune</td><td>Due pugnali · Maglio da cava · Stiletto rituale · Focus rinforzato</td><td>Cuoio rinforzato, Maglia usata, Piastre da guardia, Scudo borchiato</td><td>Elmo da guardia, Guanti da cacciatore, Stivali ferrati, Mantello da viaggio</td><td>Anello da cacciatore, Talismano di ferro freddo, Fascia del cacciatore</td></tr>
+<tr><td class="r2">Raro</td><td>Due lame · Giuramento del Rettore · Flagello chiodato · Bastone da cartografo</td><td>Cuoio dell'Ombra, Maglia della Veglia, Piastre del Rettore, Scudo di Darius</td><td>Elmo del Penitente, Guanti del Cartografo, Calzari del Pellegrino, Mantello del Penitente</td><td>Anello del Mastino, Amuleto della veglia, Cinturone del Cacciatore</td></tr>
+<tr><td class="r3">Leggendario</td><td>Falce di Atena · Clava di radice · Stocco di Dafne · Verga di cenere</td><td>Corazza e mano libera del set</td><td>Elmo, guanti, mantello del set; Stivali della lunga caccia</td><td>Anello della resina, Amuleto della quiete; anello, medaglione e corno del set cenere</td></tr></table></div>
+<p class="note">Bozza del 12/11/2026, <b>allineata il 15/11/2026</b> alle decisioni del 14/11 (poteri delle armi, niente reazioni, zaino, sei armi comuni) e al codice (set, elisir di stato). Nomi provvisori. Fonte: <code>oggetti_per_rarita.md</code>, <code>riscrittura_meccaniche.md</code> (8f), <code>elisir_e_bottino.md</code>, <code>storia_retaggio_e_set.md</code>.</p></div>
+<footer class="folio"><span>Il Trono di Cenere</span><span>Capitolo 1 | Panoramica</span></footer></section>
+
+<section class="classe" id="regole"><div class="cols"><h1>Regole degli oggetti</h1>
+<h2>Sblocco dei poteri</h2>
+<p>Il potere di un oggetto esiste e si vede solo da quando lo ottieni: armi, armature, scudi, guanti, stivali, elmi, mantelli, anelli, amuleti e ogni altro pezzo. Prima non compare da nessuna parte, né nel Regolamento né nelle descrizioni, per evitare spoiler. Se cambi o togli l'oggetto, il potere va con lui. Per i set, il potere di ogni soglia (2, 4, 5 pezzi) si mostra solo quando raggiungi quel numero di pezzi; i poteri dei set sono sempre pronti, non occupano slot di potere e non si sostituiscono come le pergamene, mentre i bonus numerici dei pezzi valgono da subito. Unica eccezione: l'armeria di Aldo mostra i poteri di tutti i suoi oggetti, perché si scambia solo alla pari (vedi capitolo Bottino).</p>
+<h2>Armi e armature a libera scelta (13/11)</h2>
+<p>Ogni classe può usare qualsiasi arma e armatura. Per ogni categoria di armatura <b>sopra quella propria della classe</b> (Guerriero tutte; Sciamano e Monaco fino alla media; Arcanista solo leggera) si applica un <b>malus: −2 a colpire e −2 alla CD degli incantesimi</b>. Esempio: Arcanista con armatura pesante, due categorie, −4. Il malus vale per qualsiasi armatura, comune, rara o dal catalogo di Aldo, e viene riportato nella scheda di ogni oggetto. Le armi non hanno malus.</p>
+<div class="todo">Il malus è una proposta: va verificato se esiste già nel codice.</div>
+<h2>Dadi di danno</h2>
+<div class="tw"><table class="lvl"><tr><th scope="col">Categoria</th><th scope="col">Dado</th></tr><tr><td>Una mano</td><td>1d6</td></tr><tr><td>Due mani</td><td>1d8</td></tr><tr><td>Leggendari e pezzi dei set (compresa la Spada del Retaggio, a +3)</td><td>1d10</td></tr><tr><td>Arma del sovrano (ascia bipenne gigante)</td><td>1d12</td></tr></table></div>
+<p>Il bonus +0/+1/+2/+3 si somma al dado. Il tipo decide lo stato applicato; una mano o due decide se resta lo scudo. Il resto è scelta estetica del giocatore.</p>
+<div class="todo"><b>Da misurare la domenica:</b> i Leggendari a 1d10 alzano il danno del giocatore rispetto ai numeri attuali dei nemici. Proposta da confermare: nessuna restrizione di classe sulle armi, restano solo i limiti di armatura.</div>
+<h2>Poteri delle armi</h2>
+<p>Non competono con i poteri di classe per l'azione standard: si dichiarano su un attacco con l'arma e scattano se colpisce. <b>Si consumano quando si dichiarano, anche se l'attacco manca.</b> Il potere <b>per scontro</b> si ricarica a fine scontro, il <b>giornaliero</b> al riposo. Usano gli stati esistenti (applica e aggrava, tiro salvezza come da regola) e non si sommano al potere di classe nello stesso colpo (eccezione: <i>Segno sulla mappa</i>, che non aggiunge danno).</p><h2>Colpi (14/11)</h2><p><b>Più attacchi:</b> un d20 per ogni attacco, ognuno con dado e bonus; ogni colpo può mancare per conto suo. <b>Colpo gratuito:</b> a segno da solo, solo il dado dell'arma, nessun bonus, mai critico, parte solo se il colpo principale colpisce. La caratteristica si somma una volta per attacco (15/11).</p><h2>Niente reazioni (14/11)</h2><p>I poteri di armature, scudi e accessori si dichiarano nel proprio turno con l'<b>azione rapida</b> (una per turno, compete con pozione, cambio d'arma, Infuso) e scattano da soli. Due modelli: <b>«fino al tuo prossimo turno»</b> e <b>«carica»</b> (scatta sul prossimo evento utile; sprecata se non arriva).</p>
+<div class="tw"><table class="lvl"><caption>Stato dell'arma</caption><tr><th scope="col">Tipo</th><th scope="col">Applica</th><th scope="col">Aggrava</th></tr><tr><td>Taglio</td><td>Sanguinante</td><td>Emorragia</td></tr><tr><td>Contundente</td><td>Stordito</td><td>Commosso</td></tr><tr><td>Perforante</td><td>Esposto</td><td>Scoperto</td></tr></table></div>
+<p>L'attacco base con l'arma non applica stati: li applicano solo i poteri. Sui boss lo Stordito diventa Indebolito.</p>
+<h2>Dove va il bonus</h2>
+<p>Il bonus numerico (+1, +2, +3) va a colpire e ai danni per le armi, alla <b>CA</b> per armatura e scudo. Elmo, guanti, stivali e mantello non danno CA (si sommerebbero fino a +12): danno +1, +2 o +3 a un'abilità o a un tiro salvezza collegato, in linea con «abilità reali al posto dei bonus numerici» deciso per i set. Gli accessori seguono la stessa regola.</p>
+<h2>Slot e limiti</h2>
+<p>Si portano al massimo due armi. Cambiare arma, equipaggiare un oggetto o bere una pozione costa l'azione rapida. Armi a due mani escludono lo scudo. Mano primaria = arma, mano secondaria = focus (il bastone è arma e focus insieme). Armature e scudi seguono i limiti di classe: lo Sciamano non porta la pesante.</p>
+<p>Accessori: un anello per mano (due), un amuleto o collana, una cintura, più lo slot fermaglio (il fermaglio indossato dà il titolo di guardiano sotto il ritratto).</p>
+<div class="todo"><b>Proposta:</b> due oggetti uguali non si sommano (vale solo il primo). Anche la regola degli elisir («un solo raro di protezione attivo») resta a parte.</div></div>
+<footer class="folio"><span>Il Trono di Cenere</span><span>Capitolo 2 | Regole</span></footer></section>
+
+<section class="classe" id="armi"><div class="cols"><h1>Le armi</h1>
+<p class="lead">Quattro tipi, taglio, contundente, perforante e focus, e una sola arma per tipo in ogni rarità: dodici armi lasciate dai PNG più quelle di base. Le armi rare hanno un potere per scontro, le leggendarie un giornaliero.</p>
+<div class="tw span"><table class="lvl"><caption>Quattro tipi per rarità</caption><tr><th scope="col">Tipo</th><th scope="col">Comune +0</th><th scope="col">Non comune +1</th><th scope="col">Raro +2</th><th scope="col">Leggendario +3</th></tr>
+<tr><td>Taglio</td><td>arma di creazione</td><td>Due pugnali (Ettore)</td><td>Due lame (Lama gemella)</td><td>Falce (Atena)</td></tr>
+<tr><td>Contundente</td><td>arma di creazione</td><td>Maglio da cava (Bruto delle cave)</td><td>Giuramento del Rettore (Enea)</td><td>Clava di radice (Troll delle radici)</td></tr>
+<tr><td>Perforante</td><td>arma di creazione</td><td>Stiletto rituale (Ladra dei portali)</td><td>Flagello chiodato (Penitente flagellante)</td><td>Stocco (Dafne)</td></tr>
+<tr><td>Focus</td><td>libro arcano, filatterio, simbolo sacro o bastone</td><td>Focus rinforzato (armeria di Aldo)</td><td>Bastone da cartografo (Cartografo rinnegato)</td><td>Verga di cenere (Profeta della cenere)</td></tr></table></div>
+<h2>Comuni (+0)</h2>
+<p>Nessun potere. <b>Sei armi comuni</b> (14/11): Spada / Spadone (taglio), Mazza ferrata / Maglio (contundente), Pugnale / Tridente (perforante), 1d6 a una mano e 1d8 a due mani; niente armi da lancio. Le armi a due mani escludono scudo e focus in mano secondaria. Manganello (ex Bastone): 1d6 contundente, una mano. Focus 1d6, il bastone 1d8 a due mani. Nomi esatti nel codice.</p>
+<h2>Non comuni (+1), senza poteri</h2>
+<div class="tw span"><table class="lvl"><tr><th scope="col">Arma</th><th scope="col">Tipo</th><th scope="col">Da dove</th><th scope="col">Classi</th></tr>
+<tr><td>Due pugnali</td><td>taglio</td><td>Ettore (garantiti; da risparmiato un pugnale)</td><td>Guerriero, Sciamano</td></tr>
+<tr><td>Maglio da cava</td><td>contundente, 2 mani</td><td>Bruto delle cave (★, bronzo)</td><td>Guerriero, Monaco</td></tr>
+<tr><td>Stiletto rituale</td><td>perforante, leggero</td><td>Ladra dei portali (★, bronzo)</td><td>Guerriero, Sciamano, Arcanista</td></tr>
+<tr><td>Focus rinforzato</td><td>focus</td><td>armeria di Aldo (il focus scelto in creazione, in versione migliore)</td><td>Sciamano, Arcanista, Monaco</td></tr></table></div>
+<h2>Rari (+2), un potere per scontro</h2>
+<div class="tw span"><table class="lvl"><tr><th scope="col">Arma</th><th scope="col">Tipo e classi</th><th scope="col">Da dove</th><th scope="col">Potere per scontro</th></tr>
+<tr><td>Due lame</td><td>taglio, leggere; Guerriero, Sciamano</td><td>Lama gemella (★★★, platino)</td><td><b>Danza delle lame:</b> su un colpo a segno, un secondo colpo gratuito col dado dell'arma; se il bersaglio è Sanguinante, lo aggrava in Emorragia</td></tr>
+<tr><td>Giuramento del Rettore</td><td><b>a due facce</b>: maglio contundente / ascia taglio; 2 mani; Guerriero, Monaco. Cambiare faccia è un'azione rapida</td><td>Enea (garantito se muore impugnandolo)</td><td><b>Colpo del Giuramento</b> (su entrambe le facce): un dado in più e lo stato della faccia attiva, maglio Stordito (poi Commosso), ascia Sanguinante (poi Emorragia). Già suoi: <i>Fiducia Condivisa</i> (+2 ai TS contro Impaurito e al danno mentale delle prove fallite), <i>Primo Passo nel Buio</i> (+2 CA nel primo turno)</td></tr>
+<tr><td>Flagello chiodato</td><td>perforante; Guerriero, Monaco</td><td>Penitente flagellante (★★, argento)</td><td><b>Punta nella piaga:</b> su un colpo a segno applica Esposto; se è già Esposto, Scoperto</td></tr>
+<tr><td>Bastone da cartografo</td><td>focus, 2 mani; Sciamano, Arcanista, Monaco</td><td>Cartografo rinnegato (★★, argento)</td><td><b>Segno sulla mappa:</b> si dichiara insieme a un potere di classe che applica uno stato; quello stato entra senza tiro salvezza, solo per quel colpo</td></tr></table></div>
+<p class="note">Arma opzionale (cose di Enea): <b>Spaccatoro di Caius</b>, martello a una mano, contundente, +2. Potere deciso <i>«Caius, colpisci!»</i> (per scontro: dopo un attacco mancato del nemico, colpo con un dado in più e nemico Impaurito 1 turno) e <i>Istinto della Prima Linea</i> (+1 a colpire e ai danni contro nemici singoli).</p>
+<h2>Leggendari (+3), un potere giornaliero</h2>
+<div class="tw span"><table class="lvl"><tr><th scope="col">Arma</th><th scope="col">Tipo e classi</th><th scope="col">Da dove</th><th scope="col">Potere giornaliero</th></tr>
+<tr><td>Falce</td><td>taglio, 2 mani; Guerriero, Monaco</td><td>Atena (garantita)</td><td><b>Raccolto:</b> su un colpo a segno, due dadi in più e aggrava lo stato dell'arma; se il bersaglio è Vacillante, critico</td></tr>
+<tr><td>Clava di radice</td><td>contundente, 2 mani; Guerriero, Monaco</td><td>Troll delle radici (★★★, oro)</td><td><b>Albero caduto:</b> su un colpo a segno, due dadi in più; Stordito senza TS e aggravato subito in Commosso (un boss è Indebolito 3 turni)</td></tr>
+<tr><td>Stocco</td><td>perforante, leggero; Guerriero, Sciamano</td><td>Dafne (garantito se muore; se risparmiata lo tiene lei)</td><td><b>Doppia stoccata:</b> due attacchi indipendenti (un d20 ciascuno); ogni colpo a segno applica il suo stato senza TS: il primo Esposto, il secondo lo aggrava in Scoperto</td></tr>
+<tr><td>Verga di cenere</td><td>focus, danno di fuoco; Arcanista, Monaco</td><td>Profeta della cenere (★★★, platino)</td><td><b>Pioggia di braci:</b> per 3 turni, all'inizio del tuo turno, 1d6 di fuoco senza tiro per colpire che applica o aggrava Scottato</td></tr></table></div>
+<p>La verga di cenere è l'unica con danno elementale (regola delle armi uniche). Strega della torbiera non lascia più un'arma: la sua verga sarebbe stata un secondo focus, quindi lascia una pergamena di fuoco sacro.</p>
+<div class="todo"><b>Cambi rispetto alla matrice del 06/11 (DECISI il 14/11):</b> Lama gemella scende da +3 a +2; il flagello del Penitente diventa perforante (chiodato); lo stiletto perde il ruolo di focus; il focus non comune viene dall'armeria perché nessun PNG ne lascia uno; la Strega lascia una pergamena invece di una verga.</div></div>
+<footer class="folio"><span>Il Trono di Cenere</span><span>Capitolo 3 | Armi</span></footer></section>
+
+<section class="classe" id="armature"><div class="cols"><h1>Armature, scudi e altri pezzi</h1>
+<p class="lead">Otto slot: armatura leggera, media e pesante, scudo, elmo, guanti, stivali, mantello. Armatura e scudo danno CA, gli altri pezzi un bonus a un'abilità. I Rari hanno un potere per scontro, i Leggendari un giornaliero. Nomi e poteri sono proposte.</p>
+<div class="tw span"><table class="lvl"><caption>Una voce per slot e rarità</caption><tr><th scope="col">Slot</th><th scope="col">Comune +0</th><th scope="col">Non comune +1 (armeria, nessun potere)</th><th scope="col">Raro +2 (per scontro)</th><th scope="col">Leggendario +3 (giornaliero)</th></tr>
+<tr><td>Armatura leggera</td><td>di base</td><td>Cuoio rinforzato (+1 CA)</td><td>Cuoio dell'Ombra (+2 CA)</td><td>Corazza del set (+3 CA, si adatta alla classe)</td></tr>
+<tr><td>Armatura media</td><td>di base</td><td>Maglia usata (+1 CA)</td><td>Maglia della Veglia (+2 CA)</td><td>Corazza del set</td></tr>
+<tr><td>Armatura pesante</td><td>di base</td><td>Piastre da guardia (+1 CA)</td><td>Piastre del Rettore (+2 CA)</td><td>Corazza del set</td></tr>
+<tr><td>Scudo</td><td>scudo base, +1 CA</td><td>Scudo borchiato (+1 CA aggiuntivo al base)</td><td>Scudo di Darius (+2 CA)</td><td>Mano libera del set (+2 CA; incantatori: focus d8)</td></tr>
+<tr><td>Elmo</td><td>—</td><td>Elmo da guardia (+1 Percezione)</td><td>Elmo del Penitente (+2 Percezione)</td><td>Elmo del set</td></tr>
+<tr><td>Guanti</td><td>—</td><td>Guanti da cacciatore (+1 Atletica)</td><td>Guanti del Cartografo (+2 Indagare)</td><td>Guanti del set</td></tr>
+<tr><td>Stivali</td><td>—</td><td>Stivali ferrati (+1 Furtività)</td><td>Calzari del Pellegrino (+2 Sopravvivenza)</td><td>Stivali della lunga caccia (+3 Sopravvivenza)</td></tr>
+<tr><td>Mantello</td><td>—</td><td>Mantello da viaggio (+1 Sopravvivenza)</td><td>Mantello del Penitente (+2 Furtività)</td><td>Mantello del set</td></tr></table></div>
+<h2>Poteri per scontro dei Rari (azione rapida)</h2>
+<div class="tw span"><table class="lvl"><tr><th scope="col">Oggetto</th><th scope="col">Potere</th></tr>
+<tr><td>Cuoio dell'Ombra</td><td>Fino al tuo prossimo turno, +4 CA</td></tr>
+<tr><td>Maglia della Veglia</td><td>Carica: il prossimo colpo subito è ridotto di 4</td></tr>
+<tr><td>Piastre del Rettore</td><td>Carica: il prossimo tiro salvezza contro uno stato riesce da solo</td></tr>
+<tr><td>Scudo di Darius</td><td><i>La risata di Darius</i> (per scontro, era 1 al giorno), carica: annulla il prossimo attacco del nemico, boss e colpi annunciati compresi. Passivo suo: <i>Calore del Focolare</i>, +1 punto mentale al riposo. +2 CA</td></tr>
+<tr><td>Elmo del Penitente</td><td>Carica: il prossimo tiro salvezza contro Impaurito o Esposto riesce</td></tr>
+<tr><td>Guanti del Cartografo</td><td><i>Studio del bersaglio</i>, carica: il prossimo attacco fa un dado in più se il bersaglio è vulnerabile al suo tipo di danno; altrimenti si consuma senza effetto</td></tr>
+<tr><td>Calzari del Pellegrino</td><td>Passivo <i>Passo di Casa</i>: +2 ai TS contro Indebolito e Stordito. <i>Eco del Traguardo</i>: ritirata fino alla cripta da uno scontro fuori casa, mai contro guardiani o mastini; resta fuori dagli scontri</td></tr>
+<tr><td>Mantello del Penitente</td><td>Carica: il prossimo colpo subito è dimezzato (non cumulabile con la Maglia sullo stesso colpo)</td></tr></table></div>
+<h2>Leggendari</h2>
+<p><b>Pezzi del set</b> (corazza, mano libera, elmo, guanti, mantello): non hanno un giornaliero proprio, valgono i poteri del set a 2, 4 e 5 pezzi (capitolo 6). <b>Stivali della lunga caccia</b> (bottino del platino, fuori set): passivo già deciso, immuni allo Stordito; <i>Piede fermo</i>, carica: il prossimo tiro salvezza ha +4 (da riconfermare).</p>
+<div class="todo"><b>Aperto:</b> i pezzi del set potrebbero avere anche un giornaliero proprio oltre al potere di set. Da decidere.</div></div>
+<footer class="folio"><span>Il Trono di Cenere</span><span>Capitolo 4 | Armature, scudi e pezzi</span></footer></section>
+
+<section class="classe" id="accessori"><div class="cols"><h1>Accessori</h1>
+<p class="lead">Un anello per mano, un amuleto o collana, una cintura, più il fermaglio. Nessuna CA: +1, +2 o +3 a un'abilità o a un tiro salvezza; Rari con un potere per scontro, Leggendari con un giornaliero.</p>
+<div class="tw span"><table class="lvl"><caption>Una voce per slot e rarità</caption><tr><th scope="col">Slot</th><th scope="col">Non comune +1</th><th scope="col">Raro +2 (per scontro)</th><th scope="col">Leggendario +3 (giornaliero)</th></tr>
+<tr><td>Anello (due)</td><td>Anello da cacciatore (+1 Indagare)</td><td>Anello del Mastino (+2 Percezione)</td><td>Anello della resina (+3 Indagare); Anello col sigillo (set cenere)</td></tr>
+<tr><td>Amuleto o collana</td><td>Talismano di ferro freddo (+1 ai TS contro Scottato)</td><td>Amuleto della veglia (+2 CA contro il primo attacco subito di ogni scontro)</td><td>Amuleto della quiete (+3 salute mentale massima); Medaglione (set cenere)</td></tr>
+<tr><td>Cintura</td><td>Fascia del cacciatore (+1 Percezione e Sopravvivenza)</td><td>Cinturone del Cacciatore (+2 Sopravvivenza)</td><td>Corno da caccia (set cenere)</td></tr></table></div>
+<div class="tw span"><table class="lvl"><caption>Poteri</caption><tr><th scope="col">Oggetto</th><th scope="col">Potere</th></tr>
+<tr><td>Anello del Mastino (raro)</td><td>Fuori dallo scontro, una carica per riposo: la tua Percezione contro la Furtività del nemico riesce in automatico</td></tr>
+<tr><td>Amuleto della veglia (raro)</td><td>Per scontro, carica: il prossimo nemico che ti colpisce subisce 1d6 + livello</td></tr>
+<tr><td>Cinturone del Cacciatore (raro)</td><td>Una volta per scontro, un'azione rapida di qualsiasi tipo (cambio arma, cambio faccia, pozione, equipaggiamento, Infuso) non costa niente</td></tr>
+<tr><td>Anello della resina (leggendario)</td><td>Giornaliero, azione rapida a inizio scontro: scegli uno stato, sei immune per tutto lo scontro</td></tr>
+<tr><td>Amuleto della quiete (leggendario)</td><td>Carica, si ricarica al riposo: il prossimo danno mentale (prova fallita, diario o flashback) è annullato</td></tr>
+<tr><td>Anello col sigillo, Medaglione, Corno da caccia</td><td>Pezzi del set cenere: valgono i poteri del set a 2, 4 e 5 pezzi</td></tr></table></div>
+<p>Con i due anelli puoi portare, ad esempio, l'Anello della resina e l'Anello col sigillo. La <b>Fiala di brace</b> (cura 2d4) resta un consumabile fuori slot.</p>
+<div class="todo"><b>Da rivedere:</b> Talismano di ferro freddo, Fascia del cacciatore e gli esempi dei bottini sono ancora quelli del 28/10; i valori sopra sono già riportati alla scala nuova.</div></div>
+<footer class="folio"><span>Il Trono di Cenere</span><span>Capitolo 5 | Accessori</span></footer></section>
+
+<section class="classe" id="set"><div class="cols"><h1>I due set</h1>
+<p class="lead">Pezzi indossati, tutti a +3 (spada e armature comprese: il +4 non esiste più). Bonus a 2, 4 e 5 pezzi (a volontà, per scontro, giornaliero), fuori dagli slot di potere. Il set di carne aiuta a resistere, quello di cenere a fare danno. Nomi provvisori; le clausole sul sovrano sono nascoste al giocatore.</p>
+<div class="tw span"><table class="lvl"><caption>Set del sovrano di carne (ex Vespera, custodito da Aldo)</caption><tr><th scope="col">Pezzo</th><th scope="col">Slot</th><th scope="col">Quando</th></tr>
+<tr><td>Mantello</td><td>schiena</td><td>prima caccia comune</td></tr>
+<tr><td>Guanti</td><td>mani</td><td>bronzo</td></tr>
+<tr><td>Elmo</td><td>testa</td><td>argento</td></tr>
+<tr><td>Oggetto di mano libera</td><td>mano libera</td><td>oro (scudo per il Guerriero, focus d8 per gli incantatori)</td></tr>
+<tr><td>Corazza</td><td>torso</td><td>platino</td></tr></table></div>
+<div class="tw span"><table class="lvl"><caption>Poteri del set di carne</caption><tr><th scope="col">Pezzi</th><th scope="col">Potere</th></tr>
+<tr><td>2</td><td>Odore di Casa (sempre attivo): riduzione 1 sui colpi fisici subiti (era 2, 15/11)</td></tr>
+<tr><td>4</td><td>Sguardo della Casa (per scontro, azione rapida): marchi un nemico, −2 a colpirti per lo scontro</td></tr>
+<tr><td>5</td><td>Ultima Guardia (giornaliero): a 0 PF ti rialzi col 10% della salute massima (minimo 1)</td></tr></table></div>
+<div class="tw span"><table class="lvl"><caption>Set del sovrano di cenere (ex Retaggio del Padrone)</caption><tr><th scope="col">Pezzo</th><th scope="col">Slot</th><th scope="col">Dove</th></tr>
+<tr><td>Anello col sigillo</td><td>anello</td><td>cripta, sarcofago del Primo dei Vespera (libro del figlio maggiore; Sapienza, Atletica)</td></tr>
+<tr><td>Medaglione</td><td>collo</td><td>cimitero, tra i rovi (Sopravvivenza)</td></tr>
+<tr><td>Corno da caccia</td><td>cintura</td><td>Dafne, sempre ottenuto</td></tr>
+<tr><td>Corona</td><td>testa</td><td>sottotetto di Atena (Acrobazia, Furtività)</td></tr>
+<tr><td>Spada (taglio, poteri fissi)</td><td>mano principale</td><td>solo nel finale di Adele, quando scioglie il campo di forza</td></tr></table></div>
+<div class="tw span"><table class="lvl"><caption>Poteri del set di cenere</caption><tr><th scope="col">Pezzi</th><th scope="col">Potere</th><th scope="col">Clausola sul sovrano (nascosta)</th></tr>
+<tr><td>2</td><td>Occhio dell'erede (a volontà): a inizio scontro scopri una resistenza o vulnerabilità</td><td>sangue e psichico: immune → resistente</td></tr>
+<tr><td>4</td><td>Voce del sangue (per scontro, azione rapida, carica): rilanci il primo tiro per colpire mancato (TS e prove: da decidere)</td><td>taglio, perforante e ossa: resistente → neutro</td></tr>
+<tr><td>5</td><td>Sentenza dell'erede (giornaliero): un attacco ignora resistenze e immunità, dado doppio</td><td>mappa dell'armatura azzerata: danno pieno</td></tr></table></div>
+<p><b>Conflitto voluto sulla testa:</b> la corona vale come pezzo cenere e l'elmo come pezzo carne. Fuori dal finale di Adele, corona = cenere 4 + carne 4, elmo = cenere 3 + carne 5; nel finale B 5+4 contro 4+5.</p>
+<div class="todo"><b>Da definire:</b> bonus di ogni singolo pezzo (nella sessione oggetti); la mano libera resta +2 CA (come nel codice) finché non si decide se passa a +3. I poteri a 2 e 4 pezzi e Ultima Guardia sono nel codice dal 15/11; manca Sentenza dell'erede.</div></div>
+<footer class="folio"><span>Il Trono di Cenere</span><span>Capitolo 6 | Set</span></footer></section>
+
+<section class="classe" id="consumabili"><div class="cols"><h1>Elisir, dotazione e bottino</h1>
+<h2>Dotazione comune</h2>
+<p>Torcia (un solo utilizzo; si raccoglie fuori dal dungeon, le torce si sommano). Lanterna di Guendalina (un utilizzo d'olio, ricaricata con l'olio di scarto dei preparati; la offre se accetti la scaletta senza luce). Razioni di Adele, solo regola facoltativa «Fame»: Guendalina ne cucina 1d4 al giorno, tetto 10. Pozioni per le emergenze (valori nel codice).</p>
+<div class="tw span"><table class="lvl"><caption>Elisir comuni (curano lo stato lieve; bere è azione rapida)</caption><tr><th scope="col">Famiglia</th><th scope="col">Elisir</th><th scope="col">Ingrediente</th></tr>
+<tr><td>Sanguinante</td><td>Impiastro di achillea</td><td>achillea (erba)</td></tr>
+<tr><td>Scottato</td><td>Balsamo di grasso di cinghiale</td><td>2 grassi di cinghiale</td></tr>
+<tr><td>Intossicato</td><td>Tintura di fiele di vipera</td><td>fiele di vipera</td></tr>
+<tr><td>Esposto</td><td>Collirio di eufrasia</td><td>eufrasia (erba)</td></tr>
+<tr><td>Indebolito</td><td>Infuso di velluto di cervo</td><td>velluto di cervo</td></tr>
+<tr><td>Impaurito</td><td>Sale di zanna di lupo</td><td>zanna di lupo</td></tr></table></div>
+<div class="tw span"><table class="lvl"><caption>Elisir rari (curano lieve e grave, 3 turni di immunità alla famiglia; ingredienti da animali infernali)</caption><tr><th scope="col">Famiglia</th><th scope="col">Elisir</th><th scope="col">Ingrediente</th></tr>
+<tr><td>Sanguinante</td><td>Impiastro di brace</td><td>piuma del corvo di brace</td></tr>
+<tr><td>Scottato</td><td>Balsamo di brace</td><td>grasso del cinghiale di brace</td></tr>
+<tr><td>Intossicato</td><td>Tintura di brace</td><td>fiele della vipera di brace</td></tr>
+<tr><td>Esposto</td><td>Collirio di cenere</td><td>occhio del ratto di cenere</td></tr>
+<tr><td>Indebolito</td><td>Infuso di cenere</td><td>velluto del cervo di cenere</td></tr>
+<tr><td>Impaurito</td><td>Sale di cenere</td><td>zanna del lupo di cenere</td></tr></table></div>
+<p>Borsa: al massimo 2 per famiglia, rari compresi; un solo raro di protezione attivo per volta (⚠ il codice del 15/11 permette ancora più immunità insieme: da decidere). Bere è un'azione rapida; il comune non basta contro la forma grave. Gli elisir non sono più nelle rastrelliere di Aldo.</p>
+<h2>Le cose degli uomini di Enea</h2>
+<p>Al posto dell'oggetto magico (70%), solo dopo la rivelazione: <b>Scudo di Darius</b> (foresta nord) e <b>Calzari del Pellegrino</b> (foresta est), descritti nel capitolo 4, e lo <b>Spaccatoro di Caius</b> (foresta ovest), descritto nel capitolo 3. Tutti Rari.</p>
+<div class="tw span"><table class="lvl"><caption>Bottino magico dei guardiani (esempi del 28/10, da rivedere)</caption><tr><th scope="col">Grado</th><th scope="col">Oggetto</th><th scope="col">Effetto</th><th scope="col">Probabilità</th></tr>
+<tr><td>Bronzo (Ettore)</td><td>Talismano di ferro freddo; Fascia del cacciatore; Fiala di brace</td><td>vedi capitolo 5; la Fiala cura 2d4</td><td>60%</td></tr>
+<tr><td>Argento (Enea)</td><td>cose di Enea; Amuleto della veglia</td><td>vedi capitoli 3, 4 e 5</td><td>70%</td></tr>
+<tr><td>Oro (Dafne)</td><td>Anello della resina</td><td>vedi capitolo 5</td><td>80%</td></tr>
+<tr><td>Platino (Atena)</td><td>Amuleto della quiete; Stivali della lunga caccia</td><td>vedi capitoli 4 e 5</td><td>90%</td></tr></table></div>
+<p class="note">Armeria di Aldo: non si compra, si baratta (capitolo Bottino). Il tiro per l'oggetto magico si fa a inizio partita e si salva.</p></div>
+<footer class="folio"><span>Il Trono di Cenere</span><span>Capitolo 7 | Consumabili</span></footer></section>
+
+<section class="classe" id="bottino"><div class="cols"><h1>Bottino, baratto e zaino</h1>
+<h2>Baratto con Aldo</h2>
+<p>Niente compravendita. Aldo è lì da millenni; in secoli di cacce, avventurieri morti e guardiani, la Casa ha accumulato ricchezze in ogni angolo. Aldo scambia un oggetto con uno <b>della stessa rarità</b>, Leggendari compresi (la Falce di Atena non ha un ruolo nella storia). Non si può prendere un oggetto più raro lasciandone uno più comune. Sono esclusi i pezzi dei set, legati alla storia. All'armeria i poteri sono sempre visibili.</p>
+<div class="todo">Conta quanti oggetti di una rarità si trovano più di quali: il pool va bilanciato perché nessun oggetto domini per tutte le classi.</div>
+<h2>Bottino dei nemici (regola uniforme)</h2>
+<p>Ogni nemico, guardiani compresi, lascia equipaggiamento base, risorse (pozioni e ingredienti per elisir) e una possibilità di oggetti magici o pergamene, più importanti per i guardiani e più semplici per gli altri. Gli animali della foresta lasciano solo ciò che già sappiamo (pelo, unghie, ecc.), mai equipaggiamento.</p>
+<h2>Loot ibrido</h2>
+<p><b>Fissi, con nome e poteri scritti:</b> premi dei guardiani (la loro arma garantita, con la rarità che cresce lungo il dungeon: Ettore Non comune, Enea Raro, Dafne e Atena Leggendario), set, oggetti di storia, catalogo di Aldo. Tutti i Leggendari stanno qui.</p>
+<p><b>Casuali, da Comune a Raro:</b> il resto del bottino. La rarità decide il bonus (+0 / +1 / +2); il caso decide tipo, nome e un affisso da una tabella per rarità. Il caso sceglie tra poteri e affissi già scritti e approvati, non ne inventa. Il bottino casuale si genera con un seme salvato nel salvataggio, così ricaricare non permette di ritirare. Il baratto con Aldo è la rete di sicurezza.</p>
+<div class="todo">Da definire: tabelle di affissi, fasce di rarità per le stelle dei nemici, livelli delle pergamene, eventuali oggetti maledetti (sempre visibili), probabilità o garantito (proposta: probabilità per Comuni e Non comuni, garantito da Raro in su). Bilanciamento: si misurano la peggiore e la migliore build possibili.</div>
+<h2>Raccogliere</h2>
+<p>Gli oggetti di un nemico esanime si raccolgono dallo zaino con <b>«Raccogli»</b> su un singolo oggetto o <b>«Raccogli tutto»</b>. Raccogliendo un oggetto il suo potere si sblocca. Se lo zaino è pieno, «Raccogli tutto» prende ciò che entra e il resto resta sul cadavere, che resta nella scena.</p>
+<h2>Zaino e nascondiglio</h2>
+<div class="tw"><table class="lvl"><tr><th scope="col">Cosa</th><th scope="col">Capienza</th></tr><tr><td>Pozioni ed elisir</td><td>2 per tipo</td></tr><tr><td>Ingredienti</td><td>10 per tipo</td></tr><tr><td>Equipaggiamento di scorta (non indossato)</td><td>8 posti</td></tr><tr><td>Pergamene</td><td>nessun limite (scheda a parte)</td></tr><tr><td>Oggetti di storia</td><td>nessun limite</td></tr><tr><td>Nascondiglio nello sgabuzzino (dietro i salami)</td><td>10 posti, subito; pozioni ed elisir dello stesso tipo in un posto (×N, tetto 10)</td></tr><tr><td>Stanza dei ragazzi</td><td>nessun posto per ora</td></tr></table></div>
+<div class="todo">Capienze decise il 14/11. Da fare nel gioco: togliere, buttare o posare oggetti nello sgabuzzino della dispensa (15/11). I nascondigli si usano solo in Casa e mai durante uno scontro; per il baratto conta solo ciò che si ha nello zaino.</div></div>
+<footer class="folio"><span>Il Trono di Cenere</span><span>Capitolo 8 | Bottino</span></footer></section>
+
+<section class="classe" id="loot"><div class="cols"><h1>Loot casuale</h1>
+<p class="lead">Prima versione del 13/11/2026, da lavorare insieme. Percentuali, pesi e poteri sono ipotesi da misurare con le serie di scontri.</p>
+<h2>In breve</h2>
+<p>Gli oggetti <b>fissi</b> (guardiani, set, storia, catalogo di Aldo, tutti i Leggendari) restano scritti a mano. Il resto del bottino, da Comune a Raro, lo decide il caso: la <b>rarità</b> dà il bonus (+0, +1, +2), il caso sceglie tipo, base, nome e, per i Rari, un potere per scontro tra quelli già scritti. Il caso non inventa poteri nuovi. Si genera con un <b>seme di partita</b>: ricaricare dà lo stesso bottino. Un'abilità non supera mai +3, anche sommando più pezzi.</p>
+<h2>1. Cosa cade</h2>
+<div class="tw span"><table class="lvl"><tr><th scope="col">Nemico</th><th scope="col">Equip. base</th><th scope="col">Risorse</th><th scope="col">Non comune</th><th scope="col">Raro</th><th scope="col">Pergamena</th></tr><tr><td>★ bronzo</td><td>60%</td><td>60%</td><td>25%</td><td>—</td><td>10%, semplice</td></tr><tr><td>★★ argento</td><td>50%</td><td>60%</td><td>35%</td><td>10%</td><td>15%, semplice</td></tr><tr><td>★★★ oro / platino</td><td>40%</td><td>70%</td><td>35%</td><td>25%</td><td>25%, semplice o importante</td></tr><tr><td>Animali</td><td>solo pelo, unghie, ecc.</td><td></td><td></td><td></td><td></td></tr></table></div>
+<p><b>Guardiani:</b> arma propria garantita (Ettore Non comune, Enea Raro, Dafne e Atena Leggendario) più il tiro già esistente di oggetto magico o pergamena importante (60%, 70%, 80%, 90%). Il garantito resta solo per i premi fissi; per il caso c'è la probabilità. Pergamena semplice = potere per scontro; importante = giornaliero (da allineare con il documento sugli elisir).</p>
+<h2>2. Come si genera un oggetto</h2>
+<ol><li><b>Slot:</b> arma 25%, armatura o scudo 20%, elmo, guanti, stivali e mantello 8% l'uno, accessori 23%.</li><li><b>Base:</b> dalle tabelle qui sotto. Il Comune finisce qui.</li><li><b>Bonus</b> secondo la rarità: arma a colpire e ai danni; armatura e scudo alla CA; gli altri pezzi a una abilità o a un tiro salvezza.</li><li><b>Nome:</b> base + «di» + sostantivo, senza articolo (<i>Spadone di brace</i>, <i>Elmo di vedetta</i>). Sostantivi: brace, cenere, vedetta, cacciatore, radice, veglia, ferro, nebbia, spina, sale, corvo, lupo.</li><li><b>Potere per scontro</b> solo ai Rari. I Non comuni non hanno poteri.</li></ol>
+<h2>3. Armi base</h2>
+<div class="tw span"><table class="lvl"><tr><th scope="col">Tipo</th><th scope="col">Una mano (1d6)</th><th scope="col">Due mani (1d8)</th></tr><tr><td>Taglio</td><td>Spada corta, Scimitarra, Ascia</td><td>Spadone, Mannaia</td></tr><tr><td>Contundente</td><td>Mazza chiodata, Martello, Randello</td><td>Maglio, Mazza a due mani</td></tr><tr><td>Perforante</td><td>Daga lunga, Giavellotto</td><td>Tridente, Lancia</td></tr><tr><td>Focus</td><td>Libro arcano, Filatterio, Simbolo sacro (1d6)</td><td>Bastone (1d8, arma e focus insieme)</td></tr></table></div>
+<p>Due armi portate al massimo; con un'arma a due mani non si imbraccia lo scudo. Il tipo decide lo stato dei poteri.</p>
+<h2>4. Bonus degli altri pezzi (elmo, guanti, stivali, mantello, anelli, amuleto, cintura)</h2>
+<p>Si tira 1d12; il bonus è +1 (Non comune) o +2 (Raro).</p>
+<div class="tw span"><table class="lvl"><tr><th scope="col">d12</th><th scope="col">Bonus</th></tr><tr><td>1</td><td>Percezione</td></tr><tr><td>2</td><td>Sopravvivenza</td></tr><tr><td>3</td><td>Furtività</td></tr><tr><td>4</td><td>Atletica</td></tr><tr><td>5</td><td>Indagare</td></tr><tr><td>6</td><td>TS contro Scottato</td></tr><tr><td>7</td><td>TS contro Intossicato</td></tr><tr><td>8</td><td>TS contro Impaurito</td></tr><tr><td>9</td><td>TS contro Esposto</td></tr><tr><td>10</td><td>TS contro Indebolito</td></tr><tr><td>11</td><td>TS contro Stordito</td></tr><tr><td>12</td><td>Salute mentale massima</td></tr></table></div>
+<p>Armi e armature Non comuni: l'affisso è solo nome, il +1 va a colpire e ai danni o alla CA.</p>
+<h2>5. Poteri per scontro dei Rari: armi</h2>
+<p>Si estrae un potere del <b>tipo</b> dell'arma, su un colpo a segno. Valgono solo per gli oggetti casuali: gli oggetti con nome restano quelli scritti.</p>
+<div class="tw span"><table class="lvl"><tr><th scope="col">Tipo</th><th scope="col">Potere</th><th scope="col">Effetto</th></tr><tr><td>Taglio</td><td>Doppio colpo</td><td>secondo colpo gratuito; se Sanguinante, Emorragia</td></tr><tr><td>Taglio</td><td>Taglio profondo</td><td>un dado in più e applica Sanguinante (o Emorragia)</td></tr><tr><td>Taglio</td><td>Fendente</td><td>due dadi in più, nessuno stato</td></tr><tr><td>Contundente</td><td>Schianto</td><td>un dado in più; Stordito (TS; boss Indebolito); se già Stordito, Commosso</td></tr><tr><td>Contundente</td><td>Spaccaguardia</td><td>ignora le resistenze (non le immunità)</td></tr><tr><td>Contundente</td><td>Scossone</td><td>Stordito senza TS</td></tr><tr><td>Perforante</td><td>Punta nella piaga</td><td>Esposto; se già Esposto, Scoperto</td></tr><tr><td>Perforante</td><td>Affondo</td><td>+4 a colpire e un dado in più</td></tr><tr><td>Perforante</td><td>Doppia punta</td><td>due attacchi di fila, il secondo con −2</td></tr><tr><td>Focus</td><td>Segno sulla mappa</td><td>il prossimo stato che applichi entra senza TS</td></tr><tr><td>Focus</td><td>Mente acuta</td><td>+2 a colpire e +2 alla CD del prossimo potere</td></tr><tr><td>Focus</td><td>Eco</td><td>il prossimo potere a volontà non usa l'azione standard</td></tr></table></div>
+<h2>6. Poteri per scontro dei Rari: armature e altri pezzi</h2>
+<div class="tw span"><table class="lvl"><tr><th scope="col">Gruppo</th><th scope="col">Potere</th><th scope="col">Effetto</th></tr><tr><td>Armatura</td><td>Ombra</td><td>il primo attacco contro di te ha −4 a colpire</td></tr><tr><td>Armatura</td><td>Veglia</td><td>un colpo subito è ridotto di 4</td></tr><tr><td>Armatura</td><td>Fermezza</td><td>un TS contro uno stato appena applicato riesce</td></tr><tr><td>Scudo</td><td>Muro</td><td>+2 CA per 3 turni</td></tr><tr><td>Scudo</td><td>Riflesso</td><td>un nemico che ti manca subisce 1d6</td></tr><tr><td>Scudo</td><td>Parata</td><td>un colpo subito è dimezzato</td></tr><tr><td>Elmo, guanti, stivali, mantello, anelli, amuleto, cintura</td><td>Occhio vigile</td><td>un TS contro Impaurito o Esposto riesce</td></tr><tr><td>(stessi)</td><td>Mano ferma</td><td>il prossimo attacco ignora le resistenze</td></tr><tr><td>(stessi)</td><td>Passo leggero</td><td>il prossimo attacco contro di te ha −4</td></tr><tr><td>(stessi)</td><td>Respiro</td><td>cura 1d8</td></tr><tr><td>(stessi)</td><td>Presa salda</td><td>un TS contro Stordito o Indebolito riesce</td></tr><tr><td>(stessi)</td><td>Colpo d'occhio</td><td>+4 al tuo prossimo attacco</td></tr></table></div>
+<p>Due pezzi con lo stesso potere non si sommano.</p>
+<h2>7. Oggetti maledetti (opzionale)</h2>
+<p>Visibili prima di raccoglierli: bonus più alto ma un malus nominato. Esempi: <i>Spadone di spina</i> (+3, ma −2 CA mentre è equipaggiato), <i>Elmo di nebbia</i> (+2 Percezione, −1 TS contro Impaurito), <i>Anello di cenere</i> (+1 TS contro Scottato, −1 salute mentale massima).</p>
+<div class="todo"><b>Da fare:</b> approvare percentuali, pesi e poteri; leggere dal codice i valori base e il malus delle armature; scrivere il generatore con seme; misurare la peggiore e la migliore build.</div></div>
+<footer class="folio"><span>Il Trono di Cenere</span><span>Capitolo 9 | Loot casuale</span></footer></section>
+
+<section class="classe" id="aperti"><div class="cols"><h1>Da collocare e da decidere</h1>
+<h2>Oggetti senza rarità</h2>
+<div class="tw span"><table class="lvl"><tr><th scope="col">Oggetto</th><th scope="col">Perché è aperto</th></tr>
+<tr><td>Pergamene</td><td>Lasciti di avventurieri, non equipaggiamento: si legano a uno slot di potere. Prima proposta: la pergamena di fuoco sacro della Strega della torbiera</td></tr>
+<tr><td>Fede nuziale di Adele</td><td>Reliquia di storia «intrisa d'amore», non è nella soglia del Retaggio</td></tr>
+<tr><td>Fermagli</td><td>Slot «fermaglio»: indossato dà il titolo di guardiano sotto il ritratto (bronzo: +2 Furtività nel pedinamento ma più agguati)</td></tr></table></div>
+<h2>Oggetti di trama</h2>
+<p>Fuori dalla scala di rarità: scaletta della cantina, foglietto di Adele, Blasone d'Argento, Lacrime della Regina (tre), collier e collana vuota, diari e Appunti di Guendalina, libro del figlio maggiore, giocattoli di Agnese (cinque, ne servono tre).</p>
+<h2>Punti da decidere insieme</h2>
+<div class="todo"><ol><li>Decisi il 13/11: baratto alla pari con Aldo (Leggendari compresi, set esclusi), poteri dei set per soglia, nomi provvisori accettati, loot ibrido, dadi per categoria.</li><li>I poteri nuovi delle armi (quattro per scontro, quattro giornalieri) e le cinque modifiche alla matrice del 06/11.</li><li>Tabella del bottino per tipo di nemico, affissi casuali, capienze di zaino e nascondigli.</li><li>Nomi e valori di armi e armature di base, dal codice.</li></ol></div></div>
+<footer class="folio"><span>Il Trono di Cenere</span><span>Appendice | Aperti</span></footer></section>
+
+</main></body></html>

@@ -28,9 +28,11 @@
     const z = P.tiroSalvezza(b, "sanguinante", fonte, dadi([6]));
     eq([z.attr, z.tot, z.cd, z.ok], ["Vigore", 12, 12, true]);
   });
-  caso("TS: la caratteristica dipende dallo stato (Scottato Agilità, Esposto Mente, Impaurito Spirito)", () => {
+  caso("TS: la caratteristica dipende dallo stato (14/11: Scottato ed Esposto Agilità, Vuoto Mente, Impaurito e Maledetto Spirito)", () => {
     eq(P.tiroSalvezza(pg(), "scottato", fonte, dadi([1])).attr, "Agilità");
-    eq(P.tiroSalvezza(pg(), "esposto", fonte, dadi([1])).attr, "Mente");
+    eq(P.tiroSalvezza(pg(), "esposto", fonte, dadi([1])).attr, "Agilità");
+    eq(P.tiroSalvezza(pg(), "vuoto", fonte, dadi([1])).attr, "Mente");
+    eq(P.tiroSalvezza(pg(), "maledizione", fonte, dadi([1])).attr, "Spirito");
     eq(P.tiroSalvezza(pg(), "impaurito", fonte, dadi([1])).attr, "Spirito");
     eq(P.tiroSalvezza(pg(), "indebolito", fonte, dadi([1])).attr, "Vigore");
   });
@@ -177,6 +179,34 @@
     eq(!!P.subisci(b, 15).vacillanteOra, false, "a 15 su 30 non è ancora sotto il 50%"); vero(!P.vacillante(b));
     eq(P.subisci(b, 1).vacillanteOra, true); vero(P.vacillante(b));
     eq(!!P.subisci(b, 1).vacillanteOra, false);
+  });
+
+
+  /* ===== 15/11: scudi di PF, stati del sovrano, tipi nuovi ===== */
+  caso("Scudo di PF: assorbe prima della salute; uno alla volta; il danno assorbito non è salute persa", () => {
+    const b = pg();
+    eq(P.creaScudo(b, "corteccia_viva", 6).k, "scudo");
+    eq(P.creaScudo(b, "radici_avvolgenti", 9).k, "scudoRifiutato", "uno alla volta");
+    const e = P.subisci(b, 4, "taglio"); eq([e.danno, e.assorbito, b.scudoPF.pf], [0, 4, 2]);
+    const e2 = P.subisci(b, 5, "taglio"); eq([e2.danno, e2.assorbito, b.scudoPF], [3, 2, null], "lo scudo finito sparisce");
+    eq(P.creaScudo(b, "radici_avvolgenti", 9).k, "scudo", "finito lo scudo se ne crea un altro");
+    eq(P.creaScudo(b, "corazza", 8, { sostituisci: true }).max, 8, "Corteccia nuova / Corazza sostituiscono");
+  });
+  caso("Scudo: le vulnerabilità si contano prima dello scudo; i danni continuativi passano anche loro dallo scudo", () => {
+    const b = pg(); b.res = { taglio: "vuln" }; P.creaScudo(b, "s", 5);
+    const e = P.subisci(b, 4, "taglio"); eq([e.assorbito, e.danno], [5, 1]);
+    const c = pg(); P.creaScudo(c, "s", 10); P.metti ? 0 : 0; c.stati = { sanguinante: { liv: 1, turni: 3 } };
+    const t = P.tick(c, "sanguinante", dadi([3])); eq([t.danno, c.scudoPF.pf], [0, 7]);
+  });
+  caso("Stati del sovrano: Maledetto dimezza le cure, Condannato le annulla; Svuotato e Furente esistono con il loro nome", () => {
+    const b = pg(); eq(P.fattoreCure(b), 1);
+    P.applica(b, "maledizione", { senzaTs: true }); eq([P.nomeStato("maledizione", 1), P.fattoreCure(b)], ["Maledetto", 0.5]);
+    P.aggrava(b, "maledizione", {}); eq([P.nomeStato("maledizione", 2), P.fattoreCure(b)], ["Condannato", 0]);
+    eq([P.nomeStato("vuoto", 1), P.nomeStato("vuoto", 2), P.nomeStato("furente", 1)], ["Svuotato", "Prosciugato", "Furente"]);
+  });
+  caso("Stordito: perde l'intero turno, anche l'azione rapida; tipi nuovi forza e psichico", () => {
+    const b = pg(); P.applica(b, "stordito", { senzaTs: true }); eq([P.puoAgire(b), P.puoAzioneRapida(b)], [false, false]);
+    vero(P.TIPI.includes("forza") && P.TIPI.includes("psichico") && !P.TIPI.includes("illusione"));
   });
 
   function esegui() { return casi.map(({ nome, fn }) => { try { fn(); return { nome, ok: true }; } catch (e) { return { nome, ok: false, errore: e.message }; } }); }

@@ -6505,7 +6505,7 @@
       pg.livello = livelloPg() + 1;
       righe.push(RG.livello.abilita(pg.livello), RG.livello.prove((pg.livello - 1) * R_.CD_PER_LIVELLO));
       if (pg.livello >= LIVELLO_MAX) righe.push(RG.livello.massimo);
-      if (motoreNuovo()) { righe.push("Al riposo scegli i poteri del nuovo livello (le scelte sono definitive)."); if (pg.livello === 2) righe.push("Tratto: " + MotSP.TRATTI[MotSP.SPEC[pg.classe].classe.tratti[2]].nome + "."); if (pg.livello === 3 && !viaPg()) righe.push("Puoi scegliere la via di prestigio di Aldo o di Guendalina nella sezione Poteri."); }
+      if (motoreNuovo()) { righe.push("Al riposo scegli i poteri del nuovo livello (le scelte sono definitive)."); if (pg.livello === 3) righe.push("Privilegio di classe: " + MotSP.TRATTI[MotSP.SPEC[pg.classe].classe.privilegi[3]].nome + "."); if (pg.livello === 5) righe.push("Privilegio di classe: " + MotSP.POTERI[MotSP.SPEC[pg.classe].classe.privilegi[5]].nome + "."); if (pg.livello === 2 && !viaPg()) righe.push("Puoi scegliere la via di prestigio di Aldo o di Guendalina nella sezione Poteri."); }
       if (haTecniche() && TEC.some(t => t.liv === pg.livello && t.tipo !== "Utilita" && !t.via && tecDellaClasse(t))) righe.push(RT.nuovoPosto(pg.livello));
       if (haTecniche() && pg.livello === 3 && !viaPg()) righe.push(RT.via.sblocco);
       if (incantatore()) { righe.push(RT.inc.nuovoPosto(pg.livello)); if (pg.livello === 3 && !viaPg()) righe.push(RT.inc.viaSblocco); }
@@ -6770,7 +6770,7 @@
       if (magia) sep("sep-spazio");
       if (manaMax() != null) riga(vit, U.mana, `${manaAttuale()} / ${manaMax()}`, "mana");
       if (risorsaPg()) riga(vit, nomeRisorsa(), `${risorsaAttuale()} / ${risorsaPg().max}`, "risorsa"); /* punti furia o punti natura */
-      if (motoreNuovo()) { riga(vit, "CD dei tuoi stati", String(8 + modAttaccoPg() + livelloPg()), "cdinc"); if (pg.classe === "Forestiero") riga(vit, "Elisir (Infuso)", String(Number(pg.elisir) || 0), "cdinc"); }
+      if (motoreNuovo()) { riga(vit, "CD dei tuoi stati", String(8 + modAttaccoPg() + livelloPg()), "cdinc"); if (pg.classe === "Forestiero" && livelloPg() >= 5) riga(vit, "Elisir (Infuso)", String(Number(pg.elisir) || 0), "cdinc"); }
       else if (cdIncantesimi() != null) riga(vit, CB.cdInc, String(cdIncantesimi()), "cdinc");
       if (scontro && pg.classe === "Accolito") riga(vit, Lingua.t({ it: "Bilancia", en: "Balance" }), nomeBilancia(Number(scontro.bilancia) || 0), "cdinc");
       const sc = (() => { try { return scontro; } catch (e) { return null; } })();
@@ -7062,7 +7062,7 @@
     }
     /* Scelta della via (PROVVISORIA: da spostare nei dialoghi con Aldo e Guendalina). Si sceglie una volta sola. */
     function sceglieVia(v) {
-      if (viaPg() || !["aldo", "guendalina"].includes(v) || livelloPg() < 3 || !(motoreNuovo() || haTecniche() || incantatore())) return false;
+      if (viaPg() || !["aldo", "guendalina"].includes(v) || livelloPg() < (motoreNuovo() ? 2 : 3) || !(motoreNuovo() || haTecniche() || incantatore())) return false;
       usate.via = v; salvaUsate(); disegnaTecniche(); disegnaIncantesimi();
       fuoriDallaTendina(() => aggiungi({ tipo: "sistema", box: "cap", righe: [RT.via.scelta(nomeViaPg(v))] }));
       return true;
@@ -7788,7 +7788,7 @@
     function curaRiposo(conDigiuno) {
       const ris = risorsaPg();
       const pieno = !(pg.dannoFisico > 0) && !(pg.dannoMentale > 0) && !(pg.manaUsato > 0 && manaMax() != null) && !(pg.risorsaUsata > 0 && ris) && !Object.keys(statiPg()).length; /* con uno stato alterato si può sempre riposare */
-      const ricarica = motoreNuovo() && ((pg.giornalieriUsati || []).length > 0 || (pg.classe === "Forestiero" && (Number(pg.elisir) || 0) < (viaPg() === "guendalina" && livelloPg() >= 4 ? 3 : 2))); /* 08/11: si riposa anche per i giornalieri e l'Infuso */
+      const ricarica = motoreNuovo() && ((pg.giornalieriUsati || []).length > 0 || (pg.classe === "Forestiero" && livelloPg() >= 5 && (Number(pg.elisir) || 0) < 2)); /* 15/11: Infuso al livello 5, massimo 2 */ /* 08/11: si riposa anche per i giornalieri e l'Infuso */
       if (pieno && !livelliPronti() && !ricarica) return null; /* 01/11: con un livello in attesa si può riposare anche al pieno */
       let scorta = razioni();
       if (scorta <= 0 && !conDigiuno) return { fame: true };
@@ -11878,7 +11878,7 @@
     const tipoOk = (t) => t.tipo === "Utilita" || t.tipo === "Natura" || (t.tipo === "Scudo" ? !!scudo : t.tipo === tipoArmaInMano()); /* lo Sciamano usa le sue con qualsiasi arma */
     const scudoPosti = () => !sciamano() && !!scudo; /* il posto in più dello scudo è del Guerriero */
     const maxTecniche = () => CMB.slotTecniche(livelloPg(), scudoPosti()); /* 2, 4, 5, 6, 7 (+1 con lo scudo) */
-    const viaPg = () => ((motoreNuovo() || haTecniche() || incantatore()) && livelloPg() >= 3 && (usate.via === "aldo" || usate.via === "guendalina")) ? usate.via : null;
+    const viaPg = () => ((motoreNuovo() || haTecniche() || incantatore()) && livelloPg() >= (motoreNuovo() ? 2 : 3) && (usate.via === "aldo" || usate.via === "guendalina")) ? usate.via : null;
     const nomeViaPg = (v) => incantatore() ? Lingua.t(MG.NOMI_VIE[pg.classe][v]) : sciamano() ? RT.via.nomiNatura[v] : RT.via.nomi[v];
     const tipoArmaVia = () => tipoArmaInMano() || eqPg().armaTipoDanno; /* le abilità della via cambiano con il tipo d'arma */
     /* serie della via preparata al riposo: quella dell'arma o quella dello scudo (usate.viaSerie) */
@@ -12536,11 +12536,12 @@
     function combattentePg() {
       const liv = livelloPg(), st = (a) => Number(pg.statistiche && pg.statistiche[a]) || 10;
       const m = { Vigore: mod(st("Vigore")), "Agilità": mod(st("Agilità")), Mente: mod(st("Mente")), Spirito: mod(st("Spirito")) };
-      const via = liv >= 3 && (usate.via === "aldo" || usate.via === "guendalina") ? usate.via : null;
+      const via = liv >= 2 && (usate.via === "aldo" || usate.via === "guendalina") ? usate.via : null; /* 15/11: la via si sceglie al livello 2 */
       const tipo = TIPI_ARMA_MOT[(arma && arma.tipoDanno) || eqPg().armaTipoDanno] || "contundente";
       return MotS.preparaScontro({
-        nome: "Tu", classe: pg.classe, spec: pg.spec, liv, mod: m, modClasse: modAttaccoPg(), pv: pvPg(), pvMax: pvMaxPg(),
-        caBase: Number(caAttuale()) || 10, arma: { dado: dadoArmaPg(false), tipo, bonus: bonusArmaPg() }, scudo: !!scudo, focus: { dado: 8, bonus: 0 }, via,
+        nome: "Tu", classe: pg.classe, spec: MotSP.ALIAS[pg.spec] || pg.spec, liv, mod: m, modClasse: modAttaccoPg(), pv: pvPg(), pvMax: pvMaxPg(),
+        caBase: Number(caAttuale()) || 10, arma: { dado: dadoArmaPg(false), tipo, bonus: bonusArmaPg() }, scudo: !!scudo,
+        focus: pg.classe !== "Soldato" && !scudo ? { dado: 8, bonus: 0 } : null, via, /* 15/11: focus solo degli incantatori, in mano secondaria (lo scudo lo esclude) */
         poteri: MotSP.poteriAlLivello(pg.classe, pg.spec, pg.scelte || [], liv), tratti: MotSP.trattiAlLivello(pg.classe, liv), stati: {},
         usati: { scontro: {}, giorno: Object.fromEntries((pg.giornalieriUsati || []).map(k => [k, true])) }, elisir: Number(pg.elisir) || 0
       });
@@ -12591,6 +12592,7 @@
       primaDelMotore();
       const sv = document.getElementById("sangueVersato"), r = MotS.usa(M.pg, M.nem, id, { tira }, { sangueVersato: !!(sv && sv.checked) });
       segnaTurno(P0.nome); narraMotore(r.eventi); sincronizzaMotore(); scuotiNemico();
+      if (P0.rapida) { barraScontro(); return; } /* 15/11: azione rapida (elisir): il turno continua */
       fineAzioneNuovo();
     }
     function fineAzioneNuovo() {
@@ -12664,13 +12666,13 @@
       const tit = document.createElement("b"); tit.textContent = P0.nome + " — ";
       const tx = document.createElement("span"); tx.textContent = P0.testo + (d.ok ? "" : ` (${motivi[d.motivo] || d.motivo})`);
       det.append(tit, tx);
-      if (M.pg.spec === "sangue") { const l = document.createElement("label"); l.style.display = "block"; l.innerHTML = `<input type="checkbox" id="sangueVersato"> Sangue versato (3 salute per un dado in più, sopra il 50%)`; det.append(l); }
+      if (M.pg.spec === "sangue") { const l = document.createElement("label"); l.style.display = "block"; l.innerHTML = `<input type="checkbox" id="sangueVersato"> Sangue versato (${Math.ceil(M.pg.pvMax / 10)} salute per un dado in più, sopra il 50%)`; det.append(l); }
       const u = document.createElement("button"); u.type = "button"; u.textContent = "Usa " + P0.nome; u.disabled = !d.ok;
       u.addEventListener("click", () => usaPotereNuovo(scontro.potSel));
       det.append(document.createElement("br"), u); box.append(det);
       const st = document.createElement("div"); st.className = "pot-gruppo"; st.style.marginTop = "0.3rem";
       const stati = Object.keys(M.pg.stati || {}).filter(k => MotP.ha(M.pg, k)).map(k => `${MotP.nomeStato(k, M.pg.stati[k].liv)} ${M.pg.stati[k].turni}`);
-      const extra = [M.pg.copie ? `Copie ${M.pg.copie}` : "", M.pg.placche ? `Placche ${M.pg.placche}` : "", M.pg.classe === "Forestiero" ? `Elisir ${M.pg.elisir || 0}` : ""].filter(Boolean);
+      const extra = [M.pg.copie ? `Copie ${M.pg.copie}` : "", M.pg.placche ? `Placche ${M.pg.placche}` : "", M.pg.classe === "Forestiero" && M.pg.liv >= 5 ? `Elisir ${M.pg.elisir || 0}` : "", MotP.scudoAttivo(M.pg) ? `Scudo ${M.pg.scudoPF.pf}/${M.pg.scudoPF.max} PF` : ""].filter(Boolean);
       st.textContent = `Su di te: ${stati.length ? stati.join(", ") : "nessuno stato"}${extra.length ? " · " + extra.join(" · ") : ""} · CA ${MotS.ca(M.pg)}`;
       box.append(st);
       b.append(box);
@@ -12697,14 +12699,14 @@
       E.scontro.forEach(id => { const ann = E.pronto === id, us = E.usati && E.usati.scontro[id]; voce(sp, id, ann ? "annunciato: colpirà al prossimo turno" : us ? "già usato" : "disponibile", ann ? "annunciato" : us ? "usato" : ""); });
       if (!E.scontro.length) { const v = document.createElement("p"); v.className = "vuoto"; v.textContent = "Nessuno."; sp.append(v); }
     }
-    /* riposo (08/11): tornano i giornalieri; lo Sciamano prepara un elisir (Infuso: massimo 2, 3 con Mani che curano) */
+    /* riposo (08/11, 15/11): tornano i giornalieri; lo Sciamano dal livello 5 prepara un elisir (Infuso: massimo 2) */
     function riposoMotore() {
       if (!motoreNuovo()) return;
       const righe = [];
       if ((pg.giornalieriUsati || []).length) righe.push("I tuoi poteri giornalieri sono di nuovo pronti.");
       pg.giornalieriUsati = [];
-      if (pg.classe === "Forestiero") {
-        const max = viaPg() === "guendalina" && livelloPg() >= 4 ? 3 : 2, prima = Number(pg.elisir) || 0;
+      if (pg.classe === "Forestiero" && livelloPg() >= 5) {
+        const max = 2, prima = Number(pg.elisir) || 0;
         pg.elisir = Math.min(max, prima + 1);
         righe.push(pg.elisir > prima ? `Infuso: prepari un elisir (${pg.elisir} / ${max}).` : `Infuso: porti già il massimo di elisir (${max}).`);
       }
@@ -12732,9 +12734,9 @@
         aggiungi({ tipo: "sistema", box: "cap", righe: [`Livello ${o.livello}: ${nomeP(id)} (${tipo[MotSP.POTERI[id].tipo]}). Scelta definitiva.`] });
         setTimeout(sceltePendenti, 300);
       };
-      if (o.opzioni.length === 1) return prendi(o.opzioni[0]); /* l'a volontà che mancava arriva da solo al livello 4 */
+      if (o.opzioni.length === 1) return prendi(o.opzioni[0]);
       const gia = MotSP.poteriAlLivello(pg.classe, pg.spec, presi, o.livello);
-      const titolo = { scontro: "scegli il potere per scontro", giornaliero: "scegli il giornaliero", libera: "scegli la strada: il terzo a volontà o un potere per scontro" }[o.tipo] || "scegli";
+      const titolo = { scontro: "scegli il potere per scontro", giornaliero: "scegli il giornaliero", volonta: "scegli un potere a volontà" }[o.tipo] || "scegli";
       aggiungi({ tipo: "narra", box: "cap", righe: [
         `Livello ${o.livello}: ${titolo}. La scelta è definitiva.`,
         "Hai già: " + gia.map(id => `${nomeP(id)} (${tipo[MotSP.POTERI[id].tipo]})`).join(", ") + ".",
@@ -12754,14 +12756,14 @@
         const p = document.createElement("p"); p.textContent = testo; p.style.margin = "0.2rem 0 0.4rem"; p.style.fontSize = "0.9em";
         d.append(su, p); box.append(d);
       };
-      const sp = MotSP.SPEC[pg.classe][pg.spec];
+      const sp = MotSP.specDi(pg.classe, pg.spec);
       const t0 = document.createElement("p"); t0.className = "livello"; t0.textContent = `${sp.nome} — ${sp.descr || ""}`; box.append(t0);
       ["volonta", "scontro", "giornaliero"].forEach(tp => ids.filter(id => MotSP.POTERI[id].tipo === tp).forEach(id => voce(MotSP.POTERI[id].nome, tipo[tp] + (usati.has(id) ? " (usato oggi)" : ""), MotSP.POTERI[id].testo)));
-      MotSP.trattiAlLivello(pg.classe, liv).forEach(k => voce(MotSP.TRATTI[k].nome, "tratto", MotSP.TRATTI[k].testo));
-      if (liv >= 3 && !viaPg()) { /* via di prestigio: provvisorio finché non ci sono i dialoghi di Aldo e Guendalina */
+      MotSP.trattiAlLivello(pg.classe, liv).forEach(k => voce(MotSP.TRATTI[k].nome, "privilegio di classe", MotSP.TRATTI[k].testo));
+      if (liv >= 2 && !viaPg()) { /* via di prestigio: provvisorio finché non ci sono i dialoghi di Aldo e Guendalina */
         const p = document.createElement("p"); p.textContent = "Via di prestigio (provvisorio, poi dai dialoghi): "; box.append(p);
         [["aldo", "Aldo, la caccia"], ["guendalina", "Guendalina, il focolare"]].forEach(([v, n]) => { const b = document.createElement("button"); b.type = "button"; b.className = "btn-sec"; b.textContent = n; b.style.margin = "0 0.4rem 0.4rem 0"; b.addEventListener("click", () => sceglieVia(v)); box.append(b); });
-      } else if (viaPg()) voce("Via di " + (viaPg() === "aldo" ? "Aldo, la caccia" : "Guendalina, il focolare"), "via di prestigio", viaPg() === "aldo" ? "Occhio del cacciatore (3), Odore del sangue (4), Senza scampo (5)." : "La lanterna (3), Mani che curano (4), La soglia di casa (5).");
+      } else if (viaPg()) voce(MotSP.VIE[viaPg()].nome, "via di prestigio", [2, 3, 4].map(l => { const x = MotSP.VIE[viaPg()].poteri[l]; return `${x.nome} (${l})${l <= liv ? "" : " non ancora"}: ${x.testo}`; }).join(" "));
     }
     /* personaggi creati prima del motore nuovo: vanno ricreati */
     function avvisoPersonaggioVecchio() {

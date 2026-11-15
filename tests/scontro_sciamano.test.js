@@ -1,4 +1,4 @@
-/* Test dello Sciamano (Spore, Linfa) sul motore nuovo. Dadi programmati. Uso: node tests/scontro_sciamano.test.js */
+/* Test dello Sciamano (Funghi, Legno) sul motore nuovo. Dadi programmati. Uso: node tests/scontro_sciamano.test.js */
 (function (root) {
   const inNode = typeof module !== "undefined" && module.exports && typeof require === "function";
   if (inNode) { root.window = root; require("../js/poteri.js"); require("../js/specializzazioni.js"); require("../js/scontro.js"); }
@@ -14,7 +14,7 @@
   const fine = (c) => { if (c.tira.resto()) throw new Error(`dadi avanzati: ${c.tira.resto()}`); };
   /* Sciamano: Agilità +3, mazza (contundente d6), CA 14, salute 30 */
   const sciamano = (o) => Object.assign({ nome: "pg", liv: 1, pv: 30, pvMax: 30, modClasse: 3, mod: { Vigore: 1, "Agilità": 3, Mente: 0, Spirito: 1 },
-    caBase: 14, arma: { dado: 6, tipo: "contundente" }, tratti: [], spec: "spore" }, o || {});
+    caBase: 14, arma: { dado: 6, tipo: "contundente" }, tratti: [], spec: "funghi" }, o || {});
   const nemico = (o) => Object.assign({ nome: "nem", liv: 1, pv: 20, pvMax: 20, modAtt: 2, modDanno: 1, mod: {}, caBase: 12, arma: { dado: 6, tipo: "taglio" } }, o || {});
   const veleno = (liv, turni) => ({ intossicato: { liv, turni, tipo: "veleno" } });
   const ev = (r, k) => (r.eventi || r).filter(e => e && e.k === k);
@@ -29,28 +29,39 @@
     const s = sciamano(), n = nemico(), c = ctx([10, 4, 5]); S.usa(s, n, "puntura_di_mandragora", c);
     eq([n.pv, n.stati.intossicato.turni], [13, 3]); fine(c);
   });
-  caso("Legame del sottobosco: i veleni durano 4 turni", () => {
+  caso("Legame del sottobosco: gli stati da 3 turni che applichi durano 4 (non Stordito né Impaurito)", () => {
     const s = sciamano({ tratti: ["legame_sottobosco"] }), n = nemico(), c = ctx([10, 4, 5]); S.usa(s, n, "puntura_di_mandragora", c);
     eq(n.stati.intossicato.turni, 4); fine(c);
+    const l = sciamano({ tratti: ["legame_sottobosco"], spec: "legno" }), m = nemico(), c2 = ctx([10, 3, 2]); S.usa(l, m, "radice_inchiodante", c2);
+    eq(m.stati.indebolito.turni, 4); fine(c2);
+    const m2 = nemico(), c3 = ctx([10, 3, 2]); S.usa(l, m2, "colpo_di_nodo", c3); eq(m2.stati.stordito.turni, 1); fine(c3);
   });
   caso("Tappeto di micelio: solo il dado, Indebolito; il veleno dura 1 turno in più", () => {
     const s = sciamano(), n = nemico({ stati: veleno(1, 2) }), c = ctx([10, 3, 2]); S.usa(s, n, "tappeto_di_micelio", c);
     eq([n.pv, n.stati.intossicato.turni], [17, 3]); vero(P.ha(n, "indebolito")); fine(c);
   });
-  caso("Radici profonde: +1d4 contro un Avvelenato", () => {
+  caso("Radici profonde: +1d4 se il bersaglio ha uno stato, qualsiasi (11/11)", () => {
     const s = sciamano({ tratti: ["radici_profonde"] }), n = nemico({ stati: veleno(2, 3) }), c = ctx([10, 2, 3, 5]);
     S.usa(s, n, "puntura_di_mandragora", c); eq(n.pv, 12); fine(c);
+    const m = nemico({ stati: { indebolito: { liv: 1, turni: 2 } } }), c2 = ctx([10, 2, 3, 15]); S.usa(s, m, "puntura_di_mandragora", c2); eq(m.pv, 12); fine(c2);
   });
-  caso("Infuso: bere costa l'azione e cura 1/4; senza elisir è rifiutato; al riposo massimo 2 (3 con Mani che curano)", () => {
-    const s = sciamano({ pv: 10, elisir: 1 }); S.usa(s, nemico(), "bevi_elisir", ctx([])); eq([s.pv, s.elisir], [17, 0]);
-    eq(S.disponibile(s, "bevi_elisir").motivo, "senzaElisir");
+  caso("Funghi: il danno dei poteri è veleno, qualunque sia l'arma", () => {
+    const s = sciamano(), n = nemico({ res: { veleno: "res" } }), c = ctx([10, 4, 15]); const r = S.usa(s, n, "puntura_di_mandragora", c);
+    eq([ev(r, "attacco")[0].tipo, n.pv], ["veleno", 16]); fine(c);
+  });
+  caso("Infuso (privilegio del livello 5): azione rapida, cura 1/4 (+50% con Mani che curano); al riposo massimo 2", () => {
+    const s = sciamano({ pv: 10, elisir: 2, liv: 5 }), n = nemico(); const r = S.usa(s, n, "bevi_elisir", ctx([])); eq([s.pv, s.elisir, ev(r, "potere")[0].rapida], [17, 1, true]);
+    eq(S.disponibile(s, "bevi_elisir").motivo, "rapidaUsata", "una rapida per turno");
+    S.inizioTurno(s, n, ctx([])); eq(S.disponibile(s, "bevi_elisir").ok, true);
+    s.elisir = 0; eq(S.disponibile(s, "bevi_elisir").motivo, "senzaElisir");
     S.preparaInfuso(s); S.preparaInfuso(s); S.preparaInfuso(s); eq(s.elisir, 2);
-    const g = sciamano({ liv: 4, via: "guendalina" }); [1, 2, 3, 4].forEach(() => S.preparaInfuso(g)); eq(g.elisir, 3);
+    const g = sciamano({ liv: 3, via: "guendalina", pv: 10, elisir: 1 }); S.usa(g, n, "bevi_elisir", ctx([])); eq(g.pv, 21);
+    const z = sciamano({ elisir: 1, stati: { stordito: { liv: 1, turni: 1 } } }); eq(S.disponibile(z, "bevi_elisir").motivo, "rapidaUsata", "lo stordito perde anche la rapida");
   });
 
-  /* ===== Spore ===== */
-  caso("Pelle di corteccia: +2 CA; chi ti colpisce diventa Intossicato", () => {
-    const s = sciamano(), n = nemico(), c = ctx([18, 3, 2]); S.usa(s, n, "pelle_di_corteccia", c); eq(S.ca(s), 16);
+  /* ===== Funghi ===== */
+  caso("Pelle di micelio: +2 CA; chi ti colpisce diventa Intossicato", () => {
+    const s = sciamano(), n = nemico(), c = ctx([18, 3, 2]); S.usa(s, n, "pelle_di_micelio", c); eq(S.ca(s), 16);
     S.attacco(n, s, {}, c); eq(s.pv, 26); vero(P.ha(n, "intossicato")); fine(c);
   });
   caso("Spore del morbo: un dado in più, aggrava il veleno", () => {
@@ -99,54 +110,74 @@
   });
 
   /* ===== Linfa ===== */
-  caso("Balsamo della linfa: ogni turno di veleno sul nemico cura 1 (2 se Avvelenato, doppio con Cuore di linfa)", () => {
-    const s = sciamano({ spec: "linfa", pv: 10 }), n = nemico({ stati: veleno(1, 3) });
-    S.inizioTurno(n, s, ctx([2])); eq(s.pv, 11);
-    n.stati.intossicato.liv = 2; S.inizioTurno(n, s, ctx([2])); eq(s.pv, 13);
-    s.buff.cuoreLinfa = { turni: 3 }; S.inizioTurno(n, s, ctx([2])); eq(s.pv, 17);
-    S.inizioTurno(n, sciamano({ spec: "spore", pv: 10 }), ctx([2])); /* le Spore non si curano */
+  /* ===== Legno (contundente, scudi di PF) ===== */
+  const legno = (o) => sciamano({ spec: "legno", ...(o || {}) });
+  caso("Colpo di nodo: dado dell'arma + Agilità, contundente; Stordito", () => {
+    const s = legno(), n = nemico(), c = ctx([10, 4, 5]); const r = S.usa(s, n, "colpo_di_nodo", c);
+    eq([n.pv, ev(r, "attacco")[0].tipo], [13, "contundente"]); vero(P.ha(n, "stordito")); fine(c);
   });
-  caso("Cuore di linfa: aggrava e il Balsamo raddoppia per 3 turni del nemico", () => {
-    const s = sciamano({ spec: "linfa" }), n = nemico({ stati: veleno(1, 3) }); S.usa(s, n, "cuore_di_linfa", ctx([]));
-    eq([n.stati.intossicato.liv, s.buff.cuoreLinfa.turni], [2, 3]);
+  caso("Radice inchiodante: solo il dado, Indebolito; su un Commosso dura 1 turno in più", () => {
+    const s = legno(), n = nemico({ stati: { stordito: { liv: 2, turni: 2 } } }), c = ctx([10, 3, 2]); S.usa(s, n, "radice_inchiodante", c);
+    eq([n.pv, n.stati.indebolito.turni], [17, 4]); fine(c);
   });
-  caso("Linfa perenne: ogni cura del Balsamo allunga il veleno di 1 turno, massimo 3 volte", () => {
-    const s = sciamano({ spec: "linfa", pv: 10 }), n = nemico({ pv: 40, pvMax: 40, stati: veleno(1, 3) }); S.usa(s, n, "linfa_perenne", ctx([]));
-    const c = ctx([1, 1, 1, 1]); for (let i = 0; i < 4; i++) S.inizioTurno(n, s, c);
-    eq([s.buff.linfaPerenne.usi, n.stati.intossicato.turni, s.pv], [3, 6, 14]); fine(c);
+  caso("Corteccia viva: scudo di 5 + livello fino al tuo turno; se assorbe tutto il colpo, chi colpisce è Indebolito", () => {
+    const s = legno(), n = nemico(); S.usa(s, n, "corteccia_viva", ctx([])); eq(s.scudoPF.pf, 6);
+    const c = ctx([18, 3, 2]); S.attacco(n, s, {}, c); eq([s.pv, s.scudoPF.pf, s.dannoSubitoTurno || 0], [30, 2, 0]); vero(P.ha(n, "indebolito")); fine(c);
+    S.inizioTurno(s, n, ctx([])); eq(s.scudoPF, null, "finisce al tuo turno");
+    eq(legno({ liv: 5 }).liv + 5, 10);
   });
-  caso("Corteccia viva: se il nemico ti manca, il suo veleno torna a durata piena", () => {
-    const s = sciamano({ spec: "linfa" }), n = nemico({ stati: veleno(1, 1) }); S.usa(s, n, "corteccia_viva", ctx([]));
-    const c = ctx([1]); S.attacco(n, s, {}, c); eq(n.stati.intossicato.turni, 3); fine(c);
+  caso("Corteccia viva: un colpo più grosso dello scudo passa in parte; niente Indebolito", () => {
+    const s = legno(), n = nemico({ modDanno: 5 }); S.usa(s, n, "corteccia_viva", ctx([]));
+    const c = ctx([18, 4]); S.attacco(n, s, {}, c); eq([s.pv, s.scudoPF], [27, null]); vero(!P.ha(n, "indebolito")); fine(c);
   });
-  caso("Baccello esplosivo: al prossimo attacco del nemico aggrava il veleno ed Esposto", () => {
-    const s = sciamano({ spec: "linfa" }), n = nemico({ stati: veleno(1, 2) }); S.usa(s, n, "baccello_esplosivo", ctx([]));
-    const c = ctx([2, 1]); S.attacco(n, s, {}, c); eq(n.stati.intossicato.liv, 2); vero(P.ha(n, "esposto")); fine(c);
+  caso("Radici avvolgenti: scudo di 5 + 2 × livello per 3 turni, +2 CA, nemico Indebolito; Scorza viva +2 a ogni tuo turno", () => {
+    const s = legno(), n = nemico(), c = ctx([2]); S.usa(s, n, "radici_avvolgenti", c); eq([s.scudoPF.pf, S.ca(s)], [7, 16]); vero(P.ha(n, "indebolito")); fine(c);
+    const c2 = ctx([18, 3]); S.attacco(n, s, {}, c2); eq(s.scudoPF.pf, 3); fine(c2);
+    S.inizioTurno(s, n, ctx([])); eq(s.scudoPF.pf, 5); S.inizioTurno(s, n, ctx([])); eq(s.scudoPF.pf, 7);
+    S.inizioTurno(s, n, ctx([])); eq(s.scudoPF, null, "dopo 3 turni del nemico finisce");
+    eq(P.creaScudo(legno({ scudoPF: { nome: "x", pf: 3, max: 3, turni: 2 } }), "corteccia_viva", 6).k, "scudoRifiutato");
   });
-  caso("Radici avvolgenti: Indebolito, il veleno +1 turno, +2 CA fino al tuo turno", () => {
-    const s = sciamano({ spec: "linfa" }), n = nemico({ stati: veleno(1, 2) }), c = ctx([3]); S.usa(s, n, "radici_avvolgenti", c);
-    vero(P.ha(n, "indebolito")); eq([n.stati.intossicato.turni, S.ca(s)], [3, 16]); fine(c);
+  caso("Pugno di quercia: un dado in più, aggrava Stordito in Commosso", () => {
+    const s = legno(), n = nemico({ stati: { stordito: { liv: 1, turni: 1 } } }), c = ctx([10, 1, 1]); S.usa(s, n, "pugno_di_quercia", c);
+    eq([n.pv, n.stati.stordito.liv, P.nomeStato("stordito", 2)], [15, 2, "Commosso"]); fine(c);
   });
-  caso("Fioritura del parassita: 1d6 a ogni turno del nemico; al terzo esplode per 2d6 e aggrava", () => {
-    const s = sciamano({ spec: "linfa" }), n = nemico({ pv: 30, pvMax: 30 }); S.usa(s, n, "fioritura_del_parassita", ctx([]));
-    const c = ctx([2, 2, 2, 3, 3, 5]); S.inizioTurno(n, s, c); S.inizioTurno(n, s, c); S.inizioTurno(n, s, c);
-    eq(n.pv, 18); vero(P.ha(n, "intossicato")); eq(n.bulbo, null); fine(c);
+  caso("Ghianda esplosiva: al prossimo attacco del nemico 1d6 senza tiro e aggrava lo stato contundente", () => {
+    const s = legno(), n = nemico(); S.usa(s, n, "ghianda_esplosiva", ctx([]));
+    const c = ctx([4, 2, 5]); S.attacco(n, s, {}, c); eq(n.pv, 16); vero(P.ha(n, "stordito")); vero(!s.buff.ghianda); fine(c);
   });
-  caso("Purga: aggrava il veleno e togli tutti i tuoi stati", () => {
-    const s = sciamano({ spec: "linfa", stati: { sanguinante: { liv: 2, turni: 3 }, esposto: { liv: 1, turni: 2 } } }), n = nemico({ stati: veleno(1, 2) });
-    S.usa(s, n, "purga", ctx([])); vero(!P.ha(s, "sanguinante") && !P.ha(s, "esposto")); eq(n.stati.intossicato.liv, 2);
+  caso("Corteccia nuova: lo scudo attivo torna al massimo; chi ti ha colpito per ultimo è Indebolito", () => {
+    const s = legno({ colpitoUltimo: true, scudoPF: { nome: "radici_avvolgenti", pf: 2, max: 7, turni: 2 } }), n = nemico(), c = ctx([2]);
+    S.usa(s, n, "corteccia_nuova", c); eq(s.scudoPF.pf, 7); vero(P.ha(n, "indebolito")); fine(c);
+    const t = legno(); S.usa(t, nemico(), "corteccia_nuova", ctx([])); eq(t.scudoPF.pf, 6, "senza scudo nasce quello a volontà");
   });
-  caso("Rinascita del sottobosco: aggrava a durata piena, pulisce e cura un dado per turno rimasto", () => {
-    const s = sciamano({ spec: "linfa", pv: 10, stati: { stordito: { liv: 2, turni: 2 } } }), n = nemico({ stati: veleno(2, 1) }), c = ctx([1, 1, 1]);
-    S.usa(s, n, "rinascita_del_sottobosco", c); eq([s.pv, n.stati.intossicato.turni], [13, 3]); vero(!P.ha(s, "stordito")); fine(c);
+  caso("Corazza di quercia: aggrava il contundente; scudo di 5 + 3 × livello e +2 CA per tutto lo scontro", () => {
+    const s = legno({ liv: 2, scudoPF: { nome: "corteccia_viva", pf: 1, max: 7, turni: null } }), n = nemico(), c = ctx([2]);
+    S.usa(s, n, "corazza_di_quercia", c); eq([s.scudoPF.pf, S.ca(s)], [11, 16]); vero(P.ha(n, "stordito")); fine(c);
+    [1, 2, 3, 4, 5].forEach(() => S.inizioTurno(s, n, ctx([]))); eq([s.scudoPF.pf, S.ca(s)], [11, 16]);
+    S.fineScontro(s); eq(s.scudoPF, null);
+  });
+  caso("Pioggia di rami: a inizio dei tuoi 3 turni 1d6 contundente senza tiro, applica poi aggrava", () => {
+    const s = legno(), n = nemico({ pv: 30, pvMax: 30 }); S.usa(s, n, "pioggia_di_rami", ctx([]));
+    const c = ctx([4, 2, 4, 4]); S.inizioTurno(s, n, c); S.inizioTurno(s, n, c); eq(n.stati.stordito.liv, 2); S.inizioTurno(s, n, c);
+    eq(n.pv, 18); vero(!s.buff.rami); fine(c);
+  });
+  caso("Radice madre: Scorza viva recupera 4; Foresta che avanza: due dadi in più, aggrava, scudo pieno per 3 turni", () => {
+    const s = legno({ scudoPF: { nome: "radici_avvolgenti", pf: 1, max: 7, turni: 3 } }), n = nemico({ pv: 40, pvMax: 40 });
+    S.usa(s, n, "radice_madre", ctx([])); S.inizioTurno(s, n, ctx([])); eq(s.scudoPF.pf, 5);
+    const c = ctx([10, 1, 1, 1, 2]); S.usa(s, n, "foresta_che_avanza", c); eq(n.pv, 34); vero(P.ha(n, "stordito")); fine(c);
+    s.scudoPF.pf = 1; S.inizioTurno(s, n, ctx([])); eq(s.scudoPF.pf, 7);
+  });
+  caso("Gli scudi assorbono anche i danni continuativi", () => {
+    const s = legno({ stati: { sanguinante: { liv: 1, turni: 2 } } }), n = nemico(); S.usa(s, n, "radici_avvolgenti", ctx([15]));
+    S.inizioTurno(s, n, ctx([3])); eq([s.pv, s.scudoPF.pf], [30, 6]);
   });
 
   caso("Catalogo: ogni potere dello Sciamano è implementato e la scelta di creazione funziona", () => {
-    const sp = SP.SPEC.Forestiero, ids = new Set([sp.classe.potere]);
-    ["spore", "linfa"].forEach(k => { const x = sp[k]; SP.tuttiDi(x).forEach(i => ids.add(i)); });
+    const sp = SP.SPEC.Forestiero, ids = new Set([sp.classe.privilegi[5]]);
+    ["funghi", "legno"].forEach(k => SP.tuttiDi(sp[k]).forEach(i => ids.add(i)));
     ids.forEach(id => { const r = S.usa(sciamano({ elisir: 1 }), nemico({ pv: 99, pvMax: 99 }), id, { tira: (d) => Math.min(d, 10) }); eq(ev(r, "nonImplementato").length, 0, id); });
-    eq(SP.sceltaValida("Forestiero", "linfa", ["baccello_esplosivo", "linfa_amara", "cuore_di_linfa"], 2).ok, true);
-    eq(SP.sceltaValida("Forestiero", "linfa", ["spore_del_morbo", "linfa_amara", "cuore_di_linfa"]).motivo, "estranei");
+    eq(SP.sceltaValida("Forestiero", "legno", ["colpo_di_nodo", "corteccia_viva", "pugno_di_quercia", "corazza_di_quercia"], 1).ok, true);
+    eq(SP.sceltaValida("Forestiero", "legno", ["colpo_di_nodo", "corteccia_viva", "spore_del_morbo", "corazza_di_quercia"]).motivo, "estranei");
   });
 
   function esegui() { return casi.map(({ nome, fn }) => { try { fn(); return { nome, ok: true }; } catch (e) { return { nome, ok: false, errore: e.message }; } }); }

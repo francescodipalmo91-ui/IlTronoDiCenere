@@ -1,0 +1,18 @@
+# DEPENDABOT — ogni lunedì controlla se gli strumenti di verifica (npm) e le azioni di GitHub hanno aggiornamenti.
+# Al massimo UNA pull request a settimana per gruppo: i test a ogni push dicono se l'aggiornamento rompe qualcosa.
+# Le versioni maggiori (es. eslint 9 → 10) restano fuori dal gruppo e arrivano a parte, da leggere con calma.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule: { interval: weekly, day: monday, time: "07:00", timezone: Europe/Rome }
+    open-pull-requests-limit: 3
+    groups:
+      strumenti:
+        update-types: [minor, patch]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: weekly, day: monday, time: "07:00", timezone: Europe/Rome }
+    groups:
+      azioni:
+        patterns: ["*"]

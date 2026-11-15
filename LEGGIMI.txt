@@ -1,0 +1,21 @@
+IL TRONO DI CENERE — cartella del gioco (riordinata il 9 novembre 2026)
+
+Per giocare: apri index.html con Chrome o Edge.
+Versione: motore nuovo (specializzazioni e poteri a volontà / per scontro / giornalieri), quella da testare.
+Ettore ha poteri PROVVISORI; cacce comuni e avventurieri usano solo l'attacco base finché non si fanno i loro poteri.
+I personaggi creati con il vecchio sistema vanno ricreati.
+
+Cartelle
+- index.html, gioco.html, creazione.html, tutorial.html, regolamento.html  → il gioco
+- prova.html  → sala di prova del motore nuovo (registro degli scontri in log_scontri)
+- test.html   → vecchia pagina di test (motore vecchio, da rifare)
+- js/        codice (il motore nuovo è in poteri.js, specializzazioni.js, scontro.js, nemici.js, racconto.js;
+               combattimento.js, magia.js, magia_combattimento.js, sciamano.js, tecniche.js sono il motore vecchio, da togliere)
+- immagini/, audio/, lib/   risorse del gioco
+- docs/      documenti di progetto (punto d'ingresso: docs/punto_della_situazione.md); docs/archivio = documenti superati
+- tests/, strumenti/   test automatici e strumenti (npm test)
+- log_scontri/        registri degli scontri giocati a mano
+- archivio/  versioni e materiale vecchio (versione_2026-11-04 = il gioco prima del motore nuovo, per tornare indietro)
+- node_modules, package.json, .github, firebase.json, firestore.rules  → strumenti e configurazione, non toccare
+
+Per ora si lavora solo su questa cartella: GitHub si aggiorna con il rilascio, dopo i test.

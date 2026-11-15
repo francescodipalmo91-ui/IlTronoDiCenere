@@ -94,3 +94,13 @@ Ultimo esito in `docs/PONYTAIL_AUDIT.md` (seconda passata). Note: il bagliore ro
 
 **Serie di scontri in parallelo:** `PORT=8780 CLASSI=arcanista SCUOLA=arcano N=400 node strumenti/serie_scontri.js`, con un server per ogni copia dei file (`python3 -m http.server 8780` dentro la copia). Lanciarla sulla cartella in cui si sta lavorando mescola le versioni.
 
+
+## Registro degli scontri giocati a mano (04/11/2026)
+
+Ogni scontro giocato in `test.html` si salva da solo (`js/registro_scontri.js`, caricato solo dalla pagina di test): scopo, studiare come gioca una persona e usarlo per i test futuri, così servono meno serie automatiche.
+- **Dove:** pannello «Registro degli scontri» sotto il diario → «Scegli la cartella» una volta (cartella `log_scontri/` del progetto). Un file JSON per scontro, nome `data_ora_classeLivello_nemico.json`. Chrome ricorda la cartella; a ogni apertura della pagina chiede di nuovo il permesso al primo «Nuovo scontro». Senza cartella i log restano nel browser (ultimi 200) e si scaricano con «Scarica i log del browser» (`.jsonl`).
+- **Cosa registra:** personaggio e nemico (tutti i campi), preparazione, e per ogni tua azione lo stato prima (salute, risorsa, salute del nemico, Ferite, Copie, Bilancia, carica di Enea osservata o no, effetti) e cosa potevi fare in quel momento (pulsanti attivi, combo pronte, incantesimi che sprecherebbero Ferite/Copie). In fondo esito, turni, diario completo.
+- **Nota e «prova mirata»:** scrivibili anche a scontro finito (il file si riscrive). Le prove mirate e gli scontri coi dadi truccati non entrano nelle statistiche; quelli lasciati a metà dopo almeno un'azione si salvano come «abbandonato».
+- **Non registra** quando la pagina è guidata da Playwright (serie automatiche e test del browser).
+- **Analisi:** `node strumenti/analisi_log.mjs [cartella]` (predefinita `log_scontri`): esiti per caso, azioni più usate per classe, combo pronte prese o lasciate, quanto paghi col sangue per fascia di salute, detonazioni, sprechi, reazioni alla carica di Enea, cosa fai sotto il 40%, prima mossa, note. Opzioni: `TUTTI=1`, `DA=2026-11-04`, `CLASSE=arcanista`, `NEMICO=enea`, `DETTAGLIO=<id>` (le azioni di un solo scontro).
+- Il giocatore automatico (`serie_scontri.js`) ora riconosce le righe «già al massimo» dall'attributo `data-al-massimo` (l'avviso è passato in cima alla scuola).

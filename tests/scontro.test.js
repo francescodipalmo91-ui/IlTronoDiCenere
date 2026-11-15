@@ -158,11 +158,11 @@
   });
 
   /* ===== Classe, tratti, regole d'uso ===== */
-  caso("Secondo vento: 1/4 della salute massima (1/3 con Mani che curano, via di Guendalina dal 4)", () => {
+  caso("Secondo vento: 1/4 della salute massima (Mani che curano non lo tocca più: vale per pozioni ed elisir)", () => {
     const g = guerriero({ pv: 10 }); S.usa(g, nemico(), "secondo_vento", ctx([])); eq(g.pv, 17);
-    const g2 = guerriero({ pv: 10, liv: 4, via: "guendalina" }); S.usa(g2, nemico(), "secondo_vento", ctx([])); eq(g2.pv, 20);
+    const g2 = guerriero({ pv: 10, liv: 4, via: "guendalina" }); S.usa(g2, nemico(), "secondo_vento", ctx([])); eq(g2.pv, 17);
   });
-  caso("Furia (tratto II): da Vacillante +2 danni", () => {
+  caso("Furia (privilegio del livello 1): da Vacillante +2 danni", () => {
     const g = guerriero({ pv: 10, tratti: ["furia"] }), n = nemico(), c = ctx([10, 1]); S.usa(g, n, "colpo_poderoso", c); eq(n.pv, 14); fine(c);
   });
   caso("Impaurito: niente per scontro né giornalieri", () => {
@@ -176,59 +176,67 @@
   caso("Poteri preparati: un potere fuori dalla lista è rifiutato", () => {
     const g = guerriero({ poteri: ["colpo_poderoso"] }); eq(S.disponibile(g, "colpo_crudele").motivo, "nonPreparato");
   });
-  caso("Scelte: le opzioni a ogni livello (1: 3 + 2; 2 e 3: terzo a volontà o per scontro rimasti; 4: si completa; 5: nessuna)", () => {
-    const o = (sc, l) => SP.opzioniLivello("Soldato", "esecutore", sc, l).map(x => [x.tipo, x.opzioni]);
-    eq(o([], 1), [["scontro", ["spezza_guardia", "colpo_crudele", "caccia_al_ferito"]], ["giornaliero", ["assalto_implacabile", "colpo_del_boia"]]]);
-    eq(o(["spezza_guardia", "colpo_del_boia"], 2), [["libera", ["guardia_feroce", "colpo_crudele", "caccia_al_ferito"]]]);
-    eq(o(["spezza_guardia", "colpo_del_boia", "guardia_feroce"], 3), [["libera", ["colpo_crudele", "caccia_al_ferito"]]]);
-    eq(o(["spezza_guardia", "colpo_del_boia", "colpo_crudele"], 3), [["libera", ["guardia_feroce", "caccia_al_ferito"]]]);
-    eq(o(["spezza_guardia", "colpo_del_boia", "guardia_feroce", "colpo_crudele"], 4), [["scontro", ["caccia_al_ferito", "ferita_riaperta"]], ["giornaliero", ["assalto_implacabile", "marchio_della_preda"]]]);
-    eq(o(["spezza_guardia", "colpo_del_boia", "colpo_crudele", "caccia_al_ferito"], 4), [["volonta", ["guardia_feroce"]], ["giornaliero", ["assalto_implacabile", "marchio_della_preda"]]], "strada d'attacco: la difesa arriva da sola, il fisso per scontro è perso");
-    eq(o(["spezza_guardia", "colpo_del_boia", "guardia_feroce", "colpo_crudele", "ferita_riaperta", "assalto_implacabile"], 5), []);
+  caso("Scelte: le opzioni a ogni livello (1: 2 a volontà su 3 + 1 su 3 + 1 su 2; 2: nessuna; 3: per scontro e giornaliero; 4: per scontro; 5: nessuna)", () => {
+    const o = (sc, l) => SP.opzioniLivello("Soldato", "berserker", sc, l).map(x => [x.tipo, x.opzioni]);
+    const V = ["colpo_poderoso", "colpo_di_mestiere", "guardia_feroce"];
+    eq(o([], 1), [["volonta", V], ["volonta", V], ["scontro", ["spezza_guardia", "colpo_crudele", "caccia_al_ferito"]], ["giornaliero", ["assalto_implacabile", "colpo_del_boia"]]]);
+    const l1 = ["colpo_poderoso", "guardia_feroce", "spezza_guardia", "colpo_del_boia"];
+    eq(o(l1, 2), [], "al livello 2 la scelta è la via");
+    eq(o(l1, 3), [["scontro", ["colpo_crudele", "caccia_al_ferito"]], ["giornaliero", ["assalto_implacabile", "marchio_della_preda"]]]);
+    eq(o([...l1, "colpo_crudele", "marchio_della_preda"], 4), [["scontro", ["caccia_al_ferito", "ferita_riaperta"]]]);
+    eq(o([...l1, "colpo_crudele", "marchio_della_preda", "ferita_riaperta"], 5), []);
   });
-  caso("Scelte: validazione nell'ordine delle scelte; niente poteri in anticipo, niente estranei", () => {
-    const v = (x, l) => SP.sceltaValida("Soldato", "esecutore", x, l);
-    eq(v(["spezza_guardia", "colpo_del_boia"], 1).ok, true);
-    eq(v(["ferita_riaperta", "colpo_del_boia"], 1).motivo, "manca", "il fisso del 4 non si prende al livello 1");
-    eq(v(["spezza_guardia", "colpo_del_boia", "colpo_crudele"], 1).motivo, "inAnticipo");
-    eq(v(["spezza_guardia", "colpo_del_boia", "colpo_crudele"], 2).ok, true, "al 2 un per scontro al posto della difesa");
-    eq(v(["spezza_guardia", "colpo_del_boia", "guardia_feroce"], 3).livello, 3);
-    eq(v(["spezza_guardia", "colpo_del_boia", "colpo_crudele", "caccia_al_ferito", "guardia_feroce", "marchio_della_preda"], 4).ok, true);
-    eq(v(["spezza_guardia", "colpo_del_boia", "colpo_crudele", "caccia_al_ferito", "guardia_feroce", "ferita_riaperta"], 4).ok, false, "fisso per scontro senza spazio");
-    eq(v({ 1: { scontro: "caccia_al_ferito", giornaliero: "assalto_implacabile" }, 2: { libera: "guardia_feroce" }, 3: { libera: "spezza_guardia" } }, 3).ok, true, "anche come oggetto per livello");
-    eq(v(["spezza_guardia", "rivalsa"], 1).motivo, "estranei");
+  caso("Scelte: validazione; niente poteri in anticipo, niente estranei, niente doppioni", () => {
+    const v = (x, l) => SP.sceltaValida("Soldato", "berserker", x, l);
+    const l1 = ["colpo_poderoso", "guardia_feroce", "spezza_guardia", "colpo_del_boia"];
+    eq(v(l1, 1).ok, true);
+    eq(v(["colpo_poderoso", "guardia_feroce", "ferita_riaperta", "colpo_del_boia"], 1).motivo, "manca", "il quarto per scontro non si prende al livello 1");
+    eq(v([...l1, "colpo_crudele"], 2).motivo, "inAnticipo", "al livello 2 niente poteri nuovi");
+    eq(v([...l1, "colpo_crudele", "assalto_implacabile"], 3).ok, true);
+    eq(v([...l1, "colpo_crudele", "marchio_della_preda", "ferita_riaperta"], 4).ok, true);
+    eq(v([...l1, "colpo_crudele", "marchio_della_preda", "caccia_al_ferito"], 4).ok, true);
+    eq(v(["colpo_poderoso", "colpo_poderoso", "spezza_guardia", "colpo_del_boia"], 1).motivo, "doppione");
+    eq(v(["colpo_poderoso", "guardia_feroce", "spezza_guardia", "rivalsa"], 1).motivo, "estranei");
+    eq(v({ 1: { volonta: ["colpo_poderoso", "guardia_feroce"], scontro: "caccia_al_ferito", giornaliero: "assalto_implacabile" }, 3: { scontro: "spezza_guardia", giornaliero: "colpo_del_boia" } }, 3).ok, true, "anche come oggetto per livello");
   });
-  caso("Scala: 2-1-1; al 2 3-1-1 o 2-2-1; al 3 3-2-1 o 2-3-1; poi 3-3-2 e 3-3-3 per tutti, qualunque strada", () => {
+  caso("Scala 2-1-1 / 3-1-1 / 3-2-2 / 3-3-2 / 3-3-3 per tutte le 8 specializzazioni, qualunque strada", () => {
     Object.entries(SP.SPEC).forEach(([classe, cl]) => Object.keys(cl).filter(k => k !== "classe").forEach(spec => {
-      [0, 1, 2].forEach(variante => { /* 0: prima la difesa, prende i fissi · 1: corre sui per scontro · 2: lascia i fissi */
+      [0, 1].forEach(variante => {
         const scelti = [];
         [1, 2, 3, 4, 5].forEach(liv => {
-          SP.opzioniLivello(classe, spec, scelti, liv).forEach(o => scelti.push(variante === 1 ? o.opzioni[o.opzioni.length - 1] : variante === 2 ? o.opzioni[0] : o.opzioni[o.tipo === "libera" ? 0 : o.opzioni.length - 1]));
+          SP.opzioniLivello(classe, spec, scelti, liv).forEach(o => { const lib = o.opzioni.filter(id => !scelti.includes(id)); scelti.push(variante ? lib[lib.length - 1] : lib[0]); });
           eq(SP.sceltaValida(classe, spec, scelti, liv).ok, true, `${spec} ${liv} v${variante}`);
-          const pot = SP.poteriAlLivello(classe, spec, scelti, liv).filter(id => id !== cl.classe.potere);
-          const n = ["volonta", "scontro", "giornaliero"].map(t => pot.filter(id => SP.POTERI[id].tipo === t).length);
-          if (liv === 1 || liv >= 4) eq(n, SP.SCALA[liv], `${spec} livello ${liv} v${variante}`);
-          else eq(n[0] + n[1] + n[2], SP.SCALA[liv][0] + SP.SCALA[liv][1] + SP.SCALA[liv][2], `${spec} livello ${liv}: stesso numero di poteri`);
+          const pot = SP.poteriAlLivello(classe, spec, scelti, liv).filter(id => id !== cl.classe.privilegi[5]);
+          eq(["volonta", "scontro", "giornaliero"].map(t => pot.filter(id => SP.POTERI[id].tipo === t).length), SP.SCALA[liv], `${spec} livello ${liv} v${variante}`);
           eq(new Set(pot).size, pot.length, `${spec} ${liv}: nessun doppione`);
         });
       });
     }));
   });
-  caso("Al livello 1 manca la difesa (alla Sentinella Colpo di mestiere); il finale arriva sempre al 5; tratto II al livello 2", () => {
-    const l1 = SP.poteriAlLivello("Soldato", "sentinella", ["ritorsione", "rivalsa"], 1);
-    vero(l1.includes("in_guardia") && !l1.includes("colpo_di_mestiere"));
-    vero(SP.poteriAlLivello("Soldato", "sentinella", ["ritorsione", "rivalsa", "colpo_di_mestiere"], 2).includes("colpo_di_mestiere"));
-    vero(!SP.poteriAlLivello("Soldato", "sentinella", ["ritorsione", "rivalsa", "rintocco"], 2).includes("colpo_di_mestiere"), "al 2 ha scelto un per scontro");
-    vero(!SP.poteriAlLivello("Sapiente", "illusione", ["labirinto", "incubo"], 1).includes("riflessi"));
-    const l5 = SP.poteriAlLivello("Soldato", "esecutore", ["spezza_guardia", "colpo_del_boia", "guardia_feroce", "colpo_crudele", "caccia_al_ferito", "assalto_implacabile"], 5);
-    vero(l5.includes("sentenza") && !l5.includes("ferita_riaperta") && !l5.includes("marchio_della_preda"), "finale fisso, i due fissi lasciati");
-    eq([SP.livelloDi("Soldato", "sentinella", "colpo_di_mestiere"), SP.livelloDi("Soldato", "esecutore", "colpo_di_mestiere"), SP.livelloDi("Soldato", "esecutore", "marchio_della_preda")], [2, 1, 4]);
-    eq(SP.trattiAlLivello("Soldato", 1), ["mente_incrollabile"]); eq(SP.trattiAlLivello("Soldato", 2), ["mente_incrollabile", "furia"]);
+  caso("Il terzo a volontà arriva da solo al 2; finale e privilegio attivo al 5; privilegi passivi ai livelli 1 e 3; vie ai livelli 2-4", () => {
+    const l1 = ["colpo_di_guardia", "in_guardia", "ritorsione", "rivalsa"];
+    vero(!SP.poteriAlLivello("Soldato", "paladino", l1, 1).includes("colpo_di_mestiere"));
+    vero(SP.poteriAlLivello("Soldato", "paladino", l1, 2).includes("colpo_di_mestiere"));
+    eq(SP.terzoVolonta("Soldato", "paladino", l1), "colpo_di_mestiere");
+    const l5 = SP.poteriAlLivello("Soldato", "paladino", [...l1, "rintocco", "veglia_di_ferro", "spezza_carica"], 5);
+    vero(l5.includes("silenzio_della_casa") && l5.includes("secondo_vento") && !l5.includes("ultimo_baluardo"));
+    vero(!SP.poteriAlLivello("Soldato", "paladino", [...l1, "rintocco", "veglia_di_ferro", "spezza_carica"], 4).includes("secondo_vento"), "Secondo vento solo al 5");
+    eq([SP.livelloDi("Soldato", "berserker", "marchio_della_preda"), SP.livelloDi("Soldato", "berserker", "ferita_riaperta"), SP.livelloDi("Soldato", "berserker", "sentenza")], [3, 4, 5]);
+    eq(SP.trattiAlLivello("Soldato", 1), ["furia"]); eq(SP.trattiAlLivello("Soldato", 3), ["furia", "mente_incrollabile"]); eq(SP.trattiAlLivello("Soldato", 5), ["furia", "mente_incrollabile"]);
+    eq(SP.viaAlLivello("aldo", 1), []); eq(SP.viaAlLivello("aldo", 3), ["occhio_del_cacciatore", "odore_del_sangue"]); eq(SP.viaAlLivello("guendalina", 5).length, 3);
+    eq(SP.specDi("Soldato", "esecutore").nome, "Berserker", "i vecchi nomi portano ai nuovi");
   });
-  caso("Catalogo: ogni potere del Guerriero è implementato", () => {
-    const s = SP.SPEC.Soldato, ids = new Set([s.classe.potere]);
-    ["esecutore", "sentinella"].forEach(k => { const x = s[k]; SP.tuttiDi(x).forEach(i => ids.add(i)); });
-    ids.forEach(id => { const r = S.usa(guerriero(), nemico({ pv: 99, pvMax: 99 }), id, { tira: (d) => Math.min(d, 10) }); eq(ev(r, "nonImplementato").length, 0, id); });
+  caso("Catalogo: ogni potere di tutte le classi è implementato e nessuno resta senza specializzazione", () => {
+    const usati = new Set();
+    Object.entries(SP.SPEC).forEach(([classe, cl]) => {
+      usati.add(cl.classe.privilegi[5]);
+      Object.keys(cl).filter(k => k !== "classe").forEach(k => SP.tuttiDi(cl[k]).forEach(id => usati.add(id)));
+    });
+    usati.forEach(id => {
+      const g = guerriero({ elisir: 1, placche: 1, copie: 1 });
+      const r = S.usa(g, nemico({ pv: 99, pvMax: 99 }), id, { tira: (d) => Math.min(d, 10) }); eq(ev(r, "nonImplementato").length, 0, id);
+    });
+    eq(Object.keys(SP.POTERI).filter(id => !usati.has(id)), [], "poteri orfani");
   });
 
   function esegui() { return casi.map(({ nome, fn }) => { try { fn(); return { nome, ok: true }; } catch (e) { return { nome, ok: false, errore: e.message }; } }); }

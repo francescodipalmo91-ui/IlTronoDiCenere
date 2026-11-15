@@ -73,7 +73,7 @@ Stessa scelta degli altri rami (`sceglieVia`). Proposta: **Aldo = Penetrazione**
 
 ## 5. Decisioni (24/10/2026)
 
-1. **Critici forzati e furia:** restano così, anche i critici sicuri (Colpo Mirato, Il Foro Eterno, Il Colpo Perfetto) danno +2 furia.
+1. **Critici forzati e furia:** dal 04/11/2026 i critici sicuri (Colpo Mirato, Il Foro Eterno, Il Colpo Perfetto, e ogni critico garantito da una tecnica) **non** danno più +2 furia: solo il critico del dado la dà. Prima la davano; cambiato dopo uno scontro di prova contro Enea in cui il Colpo Mirato costava di fatto 4 furia invece di 6.
 2. **Vie:** confermate, Aldo = Penetrazione e Guendalina = Precisione.
 3. **Esposto sui boss:** massimo 2 turni, come Indebolito e Sbilanciato.
 

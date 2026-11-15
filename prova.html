@@ -57,6 +57,8 @@
   }
   label { display: inline-flex; gap: 6px; align-items: center; margin: 2px 10px 2px 0; }
   select { max-width: 100%; }
+  #arma, #arma2 { width: 100%; min-width: 0; text-overflow: ellipsis; }
+  .riga label:has(#arma), .riga label:has(#arma2) { flex: 1 1 100%; min-width: 0; display: flex; gap: .4rem; align-items: center; }
   select, input[type=number] { background: #101010; color: var(--text); border: 1px solid var(--line); border-radius: 4px; padding: 3px 5px; font: inherit; }
   input[type=number] { width: 56px; }
   button { background: #262626; color: var(--text); border: 1px solid #4a4a4a; border-radius: 6px; padding: 6px 10px; font: inherit; cursor: pointer; }
@@ -86,53 +88,170 @@
   .poteri button small { display: block; color: var(--muted); font-size: 12px; max-width: 320px; }
   #registro { height: 440px; overflow-y: auto; font-size: 14px; background: #0f0f0f; border: 1px solid var(--line); border-radius: 6px; padding: 8px; }
   #registro p { margin: 2px 0; }
+  .ico { display: inline-block; font-style: normal; }
+  #setInfo .spento { opacity: .45; }
+  .ico.carica { animation: vibra 0.35s linear infinite; filter: drop-shadow(0 0 3px #e0a040); }
+  .ico.difesa { filter: drop-shadow(0 0 2px #7aa7d8); }
+  @keyframes vibra { 0%, 100% { transform: translate(0, 0) rotate(0); } 25% { transform: translate(-1px, 1px) rotate(-6deg); } 50% { transform: translate(1px, -1px) rotate(5deg); } 75% { transform: translate(-1px, 0) rotate(-3deg); } }
+  #registro p.ico-carica:not(:last-child) .ico.carica { animation: none; } /* nel registro vibra solo l'ultimo annuncio */
+  .inCarica { border: 1px solid #8a5a20; border-radius: 6px; padding: 4px 8px; background: #2a1c0c; }
+  @media (prefers-reduced-motion: reduce) { .ico.carica { animation: none; } }
   .pg { color: var(--pg); } .nem { color: var(--ko); } .sis { color: var(--muted); } .bene { color: var(--ok); } .turno { color: var(--gold); border-top: 1px solid var(--line); padding-top: 4px; margin-top: 6px !important; }
   .esito { font-weight: 600; }
   #test pre { white-space: pre-wrap; font-size: 13px; }
+  /* 15/11: più comoda da usare */
+  .titolino { font: 600 14px var(--t); color: var(--gold); margin-right: 4px; }
+  .preset small { display: block; font-size: 11px; color: var(--muted); }
+  .preset { text-align: center; min-width: 92px; }
+  button.primario { background: #2c3b52; border-color: #5a7aa8; font-weight: 600; }
+  #setup > summary { cursor: pointer; list-style: none; padding: 2px 0; }
+  #setup > summary::before { content: "▸ "; color: var(--muted); }
+  #setup[open] > summary::before { content: "▾ "; }
+  #setup[open] > summary { margin-bottom: 6px; }
+  #statoTurno { border-radius: 6px; padding: 6px 8px; margin: 0 0 8px; font-weight: 600; font-size: 14px; }
+  #statoTurno.tuo { background: #1d2a3b; border: 1px solid #5a7aa8; color: var(--pg); }
+  #statoTurno.attesa { background: #1f1f1f; border: 1px solid var(--line); color: var(--muted); }
+  #statoTurno.fine { background: #1c2618; border: 1px solid #4a6a3a; color: var(--ok); }
+  #statoTurno.ko { background: #2a1714; border: 1px solid #6a2a25; color: var(--ko); }
+  #statoTurno small { display: block; font-weight: 400; color: var(--muted); }
+  #opzioni { display: block; }
+  .gruppoAz { border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; margin: 6px 0; background: #161616; }
+  .gruppoAz > b { display: block; font: 600 12px var(--t); color: var(--muted); margin-bottom: 4px; }
+  .gruppoAz button.mini { margin: 2px 4px 2px 0; }
+  #registro { height: 380px; }
+  #pgBox .barra, #nemBox .barra { height: 14px; }
+  #schede { display: flex; gap: 8px; padding: 10px 16px 0; max-width: 1700px; margin: 0 auto; flex-wrap: wrap; }
+  .scheda { flex: 1 1 260px; text-align: left; padding: 10px 14px; border-radius: 8px 8px 0 0; border-bottom: none; background: #1a1a1a; font: 600 15px var(--t); }
+  .scheda small { display: block; font: 400 12px var(--f); color: var(--muted); margin-top: 2px; }
+  .scheda.attiva { background: #2c3b52; border-color: #5a7aa8; color: #fff; }
+  .num { display: inline-block; width: 22px; height: 22px; line-height: 22px; text-align: center; border-radius: 50%; background: #2c3b52; color: #fff; font-size: 13px; margin-right: 4px; }
+  body.modo-manuale .soloAuto, body.modo-auto .soloManuale, body:not(.modo-strumenti) .soloStrumenti { display: none !important; }
+  body.modo-strumenti #latoPg, body.modo-strumenti #latoNem, body.modo-strumenti #pgBox, body.modo-strumenti #nemBox, body.modo-strumenti #registroBox { display: none; }
+  body.modo-strumenti .soloManuale, body.modo-strumenti .soloAuto, body.modo-strumenti .noStrumenti { display: none !important; }
+  body.modo-strumenti main { grid-template-columns: minmax(0, 1fr); grid-template-areas: "centro"; }
+  body.modo-auto #usaPg { display: none; }
+  .bot { border-left: 3px solid #d8a24a; padding-left: 6px; }
+  .blocchi { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 10px; }
+  .blocco { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: #151515; min-width: 0; }
+  .blocco h3 { font: 600 14px var(--t); color: var(--gold); margin: 0 0 6px; }
+  .blocco.largo2 { grid-column: 1 / -1; }
+  .campo { border-top: 1px solid var(--line); padding: 6px 0; }
+  .campo:first-of-type { border-top: none; }
+  .sotto { font-size: 13px; margin-right: 6px; }
+  .info { font-size: 12.5px; color: var(--muted); margin: 3px 0; }
+  .info b { color: var(--text); font-weight: 600; }
+  .info .pot { color: #d8a24a; }
+  .slot { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 8px; align-items: center; font-size: 14px; }
+  .slot select { width: 100%; }
+  .livBlocco { border-left: 3px solid #2c3b52; padding: 2px 0 4px 8px; margin: 8px 0; }
+  .livBlocco.futuro { opacity: .5; border-left-color: var(--line); }
+  .livBlocco h4 { font: 600 13px var(--t); margin: 0 0 4px; color: var(--pg); }
+  .livBlocco .arriva { font-size: 13px; color: var(--muted); margin: 2px 0; }
+  .livBlocco .arriva b { color: var(--text); }
+  .scegli { font-size: 12.5px; color: var(--gold); margin: 4px 0 2px; }
+  table.prog { border-collapse: collapse; width: 100%; font-size: 13px; margin: 4px 0; }
+  table.prog th, table.prog td { border-bottom: 1px solid var(--line); padding: 3px 6px; text-align: left; vertical-align: top; }
+  kbd { font: 12px monospace; border: 1px solid #555; border-radius: 3px; padding: 0 4px; color: var(--muted); }
 </style>
 </head>
-<body>
+<body class="modo-manuale">
 <header>
   <h1>Sala di prova — motore nuovo</h1>
-  <span class="nota">Riscrittura del 08/11/2026 · js/poteri.js, scontro.js, specializzazioni.js, nemici.js · nessun file del gioco viene toccato</span>
+  <span class="nota">Motore del 15/11/2026 · js/poteri.js, scontro.js, specializzazioni.js, nemici.js, oggetti.js · nessun file del gioco viene toccato</span>
 </header>
+<nav id="schede">
+  <button type="button" data-modo="manuale" class="scheda attiva">✋ Scontro manuale <small>tu giochi il personaggio, il nemico segue la sua sequenza</small></button>
+  <button type="button" data-modo="auto" class="scheda">⟳ Scontro automatico <small>il giocatore automatico gioca e tu guardi le sue scelte</small></button>
+  <button type="button" data-modo="strumenti" class="scheda">⚙ Simulazioni e test <small>centinaia di scontri, test del motore, log</small></button>
+</nav>
 <main>
   <aside id="latoPg">
     <h2 class="pg">I tuoi poteri</h2>
+    <div id="statoTurno" class="attesa">Crea il personaggio e inizia uno scontro.</div>
     <div id="dettaglioPg"></div>
-    <div class="riga" id="opzioni"></div>
+    <div class="riga soloManuale" id="opzioni"></div>
+    <p class="nota soloAuto">In automatico: il potere scelto a ogni turno compare qui sopra e nel registro.</p>
     <div id="poteri"></div>
-    <div class="riga"><button type="button" id="passa">Passa il turno</button></div>
+    <div class="riga soloManuale"><button type="button" id="passa">Passa il turno</button> <span class="nota"><kbd>Invio</kbd> usa il potere scelto · <kbd>P</kbd> passa</span></div>
   </aside>
 
   <div class="centro">
+  <section id="setupBox" class="largo">
+    <details id="setup" open>
+      <summary><h2 class="pg" style="display:inline"><span class="num">1</span> Il personaggio</h2> <span class="nota" id="setupRiassunto">classe, specializzazione, livello, armi, equipaggiamento e poteri scelti</span></summary>
+    <div class="blocchi">
+      <div class="blocco">
+        <h3>Chi sei</h3>
+        <div class="riga"><label>Classe <select id="classe"></select></label><label>Razza <select id="razza"></select></label><label>Specializzazione <select id="spec"></select></label></div>
+        <div class="riga"><label>Livello <select id="liv"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
+          <label title="Regola del gioco: +2 punti attributo liberi ai livelli 2, 3, 4 e 5 (tetto 20), presi al riposo prima della crescita della salute">Punti attributo su <select id="puntiSu"><option value="">caratteristica di classe</option><option>Vigore</option><option>Agilità</option><option>Mente</option><option>Spirito</option></select></label></div>
+        <div class="riga"><label>Via di prestigio <select id="via"><option value="">nessuna</option><option value="aldo">Aldo, la caccia</option><option value="guendalina">Guendalina, il focolare</option></select></label> <span class="nota">dal livello 2</span></div>
+        <div id="specInfo" class="info"></div>
+      </div>
+      <div class="blocco">
+        <h3>Armi</h3>
+        <div class="campo"><label>In mano <select id="arma"></select></label><div id="armaInfo" class="info"></div>
+          <label id="bonusRiga">Bonus dell'arma comune +<input type="number" id="armaBonus" value="0" min="0" max="3"></label></div>
+        <div class="campo"><b class="sotto">Mano secondaria</b>
+          <label><input type="radio" name="mano2" value="niente"> niente</label>
+          <label><input type="radio" name="mano2" value="scudo"> scudo (+1 CA)</label>
+          <label id="focusRiga"><input type="radio" name="mano2" value="focus"> focus, bonus +<input type="number" id="focusBonus" value="0" min="0" max="3"></label>
+          <input type="checkbox" id="scudo" hidden>
+          <div id="manoInfo" class="info"></div></div>
+        <div class="campo"><label>Seconda arma, nello zaino <select id="arma2"></select></label><div id="arma2Info" class="info"></div></div>
+      </div>
+      <div class="blocco">
+        <h3>Equipaggiamento <span class="nota">(nella sala si vedono tutti i poteri)</span></h3>
+        <div id="equip" class="slot"></div>
+        <div id="equipInfo" class="info"></div>
+      </div>
+      <div class="blocco">
+        <h3>Set e borsa</h3>
+        <div class="campo"><label><input type="checkbox" id="setStoria" checked> Pezzi come nella storia per il nemico scelto</label>
+          <span class="nota" id="setStoriaNota"></span></div>
+        <div class="campo"><label>Set del sovrano di carne <select id="setCarne"><option value="0">0 pezzi</option><option value="1">1 pezzi</option><option value="2">2 pezzi</option><option value="3">3 pezzi</option><option value="4">4 pezzi</option><option value="5">5 pezzi</option></select></label></div>
+        <div class="campo"><label>Set del sovrano di cenere <select id="setCenere"><option value="0">0 pezzi</option><option value="1">1 pezzi</option><option value="2">2 pezzi</option><option value="3">3 pezzi</option><option value="4">4 pezzi</option><option value="5">5 pezzi</option></select></label></div>
+        <div class="campo" id="testaRiga"><span class="nota">Testa al sovrano:</span> <label><input type="radio" name="testa" value="elmo" checked> elmo (carne 5, cenere 3)</label> <label><input type="radio" name="testa" value="corona"> corona (carne 4, cenere 4)</label></div>
+        <div id="setInfo" class="info"></div>
+        <div class="campo"><label>Elisir di stato <select id="borsa"><option value="raro" selected>2 rari per famiglia</option><option value="comune">2 comuni per famiglia</option><option value="">nessuno</option></select></label>
+          <label>Pozioni di salute <input type="number" id="pozioni" value="2" min="0" max="6" style="width:4em"></label></div>
+      </div>
+      <div class="blocco largo2">
+        <h3>Poteri</h3>
+        <div class="scelte" id="scelte"></div>
+      </div>
+    </div>
+      <div class="riga"><button type="button" id="crea">Mostra la scheda (senza combattere)</button><span class="nota" id="creaNota"></span></div>
+    </details>
+  </section>
+
+  <section id="rapida" class="largo">
+    <h2><span class="num">2</span> Il nemico <span class="noStrumenti">e via</span></h2>
+    <div class="riga">
+      <label>Nemico <select id="nemico"></select></label>
+      <span class="soloManuale"><button type="button" id="nuovo" class="primario">▶ Inizia lo scontro</button> <button type="button" id="riposa" title="Salute piena, giornalieri di nuovo disponibili, un elisir in più per lo Sciamano">Riposa</button></span>
+      <span class="soloAuto"><button type="button" id="autoAvvia" class="primario">▶ Avvia lo scontro automatico</button>
+        <button type="button" id="autoPausa" disabled>⏸ Pausa</button> <button type="button" id="autoPasso" disabled>Un turno</button>
+        <label>Velocità <select id="autoVel"><option value="1600">lenta</option><option value="800" selected>normale</option><option value="250">veloce</option><option value="0">subito</option></select></label></span>
+    </div>
+    <div class="riga noStrumenti">
+      <span class="nota">Scorciatoie (livello e arma del momento):</span>
+      <button type="button" class="preset" data-nem="ettore" data-liv="2" data-bonus="0">Ettore <small>liv. 2 · +0</small></button>
+      <button type="button" class="preset" data-nem="enea" data-liv="3" data-bonus="1">Enea <small>liv. 3 · +1</small></button>
+      <button type="button" class="preset" data-nem="dafne" data-liv="4" data-bonus="2">Dafne <small>liv. 4 · +2</small></button>
+      <button type="button" class="preset" data-nem="atena" data-liv="5" data-bonus="3">Atena <small>liv. 5 · +3</small></button>
+      <button type="button" class="preset" data-nem="sovrano" data-liv="5" data-bonus="3">Sovrano <small>liv. 5 · +3</small></button>
+    </div>
+    <div class="riga noStrumenti"><label><input type="checkbox" id="nuovoPg" checked> Ogni scontro con il personaggio nuovo, a salute piena</label> <span class="nota" id="statoScontro"></span></div>
+  </section>
+
   <section id="pgBox">
-    <h2 class="pg">Personaggio</h2>
-    <div class="riga">
-      <label>Classe <select id="classe"></select></label>
-      <label>Razza <select id="razza"></select></label>
-      <label>Specializzazione <select id="spec"></select></label>
-      <label>Livello <select id="liv"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
-      <label>Via <select id="via"><option value="">nessuna</option><option value="aldo">Aldo, la caccia</option><option value="guendalina">Guendalina, il focolare</option></select></label>
-    </div>
-    <div class="riga">
-      <label>Arma <select id="arma"></select></label>
-      <label>bonus +<input type="number" id="armaBonus" value="0" min="0" max="4"></label>
-      <label><input type="checkbox" id="scudo"> Scudo (+1 CA)</label>
-      <label>Focus d8 +<input type="number" id="focusBonus" value="0" min="0" max="4"></label>
-    </div>
-    <div class="scelte" id="scelte"></div>
-    <div class="riga"><button type="button" id="crea">Crea il personaggio (salute piena)</button><span class="nota" id="creaNota"></span></div>
+    <h2 class="pg">Tu</h2>
     <div id="pgScheda"></div>
   </section>
 
   <section id="nemBox">
     <h2 class="nem">Nemico</h2>
-    <div class="riga">
-      <label><select id="nemico"></select></label>
-      <button type="button" id="nuovo">Nuovo scontro</button>
-      <button type="button" id="riposa" title="Salute piena, giornalieri di nuovo disponibili, un elisir in più per lo Sciamano">Riposa</button>
-    </div>
     <div id="nemScheda"></div>
   </section>
 
@@ -148,19 +267,19 @@
     </div>
   </section>
 
-  <section id="azioni" class="largo">
+  <section id="azioni" class="largo soloStrumenti">
     <div>
       <h3 style="font:600 13px var(--t);color:var(--muted);margin:4px 0">Simulazione rapida</h3>
       <div class="riga">
         <label>Scontri <input type="number" id="simN" value="200" min="10" max="2000" style="width:70px"></label>
         <button type="button" id="simula">Simula con il giocatore automatico</button>
       </div>
-      <div class="nota">Il giocatore automatico usa: per scontro appena può, giornaliero quando il nemico è Vacillante, poi l'offesa a volontà. Riposa prima di ogni scontro. Serve solo per un'idea grezza.</div>
+      <div class="nota">Il giocatore automatico usa: per scontro appena può, giornaliero quando il nemico è Vacillante, poi l'offesa a volontà; da Vacillante beve una pozione (azione rapida, 2 a scontro). Riposa prima di ogni scontro. Serve solo per un'idea grezza.</div>
       <div id="simEsito"></div>
     </div>
   </section>
 
-  <section id="testBox" class="largo">
+  <section id="testBox" class="largo soloStrumenti">
     <h2>Test automatici del motore nuovo</h2>
     <div class="riga"><button type="button" id="eseguiTest">Esegui tutti i test</button><span class="nota">Gli stessi di <code>npm test</code>, qui nel browser.</span></div>
     <div id="test"></div>
@@ -182,8 +301,10 @@
 <script src="js/preset_test.js"></script>
 <script src="js/poteri.js"></script>
 <script src="js/specializzazioni.js"></script>
+<script src="js/oggetti.js"></script>
 <script src="js/scontro.js"></script>
 <script src="js/nemici.js"></script>
+<script src="js/cervello.js"></script>
 <script src="js/racconto.js"></script>
 <script src="tests/poteri.test.js"></script>
 <script src="tests/scontro.test.js"></script>
@@ -191,6 +312,10 @@
 <script src="tests/scontro_arcanista.test.js"></script>
 <script src="tests/scontro_monaco.test.js"></script>
 <script src="tests/scontro_vie.test.js"></script>
+<script src="tests/scontro_regole.test.js"></script>
+<script src="tests/guardiani.test.js"></script>
+<script src="tests/oggetti.test.js"></script>
+<script src="tests/set_elisir.test.js"></script>
 <script src="tests/nemici.test.js"></script>
 <script>
 (() => {
@@ -201,16 +326,16 @@
 
   /* classi: chiave interna di Regole, preset di test.html, specializzazioni */
   const CLASSI = { Soldato: { nome: "Guerriero", preset: "guerriero" }, Forestiero: { nome: "Sciamano", preset: "sciamano" }, Sapiente: { nome: "Arcanista", preset: "arcanista" }, Accolito: { nome: "Monaco", preset: "monaco" } };
+  /* armi comuni a griglia (14/11/2026): tre tipi × una mano (d6) / due mani (d8), più il bastone (arma e focus insieme). Nomi provvisori */
   const ARMI = [
-    { nome: "Spada corta (taglio d6)", dado: 6, tipo: "taglio" }, { nome: "Ascia da battaglia (taglio d8, 2 mani)", dado: 8, tipo: "taglio", dueMani: true },
-    { nome: "Bastone (contundente d6, 2 mani)", dado: 6, tipo: "contundente", dueMani: true }, { nome: "Martello da battaglia (contundente d8)", dado: 8, tipo: "contundente" },
-    { nome: "Mazza chiodata (perforante d6)", dado: 6, tipo: "perforante" }, { nome: "Piccone da battaglia (perforante d8, 2 mani)", dado: 8, tipo: "perforante", dueMani: true }
+    { nome: "Spada (taglio d6)", dado: 6, tipo: "taglio" }, { nome: "Spadone (taglio d8, 2 mani)", dado: 8, tipo: "taglio", dueMani: true },
+    { nome: "Mazza ferrata (contundente d6)", dado: 6, tipo: "contundente" }, { nome: "Maglio (contundente d8, 2 mani)", dado: 8, tipo: "contundente", dueMani: true },
+    { nome: "Pugnale (perforante d6)", dado: 6, tipo: "perforante" }, { nome: "Tridente (perforante d8, 2 mani)", dado: 8, tipo: "perforante", dueMani: true },
+    { nome: "Bastone (contundente d8, 2 mani, è anche focus)", dado: 8, tipo: "contundente", dueMani: true, eFocus: true }
   ];
   const NOMI_TIPO = { volonta: "A volontà", scontro: "Per scontro", giornaliero: "Giornalieri" };
-  const NOMI_TRATTI = { mente_incrollabile: "Mente incrollabile (fuori scontro)", furia: "Furia", legame_sottobosco: "Legame del sottobosco", radici_profonde: "Radici profonde",
-    pozzo_arcano: "Pozzo arcano", ultima_scintilla: "Ultima scintilla", ultimo_servizio: "Ultimo servizio", eredita_sepolcro: "Eredità del sepolcro" };
-  const RES = { vuln: "✓ vulnerabile", res: "✗ resistente", imm: "⛔ immune" };
-  const NOMI_DANNO = { taglio: "taglio", contundente: "contundente", perforante: "perforante", sangue: "sangue", illusione: "illusione", fuoco: "fuoco", fuoco_sacro: "fuoco sacro", ossa: "ossa", veleno: "veleno" };
+  const NOMI_TRATTI = Object.fromEntries(Object.entries(SP.TRATTI).map(([k, t]) => [k, k === "mente_incrollabile" ? t.nome + " (fuori scontro)" : t.nome]));
+  const RES = window.Racconto.RES, NOMI_DANNO = window.Racconto.NOMI_DANNO;
 
   let pg = null, nem = null, turno = 0, finito = true;
   const righe = [];
@@ -218,26 +343,83 @@
   /* ---------- pannello del personaggio ---------- */
   Object.entries(CLASSI).forEach(([k, c]) => $("classe").add(new Option(c.nome, k)));
   PR.RAZZE.forEach(r => $("razza").add(new Option(r, r)));
-  ARMI.forEach((a, i) => $("arma").add(new Option(a.nome, i)));
-  Object.entries(N.NEMICI).forEach(([k, n]) => $("nemico").add(new Option(`${n.nome} (liv. ${n.liv}${n.elite ? ", élite" : ""})`, k)));
+  /* armi speciali (js/oggetti.js) dopo le comuni; nei menu raggruppate per rarità */
+  const OG = window.Oggetti;
+  Object.entries(OG.ARMI).forEach(([id, a]) => ARMI.push({ ...a, speciale: id }));
+  const RARITA = ["Comune", "Non comune", "Raro", "Leggendario"];
+  const nomeBreve = (a) => (a.speciale ? a.nome : a.nome.replace(/ \(.*$/, ""));
+  const etichettaArma = (a) => `${nomeBreve(a)} — ${NOMI_DANNO[a.tipo] || a.tipo} d${a.dado}${a.dueMani ? ", 2 mani" : ""}${a.speciale ? ` +${a.bonus}` : ""}${a.potere ? " ★" : ""}`;
+  function riempiArmi(sel, conNessuna) {
+    if (conNessuna) sel.add(new Option("— nessuna —", ""));
+    RARITA.forEach(r => {
+      const g = document.createElement("optgroup"); g.label = r === "Comune" ? "Comuni (+ il bonus che scegli)" : `${r} (+${{ "Non comune": 1, Raro: 2, Leggendario: 3 }[r]}${r === "Raro" ? ", potere per scontro" : r === "Leggendario" ? ", potere giornaliero, d10" : ""})`;
+      ARMI.forEach((a, i) => { if ((a.rarita || "Comune") === r) g.append(new Option(etichettaArma(a), i)); });
+      sel.append(g);
+    });
+  }
+  riempiArmi($("arma")); riempiArmi($("arma2"), true);
+  /* equipaggiamento: un menu per posto (due anelli) */
+  const POSTI = [["armatura", "Armatura"], ["scudo", "Scudo"], ["elmo", "Elmo"], ["guanti", "Guanti"], ["stivali", "Stivali"], ["mantello", "Mantello"], ["amuleto", "Amuleto"], ["cintura", "Cintura"], ["anello", "Anello 1"], ["anello", "Anello 2"]];
+  $("equip").innerHTML = POSTI.map(([posto, nome], i) => {
+    const opz = Object.entries(OG.EQUIP).filter(([, e]) => e.slot === posto);
+    return `<span>${nome}</span><select class="eqSlot" data-posto="${posto}" id="eq${i}"><option value="">${posto === "armatura" ? "quella della classe" : posto === "scudo" ? "scudo base (se in mano)" : "— niente —"}</option>${opz.map(([id, e]) => `<option value="${id}">${e.nome} (${e.rarita}${e.ca ? ", +" + e.ca + " CA" : ""})</option>`).join("")}</select>`;
+  }).join("");
+  const equipScelto = () => [...document.querySelectorAll(".eqSlot")].map(x => x.value).filter(Boolean);
+  const testoEquip = (e) => (e.potere ? `<span class="pot">${e.potere.tipo === "scontro" ? "per scontro" : "giornaliero"}, azione rapida</span>: ${e.potere.testo}` : "")
+    + (e.tsStato ? `passivo: ${Object.entries(e.tsStato).map(([k, v]) => `+${v} ai TS contro ${P.nomeStato(k, 1)}`).join(", ")}` : "") + (e.cinturone ? "passivo: una volta per scontro un'azione rapida in più" : "") + (e.immuni ? ` · immune a ${e.immuni.map(k => P.nomeStato(k, 1)).join(", ")}` : "");
+  const testoArma = (a, bonus) => `<b>${nomeBreve(a)}</b>: ${NOMI_DANNO[a.tipo] || a.tipo}, d${a.dado}, ${a.dueMani ? "due mani" : "una mano"}, ${a.speciale ? `${a.rarita} +${a.bonus}` : `comune +${bonus || 0}`}${a.eFocus ? ", fa anche da focus" : ""}${a.facce ? ", due facce (maglio / ascia)" : ""} · stato: ${S.STATO_ARMA[a.tipo] ? P.nomeStato(S.STATO_ARMA[a.tipo], 1) : a.tipo === "fuoco" ? "Scottato (dal potere)" : "—"}${a.potere ? `<br><span class="pot">${a.potere.tipo === "scontro" ? "Per scontro" : "Giornaliero"}: ${OG.POTERI_ARMA[a.potere.id].nome}</span> — ${OG.POTERI_ARMA[a.potere.id].testo}` : ""}`;
+  /* il riquadro Armi ed Equipaggiamento: regole delle mani e descrizioni sempre aggiornate */
+  function aggiornaArmi() {
+    const classe = $("classe").value, a = ARMI[+$("arma").value], inc = classe !== "Soldato";
+    const scudoEq = document.querySelector('.eqSlot[data-posto="scudo"]').value;
+    const fFocus = document.querySelector('input[name=mano2][value=focus]'), fScudo = document.querySelector('input[name=mano2][value=scudo]');
+    fFocus.disabled = !inc || !!a.dueMani; fScudo.disabled = !!a.dueMani;
+    $("focusRiga").title = inc ? "" : "Il Guerriero non usa il focus";
+    let m = document.querySelector("input[name=mano2]:checked"); if (!m || m.disabled) { document.querySelector("input[name=mano2][value=niente]").checked = true; m = document.querySelector("input[name=mano2]:checked"); }
+    if (scudoEq && !a.dueMani) { fScudo.checked = true; m = fScudo; }
+    $("scudo").checked = m.value === "scudo";
+    $("bonusRiga").hidden = !!a.speciale;
+    $("armaInfo").innerHTML = testoArma(a, +$("armaBonus").value);
+    $("manoInfo").innerHTML = a.dueMani ? (a.eFocus ? "Due mani: il bastone fa già da focus." : "Arma a due mani: niente scudo né focus.")
+      : m.value === "scudo" ? `Scudo: ${scudoEq ? OG.EQUIP[scudoEq].nome + " (dall'equipaggiamento)" : "scudo base +1 CA"}; con <i>In guardia</i> +4 CA.`
+      : m.value === "focus" ? "Focus: i poteri degli incantatori tirano d8 se l'arma è d6 e sommano il bonus del focus." : inc ? "Mano libera: niente scudo né amplificazione del focus." : "Mano libera.";
+    const a2 = $("arma2").value !== "" ? ARMI[+$("arma2").value] : null;
+    $("arma2Info").innerHTML = a2 ? testoArma(a2, 0) + "<br>Si impugna con l'azione rapida durante lo scontro." : "Al massimo due armi con sé.";
+    const eq = equipScelto().map(id => OG.EQUIP[id]);
+    $("equipInfo").innerHTML = eq.length ? eq.map(e => `<div><b>${e.nome}</b> — ${testoEquip(e) || "nessun potere"}</div>`).join("") : "Nessun oggetto con poteri. CA dall'armatura della classe.";
+  }
+  document.querySelectorAll("input[name=mano2], .eqSlot, #armaBonus, #focusBonus").forEach(x => x.addEventListener("change", aggiornaArmi));
+  Object.entries(N.NEMICI).filter(([k]) => k !== "mastino_di_dafne").forEach(([k, n]) => $("nemico").add(new Option(`${n.nome} (liv. ${n.liv}${n.elite ? ", élite" : ""})`, k)));
+  Object.entries(N.BOSS).forEach(([k, n]) => $("nemico").add(new Option(`${n.nome} (liv. ${n.liv}, ${k === "sovrano" ? "sovrano" : "guardiano"})`, k)));
+  const nomeNem = (k) => (N.BOSS[k] || N.NEMICI[k]).nome;
+  /* Dafne: lo stacco con il mastino (il mastino diventa il bersaglio; Dafne aspetta in riserva) */
+  let riserva = null, staccoTurni = 0;
+  /* Percezione per cercare Dafne: ASSUNZIONE della sala di prova = modificatore di Mente + livello */
+  const bonusPercezione = () => ((pg.mod && pg.mod.Mente) || 0) + pg.liv;
+  function gestisciEvoca(E) {
+    if (!E.some(e => e && e.k === "evoca")) return;
+    riserva = nem; staccoTurni = 0; nem = N.crea("mastino_di_dafne"); selNem = null;
+  }
 
   function aggiornaSpec() {
     const cl = SP.SPEC[$("classe").value], sel = $("spec"), prima = sel.value; sel.innerHTML = "";
     Object.keys(cl).filter(k => k !== "classe").forEach(k => sel.add(new Option(cl[k].nome, k)));
     if ([...sel.options].some(o => o.value === prima)) sel.value = prima;
     const pr = PR.PG[CLASSI[$("classe").value].preset];
-    $("arma").value = pr.arma; $("scudo").checked = pr.scudo;
-    aggiornaScelte();
+    $("arma").value = pr.arma; document.querySelector(`input[name=mano2][value=${pr.scudo ? "scudo" : $("classe").value !== "Soldato" ? "focus" : "niente"}]`).checked = true;
+    aggiornaScelte(); aggiornaArmi();
   }
   /* scelte doppie (08/11): a ogni livello che porta una scelta, le opzioni a video con la descrizione.
      Nella sala di prova si possono cambiare; nel gioco saranno definitive. scelteFatte: { "1-scontro": id, … } */
   const scelteFatte = {};
-  const NOMI_SCELTA = { scontro: "scegli il potere per scontro", giornaliero: "scegli il giornaliero", libera: "scegli la strada: il terzo a volontà o un potere per scontro", volonta: "arriva l'a volontà che ti manca" };
-  function sceltePg() { /* rigioca le scelte fino al livello selezionato: [id…] nell'ordine */
+  const NOMI_SCELTA = { scontro: "scegli il potere per scontro", giornaliero: "scegli il giornaliero", volonta: "scegli un potere a volontà (2 su 3)" };
+  const RUOLI = { offesa: "offesa", controllo: "controllo", difesa: "difesa" };
+  function sceltePg() { /* rigioca le scelte fino al livello selezionato: [id…] nell'ordine; due scelte uguali si spostano sulla prima libera */
     const classe = $("classe").value, spec = $("spec").value, liv = +$("liv").value, presi = [], punti = [];
-    for (let l = 1; l <= liv; l++) SP.opzioniLivello(classe, spec, presi, l).forEach(o => {
-      const k = `${l}-${o.tipo}`; if (!o.opzioni.includes(scelteFatte[k])) scelteFatte[k] = o.opzioni[0];
-      presi.push(scelteFatte[k]); punti.push({ ...o, chiave: k });
+    for (let l = 1; l <= liv; l++) SP.opzioniLivello(classe, spec, presi, l).forEach((o, i) => {
+      const k = `${l}-${o.tipo}-${i}`, libere = o.opzioni.filter(id => !presi.includes(id));
+      if (!libere.includes(scelteFatte[k])) scelteFatte[k] = libere[0];
+      presi.push(scelteFatte[k]); punti.push({ ...o, libere, chiave: k });
     });
     return { presi, punti };
   }
@@ -245,51 +427,149 @@
   function giaPosseduti(classe, spec, presiPrima, liv) {
     const ids = SP.poteriAlLivello(classe, spec, presiPrima, liv);
     const tipo = { volonta: "a volontà", scontro: "per scontro", giornaliero: "giornaliero" };
-    return `<details class="gia" open><summary>Hai già ${ids.length} poteri (tocca per chiudere)</summary><ul>${ids.map(id => `<li><b>${SP.POTERI[id].nome}</b> · ${tipo[SP.POTERI[id].tipo]} — ${SP.POTERI[id].testo}</li>`).join("")}</ul></details>`;
+    return `<details class="gia"><summary>Hai già ${ids.length} poteri (tocca per vederli)</summary><ul>${ids.map(id => `<li><b>${SP.POTERI[id].nome}</b> · ${tipo[SP.POTERI[id].tipo]} — ${SP.POTERI[id].testo}</li>`).join("")}</ul></details>`;
   }
   function aggiornaScelte() {
     const classe = $("classe").value, spec = $("spec").value, s = SP.SPEC[classe][spec], box = $("scelte"), liv = +$("liv").value;
     const nomeP = (id) => SP.POTERI[id].nome, { presi, punti } = sceltePg();
-    const ora_ = SP.poteriAlLivello(classe, spec, presi, liv).filter(id => id !== SP.SPEC[classe].classe.potere);
-    const [v, sc, gi] = ["volonta", "scontro", "giornaliero"].map(t => ora_.filter(id => SP.POTERI[id].tipo === t).length);
-    const ora = (l) => (l <= liv ? "" : " (non ancora)");
-    const lasciati = liv >= 4 ? [...s.scontro, s.fissi.scontro, ...s.giornalieri, s.fissi.giornaliero].filter(id => !presi.includes(id)) : [];
-    const avviso = liv >= 3 && !presi.includes(s.volontaDopo) ? `<div class="nem">Strada d'attacco: niente ${nomeP(s.volontaDopo)} fino al livello 4, e il fisso per scontro del livello 4 è perso.</div>` : "";
-    box.innerHTML = `<div class="nota"><b>Al livello ${liv}: ${v} a volontà · ${sc} per scontro · ${gi} giornalier${gi === 1 ? "o" : "i"}</b> (più il potere di classe)</div>
-      <div class="nota">A volontà di partenza: ${s.volonta.filter(id => id !== s.volontaDopo).map(nomeP).join(" · ")} · ${nomeP(s.volontaDopo)} a scelta dal livello 2 (al più tardi arriva al 4) · finale al livello 5: ${nomeP(s.fissi.finale)}${ora(5)}</div>
-      ${punti.map((o, i) => `<div class="livScelta">Livello ${o.livello} · ${NOMI_SCELTA[o.tipo]}</div>
-        ${giaPosseduti(classe, spec, presi.slice(0, i), o.livello)}
-        <div class="carte">${o.opzioni.map(id => `<label class="carta"><input type="radio" name="${o.chiave}" value="${id}" ${scelteFatte[o.chiave] === id ? "checked" : ""}><b>${nomeP(id)}</b> <span class="nota">${{ volonta: "a volontà", scontro: "per scontro", giornaliero: "giornaliero" }[SP.POTERI[id].tipo]}</span>${SP.livelloDi(classe, spec, id) > 1 ? ` <span class="nota">(del livello ${SP.livelloDi(classe, spec, id)})</span>` : ""}<small>${SP.POTERI[id].testo}</small></label>`).join("")}</div>`).join("")}
-      ${avviso}${lasciati.length ? `<div class="nota">Lasciati per sempre: ${lasciati.map(nomeP).join(", ")}</div>` : ""}
-      <div class="nota">Nella sala di prova puoi cambiare le scelte; nel gioco saranno definitive.</div>`;
-    box.querySelectorAll(".carta input").forEach(r => r.addEventListener("change", () => { scelteFatte[r.name] = r.value; aggiornaScelte(); }));
-    $("via").disabled = liv < 3; if (liv < 3) $("via").value = "";
+    const priv = SP.SPEC[classe].classe.privilegi, terzo = SP.terzoVolonta(classe, spec, presi.slice(0, 2));
+    const [v, sc, gi] = SP.SCALA[liv];
+    $("specInfo").innerHTML = `<b>${s.nome}</b> (${s.ruolo}) — ${s.descr}${s.regola ? `<br>${s.regola}` : ""}`;
+    const tipoN = { volonta: "a volontà", scontro: "per scontro", giornaliero: "giornaliero" };
+    const carta = (name, id, checked, tipoInput) => `<label class="carta"><input type="${tipoInput || "radio"}" name="${name}" value="${id}" ${checked ? "checked" : ""}><b>${nomeP(id)}</b>${SP.POTERI[id].ruolo ? ` <span class="nota">${SP.POTERI[id].ruolo}</span>` : ""}${SP.livelloDi(classe, spec, id) > 1 ? ` <span class="nota">· nuovo del livello ${SP.livelloDi(classe, spec, id)}</span>` : ""}<small>${SP.POTERI[id].testo}</small></label>`;
+    const puntiDi = (l) => punti.filter(o => o.livello === l);
+    const blocchiScelta = (l) => {
+      const ps = puntiDi(l); if (!ps.length) return "";
+      let h = "";
+      const vol = ps.filter(o => o.tipo === "volonta");
+      if (vol.length) { const sel = vol.map(o => scelteFatte[o.chiave]); h += `<div class="scegli">A volontà — scegline 2 su 3 (il terzo arriva da solo al livello 2)</div><div class="carte">${s.volonta.map(id => carta("volonta2", id, sel.includes(id), "checkbox")).join("")}</div>`; }
+      ps.filter(o => o.tipo !== "volonta").forEach(o => { h += `<div class="scegli">${o.tipo === "scontro" ? "Per scontro" : "Giornaliero"} — scegline 1</div><div class="carte">${o.libere.map(id => carta(o.chiave, id, scelteFatte[o.chiave] === id)).join("")}</div>`; });
+      return h;
+    };
+    const arriva = (l) => {
+      const x = [];
+      if (l === 1) x.push(`privilegio <b>${SP.TRATTI[priv[1]].nome}</b> (${SP.TRATTI[priv[1]].testo})`);
+      if (l === 2) { x.push(`a volontà <b>${terzo ? nomeP(terzo) : "—"}</b> (quello lasciato)`); x.push($("via").value ? `via: <b>${SP.VIE[$("via").value].poteri[2].nome}</b>` : "scegli la <b>via di prestigio</b> (Chi sei)"); }
+      if (l === 3) { x.push(`privilegio <b>${SP.TRATTI[priv[3]].nome}</b>`); if ($("via").value) x.push(`via: <b>${SP.VIE[$("via").value].poteri[3].nome}</b>`); }
+      if (l === 4 && $("via").value) x.push(`via: <b>${SP.VIE[$("via").value].poteri[4].nome}</b>`);
+      if (l === 5) x.push(`giornaliero finale <b>${nomeP(s.fissi.finale)}</b>`, `privilegio <b>${nomeP(priv[5])}</b>`);
+      return x.length ? `<div class="arriva">Arriva da solo: ${x.join(" · ")}</div>` : "";
+    };
+    box.innerHTML = `<div class="info">Al livello ${liv}: <b>${v} a volontà · ${sc} per scontro · ${gi} giornalier${gi === 1 ? "o" : "i"}</b>${liv >= 5 ? ` + ${nomeP(priv[5])}` : ""}. Scelte definitive nel gioco, libere qui.</div>`
+      + [1, 2, 3, 4, 5].map(l => `<div class="livBlocco${l > liv ? " futuro" : ""}"><h4>Livello ${l} <span class="nota">· ${SP.SCALA[l].join(" / ")}</span>${l > liv ? ' <span class="nota">(alza il livello per sceglierlo)</span>' : ""}</h4>${l <= liv ? blocchiScelta(l) : ""}${arriva(l)}</div>`).join("");
+    /* a volontà: sempre esattamente due; spuntarne un terzo toglie il più vecchio */
+    const vk = punti.filter(o => o.tipo === "volonta").map(o => o.chiave);
+    box.querySelectorAll('input[name="volonta2"]').forEach(r => r.addEventListener("change", () => {
+      let sel = vk.map(k => scelteFatte[k]);
+      if (r.checked) sel = [sel[1], r.value]; else { r.checked = true; return; }
+      sel = s.volonta.filter(id => sel.includes(id)); scelteFatte[vk[0]] = sel[0]; scelteFatte[vk[1]] = sel[1]; aggiornaScelte();
+    }));
+    box.querySelectorAll('.carta input[type=radio]').forEach(r => r.addEventListener("change", () => { scelteFatte[r.name] = r.value; aggiornaScelte(); }));
+    $("via").disabled = liv < 2; if (liv < 2) $("via").value = "";
   }
   $("classe").addEventListener("change", aggiornaSpec);
   $("spec").addEventListener("change", aggiornaScelte);
   $("liv").addEventListener("change", aggiornaScelte);
-  $("arma").addEventListener("change", () => { if (ARMI[+$("arma").value].dueMani) $("scudo").checked = false; });
-  $("scudo").addEventListener("change", () => { if ($("scudo").checked && ARMI[+$("arma").value].dueMani) { $("scudo").checked = false; log("Un'arma a due mani esclude lo scudo.", "sis"); } });
+  $("via").addEventListener("change", aggiornaScelte);
+  $("arma").addEventListener("change", aggiornaArmi);
+  $("arma2").addEventListener("change", () => { if ($("arma2").value === $("arma").value) { $("arma2").value = ""; log("La seconda arma deve essere diversa dalla prima.", "sis"); } aggiornaArmi(); });
 
   /* il personaggio dalle stesse regole di test.html (js/preset_test.js) */
+  /* Progressione come nel gioco (progressione.md): livello 1 = base di classe + razza; salute 10 + massimo del dado + mod Vigore.
+     Ai livelli 2-5, al riposo: prima +2 punti attributo (tetto 20; quel che avanza va su Vigore, poi sugli altri), poi la salute cresce
+     di metà del dado + 1 + mod Vigore (con il Vigore già aumentato). Gli stessi passi diventano la tabella «Progressione» della scheda. */
+  function progressione(classe, razza, liv, su) {
+    const b = PR.pg(CLASSI[classe].preset, 1, razza), dado = PR.PG[CLASSI[classe].preset].dado;
+    const c = { Vigore: b.vig, "Agilità": b.agi, Mente: b.men, Spirito: b.spi };
+    let pv = R.SALUTE_BASE + dado + mod(c.Vigore);
+    const righe = [{ liv: 1, pv, piu: null, punti: "", c: { ...c } }];
+    const ordine = [su, "Vigore", "Agilità", "Mente", "Spirito"].filter((x, i, a) => a.indexOf(x) === i);
+    for (let l = 2; l <= liv; l++) {
+      let resto = l <= 5 ? R.PUNTI_PER_LIVELLO : 1; const dati = [];
+      for (const k of ordine) { const n = Math.min(resto, R.VALORE_MASSIMO - c[k]); if (n > 0) { c[k] += n; resto -= n; dati.push(`+${n} ${k}`); } if (!resto) break; }
+      const piu = R.CRESCITA_FISSA(dado, mod(c.Vigore)); pv += piu;
+      righe.push({ liv: l, pv, piu, punti: dati.join(", "), c: { ...c } });
+    }
+    return { c, pv, righe };
+  }
+  /* scheda: livello per livello, cosa è cresciuto e cosa è arrivato */
+  function tabellaProgressione(p) {
+    const s = SP.specDi(p.classe, p.spec), pr = SP.SPEC[p.classe].classe.privilegi, scelti = p.poteri;
+    /* rigioca le scelte: quali poteri sono arrivati a quale livello */
+    const presi = [], perLiv = { 1: [], 3: [], 4: [] };
+    for (let l = 1; l <= p.liv; l++) SP.opzioniLivello(p.classe, p.spec, presi, l).forEach(o => { const id = o.opzioni.find(x => scelti.includes(x) && !presi.includes(x)); if (id) { presi.push(id); perLiv[l].push(SP.POTERI[id].nome); } });
+    const terzo = s.volonta.find(x => !presi.slice(0, 4).includes(x));
+    const nuovi = (l) => {
+      const v = [...(perLiv[l] || [])];
+      if (l === 1) v.push(SP.TRATTI[pr[1]].nome + " (privilegio)");
+      if (l === 2) { if (terzo) v.push(SP.POTERI[terzo].nome); if (p.via) v.push(SP.VIE[p.via].poteri[2].nome + " (via)"); }
+      if (l === 3) { v.push(SP.TRATTI[pr[3]].nome + " (privilegio)"); if (p.via) v.push(SP.VIE[p.via].poteri[3].nome + " (via)"); }
+      if (l === 4 && p.via) v.push(SP.VIE[p.via].poteri[4].nome + " (via)");
+      if (l === 5) v.push(SP.POTERI[s.fissi.finale].nome, SP.POTERI[pr[5]].nome + " (privilegio)");
+      return v;
+    };
+    const [v, sc, gi] = SP.SCALA[p.liv];
+    return `<details class="gia"><summary>Progressione fino al livello ${p.liv} (salute, punti attributo, poteri) — al livello ${p.liv}: ${v}/${sc}/${gi} poteri</summary>
+      <table class="prog"><tr><th>Liv.</th><th>Salute</th><th>Punti attributo</th><th>Arriva</th></tr>
+      ${(p.progressione || []).map(r => `<tr><td>${r.liv}</td><td>${r.pv}${r.piu ? ` <span class="nota">(+${r.piu})</span>` : ""}</td><td>${r.punti || (r.liv === 1 ? `V ${r.c.Vigore} · A ${r.c["Agilità"]} · M ${r.c.Mente} · S ${r.c.Spirito}` : "—")}</td><td>${nuovi(r.liv).join(", ") || "—"}</td></tr>`).join("")}
+      </table><p class="nota">Come nel gioco: +2 punti ai livelli 2-5 (presi prima della crescita), salute +metà del dado +1 + mod Vigore. CA: armatura della classe + Agilità (con il tetto dell'armatura) + scudo; non cresce col livello, cresce con l'equipaggiamento.</p></details>`;
+  }
   function creaPg() {
     const classe = $("classe").value, spec = $("spec").value, liv = +$("liv").value, razza = $("razza").value;
     const scelti = sceltePg().presi;
     const v = SP.sceltaValida(classe, spec, scelti, liv);
     if (!v.ok) { $("creaNota").textContent = "Scelte non valide: " + v.motivo; return null; }
     $("creaNota").textContent = "";
-    const pr = PR.pg(CLASSI[classe].preset, liv, razza), arma = ARMI[+$("arma").value], scudo = $("scudo").checked && !arma.dueMani;
+    const prog = progressione(classe, razza, liv, $("puntiSu").value || R.ATTR_CLASSE[classe]);
+    const pr = { ...PR.pg(CLASSI[classe].preset, liv, razza), vig: prog.c.Vigore, agi: prog.c["Agilità"], men: prog.c.Mente, spi: prog.c.Spirito, pv: prog.pv }, arma = ARMI[+$("arma").value], scudo = $("scudo").checked && !arma.dueMani;
+    const conBonus = (a, extra) => (a.speciale ? OG.arma(a.speciale) : { dado: a.dado, tipo: a.tipo, bonus: extra || 0, nome: a.nome.replace(/ \(.*$/, ""), ...(a.dueMani ? { dueMani: true } : {}), ...(a.eFocus ? { eFocus: true } : {}) });
+    const a1 = conBonus(arma, +$("armaBonus").value || 0), a2 = $("arma2").value !== "" ? conBonus(ARMI[+$("arma2").value], 0) : null;
+    /* focus: solo incantatori, in mano secondaria (lo scudo lo esclude); il bastone è arma e focus */
+    const mano2 = (document.querySelector("input[name=mano2]:checked") || {}).value;
+    const focus = classe !== "Soldato" && mano2 === "focus" && !arma.dueMani ? { dado: 8, bonus: +$("focusBonus").value || 0 } : null;
+    const eqIds = equipScelto(), armEq = eqIds.map(id => OG.EQUIP[id]).find(e => e.slot === "armatura"), scudoEq = eqIds.some(id => OG.EQUIP[id].slot === "scudo") && scudo;
     const caratt = { Vigore: pr.vig, "Agilità": pr.agi, Mente: pr.men, Spirito: pr.spi };
     const m = Object.fromEntries(Object.entries(caratt).map(([k, x]) => [k, mod(x)]));
-    const ca = PR.ca(PR.PG[CLASSI[classe].preset].armatura, pr.agi, scudo);
+    /* CA: l'armatura dell'equipaggiamento sostituisce quella della classe (il suo +2 lo aggiunge Oggetti.indossa); uno scudo dell'equipaggiamento sostituisce quello base */
+    const set = setScelto(), manoLibera = set.carne >= 4 && !arma.dueMani; /* mano libera del set di carne: scudo o focus, +2 CA (sostituisce la mano secondaria) */
+    const ca = PR.ca(armEq ? armEq.armatura : PR.PG[CLASSI[classe].preset].armatura, pr.agi, scudo && !scudoEq && !manoLibera) + (manoLibera ? 2 : 0);
     const p = {
       nome: "Tu", classe, spec, liv, razza, caratt, mod: m, modClasse: m[R.ATTR_CLASSE[classe]], pv: pr.pv, pvMax: pr.pv, caBase: ca,
-      arma: { dado: arma.dado, tipo: arma.tipo, bonus: +$("armaBonus").value || 0, nome: arma.nome }, scudo,
-      focus: { dado: 8, bonus: +$("focusBonus").value || 0 }, via: liv >= 3 ? $("via").value || null : null,
-      poteri: SP.poteriAlLivello(classe, spec, scelti, liv), tratti: SP.trattiAlLivello(classe, liv), stati: {}, elisir: classe === "Forestiero" ? 2 : 0
+      arma: a1, armi: a2 ? [a1, a2] : [a1], scudo, focus, via: liv >= 2 ? $("via").value || null : null,
+      poteri: SP.poteriAlLivello(classe, spec, scelti, liv), tratti: SP.trattiAlLivello(classe, liv), stati: {},
+      elisir: classe === "Forestiero" && liv >= 5 ? 2 : 0, pozioni: Math.max(0, +$("pozioni").value || 0), progressione: prog.righe,
+      set, borsa: borsaScelta()
     };
-    return S.preparaScontro(p);
+    if (manoLibera) { p.scudo = false; if (classe !== "Soldato") p.focus = { dado: 8, bonus: 0 }; }
+    return S.preparaScontro(OG.indossa(p, eqIds.filter(id => OG.EQUIP[id].slot !== "scudo" || scudo)));
   }
+
+  /* ---------- set e borsa (15/11) ----------
+     Pezzi che il giocatore ha davvero prima di ogni scontro (storia_retaggio_e_set 7c): carne = mantello (prima caccia), guanti (Ettore),
+     elmo (Enea), mano libera (Dafne), corazza (Atena); cenere = anello e medaglione (storia, presto), corno (Dafne), corona (Atena). */
+  const PEZZI_STORIA = { ettore: [1, 2], enea: [2, 2], dafne: [3, 2], atena: [4, 3], sovrano: { elmo: [5, 3], corona: [4, 4] } };
+  const POTERI_SET_TESTO = {
+    carne: [[2, "Odore di Casa (sempre): −1 a ogni colpo fisico subito"], [4, "Sguardo della Casa (per scontro, rapida): il nemico ha −2 a colpirti; la mano libera del set dà +2 CA (non con armi a due mani)"], [5, "Ultima Guardia (giornaliero): a 0 ti rialzi con il 10% della salute"]],
+    cenere: [[2, "Occhio dell'erede (fuori scontro); sul sovrano sangue e psichico da immuni a resistenti"], [4, "Voce del sangue (per scontro, rapida): rilanci il primo tiro per colpire mancato; sul sovrano taglio, perforante e ossa neutri"], [5, "Sentenza dell'erede (solo finale B, non ancora nel motore); sul sovrano armatura azzerata"]]
+  };
+  function aggiornaSet() {
+    const id = $("nemico").value, st = PEZZI_STORIA[id], storia = $("setStoria").checked;
+    $("testaRiga").style.display = id === "sovrano" ? "" : "none";
+    if (storia) {
+      const testa = (document.querySelector("input[name=testa]:checked") || {}).value || "elmo";
+      const [c, e] = st ? (Array.isArray(st) ? st : st[testa]) : [0, 2];
+      $("setCarne").value = c; $("setCenere").value = e;
+    }
+    $("setCarne").disabled = $("setCenere").disabled = storia;
+    $("setStoriaNota").textContent = storia ? (st ? "" : "(nemico comune: anello e medaglione)") : "";
+    const riga = (k) => POTERI_SET_TESTO[k].map(([n, t]) => `<div class="${+$(k === "carne" ? "setCarne" : "setCenere").value >= n ? "" : "spento"}">${n} pezzi — ${t}</div>`).join("");
+    $("setInfo").innerHTML = `<b>Carne</b>${riga("carne")}<b>Cenere</b>${riga("cenere")}`;
+  }
+  const setScelto = () => ({ carne: +$("setCarne").value, cenere: +$("setCenere").value });
+  const borsaScelta = () => { const t = $("borsa").value; return t ? Object.fromEntries(S.FAMIGLIE_ELISIR.map(f => [f, { [t]: 2 }])) : {}; };
+  const creaNemico = (id) => N.crea(id, id === "sovrano" ? { setCenere: setScelto().cenere } : undefined);
+  ["setStoria", "setCarne", "setCenere", "nemico"].forEach(id => $(id).addEventListener("change", aggiornaSet));
+  document.querySelectorAll("input[name=testa]").forEach(r => r.addEventListener("change", aggiornaSet));
 
   /* ---------- schede ---------- */
   const barra = (b) => { const pc = Math.max(0, b.pv) / b.pvMax * 100; return `<div class="barra ${b.pv <= 0 ? "giu" : P.vacillante(b) ? "vac" : ""}"><i style="width:${pc}%"></i></div>`; };
@@ -298,43 +578,102 @@
   const buffChip = (b) => Object.keys(b.buff || {}).map(k => { const x = b.buff[k]; const d = x.finoAlTurno ? "fino al tuo turno" : x.turni ? `${x.turni}` : x.cariche ? `${x.cariche}×` : ""; return `<span class="chip buff">${NOMI_BUFF[k] || k}${d ? " " + d : ""}</span>`; }).join("");
   function schedaPg() {
     if (!pg) { $("pgScheda").innerHTML = `<p class="nota">Crea il personaggio.</p>`; return; }
-    const c = pg.caratt, extra = [pg.copie ? `Copie ${pg.copie}/3` : "", pg.placche ? `Placche ${pg.placche}/3 (−${3 + pg.liv - 1})` : "", pg.classe === "Forestiero" ? `Elisir ${pg.elisir}` : "", pg.marchia ? "Marchio della preda" : "", pg.prossimiDadi ? `+${pg.prossimiDadi} dadi al prossimo attacco` : ""].filter(Boolean).join(" · ");
-    $("pgScheda").innerHTML = `<p><b>${CLASSI[pg.classe].nome} ${SP.SPEC[pg.classe][pg.spec].nome}</b>, ${pg.razza}, livello ${pg.liv}${pg.via ? `, via di ${pg.via === "aldo" ? "Aldo" : "Guendalina"}` : ""}</p>
+    const sc = P.scudoAttivo(pg), spenti = Object.keys(pg.spenti || {}).filter(k => pg.spenti[k]);
+    const c = pg.caratt, extra = [sc ? `Scudo di corteccia ${sc.pf}/${sc.max} PF` : "", pg.copie ? `Copie ${pg.copie}/3` : "", pg.placche ? `Placche ${pg.placche}/3 (−${3 + pg.liv - 1})` : "", pg.classe === "Forestiero" && pg.liv >= 5 ? `Elisir ${pg.elisir}` : "", `Pozioni ${pg.pozioni || 0}`,
+      spenti.length ? `Spenti: ${spenti.map(k => SP.POTERI[k].nome).join(", ")}` : "", pg.marchia ? "Marchio della preda" : "", pg.prossimiDadi ? `+${pg.prossimiDadi} dadi al prossimo attacco` : ""].filter(Boolean).join(" · ");
+    $("pgScheda").innerHTML = `<p><b>${CLASSI[pg.classe].nome} ${SP.specDi(pg.classe, pg.spec).nome}</b>, ${pg.razza}, livello ${pg.liv}${pg.via ? `, via di ${pg.via === "aldo" ? "Aldo" : "Guendalina"}` : ""}</p>
       <p class="nota">Vigore ${c.Vigore} · Agilità ${c["Agilità"]} · Mente ${c.Mente} · Spirito ${c.Spirito} — caratteristica di classe ${R.ATTR_CLASSE[pg.classe]} (+${pg.modClasse}), CD dei tuoi stati ${P.cd(pg)}</p>
       <p>Salute <b>${Math.max(0, pg.pv)} / ${pg.pvMax}</b>${P.vacillante(pg) ? " · <b style='color:#d8a24a'>Vacillante</b>" : ""} · CA <b>${S.ca(pg)}</b>${pg.bonusTs ? ` · TS +${pg.bonusTs}` : ""}</p>${barra(pg)}
       <div>${statiChip(pg)} ${buffChip(pg)}</div>${extra ? `<p class="nota">${extra}</p>` : ""}
-      <p class="nota">Tratti: ${pg.tratti.map(t => NOMI_TRATTI[t] || t).join(", ")} · Arma: ${pg.arma.nome}${pg.arma.bonus ? " +" + pg.arma.bonus : ""}${pg.scudo ? " e scudo" : ""}</p>`;
+      <p class="nota">Privilegi: ${pg.tratti.map(t => NOMI_TRATTI[t] || t).join(", ")}${pg.via ? ` · Via: ${SP.viaAlLivello(pg.via, pg.liv).map(id => Object.values(SP.VIE[pg.via].poteri).find(x => x.id === id).nome).join(", ")}` : ""}</p>
+      <p class="nota">In mano: <b>${pg.arma.nome}</b> (${NOMI_DANNO[pg.arma.tipo]} d${pg.arma.dado}${pg.arma.bonus ? " +" + pg.arma.bonus : ""})${pg.armi.length > 1 ? ` · con te anche: ${pg.armi.filter(a => a !== pg.arma).map(a => a.nome).join(", ")}` : ""}${pg.scudo ? " · scudo" : ""}${pg.focus ? ` · focus${pg.focus.bonus ? " +" + pg.focus.bonus : ""}${pg.arma.dueMani && !pg.arma.eFocus ? " (inattivo: arma a due mani)" : ""}` : ""}${pg.rapidaUsata ? " · <b>azione rapida usata</b>" : ""}</p>
+      ${tabellaProgressione(pg)}`;
   }
   function schedaNem() {
     if (!nem) { $("nemScheda").innerHTML = `<p class="nota">Scegli un nemico e premi «Nuovo scontro».</p>`; return; }
-    const d = N.NEMICI[nem.id], res = Object.entries(nem.res || {}).map(([t, r]) => `<span class="chip ${r}">${NOMI_DANNO[t] || t} ${RES[r]}</span>`).join("") || `<span class="nota">neutro a tutto</span>`;
+    const d = N.NEMICI[nem.id] || N.BOSS[nem.id] || {}, res = Object.entries(nem.res || {}).map(([t, r]) => `<span class="chip ${r}">${NOMI_DANNO[t] || t} ${RES[r]}</span>`).join("") || `<span class="nota">neutro a tutto</span>`;
     const rune = N.statoRune(nem);
     $("nemScheda").innerHTML = `<p><b>${nem.nome}</b>, livello ${nem.liv}${nem.maledetto ? ` · <span class="maledetto">🔥 Maledetto</span>` : ""}${nem.elite ? " · élite" : ""}${nem.fuggito ? " · <b>fuggito</b>" : ""}</p>
       <p>Salute <b>${Math.max(0, nem.pv)} / ${nem.pvMax}</b>${P.vacillante(nem) ? " · <b style='color:#d8a24a'>Vacillante</b>" : ""} · CA <b>${S.ca(nem)}</b> · attacco +${nem.modAtt} · danno ${nem.arma.n}d${nem.arma.dado}${nem.modDanno ? " + " + nem.modDanno : ""}</p>${barra(nem)}
       <div>${statiChip(nem)} ${buffChip(nem)}</div>
       ${rune ? `<p>${rune.map(r => `<span class="runa ${r.accesa ? "on" : ""} ${r.pulsaVeloce ? "veloce" : ""}" title="${r.potere === "armatura" ? "Runa del petto: si spegne da Vacillante (CA 15 → 13)" : N.POTERI[r.potere].nome}"></span>`).join("")}</p>` : ""}
-      ${nem.pronto ? `<p class="nem"><b>Sta preparando: ${N.POTERI[nem.pronto].nome}</b></p>` : ""}
+      ${nem.pronto ? `<p class="nem inCarica">${icona(nem.pronto)}<b>Sta caricando: ${N.POTERI[nem.pronto].nome}</b> — colpirà al suo prossimo turno.</p>` : ""}
+      ${nem.guardiano ? `<p class="nota">Fase: <b>${N.faseCorrente(nem).nome}</b>${nem.statiCorti ? " · armatura integra: gli stati durano 1 turno e non si aggravano" : ""}${(nem.immuni || []).length ? " · immune a " + nem.immuni.map(k => P.nomeStato(k, 1)).join(", ") : ""}${nem.rialzo ? " · si rialzerà una volta" : ""}${nem.intoccabile ? " · <b>fuori portata</b>" : ""}</p>` : ""}
+      ${N.barreSovrano(nem) ? (() => { const b = N.barreSovrano(nem); return `<p class="nota">Cenere ${b.cenere}/${b.cenereMax} · Carne ${b.carne}/${b.carneMax}</p>`; })() : ""}
+      ${riserva ? `<p class="nota">Dafne aspetta fuori portata (stacco: turno ${staccoTurni} di 3).</p>` : ""}
       <p>${res}</p>
       ${d.daMisurare ? `<p class="nota">Da misurare: ${d.daMisurare}</p>` : ""}`;
   }
   /* ---------- scheda laterale: i tuoi poteri (seleziona → descrizione → usa) ---------- */
   let selPg = null, selNem = null;
-  const MOTIVI = { giaUsatoScontro: "già usato in questo scontro", giaUsatoGiorno: "già usato oggi: riposa", impaurito: "sei Impaurito: solo a volontà", senzaElisir: "niente elisir", senzaCopie: "nessuna Copia", senzaPlacche: "nessuna placca", nonPreparato: "non preparato" };
+  const MOTIVI = { giaUsatoScontro: "già usato in questo scontro", giaUsatoGiorno: "già usato oggi: riposa", impaurito: "sei Impaurito: solo a volontà", senzaElisir: "niente elisir", senzaCopie: "nessuna Copia", senzaPlacche: "nessuna placca", nonPreparato: "non preparato", spento: "spento dal Vuoto fino a fine scontro", rapidaUsata: "azione rapida già usata" };
   const POTERI_CLASSE = ["secondo_vento", "bevi_elisir", "coagulo", "tocco_lenitivo"];
-  const FOCUS = ["stilo_cremisi", "dardo_fantasma", "lancia_d_ossa", "sussurro_illusorio", "spine_d_ossa"];
+  /* poteri degli incantatori che tirano il dado dell'arma (d8 con il focus) con il tipo di danno del potere */
+  const FOCUS = ["colpo_di_forza", "schianto", "lancia_di_realta", "spezzare_la_materia", "doppia_frattura", "dardo_fantasma", "sussurro_illusorio",
+    "dardo_di_sangue", "ebollizione", "meteora_di_sangue", "lancia_di_sangue", "lancia_d_ossa", "spine_d_ossa"];
   function contestoPg(id) {
     const p = SP.POTERI[id], righe = [], sa = S.statoArma(pg);
-    const bonusA = pg.modClasse + (pg.arma.bonus || 0), bonusF = pg.modClasse + (pg.focus.bonus || 0), caN = nem ? S.ca(nem) : null;
-    if (FOCUS.includes(id)) righe.push(`Con il focus: tiro d20 + ${bonusF}${caN != null ? ` contro CA ${caN}` : ""}, danno 1d8 + ${bonusF}.`);
+    const fOk = pg.focus && !(pg.arma.dueMani && !pg.arma.eFocus), bonusA = pg.modClasse + (pg.arma.bonus || 0), bonusF = bonusA + (fOk ? pg.focus.bonus || 0 : 0), caN = nem ? S.ca(nem) : null;
+    if (FOCUS.includes(id)) righe.push(`${fOk ? "Con il focus" : "Senza focus"}: tiro d20 + ${bonusF}${caN != null ? ` contro CA ${caN}` : ""}, danno 1d${S.dadoIncanto(pg)} + ${bonusF}.`);
     else if (/attacc|dado dell'arma|Attacco/i.test(p.testo)) righe.push(`Con ${pg.arma.nome}: tiro d20 + ${bonusA}${caN != null ? ` contro CA ${caN}` : ""}, danno 1d${pg.arma.dado} + ${bonusA}${pg.arma.tipo === "perforante" ? ", critico 19-20" : ""}.`);
     if (/stato dell'arma/.test(p.testo) && sa) righe.push(`Stato della tua arma: ${P.nomeStato(sa, 1)} → aggravato ${P.nomeStato(sa, 2)}.`);
     if (/TS|Indebolito|Esposto|Stordito|Sanguinante|Intossicato|Scottato|Impaurito|veleno|sanguinamento|bruciatura/.test(p.testo)) righe.push(`Chi subisce i tuoi stati tira contro CD ${P.cd(pg)} (un tiro solo per potere).`);
-    if (POTERI_CLASSE.includes(id)) righe.push("Potere di classe.");
+    if (POTERI_CLASSE.includes(id)) righe.push("Privilegio di classe del livello 5.");
+    if (SP.POTERI[id].rapida) righe.push("Azione rapida: non consuma il turno.");
     return righe;
   }
+  function aggiornaStatoTurno() {
+    const st = $("statoTurno"), sc = $("statoScontro");
+    if (!pg) { st.className = "attesa"; st.textContent = "Imposta il personaggio e inizia uno scontro."; sc.textContent = ""; return; }
+    if (!nem || finito) {
+      const vinto = nem && nem.pv <= 0, perso = pg.pv <= 0;
+      st.className = perso ? "ko" : vinto ? "fine" : "attesa";
+      st.innerHTML = perso ? "Sconfitta." : vinto ? `Vittoria su ${nem.nome}.` : "Nessuno scontro in corso.";
+      st.innerHTML += `<small>Scegli il nemico e premi «Inizia» (o una scorciatoia).</small>`;
+      sc.textContent = ""; return;
+    }
+    st.className = "tuo";
+    st.innerHTML = `Turno ${turno}: ${typeof modo !== "undefined" && modo === "auto" ? (autoPausa ? "in pausa (Spazio o «Un turno»)" : "gioca il giocatore automatico") : "tocca a te"}<small>Azione standard libera · azione rapida ${S.rapidaLibera(pg) ? "libera" : "già usata"}${P.puoAgire(pg) ? "" : " · sei stordito"}</small>`;
+    sc.textContent = `Turno ${turno} · ${nem.nome} ${Math.max(0, nem.pv)}/${nem.pvMax} · tu ${Math.max(0, pg.pv)}/${pg.pvMax}`;
+  }
   function latoPg() {
+    aggiornaStatoTurno();
     const box = $("poteri"), det = $("dettaglioPg"); box.innerHTML = "";
-    $("opzioni").innerHTML = pg && pg.spec === "sangue" ? `<label title="Sopra il 50% della salute, una volta per turno: 3 salute per un dado in più. Da Vacillante il dado è gratis."><input type="checkbox" id="sangueVersato"> Sangue versato (3 salute, +1 dado)</label>` : "";
+    const costoSV = pg ? Math.ceil(pg.pvMax / 10) : 0, inScontro = pg && !finito && pg.pv > 0;
+    $("opzioni").innerHTML = (pg && pg.spec === "sangue" ? `<label title="Sopra il 50% della salute, una volta per turno: il 10% della salute massima per un dado in più. Da Vacillante il dado è gratis."><input type="checkbox" id="sangueVersato"> Sangue versato (${costoSV} salute, +1 dado)</label>` : "")
+      + (pg ? `<div class="gruppoAz"><b>Azione rapida (una per turno)</b>${pg.armi.length > 1 ? ` <button type="button" class="mini" id="cambiaArma" ${inScontro && S.rapidaLibera(pg) ? "" : "disabled"}>Cambia arma → ${pg.armi.find(a => a !== pg.arma).nome}</button>` : ""}
+        <button type="button" class="mini" id="beviPozione" ${inScontro && S.rapidaLibera(pg) && pg.pozioni > 0 ? "" : "disabled"} title="PROVVISORIO: cura 1/4 della salute massima">Bevi pozione (${pg.pozioni || 0})</button>
+        ${S.FAMIGLIE_ELISIR.filter(f => pg.borsa && pg.borsa[f] && ((pg.borsa[f].raro || 0) + (pg.borsa[f].comune || 0)) > 0).map(f => { const q = pg.borsa[f], raro = q.raro > 0;
+          return `<button type="button" class="mini elisirBtn" data-fam="${f}" data-raro="${raro ? 1 : ""}" ${inScontro && S.rapidaLibera(pg) && P.ha(pg, f) ? "" : "disabled"} title="${raro ? "Raro: cura lieve e grave, 3 turni di immunità" : "Comune: cura solo il lieve"}">Elisir ${P.nomeStato(f, 1)} (${raro ? q.raro + " rari" : q.comune + " comuni"})</button>`; }).join(" ")}
+        ${Object.keys(S.POTERI_SET).filter(id => pg.set && pg.set[S.POTERI_SET[id].set] >= S.POTERI_SET[id].pezzi).map(id => `<button type="button" class="mini setBtn" data-id="${id}" ${inScontro && S.rapidaLibera(pg) && S.disponibileSet(pg, id).ok ? "" : "disabled"}>${{ sguardo_della_casa: "Sguardo della Casa", voce_del_sangue: "Voce del sangue" }[id]} (set, per scontro)</button>`).join(" ")}</div>` : "");
+    if (inScontro && nem) { /* attacco con l'arma, potere dell'arma, faccia del Giuramento, poteri degli oggetti */
+      const box2 = document.createElement("div"); box2.className = "gruppoAz"; box2.innerHTML = "<b>Arma e oggetti</b>";
+      const bt = (testo, on, fn, titolo) => { const b = document.createElement("button"); b.type = "button"; b.className = "mini"; b.textContent = testo; b.disabled = !on; if (titolo) b.title = titolo; b.addEventListener("click", fn); box2.append(b, " "); };
+      const pa = pg.arma.potere, dA = S.disponibileArma(pg), libero = P.puoAgire(pg);
+      bt(`Attacco con ${pg.arma.nome}`, libero, () => azioneArma(false), "Attacco base: dado dell'arma + bonus, nessuno stato.");
+      if (pa && pa.id !== "segno_sulla_mappa") bt(`${pg.arma.nome} + ${OG.POTERI_ARMA[pa.id].nome} (${pa.tipo === "scontro" ? "per scontro" : "giornaliero"})`, libero && dA.ok, () => azioneArma(true), OG.POTERI_ARMA[pa.id].testo);
+      if (pa && pa.id === "segno_sulla_mappa") { const l = document.createElement("label"); l.title = OG.POTERI_ARMA[pa.id].testo; l.innerHTML = `<input type="checkbox" id="segno" ${dA.ok ? "" : "disabled"}> Segno sulla mappa con il prossimo potere`; box2.append(l, " "); }
+      if (pg.arma.facce) bt(`Cambia faccia → ${pg.arma.facce[((pg.arma.faccia || 0) + 1) % 2].nome} (rapida)`, S.rapidaLibera(pg), () => { scrivi(S.cambiaFaccia(pg).eventi); ridisegna(); });
+      OG.poteriEquip(pg).forEach(pe => {
+        const d = S.disponibileOggetto(pg, pe.id);
+        bt(`${pe.nomeOggetto} (rapida${pe.tipo === "giornaliero" ? ", giornaliero" : ""})`, d.ok, () => {
+          const st = pe.scegliStato ? (prompt("Stato da cui diventare immune (es. stordito, impaurito, sanguinante, esposto):", "stordito") || "stordito").trim().toLowerCase() : null;
+          if (st && !P.STATI[st]) { log("Stato sconosciuto.", "sis"); return; }
+          scrivi(S.usaOggetto(pg, pe.id, ctx, { stato: st }).eventi); ridisegna();
+        }, pe.testo);
+      });
+      if (pg.cinturone) box2.append(Object.assign(document.createElement("span"), { className: "nota", textContent: pg.cinturoneUsato ? "Cinturone usato." : "Cinturone: un'azione rapida in più in questo scontro." }));
+      $("opzioni").append(box2);
+    }
+    if (pg && nem && nem.nascosta && !finito && pg.pv > 0) {
+      const b = document.createElement("button"); b.type = "button"; b.className = "mini"; b.textContent = `Cerca Dafne (Percezione +${bonusPercezione()} contro 12, costa l'azione)`;
+      b.addEventListener("click", () => { const E = N.cercaDafne(nem, bonusPercezione(), ctx); scrivi(E); gestisciEvoca(E); fineTuo(); });
+      $("opzioni").append(" ", b);
+    }
+    if ($("cambiaArma")) $("cambiaArma").addEventListener("click", () => { const i = pg.armi.findIndex(a => a !== pg.arma); scrivi(S.cambiaArma(pg, i).eventi); ridisegna(); });
+    document.querySelectorAll(".elisirBtn").forEach(b => b.addEventListener("click", () => { scrivi(S.beviElisirStato(pg, b.dataset.fam, !!b.dataset.raro).eventi); ridisegna(); }));
+    document.querySelectorAll(".setBtn").forEach(b => b.addEventListener("click", () => { scrivi(S.usaSet(pg, b.dataset.id, nem).eventi); ridisegna(); }));
+    if ($("beviPozione")) $("beviPozione").addEventListener("click", () => { const r = S.beviPozione(pg, Math.max(1, Math.floor(pg.pvMax / 4))); if (r.ok) pg.pozioni--; scrivi(r.eventi); ridisegna(); });
     if (!pg) { det.innerHTML = `<p class="nota">Crea il personaggio: qui compaiono i suoi poteri.</p>`; $("passa").disabled = true; return; }
     const attivo = !finito && pg.pv > 0;
     if (!selPg || !pg.poteri.includes(selPg)) selPg = pg.poteri.find(id => S.disponibile(pg, id).ok) || pg.poteri[0];
@@ -367,8 +706,10 @@
     $("regolaNem").textContent = N.REGOLA_SCELTA;
     const lista = $("poteriNem"), det = $("dettaglioNem"), pr = $("prossimaNem"); lista.innerHTML = ""; pr.innerHTML = "";
     if (!nem) { det.innerHTML = `<p class="nota">Scegli un nemico e inizia uno scontro: qui vedi tutti i suoi poteri.</p>`; return; }
-    const ids = [...nem.volonta, ...nem.scontro];
+    const B = N.BOSS[nem.id];
+    const ids = B ? [...new Set(B.fasi.flatMap(f => [...f.sequenza, ...f.ciclo]))] : [...nem.volonta, ...nem.scontro];
     if (!selNem || !ids.includes(selNem)) selNem = nem.pronto || ids[0];
+    if (B) return latoBoss(B, ids, lista, det, pr);
     /* anteprima della prossima mossa: la stessa scelta del motore, su una copia (solo nella sala di prova) */
     if (!finito) {
       let testo;
@@ -384,7 +725,7 @@
         const usato = nem.scontro.includes(id) && nem.usati.scontro[id], ann = nem.pronto === id, b = document.createElement("button");
         const st = ann ? "annunciato: colpirà al prossimo turno" : usato ? "già usato" : nem.ultimo === id ? "usato nell'ultimo turno" : "disponibile";
         b.type = "button"; b.className = `voce${id === selNem ? " sel" : ""}${usato && !ann ? " spento" : ""}${ann ? " annunciato" : ""}`;
-        b.innerHTML = `${N.POTERI[id].nome}<small>${st}</small>`;
+        b.innerHTML = `${icona(id)}${N.POTERI[id].nome}<small>${st}</small>`;
         b.addEventListener("click", () => { selNem = id; latoNem(); });
         g.append(b);
       });
@@ -393,12 +734,39 @@
     const p = N.POTERI[selNem], tipo = nem.scontro.includes(selNem) ? (nem.elite ? "Per scontro · si annuncia un turno prima" : "Per scontro") : "A volontà";
     det.innerHTML = `<div class="dettaglio"><h3>${p.nome}</h3><p class="nota">${tipo}</p><p>${N.descrivi(selNem, nem)}</p></div>`;
   }
+  function latoBoss(B, ids, lista, det, pr) {
+    const F = B.fasi[nem.fase];
+    if (!finito) pr.innerHTML = `<div class="prossima"><b>Fase:</b> ${F.nome}.${F.stacco ? " Dafne è fuori portata." : ` <b>In coda:</b> ${(nem.coda.length ? nem.coda : F.ciclo).slice(0, 3).map(id => icona(id) + N.POTERI[id].nome).join(" → ") || "—"}.`}${nem.pronto ? ` <b>Annunciato:</b> ${icona(nem.pronto)}${N.POTERI[nem.pronto].nome}.` : ""}<br><span class="nota">Anteprima solo nella sala di prova.</span></div>`;
+    B.fasi.forEach((f, i) => {
+      const gr = [...new Set([...f.sequenza, ...f.ciclo])]; if (!gr.length) return;
+      const g = document.createElement("div"); g.className = "gruppo"; g.innerHTML = `<h3>${f.nome}${i === nem.fase ? " (ora)" : ""}</h3>`;
+      gr.forEach(id => {
+        const ann = nem.pronto === id, b = document.createElement("button");
+        b.type = "button"; b.className = `voce${id === selNem ? " sel" : ""}${ann ? " annunciato" : ""}${i !== nem.fase ? " spento" : ""}`;
+        b.innerHTML = `${icona(id)}${N.POTERI[id].nome}<small>${ann ? "annunciato: colpirà al prossimo turno" : N.POTERI[id].annuncia ? "colpo forte, si annuncia" : nem.ultimo === id ? "usato nell'ultimo turno" : ""}</small>`;
+        b.addEventListener("click", () => { selNem = id; latoNem(); });
+        g.append(b);
+      });
+      lista.append(g);
+    });
+    const p = N.POTERI[selNem];
+    det.innerHTML = `<div class="dettaglio"><h3>${p.nome}</h3><p class="nota">${icona(selNem)}${p.annuncia ? "Colpo forte: si annuncia un turno prima" : "Mossa della sequenza"}</p><p>${N.descrivi(selNem, nem)}</p>
+      <p class="nota">Ogni fase: a volontà → per scontro → giornaliero, poi il ciclo. Al cambio di fase i colpi non usati si perdono, tranne quello già annunciato${B.intervallo ? "; poi c'è un intervallo (difesa e attacco semplice)" : ""}. Nessuna fase si salta: ogni fase gioca tutta la sua sequenza prima della successiva, anche dopo colpi enormi (il danno resta).</p></div>`;
+  }
+  /* 15/11: icone delle mosse nemiche, uguali a quelle del registro */
+  const ICO = { attacco: "🗡️", carica: "🗡️", difesa: "🛡️" };
+  const icona = (id) => { const k = N.iconaDi(id); return k ? `<span class="ico ${k}" title="${{ attacco: "attacco", carica: "colpo caricato: arriva al prossimo turno", difesa: "difesa" }[k]}">${ICO[k]}</span> ` : ""; };
   const ridisegna = () => { schedaPg(); schedaNem(); latoPg(); latoNem(); };
 
   /* ---------- registro ---------- */
   function log(testo, cls) {
     righe.push(testo); if (typeof LOG !== "undefined" && LOG) LOG.riga(testo);
-    const p = document.createElement("p"); p.className = cls || ""; p.textContent = testo; $("registro").append(p); $("registro").scrollTop = 1e9;
+    const p = document.createElement("p"); p.className = cls || "";
+    /* 15/11: icona della mossa nemica (spada, spada che vibra, scudo) in uno span a parte, così la spada caricata può vibrare */
+    const m = /\bico-(attacco|carica|difesa)\b/.exec(cls || ""), ic = m && /^(\S+)\s/.exec(testo);
+    if (ic) { const sp = document.createElement("span"); sp.className = "ico " + m[1]; sp.textContent = ic[1]; p.append(sp, " " + testo.slice(ic[0].length)); }
+    else p.textContent = testo;
+    $("registro").append(p); $("registro").scrollTop = 1e9;
   }
   const racconta = (e) => window.Racconto.racconta(e);
   const scrivi = (eventi) => (eventi || []).forEach(e => { if (!e) return; const [t, c] = racconta(e); log(t, c); });
@@ -457,8 +825,8 @@
     const statiDi = (b) => Object.keys(b.stati || {}).filter(k => P.ha(b, k)).map(k => P.nomeStato(k, b.stati[k].liv) + " " + b.stati[k].turni);
     function inizia(p, n) {
       chiediPermesso();
-      corrente = { v: 2, motore: "riscrittura 08/11/2026", id: Date.now().toString(36), inizio: new Date().toISOString(), fine: null, esito: null, turni: 0,
-        pg: { classe: p.classe, nomeClasse: CLASSI[p.classe].nome, spec: p.spec, liv: p.liv, razza: p.razza, via: p.via, pv: p.pv, pvMax: p.pvMax, ca: p.caBase, arma: p.arma.nome, bonusArma: p.arma.bonus, focus: p.focus.bonus, scudo: p.scudo, poteri: p.poteri, tratti: p.tratti, caratt: p.caratt, giornalieriGiaUsati: Object.keys(p.usati.giorno || {}) },
+      corrente = { v: 2, motore: "riscrittura 15/11/2026", id: Date.now().toString(36), inizio: new Date().toISOString(), fine: null, esito: null, turni: 0,
+        pg: { classe: p.classe, nomeClasse: CLASSI[p.classe].nome, spec: p.spec, liv: p.liv, razza: p.razza, via: p.via, pv: p.pv, pvMax: p.pvMax, ca: p.caBase, arma: p.arma.nome, bonusArma: p.arma.bonus, focus: p.focus ? p.focus.bonus : null, armi: p.armi.map(a => a.nome), scudo: p.scudo, poteri: p.poteri, tratti: p.tratti, caratt: p.caratt, giornalieriGiaUsati: Object.keys(p.usati.giorno || {}) },
         nem: { id: n.id, nome: n.nome, liv: n.liv, pvMax: n.pvMax, ca: n.caBase }, azioni: [], diario: [] };
     }
     function azione(id, opz) {
@@ -478,18 +846,24 @@
 
   /* ---------- turni ---------- */
   function iniziaScontro() {
-    if (!pg) { pg = creaPg(); if (!pg) return; }
+    fermaAuto();
+    if (!pg || $("nuovoPg").checked) { const p = creaPg(); if (!p) return; pg = p; }
+    chiudiSetup();
     if (LOG && LOG.aperto()) LOG.chiudi("interrotto");
-    S.fineScontro(pg); S.preparaScontro(pg);
-    nem = N.crea($("nemico").value); turno = 0; finito = false;
+    S.fineScontro(pg); S.preparaScontro(pg); pg.pozioni = 2; pg.arma = pg.armi[0]; /* sala di prova: si riparte con 2 pozioni e la prima arma in mano */
+    nem = creaNemico($("nemico").value); turno = 0; finito = false; riserva = null; staccoTurni = 0;
     if (LOG) LOG.inizia(pg, nem);
-    log(`══ Nuovo scontro: ${CLASSI[pg.classe].nome} ${SP.SPEC[pg.classe][pg.spec].nome} (liv. ${pg.liv}, salute ${pg.pv}/${pg.pvMax}) contro ${nem.nome} (liv. ${nem.liv}, salute ${nem.pv}) ══`, "turno");
+    log(`══ Nuovo scontro: ${CLASSI[pg.classe].nome} ${SP.specDi(pg.classe, pg.spec).nome} (liv. ${pg.liv}, salute ${pg.pv}/${pg.pvMax}) contro ${nem.nome} (liv. ${nem.liv}, salute ${nem.pv}) ══`, "turno");
     inizioTuo();
   }
   function controllaFine() {
     if (finito) return true;
     let esito = null;
-    if (nem.pv <= 0) { esito = "vittoria"; log(`Vittoria: ${nem.nome} è sconfitto in ${turno} turni.`, "bene esito"); }
+    if (riserva && pg.pv > 0 && (nem.pv <= 0 || nem.fuggito || staccoTurni >= 3)) { /* fine dello stacco: torna Dafne */
+      log(nem.pv <= 0 ? "Il mastino cade." : "Il mastino si sfalda in cenere.", "sis");
+      nem = riserva; riserva = null; selNem = null; scrivi(N.fineStacco(nem, staccoTurni)); return false;
+    }
+    if (nem.pv <= 0) { esito = "vittoria"; log(nem.id === "sovrano" ? `La carne del sovrano cede (turno ${turno}). Parte l'evento finale del finale scelto.` : `Vittoria in ${turno} turni: ${nem.nome} è a terra.${N.BOSS[nem.id] && N.BOSS[nem.id].risparmio ? " (Nel gioco: finirlo o risparmiarlo.)" : ""}`, "bene esito"); }
     else if (nem.fuggito) { esito = "fuga"; log(`Fine: ${nem.nome} è fuggito.`, "sis esito"); }
     else if (pg.pv <= 0) { esito = "sconfitta"; log(`Sconfitta al turno ${turno}.`, "nem esito"); }
     if (esito) { finito = true; if (LOG) LOG.chiudi(esito); }
@@ -504,54 +878,62 @@
   }
   function turnoPg(id) {
     if (finito) return;
-    const opz = { sangueVersato: !!($("sangueVersato") && $("sangueVersato").checked) };
+    const opz = { sangueVersato: !!($("sangueVersato") && $("sangueVersato").checked), segno: !!($("segno") && $("segno").checked) };
     if (LOG && S.disponibile(pg, id).ok) LOG.azione(id, opz);
     const r = S.usa(pg, nem, id, ctx, opz);
     if (r.rifiutato) { log(`Non puoi usare ${SP.POTERI[id].nome} adesso.`, "sis"); return; }
+    scrivi(r.eventi);
+    if (SP.POTERI[id].rapida) { if (!controllaFine()) ridisegna(); return ridisegna(); } /* azione rapida: il turno continua */
+    fineTuo();
+  }
+  function azioneArma(conPotere) {
+    if (finito) return;
+    const r = S.attaccoBase(pg, nem, ctx, { poterArma: conPotere });
+    if (r.rifiutato) { log("Non puoi usare il potere dell'arma adesso.", "sis"); return; }
     scrivi(r.eventi); fineTuo();
   }
   function fineTuo() { scrivi(S.fineTurno(pg)); if (controllaFine()) return ridisegna(); turnoNemico(); }
   function turnoNemico() {
     scrivi(S.inizioTurno(nem, pg, ctx));
-    if (!controllaFine()) { scrivi(N.agisci(nem, pg, ctx).eventi); scrivi(S.fineTurno(nem)); }
+    if (!controllaFine()) { const E = N.agisci(nem, pg, ctx).eventi; scrivi(E); scrivi(S.fineTurno(nem)); gestisciEvoca(E); if (riserva && nem !== riserva) staccoTurni++; }
     if (controllaFine()) return ridisegna();
     inizioTuo();
   }
 
   /* ---------- simulazione ---------- */
-  function scegliBot(p, n) {
-    const disp = (id) => S.disponibile(p, id).ok, mie = p.poteri;
-    const g = mie.filter(id => SP.POTERI[id].tipo === "giornaliero" && disp(id));
-    if (g.length && P.vacillante(n)) return g[0];
-    const sc = mie.filter(id => SP.POTERI[id].tipo === "scontro" && disp(id) && !["secondo_vento", "coagulo", "tocco_lenitivo"].includes(id));
-    if (sc.length) return sc[0];
-    const cura = ["secondo_vento", "coagulo", "tocco_lenitivo"].find(id => mie.includes(id) && disp(id));
-    if (cura && P.vacillante(p)) return cura;
-    const off = S.offesaDi(p); return disp(off) ? off : mie.find(disp);
-  }
+  /* il giocatore automatico: js/cervello.js (combo della specializzazione, risposta agli annunci, cure); restituisce { id, perche } */
+  const scegliBot = (p, n, t) => window.Cervello.scegli(p, n, t);
   function simula() {
     const base = creaPg(); if (!base) return;
     const n0 = $("nemico").value, tot = Math.max(10, Math.min(2000, +$("simN").value || 200));
     let vinti = 0, fughe = 0, turniTot = 0, saluteRimasta = 0;
     for (let i = 0; i < tot; i++) {
-      const p = creaPg(), n = N.crea(n0); let t = 0;
-      while (p.pv > 0 && n.pv > 0 && !n.fuggito && t++ < 60) {
+      const p = creaPg(), boss = creaNemico(n0); let t = 0, n = boss, ris = null, st = 0;
+      const evoca = (E) => { if (E.some(e => e.k === "evoca")) { ris = n; st = 0; n = N.crea("mastino_di_dafne"); } };
+      while (p.pv > 0 && !n.fuggito && t++ < 80) {
+        if (ris && (n.pv <= 0 || n.fuggito || st >= 3)) { n = ris; ris = null; N.fineStacco(n, st); }
+        if (n.pv <= 0) break;
         S.inizioTurno(p, n, ctx);
-        if (p.pv > 0 && n.pv > 0 && P.puoAgire(p)) S.usa(p, n, scegliBot(p, n), ctx, { sangueVersato: p.pv > p.pvMax * 0.75 });
-        S.fineTurno(p); if (n.pv <= 0) break;
-        S.inizioTurno(n, p, ctx); if (n.pv > 0) N.agisci(n, p, ctx); S.fineTurno(n);
+        if (p.pv > 0 && n.pv > 0) window.Cervello.rapida(p, n, t); /* azione rapida del cervello: pozione, elisir di stato, poteri di set */
+        if (p.pv > 0 && n.pv > 0 && P.puoAgire(p)) {
+          if (n.nascosta) evoca(N.cercaDafne(n, ((p.mod && p.mod.Mente) || 0) + p.liv, ctx)); /* Dafne nascosta: il bot la cerca */
+          else S.usa(p, n, scegliBot(p, n, t).id, ctx, { sangueVersato: p.pv > p.pvMax * 0.75 });
+        }
+        S.fineTurno(p); if (n.pv <= 0 && !ris) break;
+        if (n.pv > 0) { S.inizioTurno(n, p, ctx); if (n.pv > 0) evoca(N.agisci(n, p, ctx).eventi); S.fineTurno(n); if (ris) st++; }
       }
+      if (ris) n = ris;
       if (n.pv <= 0 && p.pv > 0) { vinti++; saluteRimasta += p.pv / p.pvMax; } else if (n.fuggito) fughe++;
       turniTot += t;
     }
     const pct = (x) => Math.round(x / tot * 100), pv = pct(vinti), pf = pct(fughe);
-    $("simEsito").innerHTML = `<p><b>${CLASSI[base.classe].nome} ${SP.SPEC[base.classe][base.spec].nome} liv. ${base.liv}</b> contro <b>${N.NEMICI[n0].nome}</b>: vittorie <b>${pv}%</b>${fughe ? `, fughe ${pf}%` : ""}, sconfitte ${100 - pv - pf}% · turni medi ${(turniTot / tot).toFixed(1)} · salute media rimasta a chi vince ${vinti ? Math.round(saluteRimasta / vinti * 100) : 0}%</p>`;
+    $("simEsito").innerHTML = `<p><b>${CLASSI[base.classe].nome} ${SP.specDi(base.classe, base.spec).nome} liv. ${base.liv}</b> contro <b>${nomeNem(n0)}</b>: vittorie <b>${pv}%</b>${fughe ? `, fughe ${pf}%` : ""}, sconfitte ${100 - pv - pf}% · turni medi ${(turniTot / tot).toFixed(1)} · salute media rimasta a chi vince ${vinti ? Math.round(saluteRimasta / vinti * 100) : 0}%</p>`;
     log(`Simulazione: ${$("simEsito").textContent}`, "sis");
   }
 
   /* ---------- test ---------- */
   function eseguiTest() {
-    const suite = [["Stati e tiri salvezza", "TestPoteri"], ["Guerriero", "TestScontro"], ["Sciamano", "TestScontroSciamano"], ["Arcanista", "TestScontroArcanista"], ["Monaco", "TestScontroMonaco"], ["Vie", "TestScontroVie"], ["Nemici", "TestNemici"]];
+    const suite = [["Stati e tiri salvezza", "TestPoteri"], ["Guerriero", "TestScontro"], ["Sciamano", "TestScontroSciamano"], ["Arcanista", "TestScontroArcanista"], ["Monaco", "TestScontroMonaco"], ["Vie", "TestScontroVie"], ["Regole generali", "TestScontroRegole"], ["Guardiani e sovrano", "TestGuardiani"], ["Armi e oggetti", "TestOggetti"], ["Set ed elisir", "TestSetElisir"], ["Nemici", "TestNemici"]];
     let ok = 0, tot = 0; const out = [];
     suite.forEach(([nome, k]) => {
       const es = window[k].esegui(), ko = es.filter(e => !e.ok);
@@ -563,11 +945,64 @@
   }
 
   /* ---------- pulsanti ---------- */
-  $("crea").addEventListener("click", () => { const p = creaPg(); if (!p) return; pg = p; finito = true; nem = null; log(`Personaggio creato: ${CLASSI[pg.classe].nome} ${SP.SPEC[pg.classe][pg.spec].nome}, livello ${pg.liv}, salute ${pg.pvMax}, CA ${pg.caBase}. Poteri: ${pg.poteri.map(id => SP.POTERI[id].nome).join(", ")}.`, "pg"); ridisegna(); });
+  $("crea").addEventListener("click", () => { const p = creaPg(); if (!p) return; pg = p; finito = true; nem = null; log(`Personaggio creato: ${CLASSI[pg.classe].nome} ${SP.specDi(pg.classe, pg.spec).nome}, livello ${pg.liv}, salute ${pg.pvMax}, CA ${pg.caBase}. Poteri: ${pg.poteri.map(id => SP.POTERI[id].nome).join(", ")}.`, "pg"); chiudiSetup(); ridisegna(); });
+  /* il riquadro del personaggio si chiude dopo la creazione: resta il riassunto, un clic lo riapre */
+  function chiudiSetup() {
+    if (!pg) return;
+    $("setup").open = false;
+    $("setupRiassunto").textContent = `${CLASSI[pg.classe].nome} ${SP.specDi(pg.classe, pg.spec).nome}, liv. ${pg.liv}${pg.via ? ", via di " + (pg.via === "aldo" ? "Aldo" : "Guendalina") : ""} · ${pg.armi.map(a => a.nome + (a.bonus ? " +" + a.bonus : "")).join(" e ")}${(pg.equip || []).length ? " · " + pg.equip.length + " oggetti" : ""} — clic per modificare`;
+  }
+  /* prova rapida: livello, bonus dell'arma e nemico del guardiano, poi crea e parte */
+  document.querySelectorAll(".preset").forEach(b => b.addEventListener("click", () => {
+    $("liv").value = b.dataset.liv; $("liv").dispatchEvent(new Event("change"));
+    if (+b.dataset.liv >= 2 && !$("via").value) $("via").value = "guendalina";
+    $("armaBonus").value = b.dataset.bonus; $("nemico").value = b.dataset.nem;
+    if (modo === "auto") avviaAuto(); else iniziaScontro();
+  }));
+
+  /* ---------- le tre schede ---------- */
+  let modo = "manuale", autoTimer = null, autoPausa = false;
+  document.querySelectorAll(".scheda").forEach(b => b.addEventListener("click", () => {
+    fermaAuto(); modo = b.dataset.modo;
+    document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x === b));
+    document.body.className = "modo-" + modo; ridisegna();
+  }));
+
+  /* ---------- scontro automatico: il giocatore automatico gioca un turno alla volta, visibile ---------- */
+  function fermaAuto() { clearTimeout(autoTimer); autoTimer = null; autoPausa = false; aggiornaAuto(); }
+  function aggiornaAuto() {
+    const corre = modo === "auto" && pg && nem && !finito;
+    $("autoPausa").disabled = !corre; $("autoPausa").textContent = autoPausa ? "▶ Riprendi" : "⏸ Pausa";
+    $("autoPasso").disabled = !corre || !autoPausa;
+  }
+  function avviaAuto() { iniziaScontro(); log("Scontro automatico: il giocatore automatico sceglie per te.", "sis"); pianifica(); }
+  function pianifica() { aggiornaAuto(); if (finito || autoPausa || modo !== "auto") return; autoTimer = setTimeout(passoAuto, +$("autoVel").value); }
+  function passoAuto() {
+    if (finito || modo !== "auto" || !pg || !nem) return aggiornaAuto();
+    { const r = window.Cervello.rapida(pg, nem, turno); /* azione rapida: pozione, elisir di stato, poteri di set */
+      if (r.scelta) { log(`🤖 Azione rapida: ${r.scelta.perche}.`, "sis bot"); scrivi(r.eventi); } }
+    if (nem.nascosta) { log("🤖 Cerca Dafne tra i pini.", "sis bot"); const E = N.cercaDafne(nem, bonusPercezione(), ctx); scrivi(E); gestisciEvoca(E); fineTuo(); }
+    else {
+      const { id, perche } = scegliBot(pg, nem, turno);
+      if (!id) { log("🤖 Nessun potere disponibile: passa il turno.", "sis bot"); fineTuo(); }
+      else { selPg = id; log(`🤖 Sceglie ${SP.POTERI[id].nome} (${{ volonta: "a volontà", scontro: "per scontro", giornaliero: "giornaliero" }[SP.POTERI[id].tipo]}): ${perche}.`, "sis bot"); turnoPg(id); }
+    }
+    ridisegna(); pianifica();
+  }
+  $("autoAvvia").addEventListener("click", avviaAuto);
+  $("autoPausa").addEventListener("click", () => { autoPausa = !autoPausa; if (autoPausa) { clearTimeout(autoTimer); aggiornaAuto(); } else pianifica(); });
+  $("autoPasso").addEventListener("click", () => { if (autoPausa) { passoAuto(); aggiornaAuto(); } });
+  /* tastiera: Invio usa il potere scelto, P passa il turno (non mentre si scrive in un campo) */
+  document.addEventListener("keydown", (e) => {
+    if (e.target.closest && e.target.closest("input, select, textarea")) return;
+    if (modo === "auto") { if (e.key === " " && !$("autoPausa").disabled) { e.preventDefault(); $("autoPausa").click(); } return; }
+    if (e.key === "Enter" && $("usaPg") && !$("usaPg").disabled) { e.preventDefault(); $("usaPg").click(); }
+    else if ((e.key === "p" || e.key === "P") && !$("passa").disabled) { e.preventDefault(); $("passa").click(); }
+  });
   $("nuovo").addEventListener("click", iniziaScontro);
   /* scegliendo il nemico, fuori dallo scontro, la sua scheda compare subito (per leggere i poteri prima di combattere) */
-  $("nemico").addEventListener("change", () => { if (finito) { nem = N.crea($("nemico").value); selNem = null; ridisegna(); } });
-  $("riposa").addEventListener("click", () => { if (!pg) return; S.riposo(pg); pg.pv = pg.pvMax; pg.stati = {}; if (pg.classe === "Forestiero") S.preparaInfuso(pg); log("Riposi: salute piena, giornalieri di nuovo disponibili" + (pg.classe === "Forestiero" ? `, elisir ${pg.elisir}` : "") + ".", "bene"); ridisegna(); });
+  $("nemico").addEventListener("change", () => { if (finito) { nem = creaNemico($("nemico").value); selNem = null; ridisegna(); } });
+  $("riposa").addEventListener("click", () => { if (!pg) return; S.riposo(pg); pg.pv = pg.pvMax; pg.stati = {}; if (pg.classe === "Forestiero" && pg.liv >= 5) S.preparaInfuso(pg); log("Riposi: salute piena, giornalieri di nuovo disponibili" + (pg.classe === "Forestiero" ? `, elisir ${pg.elisir}` : "") + ".", "bene"); ridisegna(); });
   $("passa").addEventListener("click", () => { if (!finito) { if (LOG) LOG.azione("passa"); log("Passi il turno.", "pg"); fineTuo(); } });
   if (LOG) { $("logCartella").addEventListener("click", () => LOG.scegli()); $("logScarica").addEventListener("click", () => LOG.scaricaTutti()); LOG.carica(); }
   else { $("logStato").textContent = "Pagina guidata da un test automatico: log spenti."; }
@@ -580,7 +1015,7 @@
     const l = document.createElement("a"); l.href = url; l.download = nome; l.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
   });
 
-  aggiornaSpec(); nem = N.crea($("nemico").value); ridisegna();
+  aggiornaSpec(); aggiornaSet(); nem = creaNemico($("nemico").value); ridisegna();
   log("Sala di prova del motore nuovo. 1) Scegli classe, specializzazione, poteri e livello, poi «Crea il personaggio». 2) Scegli il nemico e «Nuovo scontro». Tu agisci per primo; il nemico risponde da solo.", "sis");
 })();
 </script>

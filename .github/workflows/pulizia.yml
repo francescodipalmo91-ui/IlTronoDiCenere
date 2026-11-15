@@ -1,0 +1,44 @@
+# PULIZIA SETTIMANALE — ogni lunedì mattina un report sullo stato del codice (file orfani, peso delle immagini,
+# codice duplicato o morto, funzioni troppo lunghe, dipendenze). Non cambia il gioco: aggiorna sempre la stessa
+# Issue «🧹 Pulizia settimanale», con la differenza rispetto alla settimana prima. Arriva una mail da GitHub.
+name: Pulizia settimanale
+on:
+  schedule:
+    - cron: "17 6 * * 1"   # lunedì 06:17 UTC = 07:17 a Roma d'inverno, 08:17 d'estate
+  workflow_dispatch:        # pulsante «Run workflow» per lanciarla a mano
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - name: Metriche della settimana scorsa (nascoste nella Issue)
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          n=$(gh issue list --label pulizia --state open --json number --jq '.[0].number // empty')
+          echo "ISSUE=$n" >> "$GITHUB_ENV"
+          if [ -n "$n" ]; then
+            gh issue view "$n" --json body --jq .body | sed -n 's/^<!-- metriche: \(.*\) -->$/\1/p' > precedente.json
+          fi
+      - name: Report
+        run: node strumenti/pulizia_settimanale.mjs --npm --md report.md --json metriche.json --precedente precedente.json
+      - name: Aggiorna la Issue
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          printf '\n<!-- metriche: %s -->\n' "$(cat metriche.json)" >> report.md
+          if [ -n "$ISSUE" ]; then
+            gh issue edit "$ISSUE" --body-file report.md
+            gh issue comment "$ISSUE" --body "Report del $(date +%d/%m/%Y) aggiornato qui sopra."   # il commento fa partire la mail
+          else
+            gh label create pulizia --color BFA36F --description "Report settimanale di pulizia" 2>/dev/null || true
+            gh issue create --title "🧹 Pulizia settimanale" --label pulizia --body-file report.md
+          fi
+      - uses: actions/upload-artifact@v4
+        with: { name: pulizia, path: "report.md\nmetriche.json" }

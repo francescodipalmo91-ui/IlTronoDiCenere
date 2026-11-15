@@ -1,0 +1,134 @@
+VISIONI DEL RETAGGIO DEL PADRONE — versione 2 (26 ottobre 2026), con prove ed enigmi
+Rivista insieme a Claude. Tra [parentesi quadre] le modifiche rispetto alla prima versione.
+
+Regole comuni
+> Ogni visione: 1d4 danni mentali non letali alla prima lettura (regola dei flashback).
+> Ordine: la visione della spada arriva sempre al primo tocco dell'armatura (l'armatura respinge il personaggio, come oggi nel gioco, senza prova), quindi è sempre la prima. Le prove di Spirito arrivano dopo, una per ogni lacrima trovata.
+  Le altre seguono l'ordine dei guardiani (Ettore, Enea, Dafne, Atena): per questo «un'altra fitta» e «l'ennesima» funzionano.
+> Ogni oggetto ha lo stemma dei Vespera: l'albero dalle radici intrecciate (mai la stella a sei punte, che resta il simbolo delle cacce).
+
+
+-- "Retaggio del Padrone - Spada"
+> dove trovarlo? Atrio, tra i guanti dell'armatura sul pianerottolo
+> cosa deve fare il personaggio per entrarne in possesso? prova di Intuizione CD 12 [era Spirito: le prove sono di abilità], poi il gesto giusto: inginocchiarsi davanti all'armatura, come il cavaliere della vetrata. Ha 3 occasioni in tutta la storia: la chiamata si risveglia a ogni Lacrima di Adele trovata. Dettagli nel documento della storia, sezione 13.
+  [nuovo] Se le fallisce tutte e tre: solo nel finale positivo Adele, liberata, accompagna il personaggio all'armatura e spezza la maledizione che avvolge la spada, per dimostrare il suo potere ritrovato. Nei finali A e B chi ha fallito affronta il re senza spada.
+> come fa a venire a conoscenza? è solo una supposizione di Guendalina
+> visione:
+"Una fitta improvvisa e lancinante ti trafigge le tempie, costringendoti a barcollare e a portare le mani al capo per soffocare il dolore. Quando riapri gli occhi, il mondo è cambiato: l'atrio della dimora e la vecchia armatura sono svaniti nel nulla, sostituiti da una realtà improvvisa e lontana.
+
+Sei testimone di una visione, cristallizzata in un giardino baciato da una luce calda e irreale. Intorno a un tavolo di legno massello, quattro persone godono della quiete di un mattino qualunque. Un uomo e una donna conversano a bassa voce, immersi in un'intesa serena; lei, con un gesto tenero e istintivo, si accarezza il ventre arrotondato con un sorriso luminoso. Poco distante, seduti sul prato o aggrappati alle sedie, due maschietti ridono spensierati, muovendo tra le dita piccoli giocattoli intagliati nel legno.
+
+Più in disparte, immobili come statue silenziose ma vigili, due domestici — un uomo e una donna — osservano la scena. I loro volti sono rigati da sorrisi gentili e accoglienti.
+
+Eppure qualcosa non va. Nonostante i volti sorridenti, l'aria è intrisa di malinconia: una tristezza sottile e indefinibile, come l'eco di un dolore lontano che nessuno di loro sembra vedere, ma che tu percepisci con chiarezza assoluta."
+
+[due maschietti: il figlio maggiore e Lorenzo; nel ventre c'è Agnese, che non è ancora nata]
+[tornata la malinconia in chiusura: serve al contrasto con il finale positivo]
+[idea: i giocattoli intagliati possono essere gli stessi che Agnese chiede al personaggio, ereditati dai fratelli]
+
+
+-- "Retaggio del Padrone - Anello"
+> dove trovarlo? Cripta, nel sarcofago del Primo dei Vespera (il più antico)
+> cosa deve fare il personaggio per entrarne in possesso? indovinello del libro («Il primo dorme dove l'albero beve»), prova di Sapienza per l'indizio, scelta del sarcofago giusto, poi Atletica CD 12 per il coperchio [era «prova di vigore»; nel gioco oggi è CD 14]
+> come fa a venire a conoscenza? Ettore accenna al «Primo dei Vespera» senza dire cosa custodisce; è il libro del figlio maggiore, una volta aperto, a rivelare l'anello. [nuovo: chiude il punto aperto sul libro]
+  Conseguenza per il gioco: senza il libro aperto il sarcofago è solo descrizione, la prova non c'è.
+> visione:
+"Un'altra fitta spaventosa ti trafigge le tempie. Cerchi aria a vuoto mentre ti aggrappi al sarcofago per non crollare, prima che il buio inghiotta ogni cosa.
+
+Riapri gli occhi e la realtà è incrinata: il falò e le coperte di Ettore sono svaniti. Al loro posto, la fatiscente cripta è divenuta una solenne camera funeraria, soffocata dal profumo denso di fiori freschi.
+
+Ti volti verso l'ingresso. Un brivido ti percuote: l'ambiente è gremito di figure spettrali. Ti fissano, ma i loro occhi sono privi di vita. Solo un volto risalta nitido: Adele, uguale al ritratto della sala da conversazione. È pietrificata dal dolore, una sola lacrima a solcarle il viso.
+
+Comprendi di essere invisibile. Segui i loro sguardi e il sangue ti si gela: alle tue spalle giace ora una piccola bara cerimoniale.
+
+Poi, un secondo dolore ti squarcia la testa e l'oscurità torna a divorare la visione."
+
+[testo invariato: è il funerale di Lorenzo, un «cosa senza perché» perfetto]
+[da valutare: un solo dettaglio sul re assente, per esempio «accanto a lei, un posto vuoto»]
+
+
+-- "Collana vuota" (cimitero) — NON è una reliquia del Retaggio
+[era «Medaglione»: la visione mostra dove Guendalina nascose la catena del collier. La collana vuota apre la libreria segreta della biblioteca e la seconda lacrima]
+> dove trovarla? Cimitero dei Vespera, dietro la cappella: vano segreto in una tomba dei rami minori
+> cosa deve fare il personaggio per entrarne in possesso? sconfiggere Enea, che rivela che nel cimitero si cela qualcosa di molto importante per tutti in casa. Poi prova di Investigazione CD 12 per trovare la tomba con l'albero inciso; la visione mostra in che ordine premere le radici, e il giocatore ripete il gesto scegliendo tra tre sequenze [via le torce: nel gioco hanno un solo uso]
+> come fa a venire a conoscenza? da Enea sa che qualcosa si trova qui; il figlio maggiore gli dice che è «una tomba dei rami minori»
+> dopo la visione: per la regola del patto Guendalina può parlarne, perché il giocatore l'ha scoperto da sé
+> flashback distorto: se la mente è spezzata (25% o meno) la visione mostra l'ordine sbagliato: destra, centro, sinistra. Il figlio maggiore può correggerlo.
+> visione:
+"Un'altra fitta ti spacca il cranio: è così violenta da spezzarti le gambe, facendoti crollare prima sulle ginocchia e poi a pancia in giù sul pavimento freddo. Resti immobile, inchiodato a terra, incapace di governare le tue membra. Puoi solo subire la visione di un'altra realtà, antica e implacabile.
+
+Questa volta la vivi sulla tua pelle. Ti allontani furtivamente dalla dimora nel cuore della notte, sotto una luna spietata. Oltrepassi la fontana accompagnato da un lieve, sinistro tintinnio metallico. Stringi qualcosa di freddo tra le dita. Corri oltre la cappella, fiutando l'aria, fino a raggiungere il piccolo cimitero dei Vespera, dove riposano i rami minori della casata, confinati tra poche lapidi dimenticate. Il fiato ti manca; una ciocca di capelli ramati, madida di sudore, ti sfiora gli occhi.
+
+Raggiungi una tomba. Non riesci a decifrare il nome inciso sul marmo, ma in cima, scolpito nella pietra, riconosci lo stemma dei Vespera: l'albero dalle radici intrecciate. Le tue mani si muovono rapide, guidate da una fredda determinazione, ma il tuo sguardo resta calamitato da quell'emblema. Le dita premono le radici dell'albero, una alla volta: prima quella a sinistra, poi quella al centro, infine quella a destra. Poi, uno scatto sordo: un vano segreto nella pietra cede e si apre.
+
+Abbassi lo sguardo sulle tue azioni e realizzi la verità: sono mani di donna, piccole ma screpolate dal lavoro. Stai riponendo nell'alcova una catena d'oro, ma il gioiello è incompleto: i tre incastri a forma di goccia sono vuoti.
+
+Nel preciso istante in cui richiudi lo scomparto della pietra, un'ultima, devastante fitta ti strappa via da lì. Sei di nuovo disteso sul pavimento, il corpo indolenzito, mentre lentamente tenti di rialzarti."
+
+[la donna è Guendalina: capelli ramati come nel gioco, mani «screpolate dal lavoro» (una governante, non la Signora)]
+[«oltre la cripta» → «oltre la cappella»: la cripta sta sotto la cappella e il cimitero è dietro]
+[corretti «Il fiat mi toglie… mi sfiora»: il racconto resta al «tu»]
+[«collier… mancano tre pietre» → «catena d'oro… incastri vuoti»: è la collana vuota]
+
+
+-- "Retaggio del Padrone - Medaglione" — BOZZA DI CLAUDE, da rivedere
+> dove trovarlo? Cimitero, tra i rovi oltre l'ultima fila di lapidi, verso la foresta
+> cosa deve fare il personaggio per entrarne in possesso? prova di Sopravvivenza CD 12 (leggere rovi e terreno)
+> come fa a venire a conoscenza? il figlio maggiore ricorda che quella notte il padre tornò dal cimitero con la mano sanguinante e senza il medaglione
+> senso: medaglione d'argento con il ritratto di Adele. La notte dell'incendio Rodolfo lo strappò e lo gettò via. Nessuno lo ha nascosto: è stato buttato.
+> punto di vista: nel corpo del re (completa la serie: Guendalina, Rodolfo, Aldo)
+> visione:
+"La fitta arriva come un colpo di frusta e ti piega in due tra i rovi. Le spine ti graffiano le mani, ma il dolore è lontano, ovattato, come se appartenesse a qualcun altro. Ed è così: quando riapri gli occhi, il corpo che abiti non è il tuo.
+
+È grande, pesante, e trema. Le maniche della camicia sono annerite di fumo e l'odore di legno bruciato ti riempie la gola. Alle tue spalle, oltre gli alberi, la dimora arde: un bagliore arancione che tinge di rosso le lapidi del cimitero.
+
+Stringi qualcosa nel pugno, così forte che il metallo ti morde la carne. Apri la mano: un medaglione d'argento, aperto, sporco di sangue. Dentro, il ritratto di una donna dai capelli raccolti e dallo sguardo severo. Conosci quel volto: è quello del quadro sopra il camino.
+
+Senti la tua voce, roca e spezzata, pronunciare un nome che non riesci a capire. Poi il braccio si alza da solo e scaglia il medaglione lontano, oltre l'ultima fila di lapidi, dove i rovi inghiottono ogni cosa.
+
+Resti lì, in ginocchio nel fango, a guardare il fuoco. Non piangi. È peggio: non senti più niente.
+
+La fitta si ritrae lentamente, come una marea, e ti lascia tra i rovi, con il medaglione stretto tra le dita, nello stesso punto in cui lui lo aveva gettato."
+
+
+-- "Retaggio del Padrone - Corno"
+> dove trovarlo? Foresta, al collo di Dafne
+> cosa deve fare il personaggio per entrarne in possesso? battere Dafne, che ne è al momento la custode, in una gara in tre tratti con prove contrapposte (corsa: Atletica; rami e torrente: Acrobazia; traccia: Sopravvivenza), vincendone 2 su 3. La gara vale come caccia all'oro: Dafne, sconfitta, lascia i suoi averi (corno e fermaglio d'oro compresi) e se ne va. Se il personaggio perde la gara, combattimento. Dafne lo usa per allertare Aldo e i mastini ogni volta che un nuovo avventuriero entra nel territorio dei Vespera.
+> come fa a venire a conoscenza? [nuovo] il figlio maggiore riconosce il corno nei suoi libri: era il corno da caccia del Signore. Così l'informazione passa da lui, come per tutto il Retaggio.
+> senso: il corno era di Rodolfo. Aldo lo affidò a Dafne come onore: la sua cacciatrice migliore diventa il segugio del Signore.
+> visione:
+"L'ennesima fitta ti fulmina la mente, lasciandoti in uno stato di catatonia. Il tuo corpo si solleva impercettibilmente dal fogliame, come sospeso da un'antica e crudele maledizione. Ancora una volta, sei costretto a vivere quei frammenti attraverso gli occhi di un altro.
+
+Sei nella sala da caccia. Di fronte a te c'è Dafne; state parlando, ma le sue parole ti giungono come un mormorio sordo e distorto. Le tue mani si allungano verso di lei: noti i guanti bianchi e la manica del frac nero. Sei Aldo. Stringi tra le dita un corno d'osso cerchiato d'argento; sull'imboccatura è inciso l'albero dalle radici intrecciate dei Vespera. Il corno del Signore. Lei lo prende, china appena il capo in segno di gratitudine e lo appende a tracolla.
+
+Per un istante le tue mani affondano nelle tasche della giacca, alla ricerca di qualcos'altro. Lo trovi: un piccolo oggetto metallico. Lo estrai e glielo appunti al bavero dell'uniforme. Quando allontani le dita, eccolo lì: il fermaglio d'oro.
+
+In quell'istante esatto, un'altra fitta ti strappa via da quel ricordo. Ricadi pesantemente sul suolo del bosco, ma questa volta riesci a non perdere l'equilibrio, rimanendo in piedi."
+
+[«polsini e giacca pesante» → guanti bianchi e frac, come Aldo è descritto nel gioco]
+[«trofeo di una battuta di caccia» → il corno del Signore, con lo stemma]
+[corretto «lo appuntare al bavero della sua uniforme»]
+
+
+-- "Retaggio del Padrone - Corona"
+> dove trovarla? Sottotetto, nel punto indicato dal figlio maggiore
+> cosa deve fare il personaggio per entrarne in possesso? tre passaggi: travi marce (Acrobazia CD 12), il percorso giusto tra tre (indicato a voce dal figlio maggiore), vicino ad Atena (Furtività CD 12, con svantaggio se ha fatto rumore). Se Atena lo sente, lo caccia via: niente scontro, riprova dopo un riposo.
+> come fa a venire a conoscenza? dal figlio maggiore
+> senso: dopo il funerale di Lorenzo, il re veste il lutto bianco e lascia la corona sul trespolo. Non la indosserà più: è l'inizio del Trono di Cenere.
+> visione:
+"Non appena le tue dita sfiorano la corona, una fitta improvvisa alle tempie ti coglie quasi impreparato. Un lampo di luce accecante ti strappa dal sottotetto: un attimo prima eri immerso nell'ombra, ora ti ritrovi nella grande sala del trono, dove i raggi del sole filtrano attraverso le vetrate, regalandoti dopo tanto tempo il tepore della luce sulla pelle.
+
+La sala è gremita e tu torni a vivere la visione in terza persona, come un ospite qualunque di Casa Vespera. Solo dopo un istante ti accorgi che i presenti hanno contorni sbiaditi, come figure di fumo: le stesse ombre dagli occhi spenti che hai già visto nella cripta. Intorno a te è tutto un mormorio: parlano sottovoce della Signora, che non si mostra più da quel giorno, da quando la disgrazia si è abbattuta sulla casa. Ti trovi lontano dal trono, quasi a ridosso del portone d'ingresso. Cominci a farti strada tra la calca, scostando a fatica i presenti, finché non riesci a guadagnare le prime file.
+
+Lo riconosci subito: è il cavaliere della vetrata, ma senza armatura. È in piedi davanti al trono e, di fronte a lui, una figura austera simile a un monaco lo sta vestendo con una tunica bianca, candida come un sudario. Non è una festa: è un lutto. Con la coda dell'occhio la noti: poggiata su un piccolo trespolo di fianco al trono, eccola, la corona. Nessuno la porge al Signore, e lui non la guarda nemmeno.
+
+Avanzi ancora di un passo. Riconosci due bambini, tenuti stretti per mano da Guendalina, mentre Aldo fa capolino poco più in là, immobile vicino a una colonna, in attesa silenziosa di un ordine che non arriva.
+
+Il Signore siede sul trono. Per un istante il sole si spegne dietro le vetrate, e la luce che resta sulla sua tunica è grigia, come cenere.
+
+Poi la fitta torna, più lieve delle altre, e ti riporta nel buio del sottotetto, la corona ancora stretta tra le dita."
+
+[folla spettrale: dopo l'incendio tutti sono già sospesi, come al funerale nella cripta]
+[«è Rodolfo» → «il cavaliere della vetrata»: il personaggio non conosce né il nome né il volto del re]
+[tunica bianca = lutto; la corona resta sul trespolo]
+[aggiunte la chiusura (la luce che diventa cenere) e l'uscita dalla visione]

@@ -9,7 +9,7 @@ window.Regole = (() => {
   const CLASSI = { /* chiavi interne: Soldato = Guerriero, Forestiero = Sciamano, Sapiente = Arcanista, Accolito = Monaco */
     Soldato: { dado: 10, risorsa: "furia", attrRisorsa: "Vigore", attrClasse: "Vigore" },
     Forestiero: { dado: 8, risorsa: "natura", attrRisorsa: "Agilità", attrClasse: "Agilità" },
-    Sapiente: { dado: 6, risorsa: "mana", attrRisorsa: "Mente", attrClasse: "Mente" },
+    Sapiente: { dado: 6, risorsa: "mana", attrRisorsa: "Mente", attrClasse: "Mente" }, /* 15/11: resta d6, classe volutamente più dura (Francesco: oggetti, pergamene e pozioni compensano) */
     Accolito: { dado: 8, risorsa: "fede", attrRisorsa: "Spirito", attrClasse: "Spirito" } /* 01/11: da d6 a d8, accompagna le brigate */
   };
   const perClasse = (filtro, valore) => Object.fromEntries(Object.entries(CLASSI).filter(([, c]) => filtro(c)).map(([k, c]) => [k, valore(c)]));

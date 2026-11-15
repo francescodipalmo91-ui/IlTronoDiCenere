@@ -488,13 +488,15 @@
     const sciamano = () => classe === "Forestiero";
     const usaTecniche = () => false; /* 08/11: motore nuovo, niente tecniche né risorse */
 
-    /* ---------- Poteri del motore nuovo (08/11): specializzazione e scelte del livello 1 (js/specializzazioni.js) ---------- */
+    /* ---------- Poteri del motore nuovo (riscritto il 15/11): specializzazione e scelte del livello 1 (js/specializzazioni.js) ----------
+       Livello 1: 2 a volontà su 3 (il terzo arriva da solo al livello 2), 1 per scontro su 3, 1 giornaliero su 2; privilegio di classe del livello 1 */
     const SP = window.SPECIALIZZAZIONI;
     let spec = null, chiavePot = null;
-    const scelteL1 = { scontro: null, giornaliero: null };
+    const scelteL1 = { volonta: [], scontro: null, giornaliero: null };
     const tipoNome = { volonta: "a volontà", scontro: "per scontro", giornaliero: "giornaliero" };
-    const cartaPot = (name, id, checked) => `<label class="carta-pot"><input type="radio" name="${name}" value="${id}"${checked ? " checked" : ""}><b>${SP.POTERI[id].nome}</b> <span class="nota">${tipoNome[SP.POTERI[id].tipo]}</span><small>${SP.POTERI[id].testo}</small></label>`;
-    const sceltePoteri = () => (spec && scelteL1.scontro && scelteL1.giornaliero ? [scelteL1.scontro, scelteL1.giornaliero] : []);
+    const RUOLO = { offesa: "offesa", controllo: "controllo", difesa: "difesa" };
+    const cartaPot = (name, id, checked, tipoInput) => `<label class="carta-pot"><input type="${tipoInput || "radio"}" name="${name}" value="${id}"${checked ? " checked" : ""}><b>${SP.POTERI[id].nome}</b> <span class="nota">${tipoNome[SP.POTERI[id].tipo]}${SP.POTERI[id].ruolo ? " · " + RUOLO[SP.POTERI[id].ruolo] : ""}</span><small>${SP.POTERI[id].testo}</small></label>`;
+    const sceltePoteri = () => (spec && scelteL1.volonta.length === 2 && scelteL1.scontro && scelteL1.giornaliero ? [...scelteL1.volonta, scelteL1.scontro, scelteL1.giornaliero] : []);
     const poteriOk = () => !!spec && SP.sceltaValida(classe, spec, sceltePoteri(), 1).ok;
     function disegnaPoteri() {
       const sez = $("poteri"); sez.hidden = !classe || !SP || !SP.SPEC[classe];
@@ -502,23 +504,27 @@
       document.querySelector(".pagina").classList.add("magia");
       const cl = SP.SPEC[classe], specs = Object.keys(cl).filter(k => k !== "classe");
       if (chiavePot !== classe) { /* nuova classe: le sue due specializzazioni */
-        chiavePot = classe; spec = null; scelteL1.scontro = scelteL1.giornaliero = null;
-        Sicuro.html($("lista-spec"), specs.map(k => `<label class="carta-pot"><input type="radio" name="spec" value="${k}"><b>${cl[k].nome}</b><small>${cl[k].descr || ""}</small></label>`).join(""));
-        $("lista-spec").querySelectorAll("input").forEach(r => r.addEventListener("change", () => { spec = r.value; scelteL1.scontro = scelteL1.giornaliero = null; aggiorna(); }));
+        chiavePot = classe; spec = null; scelteL1.volonta = []; scelteL1.scontro = scelteL1.giornaliero = null;
+        Sicuro.html($("lista-spec"), specs.map(k => `<label class="carta-pot"><input type="radio" name="spec" value="${k}"><b>${cl[k].nome}</b> <span class="nota">${cl[k].ruolo}</span><small>${cl[k].descr || ""}${cl[k].regola ? "<br>" + cl[k].regola : ""}</small></label>`).join(""));
+        $("lista-spec").querySelectorAll("input").forEach(r => r.addEventListener("change", () => { spec = r.value; scelteL1.volonta = []; scelteL1.scontro = scelteL1.giornaliero = null; aggiorna(); }));
       }
       const det = $("pot-dettaglio");
       if (!spec) { Sicuro.html(det, `<p class="guida">Scegli una specializzazione per vedere i suoi poteri.</p>`); return; }
-      const s = cl[spec], cp = SP.POTERI[cl.classe.potere], t1 = SP.TRATTI[cl.classe.tratti[1]], t2 = SP.TRATTI[cl.classe.tratti[2]];
-      const iniziali = s.volonta.filter(id => id !== s.volontaDopo);
+      const s = cl[spec], pv = cl.classe.privilegi, t1 = SP.TRATTI[pv[1]], t3 = SP.TRATTI[pv[3]], p5 = SP.POTERI[pv[5]];
+      const terzo = scelteL1.volonta.length === 2 ? SP.terzoVolonta(classe, spec, scelteL1.volonta) : null;
       Sicuro.html(det, `<h3 class="sub">Hai da subito</h3><ul class="pot-fissi">
-          ${iniziali.map(id => `<li><b>${SP.POTERI[id].nome}</b> (a volontà): ${SP.POTERI[id].testo}</li>`).join("")}
-          <li><b>${cp.nome}</b> (potere di classe, ${tipoNome[cp.tipo]}): ${cp.testo}</li>
-          <li><b>${t1.nome}</b> (tratto): ${t1.testo}</li></ul>
+          <li><b>${t1.nome}</b> (privilegio di classe): ${t1.testo}</li></ul>
+        <h3 class="sub">Livello 1 · scegli 2 poteri a volontà su 3</h3>
+        <div class="carte-pot">${s.volonta.map(id => cartaPot("pot-volonta", id, scelteL1.volonta.includes(id), "checkbox")).join("")}</div>
         <h3 class="sub">Livello 1 · scegli il potere per scontro</h3>
         <div class="carte-pot">${s.scontro.map(id => cartaPot("pot-scontro", id, scelteL1.scontro === id)).join("")}</div>
         <h3 class="sub">Livello 1 · scegli il giornaliero</h3>
         <div class="carte-pot">${s.giornalieri.map(id => cartaPot("pot-giorn", id, scelteL1.giornaliero === id)).join("")}</div>
-        <p class="guida">Più avanti: al livello 2 ${SP.POTERI[s.volontaDopo].nome} o un altro potere per scontro, e il tratto ${t2.nome}; al livello 5 ${SP.POTERI[s.fissi.finale].nome}.</p>`);
+        <p class="guida">Più avanti: al livello 2 ${terzo ? SP.POTERI[terzo].nome + " (l'a volontà che lasci)" : "l'a volontà che lasci"} e la via di prestigio; al livello 3 ${t3.nome}; al livello 5 ${SP.POTERI[s.fissi.finale].nome} e ${p5.nome}.</p>`);
+      det.querySelectorAll('input[name="pot-volonta"]').forEach(r => r.addEventListener("change", () => {
+        const v = new Set(scelteL1.volonta); if (r.checked) v.add(r.value); else v.delete(r.value);
+        scelteL1.volonta = s.volonta.filter(id => v.has(id)).slice(0, 2); aggiorna();
+      }));
       det.querySelectorAll('input[name="pot-scontro"]').forEach(r => r.addEventListener("change", () => { scelteL1.scontro = r.value; aggiorna(); }));
       det.querySelectorAll('input[name="pot-giorn"]').forEach(r => r.addEventListener("change", () => { scelteL1.giornaliero = r.value; aggiorna(); }));
       const sp = $("lista-spec").querySelector(`input[value="${spec}"]`); if (sp) sp.checked = true;
@@ -589,10 +595,10 @@
     const dotazioneScelta = () => [...document.querySelectorAll('input[name="dotazione"]:checked')].map(c => DOTAZIONE[c.value]);
 
     /* ---------- Costruzione liste ---------- */
-    /* 08/11: potere di classe e tratto I dal catalogo del motore nuovo (niente più furia e natura) */
+    /* 15/11: privilegi di classe dei livelli 1, 3 e 5 dal catalogo del motore nuovo */
     const CAPACITA_CLASSE = Object.fromEntries(Object.keys(window.SPECIALIZZAZIONI ? window.SPECIALIZZAZIONI.SPEC : {}).map(k => {
-      const c = window.SPECIALIZZAZIONI.SPEC[k].classe, p = window.SPECIALIZZAZIONI.POTERI[c.potere], tr = window.SPECIALIZZAZIONI.TRATTI[c.tratti[1]];
-      const testo = `${p.nome}: ${p.testo} ${tr.nome}: ${tr.testo}`; return [k, { it: testo, en: testo }];
+      const S_ = window.SPECIALIZZAZIONI, pv = S_.SPEC[k].classe.privilegi;
+      const testo = `${S_.TRATTI[pv[1]].nome} (livello 1): ${S_.TRATTI[pv[1]].testo} ${S_.TRATTI[pv[3]].nome} (livello 3). ${S_.POTERI[pv[5]].nome} (livello 5).`; return [k, { it: testo, en: testo }];
     }));
     /* 01/11: caratteristica di classe con la sua motivazione */
     const MOTIVO_CLASSE = {
@@ -903,7 +909,7 @@
         tecniche: [], /* 08/11: vecchio sistema, vuoto */
         motore: 2, /* 08/11: personaggio del motore nuovo (js/poteri.js, scontro.js, specializzazioni.js) */
         spec, /* specializzazione: si sceglie qui e non si cambia */
-        scelte: sceltePoteri(), /* poteri scelti, nell'ordine dei livelli (livello 1: per scontro, giornaliero) */
+        scelte: sceltePoteri(), /* poteri scelti, nell'ordine dei livelli (livello 1: due a volontà, per scontro, giornaliero) */
         modalita: (document.querySelector('input[name="modalita"]:checked') || {}).value === "difficile" ? "difficile" : "facile", /* 28/10: facile (si riparte dal salvataggio) o difficile (morte permanente) */
         abilita: abilitaScelte().map(([n, a]) => ({ nome: n, attributo: a, valore: valoreAbilita(a) + LIVELLO })),
         equipaggiamento: {

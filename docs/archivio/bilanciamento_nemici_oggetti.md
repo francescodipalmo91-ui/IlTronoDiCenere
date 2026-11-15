@@ -5,6 +5,35 @@ Sostituisce la `proposta_ettore_scontro.md` del 27 ottobre (Ettore ora è tarato
 
 **Stato del lavoro (punto 1, tutto ciò che viene prima del bronzo):** passi 1-5 chiusi. Il 28 ottobre notte il codice è stato allineato (sezione 10, «Nel codice dal 28 ottobre»). Restano per i punti successivi: agguati (servono i cinque avventurieri), pedinamento (serve il secondo piano), poteri d'arma (serve il bottino dei guardiani).
 
+
+## ⚠ Cosa vale ancora (verifica del 9 novembre)
+
+Dal 5 novembre il combattimento e la progressione sono stati riscritti (`riscrittura_meccaniche.md`, riassunto in `riepilogo_riscrittura.md`). **Dove questo documento contraddice la riscrittura, vale la riscrittura.** Il documento resta la fonte per mondo, incontri, economia e bottino.
+
+| Sezione | Stato |
+|---|---|
+| 1. Soglie di livello | Valide fino al 5; livelli fino a 10 e soglie da ricalcolare (riscrittura 8f) |
+| 1. Salute del personaggio, PE per nemico, PE della foresta, cacce comuni, percorso atteso | **Valide** (PE delle cacce per arrivo 100/150/200/250: proposta in 8c, gruppo 5) |
+| 1. Guardiani più deboli di chi si è allenato | **Superata:** il boss ha sempre un livello in più del giocatore (8f) |
+| 2. Punti abilità, tiri salvezza, danno dei nemici, controlli forti | **Superate:** niente PA, TS simmetrico, poteri dei nemici (riscrittura 2 e 8a) |
+| 2b. Morte, fuga e modalità | **Valide** |
+| 3. Stati alterati, cumulo, immunità, controlli forti | **Superati** (riscrittura 2: stati lieve/grave, durate, accumulo). Accecato non esiste più |
+| 3. Impaurito (pedinamento), elisir, erbe | **Validi nella sostanza**; gli elisir vanno rimappati sugli stati nuovi (l'elisir di salute dello Sciamano è il suo Infuso) |
+| 3b. Stati corrotti dei guardiani | **Superati** (da rifare in 8d) |
+| 4. Dove si incontrano | **Valido** |
+| 4. Statistiche fisse | Salute, CA, attacco e danno **validi** (8c li riprende); PA e abilità **superati** dai poteri di 8c |
+| 4. Mastini, guardiani, cacce di Aldo | **Superati** da 8c (gruppi 1-4: mastino corazzato al posto di quello a due teste) e da 8d-8e |
+| 5, 5b, 5c. Ettore, il sovrano, Enea | **Storici:** il carattere è nei moduli della storia; scontri e numeri si rifanno in 8d-8e |
+| 6. Armi | **Superata** dalla scala +1/+4 e dalle regole delle armi (8f) |
+| 7. Bottino | Struttura, slot e scala del potere **validi**; gli oggetti degli uomini di Enea vanno ritradotti (PA, Inibito non esistono più) |
+| 8. Mastini nei corridoi e pedinamento | **Valido** |
+| 8b. Agguati | Regole, fermaglio e frasi **validi**; i cinque avventurieri sono **tolti per ora** (8a); statistiche e abilità di orchi e goblin da rifare sul nuovo sistema |
+| 9, 10 | **Storici** |
+| Decisioni del 1° novembre | Valide: caratteristica di classe, Monaco d8, lanterna, Furtività contro i guardiani, livello al primo riposo, CD delle prove, +2 attributi ai livelli 2-5, Percezione dei nemici. Il peso dei giorni è ora una regola facoltativa. Superate: TS dei nemici, primarie dei guardiani (vedi `storia_personaggi.md`, 10a) |
+| Le otto cacce comuni | Luoghi, nota di Aldo e studio ★★★ **validi**; vulnerabilità e resistenze **superate** dalla rimappa (8c, gruppo 5); numeri «nel codice» del vecchio sistema |
+| Tratti di classe, combo, taratura di Enea, 4 novembre | **Storici** (vecchio sistema a risorse) |
+
+
 ---
 
 ## 1. Progressione (DECISO)
@@ -543,7 +572,7 @@ La vulnerabilità (+1 dado) vale anche per i danni senza tiro (Spinta, Onda d'Ur
 
 ### Due livelli
 1. **Garantito:** l'equipaggiamento del guardiano, solo se ucciso. Ciò che vedi nello scontro è ciò che trovi.
-2. **Oggetto magico:** Ettore 60%, Enea 70%, Dafne 80%, Atena 90%. Se il guardiano viene risparmiato la percentuale resta: te lo lascia come segno di rispetto.
+2. **Oggetto magico:** Ettore 60%, Enea 70%, Dafne 80%, Atena 90%. Se il guardiano viene risparmiato la percentuale resta: te lo lascia come segno di rispetto. **Mai sopra i set** (Vespera e spada del Retaggio): l'oggetto magico di un guardiano non li supera.
 
 **Contro il ricaricamento:** il tiro si fa **all'inizio della partita** e si salva con i dati del salvataggio. Ricaricare non cambia l'esito.
 
@@ -555,13 +584,13 @@ Il set Vespera copre mantello, guanti, elmo, arma e corazza. Il bottino magico v
 
 ### Le cose degli uomini di Enea (DECISO il 1 novembre)
 
-Al posto dell'oggetto magico al 70%, solo per chi è degno e rispettoso (storia, 10b). Tutti sotto il Set Vespera.
+Al posto dell'oggetto magico al 70%, solo per chi è degno (storia, `storia_enea.md`). Tutti sotto il Set Vespera. **Dal 9 novembre:** il tono (gentile/brusco) non li toglie più, cambia la prova per trovarli: **Indagare o Sopravvivenza CD 10** con Enea gentile, **CD 13** con Enea brusco (un tentativo per riposo). Settori dopo lo scambio est/ovest: Darius nord, Caius ovest, Magnus est.
 
 | Oggetto | Dove | Statistiche | Poteri |
 |---|---|---|---|
 | Scudo di Darius | foresta nord | +1 CA | Calore del Focolare: +1 punto mentale recuperato al riposo. La risata di Darius (1/giorno, azione): il nemico perde il prossimo attacco, un boss perde 2 PA |
-| Spaccatoro di Caius | foresta est | una mano, 1d6 + livello, contundente | «Caius, colpisci!» (1/scontro): dopo un attacco mancato del nemico, il colpo successivo ha +1 dado e Inibito 1 turno. Istinto della Prima Linea: +1 per colpire e ai danni contro i nemici singoli (non le bande) |
-| Calzari del Pellegrino | foresta ovest | stivali | Passo di Casa: +2 TS contro Presa e Bloccato. Eco del Traguardo (1/giorno): ritirata fuori casa fino alla cripta (mai contro guardiani o mastini), senza PE né bottino |
+| Spaccatoro di Caius | foresta ovest | una mano, 1d6 + livello, contundente | «Caius, colpisci!» (1/scontro): dopo un attacco mancato del nemico, il colpo successivo ha +1 dado e Inibito 1 turno. Istinto della Prima Linea: +1 per colpire e ai danni contro i nemici singoli (non le bande) |
+| Calzari del Pellegrino | foresta est | stivali | Passo di Casa: +2 TS contro Presa e Bloccato. Eco del Traguardo (1/giorno): ritirata fuori casa fino alla cripta (mai contro guardiani o mastini), senza PE né bottino |
 | Il Giuramento del Rettore (maglio di Enea) | bottino garantito se Enea muore impugnandolo | due mani, 1d8 + livello | Fiducia Condivisa: +2 TS contro Impaurito e il danno mentale delle prove fallite. Primo Passo nel Buio: +2 CA nel primo turno di ogni scontro |
 
 Da provare nella sala di prova: «Caius, colpisci!» e la risata contro i boss (mastino del trono, sovrano).
@@ -581,7 +610,7 @@ Da provare nella sala di prova: «Caius, colpisci!» e la risata contro i boss (
 |---|---|---|
 | Ettore | Spada sbreccata di Valdombra (una mano, 1d6 + 2, sul critico Sanguinamento, 1 punto); Coltello delle tacche (Dotazione, 1d4 perforante, senza poteri) | 60%, tabella bronzo |
 | Enea | Il Giuramento del Rettore (maglio, due mani, 1d8 + livello, poteri sopra), solo se lo ha impugnato | **Al posto del 70% (DECISO):** le cose dei suoi tre uomini, una per settore della foresta, solo se degno e rispettoso (storia, 10b). Nord: Scudo di Darius; est: Spaccatoro di Caius; ovest: Calzari del Pellegrino. Chi non è degno le perde |
-| Dafne | Lancia da caccia (due mani, 1d8 + 4, potere da definire); l'arco resta descrittivo (il giocatore non usa archi). Se vince la gara: lascia comunque corno, fermaglio e i suoi averi | 80%, oro |
+| Dafne | Lancia da caccia (due mani, 1d8 + 4, potere da definire); l'arco resta descrittivo (il giocatore non usa archi). Se si arrende o viene risparmiata: ⚠ lascia comunque corno, fermaglio e i suoi averi (dal 9 novembre niente più gara con Dafne: scontro normale, storia_personaggi.md) | 80%, oro |
 | Atena | Da definire | 90%, platino |
 
 ---
@@ -611,7 +640,7 @@ Da provare nella sala di prova: «Caius, colpisci!» e la risata contro i boss (
 - **La resa (DECISO il 29 ottobre):** a un terzo della salute l'avventuriero si arrende e scegli tu: ucciderlo o risparmiarlo. Tobia invece prova a fuggire; se la fuga fallisce, scegli lo stesso.
 - **Si risparmia una volta sola:** chi risparmi torna una volta, con rancore, **+1 livello**, senza PE, e quella volta combatte fino alla fine. Torna solo dopo un riposo, attraverso il solito «1 agguato su 5».
 - **Uccidere chi chiede pietà o tenta di fuggire costa 1 punto mentale, letale:** è la casa che ti cambia e ti reclama. A un punto di mente, finirlo vuol dire diventare parte di Casa Vespera.
-- **Testi:** tre frasi per ciascuno (l'agguato, la resa, il ritorno con rancore), scritte da Claude e corrette da Francesco. Bottino garantito se ucciso: il loro pezzo d'equipaggiamento, al livello delle cacce comuni, senza poteri. Vulnerabili all'Ombra.
+- **Testi:** tre frasi per ciascuno (l'agguato, la resa, il ritorno con rancore), scritte da Claude e corrette da Francesco. Bottino garantito se ucciso: il loro pezzo d'equipaggiamento, al livello delle cacce comuni, senza poteri (il pugnale di Isotta è un'arma). Vulnerabili all'Ombra.
 - **Stati:** gli umani e gli altri popoli feriscono il corpo (Sanguinamento, Avvelenato, Indebolito); gli orchi anche Impaurito (il ruggito).
 
 ### Il fermaglio indossato o nascosto (DECISO il 29 ottobre, numeri compresi; nel codice dal 30 ottobre)
@@ -979,3 +1008,35 @@ Il punto 1 si è chiuso cambiando le scuole (incantesimi_arcanista_monaco.md, se
 - **I numeri scendono, ma misurano la preparazione automatica, non la classe.** Il giocatore medio prepara «gli incantesimi di danno più alti» e con 15 scelte finisce su build sbilanciate (il misto prende Miraggio e Frantumare senza chi crea Copie). Gli incantesimi di ieri ci sono ancora tutti: chi li prepara ottiene almeno i numeri di ieri.
 - **Da fare se serve una misura vera:** preparazioni per build (difesa, logoramento, fortuna) nella serie.
 
+
+## 4 novembre, notte: registro degli scontri, critici e giocatore automatico
+
+**Da uno scontro a mano** (Guerriero Nano liv. 3, piccone, contro Enea: vinto in 3 turni con tre Colpi Mirati) e dalla simulazione della stessa strategia (1000 scontri, Colpo Mirato ogni volta che c'è la furia):
+
+| Versione | Vittorie | Turni |
+|---|---|---|
+| Prima | 90% | 6,0 |
+| Critico garantito senza furia (DECISO) | 88% | 6,2 |
+| + vulnerabilità non raddoppiata dal critico (DECISO) | 86% | 6,6 |
+| (prova) + Enea risorge con 1/3 della salute | 83% | 6,9 |
+
+- **DECISO:** il critico garantito da una tecnica (Colpo Mirato, Il Foro Eterno, Il Colpo Perfetto…) non dà +2 furia; il critico del dado sì. Ribalta la decisione del 24/10 (tecniche perforanti).
+- **DECISO:** la vulnerabilità aggiunge un dado anche sul critico, ma il critico non lo raddoppia (Colpo Mirato col piccone contro Enea: da 4d8 a 3d8). Serie completa col giocatore medio: nessun effetto misurabile sul resto (tutte le differenze entro ±5).
+- **Risurrezione di Enea** (1d4 + 3): resta così; leva di riserva.
+
+**Il giocatore automatico misurava male l'Arcanista** (scoperto facendolo giocare col registro acceso e analizzandone i log):
+1. con il Sangue lanciava Dardo Fantasma nel 77% delle azioni (la regola «tieni almeno 2 Copie» valeva per tutte le scuole e contro i boss le Copie vengono smascherate subito);
+2. la preparazione «combo» non prendeva nessuna Detonazione: Ferite incise e mai fatte scoppiare (174 sprecate in 100 scontri).
+
+Corretti entrambi (Copie solo per chi gioca Illusione; la Detonazione della scuola principale entra sempre nella preparazione). **Tutte le percentuali dell'Arcanista contro Enea scritte sopra (38-57%) vanno considerate sottostimate.** Serie col bot corretto (400 scontri per caso, via della scuola):
+
+| Arcanista | Ettore | Enea fermaglio / nascosto / maglio |
+|---|---|---|
+| Sangue, prima della correzione | 88% | 40 / 46 / 44% |
+| **Sangue, bot corretto** | **86%** | **58 / 72 / 62%** |
+| **Illusione, bot corretto** | **88%** | **65 / 64 / 77%** (11 turni) |
+
+- Pagare il Sangue in mana o in salute non cambia le vittorie (±3).
+- Il bot resta imperfetto: lancia Ebollizione come «cura» anche senza Ferite (92 Detonazioni a vuoto su 245). Enea per l'Arcanista resta sotto l'80%, ma molto meno di quanto sembrava: da rimisurare con i log degli scontri a mano prima di toccare Enea.
+
+**Prime osservazioni dai log a mano** (8 scontri, troppo pochi per le percentuali): colpi a segno 45% (52% nelle vittorie, 35% nelle sconfitte): ai livelli 2-3 le mancate decidono gli scontri; il giocatore prende sempre la combo pronta, paga sempre col sangue, e un'azione su tre è un attacco normale anche a risorse piene (il bot invece spende sempre).

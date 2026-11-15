@@ -15,7 +15,7 @@
   /* ---------- Costanti decise ---------- */
   const DURATA = 3;              /* tutti gli stati durano 3 turni… */
   const DURATA_IMPAURITO = 2;    /* …tranne Impaurito */
-  const DURATA_STORDITO = 1;     /* ASSUNZIONE da confermare: Stordito fa perdere UNA azione, poi 2 turni di immunità */
+  const DURATA_STORDITO = 1;     /* Stordito fa perdere l'INTERO turno (azione standard e rapida, 11/11/2026), poi 2 turni di immunità */
   const IMMUNITA_STORDITO = 2;
   const CD_BASE = 8;
   const CONFIG = {
@@ -29,12 +29,19 @@
     scottato:    { nome: "Scottato", grave: "Ustionato", dado: [4, 6], ts: "Agilità", tipo: "fuoco" },
     intossicato: { nome: "Intossicato", grave: "Avvelenato", dado: [4, 6], ts: "Vigore", tipo: "veleno" },
     stordito:    { nome: "Stordito", grave: "Commosso", ts: "Vigore" },
-    esposto:     { nome: "Esposto", grave: "Scoperto", ts: "Mente" },
+    esposto:     { nome: "Esposto", grave: "Scoperto", ts: "Agilità" },   /* 14/11/2026: Agilità da qualunque fonte (era Mente) */
     indebolito:  { nome: "Indebolito", ts: "Vigore" },
-    impaurito:   { nome: "Impaurito", ts: "Spirito" }
+    impaurito:   { nome: "Impaurito", ts: "Spirito" },
+    /* stati del sovrano (8e, 11/11/2026): solo da boss, 3 turni, nessun elisir li cura */
+    furente:     { nome: "Furente", boss: true },                                   /* sul sovrano: +2 danni (senza TS: se lo dà da solo) */
+    maledizione: { nome: "Maledetto", grave: "Condannato", ts: "Spirito", boss: true }, /* cure dimezzate → niente cure */
+    vuoto:       { nome: "Svuotato", grave: "Prosciugato", ts: "Mente", boss: true },   /* spegne un per scontro → anche un giornaliero */
+    /* stato di Atena (8d, assunzione da misurare): Gelato = −2 per colpire per 3 turni; Congelato aggiunge lo Stordito (TS Vigore) */
+    gelo:        { nome: "Gelato", grave: "Congelato", ts: "Vigore", boss: true }
   };
   /* tipi di danno della mappa (8b). Il fuoco sacro è un tipo a sé: le resistenze al fuoco comune non lo toccano */
-  const TIPI = ["taglio", "contundente", "perforante", "sangue", "illusione", "fuoco", "fuoco_sacro", "ossa", "veleno"];
+  /* 11/11/2026: forza (Arcanista della Realtà) e psichico (ex «illusione», Arcanista dell'Illusione) */
+  const TIPI = ["taglio", "contundente", "perforante", "forza", "psichico", "sangue", "fuoco", "fuoco_sacro", "ossa", "veleno"];
 
   const nomeStato = (id, liv) => { const c = STATI[id]; return !c ? id : liv === 2 && c.grave ? c.grave : c.nome; };
   const durataBase = (id) => (id === "impaurito" ? DURATA_IMPAURITO : id === "stordito" ? DURATA_STORDITO : DURATA);
@@ -51,11 +58,14 @@
   /* Esposto −2 CA, Scoperto −4 CA */
   const malusCA = (b) => { const s = st(b, "esposto"); return s ? (s.liv === 2 ? 4 : 2) : 0; };
   /* Indebolito −2 per colpire; Commosso è Indebolito (non si sommano) */
-  const malusColpire = (b) => (ha(b, "indebolito") || grave(b, "stordito") ? 2 : 0);
+  const malusColpire = (b) => (ha(b, "indebolito") || grave(b, "stordito") || ha(b, "gelo") ? 2 : 0); /* Gelato (Atena) vale come Indebolito: non si somma */
   /* contro uno Scoperto il critico parte da 19 (sui boss solo se CONFIG lo permette) */
   const sogliaCritContro = (b) => (grave(b, "esposto") && (!b.boss || CONFIG.scopertoCritSuiBoss) ? 19 : 20);
   /* Stordito (non Commosso) perde l'azione */
   const puoAgire = (b) => !(ha(b, "stordito") && !grave(b, "stordito"));
+  const puoAzioneRapida = puoAgire; /* lo stordimento toglie anche l'azione rapida */
+  /* Maledetto: cure dimezzate (per eccesso); Condannato: niente cure */
+  const fattoreCure = (b) => (grave(b, "maledizione") ? 0 : ha(b, "maledizione") ? 0.5 : 1);
   /* Impaurito: solo poteri a volontà */
   const soloAVolonta = (b) => ha(b, "impaurito");
   const immuneStordito = (b) => !!(b.boss || (b.immStordito > 0) || (b.immuni || []).includes("stordito"));
@@ -65,7 +75,12 @@
   /* attr: caratteristica imposta dal potere (Labirinto: Stordito con TS di Mente; Vincolo di sangue: Spirito) */
   function tiroSalvezza(b, id, fonte, tira, attrImposto) {
     const attr = attrImposto || (STATI[id] || {}).ts || "Vigore";
-    const m = mod(b, attr) + (Number(b.liv) || 0) + (Number(b.bonusTs) || 0);
+    const c = b.cariche || {};
+    /* cariche dell'equipaggiamento (15/11): Piastre del Rettore = il prossimo TS contro uno stato riesce; Elmo del Penitente = contro Impaurito o Esposto */
+    if (id && c.piastre) { delete c.piastre; return { k: "ts", stato: id, attr, auto: "Piastre del Rettore", ok: true, cd: cd(fonte) }; }
+    if ((id === "impaurito" || id === "esposto") && c.elmo) { delete c.elmo; return { k: "ts", stato: id, attr, auto: "Elmo del Penitente", ok: true, cd: cd(fonte) }; }
+    const piede = c.piede ? 4 : 0; if (piede) delete c.piede; /* Piede fermo: +4 al prossimo TS */
+    const m = mod(b, attr) + (Number(b.liv) || 0) + (Number(b.bonusTs) || 0) + ((b.tsStato && b.tsStato[id]) || 0) + piede; /* tsStato: Calzari, Talismano */
     const d = tira(20), tot = d + m, CD = cd(fonte);
     return { k: "ts", stato: id, attr, d, m, tot, cd: CD, ok: tot >= CD };
   }
@@ -139,11 +154,26 @@
     return { danno, res: null };
   }
   /* il danno subito è la salute effettivamente persa, dopo riduzioni e dimezzamenti. Avvisa quando si diventa Vacillanti */
-  function subisci(b, danno, tipo) {
+  /* ---------- Scudi di PF (Sciamano del Legno, 11/11/2026) ----------
+     Il danno subito riduce prima lo scudo, poi la salute. Un solo scudo alla volta (o.sostituisci per Corteccia nuova).
+     Il danno assorbito non conta come «danno subito». scudo: { nome, pf, max, turni (null = fino al tuo turno), ricarica } */
+  const scudoAttivo = (b) => (b && b.scudoPF && b.scudoPF.pf > 0 ? b.scudoPF : null);
+  function creaScudo(b, nome, pf, o) {
+    o = o || {};
+    if (scudoAttivo(b) && !o.sostituisci) return { k: "scudoRifiutato", nome, motivo: "unoAllaVolta" };
+    b.scudoPF = { nome, pf, max: pf, turni: o.turni == null ? null : o.turni, scontro: !!o.scontro, ricarica: o.ricarica || 0 };
+    return { k: "scudo", nome, pf, max: pf };
+  }
+  function assorbi(b, n) {
+    const s = scudoAttivo(b); if (!s || n <= 0) return 0;
+    const a = Math.min(s.pf, n); s.pf -= a; if (s.pf <= 0) b.scudoPF = null; return a;
+  }
+  function subisci(b, danno, tipo, o) {
     const prima = vacillante(b), m = modificaDanno(b, tipo, Math.max(0, danno));
-    const perso = Math.min(Math.max(0, b.pv), m.danno);
+    const assorbito = o && o.giaAssorbito ? 0 : assorbi(b, m.danno);
+    const perso = Math.min(Math.max(0, b.pv), m.danno - assorbito);
     b.pv -= perso;
-    const ev = { k: "danno", lordo: danno, danno: perso, tipo: tipo || null, ...(m.res ? { res: m.res } : {}) };
+    const ev = { k: "danno", lordo: danno, danno: perso, tipo: tipo || null, ...(m.res ? { res: m.res } : {}), ...(assorbito ? { assorbito } : {}) };
     if (!prima && vacillante(b)) ev.vacillanteOra = true;
     if (b.pv <= 0) ev.abbattuto = true;
     return ev;
@@ -176,6 +206,7 @@
       const s = b.stati[id]; if (!(s.turni > 0)) return;
       if (s.doppio > 0) s.doppio--;
       if (id === "intossicato" && b.velenoPerenne) return; /* Pestilenza: il veleno non scade */
+      if (id === "esposto" && b.espostoPerenne) return;   /* Punto di rottura: l'Esposto non scade */
       s.turni--;
       if (s.turni === 0) {
         E.push({ k: "scade", stato: id, nome: nomeStato(id, s.liv) });
@@ -190,8 +221,8 @@
 
   const API = {
     DURATA, DURATA_IMPAURITO, DURATA_STORDITO, IMMUNITA_STORDITO, CD_BASE, CONFIG, STATI, TIPI,
-    nomeStato, ha, grave, vacillante, malusCA, malusColpire, sogliaCritContro, puoAgire, soloAVolonta, immuneStordito,
-    cd, durataBase, modificaDanno, subisci,
+    nomeStato, ha, grave, vacillante, malusCA, malusColpire, sogliaCritContro, puoAgire, puoAzioneRapida, soloAVolonta, immuneStordito, fattoreCure,
+    cd, durataBase, modificaDanno, subisci, scudoAttivo, creaScudo, assorbi,
     tiroSalvezza: conChi(tiroSalvezza), applica: conChi(applica), aggrava: conChi(aggrava), tick: conChi(tick), allunga: conChi(allunga),
     togli: conChi(togli), togliTutti: conChi(togliTutti), inizioTurno: conChi(inizioTurno), fineTurno: conChi(fineTurno)
   };

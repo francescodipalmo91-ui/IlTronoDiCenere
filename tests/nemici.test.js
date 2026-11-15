@@ -52,11 +52,10 @@
     const m = N.crea("mastino"), g = pg({ stati: { indebolito: { liv: 1, turni: 2 } } }); m.turno = 1;
     const c = ctx([4, 2]); const r = N.agisci(m, g, c); eq(r.scelta.id, "soffio_infuocato"); eq(g.pv, 26); eq(ev(r, "ts")[0].attr, "Agilità"); vero(P.ha(g, "scottato")); fine(c);
   });
-  caso("Mastino: fuoco comune ⛔, fuoco sacro ✓, maledetto (+1d4 del Colpo consacrato)", () => {
+  caso("Mastino: fuoco comune ⛔, fuoco sacro ✓ (oggetti e pergamene), maledetto", () => {
     const m = N.crea("mastino", { stati: { scottato: { liv: 1, turni: 2, tipo: "fuoco" } } });
     S.inizioTurno(m, null, ctx([4])); eq(m.pv, 13, "bruciatura comune: immune");
-    const mo = { nome: "monaco", liv: 1, pv: 26, pvMax: 26, modClasse: 3, mod: { Spirito: 3 }, caBase: 14, arma: { dado: 6, tipo: "taglio" }, spec: "purificatore" };
-    const m2 = N.crea("mastino"), c = ctx([10, 2, 3, 15]); S.usa(mo, m2, "colpo_consacrato", c); eq(m2.pv, 5, "(2 + 3 + 3) = 8, nessuna resistenza al taglio"); fine(c);
+    const m2 = N.crea("mastino"); vero(m2.maledetto); eq(P.modificaDanno(m2, "taglio", 8).danno, 8, "nessuna resistenza al taglio");
     const m3 = N.crea("mastino", { stati: { scottato: { liv: 1, turni: 2, tipo: "fuoco_sacro" } } }); S.inizioTurno(m3, null, ctx([4])); eq(m3.pv, 7, "fuoco sacro vulnerabile: 4 → 6");
   });
   caso("Infernali di cenere: contundente ✓, fuoco ✗, sanguinamento dimezzato", () => {

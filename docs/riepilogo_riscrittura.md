@@ -1,15 +1,18 @@
-# Riepilogo della riscrittura (per Claude) — stato al 08/11/2026 (pomeriggio)
+# Riepilogo della riscrittura (per Claude) — stato al 15/11/2026 (sera)
 
-Leggere questo per primo. Dettaglio completo: `claude/riscrittura_meccaniche.md` (sezioni 0-9).
-**Codice: motore nuovo scritto il 08/11/2026 (blocchi 1-3), isolato dal vecchio e non ancora collegato al gioco.** Sezione «Codice» in fondo.
+Leggere dopo `punto_della_situazione.md`. Dettaglio completo: `claude/riscrittura_meccaniche.md` (sezioni 0-9), che prevale su ogni altro documento per le regole. Le decisioni del 14/11 (armi, colpi, TS, zaino, armature senza reazioni) sono in `decisioni_14_novembre.md`; quelle del 15/11 (bilanciamento dei boss, caratteristica una volta per attacco, opzione B) in `lavoro_codice_domenica.md`; entrambe riassunte in fondo a questo file.
+**Meccaniche congelate dal 09/11/2026:** quelle decise non si ridiscutono, si aggiunge soltanto. **Schema dei livelli, privilegi e vie ridisegnato il 10/11/2026** su diagramma di Francesco (sotto).
+**Codice CONGELATO dal 15/11/2026 (sera):** Francesco: niente più modifiche; ora va giocato e testato da persone. Le misure del bot non tengono conto di molti aspetti del gioco vero.
 
 ## Da fare, in ordine
-1. ~~8c gruppo 4 (élite)~~ → **approvato il 06/11/2026**: mastino della soglia di Adele (liv. 4) e **mastino corazzato** (liv. 5, tre rune azzurre, taglio ✗ / perforante ✓), al posto del mastino a due teste.
-2. **8c gruppo 5 (PROSSIMO: vulnerabilità fatte il 06/11, restano personaggi e poteri):** le otto cacce (★ 2/1, ★★ 2/2, ★★★ 3/2), dati in `bilanciamento_nemici_oggetti.md` («Le otto cacce comuni»: le vulnerabilità usano ancora Arcano/Forza/Luce/Ombra, da rimappare).
-3. **8d guardiani** (Ettore, Enea, Dafne, Atena) e **8e sovrano**, con poteri a volontà/per scontro/giornalieri a soglie; più le pergamene (quali, dove, quale prova).
-4. **Allineare i documenti** (mastino a due teste → mastino corazzato in `storia_casa_vespera.md` e `bilanciamento_nemici_oggetti.md`) (`storia_casa_vespera.md`, `bilanciamento_nemici_oggetti.md`, `incantesimi_arcanista_monaco.md`, `punto_della_situazione.md`) e `docs/` nel repo GitHub. Elenco contraddizioni in riscrittura, fine sezione 8a.
-4b. **Riscrittura, sezioni 0, 2 e tabelle «Livelli 3-5»:** riportare la scala dell'08/11 (qui sotto, «Schema delle classi»).
-5. **Regolamento** Base / Facoltative; **codice**: collegare il motore nuovo a `test.html` (sala di prova veritiera), creazione, scheda e `gioco.html`; zip dei file modificati a fine blocco.
+1. ~~8c gruppo 4 (élite)~~ → approvato il 06/11/2026 (mastino della soglia di Adele liv. 4, mastino corazzato liv. 5).
+2. **8c gruppo 5:** vulnerabilità e resistenze delle otto cacce fatte (riscrittura 8c); restano personaggi e poteri (★ 2/1, ★★ 2/2, ★★★ 3/2) e la conferma dei PE per arrivo.
+3a. **Set (10/11):** due set indossati, bonus a 2/4/5 pezzi (a volontà / per scontro / giornaliero, fuori dagli slot di potere); nomi provvisori «set del sovrano di cenere» (danno, ex Retaggio) e «set del sovrano di carne» (resistenza, ex Vespera); conflitto sulla testa (corona/elmo); spada con campo di forza, solo finale B; oggetto di mano libera +2 CA al posto dell'arma Vespera; niente legame vincolante. Dettaglio in `storia_retaggio_e_set.md` 7c e riscrittura 8e. **Nel codice dal 15/11:** Odore di Casa (−1), Sguardo della Casa, Ultima Guardia, Voce del sangue, mano libera +2; manca Sentenza dell'erede.
+3. **8d guardiani** (Ettore, Enea, Dafne e Atena fatti il 10/11; regola del risparmio per Ettore ed Enea; **Dafne non si risparmia** dal 15/11; Atena muore sempre) e **8e sovrano (fatto l'11/11: tre fasi di armatura più la carne, stati Maledetto/Condannato/Svuotato/Prosciugato, evento finale per finale, soglia della sala del trono)**; restano le pergamene (quali, dove, quale prova) e la soglia del Retaggio sul nuovo sistema (`storia_retaggio_e_set.md`, sezione 7).
+4. ~~Allineare i documenti~~ → **fatto il 09/11**; `docs/` del repo GitHub allineato il 15/11 (sera).
+4b. ~~Scala dell'08/11 nella riscrittura~~ → **fatto il 09/11** (sezioni 0 e 2).
+4c. ~~Allineamento ai documenti del 14/11~~ → **fatto il 15/11**: tutti i documenti (compresi `riscrittura_meccaniche.md`, `oggetti_manuale.html` e le copie in `docs/` sul PC) allineati al registro del 14/11 e al codice del 15/11.
+5. **Codice, in quest'ordine:** (a) **test di Francesco giocando** (sala di prova e gioco); (b) collegare Enea, Dafne, Atena e il sovrano in `gioco.html` (oggi sono nella sala di prova); (c) **pulizia**: togliere il vecchio motore (`combattimento.js`, `magia_combattimento.js`, `sciamano.js`, `tecniche.js`, `magia.js`, `incantesimi.js`) e i percorsi doppi `motoreNuovo()` in `gioco.html` e `creazione.html`; i personaggi vecchi si ricreano; (d) `test.html`, `tutorial.html` sul motore nuovo; (e) regolamento Base / Facoltative, allineato al codice; (f) inventario: togliere, buttare o posare oggetti nello sgabuzzino della dispensa (deciso il 15/11, non nel codice).
 
 ## Metodo di Francesco (rispettarlo)
 - Punto per punto, una cosa alla volta; prima le leggere.
@@ -17,92 +20,99 @@ Leggere questo per primo. Dettaglio completo: `claude/riscrittura_meccaniche.md`
 - Pensiero critico sempre: obiezioni numerate, poi «lavoriamo sulle obiezioni» una per una con opzioni A/B/C e una proposta motivata.
 
 ## Schema delle classi
-| Classe | Spec. 1 | Spec. 2 | Potere di classe | Tratto I | Tratto II |
+| Classe | Spec. 1 | Spec. 2 | Privilegio liv. 1 | Privilegio liv. 3 | Privilegio liv. 5 |
 |---|---|---|---|---|---|
-| Guerriero (Vigore) | Esecutore | Sentinella | Secondo vento | Mente incrollabile | Furia |
-| Sciamano (Agilità) | Spore | Linfa | Infuso | Legame del sottobosco | Radici profonde (+1d4 se Avvelenato) |
-| Arcanista (Mente) | Sangue | Illusione | Coagulo | Pozzo arcano | Ultima scintilla |
-| Monaco (Spirito) | Purificatore | Ossomante | Tocco lenitivo | Ultimo servizio | Eredità del sepolcro |
+| Guerriero (Vigore) | Berserker (ex Esecutore) | Paladino (ex Difensore) | Furia | Mente incrollabile | Secondo vento |
+| Sciamano (Agilità) | Funghi (ex Spore) | Legno (ex Linfa) | Radici profonde (+1d4 se il bersaglio ha uno stato) | Legame del sottobosco | Infuso |
+| Arcanista (Mente) | Realtà | Illusione | Ultima scintilla | Pozzo arcano | Coagulo |
+| Monaco (Spirito) | Sangue | Ossa | Eredità del sepolcro | Ultimo servizio | Tocco lenitivo |
 
-- **Scala dei poteri (DECISA l'08/11/2026, prevale sulle sezioni 0 e 2 della riscrittura e sulle tabelle «Livelli 3-5» delle specializzazioni):**
+Privilegi: il Guerriero è dal diagramma; le altre classi per tipo (ex tratto II, ex tratto I, ex potere di classe), assegnazione confermata il 10/11. **Arcanista: dado vita d6** (15/11, scelta di Francesco: classe più «hard», compensata da oggetti, pergamene e pozioni).
+
+- **Scala dei poteri (DECISA il 10/11/2026 dal diagramma di Francesco, identica per tutte le classi; prevale sulle tabelle delle specializzazioni; dettaglio: riscrittura, sezione 0):**
 
 | Livello | A volontà | Per scontro | Giornalieri | Cosa arriva |
 |---|---|---|---|---|
-| 1 | 2 | 1 (scelto su 3) | 1 (scelto su 2) | potere di classe, tratto I |
-| 2 | 3 o 2 | 1 o 2 | 1 | a scelta: il terzo a volontà o un per scontro; **tratto II** (spostato dal 4) |
-| 3 | 3 o 2 | 2 o 3 | 1 | a scelta tra le due carte rimaste del livello 2; via di prestigio |
-| 4 | 3 | 3 | 2 | si completa: l'a volontà mancante arriva da solo; per scontro il rimasto o il fisso (se c'è spazio); giornaliero il rimasto o il fisso (l'ex «livello 3»); secondo bonus della via |
-| 5 | 3 | 3 | 3 | giornaliero finale; terzo bonus della via |
+| 1 | 2 (scelti su 3) | 1 (scelto su 3) | 1 (scelto su 2) | specializzazione (e arma) in creazione; privilegio I |
+| 2 | 3 | 1 | 1 | il terzo a volontà arriva da solo; **via di prestigio** e 1° potere della via |
+| 3 | 3 | 2 | 2 | privilegio II; 2° potere della via; per scontro una delle due carte rimaste; giornaliero il rimasto **o** il terzo |
+| 4 | 3 | 3 | 2 | 3° potere della via; per scontro il rimasto **o** il quarto |
+| 5 | 3 | 3 | 3 | privilegio III; giornaliero finale (arriva da solo) |
 
-  - A volontà che arriva al livello 2: la **difesa** (Guardia feroce, Pelle di corteccia, Corteccia viva, Crosta, Riflessi, Aura purificante, Armatura d'ossa); per la **Sentinella** *Colpo di mestiere* (la difesa *In guardia* è la sua identità). Proposta di Claude, Francesco non l'ha ancora confermata.
-  - Motivo: ogni livello porta qualcosa e si impara un pezzo alla volta. Simulazione al livello 1 contro i nemici comuni: nessuna differenza apprezzabile (97-100% di vittorie in entrambi gli schemi). **Da misurare**: Enea con un giornaliero in meno al livello 3.
-  - **Scelte doppie (DECISE l'08/11/2026, obiezioni 1A 2A 3A 4B 5A 6A):** a ogni livello che porta una scelta, il giocatore sceglie a video tra potere e descrizione; **nessun cambio** nel gioco (nella sala di prova sì). Coppie sempre «di base contro del livello»: livello 1 per scontro 1 su 3 e giornaliero 1 su 2; **livello 2 e 3, strada libera (opzione A, decisa l'08/11):** al 2 il terzo a volontà oppure uno dei due per scontro rimasti, al 3 una delle due carte rimaste (al 2-3 la forma è 3-1-1/2-2-1 e 3-2-1/2-3-1; chi corre sui per scontro riceve la difesa da sola al 4 e perde per sempre il fisso per scontro del 4); a ogni scelta il giocatore vede i poteri che ha già, con la descrizione; livello 4 per scontro rimasto **o** fisso del 4, giornaliero rimasto **o** fisso (ex livello 3); livello 5 finale **fisso**. Un per scontro e un giornaliero restano fuori per sempre: li sceglie il giocatore. La schermata mostra solo potere e descrizione (niente riga «funziona con…»). Le percentuali dei boss devono valere anche per la build peggiore, al massimo 10 punti sotto l'obiettivo.
-  - Nel codice: `js/specializzazioni.js` (`SCALA`, `volontaDopo`, `fissi`, `opzioniLivello`, `sceltaValida` che rigioca le scelte, `livelloDi`), test «Scala 08/11» e «Scelte doppie»; nella sala di prova le carte delle scelte per livello.
+  - Il livello 3 è lo «spartiacque» del personaggio dentro la casa (voluto): quattro novità. Il livello 5 non ha potere della via.
+  - **Catalogo per specializzazione: 11 poteri**, 3 a volontà, 4 per scontro, 4 giornalieri; il giocatore ne conosce 9. Niente etichetta «fisso». Il **terzo giornaliero entra in scelta al livello 3** (era il 4, spostato il 10/11), il quarto per scontro al 4, il finale giornaliero arriva da solo al 5.
+  - **Nessun potere d'ufficio (DECISO il 09/11/2026, 1A e 2A):** al livello 1 si scelgono 2 a volontà su 3 (a video il ruolo di ciascuno, nessun avviso). Eccezioni volute: il terzo a volontà al livello 2, il finale del 5 e i poteri della via (la scelta è la via). Con le pergamene il pool potrà allargarsi e le scelte con lui.
+  - **Scelte doppie (DECISE l'08/11/2026, aggiornate il 10/11):** a ogni livello che porta una scelta il giocatore sceglie a video tra potere e descrizione, vedendo i poteri che ha già; **nessun cambio** nel gioco (nella sala di prova sì). Coppie sempre «di base contro del livello». Un per scontro e un giornaliero restano fuori per sempre. ⚠ Con le pergamene (cambio dei poteri al riposo dopo il livello, vedi `pergamene.md`) i poteri non scelti non restano più fuori per sempre.
+  - **Via di prestigio al livello 2** (Aldo o Guendalina): tre poteri **passivi** (non occupano slot) ai livelli 2, 3 e 4.
+  - **Decisioni chiuse (10/11):** *Mani che curano* = pozioni ed elisir di salute +50% (arrotondato per eccesso; con «Fame» anche razioni), dal livello 3; *Infuso* resta al 5 e *Legame del sottobosco* al 3; arma in creazione per tutte le classi; focus per classe (Sciamano, Arcanista, Monaco): libro arcano, filatterio, simbolo sacro (d6) o bastone (d8, due mani); *Bastone* → *Manganello*. Privilegi delle altre classi confermati.
 - Per scontro = una volta per scontro. Specializzazione scelta in creazione, mai cambiabile.
-- Vie (livello 3-5, uguali per tutti, niente poteri): **Aldo, la caccia** (Occhio del cacciatore / Odore del sangue / Senza scampo); **Guendalina, il focolare** (La lanterna / Mani che curano / La soglia di casa).
-- Meccaniche firma: Sangue versato (Sangue); Copie a metà danno + Indebolito (Illusione); Balsamo della linfa (Linfa); placche d'ossa 3 × (3 + livello − 1), generate solo da Spine e Armatura d'ossa, Gabbia d'ossa su 19-20 (Ossomante); fuoco sacro che ignora le immunità al fuoco (Purificatore).
+- Vie (si scelgono al livello 2, poteri passivi ai livelli 2-4, uguali per tutti): **Aldo, la caccia** (Occhio del cacciatore / Odore del sangue / Senza scampo); **Guendalina, il focolare** (La lanterna / Mani che curano / La soglia di casa).
+- Meccaniche firma (11/11, aggiornate il 15/11): Frattura +2 danni su Esposto/Scoperto (Realtà, forza; *Annullamento* su Scoperto +2 dadi); Copie deterministiche a metà danno + Indebolito (Illusione, psichico; *Sussurro* crea una Copia a ogni colpo); Scorza viva e scudi di PF (Legno, contundente, niente cure); veleno e Pelle di micelio (Funghi); Sangue versato al 10% della salute massima, senza cure (Monaco del Sangue); placche d'ossa 3 × (3 + livello − 1), generate solo da Spine e Armatura d'ossa, Gabbia d'ossa su 19-20; *Spirito d'ossa* 1d8 per placca + Spirito una volta (Ossa). Il fuoco sacro non ha più una classe (oggetti e pergamene).
 
 ## Regole generali chiave
-- Un'azione per turno; dialogo gratuito; niente risorse (furia, mana, fede, natura eliminati).
-- Stati: lieve/grave per Taglio (Sanguinante/Emorragia), Fuoco (Scottato/Ustionato), Veleno (Intossicato/Avvelenato), Contundente (Stordito/Commosso = Indebolito 3 turni), Perforante (Esposto −2 CA / Scoperto −4 CA e critico 19-20). Indebolito −2 per colpire. Impaurito: 2 turni, solo poteri a volontà.
+- Un'azione standard e una rapida per turno (rapida: un oggetto equipaggiato o cambiato, pozione o elisir, Infuso; dal 14/11 anche i poteri di equipaggiamento; dal 15/11 anche i poteri di set a carica come Sguardo della Casa e Voce del sangue); dialogo gratuito; niente risorse (furia, mana, fede, natura eliminati). **Niente reazioni nel gioco (14/11).**
+- Stati: lieve/grave per Taglio (Sanguinante/Emorragia), Fuoco (Scottato/Ustionato), Veleno (Intossicato/Avvelenato), Contundente (Stordito/Commosso = Indebolito 3 turni), Perforante (Esposto −2 CA / Scoperto −4 CA e critico 19-20). Indebolito −2 per colpire. Impaurito: 2 turni, solo poteri a volontà. **Stordito = perde l'intero turno (standard e rapida), poi immune 2 turni** (11/11; sui boss Indebolito).
 - Durata 3 turni (Impaurito 2). A volontà applicano; per scontro applicano e aggravano; giornalieri aggravano. Aggravare richiede il lieve (eccezione: Commosso anche se il bersaglio è immune allo Stordito).
-- **TS simmetrico:** applicare uno stato → TS di chi lo subisce (CD 8 + mod + livello); aggravare è automatico; un TS solo per potere. TS: Vigore (Sanguinante, Intossicato, Stordito, Indebolito), Agilità (Scottato), Mente (Esposto), Spirito (Impaurito).
+- **TS simmetrico:** applicare uno stato → TS di chi lo subisce (CD 8 + mod + livello); aggravare è automatico; un TS solo per potere. **TS (aggiornati il 14/11): Vigore (Sanguinante, Intossicato, Stordito, Indebolito), Agilità (Scottato, Esposto, Scoperto), Mente (Svuotato, Prosciugato), Spirito (Impaurito, Maledetto, Condannato).** Il TS dipende dallo stato, non dal tipo di danno.
+- **Colpi (14/11, precisato il 15/11):** attacco singolo un d20; più attacchi un d20 ciascuno, senza catena; colpo gratuito automatico, solo dado dell'arma, mai critico, solo se il principale colpisce; poteri per scontro e giornalieri (anche di classe) si consumano alla dichiarazione, anche se l'attacco manca. **La caratteristica si somma una volta per attacco, mai per dado** (vale per tutte le classi e per i nemici); con attacchi separati si somma a ciascuno.
 - «Danno subito» = salute effettivamente persa.
 - Vulnerabile +50% (eccesso), resistente −50% (eccesso), immune 0. Gradiente della maledizione: fuori casa solo resistenze; mastini immunità; sovrano le più forti. Fuoco sacro: neutro fuori, vulnerabili mastini e sovrano. Etichetta «Maledetto» (infernali, mastini, guardiani, sovrano).
-- Pergamene: lasciti di avventurieri; alternativa in uno slot (2 poteri, 1 uso); prova di abilità per prenderle, si perdono solo fallendo; tipi nuovi vulnerabili solo per il guardiano del lascito.
+- Pergamene (aggiornato 13-14/11, dettaglio `pergamene.md`): lasciti di avventurieri; **26 pergamene uniche**, nessun limite di numero, sostituiscono solo poteri per scontro e giornalieri; prova di abilità per prenderle; cambio dei poteri al primo riposo dopo il livello (facile) o una sola volta (difficile); tipi nuovi vulnerabili solo per il guardiano del lascito. **Non ancora nel codice.**
+- **Elisir di stato (nel codice dal 15/11):** sei famiglie; comune cura il lieve, raro anche il grave e dà 3 turni di immunità; azione rapida. ⚠ Il codice permette più immunità rare insieme: da decidere se tenerne una sola attiva.
 
 ## Nemici
-- Niente PA. Ordinari e cacce ★ 2/1; ★★ 2/2; ★★★ 3/2; élite (mastini boss) 3/2; boss come il giocatore, giornalieri a soglie 75/50/25% (Ettore 50%; Enea 50% e prima caduta; Dafne 50/25; Atena e sovrano 75/50/25, il sovrano sull'armatura). Annuncio un turno prima dei poteri forti dei boss.
-- Sovrano: ultimo 25% forma vera (armatura distrutta), poi la scena dei tre finali. Resistente (non immune) al veleno.
+- Niente PA. Ordinari e cacce ★ 2/1; ★★ 2/2; ★★★ 3/2; élite (mastini boss) 3/2; boss come il giocatore, giornalieri a soglie (Ettore 50%; Enea 50% e prima caduta; Dafne 50/25; Atena a terzi di salute; il sovrano una fase per armatura). **Annuncio un turno prima dei poteri forti dei boss**, con icone (🗡️ attacco, 🗡️ vibrante caricato, 🛡️ difesa); il colpo annunciato non si perde al cambio fase. **Opzione B (15/11):** a ogni cambio fase il boss gioca tutta la sequenza della fase, una fase per volta, anche dopo un danno massiccio (Dafne esclusa). **Ettore scritto con Agilità alta** (ladro).
+- **Valori congelati (15/11):** Ettore 42 PF / CA 12 / +4 / 1d4+2; Enea 62 / 13 / +6 / 1d8+2; Dafne 72 / 15 / +8 / 1d8+3; Atena 105 / 16 / +10 / 1d10+4; sovrano 70 di cenere + 40 di carne, +10, 1d12+4, CA 16 (70–47) / 15 (47–23) / 14 (23–0) / 13 carne.
+- Sovrano (11/11): due barre (cenere in tre fasi di armatura, poi carne); ascia bipenne, solo taglio; dadi 1/1/2; 3/3/3 (uno per fase); stati nuovi Maledetto/Condannato/Svuotato/Prosciugato (TS di Spirito per Maledetto e Condannato, di Mente per Svuotato e Prosciugato); evento finale diverso per finale; resistente (non immune) al veleno; immunità della mappa originale con le clausole del set di cenere. Vedi riscrittura 8e.
 - 5 avventurieri tolti per ora.
 
-## Mappa vulnerabilità (✓ vuln, ✗ resist, ⛔ immune, · neutro)
+## Mappa vulnerabilità (✓ vuln, ✗ resist, ⛔ immune, · neutro) — aggiornata il 15/11
 | Tipo | Ettore | Enea | Dafne | Atena | Sovrano arm. | Sovrano vero |
 |---|---|---|---|---|---|---|
 | Taglio | ✓ | ✗ | · | ✗ | ✗ | ✓ |
 | Contundente | · | ✓ | ✗ | · | ✓ | · |
 | Perforante | · | · | ✓ | ✓ | ✗ | · |
-| Sangue | · | ✓ | · | ✓ | ⛔ | ✓ |
-| Illusione | ✓ | · | ✓ | ✗ | ⛔ | ✗ |
+| Sangue | · | ✓ | · | · | ⛔ | ✓ |
+| Psichico (ex illusione) | ✓ | · | ✓ | · | ⛔ | ✗ |
 | Fuoco sacro | · | ✓ | · | ✓ | ✓ | · |
 | Ossa | · | ✗ | ✓ | · | ✗ | · |
-| Veleno | ✓ | · | ✗ | ✓ | ✗ | ✓ |
+| Veleno | ✓ | · | ✗ | · | ✗ | ✓ |
+
+Atena (15/11): tolte le vulnerabilità a sangue e veleno e la resistenza allo psichico.
 
 ## Decisioni del 06/11/2026 (dettaglio: riscrittura, sezione 8f e 8c gruppo 5)
 - **Livelli fino a 10**, solo numeri (caratteristiche, salute, mente); +1 punto attributo dal 6 (da riconfermare); soglie oltre il 5 da ricalcolare.
 - **Boss sempre un livello sopra il giocatore**; percentuali di vittoria (Ettore ~sempre, Enea 80%, Dafne 70%, Atena 60%, sovrano 50%) misurate con l'equipaggiamento del momento.
-- **Bonus equipaggiamento +1/+2/+3/+4** (tetto +3, +4 leggendarie; armature tetto +3, +4 solo set Vespera); sostituisce «+livello».
-- Armi: attacco base senza stati e senza sinergie; ogni PNG lascia la sua arma (nessuna scelta); **focus** per Arcanista e Ossomante (dado del focus per i 3 offensivi a volontà); pergamene solo come extra; matrice arma-classe approvata.
+- **Bonus equipaggiamento +1/+2/+3** (tetto +3 per tutto, set compresi dal 12/11; vedi `oggetti_per_rarita.md`); sostituisce «+livello».
+- Armi: attacco base senza stati e senza sinergie; ogni PNG lascia la sua arma (nessuna scelta); **focus** per classe (Sciamano, Arcanista, Monaco): mano primaria arma, secondaria focus facoltativo; con il focus gli offensivi che tirano il dado dell'arma passano da d6 a d8; bastone = arma + focus, due mani, d8; pergamene solo come extra; matrice arma-classe approvata (poi resa libera il 13/11).
 - **Mastino corazzato** (liv. 5, tre rune azzurre) e **mastino della soglia di Adele** (liv. 4); cacce rimappate, Profeta unico maledetto; PE per arrivo 100/150/200/250 proposti.
-- **Da aggiornare nei documenti collegati:** `bilanciamento_nemici_oggetti.md` (livello massimo 5, +livello, PE, percorso atteso).
 
-## Codice (domenica 08/11/2026) — motore nuovo su main
-Commit da `a593729` a `f9e1044`. Il motore nuovo è **isolato** dal vecchio (combattimento.js, magia_combattimento.js, sciamano.js, tecniche.js restano com'erano): **gioco.html e test.html non lo usano ancora**. Zip dei file nella cartella locale: `riscrittura_08-11-2026.zip`.
+## Decisioni dell'11/11/2026 (dettaglio: riscrittura, sezioni 0, 2, 4-6 e 8e)
+- **Specializzazioni ridisegnate (una offensiva e una difensiva per classe):** Guerriero Berserker / Paladino; Sciamano Funghi (veleno) / Legno (contundente e scudi di PF, senza cure); Arcanista Realtà (forza, nuova) / Illusione (psichico); Monaco Sangue (dall'Arcanista, costo 10% della salute, niente cure) / Ossa. Purificatore eliminato; fuoco sacro riciclato in oggetti e pergamene. Privilegi dello Sciamano validi per qualsiasi stato. Scariche alleggerite (Frantumare 1d6, Incubo +1d6, Grande Inganno 2d8; Spirito d'ossa portato a 1d8 per placca il 15/11). Idea in serbo *Appesantito*.
+- **Azione rapida** (una per turno, in più della standard): equipaggiare o cambiare un oggetto, pozione o elisir, Infuso dello Sciamano. Stordito = intero turno.
+- **Armi:** al massimo due con sé, cambio con l'azione rapida; il tipo di danno lo decide l'arma per il Guerriero e per l'attacco base di tutte le classi; gli incantatori (Sciamano compreso) tengono il tipo dei loro poteri.
+- **Sovrano:** cenere immune al Sanguinante finché l'armatura è integra o incrinata; fasi Rabbia / Maledetto / Vuoto; dadi 1/1/2; evento finale per finale, associazione ai finali confermata l'11/11.
+- **Morte contro il sovrano:** facile, ripartenza dalla scena di preparazione; difficile, game over; niente fuga né resa; avviso prima dell'ultimo ingresso (testi provvisori). Rivelazione di Atena riscritta sui set (provvisoria).
 
-| File | Contenuto | Test |
-|---|---|---|
-| `js/poteri.js` | Stati lieve/grave, TS simmetrico (uno solo per potere), applica/aggrava, Vacillante, vulnerabilità, fuoco sacro come tipo a sé | `tests/poteri.test.js` (34) |
-| `js/specializzazioni.js` | Catalogo delle 8 specializzazioni (89 poteri), scelta 2 su 3 / 1 su 2, poteri e tratti per livello | dentro i test sotto |
-| `js/scontro.js` | Attacco (totale > CA, come oggi), turni, reazioni, tutti i poteri, poteri di classe, tratti, vie di Aldo e Guendalina | `scontro` (33), `scontro_sciamano` (25), `scontro_arcanista` (32), `scontro_monaco` (29), `scontro_vie` (7) |
-| `js/nemici.js` | Gruppi 1-4 di 8c (animali, infernali, mastini, élite), scelta del potere, annuncio degli élite, rune del corazzato | `tests/nemici.test.js` (18, con 3200 scontri di fumo) |
+## Decisioni del 14/11/2026 (dettaglio: `decisioni_14_novembre.md`)
+- **Armi:** Lama gemella Raro +2 (e pergamena garantita del platino, tra le 26); Flagello chiodato perforante; Strega della torbiera → pergamena di fuoco sacro; **Focus rinforzato** (Non comune +1, senza poteri, in armeria); Stiletto rituale solo perforante; Giuramento del Rettore (arma a due facce, cambio faccia = azione rapida) e Spaccatoro di Caius si tengono entrambi.
+- **Poteri delle armi chiusi:** Danza delle lame, Colpo del Giuramento, Punta nella piaga, Segno sulla mappa (Rari); Raccolto, Albero caduto, Doppia stoccata, Pioggia di braci (Leggendari).
+- **Colpi e TS:** regole di colpo e tabella TS (vedi sopra).
+- **Zaino:** 8 posti di scorta, nascondiglio da 10, consumabili fuori dai posti, pergamene senza limite. **Armi comuni:** sei armi da mischia (tre tipi × una/due mani), niente armi da lancio.
+- **Niente reazioni:** i poteri di armature e accessori diventano poteri normali con azione rapida, nelle due formule «fino al tuo prossimo turno» e «carica». *Piede fermo* da riconfermare con Francesco.
 
-**Scelte fatte nel codice dove i documenti tacevano** (Francesco, 08/11: «si continua così», si decide dopo i test):
-1. Stordito = 1 azione persa, poi 2 turni di immunità.
-2. «Per eccesso» sul risultato: tutte le metà si arrotondano per eccesso (resistenze, Copie, Ali cremisi, Rivalsa, Vincolo…).
-3. Danni continuativi all'inizio del turno di chi li porta; durata che scende a fine turno.
-4. Effetti «per N turni» scendono all'inizio del proprio turno (coprono N turni del nemico); quelli sui tuoi turni successivi (Muffa, Sangue in piena, Arma benedetta) contano N turni tuoi.
-5. Contrattacchi: tiro per colpire, solo il dado dell'arma.
-6. Colpo del boia e Sentenza contro un Vacillante: colpiscono sempre e sono critici.
-7. Rivalsa somma il Vigore; Marchio della preda costa l'azione.
-8. Poteri con dadi senza la parola «attacco» (Pira, Incubo, Marea cremisi…) = senza tiro per colpire.
-9. Infuso: elisir PROVVISORIO = 1/4 della salute; bere costa l'azione.
-10. Fioritura del parassita: al terzo turno 1d6 + esplosione 2d6.
-11. Gabbia d'ossa solo su Lancia e Spine (Spirito d'ossa non tira il d20).
-12. Nemici comuni: caratteristiche a +0 (TS = d20 + livello); CD dei loro stati = 8 + attacco + livello; mastino del secondo piano livello 2.
-13. Élite: il turno dell'annuncio attaccano comunque con un a volontà; il potere annunciato è già speso (Spezza-carica lo fa perdere e spegne la runa).
-14. Ceneri sul pelo: a volontà difensivo (fino al suo turno), vale contro gli attacchi in mischia, non contro il focus.
-15. Senza scampo: usa il primo a volontà della specializzazione (l'offesa); scatta solo sui tuoi poteri, non sui danni continuativi.
+## Decisioni del 15/11/2026 (dettaglio: `lavoro_codice_domenica.md`, riscrittura 8g)
+- **Caratteristica una volta per attacco**, mai per dado (giocatore e nemici); attacchi separati la sommano ciascuno. *Frantumare* e *Grande Inganno* sommano la Mente una volta; *Spirito d'ossa* 1d8 per placca + Spirito una volta.
+- **Annunci tenuti** (non trasformati in poteri normali), con icone; colpo annunciato mai perso al cambio fase.
+- **Opzione B** per tutti i boss tranne Dafne: ogni fase gioca tutta la sequenza, una fase per volta.
+- **Valori dei boss rialzati e congelati** (vedi Nemici). Misure del bot (set della storia, 2 elisir per tipo, scelte da «secondo cervello» `js/cervello.js`): Ettore 96%, Enea 83%, Dafne 82%, Atena 74%, sovrano 63%; forbice ampia tra le build (es. Ossa ~100%, Paladino contro Atena 29%, Legno contro Dafne 43%, Funghi e Illusione contro il sovrano 27-32%). Le misure non contano pergamene, armeria né scelte umane.
+- **Arcanista d6**, **Atena** senza vulnerabilità a sangue e veleno né resistenza allo psichico, **sovrano** con la mappa originale e le clausole del set di cenere, **Odore di Casa −1**, **Dafne non si risparmia**.
+- **Inventario:** il giocatore potrà togliere, buttare o posare oggetti nello sgabuzzino della dispensa (da fare nel gioco). Il giocatore terrà di solito elisir e pozioni rari.
+- **Aperti (non toccare il codice senza Francesco):** una sola immunità di elisir raro attiva per volta?; *Voce del sangue* vale anche su TS e prove?; mano libera +2 o +3 (`oggetti_manuale` proponeva +3); *Sentenza dell'erede* da scrivere.
 
-**Sala di prova (`prova.html`, anche in `PROVA_riscrittura` sul PC):** schede laterali dei poteri (tuoi: seleziona, descrizione, usa; nemico: descrizione dai dati, usato/annunciato, anteprima della prossima mossa), log di ogni scontro in `log_scontri` (JSON v2) e riassunto con `node analisi_prova.mjs`.
+## Codice — storia (08/11) e stato (15/11)
+Il motore nuovo (`js/poteri.js`, `specializzazioni.js`, `scontro.js`, `nemici.js`, `oggetti.js`, `racconto.js`, `regole.js`, `cervello.js`) è descritto in `lavoro_codice_domenica.md` e `cervello_bot.md`. Sala di prova: `prova.html` (blocco «Set e borsa», pulsanti elisir e set, icone degli annunci, bot). 233 test verdi il 15/11.
 
-**Prossimi passi del codice:** collegare il motore a `test.html` (sala di prova veritiera, con il registro degli scontri), poi creazione e scheda (specializzazione e scelte), poi `gioco.html`; togliere il vecchio motore solo quando il nuovo è in gioco. Guardiani e sovrano (8d-8e) e cacce (gruppo 5) dopo le decisioni.
+**Ramo `riscrittura` (08/11):** creazione con specializzazione (personaggi `motore: 2`), scontro sul motore nuovo con un ponte in `gioco.html`, riposo e scelte di livello. Copia di prova sul PC: `PROVA_gioco`. I personaggi vecchi ricevono un avviso e l'invito a ricrearli.
+
+**Scelte fatte nel codice dove i documenti tacevano** (08/11, Francesco: «si continua così»): metà per eccesso; danni continuativi a inizio turno di chi li porta; effetti «per N turni» scendono all'inizio del proprio turno; contrattacchi solo dado dell'arma; Colpo del boia e Sentenza contro un Vacillante colpiscono sempre e sono critici; Rivalsa somma il Vigore; poteri con dadi senza la parola «attacco» = senza tiro; Fioritura del parassita 1d6 + esplosione 2d6; Gabbia d'ossa solo su Lancia e Spine; nemici comuni con caratteristiche a +0; élite: il potere annunciato è già speso; Ceneri sul pelo solo contro la mischia; Senza scampo usa il primo a volontà della specializzazione.

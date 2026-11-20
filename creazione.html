@@ -303,6 +303,12 @@
           <label style="display:block;margin:0.2rem 0;padding:0.35rem 0"><input type="radio" name="modalita" value="facile" checked style="width:1.25rem;height:1.25rem;vertical-align:-0.2rem"> <b id="mod-f">Facile</b> <span id="mod-fd" class="guida"></span></label>
           <label style="display:block;margin:0.2rem 0;padding:0.35rem 0"><input type="radio" name="modalita" value="difficile" style="width:1.25rem;height:1.25rem;vertical-align:-0.2rem"> <b id="mod-d">Difficile</b> <span id="mod-dd" class="guida"></span></label>
         </fieldset>
+        <fieldset id="facoltative" style="border:1px solid var(--line, #8884);border-radius:8px;padding:0.6rem 0.9rem;margin:0 0 0.9rem;text-align:left">
+          <legend id="fac-tit" style="font-weight:600;padding:0 0.3rem">Regole facoltative</legend>
+          <p id="fac-guida" class="guida" style="margin:0 0 0.3rem"></p>
+          <label style="display:block;margin:0.2rem 0;padding:0.35rem 0"><input type="checkbox" name="opzione" value="fame" style="width:1.25rem;height:1.25rem;vertical-align:-0.2rem"> <b id="fac-fame">Fame</b> <span id="fac-famed" class="guida"></span></label>
+          <label style="display:block;margin:0.2rem 0;padding:0.35rem 0"><input type="checkbox" name="opzione" value="pesoGiorni" style="width:1.25rem;height:1.25rem;vertical-align:-0.2rem"> <b id="fac-peso">Peso dei giorni</b> <span id="fac-pesod" class="guida"></span></label>
+        </fieldset>
         <button type="submit" class="btn" id="crea" aria-describedby="avviso" style="margin-top:0" data-t="entra">Entra nel dungeon</button>
         <p id="avviso" class="formati"></p>
         <p id="esito" aria-live="polite"></p>
@@ -333,6 +339,10 @@
         : { t: "Modalità", f: "Facile", fd: "— dopo la morte riparti dall'ultimo salvataggio; salvi quando vuoi.", d: "Difficile", dd: "— la morte è permanente; un solo salvataggio automatico, cancellato alla morte. Potrai passare a facile, mai tornare indietro." };
       const set = (id, t) => { const e = document.getElementById(id); if (e) e.textContent = t; };
       set("mod-tit", M.t); set("mod-f", M.f); set("mod-fd", M.fd); set("mod-d", M.d); set("mod-dd", M.dd);
+      const F = LINGUA === "en"
+        ? { t: "Optional rules", g: "For those who want a harder game. You can play without them: the base rules are complete.", f: "Hunger", fd: "— sleeping does not heal your body: Adele's rations do, a quarter of your maximum health each. Guendalina cooks a few every day.", p: "The weight of days", pd: "— every 10 days spent in the house you lose 1 point of maximum mental health." }
+        : { t: "Regole facoltative", g: "Per chi vuole una partita più dura. Si gioca anche senza: le regole base sono complete.", f: "Fame", fd: "— dormire non cura il corpo: curano le razioni di Adele, un quarto della salute massima l'una. Guendalina ne cucina qualcuna ogni giorno.", p: "Peso dei giorni", pd: "— ogni 10 giorni passati nella casa perdi 1 punto di salute mentale massima." };
+      set("fac-tit", F.t); set("fac-guida", F.g); set("fac-fame", F.f); set("fac-famed", F.fd); set("fac-peso", F.p); set("fac-pesod", F.pd);
     }
     const L = Lingua.t, N = Lingua.nome;
     const T = {
@@ -1084,7 +1094,8 @@
         motore: 2, /* 08/11: personaggio del motore nuovo (js/poteri.js, scontro.js, specializzazioni.js) */
         spec, /* specializzazione: si sceglie qui e non si cambia */
         scelte: sceltePoteri(), /* poteri scelti, nell'ordine dei livelli (livello 1: due a volontà, per scontro, giornaliero) */
-        modalita: (document.querySelector('input[name="modalita"]:checked') || {}).value === "difficile" ? "difficile" : "facile", /* 28/10: facile (si riparte dal salvataggio) o difficile (morte permanente) */
+        modalita: (document.querySelector('input[name="modalita"]:checked') || {}).value === "difficile" ? "difficile" : "facile",
+        opzioni: Object.fromEntries(["fame", "pesoGiorni"].map(k => [k, !!document.querySelector(`input[name="opzione"][value="${k}"]:checked`)])), /* 20/11: regole facoltative */ /* 28/10: facile (si riparte dal salvataggio) o difficile (morte permanente) */
         abilita: abilitaScelte().map(([n, a]) => ({ nome: n, attributo: a, valore: valoreAbilita(a) + LIVELLO })),
         equipaggiamento: {
           arma: arma.nome, armaDanno: arma.danno, armaTipoDanno: arma.tipo, armaMani: arma.mani,

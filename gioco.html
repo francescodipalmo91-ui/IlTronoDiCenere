@@ -2130,7 +2130,7 @@
         sblocco: {
           riposo: ["Nuova capacità sbloccata: Riposo",
             "Puoi riposare accanto a un fuoco caldo, dalle fiamme arancioni: per ora qui in cucina e nella sala da conversazione. Scrivi «riposo» oppure usa il pulsante «Riposa» nella scheda, alla voce «Capacità».",
-            "Ogni riposo dura un giorno: consumi fino a 1d4 razioni di Adele e recuperi 1d4 + livello su salute fisica e salute mentale, e tornano i poteri giornalieri. Guendalina cucina 2 razioni al giorno (scorta massima 10). Il focolare della cucina non si spegne mai: qui puoi riposare quante volte vuoi, anche senza razioni (recuperi solo 1 punto). Gli altri fuochi invece si consumano: dopo il riposo le fiamme diventano azzurre e fredde."],
+            "Ogni riposo dura un giorno: recuperi tutta la salute fisica e 2 punti di salute mentale, e tornano i poteri giornalieri (con la regola facoltativa «Fame» il corpo lo curano invece le razioni di Adele). Il focolare della cucina non si spegne mai: qui puoi riposare quante volte vuoi. Gli altri fuochi invece si consumano: dopo il riposo le fiamme diventano azzurre e fredde."],
           missione: ["Missione accettata: «Ciò che giace nell'Alto»",
             "Scendi in cantina, recupera la vecchia scaletta di legno e riportala a Guendalina, qui in cucina.",
             "La cantina si raggiunge dalla stanza di servizio, oltre la porta a sinistra della cucina: scrivi ad esempio «vado nella stanza di servizio» e poi «scendo in cantina». Laggiù è buio e girano i guardiani del Signore: muoviti in silenzio e non correre.",
@@ -2315,7 +2315,7 @@
               "«Se mai doveste trovarlo, vi prego, incastratelo nell'apposito riquadro sul camino. Quella stanza era il luogo prediletto della mia padrona, la Signora Adele, e mi si stringe il cuore a saperla così, incompleta. Ma muovetevi con cautela: i guardiani del Signore azzannano prima di chiedere il nome.»",
               "«Abbiate cura di voi... non vorrei dover piangere anche per voi.»"
             ] },
-          riposo: { nome: "Riposo", desc: "Accanto a un fuoco caldo, dalle fiamme arancioni, riposi per un giorno intero: consumi fino a 1d4 razioni di Adele e recuperi 1d4 + livello su tutte le risorse. Guendalina cucina 2 razioni al giorno (massimo 10). In cucina puoi riposare quante volte vuoi, anche senza razioni (recuperi solo 1 punto); il camino della sala da conversazione invece si consuma dopo un riposo (le fiamme diventano azzurre e fredde).", btn: "Riposa" },
+          riposo: { nome: "Riposo", desc: "Accanto a un fuoco caldo, dalle fiamme arancioni, riposi per un giorno intero: recuperi tutta la salute fisica e 2 punti di salute mentale (con la regola facoltativa «Fame» il corpo lo curano le razioni di Adele, che Guendalina cucina ogni giorno). In cucina puoi riposare quante volte vuoi; il camino della sala da conversazione invece si consuma dopo un riposo (le fiamme diventano azzurre e fredde).", btn: "Riposa" },
           laboratorio: { nome: "Laboratorio di Guendalina", desc: "Porta a Guendalina, in cucina, i resti dei mastini infernali: con quelli potrà prepararti",
             preparati: ["Siero di rosa cenerea (2 ciuffi di pelo di mastino): ripristina 1d6 di salute fisica", "Olio della falena (3 larve di falena): ripristina 1d6 di {risorsa}", "Distillato di serenità (3 ghiandole del fuoco): ripristina 1d4 di salute mentale"] }
         },
@@ -2356,7 +2356,7 @@
         sblocco: {
           riposo: ["New ability unlocked: Rest",
             "You can rest by a warm fire, one with orange flames: for now here in the kitchen and in the drawing room. Write “rest” or use the “Rest” button on your sheet, under “Abilities”.",
-            "Each rest lasts a day: you eat up to 1d4 of Adele's rations and recover 1d4 + level on physical and mental health, and your daily powers come back. Guendalina cooks 2 rations a day (up to 10 in store). The kitchen hearth never goes out: here you can rest as many times as you like, even without rations (you only recover 1 point). Other fires are spent instead: after you rest, their flames turn blue and cold."],
+            "Each rest lasts a day: you recover all your physical health and 2 points of mental health, and your daily powers come back (with the optional rule “Hunger” your body is healed by Adele's rations instead). The kitchen hearth never goes out: here you can rest as many times as you like. Other fires are spent instead: after you rest, their flames turn blue and cold."],
           missione: ["Quest accepted: “What Lies Up High”",
             "Go down to the cellar, retrieve the old wooden step-ladder and bring it back to Guendalina, here in the kitchen.",
             "The cellar is reached from the service room, beyond the door on the left of the kitchen: write for example “I go to the service room” and then “I go down to the cellar”. It is dark down there and the Master's guardians roam: move silently and do not run.",
@@ -2536,7 +2536,7 @@
               "«Should you ever find it, I beg you, fit it into its slot on the fireplace. That room was the favourite place of my mistress, Lady Adele, and it pains my heart to know it so, incomplete. But move carefully: the Master's guardians bite before they ask your name.»",
               "«Take care of yourself... I would not want to have to weep for you too.»"
             ] },
-          riposo: { nome: "Rest", desc: "By a warm fire, one with orange flames, you rest for a whole day: you eat up to 1d4 of Adele's rations and recover 1d4 + level on all your resources. Guendalina cooks 2 rations a day (up to 10). In the kitchen you can rest as many times as you like, even without rations (you only recover 1 point); the drawing room fireplace is spent after one rest (its flames turn blue and cold).", btn: "Rest" },
+          riposo: { nome: "Rest", desc: "By a warm fire, one with orange flames, you rest for a whole day: you recover all your physical health and 2 points of mental health (with the optional rule “Hunger” your body is healed by Adele's rations, which Guendalina cooks every day). In the kitchen you can rest as many times as you like; the drawing room fireplace is spent after one rest (its flames turn blue and cold).", btn: "Rest" },
           laboratorio: { nome: "Guendalina's Workshop", desc: "Bring Guendalina, in the kitchen, the remains of the infernal mastiffs: with them she can prepare for you",
             preparati: ["Ashen rose serum (2 tufts of mastiff fur): restores 1d6 physical health", "Moth oil (3 moth larvae): restores 1d6 of {risorsa}", "Distillate of serenity (3 fire glands): restores 1d4 mental health"] }
         },
@@ -4772,6 +4772,10 @@
           razioni: (tiro, mangiate, resto) => `Razioni di Adele: 1d4 = ${tiro} · ne consumi ${mangiate} · ne restano ${resto}`,
           recupero: (d, liv, tot) => `Recupero: 1d4 + livello = ${d} + ${liv} = ${tot}`,
           digiuno: "Nessuna razione di Adele: a stomaco vuoto recuperi soltanto 1 punto.",
+          /* 20/11: riposo Base e regola facoltativa «Fame» */
+          base: "Il sonno ti rimette in sesto: tutta la salute fisica.", mente: (n) => `La mente si riprende: +${n}.`,
+          fameMangi: (n, cura, resto) => `Fame: mangi ${n} ${n === 1 ? "razione" : "razioni"} di Adele (1/4 della salute massima l'una, ${cura} ciascuna) · ne restano ${resto}`,
+          fameVuota: "Fame: senza razioni di Adele il corpo non guarisce. La mente, invece, riposa.",
           riga: (nome, da, a) => `${nome}: ${da} → ${a}`,
           logorio: (n, max) => `Sono passati altri dieci giorni tra queste mura. La casa ti scava dentro: perdi 1 punto di salute mentale massima (ora ${max}). La fontana del giardino e certi reperti della casa possono restituirlo.`, logorioTit: "Il peso dei giorni",
           cucinate: (n, tot) => `Guendalina ha preparato ${n} ${n === 1 ? "razione" : "razioni"} di Adele · scorta ${tot}/${RAZIONI_MAX}`,
@@ -4849,6 +4853,9 @@
           razioni: (tiro, mangiate, resto) => `Adele's rations: 1d4 = ${tiro} · you eat ${mangiate} · ${resto} left`,
           recupero: (d, liv, tot) => `Recovery: 1d4 + level = ${d} + ${liv} = ${tot}`,
           digiuno: "No rations of Adele's: on an empty stomach you recover only 1 point.",
+          base: "Sleep puts you back on your feet: all your physical health.", mente: (n) => `Your mind recovers: +${n}.`,
+          fameMangi: (n, cura, resto) => `Hunger: you eat ${n} of Adele's ${n === 1 ? "ration" : "rations"} (a quarter of your maximum health each, ${cura} apiece) · ${resto} left`,
+          fameVuota: "Hunger: without Adele's rations your body does not heal. Your mind, however, rests.",
           riga: (nome, da, a) => `${nome}: ${da} → ${a}`,
           logorio: (n, max) => `Ten more days have passed within these walls. The house hollows you out: you lose 1 point of maximum mental health (now ${max}). The garden fountain and certain relics of the house can give it back.`, logorioTit: "The weight of the days",
           cucinate: (n, tot) => `Guendalina has prepared ${n} ${n === 1 ? "ration" : "rations"} of Adele's · store ${tot}/${RAZIONI_MAX}`,
@@ -6699,8 +6706,8 @@
     const dettaglioArma = (o) => [o && o.tipoDanno ? N("danni", o.tipoDanno) : null, o && o.mani ? U.mani(maniArma(o)) : null].filter(Boolean).join(" · ");
     const testoDanno = (o) => {
       if (!o || !o.danno) return null;
-      const m = mod(Number(pg.statistiche && pg.statistiche.Lotta) || 10);
-      return `${o.danno}${Number(o.bonus) ? " + " + o.bonus : ""} + ${U.modLotta} (${m < 0 ? "−" : "+"}${Math.abs(m)})`;
+      const m = modAttaccoPg(); /* 20/11: la caratteristica di classe (prima leggeva il vecchio attributo «Lotta») */
+      return `${o.danno}${Number(o.bonus) ? " + " + o.bonus : ""} + ${Lingua.t({ it: "mod.", en: "" })} ${nomeAttrClasse()}${Lingua.t({ it: "", en: " mod." })} (${m < 0 ? "−" : "+"}${Math.abs(m)})`;
     };
     const infoScudo = (s) => [U.caBonus(Number(s.ca) || 0), Number(s.malus) ? U.malusAg(Number(s.malus)) : U.noMalus].join(" · ");
 
@@ -7786,27 +7793,36 @@
        - al risveglio Guendalina ha cucinato 2 razioni (scorta massima 10);
        - i nemici sconfitti ricompaiono: un nuovo mastino aspetta in cantina (al massimo uno per riposo).
        Restituisce null se non c'è niente da recuperare, { fame: true } se servono razioni. */
+    /* 20/11: regole facoltative scelte in creazione (pg.opzioni). Personaggi creati prima: «Peso dei giorni» attivo, «Fame» spenta. */
+    function opzionePg(k) { const o = pg && pg.opzioni; if (!o || typeof o !== "object") return k === "pesoGiorni"; return !!o[k]; }
     function curaRiposo(conDigiuno) {
       const ris = risorsaPg();
       const pieno = !(pg.dannoFisico > 0) && !(pg.dannoMentale > 0) && !(pg.manaUsato > 0 && manaMax() != null) && !(pg.risorsaUsata > 0 && ris) && !Object.keys(statiPg()).length; /* con uno stato alterato si può sempre riposare */
       const ricarica = motoreNuovo() && ((pg.giornalieriUsati || []).length > 0 || (pg.classe === "Forestiero" && livelloPg() >= 5 && (Number(pg.elisir) || 0) < 2)); /* 15/11: Infuso al livello 5, massimo 2 */ /* 08/11: si riposa anche per i giornalieri e l'Infuso */
       if (pieno && !livelliPronti() && !ricarica) return null; /* 01/11: con un livello in attesa si può riposare anche al pieno */
       let scorta = razioni();
-      if (scorta <= 0 && !conDigiuno) return { fame: true };
       const R = RG.riposo, righe = [];
-      let rec;
-      if (scorta > 0) {
-        const tr = tira(4), mangiate = Math.min(tr, scorta); scorta -= mangiate;
-        righe.push(R.razioni(tr, mangiate, scorta));
-        const d = tira(4), lv = livelloPg(); rec = d + lv;
-        righe.push(R.recupero(d, lv, rec));
-      } else { rec = 1; righe.push(R.digiuno); }
-      { const da = pvPg(); pg.dannoFisico = Math.max(0, (pg.dannoFisico || 0) - rec); righe.push(R.riga(U.puntiSalute, da, pvPg())); }
-      { const da = mentaliAttuali(); pg.dannoMentale = Math.max(0, (pg.dannoMentale || 0) - rec); righe.push(R.riga(U.puntiMentali, da, mentaliAttuali())); }
-      if (manaMax() != null) { const da = manaAttuale(); pg.manaUsato = Math.max(0, (pg.manaUsato || 0) - rec); righe.push(R.riga(U.mana, da, manaAttuale())); }
-      if (ris) { const da = risorsaAttuale(); pg.risorsaUsata = Math.max(0, (pg.risorsaUsata || 0) - rec); righe.push(R.riga(nomeRisorsa(), da, risorsaAttuale())); }
+      /* 20/11 (riscrittura_meccaniche, sez. 2): BASE = il riposo cura tutta la salute fisica e 2 punti mentali (3 con La lanterna).
+         Regola facoltativa «Fame»: il corpo non guarisce dormendo; curano le razioni di Adele, ognuna 1/4 della salute massima
+         (al riposo se ne mangiano quante ne servono). Non servono razioni per dormire. */
+      if (opzionePg("fame")) {
+        const mani = motoreNuovo() && livelloPg() >= 3 && usate.via === "guendalina"; /* Mani che curano: +50% anche alle razioni */
+        const max = Number(pg.puntiVita ?? pg.saluteFisica) || 0, quota = Math.max(1, Math.ceil(Math.ceil(max / 4) * (mani ? 1.5 : 1))), danno = pg.dannoFisico || 0;
+        if (danno > 0 && scorta > 0) {
+          const n = Math.min(scorta, Math.ceil(danno / quota)); scorta -= n;
+          righe.push(R.fameMangi(n, quota, scorta));
+          const da = pvPg(); pg.dannoFisico = Math.max(0, danno - n * quota); righe.push(R.riga(U.puntiSalute, da, pvPg()));
+        } else if (danno > 0) righe.push(R.fameVuota);
+      } else if (pg.dannoFisico > 0) {
+        righe.push(R.base);
+        const da = pvPg(); pg.dannoFisico = 0; righe.push(R.riga(U.puntiSalute, da, pvPg()));
+      }
+      const recMente = motoreNuovo() && livelloPg() >= 2 && usate.via === "guendalina" ? 3 : 2; /* La lanterna */
+      if (pg.dannoMentale > 0) { righe.push(R.mente(recMente)); const da = mentaliAttuali(); pg.dannoMentale = Math.max(0, (pg.dannoMentale || 0) - recMente); righe.push(R.riga(U.puntiMentali, da, mentaliAttuali())); }
+      if (manaMax() != null) { const da = manaAttuale(); pg.manaUsato = 0; righe.push(R.riga(U.mana, da, manaAttuale())); } /* vecchio motore */
+      if (ris) { const da = risorsaAttuale(); pg.risorsaUsata = 0; righe.push(R.riga(nomeRisorsa(), da, risorsaAttuale())); }
       usate.giorno = (Number(usate.giorno) || 1) + 1;
-      if (usate.giorno % GIORNI_LOGORIO === 0) { /* 01/11: il peso dei giorni */
+      if (opzionePg("pesoGiorni") && usate.giorno % GIORNI_LOGORIO === 0) { /* 01/11: il peso dei giorni (dal 20/11 regola facoltativa) */
         usate.logorio = logorio() + 1;
         pg.dannoMentale = Math.min(maxMentali(), pg.dannoMentale || 0);
         righe.push(R.logorio(usate.logorio, maxMentali()));

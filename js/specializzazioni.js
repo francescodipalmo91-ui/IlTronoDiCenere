@@ -76,7 +76,7 @@
 
     /* ================= ARCANISTA (Mente) ================= */
     /* ---- Realtà (offensiva, nuova): danno di forza, Esposto / Scoperto; Frattura +2 danni su Esposto o Scoperto ---- */
-    colpo_di_forza: V("Colpo di forza", "offesa", "Dado dell'arma (d8 con il focus) + Mente, forza; applica Esposto."),
+    colpo_di_forza: V("Colpo di forza", "offesa", "Dado dell'arma (o del focus, se più alto) + Mente, forza; applica Esposto."),
     gravita: V("Gravità", "controllo", "1d6 di forza senza tiro per colpire, applica Indebolito; se il bersaglio è Esposto, dura 1 turno in più."),
     campo_di_peso: V("Campo di peso", "difesa", "+2 CA fino al tuo turno; se il nemico ti manca, 1d4 di forza senza tiro per colpire."),
     schianto: P("Schianto", "scontro", "Attacco con un dado in più, aggrava l'Esposto."),
@@ -88,7 +88,7 @@
     punto_di_rottura: P("Punto di rottura", "giornaliero", "Per lo scontro l'Esposto o lo Scoperto sul bersaglio non scade."),
     annullamento: P("Annullamento", "giornaliero", "4d8 + Mente di forza senza tiro per colpire, aggrava l'Esposto; se il bersaglio è già Scoperto, 2 dadi in più."),
     /* ---- Illusione (difensiva): danno psichico, Copie deterministiche ---- */
-    dardo_fantasma: V("Dardo fantasma", "offesa", "Dado dell'arma (d8 con il focus) + Mente, psichico; +1d4 se hai almeno una Copia."),
+    dardo_fantasma: V("Dardo fantasma", "offesa", "Dado dell'arma (o del focus, se più alto) + Mente, psichico; +1d4 se hai almeno una Copia."),
     sussurro_illusorio: V("Sussurro illusorio", "controllo", "Solo 1d6 psichico, applica Indebolito; se colpisce, nasce una Copia."),
     riflessi: V("Riflessi", "difesa", "+2 CA fino al tuo turno; se il nemico ti manca, nasce una Copia."),
     frantumare: P("Frantumare", "scontro", "Consumi tutte le Copie: 1d6 per Copia + Mente (una volta), senza tiro per colpire; con 3 Copie anche Esposto."),
@@ -102,7 +102,7 @@
 
     /* ================= MONACO (Spirito) ================= */
     /* ---- Sangue (offensiva, dall'Arcanista): Sangue versato al 10% della salute massima, niente cure ---- */
-    dardo_di_sangue: V("Dardo di sangue", "offesa", "Dado dell'arma (d8 con il focus) + Spirito, sangue; applica Sanguinante."),
+    dardo_di_sangue: V("Dardo di sangue", "offesa", "Dado dell'arma (o del focus, se più alto) + Spirito, sangue; applica Sanguinante."),
     frusta_cremisi: V("Frusta cremisi", "controllo", "Solo 1d4 senza tiro per colpire, applica Indebolito; se il bersaglio è Sanguinante, il sanguinamento dura 1 turno in più."),
     crosta: V("Crosta", "difesa", "+2 CA fino al tuo turno; chi ti colpisce diventa Sanguinante."),
     ebollizione: P("Ebollizione", "scontro", "Attacco con un dado in più, aggrava il sanguinamento."),
@@ -114,7 +114,7 @@
     vincolo_di_sangue: P("Vincolo di sangue", "giornaliero", "TS Spirito → per 3 turni il bersaglio subisce anche la metà del danno che subisci tu (escluso Sangue versato)."),
     marea_cremisi: P("Marea cremisi", "giornaliero", "4d8 + Spirito senza tiro per colpire, aggrava il sanguinamento; se è già Emorragia, la durata raddoppia (6 turni)."),
     /* ---- Ossa (difensiva, ex Ossomante): placche d'ossa, massimo 3, ognuna riduce 3 + 1 per livello oltre il primo ---- */
-    lancia_d_ossa: V("Lancia d'ossa", "offesa", "Dado dell'arma (d8 con il focus) + Spirito, ossa; critico con 19-20."),
+    lancia_d_ossa: V("Lancia d'ossa", "offesa", "Dado dell'arma (o del focus, se più alto) + Spirito, ossa; critico con 19-20."),
     spine_d_ossa: V("Spine d'ossa", "controllo", "Solo 1d6, applica Indebolito; nasce una placca."),
     armatura_d_ossa: V("Armatura d'ossa", "difesa", "Strappi le ossa al nemico: 1d4 senza tiro per colpire, +2 CA fino al tuo turno, nasce una placca."),
     spirito_d_ossa: P("Spirito d'ossa", "scontro", "Spendi tutte le placche (almeno 1): 1d8 per placca + Spirito (una volta), senza tiro per colpire."),

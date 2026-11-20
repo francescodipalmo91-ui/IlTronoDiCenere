@@ -583,7 +583,7 @@
     const stato = (modo, k, extra2) => E.push(...statoSu(att, dif, modo, ctx, k, esito, extra2));
     const vivo = () => dif.pv > 0;
     const vac = P.vacillante(dif);
-    const I = { focus: true }; /* poteri degli incantatori: dado dell'arma (d8 con il focus) e tipo del potere */
+    const I = { focus: true }; /* poteri degli incantatori: dado dell'arma (o del focus, se più alto) e tipo del potere */
     let r;
     switch (id) {
       /* ---- privilegi del livello 5 ---- */

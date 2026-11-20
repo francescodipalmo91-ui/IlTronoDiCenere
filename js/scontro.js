@@ -26,8 +26,9 @@
      (ASSUNZIONE 15/11: i due bonus si sommano, es. Focus rinforzato +1). «Una spada è sempre una spada». */
   const focusOk = (b) => !!b.focus && !(b.arma && b.arma.dueMani && !b.arma.eFocus); /* un'arma a due mani toglie il focus (il bastone è entrambi) */
   const bonusEq = (b, o) => ((b.arma && b.arma.bonus) || 0) + (o && o.focus && focusOk(b) ? (b.focus.bonus || 0) : 0);
-  /* dado dei poteri degli incantatori: il dado dell'arma, d8 con il focus se l'arma è d6 (10/11/2026) */
-  const dadoIncanto = (b) => { const d = (b.arma && b.arma.dado) || 6; return focusOk(b) && d <= 6 ? 8 : d; };
+  /* dado dei poteri degli incantatori: il dado dell'arma, oppure quello del focus se è più alto (10/11/2026).
+     19/11: il focus ha due forme, normale d8 e scudo d6 (un gradino sotto): il suo dado è b.focus.dado (d8 se manca, come prima). */
+  const dadoIncanto = (b) => { const d = (b.arma && b.arma.dado) || 6; return focusOk(b) ? Math.max(d, Number(b.focus.dado) || 8) : d; };
   const mAtt = (b, o) => (b.modAtt != null ? b.modAtt : b.modClasse || 0) + bonusEq(b, o);
   const mDanno = (b, o) => (b.modDanno != null ? b.modDanno : b.modClasse || 0) + bonusEq(b, o);
   const meta = (n) => Math.ceil(n / 2); /* le metà si arrotondano per eccesso, come le resistenze */

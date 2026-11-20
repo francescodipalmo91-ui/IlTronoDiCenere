@@ -180,21 +180,48 @@
     .fine { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--line); text-align: center; }
     #esito { min-height: 1.5rem; margin: 0.75rem 0 0; }
     #esito.errore { color: var(--errore); }
+    /* ---------- 20/11: creazione in cinque passi (mockup approvato il 17/11) ---------- */
+    .pagina, .pagina.magia { display: block; margin-top: 1.5rem; max-width: 52rem; margin-left: auto; margin-right: auto; }
+    body:has(.pagina.magia) main { max-width: 78rem; }
+    #pers, #equip, .pagina.magia #equip { padding: 0; margin: 0; border: 0; border-image: none; }
+    .passo[hidden], #blocco-focus[hidden], #blocco-scudo[hidden], #poteri-vuoto[hidden] { display: none; }
+    .passi ol { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem 0.6rem; padding: 0; margin: 0 0 1.5rem; counter-reset: passo; }
+    .passi button { display: flex; align-items: center; gap: 0.5rem; background: transparent; color: var(--muted); border: 2px solid var(--line); border-radius: 2rem; padding: 0.35rem 0.9rem 0.35rem 0.4rem; min-height: 2.75rem; }
+    .passi .n { display: inline-grid; place-items: center; width: 1.7rem; height: 1.7rem; border-radius: 50%; border: 2px solid currentColor; font-size: 0.85rem; font-weight: 600; }
+    .passi button.ok { color: var(--text); }
+    .passi button.ok .n { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+    .passi button[aria-current="step"] { border-color: var(--accent); color: var(--accent); }
+    .nav-passi { display: flex; justify-content: space-between; align-items: center; gap: 1rem; max-width: 52rem; margin: 2rem auto 0; padding-top: 1rem; border-top: 1px solid var(--line); }
+    .nav-passi .btn-sec { min-height: 2.75rem; min-width: 7rem; }
+    .nav-passi .btn-sec[hidden] { visibility: hidden; display: inline-block; }
+    .tonde { margin: 2.5rem 0 0; }
+    #info-classe { max-width: 46rem; margin: 0 auto 1.75rem; }
+    #info-classe:empty { display: none; }
+    #info-classe p { margin: 0 0 0.6rem; }
+    table.tab-classe { font-size: 0.9rem; }
+    table.tab-classe caption { text-align: left; font-family: var(--f-titoli); font-weight: 600; letter-spacing: 0.05em; padding-bottom: 0.4rem; }
+    table.tab-classe th, table.tab-classe td { padding: 0.4rem 0.4rem; text-align: center; }
+    table.tab-classe th:nth-child(2), table.tab-classe td:nth-child(2) { text-align: left; }
+    .riepilogo { display: grid; grid-template-columns: max-content 1fr; gap: 0.45rem 1.25rem; margin: 0 0 1.5rem; }
+    .riepilogo dt { color: var(--muted); }
+    .riepilogo dd { margin: 0; }
+    .riepilogo dd.manca { color: var(--muted); font-style: italic; }
+    @media (max-width: 560px) { .riepilogo { grid-template-columns: 1fr; gap: 0.1rem; } .riepilogo dd { margin-bottom: 0.5rem; } .passi .t { display: none; } .passi button { padding-right: 0.4rem; } }
+    #focus-opz label { position: relative; }
+    #focus-opz label:hover .tip, #focus-opz label:has(input:focus-visible) .tip { display: block; }
   </style>
 </head>
 <body>
   <main>
     <h1 data-t="titolo">Creazione del personaggio</h1>
-    <form id="scheda">
+    <nav class="passi" aria-label="Passi della creazione"><ol id="passi"></ol></nav>
+    <form id="scheda" novalidate>
+      <div class="pagina">
+        <div class="passo" id="passo-0">
         <div class="centro nome-box">
           <h2 class="sez" style="margin-top:0"><label for="nome" style="margin:0" data-t="nome">Nome</label></h2>
           <input id="nome" name="nome" type="text" maxlength="40" required autocomplete="off">
         </div>
-        <div class="centro">
-          <p class="formati" id="token-msg" aria-live="polite"></p>
-          <div class="galleria" id="galleria" role="radiogroup"></div>
-        </div>
-
         <div class="riga">
           <div>
             <h2 class="sez" id="h-razza" data-t="razza">Razza</h2>
@@ -207,8 +234,13 @@
             <div class="razze" id="classi" role="radiogroup" aria-labelledby="h-classe"></div>
           </div>
         </div>
-
-        <div class="pagina">
+        <div id="info-classe"></div>
+        <div class="centro">
+          <p class="formati" id="token-msg" aria-live="polite"></p>
+          <div class="galleria" id="galleria" role="radiogroup"></div>
+        </div>
+        </div>
+        <div class="passo" id="passo-1" hidden>
           <section id="pers">
           <h2 class="sez" style="margin-top:0" data-t="statistiche">Statistiche</h2>
           <p class="punti" id="punti"><span data-t="punti">Punti da distribuire:</span> <strong id="rimasti">10</strong> <span data-t="su">su</span> <span id="totale">10</span></p>
@@ -222,7 +254,18 @@
           <div class="opzioni" id="abilita" role="group" aria-labelledby="h-abilita"></div>
 
           </section>
-
+        </div>
+        <div class="passo" id="passo-2" hidden>
+          <p class="guida" id="poteri-vuoto" data-t="primaClasse"></p>
+          <section id="poteri" aria-labelledby="t-poteri" hidden>
+            <h2 class="sez" id="t-poteri" style="margin-top:0" data-t="poteri">Poteri</h2>
+            <p class="guida" style="margin:0 0 0.75rem" data-t="guidaPoteri"></p>
+            <h3 class="sub" id="h-spec" data-t="specializzazione">Specializzazione</h3>
+            <div class="carte-pot" id="lista-spec" role="radiogroup" aria-labelledby="h-spec"></div>
+            <div id="pot-dettaglio"></div>
+          </section>
+        </div>
+        <div class="passo" id="passo-3" hidden>
           <section id="equip" aria-labelledby="t-equip">
             <h2 class="sez" id="t-equip" style="margin-top:0" data-t="equipaggiamento">Equipaggiamento</h2>
           <h3 class="sub" id="h-arma" data-t="arma">Arma</h3>
@@ -233,33 +276,27 @@
           <p class="guida" id="guida-armatura" style="margin:0 0 0.75rem"></p>
           <div class="opzioni" id="armature" role="radiogroup" aria-labelledby="h-armatura"></div>
 
+          <div id="blocco-focus" hidden>
+          <h3 class="sub" id="h-focus" data-t="focus">Focus</h3>
+          <p class="guida" id="guida-focus" style="margin:0 0 0.75rem"></p>
+          <div class="opzioni" id="focus-opz" role="radiogroup" aria-labelledby="h-focus"></div>
+          </div>
+
+          <div id="blocco-scudo">
           <h3 class="sub" id="h-scudo" data-t="scudo">Scudo</h3>
           <p class="guida" id="guida-scudo" style="margin:0 0 0.75rem"></p>
           <div class="opzioni" id="scudi" role="group" aria-labelledby="h-scudo"></div>
+          </div>
 
           <h3 class="sub" id="h-dotazione" data-t="dotazione">Dotazione</h3>
-          <p class="guida" style="margin:0 0 0.75rem" data-t="guidaDotazione">Scegline tre.</p>
+          <p class="guida" style="margin:0 0 0.75rem" data-t="guidaDotazione"></p>
           <div class="opzioni" id="dotazione" role="group" aria-labelledby="h-dotazione"></div>
 
           </section>
-
-          <section id="poteri" aria-labelledby="t-poteri" hidden>
-            <h2 class="sez" id="t-poteri" style="margin-top:0">Poteri</h2>
-            <p class="guida" style="margin:0 0 0.75rem">La specializzazione si sceglie ora e non si cambia più. Al livello 1 scegli un potere per scontro e un giornaliero; a ogni livello sceglierai di nuovo. Le scelte sono definitive.</p>
-            <h3 class="sub" id="h-spec">Specializzazione</h3>
-            <div class="carte-pot" id="lista-spec" role="radiogroup" aria-labelledby="h-spec"></div>
-            <div id="pot-dettaglio"></div>
-          </section>
         </div>
-
-      <div class="tonde">
-        <div class="dado"><b data-t="dadoVita">Dado vita</b><button type="button" class="btn-sec" id="lancia" disabled></button><p id="pv" aria-live="polite"></p></div>
-        <div class="tonda rosso"><b data-t="saluteFisica">Salute fisica</b><span class="num" id="sf-v">–</span><small id="sf-f"></small></div>
-        <div class="tonda blu"><b data-t="saluteMentale">Salute mentale</b><span class="num" id="sm-v">–</span><small id="sm-f"></small></div>
-        <div class="tonda verde"><b data-t="classeArmatura">Classe armatura</b><span class="num" id="ca-v">–</span><small id="ca-f"></small></div>
-        <div class="tonda giallo" id="mana-box" hidden><b id="mana-t">Punti arcano</b><span class="num" id="mana-v">–</span><small id="mana-f"></small></div>
-      </div>
-
+        <div class="passo" id="passo-4" hidden>
+          <h2 class="sez" style="margin-top:0" data-t="riepilogo">Riepilogo</h2>
+          <dl class="riepilogo" id="riepilogo"></dl>
       <div class="fine">
         <fieldset id="modalita" style="border:1px solid var(--line, #8884);border-radius:8px;padding:0.6rem 0.9rem;margin:0 0 0.9rem;text-align:left">
           <legend id="mod-tit" style="font-weight:600;padding:0 0.3rem">Modalità</legend>
@@ -269,6 +306,20 @@
         <button type="submit" class="btn" id="crea" aria-describedby="avviso" style="margin-top:0" data-t="entra">Entra nel dungeon</button>
         <p id="avviso" class="formati"></p>
         <p id="esito" aria-live="polite"></p>
+      </div>
+        </div>
+      </div>
+      <div class="tonde">
+        <div class="dado"><b data-t="dadoVita">Dado vita</b><button type="button" class="btn-sec" id="lancia" disabled></button><p id="pv" aria-live="polite"></p></div>
+        <div class="tonda rosso"><b data-t="saluteFisica">Salute fisica</b><span class="num" id="sf-v">–</span><small id="sf-f"></small></div>
+        <div class="tonda blu"><b data-t="saluteMentale">Salute mentale</b><span class="num" id="sm-v">–</span><small id="sm-f"></small></div>
+        <div class="tonda verde"><b data-t="classeArmatura">Classe armatura</b><span class="num" id="ca-v">–</span><small id="ca-f"></small></div>
+        <div class="tonda giallo" id="mana-box" hidden><b id="mana-t">Punti arcano</b><span class="num" id="mana-v">–</span><small id="mana-f"></small></div>
+      </div>
+      <div class="nav-passi">
+        <button type="button" class="btn-sec" id="indietro" data-t="indietro">Indietro</button>
+        <span id="passo-n" class="guida" aria-live="polite"></span>
+        <button type="button" class="btn-sec" id="avanti" data-t="avanti">Avanti</button>
       </div>
     </form>
   </main>
@@ -286,12 +337,26 @@
     const L = Lingua.t, N = Lingua.nome;
     const T = {
       it: {
-        titoloPagina: "Creazione personaggio", titolo: "Creazione del personaggio", nome: "Nome", immagine: "Immagine del personaggio",
+        titoloPagina: "Creazione personaggio", titolo: "Creazione del personaggio",
+        /* 20/11: cinque passi, focus a due forme, riepilogo */
+        passi: ["Chi sei", "Attributi e abilità", "Specializzazione e poteri", "Equipaggiamento", "Riepilogo"],
+        indietro: "Indietro", avanti: "Avanti", passoN: (i, n) => `Passo ${i} di ${n}`,
+        poteri: "Poteri", specializzazione: "Specializzazione", guidaPoteri: "La specializzazione si sceglie ora e non si cambia più. Al livello 1 scegli due poteri a volontà, uno per scontro e un giornaliero; a ogni livello sceglierai di nuovo. Le scelte sono definitive.",
+        haiSubito: "Hai da subito", privilegio: "privilegio di classe", sceltaVolonta: "Livello 1 · scegli 2 poteri a volontà su 3", sceltaScontro: "Livello 1 · scegli il potere per scontro", sceltaGiorn: "Livello 1 · scegli il giornaliero",
+        scegliSpec: "Scegli una specializzazione per vedere i suoi poteri.", tipiPot: { volonta: "a volontà", scontro: "per scontro", giornaliero: "giornaliero" }, ruoli: { offesa: "offesa", controllo: "controllo", difesa: "difesa" }, ruoloSpec: { offensiva: "offensiva", difensiva: "difensiva" },
+        piuAvanti: (terzo, t3, fin, p5) => `Più avanti: al livello 2 ${terzo ? terzo + " (l'a volontà che lasci)" : "l'a volontà che lasci"} e la via di prestigio; al livello 3 ${t3}; al livello 5 ${fin} e ${p5}.`,
+        focus: "Focus", guidaFocus: "Un solo oggetto, in due forme: scegli quella che preferisci. Sta nella mano secondaria, quindi puoi usare solo armi a una mano. Il bonus a colpire e ai danni è lo stesso nelle due forme.",
+        formaNormale: "forma normale", formaScudo: "forma scudo", infoFocusN: "1d8 · una mano", infoFocusS: "1d6 · +1 CA, nessun malus di Agilità",
+        tipFocusN: "Il dado dei tuoi poteri offensivi diventa d8. Non dà classe armatura.", tipFocusS: "Il dado dei tuoi poteri offensivi resta d6, ma la tua classe armatura sale di 1, senza malus di Agilità.",
+        guidaArmiFocus: "Scegline una. Il focus occupa la mano secondaria: solo armi a una mano.", infoFocusCA: "focus scudo",
+        tabLivello: "Livello", tabPrivilegi: "Privilegi e novità", tabVolonta: "A volontà", tabScontro: "Per scontro", tabGiorn: "Giornalieri", via: "Via di prestigio (Aldo o Guendalina)", finale: "giornaliero finale",
+        riepilogo: "Riepilogo", rNome: "Nome", rRazza: "Razza", rClasse: "Classe", rSpec: "Specializzazione", rPoteri: "Poteri del livello 1", rAttr: "Attributi", rAbilita: "Abilità", rArma: "Arma", rFocus: "Focus", rScudo: "Scudo", rArmatura: "Armatura", rDotazione: "Dotazione", nessuno: "nessuno", daScegliere: "da scegliere",
+        mancaNome: "il nome", mancaFocus: "la forma del focus", mancaSpec: "la specializzazione", mancaPoteri: "i poteri del livello 1", nome: "Nome", immagine: "Immagine del personaggio",
         razza: "Razza", guidaRazza: "Scegli una razza.", classe: "Classe", guidaClasse: "Scegli una classe.",
         statistiche: "Statistiche", punti: "Punti da distribuire:", su: "su",
         thAttributo: "Attributo", thUtilizzo: "Utilizzo", thRazza: "Razza", thMod: "Mod", thValore: "Valore",
         abilita: "Abilità", guidaAbilita: "Scegline quattro. Il valore è il modificatore dell'attributo collegato; le abilità scelte aggiungono anche il livello del personaggio.",
-        equipaggiamento: "Equipaggiamento", arma: "Arma", armatura: "Armatura", scudo: "Scudo", dotazione: "Dotazione", guidaDotazione: "Parti con tutto questo.",
+        equipaggiamento: "Equipaggiamento", arma: "Arma", armatura: "Armatura", scudo: "Scudo", dotazione: "Dotazione", guidaDotazione: "Parti con tutto questo. Serve nelle prove dei luoghi (enigmi, tranelli, ricerche), non in combattimento: ogni oggetto adatto dà +2 alla prova.",
         dadoVita: "Dado vita", saluteFisica: "Salute fisica", saluteMentale: "Salute mentale", classeArmatura: "Classe armatura", entra: "Entra nel dungeon",
         sceglineUna: "Scegline una.", nonDisponibili: (c) => ` Alcune non sono disponibili per la classe ${c}.`,
         guidaScudo: "Facoltativo. Occupa una mano.", scudoNo: "Facoltativo. Non si può usare con un'arma a due mani.",
@@ -301,7 +366,7 @@
         diminuisci: (n) => `Diminuisci ${n}`, aumenta: (n) => `Aumenta ${n}`,
         punti4: `+${Regole.RAZZE.Umano.punti} punti attributo da assegnare a scelta del giocatore`,
         tipoDanno: "Tipo di danno", mani: "Mani", testoMani: (n) => `${n} ${n === 1 ? "mano" : "mani"}`, dannoTit: (t) => `Danno ${t}`,
-        notaDueMani: "Un'arma a due mani occupa entrambe le mani: niente scudo, e per Sciamano, Arcanista e Monaco niente focus (tranne il bastone, che è arma e focus insieme). Per usare la torcia dovrai prima riporla.",
+        notaDueMani: "Un'arma a due mani occupa entrambe le mani: niente scudo. Per usare la torcia dovrai prima riporla.",
         notaScudo: "Occupa una mano: non si può usare con un'arma a due mani, e per tenere la torcia dovrai prima riporlo.",
         modLotta: "modificatore di classe", attrClasse: "Caratteristica", attrClasseNota: "Vale per il tiro per colpire e il danno dei tuoi attacchi e poteri (una volta per attacco) e per la difficoltà degli stati che applichi.", malusAgilita: "Malus Agilità", bonusAgilita: "Bonus Agilità max", infoScudo: "+1 classe armatura · malus Agilità −1",
         utilizzi: (n) => (n > 1 ? `${n} utilizzi` : "1 utilizzo"), riutilizzabile: "Riutilizzabile",
@@ -317,12 +382,25 @@
         costo: "Costo", costoMana: (n) => `${n} ${classe === "Accolito" ? "Fede" : "Arcano"}`, mancaInc: (n) => `${n} ${n === 1 ? "incantesimo" : "incantesimi"}`, mancaScuola: ""
       },
       en: {
-        titoloPagina: "Character creation", titolo: "Character creation", nome: "Name", immagine: "Character portrait",
+        titoloPagina: "Character creation", titolo: "Character creation",
+        passi: ["Who you are", "Attributes and skills", "Specialization and powers", "Equipment", "Summary"],
+        indietro: "Back", avanti: "Next", passoN: (i, n) => `Step ${i} of ${n}`,
+        poteri: "Powers", specializzazione: "Specialization", guidaPoteri: "You choose your specialization now and can never change it. At level 1 you pick two at-will powers, one encounter power and one daily; you will choose again at every level. Choices are final.",
+        haiSubito: "You start with", privilegio: "class feature", sceltaVolonta: "Level 1 · choose 2 of 3 at-will powers", sceltaScontro: "Level 1 · choose the encounter power", sceltaGiorn: "Level 1 · choose the daily power",
+        scegliSpec: "Choose a specialization to see its powers.", tipiPot: { volonta: "at will", scontro: "encounter", giornaliero: "daily" }, ruoli: { offesa: "offence", controllo: "control", difesa: "defence" }, ruoloSpec: { offensiva: "offensive", difensiva: "defensive" },
+        piuAvanti: (terzo, t3, fin, p5) => `Later: at level 2 ${terzo ? terzo + " (the at-will power you leave)" : "the at-will power you leave"} and your prestige path; at level 3 ${t3}; at level 5 ${fin} and ${p5}.`,
+        focus: "Focus", guidaFocus: "A single item with two forms: pick the one you prefer. It sits in your off hand, so you can only use one-handed weapons. The bonus to hit and to damage is the same in both forms.",
+        formaNormale: "normal form", formaScudo: "shield form", infoFocusN: "1d8 · one hand", infoFocusS: "1d6 · +1 AC, no Agility penalty",
+        tipFocusN: "The die of your offensive powers becomes a d8. It gives no armor class.", tipFocusS: "The die of your offensive powers stays a d6, but your armor class rises by 1, with no Agility penalty.",
+        guidaArmiFocus: "Choose one. The focus takes your off hand: one-handed weapons only.", infoFocusCA: "shield focus",
+        tabLivello: "Level", tabPrivilegi: "Features and new things", tabVolonta: "At will", tabScontro: "Encounter", tabGiorn: "Daily", via: "Prestige path (Aldo or Guendalina)", finale: "final daily",
+        riepilogo: "Summary", rNome: "Name", rRazza: "Race", rClasse: "Class", rSpec: "Specialization", rPoteri: "Level 1 powers", rAttr: "Attributes", rAbilita: "Skills", rArma: "Weapon", rFocus: "Focus", rScudo: "Shield", rArmatura: "Armor", rDotazione: "Gear", nessuno: "none", daScegliere: "to choose",
+        mancaNome: "the name", mancaFocus: "the focus form", mancaSpec: "the specialization", mancaPoteri: "the level 1 powers", nome: "Name", immagine: "Character portrait",
         razza: "Race", guidaRazza: "Choose a race.", classe: "Class", guidaClasse: "Choose a class.",
         statistiche: "Attributes", punti: "Points to assign:", su: "of",
         thAttributo: "Attribute", thUtilizzo: "Used for", thRazza: "Race", thMod: "Mod", thValore: "Value",
         abilita: "Skills", guidaAbilita: "Choose four. The value is the modifier of the linked attribute; the skills you choose also add the character's level.",
-        equipaggiamento: "Equipment", arma: "Weapon", armatura: "Armor", scudo: "Shield", dotazione: "Gear", guidaDotazione: "You start with all of this.",
+        equipaggiamento: "Equipment", arma: "Weapon", armatura: "Armor", scudo: "Shield", dotazione: "Gear", guidaDotazione: "You start with all of this. It helps in checks around the house (riddles, traps, searches), not in combat: each fitting item gives +2 to the check.",
         dadoVita: "Hit die", saluteFisica: "Physical health", saluteMentale: "Mental health", classeArmatura: "Armor class", entra: "Enter the dungeon",
         sceglineUna: "Choose one.", nonDisponibili: (c) => ` Some are not available to the ${c} class.`,
         guidaScudo: "Optional. Takes up one hand.", scudoNo: "Optional. Cannot be used with a two-handed weapon.",
@@ -332,7 +410,7 @@
         diminuisci: (n) => `Decrease ${n}`, aumenta: (n) => `Increase ${n}`,
         punti4: `+${Regole.RAZZE.Umano.punti} attribute points to assign as the player chooses`,
         tipoDanno: "Damage type", mani: "Hands", testoMani: (n) => `${n} ${n === 1 ? "hand" : "hands"}`, dannoTit: (t) => `${t} damage`,
-        notaDueMani: "A two-handed weapon takes up both hands: no shield, and for Shaman, Arcanist and Monk no focus (except the staff, which is weapon and focus at once). To use the torch you will first have to put it away.",
+        notaDueMani: "A two-handed weapon takes up both hands: no shield. To use the torch you will first have to put it away.",
         notaScudo: "Takes up one hand: it cannot be used with a two-handed weapon, and to hold the torch you will first have to put it away.",
         modLotta: "class modifier", attrClasse: "Class attribute", attrClasseNota: "Used for the attack and damage rolls of your attacks and powers (once per attack) and for the difficulty of the conditions you inflict.", malusAgilita: "Agility penalty", bonusAgilita: "Max Agility bonus", infoScudo: "+1 armor class · Agility penalty −1",
         utilizzi: (n) => (n > 1 ? `${n} uses` : "1 use"), riutilizzabile: "Reusable",
@@ -350,7 +428,7 @@
     };
     const t = T[LINGUA];
     document.title = t.titoloPagina;
-    document.querySelectorAll("[data-t]").forEach(e => { e.textContent = t[e.dataset.t]; });
+    document.querySelectorAll("[data-t]").forEach(e => { if (typeof t[e.dataset.t] === "string") e.textContent = t[e.dataset.t]; });
     document.getElementById("galleria").setAttribute("aria-label", t.immagine);
 
     /* ---------- Regole e dati ---------- */
@@ -359,7 +437,7 @@
     const R_ = window.Regole; /* tutti i numeri delle regole stanno in regole.js */
     const VALORE_MASSIMO = R_.VALORE_MASSIMO; /* nessun attributo può superare 20, bonus della razza compreso */
     const VALORE_MINIMO = R_.VALORE_MINIMO, PUNTI_BASE = R_.PUNTI_BASE, LATO_MAX_IMMAGINE = 400;
-    const PV_BASE = R_.SALUTE_BASE, LIVELLO = 1, CA_BASE = R_.CA_BASE, MAX_ABILITA = R_.MAX_ABILITA, MAX_DOTAZIONE = R_.MAX_DOTAZIONE;
+    const PV_BASE = R_.SALUTE_BASE, LIVELLO = 1, CA_BASE = R_.CA_BASE, MAX_ABILITA = R_.MAX_ABILITA, MAX_DOTAZIONE = 7; /* tutta la dotazione (17/11) */
     /* Agilità dà il suo modificatore alla Classe armatura, con un tetto che dipende dall'armatura */
     const TETTO_AGILITA = R_.TETTO_AGILITA;
 
@@ -416,16 +494,25 @@
       { nome: "Mazza ferrata", danno: "1d6", tipo: "Contundente", mani: 1 },
       { nome: "Maglio", danno: "1d8", tipo: "Contundente", mani: 2 },
       { nome: "Pugnale", danno: "1d6", tipo: "Perforante", mani: 1 },
-      { nome: "Tridente", danno: "1d8", tipo: "Perforante", mani: 2 },
-      { nome: "Bastone", danno: "1d8", tipo: "Contundente", mani: 2, focus: true }
-    ];
+      { nome: "Tridente", danno: "1d8", tipo: "Perforante", mani: 2 }
+    ]; /* 17/11: il Bastone (arma e focus a due mani) è cancellato */
     /* Limiti di armatura per classe (le armi sono libere). ⚠ Il malus per l'armatura sopra la propria categoria (13/11) non è ancora
        nel motore: finché non c'è, restano i limiti di prima. */
-    const LIMITI_CLASSI = {
-      Forestiero: { armature: ["Armatura leggera", "Armatura media"] },
-      Sapiente: { armature: ["Armatura leggera"] },
-      Accolito: { armature: ["Armatura leggera", "Armatura media"] }
+    const ARMI_UNA_MANO = ARMI.filter(a => a.mani === 1).map(a => a.nome);
+    const LIMITI_CLASSI = { /* 17/11: limiti di classe; il focus sta nella mano secondaria, quindi gli incantatori usano solo armi a una mano */
+      Forestiero: { armature: ["Armatura leggera", "Armatura media"], armi: ARMI_UNA_MANO },
+      Sapiente: { armature: ["Armatura leggera"], armi: ARMI_UNA_MANO },
+      Accolito: { armature: ["Armatura leggera", "Armatura media"], armi: ARMI_UNA_MANO }
     };
+    /* 19/11: il focus è un oggetto in due forme (oggetti_per_rarita.md, sez. 1). Normale: una mano, 1d8, nessuna CA.
+       Scudo: un gradino di dado sotto (1d6), +1 CA, nessun malus di Agilità. Il Guerriero non ha focus: ha lo scudo. */
+    const FOCUS = {
+      Forestiero: { normale: "Asse del mondo", scudo: "Scudo Feticcio" },
+      Sapiente: { normale: "Libro arcano", scudo: "Brocchiere Runico" },
+      Accolito: { normale: "Filatterio", scudo: "Aegis Divina" }
+    };
+    const FORME = { normale: { dado: 8, ca: 0 }, scudo: { dado: 6, ca: 1 } };
+    const usaFocus = () => !!(classe && FOCUS[classe]);
     /* malus: penalità alle abilità che usano Agilità (il risultato può diventare negativo) */
     const ARMATURE = [
       { nome: "Armatura leggera", ca: 2, malus: 0, desc: { it: "Cuoio lavorato e flessibile, rinforzato da borchie metalliche che aumentano la protezione senza limitare i movimenti.", en: "Worked, supple leather reinforced with metal studs that add protection without hindering movement." } },
@@ -435,11 +522,13 @@
     /* Scudo facoltativo: +1 Classe Armatura, −1 alle abilità di Agilità, occupa una mano */
     const SCUDO = { nome: "Scudo", ca: 1, malus: 1 };
     /* senza "usi" = oggetto riutilizzabile; le descrizioni stanno in lingua.js */
-    const DOTAZIONE = [
+    const DOTAZIONE = [ /* 17/11: dotazione fissa per tutti (decisioni_17_novembre.md, sez. 5); quantità da misurare giocando */
+      { nome: "Piede di porco" }, { nome: "Corda" }, { nome: "Lente" },
       { nome: "Pozione di cura", usi: 1 },
-      { nome: "Torcia", usi: 5, impugnabile: true },
-      { nome: "Piede di porco" }
-    ]; /* 15/11: tolte Pozione di essenza e Borsa dei veleni (risorse del vecchio sistema): la dotazione è data tutta, senza scelta */
+      { nome: "Torcia", usi: 2, impugnabile: true },
+      { nome: "Gesso", usi: 3 },
+      { nome: "Quaderno e carboncino", usi: 2 }
+    ];
 
     /* ---------- Incantesimi (Arcanista e Monaco): le scuole di js/magia.js ----------
        04/11: niente scuola principale. Al livello 1 si preparano 3 incantesimi di livello 1, liberamente tra le due scuole;
@@ -492,34 +581,34 @@
     const SP = window.SPECIALIZZAZIONI;
     let spec = null, chiavePot = null;
     const scelteL1 = { volonta: [], scontro: null, giornaliero: null };
-    const tipoNome = { volonta: "a volontà", scontro: "per scontro", giornaliero: "giornaliero" };
-    const RUOLO = { offesa: "offesa", controllo: "controllo", difesa: "difesa" };
+    const tipoNome = t.tipiPot, RUOLO = t.ruoli;
     const cartaPot = (name, id, checked, tipoInput) => `<label class="carta-pot"><input type="${tipoInput || "radio"}" name="${name}" value="${id}"${checked ? " checked" : ""}><b>${SP.POTERI[id].nome}</b> <span class="nota">${tipoNome[SP.POTERI[id].tipo]}${SP.POTERI[id].ruolo ? " · " + RUOLO[SP.POTERI[id].ruolo] : ""}</span><small>${SP.POTERI[id].testo}</small></label>`;
     const sceltePoteri = () => (spec && scelteL1.volonta.length === 2 && scelteL1.scontro && scelteL1.giornaliero ? [...scelteL1.volonta, scelteL1.scontro, scelteL1.giornaliero] : []);
     const poteriOk = () => !!spec && SP.sceltaValida(classe, spec, sceltePoteri(), 1).ok;
     function disegnaPoteri() {
       const sez = $("poteri"); sez.hidden = !classe || !SP || !SP.SPEC[classe];
+      $("poteri-vuoto").hidden = !sez.hidden;
       if (sez.hidden) return;
       document.querySelector(".pagina").classList.add("magia");
       const cl = SP.SPEC[classe], specs = Object.keys(cl).filter(k => k !== "classe");
       if (chiavePot !== classe) { /* nuova classe: le sue due specializzazioni */
         chiavePot = classe; spec = null; scelteL1.volonta = []; scelteL1.scontro = scelteL1.giornaliero = null;
-        Sicuro.html($("lista-spec"), specs.map(k => `<label class="carta-pot"><input type="radio" name="spec" value="${k}"><b>${cl[k].nome}</b> <span class="nota">${cl[k].ruolo}</span><small>${cl[k].descr || ""}${cl[k].regola ? "<br>" + cl[k].regola : ""}</small></label>`).join(""));
+        Sicuro.html($("lista-spec"), specs.map(k => `<label class="carta-pot"><input type="radio" name="spec" value="${k}"><b>${cl[k].nome}</b> <span class="nota">${t.ruoloSpec[cl[k].ruolo] || cl[k].ruolo}</span><small>${cl[k].descr || ""}${cl[k].regola ? "<br>" + cl[k].regola : ""}</small></label>`).join(""));
         $("lista-spec").querySelectorAll("input").forEach(r => r.addEventListener("change", () => { spec = r.value; scelteL1.volonta = []; scelteL1.scontro = scelteL1.giornaliero = null; aggiorna(); }));
       }
       const det = $("pot-dettaglio");
-      if (!spec) { Sicuro.html(det, `<p class="guida">Scegli una specializzazione per vedere i suoi poteri.</p>`); return; }
+      if (!spec) { Sicuro.html(det, `<p class="guida">${t.scegliSpec}</p>`); return; }
       const s = cl[spec], pv = cl.classe.privilegi, t1 = SP.TRATTI[pv[1]], t3 = SP.TRATTI[pv[3]], p5 = SP.POTERI[pv[5]];
       const terzo = scelteL1.volonta.length === 2 ? SP.terzoVolonta(classe, spec, scelteL1.volonta) : null;
-      Sicuro.html(det, `<h3 class="sub">Hai da subito</h3><ul class="pot-fissi">
-          <li><b>${t1.nome}</b> (privilegio di classe): ${t1.testo}</li></ul>
-        <h3 class="sub">Livello 1 · scegli 2 poteri a volontà su 3</h3>
+      Sicuro.html(det, `<h3 class="sub">${t.haiSubito}</h3><ul class="pot-fissi">
+          <li><b>${t1.nome}</b> (${t.privilegio}): ${t1.testo}</li></ul>
+        <h3 class="sub">${t.sceltaVolonta}</h3>
         <div class="carte-pot">${s.volonta.map(id => cartaPot("pot-volonta", id, scelteL1.volonta.includes(id), "checkbox")).join("")}</div>
-        <h3 class="sub">Livello 1 · scegli il potere per scontro</h3>
+        <h3 class="sub">${t.sceltaScontro}</h3>
         <div class="carte-pot">${s.scontro.map(id => cartaPot("pot-scontro", id, scelteL1.scontro === id)).join("")}</div>
-        <h3 class="sub">Livello 1 · scegli il giornaliero</h3>
+        <h3 class="sub">${t.sceltaGiorn}</h3>
         <div class="carte-pot">${s.giornalieri.map(id => cartaPot("pot-giorn", id, scelteL1.giornaliero === id)).join("")}</div>
-        <p class="guida">Più avanti: al livello 2 ${terzo ? SP.POTERI[terzo].nome + " (l'a volontà che lasci)" : "l'a volontà che lasci"} e la via di prestigio; al livello 3 ${t3.nome}; al livello 5 ${SP.POTERI[s.fissi.finale].nome} e ${p5.nome}.</p>`);
+        <p class="guida">${t.piuAvanti(terzo ? SP.POTERI[terzo].nome : null, t3.nome, SP.POTERI[s.fissi.finale].nome, p5.nome)}</p>`);
       det.querySelectorAll('input[name="pot-volonta"]').forEach(r => r.addEventListener("change", () => {
         const v = new Set(scelteL1.volonta); if (r.checked) v.add(r.value); else v.delete(r.value);
         scelteL1.volonta = s.volonta.filter(id => v.has(id)).slice(0, 2); aggiorna();
@@ -587,7 +676,9 @@
     const scelto = (name) => document.querySelector(`input[name="${name}"]:checked`);
     const armaScelta = () => scelto("arma") ? ARMI[scelto("arma").value] : null;
     const armaturaScelta = () => scelto("armatura") ? ARMATURE[scelto("armatura").value] : null;
-    const scudoScelto = () => !!scelto("scudo");
+    const scudoScelto = () => !usaFocus() && !!scelto("scudo");
+    const formaFocus = () => (usaFocus() && scelto("formafocus") ? scelto("formafocus").value : null); /* "normale" o "scudo" */
+    const caFocus = () => (formaFocus() ? FORME[formaFocus()].ca : 0);
     const bonusAgilitaCA = (arm) => Math.max(0, Math.min(modDi("Agilità"), TETTO_AGILITA[arm.nome] ?? 3));
     const malusAgilita = () => { const a = armaturaScelta(); return (a ? a.malus : 0) + (scudoScelto() ? SCUDO.malus : 0); };
     const valoreAbilita = (attr) => modDi(attr) - (attr === "Agilità" ? malusAgilita() : 0);
@@ -655,6 +746,22 @@
       s => `<em class="tip-riga"><i><b>${t.classeArmatura}</b><b>+${s.ca}</b></i><i><b>${t.malusAgilita}</b><b>−${s.malus}</b></i></em>${Lingua.desc("Scudo")}<em class="nota-mani">${t.notaScudo}</em>`);
     creaOpzioni("dotazione", DOTAZIONE, "checkbox", "dotazione",
       d => d.usi ? t.utilizzi(d.usi) : t.riutilizzabile, d => Lingua.desc(d.nome));
+
+    let chiaveFocus = null;
+    function disegnaFocus() {
+      if (!usaFocus()) { chiaveFocus = null; return; }
+      if (chiaveFocus === classe) return;
+      chiaveFocus = classe;
+      const box = $("focus-opz"), F = FOCUS[classe]; box.replaceChildren();
+      $("guida-focus").textContent = t.guidaFocus;
+      ["normale", "scudo"].forEach(forma => {
+        const nome = F[forma], l = document.createElement("label");
+        Sicuro.html(l, `<input type="radio" name="formafocus" value="${forma}" aria-describedby="tip-focus-${forma}"><span><b>${N("oggetti", nome)}</b><small>${forma === "normale" ? t.formaNormale + " · " + t.infoFocusN : t.formaScudo + " · " + t.infoFocusS}</small></span>` +
+          `<small class="tip" id="tip-focus-${forma}" role="tooltip">${forma === "normale" ? t.tipFocusN : t.tipFocusS} ${Lingua.desc(nome)}</small>`);
+        l.querySelector("input").addEventListener("change", aggiorna);
+        box.appendChild(l);
+      });
+    }
 
     /* ---------- Riquadri a scomparsa: a destra della voce, a sinistra se manca spazio, sotto sugli schermi stretti ---------- */
     function posizionaTip(label) {
@@ -731,12 +838,16 @@
         $(guida).textContent = t.sceglineUna + (ammessi ? t.nonDisponibili(N("classi", classe)) : "");
       };
       filtra("arma", ARMI, lim.armi, "guida-arma");
+      if (usaFocus()) $("guida-arma").textContent = t.guidaArmiFocus;
+      /* incantatori: focus a due forme al posto dello scudo; Guerriero: scudo facoltativo */
+      $("blocco-focus").hidden = !usaFocus(); $("blocco-scudo").hidden = usaFocus();
+      disegnaFocus();
       filtra("armatura", ARMATURE, lim.armature, "guida-armatura");
       /* lo scudo occupa una mano: niente scudo con un'arma a due mani */
       const a = armaScelta(), sc = document.querySelector('input[name="scudo"]');
       const dueMani = !!(a && a.mani === 2);
-      sc.disabled = dueMani;
-      if (dueMani) sc.checked = false;
+      sc.disabled = dueMani || usaFocus();
+      if (sc.disabled) sc.checked = false;
       $("guida-scudo").textContent = dueMani ? t.scudoNo : t.guidaScudo;
     }
 
@@ -774,8 +885,9 @@
       $("sm-v").textContent = tiro === null ? "–" : PV_BASE + tiro + modM;
       $("sm-f").textContent = tiro === null ? t.primaClasse : `${PV_BASE} + ${tiro} ${segno(modM)}`;
       const bAg = arm ? bonusAgilitaCA(arm) : 0;
-      $("ca-v").textContent = arm ? CA_BASE + arm.ca + bAg + (sc ? SCUDO.ca : 0) : "–";
-      $("ca-f").textContent = arm ? `${CA_BASE} + ${arm.ca}${bAg ? " + " + bAg + " (" + N("attributi", "Agilità") + ")" : ""}${sc ? " + " + SCUDO.ca : ""}` : t.scegliArmatura;
+      const cF = caFocus();
+      $("ca-v").textContent = arm ? CA_BASE + arm.ca + bAg + (sc ? SCUDO.ca : 0) + cF : "–";
+      $("ca-f").textContent = arm ? `${CA_BASE} + ${arm.ca}${bAg ? " + " + bAg + " (" + N("attributi", "Agilità") + ")" : ""}${sc ? " + " + SCUDO.ca : ""}${cF ? " + " + cF + " (" + t.infoFocusCA + ")" : ""}` : t.scegliArmatura;
 
       /* mana: solo Sapiente e Accolito */
       disegnaIncantesimi();
@@ -794,6 +906,7 @@
       aggiornaImmagine();
 
       const m = t.manca, manca = [];
+      if (!$("nome").value.trim()) manca.push(t.mancaNome);
       if (!razza) manca.push(m.razza);
       if (!classe) manca.push(m.classe);
       else if (tiro === null) manca.push(m.tiro);
@@ -801,14 +914,16 @@
       if (nAb < MAX_ABILITA) manca.push(m.abilita(MAX_ABILITA - nAb));
       if (!arma) manca.push(m.arma);
       if (!arm) manca.push(m.armatura);
+      if (usaFocus() && !formaFocus()) manca.push(t.mancaFocus);
       if (dot.length < MAX_DOTAZIONE) manca.push(m.dot(MAX_DOTAZIONE - dot.length));
       if (magia && nInc < incNecessari()) manca.push(t.mancaInc(incNecessari() - nInc));
       if (usaTecniche() && arma && nTec < tecNecessarie()) manca.push(t.mancaTec(tecNecessarie() - nTec));
-      if (classe && !spec) manca.push("la specializzazione");
-      else if (classe && !poteriOk()) manca.push("i poteri del livello 1");
+      if (classe && !spec) manca.push(t.mancaSpec);
+      else if (classe && !poteriOk()) manca.push(t.mancaPoteri);
       if (ritrattiN > 0 && !immagine) manca.push(m.ritratto);
       $("crea").disabled = manca.length > 0;
       $("avviso").textContent = manca.length ? t.ancora + manca.join(", ") + "." : "";
+      disegnaInfoClasse(); disegnaRiepilogo(); disegnaPassi();
     }
 
     /* ---------- Immagine da razza + classe ---------- */
@@ -877,15 +992,80 @@
       });
     }
 
+    /* ---------- 20/11: cinque passi (mockup approvato il 17/11) ---------- */
+    let passo = 0;
+    const NPASSI = 5;
+    const passoOk = (i) => {
+      if (i === 0) return !!($("nome").value.trim() && razza && classe && (ritrattiN === 0 || immagine));
+      if (i === 1) return !!razza && puntiTotali() - spesi(-1) === 0 && abilitaScelte().length === MAX_ABILITA;
+      if (i === 2) return !!classe && poteriOk();
+      if (i === 3) return !!(armaScelta() && armaturaScelta() && (!usaFocus() || formaFocus()));
+      return [0, 1, 2, 3].every(passoOk);
+    };
+    function vai(i) {
+      passo = Math.max(0, Math.min(NPASSI - 1, i));
+      for (let k = 0; k < NPASSI; k++) $("passo-" + k).hidden = k !== passo;
+      disegnaPassi();
+      const h = $("passo-" + passo).querySelector("h2"); if (h) { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); }
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    function disegnaPassi() {
+      Sicuro.html($("passi"), t.passi.map((nome, i) => `<li><button type="button" data-p="${i}" class="${passoOk(i) ? "ok" : ""}"${i === passo ? ' aria-current="step"' : ""}><span class="n">${passoOk(i) ? "✓" : i + 1}</span><span class="t">${nome}</span></button></li>`).join(""));
+      $("indietro").hidden = passo === 0; $("avanti").hidden = passo === NPASSI - 1;
+      $("passo-n").textContent = t.passoN(passo + 1, NPASSI);
+    }
+    $("passi").addEventListener("click", (e) => { const b = e.target.closest("button[data-p]"); if (b) vai(Number(b.dataset.p)); });
+    $("indietro").addEventListener("click", () => vai(passo - 1));
+    $("avanti").addEventListener("click", () => vai(passo + 1));
+    $("nome").addEventListener("input", aggiorna);
+
+    /* tabella di classe e privilegi, visibili appena si sceglie la classe (decisioni_17_novembre.md, sez. 4) */
+    let chiaveInfo = null;
+    function disegnaInfoClasse() {
+      const box = $("info-classe");
+      if (chiaveInfo === classe) return;
+      chiaveInfo = classe;
+      if (!classe || !SP || !SP.SPEC[classe]) { box.replaceChildren(); return; }
+      const pv = SP.SPEC[classe].classe.privilegi, p1 = SP.TRATTI[pv[1]], p3 = SP.TRATTI[pv[3]], p5 = SP.POTERI[pv[5]];
+      const righe = [[1, `${p1.nome}`, 2, 1, 1], [2, t.via, 3, 1, 1], [3, `${p3.nome}`, 3, 2, 2], [4, "—", 3, 3, 2], [5, `${p5.nome}; ${t.finale}`, 3, 3, 3]];
+      Sicuro.html(box, `<p><b>${p1.nome}</b> (${t.privilegio}, ${t.tabLivello.toLowerCase()} 1): ${p1.testo}</p>` +
+        `<table class="tab-classe"><caption>${N("classi", classe)}</caption><thead><tr><th>${t.tabLivello}</th><th>${t.tabPrivilegi}</th><th>${t.tabVolonta}</th><th>${t.tabScontro}</th><th>${t.tabGiorn}</th></tr></thead><tbody>` +
+        righe.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td></tr>`).join("") + `</tbody></table>`);
+    }
+
+    /* riepilogo dell'ultimo passo */
+    function disegnaRiepilogo() {
+      const v = (x) => x ? x : `<span class="manca">${t.daScegliere}</span>`;
+      const arma = armaScelta(), arm = armaturaScelta(), ff = formaFocus(), cl = classe && SP && SP.SPEC[classe];
+      const pot = sceltePoteri().map(id => SP.POTERI[id] ? SP.POTERI[id].nome : id).join(", ");
+      const attr = razza ? NOMI.map((n, i) => `${N("attributi", n)} ${totale(i)}`).join(" · ") : "";
+      const ab = abilitaScelte().map(([n]) => N("abilita", n)).join(", ");
+      const voci = [
+        [t.rNome, v(Sicuro.testo ? Sicuro.testo($("nome").value.trim()) : $("nome").value.trim().replace(/[<>&"]/g, ""))],
+        [t.rRazza, v(razza && N("razze", razza))], [t.rClasse, v(classe && N("classi", classe))],
+        [t.rSpec, v(cl && spec && cl[spec] ? cl[spec].nome : "")], [t.rPoteri, v(pot)],
+        [t.rAttr, v(attr)], [t.rAbilita, v(abilitaScelte().length === MAX_ABILITA ? ab : "")],
+        [t.rArma, v(arma && `${N("oggetti", arma.nome)} (${arma.danno})`)]
+      ];
+      if (usaFocus()) voci.push([t.rFocus, v(ff && `${N("oggetti", FOCUS[classe][ff])} (${ff === "normale" ? t.formaNormale + ", " + t.infoFocusN : t.formaScudo + ", " + t.infoFocusS})`)]);
+      else voci.push([t.rScudo, scudoScelto() ? N("oggetti", SCUDO.nome) : t.nessuno]);
+      voci.push([t.rArmatura, v(arm && N("oggetti", arm.nome))], [t.rDotazione, DOTAZIONE.map(d => N("oggetti", d.nome) + (d.usi ? ` ×${d.usi}` : "")).join(", ")]);
+      Sicuro.html($("riepilogo"), voci.map(([k, x]) => `<dt>${k}</dt><dd>${x}</dd>`).join(""));
+    }
+
     /* ---------- Salvataggio ---------- */
     $("scheda").addEventListener("submit", (e) => {
       e.preventDefault();
       const arma = armaScelta(), arm = armaturaScelta(), dot = dotazioneScelta(), sc = scudoScelto();
       if (!razza || !classe || tiro === null || puntiTotali() - spesi(-1) !== 0 ||
           abilitaScelte().length !== MAX_ABILITA || !arma || !arm || dot.length !== MAX_DOTAZIONE || (ritrattiN > 0 && !immagine) ||
+          !$("nome").value.trim() || (usaFocus() && !formaFocus()) ||
           (usaMagia() && !incScuolaOk()) || (usaTecniche() && tecnicheScelte().length < tecNecessarie()) || !poteriOk()) return;
 
       const base = Object.fromEntries(NOMI.map((n, i) => [n, totale(i)]));
+      /* 19/11: focus a due forme. La forma scudo vive nello slot dello scudo (mano secondaria) e porta con sé il dado del focus */
+      const ff = formaFocus(), focus = ff ? { nome: FOCUS[classe][ff], forma: ff, dado: FORME[ff].dado, bonus: 0, ca: FORME[ff].ca } : null;
+      const scudoEq = sc ? { ...SCUDO } : focus && ff === "scudo" ? { nome: focus.nome, ca: 1, malus: 0, focus: { dado: focus.dado, bonus: 0 } } : null;
       const stat = { ...base }; /* l'arma non modifica il Vigore: dà il dado di danno */
       const pg = {
         nome: $("nome").value.trim(),
@@ -896,7 +1076,7 @@
         tiroDado: { dado: CLASSI[classe], valore: tiro },
         puntiVita: PV_BASE + tiro + mod(stat.Vigore),
         saluteMentale: PV_BASE + tiro + mod(stat.Spirito),
-        classeArmatura: CA_BASE + arm.ca + (sc ? SCUDO.ca : 0), /* comprende lo scudo, se scelto; il bonus di Agilità si calcola in gioco */
+        classeArmatura: CA_BASE + arm.ca + (scudoEq ? scudoEq.ca : 0), /* comprende lo scudo o il focus scudo, se scelto; il bonus di Agilità si calcola in gioco */
         mana: null, risorsa: null, /* 08/11: niente risorse nel motore nuovo */
         scuola: null, /* 04/11: niente scuola principale; la scuola potenziata la decide la via di prestigio */
         incantesimi: incantesimiScelti().map(inc => inc.id), /* id di js/magia.js: nomi, costi ed effetti si leggono da lì */
@@ -909,7 +1089,8 @@
         equipaggiamento: {
           arma: arma.nome, armaDanno: arma.danno, armaTipoDanno: arma.tipo, armaMani: arma.mani,
           armatura: arm.nome, armaturaCA: arm.ca, malusAgilita: arm.malus, /* solo l'armatura: il malus dello scudo è a parte */
-          scudo: sc ? { ...SCUDO } : null,
+          scudo: scudoEq,
+          focus, /* 19/11: { nome, forma: "normale" | "scudo", dado, bonus, ca }; null per il Guerriero */
           dotazione: dot.map(d => ({ nome: d.nome, usi: d.usi, desc: Lingua.desc(d.nome), impugnabile: !!d.impugnabile }))
         }
       };
@@ -935,6 +1116,7 @@
     });
 
     aggiorna();
+    vai(0);
   </script>
 </body>
 </html>

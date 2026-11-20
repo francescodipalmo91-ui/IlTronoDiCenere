@@ -76,6 +76,21 @@
     const t = nemico({ statiCorti: true }), c2 = ctx([10, 1, 1, 2]); S.usa(guerriero(), t, "spezza_guardia", c2); eq(t.stati.esposto.turni, 1); fine(c2);
   });
 
+  caso("Focus a due forme (19/11): forma normale d8, forma scudo d6; senza dado salvato vale d8; arma a due mani toglie il focus", () => {
+    /* registra i lati dei dadi chiesti: il primo dopo il d20 per colpire è il dado del danno */
+    const lati = (focus, arma) => {
+      const chiesti = [], c = { tira: (d) => { chiesti.push(d); return d === 20 ? 15 : 1; } };
+      const a = Object.assign({ nome: "Tu", liv: 1, pv: 20, pvMax: 20, modClasse: 3, mod: { Mente: 3 }, caBase: 12, arma: arma || SPADA, tratti: [], spec: "realta", focus }, {});
+      S.usa(a, nemico(), "colpo_di_forza", c);
+      return chiesti[chiesti.indexOf(20) + 1];
+    };
+    eq(lati({ dado: 8, bonus: 0 }), 8, "forma normale");
+    eq(lati({ dado: 6, bonus: 0 }), 6, "forma scudo");
+    eq(lati({ bonus: 0 }), 8, "personaggio creato prima del 20/11");
+    eq(lati(null), 6, "senza focus: il dado dell'arma");
+    eq(lati({ dado: 8, bonus: 0 }, MAGLIO), 8, "arma a due mani: il suo dado, niente focus");
+  });
+
   function esegui() { return casi.map(({ nome, fn }) => { try { fn(); return { nome, ok: true }; } catch (e) { return { nome, ok: false, errore: e.message }; } }); }
   root.TestScontroRegole = { esegui, casi };
   if (inNode && require.main === module) {

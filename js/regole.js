@@ -41,7 +41,7 @@ window.Regole = (() => {
   ],
   MALUS_AGILITA: { "Armatura leggera": 0, "Armatura media": 1, "Armatura pesante": 2, Scudo: 1 }, /* malus alle abilità di Agilità */
   MAX_ABILITA: 4,
-  MAX_DOTAZIONE: 3,
+  MAX_DOTAZIONE: 7, /* 17/11: dotazione fissa di sette oggetti */
 
   CLASSI,
   /* ricavati da CLASSI, così creazione e gioco non li ricopiano */

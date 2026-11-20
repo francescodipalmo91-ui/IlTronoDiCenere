@@ -6687,7 +6687,8 @@
       if (arma.mani == null && arma.nome === eqIniz.arma && eqIniz.armaMani) { arma.mani = eqIniz.armaMani; arma.tipoDanno = eqIniz.armaTipoDanno; }
       if (salvata && salvata.mano && typeof salvata.mano === "object" && salvata.mano.nome) mano = rinomina(salvata.mano);
       if (salvata && "scudo" in salvata) scudo = (salvata.scudo && typeof salvata.scudo === "object") ? salvata.scudo : null;
-      else if (eqIniz.scudo) scudo = { id: "scudo", tipo: "scudo", nome: eqIniz.scudo.nome || "Scudo", ca: Number(eqIniz.scudo.ca) || 1, malus: Number(eqIniz.scudo.malus) || 0 };
+      else if (eqIniz.scudo) scudo = { id: "scudo", tipo: "scudo", nome: eqIniz.scudo.nome || "Scudo", ca: Number(eqIniz.scudo.ca) || 1, malus: Number(eqIniz.scudo.malus) || 0,
+        ...(eqIniz.scudo.focus ? { focus: { dado: Number(eqIniz.scudo.focus.dado) || 6, bonus: Number(eqIniz.scudo.focus.bonus) || 0 } } : {}) }; /* 19/11: il focus in forma scudo */
       if (armaturaPartita && armaturaPartita.nome) applicaArmatura(armaturaPartita); /* armatura presa dalle rastrelliere */
     }
 
@@ -9512,6 +9513,7 @@
       /* 2. mano secondaria: arma a due mani, scudo o oggetto impugnato; vuota = trattino */
       if (duemani()) voceEquip(dl, U.manoSecondaria, "—"); /* l'arma a due mani è già in mano primaria */
       else if (scudo) voceEquip(dl, U.manoSecondaria, nomeOg(scudo), [U.caBonus(Number(scudo.ca) || 0), Number(scudo.malus) ? U.malusAg(Number(scudo.malus)) : U.noMalus], "scudo");
+      else if (!mano && eq.focus && eq.focus.forma === "normale" && pg.classe !== "Soldato") voceEquip(dl, U.manoSecondaria, N("oggetti", eq.focus.nome), [`d${Number(eq.focus.dado) || 8}`, Lingua.t({ it: "focus", en: "focus" })], "scudo"); /* 19/11 */
       else voceEquip(dl, U.manoSecondaria, mano ? nomeOg(mano) + (mano.usi != null ? ` ×${mano.usi}` : "") : "—", "", "mano");
       /* 3. armatura (dettagli a scomparsa) */
       const malus = Number(eq.malusAgilita) || 0;
@@ -12534,6 +12536,15 @@
     const MAPPA_NEMICI = { mastino: "mastino", esploratore: "ettore", ratto: "ratto_di_cenere", corvo: "corvo_di_brace", cinghiale: "cinghiale_di_brace", lupo: "lupo_di_cenere",
       cervo: "cervo", cinghiale_bosco: "cinghiale", vipera: "vipera", ratto_comune: "ratto", corvo_comune: "corvo", lupo_comune: "lupo" };
     const TIPI_ARMA_MOT = { Tagliente: "taglio", Contundente: "contundente", Perforante: "perforante" };
+    /* 19/11: il focus del personaggio. Forma scudo: vive nello slot dello scudo (riposto, niente focus). Forma normale: in mano secondaria
+       se non c'è uno scudo. Personaggi creati prima del 20/11 (senza focus salvato): il focus implicito d8, come prima. */
+    function focusPg() {
+      if (pg.classe === "Soldato") return null;
+      if (scudo) return scudo.focus ? { dado: Number(scudo.focus.dado) || 6, bonus: Number(scudo.focus.bonus) || 0 } : null;
+      const f = eqPg().focus;
+      if (f && f.forma === "scudo") return null;
+      return { dado: (f && Number(f.dado)) || 8, bonus: (f && Number(f.bonus)) || 0 };
+    }
     function combattentePg() {
       const liv = livelloPg(), st = (a) => Number(pg.statistiche && pg.statistiche[a]) || 10;
       const m = { Vigore: mod(st("Vigore")), "Agilità": mod(st("Agilità")), Mente: mod(st("Mente")), Spirito: mod(st("Spirito")) };
@@ -12541,8 +12552,8 @@
       const tipo = TIPI_ARMA_MOT[(arma && arma.tipoDanno) || eqPg().armaTipoDanno] || "contundente";
       return MotS.preparaScontro({
         nome: "Tu", classe: pg.classe, spec: MotSP.ALIAS[pg.spec] || pg.spec, liv, mod: m, modClasse: modAttaccoPg(), pv: pvPg(), pvMax: pvMaxPg(),
-        caBase: Number(caAttuale()) || 10, arma: { dado: dadoArmaPg(false), tipo, bonus: bonusArmaPg(), ...(arma && Number(arma.mani) === 2 ? { dueMani: true } : {}), ...(arma && /^Bastone/.test(arma.nome || "") ? { eFocus: true } : {}) }, scudo: !!scudo, /* 15/11: due mani tolgono il focus, tranne il bastone */
-        focus: pg.classe !== "Soldato" && !scudo ? { dado: 8, bonus: 0 } : null, via, /* 15/11: focus solo degli incantatori, in mano secondaria (lo scudo lo esclude) */
+        caBase: Number(caAttuale()) || 10, arma: { dado: dadoArmaPg(false), tipo, bonus: bonusArmaPg(), ...(arma && Number(arma.mani) === 2 ? { dueMani: true } : {}), ...(arma && /^Bastone/.test(arma.nome || "") ? { eFocus: true } : {}) }, scudo: !!(scudo && !scudo.focus), /* 15/11: due mani tolgono il focus, tranne il bastone; 19/11: il focus scudo non è uno scudo per In guardia */
+        focus: focusPg(), via, /* focus solo degli incantatori, in mano secondaria (19/11: un oggetto, due forme) */
         poteri: MotSP.poteriAlLivello(pg.classe, pg.spec, pg.scelte || [], liv), tratti: MotSP.trattiAlLivello(pg.classe, liv), stati: {},
         usati: { scontro: {}, giorno: Object.fromEntries((pg.giornalieriUsati || []).map(k => [k, true])) }, elisir: Number(pg.elisir) || 0
       });

@@ -2,3 +2,5 @@ node_modules/
 tests/fumo_report.json
 firebase-debug.log
 firestore-debug.log
+log_partite/
+strumenti/chiave_firebase.json

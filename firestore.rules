@@ -1,5 +1,5 @@
 rules_version = '2';
-// REGOLE DI SICUREZZA FIRESTORE — salvataggi di Il Trono di Cenere.
+// REGOLE DI SICUREZZA FIRESTORE — salvataggi e log delle partite di Il Trono di Cenere.
 // Versione PROPOSTA (29/10/2026), più stretta di quella oggi pubblicata (scritta nel commento di js/cloud.js):
 // ognuno legge e scrive solo i propri dati, come prima, ma in più:
 //  - i posti sono solo 1, 2 e 3; il profilo ha solo «tutorial_completato»;
@@ -30,6 +30,22 @@ service cloud.firestore {
                 ? request.resource.data.dati == null
                 : request.resource.data.dati is string && request.resource.data.dati.size() < 1000000);
       }
+    }
+
+    // 20/11/2026: log anonimi delle partite (js/registro.js, docs/logging_partite.md).
+    // Dal browser si può solo CREARE un evento, con il proprio uid (anche anonimo) e i campi attesi; nessuno legge,
+    // modifica o cancella dal gioco. I log si leggono e si cancellano solo dal PC con strumenti/scarica_log.mjs (firebase-admin).
+    match /log/{partita}/eventi/{id} {
+      allow create: if request.auth != null
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly(["tipo", "dati", "versione", "partita", "n", "sessione", "t", "dispositivo", "scade", "uid"])
+        && request.resource.data.keys().hasAll(["tipo", "dati", "versione", "partita", "n", "sessione", "t", "dispositivo", "scade", "uid"])
+        && request.resource.data.tipo in ["inizio", "scontro", "prova", "livello", "riposo", "morte", "guardiano", "movimento", "inventario", "dialogo", "uscita", "fine"]
+        && request.resource.data.dati is string && request.resource.data.dati.size() <= 200100
+        && request.resource.data.partita == partita
+        && request.resource.data.n is int && request.resource.data.t is int && request.resource.data.scade is int
+        && request.resource.data.dispositivo in ["computer", "telefono"]
+        && request.resource.data.versione is string && request.resource.data.sessione is string;
     }
   }
 }

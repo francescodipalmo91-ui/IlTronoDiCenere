@@ -15,6 +15,7 @@
   <script src="lib/howler.core.min.js"></script>
   <script src="js/audio.js"></script>
   <script src="js/cloud.js"></script>
+  <script src="js/registro.js"></script>
   <link rel="stylesheet" href="tema.css">
   <style>
     * { box-sizing: border-box; }
@@ -195,6 +196,16 @@
     .account button[data-conferma] { color: #ffb4b4; border-color: #d96b6b; }
     @media (max-width: 480px) { .lingue { left: auto; right: 4.6rem; transform: none; } }
 
+    /* ---------- 20/11: consenso al log anonimo delle partite (js/registro.js) ---------- */
+    .consenso { position: fixed; left: 50%; bottom: 4rem; transform: translateX(-50%); z-index: 4; width: min(34rem, calc(100vw - 2rem));
+      padding: 0.9rem 1rem; border: 1px solid rgba(180,180,180,0.45); border-radius: 0.75rem; background: rgba(7,9,13,0.9); backdrop-filter: blur(6px); box-shadow: 0 6px 20px rgba(0,0,0,0.6); }
+    .consenso[hidden] { display: none; }
+    .consenso p { margin: 0 0 0.7rem; font-size: 0.95rem; line-height: 1.4; }
+    .consenso .c-btn { display: flex; gap: 0.6rem; justify-content: flex-end; flex-wrap: wrap; }
+    .consenso button { min-width: 0; min-height: 2.75rem; padding: 0.45rem 1rem; font-size: 0.95rem; }
+    .log-stato { margin: 0.6rem 0 0; font-size: 0.85rem; color: var(--muted); }
+    .log-stato button { min-width: 0; padding: 0 0.2rem; font-size: inherit; background: none; border: 0; color: var(--accent); text-decoration: underline; cursor: pointer; min-height: 2.75rem; }
+
     /* ---------- Conflitti di salvataggio tra dispositivi ---------- */
     .conflitti:empty { display: none; }
     .conflitti { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem; }
@@ -245,9 +256,14 @@
       <p class="avviso" id="avviso" aria-live="polite"></p>
       <a class="allenamento" id="allenamento2" href="tutorial.html"></a>
       <a class="allenamento regolamento" id="regolamento2" href="regolamento.html"></a>
+      <p class="log-stato" id="logStato"></p>
     </section>
   </main>
 
+  <div class="consenso" id="consenso" role="dialog" aria-labelledby="consensoTesto" hidden>
+    <p id="consensoTesto"></p>
+    <div class="c-btn"><button type="button" id="consensoNo"></button><button type="button" id="consensoSi"></button></div>
+  </div>
   <div class="account" id="account" hidden><button type="button" id="accedi"></button></div>
   <button type="button" id="audio" aria-pressed="true" title="Musica">🔊</button>
 
@@ -311,6 +327,29 @@
       }
     };
     const tx = () => T[Lingua.get()];
+    /* 20/11: consenso al log anonimo delle partite (docs/logging_partite.md): si chiede una volta, si cambia qui sotto */
+    const LOGTX = {
+      it: { testo: "Per migliorare il gioco registriamo in forma anonima come vanno le partite (scontri, prove, scelte). Nessun dato personale.", si: "Va bene", no: "No, grazie", attivo: "Registro anonimo delle partite: attivo.", spento: "Registro anonimo delle partite: spento.", cambia: "Cambia" },
+      en: { testo: "To improve the game we record, anonymously, how games go (fights, checks, choices). No personal data.", si: "That's fine", no: "No, thanks", attivo: "Anonymous game log: on.", spento: "Anonymous game log: off.", cambia: "Change" }
+    };
+    function disegnaConsenso() {
+      if (!window.Registro || !window.Cloud || !Cloud.attivo) return;
+      const L2 = LOGTX[Lingua.get()] || LOGTX.it, c = Registro.consenso();
+      document.getElementById("consensoTesto").textContent = L2.testo;
+      document.getElementById("consensoSi").textContent = L2.si;
+      document.getElementById("consensoNo").textContent = L2.no;
+      document.getElementById("consenso").hidden = c != null;
+      const st = document.getElementById("logStato");
+      st.replaceChildren(document.createTextNode((c === "si" ? L2.attivo : L2.spento) + " "));
+      if (c != null) { const b = document.createElement("button"); b.type = "button"; b.textContent = L2.cambia; b.addEventListener("click", () => { Registro.impostaConsenso(c !== "si"); disegnaConsenso(); }); st.append(b); }
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+      const scegli = (si) => { Registro.impostaConsenso(si); disegnaConsenso(); };
+      document.getElementById("consensoSi").addEventListener("click", () => scegli(true));
+      document.getElementById("consensoNo").addEventListener("click", () => scegli(false));
+      disegnaConsenso();
+      document.querySelectorAll(".bandiera").forEach(b => b.addEventListener("click", () => setTimeout(disegnaConsenso, 0)));
+    });
     let rispostaChiave = null; /* risposta mostrata sotto i pulsanti, da ritradurre se cambia la lingua */
 
     /* Sfondo video: muto e in ripetizione infinita. Con "riduci animazioni" resta fermo sull'immagine statica. */

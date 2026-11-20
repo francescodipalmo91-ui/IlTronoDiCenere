@@ -24,6 +24,7 @@
   <script src="lib/howler.core.min.js"></script>
   <script src="js/audio.js"></script>
   <script src="js/cloud.js"></script>
+  <script src="js/registro.js"></script>
   <link rel="stylesheet" href="tema.css">
   <style>
 
@@ -6301,6 +6302,8 @@
     try { pg = JSON.parse(localStorage.getItem("personaggio")); } catch (e) {}
     if (!pg || !pg.classe) { pg = null; window.location.replace("index.html"); }
     else if (!pg.equipaggiamento) { pg = null; window.location.replace("index.html"); }
+    /* 20/11: id casuale della partita per i log (js/registro.js); i personaggi creati prima lo ricevono qui */
+    if (pg && !pg.idPartita && window.Registro) { pg.idPartita = Registro.nuovoId(); try { localStorage.setItem("personaggio", JSON.stringify(pg)); } catch (e) {} }
     else if (window.MAGIA && window.MAGIA.CLASSI[pg.classe] && [].concat(pg.incantesimi || []).some(x => !window.MAGIA.INCANTESIMI.some(i => i.id === (x && x.id || x)))) { pg = null; window.location.replace("index.html"); } /* creato con il vecchio sistema di incantesimi (04/11: la scuola principale non c'è più, si controllano gli id) */
 
     /* =====================================================================
@@ -6427,6 +6430,9 @@
     if (pg) pg.risorsaUsata = salvata ? (Number(salvata.risorsaUsata) || 0) : 0;
     function crescitaPg() { return crescita; }
     function livelloPg() { return Number(pg && pg.livello) || 1; }
+    /* 20/11: log delle partite. Mai un errore del log deve fermare il gioco. */
+    let ultimaAzioneLog = null, ultimaProvaLog = null, ingressoLuogoLog = Date.now();
+    function logEv(tipo, dati) { try { if (window.Registro) Registro.evento(tipo, dati); } catch (e) {} }
     function saluteMaxPg() { return (Number(pg.puntiVita ?? pg.saluteFisica) || 0) + crescita.salute; }
     /* punti furia / punti natura: { id, max } oppure null (anche per i personaggi creati prima di questa regola) */
     function risorsaPg() {
@@ -6459,7 +6465,7 @@
     /* al riposo: per ogni livello in attesa, 2 punti attributo e poi la crescita; alla fine si torna a «dopo» */
     function crescitaAlRiposo(dopo) {
       if (!livelliPronti() || finePartita) return dopo();
-      apriCrescita(livelloPg() + 1, () => { saliDiLivello(); crescitaAlRiposo(dopo); });
+      apriCrescita(livelloPg() + 1, () => { saliDiLivello(); logEv("livello", { livello: livelloPg(), statistiche: pg.statistiche || null, scelte: pg.scelte || [], via: usate.via || null, giorno: Number(usate.giorno) || 1 }); crescitaAlRiposo(dopo); });
     }
     function apriCrescita(nuovo, fatto) {
       const f = document.getElementById("finestraPrep"), box = document.getElementById("prepBox"), L = RG.livello;
@@ -6565,6 +6571,7 @@
     }
     function finePersonaggio(T) {
       if (finePartita) return;
+      logEv("morte", { luogo, nemico: scontro ? scontro.id : (ultimoNemico && ultimoNemico.id) || null, livello: livelloPg(), giorno: Number(usate.giorno) || 1, modalita: modalitaPg(), titolo: T && T.titolo || null });
       finePartita = true;
       try { if (scontro) { chiudiScontro("perso"); scontro = null; MusicaScontro.ferma(); barraScontro(); } } catch (e) {}
       chiudiScelte();
@@ -7252,6 +7259,19 @@
     }
     /* a fine scontro i turni si richiudono tutti dentro un'unica tendina */
     function chiudiScontro(esito) {
+      try { /* 20/11: log dello scontro, un solo evento a fine scontro con il registro turno per turno */
+        if (scontro && scontro.log && !scontro.log.chiuso) {
+          scontro.log.chiuso = true;
+          const M = scontro.N, L0 = scontro.log;
+          logEv("scontro", { nemico: scontro.id, ctx: L0.ctx, esito, turni: scontro.round || 0, primo: scontro.primo, secondi: Math.round((Date.now() - L0.t0) / 1000),
+            livello: livelloPg(), classe: pg.classe, spec: pg.spec || null, pvInizio: L0.pvInizio, pvFine: pvPg(), pvMax: L0.pvMax, nemicoPv: L0.nemicoPv, nemicoPvFine: scontro.pv,
+            arma: arma && arma.nome, scudo: scudo ? scudo.nome : null, focus: (eqPg().focus && eqPg().focus.forma) || null, via: usate.via || null,
+            poteri: M && M.pg ? M.pg.poteri : null, usati: M && M.pg && M.pg.usati ? { scontro: Object.keys(M.pg.usati.scontro || {}), giorno: Object.keys(M.pg.usati.giorno || {}) } : null,
+            zaino: zaino.filter(x => x && (x.effetto || x.tipo === "consumabile" || x.tipo === "dotazione")).map(x => x.nome + (x.usi != null ? "×" + x.usi : "")),
+            registro: L0.eventi });
+          if (NEMICI[scontro.id] && NEMICI[scontro.id].boss) logEv("guardiano", { nemico: scontro.id, esito, luogo, giorno: Number(usate.giorno) || 1, livello: livelloPg() });
+        }
+      } catch (e) {}
       fineScontroStati(); /* 28/10: tutti gli stati finiscono con lo scontro */
       if (!scontro || !scontro.sid) return;
       const T = SCONTRO_TIT[LINGUA] || SCONTRO_TIT.it, sid = scontro.sid;
@@ -7462,6 +7482,7 @@
     }
     function avviaDialogo(id) { nodoDialogo(id, "inizio"); }
     function nodoDialogo(id, nodo, soloRisposte) {
+      if (!soloRisposte) logEv("dialogo", { dialogo: id, nodo, luogo });
       const d = DLG()[id];
       if (!d.nodi[nodo]) { nodo = "inizio"; soloRisposte = true; } /* salvataggio di una versione precedente del dialogo */
       const n = d.nodi[nodo];
@@ -7837,6 +7858,7 @@
       usate.cantina_ricompare = false; /* 28/10: il mastino della cantina non ricompare più */
       salvaUsate();
       disegnaVitali(); aggiornaMentali(); modificato();
+      logEv("riposo", { luogo, giorno: usate.giorno, pv: pvPg(), pvMax: pvMaxPg(), mente: mentaliAttuali(), menteMax: maxMentali(), razioni: scorta, fame: opzionePg("fame"), pesoGiorni: opzionePg("pesoGiorni"), livelloInAttesa: !!livelliPronti() });
       return { esito: R.titolo(usate.giorno), esitoRighe: righe };
     }
     let ultimoRiposoTesto = -1;
@@ -9313,6 +9335,10 @@
     const clic = (fn) => () => { vistaFissa = false; fuoriTendina = true; try { fn(); } finally { fuoriTendina = false; } };
     function aggiungi(v) {
       if (!v.stanza) v.stanza = luogo;
+      try { /* 20/11: log delle prove: il riquadro «prova» (abilità, CD) e poi il suo esito */
+        if (v.tipo === "prova" && !scontro) ultimaProvaLog = { titolo: v.titolo || null, dati: v.dati || [] };
+        else if (v.prova && v.esito != null) { logEv("prova", { ...(ultimaProvaLog || {}), esito: String(v.esito), ok: v.box === "ok", luogo, livello: livelloPg(), giorno: Number(usate.giorno) || 1 }); ultimaProvaLog = null; }
+      } catch (e) {}
       distorci(v);
       if (scontro && v.tipo !== "giocatore") { if (!scontro.turno) v.fuori = true; else if (v.fuori !== true) v.fuori = false; } /* scontro: prima del 1° turno fuori, poi nella tendina del turno */
       else if (fuoriTendina) v.fuori = true;
@@ -10345,6 +10371,7 @@
     }
 
     function vai(id, opz) {
+      { const ora = Date.now(); logEv("movimento", { da: luogo, a: id, giorno: Number(usate.giorno) || 1, secondi: Math.round((ora - ingressoLuogoLog) / 1000) }); ingressoLuogoLog = ora; }
       lasciaStanza(luogo, id);
       ultimoNemico = null; disegnaNemico(); /* la scheda del nemico si chiude cambiando stanza */
       chiudiScelte(); /* eventuali scelte rimaste in sospeso nella stanza che si lascia */
@@ -10568,6 +10595,7 @@
     const DOVE_TORNA = { serra: "giardino", pineta_est: "cappella", pineta_ovest: "serra", pianerottolo: "atrio", cantina: "servizio", dispensa: "cucina", servizio: "cucina", cucina: "corridoio", sala_ballo: "corridoio", corridoio: "sala_pranzo", sala_pranzo: "sala_conversazione", giardino: "atrio", cappella: "giardino", cimitero: "giardino", pineta: "cimitero", cripta: "cappella", sala_trofei: "sala_caccia", anticamera_trono: "pianerottolo", corridoio_primo: "pianerottolo" };
     let ultimoTesto = "";
     async function gestisci(testo) {
+      ultimaAzioneLog = String(testo || "").slice(0, 120);
       const t = norm(testo);
       if (scontro) return gestisciScontro(t); /* durante lo scontro valgono solo le azioni di combattimento */
       const stanza = STANZE[luogo];
@@ -11674,6 +11702,7 @@
         if (opz.caMod) scontro.N.nem.caBase += opz.caMod;
         scontro.pv = scontro.pvMax = scontro.N.nem.pv; scontro.svelata = true;
       }
+      scontro.log = { t0: Date.now(), pvInizio: pvPg(), pvMax: pvMaxPg(), nemicoPv: scontro.pvMax, ctx: opz.ctx || null, primo: null, eventi: [] }; /* 20/11: log */
       MusicaScontro.avvia();
       if (puoFuggire() && !usate.hint_fuga) { usate.hint_fuga = true; salvaUsate(); setTimeout(() => sist(FUGA_TX().suggerimento), 50); } /* 28/10: la fuga esiste */
       const a = statPg("Agilità"), b = stat["Agilità"];
@@ -12592,6 +12621,7 @@
     }
     /* il racconto degli eventi (js/racconto.js) nel diario: le righe consecutive dello stesso lato in un solo riquadro */
     function narraMotore(eventi) {
+      try { if (scontro && scontro.log && eventi) eventi.forEach(e => { if (e && scontro.log.eventi.length < 600) scontro.log.eventi.push({ r: scontro.round || 0, ...e }); }); } catch (e) {} /* 20/11: log turno per turno */
       let box = null, righe = [];
       const chiudi = () => { if (righe.length) aggiungi({ tipo: "narra", box, righe }); righe = []; };
       (eventi || []).forEach(e => {
@@ -12991,6 +13021,13 @@
         if (esito !== "invio" && testo) avvisa(elStato.textContent + " · " + testo);
       };
       if (window.Cloud && Cloud.attivo) Cloud.avvia(); /* riprende l'accesso fatto nella pagina iniziale */
+      /* 20/11: log anonimo delle partite (solo con il consenso dato nella pagina iniziale) */
+      if (window.Registro && pg) {
+        Registro.avvia({ idPartita: () => pg && pg.idPartita });
+        logEv("inizio", { classe: pg.classe, spec: pg.spec || null, razza: pg.razza, livello: livelloPg(), modalita: modalitaPg(), opzioni: pg.opzioni || null,
+          focus: (eqPg().focus && eqPg().focus.forma) || null, arma: eqPg().arma || null, armatura: eqPg().armatura || null, luogo, giorno: Number(usate.giorno) || 1, lingua: LINGUA });
+        addEventListener("pagehide", () => { logEv("uscita", { luogo, giorno: Number(usate.giorno) || 1, ultima: ultimaAzioneLog, inScontro: !!scontro }); });
+      }
 
       /* ---------- tastiera: se il diario era in fondo, resta in fondo quando la tastiera lo rimpicciolisce ---------- */
       const elDiario = $("diario");

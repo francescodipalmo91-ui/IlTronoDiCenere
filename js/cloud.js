@@ -74,7 +74,7 @@ window.Cloud = (() => {
       await new Promise(primo => {
         let fatto = false;
         auth.onAuthStateChanged(u => {
-          stato.utente = u ? { nome: u.displayName || u.email || "", email: u.email || "" } : null;
+          stato.utente = u && !u.isAnonymous ? { nome: u.displayName || u.email || "", email: u.email || "" } : null; /* 20/11: l'accesso anonimo (solo per i log) non è un accesso */
           stato.pronto = true; notifica();
           if (!fatto) { fatto = true; primo(); }
         });
@@ -83,7 +83,7 @@ window.Cloud = (() => {
     })().catch((e) => { stato.erroreAvvio = (e && (e.code || e.message)) || "avvio"; stato.pronto = true; notifica(); return false; });
     return avvio;
   }
-  const connesso = async () => (await avvia()) && auth && auth.currentUser;
+  const connesso = async () => (await avvia()) && auth && auth.currentUser && !auth.currentUser.isAnonymous;
   const docPosto = (n) => db.collection("utenti").doc(auth.currentUser.uid).collection("posti").doc(String(n));
   const docProfilo = () => db.collection("utenti").doc(auth.currentUser.uid);
   const pesante = (json) => new TextEncoder().encode(json).length > LIMITE;
@@ -199,7 +199,24 @@ window.Cloud = (() => {
     return true;
   }
 
+  /* 20/11: log delle partite (js/registro.js, docs/logging_partite.md). Serve un uid: quello di Google se c'è l'accesso,
+     altrimenti l'accesso anonimo di Firebase. Si scrive in log/{idPartita}/eventi/{n}, solo creazioni (regole in firestore.rules). */
+  async function uidPerLog() {
+    if (!await avvia() || !auth) return null;
+    if (auth.currentUser) return auth.currentUser.uid;
+    try { const r = await conTimeout(auth.signInAnonymously(), 8000); return r && r.user ? r.user.uid : null; } catch (e) { return null; }
+  }
+  async function scriviLog(idPartita, eventi) {
+    const uid = await uidPerLog();
+    if (!uid || !db) return false;
+    const batch = db.batch(), col = db.collection("log").doc(idPartita).collection("eventi");
+    eventi.forEach(e => batch.set(col.doc(String(e.n).padStart(6, "0") + "_" + e.sessione), { ...e, uid }));
+    await conTimeout(batch.commit(), 10000);
+    return true;
+  }
+
   return {
+    scriviLog, dispositivo: DISP,
     get attivo() { return stato.attivo; },
     get pronto() { return stato.pronto; },
     utente: () => stato.utente,

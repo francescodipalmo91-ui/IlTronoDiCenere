@@ -1095,6 +1095,7 @@
         spec, /* specializzazione: si sceglie qui e non si cambia */
         scelte: sceltePoteri(), /* poteri scelti, nell'ordine dei livelli (livello 1: due a volontà, per scontro, giornaliero) */
         modalita: (document.querySelector('input[name="modalita"]:checked') || {}).value === "difficile" ? "difficile" : "facile",
+        idPartita: Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4), /* 20/11: id anonimo della partita per i log (js/registro.js) */
         opzioni: Object.fromEntries(["fame", "pesoGiorni"].map(k => [k, !!document.querySelector(`input[name="opzione"][value="${k}"]:checked`)])), /* 20/11: regole facoltative */ /* 28/10: facile (si riparte dal salvataggio) o difficile (morte permanente) */
         abilita: abilitaScelte().map(([n, a]) => ({ nome: n, attributo: a, valore: valoreAbilita(a) + LIVELLO })),
         equipaggiamento: {

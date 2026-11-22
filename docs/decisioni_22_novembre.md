@@ -1,6 +1,6 @@
 # Decisioni e lavori del 22 novembre 2026 (domenica)
 
-Registro più recente. Tutto sul PC, **non su GitHub**. Il bilanciamento resta congelato (15/11): nessun valore toccato, le misure sono indicative.
+Registro più recente. Sul PC e, dalla sera (sezione 16), anche su GitHub. Il bilanciamento resta congelato (15/11): nessun valore toccato, le misure sono indicative.
 
 ## 1. Controlli lasciati aperti il 21/11
 - **Test del motore (16 serie)**: tutti verdi, anche dopo le modifiche di oggi.

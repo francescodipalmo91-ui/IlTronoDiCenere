@@ -128,7 +128,7 @@ caso("Esterni: immagine del cimitero, con Enea finché è lì", async (b) => {
   const img = () => page.evaluate(() => vista("cimitero").img.src);
   eq(await img(), "immagini/house/cimitero.webp");
   await page.evaluate(() => { usate.enea = "incontrato"; }); eq(await img(), "immagini/house/cimitero_enea.webp");
-  await page.evaluate(() => { usate.enea = "risparmiato"; }); eq(await img(), "immagini/house/cimitero_enea.webp", "risparmiato resta al cimitero");
+  await page.evaluate(() => { usate.enea = "risparmiato"; }); eq(await img(), "immagini/house/cimitero.webp", "risparmiato lascia il campo (regola del risparmio, 10/11)");
   await page.evaluate(() => { usate.enea = "morto"; }); eq(await img(), "immagini/house/cimitero.webp");
   eq(await page.evaluate(() => DIM_IMMAGINI.cimitero), [2848, 1600]);
   eq(errori, [], "errori"); await chiudi();

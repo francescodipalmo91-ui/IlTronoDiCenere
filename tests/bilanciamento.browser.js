@@ -252,8 +252,8 @@ caso("Rastrelliere: armature +1 (+2 dalla quinta caccia comune), scudi +1, fissa
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ livello: 2 }), BRONZO({ livello: 2, luogo: "sala_caccia" }));
   const prendi = (nome, fatte) => page.evaluate(([n, f]) => { usate.armeria_scelte = 1; usate.cc_fatte_lista = Array.from({ length: f }, (_, i) => "c" + i); prendiDallaRastrelliera(ARMERIA.find(o => o.nome === n && !o.sp)); const it = zaino[zaino.length - 1]; return [it.nome, it.ca, it.bonus || 0]; }, [nome, fatte]);
   eq(await prendi("Armatura media", 0), ["Armatura media", 4, 1], "dal bronzo +1");
-  eq(await prendi("Armatura pesante", 4), ["Armatura pesante", 5, 1], "gradi 1-2: +1");
-  eq(await prendi("Armatura leggera", 5), ["Armatura leggera", 4, 2], "grado 3: +2");
+  eq(await prendi("Armatura pesante", 4), ["Armatura pesante", 7, 1], "gradi 1-2: +1"); /* 20/11: pesante 6 */
+  eq(await prendi("Armatura leggera", 5), ["Armatura leggera", 3, 2], "grado 3: +2"); /* 20/11: leggera 1 */
   eq(await prendi("Scudo", 5), ["Scudo", 2, 1], "scudo +1");
   eq(errori, [], "errori"); await chiudi();
 });

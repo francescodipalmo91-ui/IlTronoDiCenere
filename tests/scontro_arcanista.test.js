@@ -67,8 +67,8 @@
     const a = arcanista(), n = nemico({ stati: esposto(2, 2) }), c = ctx([10, 1, 1, 1]); S.usa(a, n, "doppia_frattura", c); eq(n.pv, 12); fine(c);
     const m = nemico(), c2 = ctx([10, 1]); S.usa(arcanista(), m, "doppia_frattura", c2); eq(m.pv, 16); fine(c2);
   });
-  caso("Sovraccarico: 2d8 + Mente senza tiro, aggrava l'Esposto (senza il lieve lo applica)", () => {
-    const a = arcanista(), n = nemico(), c = ctx([3, 4, 2]); S.usa(a, n, "sovraccarico", c); eq(n.pv, 10); vero(P.ha(n, "esposto")); fine(c);
+  caso("Sovraccarico: 2d8 senza tiro né Mente (16/11), aggrava l'Esposto (senza il lieve lo applica)", () => {
+    const a = arcanista(), n = nemico(), c = ctx([3, 4, 2]); S.usa(a, n, "sovraccarico", c); eq(n.pv, 13); vero(P.ha(n, "esposto")); fine(c);
   });
   caso("Collasso gravitazionale: 1d8 a inizio dei tuoi 3 turni, applica poi aggrava l'Esposto, Frattura dal secondo", () => {
     const a = arcanista(), n = nemico({ pv: 40, pvMax: 40 }); S.usa(a, n, "collasso_gravitazionale", ctx([]));
@@ -79,9 +79,9 @@
     const a = arcanista(), n = nemico({ stati: esposto(1, 1) }); S.usa(a, n, "punto_di_rottura", ctx([]));
     S.fineTurno(n); S.fineTurno(n); vero(P.ha(n, "esposto")); S.fineScontro(n); vero(!n.espostoPerenne);
   });
-  caso("Annullamento: 4d8 + Mente senza tiro; su uno Scoperto 2 dadi in più (15/11)", () => {
+  caso("Annullamento: 4d8 senza tiro né Mente; su uno Scoperto 2 dadi in più (15/11)", () => {
     const a = arcanista(), n = nemico({ pv: 40, pvMax: 40, stati: esposto(2, 2) }), c = ctx([1, 1, 1, 1, 1, 1]); S.usa(a, n, "annullamento", c);
-    eq(n.pv, 29, "40 − (6 + 3 + Frattura 2)"); fine(c);
+    eq(n.pv, 32, "40 − (6 + Frattura 2)"); fine(c);
   });
 
   /* ===== Classe e tratti ===== */
@@ -120,18 +120,18 @@
     S.usa(a, n, "sussurro_illusorio", c); eq([n.pv, a.copie], [16, 1]); fine(c);
     const a2 = illusionista(), n2 = nemico(), c2 = ctx([10, 4, 3]); S.usa(a2, n2, "sussurro_illusorio", c2); eq(a2.copie, 1, "anche senza Indebolito");
   });
-  caso("Frantumare: 1d6 per Copia + Mente una volta, senza tiro; con 3 Copie anche Esposto", () => {
+  caso("Frantumare: 1d6 per Copia, senza tiro né Mente; con 3 Copie anche Esposto", () => {
     const a = illusionista({ copie: 3 }), n = nemico(), c = ctx([1, 1, 1, 2]); S.usa(a, n, "frantumare", c);
-    eq([n.pv, a.copie], [14, 0], "20 − (3 + 3)"); vero(P.ha(n, "esposto")); fine(c);
+    eq([n.pv, a.copie], [17, 0], "20 − 3"); vero(P.ha(n, "esposto")); fine(c);
   });
   caso("Labirinto: TS di Mente → Stordito; nasce una Copia", () => {
     const a = illusionista(), n = nemico(), c = ctx([5]); const r = S.usa(a, n, "labirinto", c);
     eq(ev(r, "ts")[0].attr, "Mente"); vero(P.ha(n, "stordito")); eq(a.copie, 1); fine(c);
   });
   caso("Sdoppiamento: 2 Copie e +2 CA", () => { const a = illusionista(); S.usa(a, nemico(), "sdoppiamento", ctx([])); eq([a.copie, S.ca(a)], [2, 14]); });
-  caso("Incubo: 2d8 + Mente + 1d6 per Copia (non le consuma); TS Spirito → Impaurito", () => {
+  caso("Incubo: 2d8 + 1d6 per Copia, senza Mente (non le consuma); TS Spirito → Impaurito", () => {
     const a = illusionista({ copie: 2 }), n = nemico(), c = ctx([1, 1, 1, 1, 2]); S.usa(a, n, "incubo", c);
-    eq([n.pv, a.copie], [13, 2]); vero(P.ha(n, "impaurito")); fine(c);
+    eq([n.pv, a.copie], [16, 2]); vero(P.ha(n, "impaurito")); fine(c);
   });
   caso("Dado truccato: il nemico tira due d20 e tiene il peggiore (3 turni, 2 sui boss)", () => {
     const a = illusionista(), n = nemico(); S.usa(a, n, "dado_truccato", ctx([]));
@@ -146,10 +146,10 @@
     const a = illusionista(), n = nemico(); S.usa(a, n, "specchio_rotto", ctx([]));
     const c = ctx([18, 6, 3]); S.attacco(n, a, {}, c); eq([a.pv, n.pv, a.specchio], [20, 13, false]); fine(c);
   });
-  caso("Il Grande Inganno: serve almeno una Copia; 2d8 per Copia + Mente una volta, svantaggio per 2 turni", () => {
+  caso("Il Grande Inganno: serve almeno una Copia; 2d8 per Copia senza Mente, svantaggio per 2 turni", () => {
     eq(S.disponibile(illusionista(), "grande_inganno").motivo, "senzaCopie");
     const a = illusionista({ copie: 2 }), n = nemico(), c = ctx([1, 1, 1, 1]); S.usa(a, n, "grande_inganno", c);
-    eq([n.pv, a.copie, n.svantaggio], [13, 0, 2], "20 − (4 + 3)"); fine(c);
+    eq([n.pv, a.copie, n.svantaggio], [16, 0, 2], "20 − 4"); fine(c);
   });
 
   caso("Catalogo: ogni potere dell'Arcanista è implementato; i tipi sono forza e psichico", () => {

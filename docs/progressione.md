@@ -1,6 +1,6 @@
 # Il Trono di Cenere — Progressione
 
-Livelli, salute, attributi, esperienza e percorso atteso. Nato il 9 novembre 2026 dalla divisione di `bilanciamento_nemici_oggetti.md` (archiviato), con tutto tradotto sul sistema nuovo.
+Livelli, salute, attributi, esperienza e percorso atteso. Nato il 9 novembre 2026 dalla divisione di `bilanciamento_nemici_oggetti.md` (archiviato), con tutto tradotto sul sistema nuovo. Ripulito il 16/11/2026 (goblin, orchi e avventurieri cancellati: `registro_cancellati.md`).
 Regole di combattimento e poteri per livello: `riscrittura_meccaniche.md` (scala dei poteri, sezione 0; livelli fino a 10, sezione 8f), che prevale.
 
 ---
@@ -35,25 +35,25 @@ Regole di combattimento e poteri per livello: `riscrittura_meccaniche.md` (scala
 |---|---|
 | Animali normali (fuori casa e foresta) | 50-75 (cinghiale 75) |
 | Animali infernali | 75-100 (cinghiale di brace 100) |
-| Goblin / orco degli agguati | 75 / 100 |
-| Banda di goblin / di orchi | 125 / 150 |
+| Vuoti degli agguati | ⚠ da definire (sessione del 18/11); le vecchie cifre di goblin, orchi e bande sono cancellate |
 | Mastini comuni | 150 |
 | Mastini élite (della soglia di Adele, corazzato) | 300 |
-| Cacce comuni di Aldo | per stelle 100 / 150 / 200; ⚠ proposta del 6 novembre: per arrivo 100 (bronzo) / 150 (argento) / 200 (oro) / 250 (platino) |
+| Cacce comuni di Aldo (i vuoti delle cacce) | per stelle 100 / 150 / 200; ⚠ proposta del 6 novembre: per arrivo 100 (bronzo) / 150 (argento) / 200 (oro) / 250 (platino) |
 | Guardiani | bronzo 400, argento 550, oro 700, platino 900 |
 | Missioni di Guendalina (scaletta, figli, blasone) | 50 ciascuna |
 | Fiducia del figlio maggiore (libro aperto) | 50 |
 | Reliquie, lacrime, diari | 0: la ricompensa è la soglia del Retaggio, la storia, la conoscenza |
-| I cinque avventurieri (tolti per ora, `mondo_e_incontri.md`) | 100, solo la prima volta |
 
 **PE a scalare** (gli animali restano sempre allo stesso livello: col tempo servono solo per gli ingredienti):
 
-| Livello del personaggio | Animali normali | Animali infernali | Orchi e goblin |
-|---|---|---|---|
-| 1-2 | pieni | pieni | pieni |
-| 3 | metà | pieni | pieni |
-| 4 | nessuno | metà | metà (bande piene) |
-| 5 | nessuno | nessuno | nessuno (bande metà) |
+| Livello del personaggio | Animali normali | Animali infernali |
+|---|---|---|
+| 1-2 | pieni | pieni |
+| 3 | metà | pieni |
+| 4 | nessuno | metà |
+| 5 | nessuno | nessuno |
+
+⚠ La scalatura dei vuoti degli agguati si decide insieme ai loro PE.
 
 ## 5. Livelli attesi e boss
 
@@ -63,7 +63,7 @@ Regole di combattimento e poteri per livello: `riscrittura_meccaniche.md` (scala
 
 ## 6. Percorso atteso
 
-⚠ **Da ricalcolare** con le otto cacce (due per finestra, anche dopo il platino), i mastini élite scambiati e i livelli fino a 10. La tabella del 28 ottobre, adattata, resta come traccia:
+⚠ **Da ricalcolare** con le otto cacce (due per finestra, anche dopo il platino), i mastini élite scambiati, i vuoti degli agguati e i livelli fino a 10. La tabella del 28 ottobre, adattata, resta come traccia (dove cita «agguato» si intende un vuoto):
 
 | Momento | PE | Livello |
 |---|---|---|

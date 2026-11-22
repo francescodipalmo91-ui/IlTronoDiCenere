@@ -16,7 +16,7 @@ window.PresetTest = (() => {
   const R = window.Regole;
   const mod = (v) => Math.floor((Number(v) - 10) / 2);
 
-  const ARMATURE = { nessuna: { nome: "Nessuna", ca: 0, tetto: 99 }, leggera: { nome: "Leggera", ca: 2, tetto: 3 }, media: { nome: "Media", ca: 3, tetto: 2 }, pesante: { nome: "Pesante", ca: 4, tetto: 0 } };
+  const ARMATURE = { nessuna: { nome: "Nessuna", ca: 0, tetto: 99 }, leggera: { nome: "Leggera", ca: 2, tetto: 3 }, veste: { nome: "Veste", ca: 2, tetto: 3 } /* 19/11: veste delle classi magiche = leggera */, media: { nome: "Media", ca: 3, tetto: 2 }, pesante: { nome: "Pesante", ca: 4, tetto: 0 } };
 
   /* arma = indice in ARMI di js/sala_prova.js: 0 Spada corta, 1 Ascia da battaglia, 2 Bastone, 3 Martello da battaglia, 4 Mazza chiodata, 5 Piccone da battaglia */
   const PG = {

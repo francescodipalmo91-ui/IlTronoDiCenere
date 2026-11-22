@@ -96,9 +96,9 @@
     const g = guerriero(), n = nemico({ stati: { sanguinante: { liv: 1, turni: 2, tipo: "taglio" } } }), c = ctx([10, 1, 1, 1]);
     S.usa(g, n, "ferita_riaperta", c); eq(n.pv, 14); vero(!P.ha(n, "sanguinante")); fine(c);
   });
-  caso("Sentenza: tre attacchi, tutti critici contro un Vacillante", () => {
+  caso("Resa dei conti (era Sentenza): tre attacchi, tutti critici contro un Vacillante", () => {
     const g = guerriero(), n = nemico({ pv: 40, pvMax: 40 }); n.pv = 19;
-    const c = ctx([1, 1, 1, 1, 1, 1]); S.usa(g, n, "sentenza", c); eq(n.pv, 4, "3 × (2 dadi da 1 + 3)"); fine(c);
+    const c = ctx([1, 1, 1, 1, 1, 1]); S.usa(g, n, "resa_dei_conti", c); eq(n.pv, 4, "3 × (2 dadi da 1 + 3)"); fine(c);
   });
 
   /* ===== Sentinella ===== */
@@ -221,7 +221,7 @@
     const l5 = SP.poteriAlLivello("Soldato", "paladino", [...l1, "rintocco", "veglia_di_ferro", "spezza_carica"], 5);
     vero(l5.includes("silenzio_della_casa") && l5.includes("secondo_vento") && !l5.includes("ultimo_baluardo"));
     vero(!SP.poteriAlLivello("Soldato", "paladino", [...l1, "rintocco", "veglia_di_ferro", "spezza_carica"], 4).includes("secondo_vento"), "Secondo vento solo al 5");
-    eq([SP.livelloDi("Soldato", "berserker", "marchio_della_preda"), SP.livelloDi("Soldato", "berserker", "ferita_riaperta"), SP.livelloDi("Soldato", "berserker", "sentenza")], [3, 4, 5]);
+    eq([SP.livelloDi("Soldato", "berserker", "marchio_della_preda"), SP.livelloDi("Soldato", "berserker", "ferita_riaperta"), SP.livelloDi("Soldato", "berserker", "resa_dei_conti")], [3, 4, 5]);
     eq(SP.trattiAlLivello("Soldato", 1), ["furia"]); eq(SP.trattiAlLivello("Soldato", 3), ["furia", "mente_incrollabile"]); eq(SP.trattiAlLivello("Soldato", 5), ["furia", "mente_incrollabile"]);
     eq(SP.viaAlLivello("aldo", 1), []); eq(SP.viaAlLivello("aldo", 3), ["occhio_del_cacciatore", "odore_del_sangue"]); eq(SP.viaAlLivello("guendalina", 5).length, 3);
     eq(SP.specDi("Soldato", "esecutore").nome, "Berserker", "i vecchi nomi portano ai nuovi");
@@ -232,8 +232,9 @@
       usati.add(cl.classe.privilegi[5]);
       Object.keys(cl).filter(k => k !== "classe").forEach(k => SP.tuttiDi(cl[k]).forEach(id => usati.add(id)));
     });
+    usati.add("ultimo_colpo"); /* potere di pergamena (Lascito di Dafne): non appartiene a una specializzazione */
     usati.forEach(id => {
-      const g = guerriero({ elisir: 1, placche: 1, copie: 1 });
+      const g = guerriero({ elisir: 1, placche: 1, copie: 1, ...(id === "ultimo_colpo" ? { poteri: undefined } : {}) });
       const r = S.usa(g, nemico({ pv: 99, pvMax: 99 }), id, { tira: (d) => Math.min(d, 10) }); eq(ev(r, "nonImplementato").length, 0, id);
     });
     eq(Object.keys(SP.POTERI).filter(id => !usati.has(id)), [], "poteri orfani");

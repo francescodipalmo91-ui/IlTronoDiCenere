@@ -33,9 +33,9 @@
   const REGOLE = {
     berserker: [
       R("marchio_della_preda", (s) => s.boss && s.turno <= 2, "contro un boss il marchio rende per tutto lo scontro"),
-      R("sentenza", (s) => s.vac, "Vacillante: tre critici"),
+      R("resa_dei_conti", (s) => s.vac, "Vacillante: tre critici"),
       R("colpo_del_boia", (s) => s.vac, "Vacillante: critico automatico"),
-      R("caccia_al_ferito", (s) => s.vac || s.annuncio, "Vacillante o colpo annunciato: un dado in più e niente carica"),
+      R("caccia_al_ferito", (s) => s.vac || s.annuncio, "Vacillante o colpo annunciato: un dado di danno in più e niente carica"),
       R("assalto_implacabile", (s) => !s.haSa && s.puoSa, "applica e aggrava lo stato dell'arma in un colpo"),
       R("colpo_di_mestiere", (s) => !s.haSa && s.puoSa, "prima lo stato dell'arma"),
       R("colpo_crudele", (s) => s.haSa && !s.graveSa, "stato dell'arma presente: lo aggrava"),
@@ -86,12 +86,12 @@
     ],
     realta: [
       R("collasso_gravitazionale", (s) => s.boss && s.turno <= 2, "danno e Esposto per 3 turni"),
-      R("lancia_di_realta", (s) => !s.ha("esposto"), "due dadi in più e Esposto"),
+      R("lancia_di_realta", (s) => !s.ha("esposto"), "due dadi di danno in più e Esposto"),
       R("colpo_di_forza", (s) => !s.ha("esposto"), "prima l'Esposto"),
       R("punto_di_rottura", (s) => s.ha("esposto"), "l'Esposto non scade più"),
       R("schianto", (s) => s.ha("esposto") && !s.grave("esposto"), "aggrava: Scoperto"),
-      R("annullamento", (s) => s.grave("esposto"), "Scoperto: 2 dadi in più"),
-      R("doppia_frattura", (s) => s.grave("esposto"), "Scoperto: due dadi in più"),
+      R("annullamento", (s) => s.grave("esposto"), "Scoperto: 2 dadi di danno in più"),
+      R("doppia_frattura", (s) => s.grave("esposto"), "Scoperto: due dadi di danno in più"),
       R("sovraccarico", (s) => s.ha("esposto"), "danno senza tiro, aggrava"),
       R("gravita", (s) => s.ha("esposto") && !s.ha("indebolito"), "Esposto: Indebolito più lungo, senza tiro"),
       R("spezzare_la_materia", (s) => s.n.res && s.n.res.forza === "res", "resiste alla forza"),
@@ -112,14 +112,14 @@
       R("dardo_fantasma", sempre, "attacco base, +1d4 con le Copie")
     ],
     sangue: [
-      R("sangue_in_piena", (s) => s.boss && s.turno <= 2, "un dado in più per 3 turni, aggrava"),
+      R("sangue_in_piena", (s) => s.boss && s.turno <= 2, "un dado di danno in più per 3 turni, aggrava"),
       R("costellazione_rossa", (s) => s.boss, "sfere ogni turno"),
       R("dardo_di_sangue", (s) => !s.ha("sanguinante"), "prima il Sanguinante"),
       R("ebollizione", (s) => s.ha("sanguinante") && !s.grave("sanguinante"), "aggrava: Emorragia"),
       R("marea_cremisi", (s) => s.grave("sanguinante"), "Emorragia: durata doppia"),
       R("cuore_spezzato", (s) => s.grave("sanguinante") && s.turni("sanguinante") >= 2, "incassa il doppio dei turni"),
       R("meteora_di_sangue", (s) => s.ha("sanguinante"), "sanguina: critico con 19-20"),
-      R("lancia_di_sangue", sempre, "due dadi in più"),
+      R("lancia_di_sangue", sempre, "due dadi di danno in più"),
       R("vincolo_di_sangue", (s) => s.boss && s.pvPct > 0.6, "il boss divide il danno che subisci"),
       R("frusta_cremisi", (s) => s.ha("sanguinante") && s.turni("sanguinante") <= 1, "il sanguinamento sta per scadere: lo allunga"),
       R("crosta", (s) => s.annuncio && s.ioVac, "colpo annunciato e poca salute"),
@@ -133,7 +133,7 @@
       R("prigione_d_ossa", (s) => !s.ha("esposto"), "Esposto per 3 turni"),
       R("decrepitezza", (s) => !s.ha("indebolito"), "Indebolito ed Esposto, una placca"),
       R("armata_dei_morti", (s) => s.vac || s.turno >= 4, "danno grande senza consumare placche"),
-      R("lama_d_osso", (s) => s.placche >= 1 && s.placche < 3, "due dadi in più, la placca torna"),
+      R("lama_d_osso", (s) => s.placche >= 1 && s.placche < 3, "due dadi di danno in più, la placca torna"),
       R("armatura_d_ossa", (s) => s.placche < 3, "una placca e +2 CA"),
       R("spine_d_ossa", (s) => s.placche < 3, "una placca e Indebolito"),
       R("lancia_d_ossa", sempre, "attacco base")
@@ -147,6 +147,7 @@
     s.disp = disp; /* le regole possono chiedere se un potere è pronto (es. costruire Copie solo se c'è qualcosa che le spende) */
     const cura = CURE.find(disp);
     if (cura && (s.pvPct < 0.4 || (s.ioVac && s.annuncio))) return { id: cura, perche: "salute bassa: si cura" };
+    if (disp("ultimo_colpo") && (s.vac || s.turno >= 3)) return { id: "ultimo_colpo", perche: "Lascito di Dafne: colpo garantito" };
     for (const r of REGOLE[p.spec] || []) if (disp(r.id) && r.quando(s)) return { id: r.id, perche: r.perche };
     const off = S.offesaDi(p); if (disp(off)) return { id: off, perche: "attacco base" };
     const q = mie.find(disp); return { id: q || null, perche: q ? "l'unico disponibile" : "niente da usare" };
@@ -168,6 +169,9 @@
     if (S.disponibileSet && n && n.boss !== undefined) {
       if (S.disponibileSet(p, "sguardo_della_casa").ok) return { tipo: "set", id: "sguardo_della_casa", perche: "set: Sguardo della Casa" };
       if (S.disponibileSet(p, "voce_del_sangue").ok) return { tipo: "set", id: "voce_del_sangue", perche: "set: Voce del sangue" };
+      /* set di classe, 3 pezzi: Grido, Lampo e Radice appena possibile; Fede contro un colpo annunciato o da Vacillante */
+      for (const id of ["grido_del_valoroso", "lampo_di_intuizione", "radice_che_resta"]) if (S.disponibileSet(p, id).ok) return { tipo: "set", id, perche: "set di classe" };
+      if ((n.pronto || P.vacillante(p)) && S.disponibileSet(p, "fede_incrollabile").ok) return { tipo: "set", id: "fede_incrollabile", perche: "set di classe: Fede incrollabile" };
     }
     return null;
   }

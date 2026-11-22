@@ -39,7 +39,7 @@ window.Regole = (() => {
     ["Socialità", "Spirito", { it: "Il modo di trattare con gli altri, gentile o duro: convincere, negoziare, intimidire. Conta l'approccio che scegli.", en: "How you deal with others, kindly or harshly: convincing, negotiating, intimidating. The approach you choose matters." }],
     ["Intuizione", "Spirito", { it: "Leggere le intenzioni altrui: capire chi mente, cosa nasconde un silenzio, cosa vuole davvero chi ti sta davanti.", en: "Reading other people's intentions: telling who is lying, what a silence hides, what the person before you truly wants." }]
   ],
-  MALUS_AGILITA: { "Armatura leggera": 0, "Armatura media": 1, "Armatura pesante": 2, Scudo: 1 }, /* malus alle abilità di Agilità */
+  MALUS_AGILITA: { "Armatura leggera": 0, "Armatura media": 0, "Armatura pesante": 1, Scudo: 1 }, /* malus alle abilità di Agilità (20/11: solo la pesante, -1) */
   MAX_ABILITA: 4,
   MAX_DOTAZIONE: 7, /* 17/11: dotazione fissa di sette oggetti */
 
@@ -58,7 +58,10 @@ window.Regole = (() => {
   TECNICHE_SCUDO: 1,           /* una tecnica in più con lo scudo imbracciato */
   SALUTE_BASE: 10,             /* salute fisica e mentale = 10 + massimo del dado vita + modificatore (28/10) */
   CA_BASE: 10,
-  TETTO_AGILITA: { "Armatura leggera": 3, "Armatura media": 2, "Armatura pesante": 0 },
+  /* 20/11 (Francesco): più scalino tra le armature, così servono tutte. Con Agilità +1/+2/+3: leggera 2/3/4, media 4/5/5, pesante 6.
+     Malus alle prove di Agilità: vedi MALUS_AGILITA più sopra (solo la pesante, -1). */
+  ARMATURA_CA: { "Armatura leggera": 1, "Armatura media": 3, "Armatura pesante": 6 },
+  TETTO_AGILITA: { "Armatura leggera": 4, "Armatura media": 2, "Armatura pesante": 0 },
 
   /* prove e combattimento */
   COSTO_PROVA_FALLITA: 1,      /* punti di salute mentale */

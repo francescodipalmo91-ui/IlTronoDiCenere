@@ -116,6 +116,46 @@
     });
   });
 
+  /* ===== vuoti (vuoti.md, 22/11) ===== */
+  caso("Vuoti: statistiche per fascia e poteri (a volontà 1 dalla 0, per scontro dalla 2, a volontà 2 dalla 3); tutti maledetti", () => {
+    eq(N.FASCE_VUOTI.map(f => [f.pv, f.ca, f.att]), [[20, 11, 2], [26, 12, 3], [32, 13, 4], [38, 14, 5], [44, 15, 6]]);
+    eq([0, 1, 2, 3, 4].map(f => { const v = N.crea("vuoto:" + f + ":trappolista"); return [v.volonta.length, v.scontro.length]; }), [[1, 0], [1, 0], [1, 1], [2, 1], [2, 1]]);
+    const v = N.crea("vuoto:2:veleni"); eq([v.maledetto, v.vuoto, v.arma.tipo, v.agguato], [true, true, "veleno", "Percezione"]);
+    eq(N.crea("vuoto:0:carica").agguato, "Intuizione");
+  });
+  caso("Carica a testa bassa: un dado in più, poi −2 CA fino al suo turno", () => {
+    const v = N.crea("vuoto:0:carica"), g = pg(), c = ctx([15, 3, 3]); N.agisci(v, g, c); eq(g.pv, 30 - 7); eq(S.ca(v), 9); fine(c);
+    S.inizioTurno(v, g, ctx([])); eq(S.ca(v), 11);
+  });
+  caso("Colpo alle spalle +2 solo al primo turno se agisce per primo; Ferita finta: un dado in più se hai mancato", () => {
+    const v = N.crea("vuoto:0:imboscata", { primo: true }), g = pg(), r = N.agisci(v, g, ctx([12, 1])); eq(ev(r, "attacco")[0].tot, 16, "12 + 2 + 2");
+    const f = N.crea("vuoto:0:finto"), h = pg({ ultimoMancato: true }), c = ctx([15, 1, 1]); N.agisci(f, h, c); fine(c);
+  });
+  caso("Buca (trappolista, per scontro): 2d6 senza tiro e perdi l'azione rapida del turno dopo", () => {
+    const v = N.crea("vuoto:2:trappolista"), g = pg(); const E = N.esegui(v, g, "buca", ctx([3, 4])); eq(g.pv, 23); vero(ev(E, "rapidaPersa").length === 1);
+    S.inizioTurno(g, v, ctx([])); eq(!!S.rapidaLibera(g), false); S.inizioTurno(g, v, ctx([])); eq(!!S.rapidaLibera(g), true);
+  });
+  caso("Respiro d'ombra: un TS solo; fallito → Intossicato e subito aggravato", () => {
+    const v = N.crea("vuoto:2:veleni"), g = pg(), c = ctx([15, 1, 1, 2]); N.esegui(v, g, "respiro_d_ombra", c); eq(g.stati.intossicato.liv, 2); fine(c);
+  });
+  caso("Cacce: vuoto élite (+50% salute, +1 CA, +1 attacco), Colpo feroce e Colpo furioso con lo stato dell'archetipo; vulnerabilità", () => {
+    const c = N.crea("caccia:gualtiero"); eq([c.nome, c.pv, c.caBase, c.modAtt, c.volonta, c.scontro], ["Gualtiero Pietrafenda", 39, 13, 4, ["carica_testa_bassa", "colpo_feroce"], ["colpo_furioso_stordito"]]);
+    eq(c.res, { psichico: "vuln", contundente: "res" }); eq(Object.keys(N.CACCE).length, 8);
+    const e = N.crea("caccia:ezechiele"); eq([e.volonta.length, e.scontro.length], [3, 2], "fascia 4: 3 / 2");
+  });
+  caso("Prova dell'agguato: riuscita = −2 CA al vuoto nel primo round; fallita = agisce per primo (+2 alle spalle) e tu hai −2 CA", () => {
+    const v = N.crea("vuoto:0:imboscata"), g = pg(); const a = N.provaAgguato(v, g, 3, ctx([12, 10])); eq([a.ok, a.tot, a.contro], [true, 15, 12]); eq(S.ca(v), 9);
+    const w = N.crea("vuoto:0:imboscata"), h = pg(); const b = N.provaAgguato(w, h, 3, ctx([5, 10])); eq([b.ok, S.ca(h), w.primo], [false, 14, true]);
+    const r = N.agisci(w, h, ctx([10, 1])); eq(ev(r, "attacco")[0].tot, 14, "10 + 2 + 2 alle spalle");
+    eq(N.provaAgguato(N.crea("vuoto:1:carica"), pg(), 0, ctx([]), { auto: true }).ok, true);
+  });
+  caso("Vuoti: ogni fascia e archetipo gioca uno scontro intero senza errori", () => {
+    Object.keys(N.ARCHETIPI).forEach(a => [0, 2, 4].forEach(f => {
+      const v = N.crea(`vuoto:${f}:${a}`), g = pg({ pv: 999, pvMax: 999 }), c = { tira: (d) => 1 + Math.floor(Math.random() * d) };
+      for (let t = 0; t < 8; t++) { S.inizioTurno(v, g, c); N.agisci(v, g, c); S.fineTurno(v); S.inizioTurno(g, v, c); S.fineTurno(g); }
+    }));
+  });
+
   function esegui() { return casi.map(({ nome, fn }) => { try { fn(); return { nome, ok: true }; } catch (e) { return { nome, ok: false, errore: e.message }; } }); }
   root.TestNemici = { esegui, casi };
   if (inNode && require.main === module) {

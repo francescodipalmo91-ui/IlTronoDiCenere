@@ -80,7 +80,7 @@ Privilegi del Guerriero dal diagramma; quelli delle altre classi assegnati per t
 | Giornaliero | Assalto implacabile | Scelta dal livello 1 | Due attacchi: il primo applica lo stato, il secondo lo aggrava |
 | Giornaliero | Colpo del boia | Scelta dal livello 1 | Doppio dei dadi; critico automatico se il bersaglio è Vacillante |
 | Giornaliero | Marchio della preda | Scelta al livello 3 | Per lo scontro +1d4 a tutti i tuoi attacchi contro il bersaglio |
-| Giornaliero finale | Sentenza | Arriva da solo al livello 5 | Tre attacchi; se Vacillante sono tutti critici |
+| Giornaliero finale | Resa dei conti (ex Sentenza) | Arriva da solo al livello 5 | Tre attacchi; se Vacillante sono tutti critici |
 
 ## Paladino (ex Difensore) — incassa, contrattacca, toglie al nemico i colpi migliori
 
@@ -151,10 +151,10 @@ Privilegi del Guerriero dal diagramma; quelli delle altre classi assegnati per t
 | Per scontro | Lancia di realtà | Scelta dal livello 1 | Attacco +2 dadi, applica Esposto |
 | Per scontro | Spezzare la materia | Scelta dal livello 1 | Attacco +1 dado; ignora le resistenze (non le immunità) |
 | Per scontro | Doppia frattura | Scelta al livello 4 | Attacco; se il bersaglio è già Scoperto, +2 dadi |
-| Giornaliero | Sovraccarico | Scelta dal livello 1 | 2d8 + Mente, aggrava l'Esposto |
+| Giornaliero | Sovraccarico | Scelta dal livello 1 | 2d8 senza tiro, aggrava l'Esposto (16/11: senza Mente) |
 | Giornaliero | Collasso gravitazionale | Scelta dal livello 1 | 3 turni: a inizio turno 1d8 senza tiro, applica/aggrava l'Esposto |
 | Giornaliero | Punto di rottura | Scelta al livello 3 | Per lo scontro l'Esposto/Scoperto non scade |
-| Giornaliero finale | Annullamento | Arriva da solo al livello 5 | 4d8 + Mente senza tiro, aggrava; se già Scoperto, doppio dei dadi |
+| Giornaliero finale | Annullamento | Arriva da solo al livello 5 | 4d8 senza tiro, aggrava; se già Scoperto, +2 dadi (15/11; 16/11: senza Mente) |
 
 ## Illusione (difensiva) — inganna, il nemico colpisce il vuoto; danno psichico
 **Copie:** max 3, deterministiche, spariscono a fine scontro. Un attacco che ti colpirebbe colpisce una Copia: metà danno, la Copia svanisce, l'attaccante diventa Indebolito. Colpi caricati/area distruggono tutte le Copie.
@@ -164,14 +164,14 @@ Privilegi del Guerriero dal diagramma; quelli delle altre classi assegnati per t
 | A volontà | Dardo fantasma | Scelta dal livello 1 | dado dell'arma (d8 con il focus) + Mente; +1d4 se hai una Copia |
 | A volontà | Sussurro illusorio | Scelta dal livello 1 | 1d6, Indebolito; se già Indebolito nasce una Copia |
 | A volontà | Riflessi | Scelta dal livello 1 | +2 CA; se il nemico manca, nasce una Copia |
-| Per scontro | Frantumare | Scelta dal livello 1 | Consumi le Copie: 1d6 + Mente per Copia; con 3 Copie anche Esposto |
+| Per scontro | Frantumare | Scelta dal livello 1 | Consumi le Copie: 1d6 per Copia, senza Mente (16/11); con 3 Copie anche Esposto |
 | Per scontro | Labirinto | Scelta dal livello 1 | TS Mente → Stordito (boss Indebolito); nasce una Copia |
 | Per scontro | Sdoppiamento | Scelta dal livello 1 | Costa l'azione: 2 Copie e +2 CA |
 | Per scontro | Specchio rotto | Scelta al livello 4 | Nasce una Copia; la prossima distrutta rimanda il danno pieno (metà sui boss) |
-| Giornaliero | Incubo | Scelta dal livello 1 | 2d8 + Mente, +1d6 per Copia (senza consumarle); TS Spirito → Impaurito |
+| Giornaliero | Incubo | Scelta dal livello 1 | 2d8, +1d6 per Copia (senza consumarle; senza Mente dal 22/11); TS Spirito → Impaurito |
 | Giornaliero | Dado truccato | Scelta dal livello 1 | 3 turni il nemico tira 2d20 e tiene il peggiore (2 sui boss) |
 | Giornaliero | Teatro di specchi | Scelta al livello 3 | Copie al massimo; 3 turni ogni Copia distrutta esplode 1d6 su chi l'ha colpita |
-| Giornaliero finale | Il Grande Inganno | Arriva da solo al livello 5 | Consumi le Copie: 2d8 + Mente per Copia; 2 turni 2d20 al nemico, tiene il peggiore |
+| Giornaliero finale | Il Grande Inganno | Arriva da solo al livello 5 | Consumi le Copie: 2d8 per Copia, senza Mente (16/11); 2 turni 2d20 al nemico, tiene il peggiore |
 
 ---
 
@@ -194,7 +194,7 @@ Il fuoco sacro (ex Purificatore) non è più di nessuna classe: resta come tipo 
 | Giornaliero | Cuore spezzato | Scelta dal livello 1 | Aggrava, subisce subito il doppio dei turni residui e lo stato finisce |
 | Giornaliero | Sangue in piena | Scelta dal livello 1 | 3 turni: +1 dado, ogni colpo aggrava |
 | Giornaliero | Vincolo di sangue | Scelta al livello 3 | TS Spirito → 3 turni il bersaglio subisce metà del danno che subisci tu |
-| Giornaliero finale | Marea cremisi | Arriva da solo al livello 5 | 4d8 + Spirito senza tiro, aggrava; se Emorragia durata raddoppiata (6) |
+| Giornaliero finale | Marea cremisi | Arriva da solo al livello 5 | 4d8 senza tiro (16/11: senza Spirito), aggrava; se Emorragia durata raddoppiata (6) |
 
 ## Ossa (difensiva, ex Ossomante) — carica e scarica
 **Placche d'ossa:** max 3, sull'armatura, spariscono a fine scontro; un colpo subito ne spezza una e riduce il danno di 3 + 1 per livello oltre il primo. Nascono da Spine d'ossa, Armatura d'ossa e poteri che lo dicono. Gabbia d'ossa: 19-20 naturale con Lancia/Spine → Stordito (boss Indebolito).
@@ -204,14 +204,14 @@ Il fuoco sacro (ex Purificatore) non è più di nessuna classe: resta come tipo 
 | A volontà | Lancia d'ossa | Scelta dal livello 1 | dado dell'arma (d8 con il focus) + Spirito; critico 19-20 |
 | A volontà | Spine d'ossa | Scelta dal livello 1 | 1d6, Indebolito; nasce una placca |
 | A volontà | Armatura d'ossa | Scelta dal livello 1 | 1d4 senza tiro, +2 CA, nasce una placca |
-| Per scontro | Spirito d'ossa | Scelta dal livello 1 | Spendi tutte le placche: 1d6 + Spirito per placca |
+| Per scontro | Spirito d'ossa | Scelta dal livello 1 | Spendi tutte le placche: 1d8 per placca, senza Spirito (15/11, 16/11) |
 | Per scontro | Lama d'osso | Scelta dal livello 1 | Spendi 1 placca: attacco +2 dadi; se colpisce la placca torna |
 | Per scontro | Barricata di costole | Scelta dal livello 1 | Costa l'azione: placche al massimo; prossimo attacco nemico −2 |
 | Per scontro | Decrepitezza | Scelta al livello 4 | TS Vigore → Indebolito ed Esposto; nasce una placca |
 | Giornaliero | Prigione d'ossa | Scelta dal livello 1 | TS Vigore → Stordito (boss Indebolito); in ogni caso Esposto 3 turni |
 | Giornaliero | Armatura del sepolcro | Scelta dal livello 1 | 3 turni: a inizio turno placche al massimo |
 | Giornaliero | Armatura spezzata | Scelta al livello 3 | Ogni placca spezzata fa 1d6 a chi ha colpito |
-| Giornaliero finale | Armata dei morti | Arriva da solo al livello 5 | 4d8 + Spirito senza tiro; Stordito (boss Indebolito); senza consumare le placche |
+| Giornaliero finale | Armata dei morti | Arriva da solo al livello 5 | 4d8 senza tiro (16/11: senza Spirito); Stordito (boss Indebolito); senza consumare le placche |
 
 ---
 

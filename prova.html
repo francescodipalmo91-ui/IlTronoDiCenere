@@ -195,7 +195,9 @@
         <div class="campo"><b class="sotto">Mano secondaria</b>
           <label><input type="radio" name="mano2" value="niente"> niente</label>
           <label><input type="radio" name="mano2" value="scudo"> scudo (+1 CA)</label>
-          <label id="focusRiga"><input type="radio" name="mano2" value="focus"> focus, bonus +<input type="number" id="focusBonus" value="0" min="0" max="3"></label>
+          <span id="focusRiga"><label><input type="radio" name="mano2" value="focus"> focus</label>
+            <select id="focusTipo" aria-label="Oggetto focus"><option value="focus_comune">comune +0</option><option value="focus_rinforzato">Focus rinforzato +1</option><option value="sfera_armillare">Sfera armillare +2 (Raro)</option><option value="verga_di_cenere">Verga di cenere +3 (Leggendario)</option><option value="focus_del_penitente">Focus del Penitente +2 (set)</option><option value="focus_del_pellegrino">Focus del Pellegrino +2 (set)</option></select>
+            <select id="focusForma" aria-label="Forma del focus"><option value="normale">forma normale</option><option value="scudo">forma scudo (un dado sotto, +1 CA)</option></select></span>
           <input type="checkbox" id="scudo" hidden>
           <div id="manoInfo" class="info"></div></div>
         <div class="campo"><label>Seconda arma, nello zaino <select id="arma2"></select></label><div id="arma2Info" class="info"></div></div>
@@ -204,6 +206,7 @@
         <h3>Equipaggiamento <span class="nota">(nella sala si vedono tutti i poteri)</span></h3>
         <div id="equip" class="slot"></div>
         <div id="equipInfo" class="info"></div>
+        <div class="campo"><label><input type="checkbox" id="lascito"> Pergamena Lascito di Dafne (Ultimo colpo, giornaliero)</label></div>
       </div>
       <div class="blocco">
         <h3>Set e borsa</h3>
@@ -272,6 +275,7 @@
       <h3 style="font:600 13px var(--t);color:var(--muted);margin:4px 0">Simulazione rapida</h3>
       <div class="riga">
         <label>Scontri <input type="number" id="simN" value="200" min="10" max="2000" style="width:70px"></label>
+        <label title="Vuoti degli agguati: quanti di fila senza riposo (salute e pozioni non tornano); vale come vittoria solo se li vinci tutti">Agguati di fila <select id="simFila"><option>1</option><option>2</option><option>3</option></select></label>
         <button type="button" id="simula">Simula con il giocatore automatico</button>
       </div>
       <div class="nota">Il giocatore automatico usa: per scontro appena può, giornaliero quando il nemico è Vacillante, poi l'offesa a volontà; da Vacillante beve una pozione (azione rapida, 2 a scontro). Riposa prima di ogni scontro. Serve solo per un'idea grezza.</div>
@@ -326,12 +330,11 @@
 
   /* classi: chiave interna di Regole, preset di test.html, specializzazioni */
   const CLASSI = { Soldato: { nome: "Guerriero", preset: "guerriero" }, Forestiero: { nome: "Sciamano", preset: "sciamano" }, Sapiente: { nome: "Arcanista", preset: "arcanista" }, Accolito: { nome: "Monaco", preset: "monaco" } };
-  /* armi comuni a griglia (14/11/2026): tre tipi × una mano (d6) / due mani (d8), più il bastone (arma e focus insieme). Nomi provvisori */
+  /* armi comuni a griglia (14/11/2026): tre tipi × una mano (d6) / due mani (d8), Nomi provvisori (il bastone come arma/focus a due mani è cancellato dal 17/11) */
   const ARMI = [
     { nome: "Spada (taglio d6)", dado: 6, tipo: "taglio" }, { nome: "Spadone (taglio d8, 2 mani)", dado: 8, tipo: "taglio", dueMani: true },
     { nome: "Mazza ferrata (contundente d6)", dado: 6, tipo: "contundente" }, { nome: "Maglio (contundente d8, 2 mani)", dado: 8, tipo: "contundente", dueMani: true },
-    { nome: "Pugnale (perforante d6)", dado: 6, tipo: "perforante" }, { nome: "Tridente (perforante d8, 2 mani)", dado: 8, tipo: "perforante", dueMani: true },
-    { nome: "Bastone (contundente d8, 2 mani, è anche focus)", dado: 8, tipo: "contundente", dueMani: true, eFocus: true }
+    { nome: "Pugnale (perforante d6)", dado: 6, tipo: "perforante" }, { nome: "Tridente (perforante d8, 2 mani)", dado: 8, tipo: "perforante", dueMani: true }
   ];
   const NOMI_TIPO = { volonta: "A volontà", scontro: "Per scontro", giornaliero: "Giornalieri" };
   const NOMI_TRATTI = Object.fromEntries(Object.entries(SP.TRATTI).map(([k, t]) => [k, k === "mente_incrollabile" ? t.nome + " (fuori scontro)" : t.nome]));
@@ -346,13 +349,13 @@
   /* armi speciali (js/oggetti.js) dopo le comuni; nei menu raggruppate per rarità */
   const OG = window.Oggetti;
   Object.entries(OG.ARMI).forEach(([id, a]) => ARMI.push({ ...a, speciale: id }));
-  const RARITA = ["Comune", "Non comune", "Raro", "Leggendario"];
+  const RARITA = ["Comune", "Non comune", "Raro", "Leggendario", "Set"]; /* Set: pezzi dei set di classe (22/11) */
   const nomeBreve = (a) => (a.speciale ? a.nome : a.nome.replace(/ \(.*$/, ""));
   const etichettaArma = (a) => `${nomeBreve(a)} — ${NOMI_DANNO[a.tipo] || a.tipo} d${a.dado}${a.dueMani ? ", 2 mani" : ""}${a.speciale ? ` +${a.bonus}` : ""}${a.potere ? " ★" : ""}`;
   function riempiArmi(sel, conNessuna) {
     if (conNessuna) sel.add(new Option("— nessuna —", ""));
     RARITA.forEach(r => {
-      const g = document.createElement("optgroup"); g.label = r === "Comune" ? "Comuni (+ il bonus che scegli)" : `${r} (+${{ "Non comune": 1, Raro: 2, Leggendario: 3 }[r]}${r === "Raro" ? ", potere per scontro" : r === "Leggendario" ? ", potere giornaliero, d10" : ""})`;
+      const g = document.createElement("optgroup"); g.label = r === "Set" ? "Set di classe (+2)" : r === "Comune" ? "Comuni (+ il bonus che scegli)" : `${r} (+${{ "Non comune": 1, Raro: 2, Leggendario: 3 }[r]}${r === "Raro" ? ", potere per scontro" : r === "Leggendario" ? ", potere giornaliero, d10" : ""})`;
       ARMI.forEach((a, i) => { if ((a.rarita || "Comune") === r) g.append(new Option(etichettaArma(a), i)); });
       sel.append(g);
     });
@@ -365,7 +368,8 @@
     return `<span>${nome}</span><select class="eqSlot" data-posto="${posto}" id="eq${i}"><option value="">${posto === "armatura" ? "quella della classe" : posto === "scudo" ? "scudo base (se in mano)" : "— niente —"}</option>${opz.map(([id, e]) => `<option value="${id}">${e.nome} (${e.rarita}${e.ca ? ", +" + e.ca + " CA" : ""})</option>`).join("")}</select>`;
   }).join("");
   const equipScelto = () => [...document.querySelectorAll(".eqSlot")].map(x => x.value).filter(Boolean);
-  const testoEquip = (e) => (e.potere ? `<span class="pot">${e.potere.tipo === "scontro" ? "per scontro" : "giornaliero"}, azione rapida</span>: ${e.potere.testo}` : "")
+  const testoEquip = (e) => (e.setClasse ? `<span class="pot">set ${OG.SET_CLASSE[e.setClasse].nome}</span> ` : "") + (e.classi ? `<span class="pot">veste</span> ` : "")
+    + (e.abilita ? Object.entries(e.abilita).map(([k, v]) => `+${v} ${k}`).join(", ") + " (prove) " : "") + (e.attributi ? Object.entries(e.attributi).map(([k, v]) => `+${v} mod. ${k}`).join(", ") + " " : "") + (e.potere ? `<span class="pot">${e.potere.tipo === "scontro" ? "per scontro" : "giornaliero"}, ${e.potere.automatico ? "parte da solo all'inizio del primo turno" : "azione rapida"}</span>: ${e.potere.testo}` : "")
     + (e.tsStato ? `passivo: ${Object.entries(e.tsStato).map(([k, v]) => `+${v} ai TS contro ${P.nomeStato(k, 1)}`).join(", ")}` : "") + (e.cinturone ? "passivo: una volta per scontro un'azione rapida in più" : "") + (e.immuni ? ` · immune a ${e.immuni.map(k => P.nomeStato(k, 1)).join(", ")}` : "");
   const testoArma = (a, bonus) => `<b>${nomeBreve(a)}</b>: ${NOMI_DANNO[a.tipo] || a.tipo}, d${a.dado}, ${a.dueMani ? "due mani" : "una mano"}, ${a.speciale ? `${a.rarita} +${a.bonus}` : `comune +${bonus || 0}`}${a.eFocus ? ", fa anche da focus" : ""}${a.facce ? ", due facce (maglio / ascia)" : ""} · stato: ${S.STATO_ARMA[a.tipo] ? P.nomeStato(S.STATO_ARMA[a.tipo], 1) : a.tipo === "fuoco" ? "Scottato (dal potere)" : "—"}${a.potere ? `<br><span class="pot">${a.potere.tipo === "scontro" ? "Per scontro" : "Giornaliero"}: ${OG.POTERI_ARMA[a.potere.id].nome}</span> — ${OG.POTERI_ARMA[a.potere.id].testo}` : ""}`;
   /* il riquadro Armi ed Equipaggiamento: regole delle mani e descrizioni sempre aggiornate */
@@ -377,25 +381,33 @@
     $("focusRiga").title = inc ? "" : "Il Guerriero non usa il focus";
     let m = document.querySelector("input[name=mano2]:checked"); if (!m || m.disabled) { document.querySelector("input[name=mano2][value=niente]").checked = true; m = document.querySelector("input[name=mano2]:checked"); }
     if (scudoEq && !a.dueMani) { fScudo.checked = true; m = fScudo; }
-    $("scudo").checked = m.value === "scudo";
+    $("focusForma").disabled = m.value !== "focus"; $("focusTipo").disabled = m.value !== "focus";
+    $("scudo").checked = m.value === "scudo" || (m.value === "focus" && $("focusForma").value === "scudo");
     $("bonusRiga").hidden = !!a.speciale;
     $("armaInfo").innerHTML = testoArma(a, +$("armaBonus").value);
     $("manoInfo").innerHTML = a.dueMani ? (a.eFocus ? "Due mani: il bastone fa già da focus." : "Arma a due mani: niente scudo né focus.")
       : m.value === "scudo" ? `Scudo: ${scudoEq ? OG.EQUIP[scudoEq].nome + " (dall'equipaggiamento)" : "scudo base +1 CA"}; con <i>In guardia</i> +4 CA.`
-      : m.value === "focus" ? "Focus: i poteri degli incantatori tirano d8 se l'arma è d6 e sommano il bonus del focus." : inc ? "Mano libera: niente scudo né amplificazione del focus." : "Mano libera.";
+      : m.value === "focus" ? (() => { const f = OG.focus($("focusTipo").value, $("focusForma").value); return `${f.nome}, ${f.forma === "scudo" ? "forma scudo" : "forma normale"}: i poteri degli incantatori tirano d${f.dado} se l'arma è più bassa e sommano +${f.bonus}${f.ca ? "; +" + f.ca + " CA, nessun malus di Agilità" : ""}.${f.potere ? ` <span class="pot">${f.potere.tipo === "scontro" ? "Per scontro" : "Giornaliero"}: ${OG.POTERI_ARMA[f.potere.id].nome}</span> — ${OG.POTERI_ARMA[f.potere.id].testo}` : ""}`; })() : inc ? "Mano libera: niente scudo né amplificazione del focus." : "Mano libera.";
     const a2 = $("arma2").value !== "" ? ARMI[+$("arma2").value] : null;
     $("arma2Info").innerHTML = a2 ? testoArma(a2, 0) + "<br>Si impugna con l'azione rapida durante lo scontro." : "Al massimo due armi con sé.";
     const eq = equipScelto().map(id => OG.EQUIP[id]);
     $("equipInfo").innerHTML = eq.length ? eq.map(e => `<div><b>${e.nome}</b> — ${testoEquip(e) || "nessun potere"}</div>`).join("") : "Nessun oggetto con poteri. CA dall'armatura della classe.";
   }
-  document.querySelectorAll("input[name=mano2], .eqSlot, #armaBonus, #focusBonus").forEach(x => x.addEventListener("change", aggiornaArmi));
+  document.querySelectorAll("input[name=mano2], .eqSlot, #armaBonus, #focusTipo, #focusForma").forEach(x => x.addEventListener("change", aggiornaArmi));
   Object.entries(N.NEMICI).filter(([k]) => k !== "mastino_di_dafne").forEach(([k, n]) => $("nemico").add(new Option(`${n.nome} (liv. ${n.liv}${n.elite ? ", élite" : ""})`, k)));
   Object.entries(N.BOSS).forEach(([k, n]) => $("nemico").add(new Option(`${n.nome} (liv. ${n.liv}, ${k === "sovrano" ? "sovrano" : "guardiano"})`, k)));
-  const nomeNem = (k) => (N.BOSS[k] || N.NEMICI[k]).nome;
+  /* vuoti degli agguati (fascia × archetipo) e le otto cacce (22/11, vuoti.md) */
+  { const g = document.createElement("optgroup"); g.label = "Vuoti degli agguati (fascia 0-4)";
+    N.FASCE_VUOTI.forEach((_, f) => Object.entries(N.ARCHETIPI).forEach(([a, x]) => g.append(new Option(`Vuoto, ${x.nome.toLowerCase()} (fascia ${f})`, `vuoto:${f}:${a}`)))); $("nemico").append(g);
+    const h = document.createElement("optgroup"); h.label = "Cacce (vuoti élite)";
+    Object.entries(N.CACCE).forEach(([k, c]) => h.append(new Option(`${c.nome} (fascia ${c.fascia}, ${N.ARCHETIPI[c.arch].nome.toLowerCase()})`, "caccia:" + k))); $("nemico").append(h); }
+  const nomeNem = (k) => (N.BOSS[k] || N.NEMICI[k] || N.crea(k)).nome;
   /* Dafne: lo stacco con il mastino (il mastino diventa il bersaglio; Dafne aspetta in riserva) */
   let riserva = null, staccoTurni = 0;
   /* Percezione per cercare Dafne: ASSUNZIONE della sala di prova = modificatore di Mente + livello */
   const bonusPercezione = () => ((pg.mod && pg.mod.Mente) || 0) + pg.liv;
+  /* prova dell'agguato nella sala: Percezione = Mente + livello, Intuizione = Spirito + livello (assunzione, come per Dafne) */
+  const bonusAgguato = (p, n) => ((p.mod && p.mod[n.agguato === "Intuizione" ? "Spirito" : "Mente"]) || 0) + p.liv;
   function gestisciEvoca(E) {
     if (!E.some(e => e && e.k === "evoca")) return;
     riserva = nem; staccoTurni = 0; nem = N.crea("mastino_di_dafne"); selNem = null;
@@ -526,7 +538,7 @@
     const a1 = conBonus(arma, +$("armaBonus").value || 0), a2 = $("arma2").value !== "" ? conBonus(ARMI[+$("arma2").value], 0) : null;
     /* focus: solo incantatori, in mano secondaria (lo scudo lo esclude); il bastone è arma e focus */
     const mano2 = (document.querySelector("input[name=mano2]:checked") || {}).value;
-    const focus = classe !== "Soldato" && mano2 === "focus" && !arma.dueMani ? { dado: 8, bonus: +$("focusBonus").value || 0 } : null;
+    const focus = classe !== "Soldato" && mano2 === "focus" && !arma.dueMani ? OG.focus($("focusTipo").value, $("focusForma").value) : null;
     const eqIds = equipScelto(), armEq = eqIds.map(id => OG.EQUIP[id]).find(e => e.slot === "armatura"), scudoEq = eqIds.some(id => OG.EQUIP[id].slot === "scudo") && scudo;
     const caratt = { Vigore: pr.vig, "Agilità": pr.agi, Mente: pr.men, Spirito: pr.spi };
     const m = Object.fromEntries(Object.entries(caratt).map(([k, x]) => [k, mod(x)]));
@@ -536,7 +548,7 @@
     const p = {
       nome: "Tu", classe, spec, liv, razza, caratt, mod: m, modClasse: m[R.ATTR_CLASSE[classe]], pv: pr.pv, pvMax: pr.pv, caBase: ca,
       arma: a1, armi: a2 ? [a1, a2] : [a1], scudo, focus, via: liv >= 2 ? $("via").value || null : null,
-      poteri: SP.poteriAlLivello(classe, spec, scelti, liv), tratti: SP.trattiAlLivello(classe, liv), stati: {},
+      poteri: [...SP.poteriAlLivello(classe, spec, scelti, liv), ...($("lascito").checked ? ["ultimo_colpo"] : [])], tratti: SP.trattiAlLivello(classe, liv), stati: {},
       elisir: classe === "Forestiero" && liv >= 5 ? 2 : 0, pozioni: Math.max(0, +$("pozioni").value || 0), progressione: prog.righe,
       set, borsa: borsaScelta()
     };
@@ -550,7 +562,7 @@
   const PEZZI_STORIA = { ettore: [1, 2], enea: [2, 2], dafne: [3, 2], atena: [4, 3], sovrano: { elmo: [5, 3], corona: [4, 4] } };
   const POTERI_SET_TESTO = {
     carne: [[2, "Odore di Casa (sempre): −1 a ogni colpo fisico subito"], [4, "Sguardo della Casa (per scontro, rapida): il nemico ha −2 a colpirti; la mano libera del set dà +2 CA (non con armi a due mani)"], [5, "Ultima Guardia (giornaliero): a 0 ti rialzi con il 10% della salute"]],
-    cenere: [[2, "Occhio dell'erede (fuori scontro); sul sovrano sangue e psichico da immuni a resistenti"], [4, "Voce del sangue (per scontro, rapida): rilanci il primo tiro per colpire mancato; sul sovrano taglio, perforante e ossa neutri"], [5, "Sentenza dell'erede (solo finale B, non ancora nel motore); sul sovrano armatura azzerata"]]
+    cenere: [[2, "Occhio dell'erede (fuori scontro); sul sovrano sangue e psichico da immuni a resistenti"], [4, "Voce del sangue (per scontro, rapida): rilanci il primo tiro per colpire mancato; sul sovrano taglio, perforante e ossa neutri"], [5, "Decreto dell'erede (solo finale B, non ancora nel motore); sul sovrano armatura azzerata"]]
   };
   function aggiornaSet() {
     const id = $("nemico").value, st = PEZZI_STORIA[id], storia = $("setStoria").checked;
@@ -586,7 +598,7 @@
       <p>Salute <b>${Math.max(0, pg.pv)} / ${pg.pvMax}</b>${P.vacillante(pg) ? " · <b style='color:#d8a24a'>Vacillante</b>" : ""} · CA <b>${S.ca(pg)}</b>${pg.bonusTs ? ` · TS +${pg.bonusTs}` : ""}</p>${barra(pg)}
       <div>${statiChip(pg)} ${buffChip(pg)}</div>${extra ? `<p class="nota">${extra}</p>` : ""}
       <p class="nota">Privilegi: ${pg.tratti.map(t => NOMI_TRATTI[t] || t).join(", ")}${pg.via ? ` · Via: ${SP.viaAlLivello(pg.via, pg.liv).map(id => Object.values(SP.VIE[pg.via].poteri).find(x => x.id === id).nome).join(", ")}` : ""}</p>
-      <p class="nota">In mano: <b>${pg.arma.nome}</b> (${NOMI_DANNO[pg.arma.tipo]} d${pg.arma.dado}${pg.arma.bonus ? " +" + pg.arma.bonus : ""})${pg.armi.length > 1 ? ` · con te anche: ${pg.armi.filter(a => a !== pg.arma).map(a => a.nome).join(", ")}` : ""}${pg.scudo ? " · scudo" : ""}${pg.focus ? ` · focus${pg.focus.bonus ? " +" + pg.focus.bonus : ""}${pg.arma.dueMani && !pg.arma.eFocus ? " (inattivo: arma a due mani)" : ""}` : ""}${pg.rapidaUsata ? " · <b>azione rapida usata</b>" : ""}</p>
+      <p class="nota">In mano: <b>${pg.arma.nome}</b> (${NOMI_DANNO[pg.arma.tipo]} d${pg.arma.dado}${pg.arma.bonus ? " +" + pg.arma.bonus : ""})${pg.armi.length > 1 ? ` · con te anche: ${pg.armi.filter(a => a !== pg.arma).map(a => a.nome).join(", ")}` : ""}${pg.scudo ? " · scudo" : ""}${pg.focus ? ` · ${pg.focus.nome && pg.focus.nome !== "Focus" ? pg.focus.nome : "focus"}${pg.focus.forma === "scudo" ? " (forma scudo)" : ""}${pg.focus.bonus ? " +" + pg.focus.bonus : ""}${pg.arma.dueMani && !pg.arma.eFocus ? " (inattivo: arma a due mani)" : ""}` : ""}${pg.rapidaUsata ? " · <b>azione rapida usata</b>" : ""}</p>
       ${tabellaProgressione(pg)}`;
   }
   function schedaNem() {
@@ -645,16 +657,16 @@
         <button type="button" class="mini" id="beviPozione" ${inScontro && S.rapidaLibera(pg) && pg.pozioni > 0 ? "" : "disabled"} title="PROVVISORIO: cura 1/4 della salute massima">Bevi pozione (${pg.pozioni || 0})</button>
         ${S.FAMIGLIE_ELISIR.filter(f => pg.borsa && pg.borsa[f] && ((pg.borsa[f].raro || 0) + (pg.borsa[f].comune || 0)) > 0).map(f => { const q = pg.borsa[f], raro = q.raro > 0;
           return `<button type="button" class="mini elisirBtn" data-fam="${f}" data-raro="${raro ? 1 : ""}" ${inScontro && S.rapidaLibera(pg) && P.ha(pg, f) ? "" : "disabled"} title="${raro ? "Raro: cura lieve e grave, 3 turni di immunità" : "Comune: cura solo il lieve"}">Elisir ${P.nomeStato(f, 1)} (${raro ? q.raro + " rari" : q.comune + " comuni"})</button>`; }).join(" ")}
-        ${Object.keys(S.POTERI_SET).filter(id => pg.set && pg.set[S.POTERI_SET[id].set] >= S.POTERI_SET[id].pezzi).map(id => `<button type="button" class="mini setBtn" data-id="${id}" ${inScontro && S.rapidaLibera(pg) && S.disponibileSet(pg, id).ok ? "" : "disabled"}>${{ sguardo_della_casa: "Sguardo della Casa", voce_del_sangue: "Voce del sangue" }[id]} (set, per scontro)</button>`).join(" ")}</div>` : "");
+        ${Object.keys(S.POTERI_SET).filter(id => { const d = S.POTERI_SET[id]; return d.classe ? OG.pezziSet(pg, d.classe) >= d.pezzi : pg.set && pg.set[d.set] >= d.pezzi; }).map(id => `<button type="button" class="mini setBtn" data-id="${id}" ${inScontro && S.rapidaLibera(pg) && S.disponibileSet(pg, id).ok ? "" : "disabled"}>${{ sguardo_della_casa: "Sguardo della Casa", voce_del_sangue: "Voce del sangue" }[id] || Object.values(OG.SET_CLASSE).find(x => x.scontro.id === id).scontro.nome} (set, per scontro)</button>`).join(" ")}</div>` : "");
     if (inScontro && nem) { /* attacco con l'arma, potere dell'arma, faccia del Giuramento, poteri degli oggetti */
       const box2 = document.createElement("div"); box2.className = "gruppoAz"; box2.innerHTML = "<b>Arma e oggetti</b>";
       const bt = (testo, on, fn, titolo) => { const b = document.createElement("button"); b.type = "button"; b.className = "mini"; b.textContent = testo; b.disabled = !on; if (titolo) b.title = titolo; b.addEventListener("click", fn); box2.append(b, " "); };
-      const pa = pg.arma.potere, dA = S.disponibileArma(pg), libero = P.puoAgire(pg);
+      const pa = S.potereArma(pg), dA = S.disponibileArma(pg), libero = P.puoAgire(pg);
       bt(`Attacco con ${pg.arma.nome}`, libero, () => azioneArma(false), "Attacco base: dado dell'arma + bonus, nessuno stato.");
       if (pa && pa.id !== "segno_sulla_mappa") bt(`${pg.arma.nome} + ${OG.POTERI_ARMA[pa.id].nome} (${pa.tipo === "scontro" ? "per scontro" : "giornaliero"})`, libero && dA.ok, () => azioneArma(true), OG.POTERI_ARMA[pa.id].testo);
       if (pa && pa.id === "segno_sulla_mappa") { const l = document.createElement("label"); l.title = OG.POTERI_ARMA[pa.id].testo; l.innerHTML = `<input type="checkbox" id="segno" ${dA.ok ? "" : "disabled"}> Segno sulla mappa con il prossimo potere`; box2.append(l, " "); }
       if (pg.arma.facce) bt(`Cambia faccia → ${pg.arma.facce[((pg.arma.faccia || 0) + 1) % 2].nome} (rapida)`, S.rapidaLibera(pg), () => { scrivi(S.cambiaFaccia(pg).eventi); ridisegna(); });
-      OG.poteriEquip(pg).forEach(pe => {
+      OG.poteriEquip(pg).filter(pe => !pe.automatico).forEach(pe => {
         const d = S.disponibileOggetto(pg, pe.id);
         bt(`${pe.nomeOggetto} (rapida${pe.tipo === "giornaliero" ? ", giornaliero" : ""})`, d.ok, () => {
           const st = pe.scegliStato ? (prompt("Stato da cui diventare immune (es. stordito, impaurito, sanguinante, esposto):", "stordito") || "stordito").trim().toLowerCase() : null;
@@ -854,6 +866,7 @@
     nem = creaNemico($("nemico").value); turno = 0; finito = false; riserva = null; staccoTurni = 0;
     if (LOG) LOG.inizia(pg, nem);
     log(`══ Nuovo scontro: ${CLASSI[pg.classe].nome} ${SP.specDi(pg.classe, pg.spec).nome} (liv. ${pg.liv}, salute ${pg.pv}/${pg.pvMax}) contro ${nem.nome} (liv. ${nem.liv}, salute ${nem.pv}) ══`, "turno");
+    if (nem.vuoto && !nem.caccia) { const a = N.provaAgguato(nem, pg, bonusAgguato(pg, nem), ctx); scrivi([a]); if (!a.ok) return turnoNemico(); } /* agguato: persa la prova, il vuoto agisce per primo */
     inizioTuo();
   }
   function controllaFine() {
@@ -873,6 +886,8 @@
     turno++; log(`— Turno ${turno} —`, "turno");
     scrivi(S.inizioTurno(pg, nem, ctx));
     if (controllaFine()) return ridisegna();
+    /* Primo passo (Stivali dell'Ultimo passo): nella sala l'attacco extra è l'attacco base, e si agisce per primi */
+    if (turno === 1 && !nem.nascosta && P.puoAgire(pg) && S.haPrimoPasso(pg)) { scrivi(S.primoPasso(pg, nem, ctx, { primo: true }).eventi); if (controllaFine()) return ridisegna(); }
     if (!P.puoAgire(pg)) { S.fineTurno(pg); turnoNemico(); return; }
     ridisegna();
   }
@@ -907,13 +922,26 @@
     const base = creaPg(); if (!base) return;
     const n0 = $("nemico").value, tot = Math.max(10, Math.min(2000, +$("simN").value || 200));
     let vinti = 0, fughe = 0, turniTot = 0, saluteRimasta = 0;
+    const fila = Math.max(1, +($("simFila") && $("simFila").value) || 1);
     for (let i = 0; i < tot; i++) {
-      const p = creaPg(), boss = creaNemico(n0); let t = 0, n = boss, ris = null, st = 0;
+      const p = creaPg(); let vintoTutto = true, t = 0, n = null;
+      for (let k = 0; k < fila && vintoTutto; k++) {
+      if (k > 0) S.fineScontro(p); /* agguato dopo agguato: salute e pozioni restano quelle */
+      const boss = creaNemico(n0); t = 0; n = boss; let ris = null, st = 0;
+      /* agguato dei vuoti: prova contrapposta; persa = il vuoto agisce per primo */
+      let agg = null;
+      if (n.vuoto && !n.caccia) {
+        agg = N.provaAgguato(n, p, bonusAgguato(p, n), ctx);
+        if (!agg.ok) { S.inizioTurno(n, p, ctx); N.agisci(n, p, ctx); S.fineTurno(n); }
+      }
       const evoca = (E) => { if (E.some(e => e.k === "evoca")) { ris = n; st = 0; n = N.crea("mastino_di_dafne"); } };
       while (p.pv > 0 && !n.fuggito && t++ < 80) {
         if (ris && (n.pv <= 0 || n.fuggito || st >= 3)) { n = ris; ris = null; N.fineStacco(n, st); }
         if (n.pv <= 0) break;
         S.inizioTurno(p, n, ctx);
+        if (t === 1 && p.pv > 0 && n.pv > 0 && !n.nascosta && P.puoAgire(p) && S.haPrimoPasso(p)) { /* Primo passo: il cervello sceglie l'a volontà */
+          const sc = scegliBot(p, n, t).id; S.primoPasso(p, n, ctx, { potere: sc && SP.POTERI[sc].tipo === "volonta" ? sc : undefined, primo: !agg || agg.ok });
+        }
         if (p.pv > 0 && n.pv > 0) window.Cervello.rapida(p, n, t); /* azione rapida del cervello: pozione, elisir di stato, poteri di set */
         if (p.pv > 0 && n.pv > 0 && P.puoAgire(p)) {
           if (n.nascosta) evoca(N.cercaDafne(n, ((p.mod && p.mod.Mente) || 0) + p.liv, ctx)); /* Dafne nascosta: il bot la cerca */
@@ -923,8 +951,10 @@
         if (n.pv > 0) { S.inizioTurno(n, p, ctx); if (n.pv > 0) evoca(N.agisci(n, p, ctx).eventi); S.fineTurno(n); if (ris) st++; }
       }
       if (ris) n = ris;
-      if (n.pv <= 0 && p.pv > 0) { vinti++; saluteRimasta += p.pv / p.pvMax; } else if (n.fuggito) fughe++;
+      if (!(n.pv <= 0 && p.pv > 0)) vintoTutto = false;
       turniTot += t;
+      }
+      if (vintoTutto) { vinti++; saluteRimasta += p.pv / p.pvMax; } else if (n.fuggito) fughe++;
     }
     const pct = (x) => Math.round(x / tot * 100), pv = pct(vinti), pf = pct(fughe);
     $("simEsito").innerHTML = `<p><b>${CLASSI[base.classe].nome} ${SP.specDi(base.classe, base.spec).nome} liv. ${base.liv}</b> contro <b>${nomeNem(n0)}</b>: vittorie <b>${pv}%</b>${fughe ? `, fughe ${pf}%` : ""}, sconfitte ${100 - pv - pf}% · turni medi ${(turniTot / tot).toFixed(1)} · salute media rimasta a chi vince ${vinti ? Math.round(saluteRimasta / vinti * 100) : 0}%</p>`;

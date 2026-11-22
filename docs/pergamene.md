@@ -1,6 +1,6 @@
 # Il Trono di Cenere — Pergamene
 
-Bozza di lavoro del 13/11/2026, decisioni prese con Francesco punto per punto; allineata il 15/11/2026 a `decisioni_14_novembre.md`. Dove manca un dato è segnato ⚠. Integra `riscrittura_meccaniche.md` (8b-bis, prevale questo file dove diverge), `armeria_aldo.md` e `oggetti_per_rarita.md`.
+Bozza di lavoro del 13/11/2026, decisioni prese con Francesco punto per punto; allineata il 15/11/2026 a `decisioni_14_novembre.md`; nomi delle cacce ★★★ aggiornati il 19/11. Dove manca un dato è segnato ⚠. Integra `riscrittura_meccaniche.md` (8b-bis, prevale questo file dove diverge), `armeria_aldo.md` e `oggetti_per_rarita.md`.
 
 ## 1. Idea
 
@@ -74,13 +74,13 @@ Archetipi per abilità (le nove abilità della scheda; ⚠ confermare che non ne
 
 Priorità alle abilità più povere di prove: **Acrobazia** (nessuna), **Atletica** e **Sopravvivenza** (una sola ciascuna).
 
-**Totale: 26 pergamene:** 9 generiche (una per abilità), 8 esclusive di classe (2 per classe), 4 proibite, 1 di Agnese (con 4 o 5 giocattoli), 1 della Strega della torbiera (fuoco sacro), 3 dell'armeria (già scritte in `armeria_aldo.md`).
+**Totale: 26 pergamene:** 9 generiche (una per abilità), 8 esclusive di classe (2 per classe), 4 proibite, 1 di Agnese (con 4 o 5 giocattoli), 1 di Ysolde della Torbiera (ex Strega della torbiera; fuoco sacro), 3 dell'armeria (già scritte in `armeria_aldo.md`).
 
-**La pergamena garantita della caccia ★★★ al platino** (14/11, insieme alla Lama gemella nel bottino del Cacciatore al platino) **è contata tra le 26: non ne aggiunge una 27ª.** Si prende dalle 9 generiche (una delle nove, ⚠ quale: da scegliere nella sessione pergamene). Le generiche trovate nei luoghi diventano quindi 8 più questa.
+**La pergamena garantita della caccia ★★★ al platino** (14/11; nel bottino di Corvino Due Lame, ex Lama gemella, ★★★ al platino, insieme alle Due lame) **è contata tra le 26: non ne aggiunge una 27ª.** Si prende dalle 9 generiche (una delle nove, ⚠ quale: da scegliere nella sessione pergamene). Le generiche trovate nei luoghi diventano quindi 8 più questa.
 
 ## 7. Pergamene candidate dal registro del 14/11 (da decidere nella sessione pergamene)
 
-- **Pergamena di fuoco sacro** (Strega della torbiera; già tra le 26): la sua arma base cambia il danno in fuoco sacro. Vincoli proposti: **3 turni per scontro**, durante l'effetto l'attacco **non può dichiarare il potere dell'arma** (costo), solo attacco con l'arma, il bersaglio principale è il sovrano (armatura vulnerabile al fuoco sacro). Va misurata con `serie_scontri.js` (set + vulnerabilità +50%).
+- **Pergamena di fuoco sacro** (Ysolde della Torbiera, ex Strega della torbiera; già tra le 26): la sua arma base cambia il danno in fuoco sacro. Vincoli proposti: **3 turni per scontro**, durante l'effetto l'attacco **non può dichiarare il potere dell'arma** (costo), solo attacco con l'arma, il bersaglio principale è il sovrano (armatura vulnerabile al fuoco sacro). Va misurata con `serie_scontri.js` (set + vulnerabilità +50%).
 - **Pergamena di «maestria»** (nome provvisorio, **non** compresa nelle 26): giornaliera, 2 turni, i bonus dell'arma valgono anche sui colpi gratuiti. Si decide dopo le misure di domenica; si toglie se le armi a più colpi funzionano già.
 - **Pergamena garantita del platino:** vedi sezione 6.
 

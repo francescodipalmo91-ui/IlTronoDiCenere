@@ -254,7 +254,7 @@
       </details>
     </aside>
 
-    <div class="divisore" id="divPg" role="presentation"></div>
+    <div class="divisore" id="divPg" role="none"></div>
 
     <main class="gioco">
       <div class="barra">
@@ -275,7 +275,7 @@
       </div>
     </main>
 
-    <div class="divisore" id="divNem" role="presentation"></div>
+    <div class="divisore" id="divNem" role="none"></div>
 
     <!-- Scheda del nemico: immagine e nome visibili, il resto si svela solo a belva sconfitta -->
     <aside class="scheda nemico" id="schedaNem">
@@ -337,7 +337,7 @@
         pgNome: "Recluta", pgSotto: "Umano — Guerriero · Livello 1",
         eq: {
           spada: ["Spada corta", "1d6 + Vigore · tagliente · 1 mano"],
-          armatura: ["Armatura leggera", "+2 classe armatura"],
+          armatura: ["Armatura leggera", "+1 classe armatura"],
           scudo: ["Scudo", "+1 classe armatura · malus Agilità −1"],
           pozione: ["Pozione di salute", (n) => n ? "1 utilizzo · cura 2d4" : "Esaurita"],
           torcia: ["Torcia", (n) => n ? `${n} utilizzi · 1d4 + Vigore · contundente` : "Consumata"]

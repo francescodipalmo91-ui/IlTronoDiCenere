@@ -8,7 +8,7 @@
   const P = root.Poteri, SP = root.SPECIALIZZAZIONI, N = root.Nemici;
   const RES = { vuln: "✓ vulnerabile", res: "✗ resistente", imm: "⛔ immune" };
   const NOMI_DANNO = { taglio: "taglio", contundente: "contundente", perforante: "perforante", forza: "forza", psichico: "psichico", sangue: "sangue", fuoco: "fuoco", fuoco_sacro: "fuoco sacro", ossa: "ossa", veleno: "veleno" };
-  const NOMI_BUFF = { guardiaFeroce: "Guardia feroce", inGuardia: "In guardia", ritorsione: "Ritorsione", rintocco: "Rintocco", rappresaglia: "Rappresaglia", veglia: "Veglia di ferro",
+  const NOMI_BUFF = { sorpreso: "Sorpresa dell'agguato", scoperto: "Scoperto dopo la carica (−2 CA)", grido: "Grido del valoroso", fede: "Fede incrollabile", primoPasso: "Primo passo (−2 CA al nemico)", guardiaFeroce: "Guardia feroce", inGuardia: "In guardia", ritorsione: "Ritorsione", rintocco: "Rintocco", rappresaglia: "Rappresaglia", veglia: "Veglia di ferro",
     baluardo: "Ultimo baluardo", silenzio: "Silenzio della casa", pelle: "Pelle di micelio", muffa: "Muffa che dilaga", sciame: "Sciame putrido", cisti: "Cisti parassita",
     ghianda: "Ghianda esplosiva", radici: "Radici avvolgenti", corazza: "Corazza di quercia", rami: "Pioggia di rami", radiceMadre: "Radice madre", foresta: "Foresta che avanza",
     campo: "Campo di peso", collasso: "Collasso gravitazionale", crosta: "Crosta", piena: "Sangue in piena", vincolo: "Vincolo di sangue", costellazione: "Costellazione rossa", riflessi: "Riflessi", sdoppiamento: "Sdoppiamento", teatro: "Teatro di specchi",
@@ -44,7 +44,7 @@
       case "tick": return [`${su === "Tu" ? "Subisci" : su + " subisce"} ${e.nome}: ${danno(e)}${dadiTesto(e.tiri)}.`, su === "Tu" ? "nem" : "bene"];
       case "perdeAzione": return [`${(e.chi || e.su) === "Tu" ? "Sei stordito: perdi il turno" : (e.chi || e.su) + " è stordito e perde il turno"}.`, "sis"];
       case "scade": return [`${su === "Tu" ? "Su di te" : "Su " + su} finisce ${e.nome}.`, "sis"];
-      case "buff": return [`Effetto attivo: ${NOMI_BUFF[e.id] || e.id}${e.ca ? ` (+${e.ca} CA)` : ""}.`, "sis"];
+      case "buff": return [`Effetto attivo: ${NOMI_BUFF[e.id] || e.id}${e.ca ? ` (${e.ca > 0 ? "+" : "−"}${Math.abs(e.ca)} CA)` : ""}.`, "sis"];
       case "cura": case "pozzo": case "ultimoServizio": case "elisir": case "pozione":
         return [`${e.chi === "Tu" ? "Ti curi" : e.chi + " si cura"} di ${e.n}${{ pozzo: " (Pozzo arcano)", ultimoServizio: " (Ultimo servizio: resti in piedi)", elisir: " (elisir)", pozione: " (pozione)" }[e.k] || ""}${dadiTesto(e.tiri)}${e.ridotta ? (e.ridotta === "condannato" ? " — Condannato: niente cure" : " — Maledetto: cura dimezzata") : ""}.`, "bene"];
       case "vacillante": return [`${e.chi === "Tu" ? "Sei Vacillante" : e.chi + " è Vacillante"}!`, "esito " + (e.chi === "Tu" ? "nem" : "bene")];
@@ -62,7 +62,12 @@
       case "rapida": return [`Azione rapida.`, "sis"];
       case "elisirStato": return [`${e.chi === "Tu" ? "Bevi" : e.chi + " beve"} un elisir ${e.raro ? "raro" : "comune"} contro ${P && P.nomeStato ? P.nomeStato(e.fam, 1) : e.fam}${e.raro ? ": curato e immune per 3 turni" : ": curato"}.`, "buono"];
       case "elisirDebole": return [`L'elisir comune non basta contro la forma grave.`, "sis"];
-      case "poterSet": return [{ sguardo_della_casa: "Sguardo della Casa: il nemico marchiato ha −2 a colpirti per tutto lo scontro.", voce_del_sangue: "Voce del sangue: il prossimo tiro per colpire mancato si rilancia." }[e.id] || e.id, "buono"];
+      case "agguato": return [e.auto ? `Agguato: ${e.chi} non ti coglie di sorpresa.` : `Agguato: ${e.abilita} ${e.d} → ${e.tot} contro la Furtività di ${e.chi} ${e.dn} → ${e.contro}: ${e.ok ? "lo scopri in tempo, agisci per primo (−2 CA al nemico nel primo round)" : "ti coglie di sorpresa: agisce per primo e hai −2 CA nel primo round"}.`, e.ok ? "buono" : "nem"];
+      case "rapidaPersa": return [`${e.chi === "Tu" ? "Finisci nella buca: perdi" : e.chi + " perde"} l'azione rapida del prossimo turno.`, "nem"];
+      case "lampo": return ["Lampo di intuizione: questo potere ha +2 CD e un dado in più.", "buono"];
+      case "poterSet": return [{ sguardo_della_casa: "Sguardo della Casa: il nemico marchiato ha −2 a colpirti per tutto lo scontro.", voce_del_sangue: "Voce del sangue: il prossimo tiro per colpire mancato si rilancia.",
+        grido_del_valoroso: "Grido del valoroso: fino al tuo prossimo turno +2 CA e +2 ai danni.", lampo_di_intuizione: "Lampo di intuizione: il prossimo potere di questo turno ha +2 CD e un dado in più.",
+        fede_incrollabile: "Fede incrollabile: fino al tuo prossimo turno +3 ai TS contro gli stati.", radice_che_resta: "Radice che resta: il prossimo stato che applichi in questo turno dura 1 turno in più." }[e.id] || e.id, "buono"];
       case "voceDelSangue": return [`Voce del sangue: ${e.prima} si rilancia → ${e.d}.`, "buono"];
       case "ultimaGuardia": return [`Ultima Guardia: ${e.chi} si rialza con ${e.pv} di salute!`, "buono"];
       case "rapidaUsata": return [`Hai già usato l'azione rapida in questo turno.`, "sis"];
@@ -92,7 +97,7 @@
       case "potereOggetto": return [`${e.nome}: ${e.testo}`, "pg"];
       case "carica": return [`Carica pronta.`, "sis"];
       case "risata": return [`La risata di Darius: l'attacco di ${e.su} va a vuoto.`, "bene"];
-      case "studio": return [e.ok ? "Studio del bersaglio: un dado in più sul punto debole." : "Studio del bersaglio: nessun punto debole, la carica va persa.", e.ok ? "bene" : "sis"];
+      case "studio": return [e.ok ? "Studio del bersaglio: un dado di danno in più sul punto debole." : "Studio del bersaglio: nessun punto debole, la carica va persa.", e.ok ? "bene" : "sis"];
       case "amuletoVeglia": return [`L'amuleto della veglia brucia chi ti ha colpito: ${e.su} subisce ${danno(e)}${dadiTesto(e.tiri)}.`, "bene"];
       case "braci": return [`La pioggia di braci: ${e.su} subisce ${danno(e)}${dadiTesto(e.tiri)}.`, "bene"];
       case "faccia": return [`Giri il Giuramento: ora colpisci di ${e.nome} (${e.tipo}).`, "pg"];
@@ -105,7 +110,7 @@
       case "copieConsumate": return [`Consumi ${e.n} Copie.`, "pg"];
       case "placche": return [`Placche d'ossa: ${e.tot}.`, "pg"];
       case "placcheSpese": return [`Spendi ${e.n} placche.`, "pg"];
-      case "sangueVersato": return [e.costo ? `Sangue versato: paghi ${e.costo} salute per un dado in più.` : `Sangue versato: da Vacillante il dado in più è gratis.`, "pg"];
+      case "sangueVersato": return [e.costo ? `Sangue versato: paghi ${e.costo} salute per un dado di danno in più.` : `Sangue versato: da Vacillante il dado di danno in più è gratis.`, "pg"];
       case "occhioDelCacciatore": return [`Occhio del cacciatore: il doppio dei dadi.`, "pg"];
       case "senzaScampo": return [`Senza scampo!`, "pg esito"];
       case "sogliaDiCasa": return [`La soglia di casa: il colpo fa metà danno, +2 CA per 2 turni.`, "bene"];

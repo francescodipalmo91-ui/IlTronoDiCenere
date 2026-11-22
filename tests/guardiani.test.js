@@ -104,7 +104,7 @@
     const s = N.crea("sovrano"), p = pg();
     const r = mosse(s, p, 3); eq(r.map(x => x.scelta.id), ["fendente_di_rabbia", "collera_del_re", "scure_della_collera"]);
     s.pv = 75; const r2 = mosse(s, p, 3); eq(r2.map(x => x.scelta.id), ["difesa_del_re", "colpo_semplice", "colpo_maledetto"]);
-    s.pv = 20; const r3 = mosse(s, p, 2); eq(r3.map(x => x.scelta.id), ["sentenza_maledetta", "giudizio_della_casa"], "opzione B: il Maledetto finisce la sua sequenza");
+    s.pv = 20; const r3 = mosse(s, p, 2); eq(r3.map(x => x.scelta.id), ["condanna_maledetta", "giudizio_della_casa"], "opzione B: il Maledetto finisce la sua sequenza");
     const rv = mosse(s, p, 5); eq(rv.map(x => x.scelta.id), ["difesa_del_re", "colpo_semplice", "colpo_di_vuoto", "vuoto_che_divora", "scure_del_vuoto"], "poi tutto il Vuoto");
     eq(ev(rv[0], "faseBoss")[0].nome, "Vuoto (armatura caduta)");
     const r4 = mosse(s, p, 3); eq(r4.map(x => x.scelta.id), ["colpo_senza_armatura", "colpo_senza_armatura", "colpo_senza_armatura"], "infine la carne");

@@ -4,7 +4,8 @@
    Il gioco chiama solo Registro.evento(tipo, dati). Gli eventi vanno in una coda (anche in localStorage,
    così non si perdono se si chiude la pagina o si è offline) e si scrivono su Firestore a lotti:
    a fine scontro, alla prova, al riposo, ogni 30 secondi e quando la pagina passa in secondo piano.
-   - Niente richieste al giocatore durante il gioco: il consenso si chiede una volta (pagina iniziale).
+   - Niente richieste al giocatore durante il gioco: il consenso si chiede una volta, in creazione, al clic su «Entra nel dungeon»
+     (20/11); si cambia dalla pagina iniziale.
      Con «No, grazie» non parte nessuna scrittura. Senza Firebase (js/cloud.js) il registro resta muto.
    - Nessun dato personale: niente nome, niente email. L'uid è quello di Firebase (anonimo se non c'è l'accesso Google).
    - Ogni evento: tipo, dati (JSON in una stringa), versione del gioco, id della partita, numero progressivo,

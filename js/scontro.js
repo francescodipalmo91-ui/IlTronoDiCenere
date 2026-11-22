@@ -21,7 +21,9 @@
   const critBaseArma = (b) => (b.arma && b.arma.critDa) || (b.arma && b.arma.tipo === "perforante" ? 19 : 20);
 
   const pronto = (b) => { b.buff = b.buff || {}; b.usati = b.usati || { scontro: {}, giorno: {} }; b.stati = b.stati || {}; return b; };
-  const fonteDi = (b) => ({ liv: b.liv, modClasse: b.modClasse || 0 });
+  /* set di classe (set_di_classe.md): pezzi addosso e poteri attivi */
+  const pezziClasse = (b, id) => (O() ? O().pezziSet(b, id) : 0);
+  const fonteDi = (b) => ({ liv: b.liv, modClasse: b.modClasse || 0, cdBonus: (pezziClasse(b, "sapiente") >= 2 ? 1 : 0) + (b.lampoAttivo ? 2 : 0) });
   /* il bonus +N è dell'arma; i poteri degli incantatori (o.focus) prendono dall'arma dado e bonus, e il focus aggiunge il suo
      (ASSUNZIONE 15/11: i due bonus si sommano, es. Focus rinforzato +1). «Una spada è sempre una spada». */
   const focusOk = (b) => !!b.focus && !(b.arma && b.arma.dueMani && !b.arma.eFocus); /* un'arma a due mani toglie il focus (il bastone è entrambi) */
@@ -50,6 +52,8 @@
     if (dif.statiCorti) modo = "applica";
     const segno = att.segnoAttivo && att !== dif ? { senzaTs: true } : {}; /* Segno sulla mappa: lo stato entra senza TS, solo per quel colpo */
     const E = (modo === "aggrava" ? P.aggrava : P.applica)(dif, k, { fonte: fonteDi(att), tira: ctx.tira, esito, turni: dif.statiCorti ? 1 : durataDi(att, k), tipo: tipoStato(att, k), ...(extra || {}), ...segno });
+    /* Radice che resta (Pellegrino, 3 pezzi): il primo stato applicato nel turno dura 1 turno in più */
+    if (att.radice && att !== dif && E.some(e => e.k === "stato" && e.stato === k) && P.ha(dif, k)) { att.radice = false; E.push(P.allunga(dif, k, 1)); }
     /* Svuotato / Prosciugato (Vuoto del sovrano): si spegne un per scontro non usato; aggravato, anche un giornaliero */
     if (k === "vuoto") E.filter(e => e.k === "stato" && e.stato === "vuoto").forEach(e => {
       E.push(...spegni(dif, "scontro")); if (e.liv === 2) E.push(...spegni(dif, "giornaliero"));
@@ -105,16 +109,22 @@
     let d = auto ? null : tiraD20();
     const malusBarr = !o.contrattacco && att.malusProssimo ? att.malusProssimo : 0; if (malusBarr) att.malusProssimo = 0; /* Barricata di costole */
     const malusSguardo = att.sguardoCasa && dif.set ? 2 : 0; /* Sguardo della Casa (set di carne, 4 pezzi): il nemico marchiato ha −2 a colpirti */
-    let tot = auto ? null : d + mAtt(att, o) - P.malusColpire(att) - malusBarr - malusSguardo;
+    /* Slancio (Valoroso, 2 pezzi): +1 a colpire sul primo attacco con tiro dopo un colpo a segno del turno prima */
+    const slancio = !auto && !o.contrattacco && att.slancio ? 1 : 0; if (slancio) att.slancio = false;
+    const bc = Number(o.bonusColpire) || 0; /* vuoti: Colpo alle spalle (+2), Furia cieca (secondo −2) */
+    let tot = auto ? null : d + mAtt(att, o) + slancio + bc - P.malusColpire(att) - malusBarr - malusSguardo;
     const soglia = Math.min(o.critDa || 20, o.focus ? 20 : critBaseArma(att), P.sogliaCritContro(dif));
     /* Voce del sangue (set di cenere, 4 pezzi, carica): il primo tiro per colpire mancato si rilancia */
     if (!auto && !o.contrattacco && att.cariche && att.cariche.voce && d < soglia && tot <= ca(dif)) {
-      delete att.cariche.voce; const prima = d; d = tiraD20(); tot = d + mAtt(att, o) - P.malusColpire(att) - malusBarr - malusSguardo;
+      delete att.cariche.voce; const prima = d; d = tiraD20(); tot = d + mAtt(att, o) + slancio + bc - P.malusColpire(att) - malusBarr - malusSguardo;
       E.push({ k: "voceDelSangue", chi: att.nome, prima, d });
     }
     const crit = auto || d >= soglia, ok = auto || d >= soglia || tot > ca(dif); /* come nel gioco: il totale deve superare la CA */
     const ev = { k: "attacco", da: att.nome, a: dif.nome, nome: o.nome || null, d, tot, ca: ca(dif), crit: ok && crit, ok, danno: 0 };
     if (o.contrattacco) ev.contrattacco = true;
+    if (slancio) ev.slancio = 1;
+    if (!o.contrattacco) att.ultimoMancato = !ok; /* Ferita finta dei vuoti: «se hai mancato il tuo ultimo attacco» */
+    if (ok && !auto && !o.contrattacco && pezziClasse(att, "valoroso") >= 2) att.slancioProssimo = true;
     E.push(ev);
     if (!ok) { E.push(...reazioneMancato(att, dif, ctx)); return { ok: false, crit: false, eventi: E, ev }; }
     /* Ritorsione: il primo colpo che subisci fa 0, poi contrattacchi a danno pieno e aggravi lo stato dell'arma */
@@ -137,7 +147,9 @@
     if (dif.marchio && att.marchia) { const x = ctx.tira(4); lordo += x; ev.marchio = x; }                /* Marchio della preda */
     if ((att.tratti || []).includes("furia") && P.vacillante(att)) { lordo += 2; ev.furia = 2; }        /* Furia: da Vacillante +2 */
     if ((att.tratti || []).includes("radici_profonde") && haStato(dif)) { const x = ctx.tira(4); lordo += x; ev.radici = x; } /* Radici profonde: qualsiasi stato (11/11) */
-    if (P.ha(att, "furente")) { lordo += 2; ev.furente = 2; }                                           /* Furente (sovrano): +2 danni */
+    if (P.ha(att, "furente")) { lordo += 2; ev.furente = 2; }
+    const grido = Object.values(att.buff || {}).reduce((t, x) => t + (Number(x.danni) || 0), 0); if (grido && !o.soloDado) { lordo += grido; ev.grido = grido; } /* Grido del valoroso */
+    if (!o.contrattacco && pezziClasse(att, "pellegrino") >= 2 && haStato(dif)) { lordo += 1; ev.pellegrino = 1; }        /* Passo del pellegrino */                                           /* Furente (sovrano): +2 danni */
     if (o.potere && !o.contrattacco && frattura(att, dif)) { lordo += 2; ev.frattura = 2; }             /* Frattura (Realtà): +2 su Esposto o Scoperto */
     Object.assign(ev, { nd, dado, tiri });
     const dopo = [];
@@ -166,7 +178,7 @@
         dopo.push(() => { const e = { k: "specchioRotto" }; return [e, ...danneggia(att, x, "psichico", e, ctx)]; }); }
     }
     if (dif.buff.eredita) { lordo = meta(lordo); ev.eredita = true; } /* Eredità del sepolcro */
-    /* Mantello del Penitente (carica, metà) o, se non c'è, Maglia della Veglia (carica, −4): mai tutte e due sullo stesso colpo */
+    /* Mantello del Fuggiasco (carica, metà) o, se non c'è, Maglia della Veglia (carica, −4): mai tutte e due sullo stesso colpo */
     const c = dif.cariche || {};
     if (c.mantello) { delete c.mantello; lordo = meta(lordo); ev.mantello = true; }
     else if (c.maglia) { delete c.maglia; lordo = Math.max(0, lordo - 4); ev.maglia = 4; }
@@ -285,6 +297,9 @@
     if (!b.buff.veglia && b.bonusTsBase != null) { b.bonusTs = b.bonusTsBase; delete b.bonusTsBase; }
     if (avv) { pronto(avv); avv.colpitoUltimo = false; avv.dannoSubitoTurno = 0; avv.pozzoUsato = false; }
     b.sangueVersatoTurno = false; b.rapidaUsata = false;
+    if (b.rapidaPersa) { b.rapidaUsata = true; b.rapidaPersa = false; } /* Buca del trappolista: perdi l'azione rapida di questo turno */
+    if (b.slancioProssimo) { b.slancio = true; b.slancioProssimo = false; }  /* Slancio: vale dal turno successivo */
+    b.riduciTick = pezziClasse(b, "penitente") >= 2 ? 1 : 0;              /* Carne domata */
     if (b.immuniTemp) for (const k of Object.keys(b.immuniTemp)) if (--b.immuniTemp[k] <= 0) { delete b.immuniTemp[k]; if (!(b.immuniEquip || []).includes(k)) b.immuni = (b.immuni || []).filter(x => x !== k); }
     const E = P.inizioTurno(b, ctx.tira);
     E.push(...rialzo(b, ctx)); /* un danno continuativo può abbattere Enea: si rialza anche così */
@@ -345,6 +360,7 @@
     pronto(b);
     if (b.svantaggio > 0) b.svantaggio--;
     if (b.nonCarica > 0) b.nonCarica--;
+    b.lampo = false; b.radice = false; /* Lampo di intuizione e Radice che resta valgono solo nel turno */
     if (b.velenoPerenne) b.pestilenzaTurni = (b.pestilenzaTurni || 0) + 1; /* turni passati dall'inizio di Pestilenza */
     return P.fineTurno(b);
   }
@@ -352,6 +368,7 @@
   function fineScontro(b) { pronto(b); b.usati.scontro = {}; b.buff = {}; b.stati = {}; b.prossimiDadi = 0; b.marchio = false; b.marchia = false; b.immStordito = 0; b.nonCarica = 0; b.pronto = null;
     b.scudoPF = null; b.spenti = {}; b.espostoPerenne = false; b.rapidaUsata = false; b.velenoPerenne = false;
     b.cariche = {}; b.cinturoneUsato = false; b.segnoAttivo = false;
+    b.slancio = false; b.slancioProssimo = false; b.lampo = false; b.lampoAttivo = false; b.radice = false; b.riduciTick = 0;
     if (b.immuniTemp) { for (const k of Object.keys(b.immuniTemp)) if (!(b.immuniEquip || []).includes(k)) b.immuni = (b.immuni || []).filter(x => x !== k); b.immuniTemp = {}; }
     if (b.immuniScontro) { b.immuni = (b.immuni || []).filter(k => !b.immuniScontro.includes(k) || (b.immuniEquip || []).includes(k)); b.immuniScontro = []; }
     b.pestilenzaTurni = 0; b.copie = 0; b.specchio = false; b.svantaggio = 0; b.scintillaUsata = false; b.placche = 0; b.malusProssimo = 0; b.occhioUsato = false; b.senzaScampoUsato = false; b.sogliaUsata = false;
@@ -409,11 +426,12 @@
   }
 
   /* ---------- Poteri di armature e accessori (14/11): azione rapida, «fino al tuo prossimo turno» o «carica» ---------- */
-  const CARICHE = { maglia_della_veglia: "maglia", mantello_del_penitente: "mantello", piastre_del_rettore: "piastre", elmo_del_penitente: "elmo",
+  const CARICHE = { maglia_della_veglia: "maglia", mantello_del_fuggiasco: "mantello", piastre_del_rettore: "piastre", elmo_della_sentinella: "elmo",
     risata_di_darius: "risata", amuleto_della_veglia: "amuleto", studio_del_bersaglio: "studio", piede_fermo: "piede" };
   function disponibileOggetto(b, id) {
     const pe = (O() ? O().poteriEquip(b) : []).find(x => x.id === id);
     if (!pe) return { ok: false, motivo: "nonIndossato" };
+    if (pe.automatico) return { ok: false, motivo: "automatico" }; /* Primo passo: parte da solo (primoPasso) */
     if ((pe.tipo === "scontro" ? b.usati.scontro : b.usati.giorno)["ogg:" + id]) return { ok: false, motivo: pe.tipo === "scontro" ? "giaUsatoScontro" : "giaUsatoGiorno" };
     if (!rapidaLibera(b)) return { ok: false, motivo: "rapidaUsata" };
     return { ok: true, potere: pe };
@@ -431,11 +449,30 @@
     return { eventi: E };
   }
 
+  /* ---------- Primo passo (Stivali dell'Ultimo passo, 16/11 sez. 5) ----------
+     All'inizio del primo turno del giocatore, prima della sua azione: un attacco extra classico (attacco base) o un potere a volontà,
+     con d20 e bonus completi. opz.potere: id del potere a volontà (assente = attacco base). opz.primo: il giocatore agisce per primo
+     (agguato o Furtività riusciti, o nessuna sorpresa): solo allora il nemico ha −2 CA nel primo round, sommato agli altri −2. */
+  const haPrimoPasso = (b) => !!(O() && O().poteriEquip(b).some(x => x.id === "primo_passo")) && !(b.usati && b.usati.giorno["ogg:primo_passo"]);
+  function primoPasso(att, dif, ctx, opz) {
+    pronto(att); pronto(dif); opz = opz || {};
+    if (!haPrimoPasso(att)) return { eventi: [], rifiutato: true };
+    const pv = opz.potere && potere(opz.potere);
+    if (opz.potere && (!pv || pv.tipo !== "volonta" || !disponibile(att, opz.potere).ok)) return { eventi: [{ k: "soloAVolonta", potere: opz.potere }], rifiutato: true };
+    att.usati.giorno["ogg:primo_passo"] = true;
+    const E = [{ k: "potereOggetto", id: "primo_passo", nome: "Stivali dell'Ultimo passo", testo: "Primo passo" }];
+    if (opz.primo !== false) E.push(buff(dif, "primoPasso", { ca: -2, turni: 1 }));
+    E.push(...(pv ? usa(att, dif, opz.potere, ctx, { gratis: true }) : attaccoBase(att, dif, ctx)).eventi);
+    return { eventi: E };
+  }
+
   /* ---------- Attacco con l'arma (attacco base) e poteri delle armi (14/11) ----------
      L'attacco base non applica stati né attiva le sinergie della specializzazione. opz.poterArma: dichiara il potere dell'arma
      (si consuma subito, anche se manca). Segno sulla mappa si dichiara invece con un potere di classe (usa, opz.segno). */
+  /* il potere dell'arma in mano o, se manca, quello del focus (Sfera armillare: Segno sulla mappa) */
+  const potereArma = (b) => (b.arma && b.arma.potere) || (focusOk(b) && b.focus && b.focus.potere) || null;
   function disponibileArma(b) {
-    const p = b.arma && b.arma.potere; if (!p) return { ok: false, motivo: "senzaPotere" };
+    const p = potereArma(b); if (!p) return { ok: false, motivo: "senzaPotere" };
     if ((p.tipo === "scontro" ? b.usati.scontro : b.usati.giorno)["arma:" + p.id]) return { ok: false, motivo: p.tipo === "scontro" ? "giaUsatoScontro" : "giaUsatoGiorno" };
     if (P.soloAVolonta(b)) return { ok: false, motivo: "impaurito" };
     return { ok: true, potere: p };
@@ -500,10 +537,13 @@
   /* ---------- Poteri dei set (storia_retaggio_e_set 7c): non occupano slot di potere ----------
      b.set = { carne: pezzi, cenere: pezzi }. Passivi: Odore di Casa (carne 2), Ultima Guardia (carne 5), clausole sul sovrano (cenere).
      Per scontro, con l'azione rapida (niente reazioni, 14/11): Sguardo della Casa (carne 4) e Voce del sangue (cenere 4, carica). */
-  const POTERI_SET = { sguardo_della_casa: { set: "carne", pezzi: 4 }, voce_del_sangue: { set: "cenere", pezzi: 4 } };
+  const POTERI_SET = { sguardo_della_casa: { set: "carne", pezzi: 4 }, voce_del_sangue: { set: "cenere", pezzi: 4 },
+    /* set di classe, 3 pezzi (set_di_classe.md) */
+    grido_del_valoroso: { classe: "valoroso", pezzi: 3 }, lampo_di_intuizione: { classe: "sapiente", pezzi: 3 },
+    fede_incrollabile: { classe: "penitente", pezzi: 3 }, radice_che_resta: { classe: "pellegrino", pezzi: 3 } };
   function disponibileSet(b, id) {
     pronto(b); const d = POTERI_SET[id];
-    if (!d || !b.set || !(b.set[d.set] >= d.pezzi)) return { ok: false, motivo: "senzaSet" };
+    if (!d || !(d.classe ? pezziClasse(b, d.classe) >= d.pezzi : b.set && b.set[d.set] >= d.pezzi)) return { ok: false, motivo: "senzaSet" };
     if (b.usati.scontro[id]) return { ok: false, motivo: "giaUsatoScontro" };
     return { ok: true };
   }
@@ -513,6 +553,10 @@
     b.usati.scontro[id] = true;
     if (id === "sguardo_della_casa" && dif) { pronto(dif); dif.sguardoCasa = true; }
     if (id === "voce_del_sangue") { b.cariche = b.cariche || {}; b.cariche.voce = true; }
+    if (id === "grido_del_valoroso") r.eventi.push(buff(b, "grido", { ca: 2, danni: 2, finoAlTurno: true }));
+    if (id === "fede_incrollabile") r.eventi.push(buff(b, "fede", { tsStati: 3, finoAlTurno: true }));
+    if (id === "lampo_di_intuizione") b.lampo = true;
+    if (id === "radice_che_resta") b.radice = true;
     r.eventi.push({ k: "poterSet", chi: b.nome, id }); return r;
   }
   function beviPozione(b, n) {
@@ -546,7 +590,7 @@
     if (p.tipo === "scontro") att.usati.scontro[id] = true;
     if (p.tipo === "giornaliero") att.usati.giorno[id] = true;
     if (p.rapida) att.rapidaUsata = true;
-    /* Segno sulla mappa (Bastone da cartografo): dichiarato con un potere di classe, lo stato entra senza TS per questo colpo */
+    /* Segno sulla mappa (Sfera armillare): dichiarato con un potere di classe, lo stato entra senza TS per questo colpo */
     if (opz.segno) {
       const d = disponibileArma(att);
       if (d.ok && d.potere.id === "segno_sulla_mappa") { att.usati.scontro["arma:segno_sulla_mappa"] = true; att.segnoAttivo = true; E.push({ k: "potereArma", id: "segno_sulla_mappa", nome: "Segno sulla mappa" }); }
@@ -556,6 +600,7 @@
     if (p.tipo === "giornaliero" && (att.tratti || []).includes("eredita_sepolcro")) E.push(buff(att, "eredita", { finoAlTurno: true }));
     /* Sangue versato: sopra il 50%, una volta per turno, 10% della salute massima (per eccesso) per +1 dado; da Vacillante gratis */
     let extra = 0;
+    if (att.lampo && !p.rapida) { att.lampo = false; att.lampoAttivo = true; extra = 1; E.push({ k: "lampo" }); } /* Lampo di intuizione: +2 CD e un dado */
     if (att.spec === "sangue" && SANGUE_DANNO.includes(id)) {
       const costo = Math.ceil(att.pvMax / 10);
       if (P.vacillante(att)) { extra = 1; E.push({ k: "sangueVersato", costo: 0 }); }
@@ -570,6 +615,7 @@
     const atk = (o) => { const doppio = occhio() || (o && o.doppiDadi); const r = attacco(att, dif, { nome: id, potere: true, ...o, doppiDadi: doppio, piuDadi: ((o && o.piuDadi) || 0) + prendiExtra() }, ctx); E.push(...r.eventi); return r; };
     /* danno senza tiro per colpire: n dadi + modificatore (15/11, Francesco: la caratteristica una volta per attacco, mai per dado: conMod 0 o 1).
        dadiPiu: dadi di un altro tipo nello stesso colpo (Incubo: +1d6 per Copia). Frattura vale anche qui. */
+    /* danno senza tiro per colpire (regola 16/11): mai critico, nessun bonus di caratteristica o di oggetto; conMod resta 0 per tutti i poteri */
     const fisso = (n, dado, conMod, tipo, dadiPiu) => {
       const k2 = occhio() ? 2 : 1, t = tiraDadi(ctx, (n + prendiExtra()) * k2, dado), t2 = dadiPiu ? tiraDadi(ctx, dadiPiu.n * k2, dadiPiu.dado) : [];
       const fr = frattura(att, dif) ? 2 : 0, m = conMod ? mDanno(att, { focus: true }) : 0;
@@ -611,7 +657,7 @@
         r = atk({ piuDadi: s }); if (r.ok && s) E.push(P.togli(dif, k));
         break;
       }
-      case "sentenza": for (let i = 0; i < 3 && vivo(); i++) atk({ autoCrit: vac }); break;
+      case "resa_dei_conti": for (let i = 0; i < 3 && vivo(); i++) atk({ autoCrit: vac }); break;
       /* Paladino */
       case "colpo_di_guardia": atk({ bonusDanno: att.colpitoUltimo ? 2 : 0 }); break;
       case "in_guardia": E.push(buff(att, "inGuardia", { ca: att.scudo ? 4 : 2, finoAlTurno: true })); break;
@@ -708,10 +754,10 @@
       case "lancia_di_realta": r = atk({ ...I, tipo: "forza", piuDadi: 2 }); if (r.ok && vivo()) stato("applica", "esposto"); break;
       case "spezzare_la_materia": atk({ ...I, tipo: "forza", piuDadi: 1, ignoraRes: true }); break;
       case "doppia_frattura": atk({ ...I, tipo: "forza", piuDadi: P.grave(dif, "esposto") ? 2 : 0 }); break;
-      case "sovraccarico": fisso(2, 8, 1, "forza"); if (vivo()) stato("aggrava", "esposto"); break;
+      case "sovraccarico": fisso(2, 8, 0, "forza"); if (vivo()) stato("aggrava", "esposto"); break;
       case "collasso_gravitazionale": E.push(buff(att, "collasso", { cariche: 3 })); break;
       case "punto_di_rottura": dif.espostoPerenne = true; E.push({ k: "puntoDiRottura" }); break;
-      case "annullamento": fisso(P.grave(dif, "esposto") ? 6 : 4, 8, 1, "forza"); /* 15/11: Scoperto = +2 dadi (era il doppio) */ if (vivo()) stato("aggrava", "esposto"); break;
+      case "annullamento": fisso(P.grave(dif, "esposto") ? 6 : 4, 8, 0, "forza"); /* 15/11: Scoperto = +2 dadi (era il doppio) */ if (vivo()) stato("aggrava", "esposto"); break;
 
       /* ---- Arcanista dell'Illusione: psichico, Copie ---- */
       case "dardo_fantasma": atk({ ...I, tipo: "psichico", dadoExtra: att.copie > 0 ? 4 : 0 }); break;
@@ -723,18 +769,18 @@
       case "riflessi": E.push(buff(att, "riflessi", { ca: 2, finoAlTurno: true })); break;
       case "frantumare": {
         const n = att.copie || 0; att.copie = 0; E.push({ k: "copieConsumate", n });
-        if (n) { fisso(n, 6, 1, "psichico"); if (n >= 3 && vivo()) stato("applica", "esposto"); }
+        if (n) { fisso(n, 6, 0, "psichico"); if (n >= 3 && vivo()) stato("applica", "esposto"); }
         break;
       }
       case "labirinto": stato("applica", "stordito", { attr: "Mente" }); copia(1); break;
       case "sdoppiamento": copia(2); E.push(buff(att, "sdoppiamento", { ca: 2, finoAlTurno: true })); break;
       case "specchio_rotto": copia(1); att.specchio = true; break;
-      case "incubo": fisso(2, 8, 1, "psichico", att.copie > 0 ? { n: att.copie, dado: 6 } : null); if (vivo()) stato("applica", "impaurito"); break;
+      case "incubo": fisso(2, 8, 0, "psichico", att.copie > 0 ? { n: att.copie, dado: 6 } : null); if (vivo()) stato("applica", "impaurito"); break;
       case "dado_truccato": dif.svantaggio = Math.max(dif.svantaggio || 0, dif.boss ? 2 : 3); E.push({ k: "svantaggio", turni: dif.svantaggio }); break;
       case "teatro_di_specchi": att.copie = COPIE_MAX; E.push({ k: "copia", tot: att.copie }, buff(att, "teatro", { turni: 3 })); break;
       case "grande_inganno": {
         const n = att.copie; att.copie = 0; E.push({ k: "copieConsumate", n });
-        fisso(2 * n, 8, 1, "psichico");
+        fisso(2 * n, 8, 0, "psichico");
         dif.svantaggio = Math.max(dif.svantaggio || 0, 2); E.push({ k: "svantaggio", turni: dif.svantaggio });
         break;
       }
@@ -764,7 +810,7 @@
       }
       case "marea_cremisi": {
         const era = P.grave(dif, "sanguinante");
-        fisso(4, 8, 1, "sangue"); if (vivo()) { stato("aggrava", "sanguinante"); if (era && P.ha(dif, "sanguinante")) dif.stati.sanguinante.turni = 6; }
+        fisso(4, 8, 0, "sangue"); if (vivo()) { stato("aggrava", "sanguinante"); if (era && P.ha(dif, "sanguinante")) dif.stati.sanguinante.turni = 6; }
         break;
       }
 
@@ -772,17 +818,25 @@
       case "lancia_d_ossa": atk({ ...I, tipo: "ossa", critDa: 19, gabbia: true }); break;
       case "spine_d_ossa": r = atk({ ...I, dado: 6, soloDado: true, tipo: "ossa", gabbia: true }); if (r.ok && vivo()) stato("applica", "indebolito"); placca(1); break;
       case "armatura_d_ossa": fisso(1, 4, 0, "ossa"); E.push(buff(att, "armaturaOssa", { ca: 2, finoAlTurno: true })); placca(1); break;
-      case "spirito_d_ossa": { const n = att.placche; att.placche = 0; E.push({ k: "placcheSpese", n }); fisso(n, 8, 1, "ossa"); break; } /* 15/11: d8 per placca, Spirito una volta */
+      case "spirito_d_ossa": { const n = att.placche; att.placche = 0; E.push({ k: "placcheSpese", n }); fisso(n, 8, 0, "ossa"); break; } /* 22/11: d8 per placca, senza Spirito (regola 16/11) */
       case "lama_d_osso": att.placche--; r = atk({ piuDadi: 2 }); if (r.ok) placca(1); break;
       case "barricata_di_costole": att.placche = PLACCHE_MAX; dif.malusProssimo = 2; E.push({ k: "placche", tot: att.placche }, { k: "barricata" }); break;
       case "decrepitezza": stato("applica", "indebolito"); stato("applica", "esposto"); placca(1); break;
       case "prigione_d_ossa": stato("applica", "stordito"); if (vivo()) E.push(...P.applica(dif, "esposto", { senzaTs: true })); break;
       case "armatura_del_sepolcro": E.push(buff(att, "sepolcro", { cariche: 3 })); break;
       case "armatura_spezzata": E.push(buff(att, "spezzata", {})); break;
-      case "armata_dei_morti": fisso(4, 8, 1, "ossa"); if (vivo()) stato("applica", "stordito"); break; /* senza consumare le placche (11/11) */
+      case "armata_dei_morti": fisso(4, 8, 0, "ossa"); if (vivo()) stato("applica", "stordito"); break; /* senza consumare le placche (11/11) */
+      /* Ultimo colpo (Lascito di Dafne): garantito, dado dell'arma + 2 dadi, niente bonus né critico; Esposto poi Scoperto senza TS */
+      case "ultimo_colpo": {
+        const dado = (att.arma && att.arma.dado) || 4, t = tiraDadi(ctx, 3 * (occhio() ? 2 : 1), dado);
+        const e = { k: "dannoFisso", nome: id, tiri: t, dado, mod: 0 };
+        E.push(e, ...danneggia(dif, somma(t), (att.arma && att.arma.tipo) || null, e, ctx));
+        if (vivo()) { E.push(...statoSu(att, dif, "applica", ctx, "esposto", null, { senzaTs: true })); if (vivo()) E.push(...statoSu(att, dif, "aggrava", ctx, "esposto", null, { senzaTs: true })); }
+        break;
+      }
       default: E.push({ k: "nonImplementato", id });
     }
-    att.segnoAttivo = false;
+    att.segnoAttivo = false; att.lampoAttivo = false;
     /* Senza scampo (via di Aldo, livello 4): la prima volta nello scontro che il nemico diventa Vacillante, un colpo gratuito
        (regola del 14/11: va a segno, solo il dado dell'arma, niente bonus né critico né stati) */
     if (!vac && P.vacillante(dif) && dif.pv > 0 && aldo && att.liv >= 4 && !att.senzaScampoUsato && !opz.gratis) {
@@ -803,7 +857,7 @@
 
   const API = { STATO_ARMA, statoArma, ca, attacco, usa, disponibile, inizioTurno, fineTurno, fineScontro, riposo, preparaInfuso, preparaScontro, offesaDi, statoSu, danneggia, fonteDi,
     usaRapida, rapidaLibera, cambiaArma, cambiaFaccia, beviPozione, colpoGratuito, spegni, cura, dadoIncanto,
-    attaccoBase, disponibileArma, usaOggetto, disponibileOggetto, FAMIGLIE_ELISIR, beviElisirStato, POTERI_SET, disponibileSet, usaSet };
+    attaccoBase, disponibileArma, potereArma, usaOggetto, disponibileOggetto, primoPasso, haPrimoPasso, FAMIGLIE_ELISIR, beviElisirStato, POTERI_SET, disponibileSet, usaSet };
   root.Scontro = API;
   if (typeof module !== "undefined" && module.exports) module.exports = API;
 })(typeof window !== "undefined" ? window : globalThis);

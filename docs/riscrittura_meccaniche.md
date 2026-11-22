@@ -4,6 +4,10 @@ Documento di lavoro nato il 05/11/2026 dal feedback del primo tester esterno.
 Obiettivo: **snellire tantissimo** combattimento e regole, con poteri netti e definiti, ispirandosi a D&D 4.
 Regola di lavoro: si decide il nucleo minimo, lo si mette in gioco, lo si prova; solo dopo si aggiunge.
 **Meccaniche congelate dal 9 novembre 2026:** ciò che è deciso qui non si ridiscute; si aggiunge (guardiani, sovrano, cacce, pergamene, livelli 6-10). Si cambia solo se una prova giocata lo chiede. Questo documento prevale su ogni altro per le regole.
+**Cancellati il 16/11/2026:** goblin, orchi, bande e i cinque avventurieri (`registro_cancellati.md`): al loro posto i **vuoti**, definiti il 18/11 in **`vuoti.md`** (statistiche per fascia, archetipi, poteri, cacce élite, bottino; diari in `diari_vuoti.md`). Le decisioni del 16/11 sulle regole (poteri senza tiro, *Primo passo*, agguato, rinomi) sono **riversate qui il 22/11/2026, insieme al codice** (`decisioni_22_novembre.md`).
+**Aggiornato il 20/11/2026:** «verga del Profeta» → verga di cenere (regole delle armi); matrice 8f: Baldassarre lascia la Sfera armillare (ex Bastone da cartografo). Focus **un oggetto, due forme** riversato in 0 (c) e nella sezione sui focus (8f), insieme al codice: il dado dei poteri è quello della forma (normale d8, scudo d6). Riposo base e regole facoltative «Fame» e «Peso dei giorni» nel codice e nel regolamento (sezione 2). Dettaglio: `decisioni_20_novembre.md`.
+**Aggiornato il 19/11/2026:** Lama gemella a +2 nella matrice arma-classe (8f); agguati anche prima di Ettore; nomi, archetipi e vulnerabilità delle quattro cacce ★★★ (gruppo 5 e matrice) (`decisioni_19_novembre.md`).
+**Aggiornato il 18/11/2026 (parziale):** nomi delle quattro cacce ★ e ★★, gruppo 6 e matrice arma-classe; il riversamento completo di focus a due per classe, sei armi comuni, set di classe e dotazione (`decisioni_17_novembre.md`, `set_di_classe.md`) resta per domenica 22/11.
 **Allineato al codice il 15/11/2026 (sera)**: regole di colpo, TS per stato, niente reazioni (decisioni del 14/11); caratteristica una volta per attacco, fasi dei boss senza salti (opzione B), icone degli annunci, valori dei boss misurati con set ed elisir, Atena senza vulnerabilità a sangue e veleno né resistenza al psichico (decisioni del 15/11). Stato del codice e misure: `lavoro_codice_domenica.md`.
 
 ---
@@ -41,12 +45,10 @@ Regola di lavoro: si decide il nucleo minimo, lo si mette in gioco, lo si prova;
 | Arcanista | Ultima scintilla | Pozzo arcano | Coagulo |
 | Monaco | Eredità del sepolcro | Ultimo servizio | Tocco lenitivo |
 
-  - **Decisioni chiuse (10/11/2026):** (a) *Mani che curano* (via di Guendalina, livello 3) non potenzia più il potere di classe: pozioni ed elisir di salute curano il 50% in più (arrotondato per eccesso); con la regola facoltativa «Fame» vale anche per le razioni. Funziona dal 3, indipendente dal potere di classe; se la via di Guendalina risulta debole nei test si rivede. (b) *Infuso* dello Sciamano resta al livello 5 e *Legame del sottobosco* (+1 erba) al 3; se lo Sciamano dei Funghi fatica nei test: un elisir o un'erba in più, non uno scambio. (c) **Arma e focus:** l'arma si sceglie in creazione per tutte le classi. Il **focus** è valido per la *classe* (non per la specializzazione) e si sceglie alla creazione di Sciamano, Arcanista e Monaco: libro arcano, filatterio, simbolo sacro (1d6, una mano) o bastone (1d8, due mani, è arma e focus insieme). Il Guerriero non ha focus. Il vecchio *Bastone* (1d6 contundente) diventa *Manganello* (una mano). (d) Pergamene: potranno ampliare il pool dei poteri e dare scelte in più (da definire con le pergamene).
+  - **Decisioni chiuse (10/11/2026):** (a) *Mani che curano* (via di Guendalina, livello 3) non potenzia più il potere di classe: pozioni ed elisir di salute curano il 50% in più (arrotondato per eccesso); con la regola facoltativa «Fame» vale anche per le razioni. Funziona dal 3, indipendente dal potere di classe; se la via di Guendalina risulta debole nei test si rivede. (b) *Infuso* dello Sciamano resta al livello 5 e *Legame del sottobosco* (+1 erba) al 3; se lo Sciamano dei Funghi fatica nei test: un elisir o un'erba in più, non uno scambio. (c) **Arma e focus:** l'arma si sceglie in creazione per tutte le classi. Il **focus** è valido per la *classe* (non per la specializzazione) e si sceglie alla creazione di Sciamano, Arcanista e Monaco; **dal 19/11 è un oggetto in due forme**, a scelta libera in creazione (`oggetti_per_rarita.md`, sez. 1): **normale** 1d8, una mano (Asse del mondo / Libro arcano / Filatterio) oppure **scudo** 1d6, +1 CA senza malus di Agilità (Scudo Feticcio / Brocchiere Runico / Aegis Divina); stesso bonus N nelle due forme. Il focus sta nella mano secondaria: gli incantatori usano solo armi a una mano. Il Guerriero non ha focus. **Cancellati il 17/11:** Simbolo sacro, Bastone (come focus a due mani) e Manganello (`registro_cancellati.md`). (d) Pergamene: potranno ampliare il pool dei poteri e dare scelte in più (da definire con le pergamene).
 - Canone: Aldo e Guendalina sono semplici maggiordomi, non conoscono magie reali; i loro poteri sono frutto della maledizione. Il personaggio entra nel dungeon già formato.
 - **Tutte le 8 specializzazioni e le due vie approvate il 05/11/2026** (vie: sezione 7).
 
-| Classe | Specializzazione 1 | Specializzazione 2 |
-|---|---|---|
 | Classe | Specializzazione offensiva | Specializzazione difensiva |
 |---|---|---|
 | Guerriero | Berserker (ex Esecutore) | Paladino (ex Difensore, ex Sentinella) |
@@ -131,7 +133,8 @@ Regola di lavoro: si decide il nucleo minimo, lo si mette in gioco, lo si prova;
 - **Attacco singolo:** 1d20; se colpisce, dado dell'arma + bonus + eventuali dadi del potere.
 - **Più attacchi** (potere scritto «due attacchi», combo dei nemici): un d20 per ogni attacco, ognuno con dado, bonus e dadi propri; ogni colpo può mancare per conto suo.
 - **Colpo gratuito** (es. *Senza scampo*, *Danza delle lame*): a segno da solo, solo il dado dell'arma, nessun bonus, mai critico, parte solo se il colpo principale colpisce.
-- **La caratteristica si somma una volta per attacco, mai per dado o per risorsa (15/11).** Più attacchi separati = la caratteristica su ognuno. Vale per giocatore e nemici (*Spirito d'ossa*, *Frantumare*, *Il Grande Inganno* corretti di conseguenza).
+- **La caratteristica si somma una volta per attacco, mai per dado o per risorsa (15/11).** Più attacchi separati = la caratteristica su ognuno. Vale per giocatore e nemici.
+- **Poteri senza tiro per colpire (16/11, nel codice dal 22/11):** un colpo che va a segno senza d20 non è mai critico e non riceve bonus (né +N dell'arma né caratteristica): valgono solo il dado dell'arma, se è un attacco con l'arma, e i dadi scritti nel potere. La CD degli stati dipende ancora dalla caratteristica. Corretti Sovraccarico, Annullamento, Frantumare, Il Grande Inganno, Incubo, Marea cremisi, Spirito d'ossa, Armata dei morti.
 - **Poteri per scontro e giornalieri si consumano quando si dichiarano**, anche se l'attacco manca (anche i poteri di classe). Un potere senza tiro per colpire non può mancare.
 
 ### Armi
@@ -149,10 +152,10 @@ Regola di lavoro: si decide il nucleo minimo, lo si mette in gioco, lo si prova;
 - **Chi decide il tipo di danno (11/11/2026):** per i poteri del Guerriero e per l'attacco base di tutte le classi lo decide l'**arma in mano** (il potere si adatta: stesso potere, stato dell'arma). **Gli incantatori, Sciamano compreso, mantengono il tipo di danno dei loro poteri** (sangue, psichico, forza, ossa, veleno; il Legno il contundente): dall'arma prendono solo dado e bonus.
 - **Scudo**: oggetto base (+1 CA, potenzia *In guardia*). Poteri speciali solo negli scudi trovati in gioco. Nessuna via dello scudo.
 
-### Riposo, razioni, mente
+### Riposo, razioni, mente (nel codice dal 20/11; le facoltative si scelgono in creazione, accanto alla modalità)
 - **Riposo** = 1 giorno: ricarica i giornalieri, recupera **2 punti mentali** (solo dove le fiamme sono calde).
 - **Base**: il riposo cura tutta la salute fisica; le pozioni restano per le emergenze.
-- **Facoltativa "Fame"**: il riposo non cura il corpo; curano le razioni (quante se ne vogliono, ognuna una quota fissa, es. 1/4 della salute massima).
+- **Facoltativa "Fame"**: il riposo non cura il corpo; curano le razioni (quante se ne vogliono, ognuna 1/4 della salute massima). Nel codice (20/11) si mangiano al riposo, quante ne servono; *Mani che curano* +50% anche sulle razioni.
 - Guendalina cucina **1d4 razioni al giorno**, tetto 10; contatore "Dispensa" sempre visibile.
 - **Facoltativa "Peso dei giorni"**: ogni 10 giorni −1 alla salute mentale massima. Il contatore dei giorni resta visibile per tutti (serve al finale).
 - La mente si recupera solo con il riposo (2), la fontana, le lacrime e gli elisir.
@@ -203,9 +206,9 @@ Identità: logora con lo stato dell'arma e finisce i nemici Vacillanti.
 |---|---|---|---|
 | 3 | Giornaliero | Marchio della preda | Il bersaglio è marchiato per lo scontro: +1d4 a tutti i tuoi attacchi contro di lui |
 | 4 | Per scontro | Ferita riaperta | Se il bersaglio ha lo stato dell'arma: +1 dado per ogni turno che gli resta, poi lo stato finisce |
-| 5 | Giornaliero (finale) | Sentenza | Tre attacchi; se il bersaglio è Vacillante, sono tutti critici |
+| 5 | Giornaliero (finale) | Resa dei conti (ex Sentenza, 16/11) | Tre attacchi; se il bersaglio è Vacillante, sono tutti critici |
 
-Da misurare: picco con arma perforante (Scoperto + *Colpo del boia* / *Caccia al ferito*) contro boss Vacillanti; *Sentenza* contro Atena e il sovrano; *Ferita riaperta* con lo Stordito (pochi turni).
+Da misurare: picco con arma perforante (Scoperto + *Colpo del boia* / *Caccia al ferito*) contro boss Vacillanti; *Resa dei conti* contro Atena e il sovrano; *Ferita riaperta* con lo Stordito (pochi turni).
 
 ### 3b. Guerriero Paladino (ex Difensore, ex Sentinella; APPROVATO il 05/11/2026, rinominato l'11/11/2026)
 
@@ -360,7 +363,7 @@ Identità: offensiva. La realtà si incrina, poi si spezza: il danno di forza ap
 
 | Potere | Ruolo | Effetto |
 |---|---|---|
-| Colpo di forza | Offesa | Dado dell'arma (d8 con il focus) + Mente, applica Esposto |
+| Colpo di forza | Offesa | Dado dell'arma (o del focus, se più alto) + Mente, applica Esposto |
 | Gravità (ex Spinta) | Controllo | 1d6 senza tiro per colpire, applica Indebolito; se il bersaglio è Esposto, dura 1 turno in più |
 | Campo di peso (ex Barriera cinetica) | Difesa | +2 CA fino al tuo turno; se il nemico ti manca, 1d4 di forza senza tiro per colpire |
 
@@ -376,7 +379,7 @@ Identità: offensiva. La realtà si incrina, poi si spezza: il danno di forza ap
 
 | Potere | Effetto |
 |---|---|
-| Sovraccarico | 2d8 + Mente, aggrava l'Esposto |
+| Sovraccarico | 2d8 senza tiro per colpire, aggrava l'Esposto (16/11: senza caratteristica) |
 | Collasso gravitazionale (ex Pioggia di frammenti) | Per i tuoi 3 turni successivi, all'inizio del turno 1d8 senza tiro per colpire, applica o aggrava l'Esposto |
 
 **Poteri che entrano in scelta ai livelli 3, 4 e 5:**
@@ -385,7 +388,7 @@ Identità: offensiva. La realtà si incrina, poi si spezza: il danno di forza ap
 |---|---|---|---|
 | 3 | Giornaliero | Punto di rottura | Per lo scontro l'Esposto o Scoperto sul bersaglio non scade |
 | 4 | Per scontro | Doppia frattura | Attacco; se il bersaglio è già Scoperto, due dadi in più |
-| 5 | Giornaliero (finale) | Annullamento | 4d8 + Mente senza tiro per colpire, aggrava; se il bersaglio è già Scoperto, **2 dadi in più** (era il doppio dei dadi, 15/11) |
+| 5 | Giornaliero (finale) | Annullamento | 4d8 senza tiro per colpire (16/11: senza caratteristica), aggrava; se il bersaglio è già Scoperto, **2 dadi in più** (era il doppio dei dadi, 15/11) |
 
 Da misurare: *Frattura* (+2 su ogni potere dal secondo turno, più critico 19-20 con lo Scoperto) contro Ettore ed Enea; *Spezzare la materia* contro il sovrano (non tocca le immunità: sangue e psichico); l'Arcanista della Realtà ha CA e salute basse e nessuno scudo.
 Idea tenuta in serbo: stato nuovo **Appesantito** (gravità: il bersaglio non può caricare), da valutare dopo le misure.
@@ -402,7 +405,7 @@ Identità: difensiva. Inganna il nemico, che colpisce il vuoto e si indebolisce;
 
 | Potere | Ruolo | Effetto |
 |---|---|---|
-| Dardo fantasma | Offesa | dado dell'arma (d8 con il focus) + Mente; +1d4 se hai almeno una Copia |
+| Dardo fantasma | Offesa | dado dell'arma (o del focus, se più alto) + Mente; +1d4 se hai almeno una Copia |
 | Sussurro illusorio | Controllo | Solo 1d6, applica Indebolito; **se colpisce nasce una Copia** (15/11; prima solo su un bersaglio già Indebolito) |
 | Riflessi | Difesa | +2 CA fino al tuo turno; se il nemico ti manca, nasce una Copia |
 
@@ -410,7 +413,7 @@ Identità: difensiva. Inganna il nemico, che colpisce il vuoto e si indebolisce;
 
 | Potere | Effetto |
 |---|---|
-| Frantumare | Consumi tutte le Copie: **1d6 per Copia + Mente una volta** (15/11: la caratteristica non si somma più per Copia), senza tiro per colpire; con 3 Copie anche Esposto |
+| Frantumare | Consumi tutte le Copie: **1d6 per Copia** (16/11: senza caratteristica), senza tiro per colpire; con 3 Copie anche Esposto |
 | Labirinto | TS Mente → Stordito (sui boss Indebolito); nasce una Copia |
 | Sdoppiamento | Costa l'azione: nascono 2 Copie e +2 CA fino al tuo turno |
 
@@ -418,7 +421,7 @@ Identità: difensiva. Inganna il nemico, che colpisce il vuoto e si indebolisce;
 
 | Potere | Effetto |
 |---|---|
-| Incubo | 2d8 + Mente, **+1d6** per Copia senza consumarle (era +1d8); TS Spirito → Impaurito |
+| Incubo | 2d8, **+1d6** per Copia, senza tiro e senza caratteristica (16/11, regola applicata il 22/11) senza consumarle (era +1d8); TS Spirito → Impaurito |
 | Dado truccato | Per 3 turni il nemico tira due d20 per colpire e tiene il peggiore (2 turni sui boss) |
 
 **Poteri che entrano in scelta ai livelli 3, 4 e 5:**
@@ -427,7 +430,7 @@ Identità: difensiva. Inganna il nemico, che colpisce il vuoto e si indebolisce;
 |---|---|---|---|
 | 3 | Giornaliero | Teatro di specchi | Copie al massimo; per 3 turni ogni Copia distrutta esplode con 1d6 su chi l'ha colpita |
 | 4 | Per scontro | Specchio rotto | Nasce una Copia; la prossima Copia distrutta rimanda al nemico il danno pieno del colpo (metà sui boss) |
-| 5 | Giornaliero (finale) | Il Grande Inganno | Consumi tutte le Copie (almeno 1): **2d8 per Copia + Mente una volta** (15/11), senza tiro per colpire; per 2 turni il nemico tira due d20 per colpire e tiene il peggiore |
+| 5 | Giornaliero (finale) | Il Grande Inganno | Consumi tutte le Copie (almeno 1): **2d8 per Copia** (16/11: senza caratteristica), senza tiro per colpire; per 2 turni il nemico tira due d20 per colpire e tiene il peggiore |
 
 Da misurare: Indebolito quasi a ogni turno (correttivo: solo dalla prima Copia distrutta per turno); senza Copie è la più debole a volontà; *Teatro di specchi* contro nemici a due attacchi; *Specchio rotto* sui nemici comuni; *Il Grande Inganno* e *Dado truccato* non si sommano (si rinnova la durata); una Copia dimezza il colpo, quindi contro i boss rende più dello scudo piatto del Legno (può esserci una classe che rende più di un'altra: voluto, 11/11).
 
@@ -444,7 +447,7 @@ Questioni:
 Specializzazioni: **Sangue** (offensiva, passa dall'Arcanista) e **Ossa** (difensiva; ex Ossomante / Chierico delle Ossa). Il **Purificatore** (fuoco sacro) è eliminato come specializzazione: il fuoco sacro resta come tipo di danno **da riciclare in oggetti e pergamene** (decisione dell'11/11/2026). Scartato anche l'Inquisitore della Mietitura (doppione del Berserker (ex Esecutore): la falce / arma d'asta necrotica resta un'idea di oggetto, es. nella teca di Aldo).
 - **Privilegi di classe** (i primi due ispirati a Diablo 3): livello 1 *Eredità del sepolcro*: dopo aver usato un potere giornaliero, fino al tuo turno successivo dimezzi i danni che subisci; livello 3 *Ultimo servizio*: una volta al giorno, quando scendi a 0 salute fisica, resti a 1 e ti curi 1d6 + Spirito; livello 5 *Tocco lenitivo* (per scontro): costa l'azione, cura 1/4 della salute massima e toglie uno stato.
 - La Bilancia (Luce/Ombra) è eliminata.
-- **Da rifare più avanti:** il testo di presentazione del Monaco (non più «fuoco sacro che brucia le maledizioni», ora sangue e ossa) e il focus «simbolo sacro» (valutare un nome nuovo).
+- **Da rifare più avanti:** il testo di presentazione del Monaco (non più «fuoco sacro che brucia le maledizioni», ora sangue e ossa). Il focus «simbolo sacro» è cancellato (17/11): il Monaco ha Filatterio e Aegis Divina.
 - In archivio: il Purificatore (*Colpo consacrato*, *Marchio del rogo*, *Aura purificante*, *Rogo*, *Arma benedetta*, *Fiamma calda*, *Martello del giudizio*, *Pira*, *Fuoco che cura*, *Consacrazione*, *Rogo purificatore*): possibili idee per pergamene e oggetti di fuoco sacro.
 
 ### 6a. Monaco del Sangue (ex Arcanista del Sangue; DECISO l'11/11/2026)
@@ -456,7 +459,7 @@ Identità: offensiva. Dardi e lance di sangue per fare danno; **non assorbe sang
 
 | Potere | Ruolo | Effetto |
 |---|---|---|
-| Dardo di sangue (ex Stilo cremisi) | Offesa | dado dell'arma (d8 con il focus) + Spirito, applica Sanguinante |
+| Dardo di sangue (ex Stilo cremisi) | Offesa | dado dell'arma (o del focus, se più alto) + Spirito, applica Sanguinante |
 | Frusta cremisi | Controllo | Solo 1d4 senza tiro per colpire, applica Indebolito; se il bersaglio è Sanguinante, il sanguinamento dura 1 turno in più |
 | Crosta | Difesa | +2 CA fino al tuo turno; chi ti colpisce diventa Sanguinante |
 
@@ -481,7 +484,7 @@ Identità: offensiva. Dardi e lance di sangue per fare danno; **non assorbe sang
 |---|---|---|---|
 | 3 | Giornaliero | Vincolo di sangue | TS Spirito → per 3 turni il bersaglio subisce anche la metà del danno che subisci tu (escluso *Sangue versato*) |
 | 4 | Per scontro | Costellazione rossa | Per i tuoi 3 turni successivi, all'inizio del turno una sfera fa 1d6 e applica Sanguinante; la terza aggrava |
-| 5 | Giornaliero (finale) | Marea cremisi | 4d8 + Spirito senza tiro per colpire, aggrava il sanguinamento; se è già Emorragia, la durata raddoppia (6 turni) |
+| 5 | Giornaliero (finale) | Marea cremisi | 4d8 senza tiro per colpire (16/11: senza caratteristica), aggrava il sanguinamento; se è già Emorragia, la durata raddoppia (6 turni) |
 
 Da misurare: *Sangue in piena* + *Sangue versato* (due dadi in più per 3 turni); *Lancia di sangue* + *Sangue versato* (+3 dadi, una volta per scontro); *Vincolo di sangue* il più debole (correttivo pronto: ogni colpo a segno del bersaglio ti cura 1, ma contro il principio delle offensive); *Marea cremisi* circa 42 danni totali con Emorragia; il costo del 10% senza cure contro Ettore ed Enea; la cenere del sovrano è **immune al sangue** (da rivedere nella sessione sui boss). Tolti *Risucchio* e *Ali cremisi*.
 
@@ -501,7 +504,7 @@ Identità: difensiva, carica e scarica. Il combattimento accumula un potere vort
 
 | Potere | Ruolo | Effetto |
 |---|---|---|
-| Lancia d'ossa | Offesa | dado dell'arma (d8 con il focus) + Spirito; critico con 19-20 |
+| Lancia d'ossa | Offesa | dado dell'arma (o del focus, se più alto) + Spirito; critico con 19-20 |
 | Spine d'ossa | Controllo | Solo 1d6, applica Indebolito; nasce una placca |
 | Armatura d'ossa | Difesa | Strappi le ossa al nemico: 1d4 senza tiro per colpire, +2 CA fino al tuo turno, nasce una placca |
 
@@ -509,7 +512,7 @@ Identità: difensiva, carica e scarica. Il combattimento accumula un potere vort
 
 | Potere | Effetto |
 |---|---|
-| Spirito d'ossa | Spendi tutte le placche (almeno 1): **1d8 per placca + Spirito una volta**, senza tiro per colpire (15/11: era 1d6 + Spirito per placca; con *Occhio del cacciatore* arrivava a 44 danni contro Atena) |
+| Spirito d'ossa | Spendi tutte le placche (almeno 1): **1d8 per placca**, senza tiro per colpire (16/11: senza caratteristica) (15/11: era 1d6 + Spirito per placca; con *Occhio del cacciatore* arrivava a 44 danni contro Atena) |
 | Lama d'osso | Spendi 1 placca: attacco con l'arma con due dadi in più; se colpisce, la placca torna |
 | Barricata di costole | Costa l'azione: placche al massimo; il prossimo attacco del nemico ha −2 per colpire |
 
@@ -526,9 +529,9 @@ Identità: difensiva, carica e scarica. Il combattimento accumula un potere vort
 |---|---|---|---|
 | 3 | Giornaliero | Armatura spezzata | Per lo scontro, ogni placca che si spezza fa 1d6 a chi l'ha colpita |
 | 4 | Per scontro | Decrepitezza | TS Vigore → Indebolito ed Esposto insieme; nasce una placca |
-| 5 | Giornaliero (finale) | Armata dei morti | Le ossa dei morti di Casa Vespera si sollevano: 4d8 + Spirito senza tiro per colpire (senza più il +1d8 per placca e senza consumarle); Stordito (sui boss Indebolito) |
+| 5 | Giornaliero (finale) | Armata dei morti | Le ossa dei morti di Casa Vespera si sollevano: 4d8 senza tiro per colpire (16/11: senza caratteristica) (senza più il +1d8 per placca e senza consumarle); Stordito (sui boss Indebolito) |
 
-Da misurare: *Spirito d'ossa* con 3 placche (dal 15/11 circa 3d8 + Spirito, media 21,5); Gabbia d'ossa + Lancia (circa 10% di stordimenti); *Armatura del sepolcro* contro gli sciami; due poteri che spendono placche nello stesso scontro (serve ricaricare tra l'uno e l'altro, voluto); Ossa contro la cenere del sovrano (ossa ✗).
+Da misurare: *Spirito d'ossa* con 3 placche (dal 22/11 3d8 senza Spirito, media 13,5); Gabbia d'ossa + Lancia (circa 10% di stordimenti); *Armatura del sepolcro* contro gli sciami; due poteri che spendono placche nello stesso scontro (serve ricaricare tra l'uno e l'altro, voluto); Ossa contro la cenere del sovrano (ossa ✗).
 
 ## 7. Vie di prestigio (APPROVATE il 05/11/2026; livelli spostati il 10/11/2026)
 
@@ -559,7 +562,7 @@ Da misurare (dopo lo spostamento di un livello): *Senza scampo* e *La soglia di 
 ### 8a. Regole generali (APPROVATE il 05/11/2026)
 
 - **Spariscono i punti abilità (PA)** dei nemici, e con loro l'oggetto che li faceva recuperare. I nemici usano la stessa logica dei poteri del giocatore: a volontà, per scontro, giornalieri; stesse regole applica/aggrava.
-- **I 5 avventurieri escono dal gioco per ora** (rientreranno con le cacce).
+- **Goblin, orchi, bande e i cinque avventurieri sono cancellati (16/11)**; i nemici comuni degli agguati e delle cacce sono i **vuoti** (`vuoti.md`; `mondo_e_incontri.md`, sezione 4).
 
 | Fascia | A volontà | Per scontro | Giornalieri |
 |---|---|---|---|
@@ -586,7 +589,7 @@ Da misurare (dopo lo spostamento di un livello): *Senza scampo* e *La soglia di 
 - **Il sovrano** (⚠ superato dalla struttura a due barre, 8e): nell'ultimo 25% l'armatura di cenere è distrutta e si vede il re nella sua forma vera, che combatte solo perché la maledizione gli è ancora attaccata. Sconfitto, parte l'ultima scena verso i tre finali.
 - Da definire per ogni nemico: l'ordine con cui sceglie i poteri (es. per scontro alla prima occasione utile, poi alterna gli a volontà).
 
-~~Da riportare in `storia_casa_vespera.md`~~ (fatto il 09/11 nei moduli `storia_*`): niente PA; avventurieri tolti per ora (anche Corrado Vallerossa); soglie dei giornalieri dei boss; sovrano resistente, non immune, al veleno; ultimo 25% del sovrano.
+~~Da riportare in `storia_casa_vespera.md`~~ (fatto il 09/11 nei moduli `storia_*`): niente PA; avventurieri cancellati (16/11); soglie dei giornalieri dei boss; sovrano resistente, non immune, al veleno; ultimo 25% del sovrano.
 
 ### 8b. Resistenze e vulnerabilità (APPROVATE il 05/11/2026)
 
@@ -607,7 +610,7 @@ Vale anche per i danni continuativi di quel tipo. Il fuoco sacro ignora le immun
 | Dentro casa | Mastini | La maledizione è piena: possono avere immunità | ✓ vulnerabili |
 | Il cuore | Sovrano con l'armatura | Le immunità più forti | ✓ vulnerabile |
 
-**Etichetta «Maledetto»:** nel riquadro del nemico, sotto il nome, simbolo e colore fissi (es. fiamma azzurra). Maledetti: infernali, mastini, guardiani, sovrano; gli animali normali no. Il +1d4 del vecchio *Colpo consacrato* è caduto con il Purificatore (idea per oggetti e pergamene di fuoco sacro).
+**Etichetta «Maledetto»:** nel riquadro del nemico, sotto il nome, simbolo e colore fissi (es. fiamma azzurra). Maledetti: infernali, mastini, guardiani, sovrano e **tutti i vuoti** (16/11); gli animali normali no. L'etichetta è solo colore: non cambia lo scontro. Il +1d4 del vecchio *Colpo consacrato* è caduto con il Purificatore (idea per oggetti e pergamene di fuoco sacro).
 
 **Mappa (schema colori di Francesco):**
 
@@ -698,35 +701,30 @@ Come tutti i mastini: fuoco comune ⛔, fuoco sacro ✓. La paura (Impaurito) è
 
 Obiezioni chiuse: Ringhio Impaurito con TS Spirito (A); doppione con il sovrano risolto (mappa diversa e armatura parziale); statistiche stimate, da misurare in test.html.
 
-**Gruppo 5, le otto cacce comuni (vulnerabilità e resistenze APPROVATE il 06/11/2026; nomi e personaggi segnaposto, li scrive Francesco; poteri da fare)**
+**Gruppo 5, le otto cacce comuni (vulnerabilità e resistenze APPROVATE il 06/11/2026; dal 16/11 i bersagli sono vuoti élite; nomi delle quattro cacce ★ e ★★ DECISI il 18/11; le quattro ★★★ DECISE il 19/11; statistiche e poteri delle cacce in `vuoti.md`, sez. 5)**
 
 Rimappate sui tipi nuovi (cadono Arcano, Forza, Luce, Ombra). Nessuna immunità (fuori casa solo resistenze). Due cacce per caratteristica primaria, due per finestra tra un fermaglio e l'altro; le classi favorite sono quelle che trovano la vulnerabilità tra i propri strumenti.
 
 | Finestra | Caccia | Primaria | Stelle | Vulnerabile | Resistente | Classe favorita |
 |---|---|---|---|---|---|---|
-| Dopo il bronzo | Bruto delle cave (orco) | Vigore | ★ | Psichico | Contundente | Arcanista (Illusione) |
-| | Ladra dei portali (umana) | Agilità | ★ | Contundente | Veleno | Guerriero |
-| Dopo l'argento | Cartografo rinnegato (mago) | Mente | ★★ | Veleno | Psichico | Sciamano (Funghi) |
-| | Penitente flagellante (fanatico) | Spirito | ★★ | Ossa | Fuoco sacro | Monaco (Ossa) |
-| Dopo l'oro | Troll delle radici | Vigore | ★★★ | Taglio | Perforante | Guerriero |
-| | Strega della torbiera | Mente | ★★★ | Fuoco sacro | Veleno | oggetti e pergamene (fuoco sacro; da rivedere) |
-| Dopo il platino | Lama gemella (duellante) | Agilità | ★★★ | Sangue | Taglio | Monaco (Sangue) |
-| | Profeta della cenere | Spirito | ★★★ | Veleno | Fuoco comune | Sciamano (Funghi) |
+| Dopo il bronzo | Gualtiero Pietrafenda (nano delle montagne; Carica) | Vigore | ★ | Psichico | Contundente | Arcanista (Illusione) |
+| | Fiammetta Ruggine (gnoma dei tunnel; Imboscata) | Agilità | ★ | Contundente | Veleno | Guerriero |
+| Dopo l'argento | Baldassarre Tintaverde (elfo delle nebbie; Fuoco) | Mente | ★★ | Veleno | Psichico | Sciamano (Funghi) |
+| | Ottilia dei Sette Digiuni (umana delle valli; Finto ferito) | Spirito | ★★ | Ossa | Fuoco sacro | Monaco (Ossa) |
+| Dopo l'oro | Brunilde Spezzacatena (nana delle fucine; Trappolista) | Vigore | ★★★ | Forza | Perforante | Arcanista (Realtà) |
+| | Ysolde della Torbiera (elfa degli acquitrini; Veleni e vapori) | Mente | ★★★ | Fuoco sacro | Veleno | oggetti e pergamene (lascia la pergamena di fuoco sacro) |
+| Dopo il platino | Corvino Due Lame (umano duellante; Imboscata) | Agilità | ★★★ | Sangue | Taglio | Monaco (Sangue) |
+| | Ezechiele Cenerino (umano predicatore; Fuoco) | Spirito | ★★★ | Veleno | Fuoco comune | Sciamano (Funghi) |
 
-- **Maledetto:** solo il Profeta della cenere. Il fuoco sacro (oggetti e pergamene) ignora la sua resistenza al fuoco.
+- **Maledetto:** tutti i vuoti (16/11, solo etichetta). Il fuoco sacro (oggetti e pergamene) ignora la resistenza al fuoco di Ezechiele Cenerino.
 - Nota di Aldo (★ e ★★), studio dell'★★★ e luoghi: `mondo_e_incontri.md`, sezione 7.
-- **Da rivedere nella sessione cacce (11/11):** nessuna caccia è vulnerabile alla **forza**; da decidere quale lo diventa (Realtà) e chi resta favorito dopo la caduta del Purificatore.
-- **PE (proposta del 06/11, non ancora confermata):** per arrivo, 100 (bronzo) / 150 (argento) / 200 (oro) / 250 (platino); finora per stelle 100/150/200 (`progressione.md`).
-- **Da fare:** personaggi e poteri dei nemici delle cacce (★ 2/1, ★★ 2/2, ★★★ 3/2); gruppo 5 chiuso solo per il suo schema.
+- **Forza (DECISO il 19/11):** Brunilde Spezzacatena è vulnerabile alla forza (favorita: Arcanista della Realtà).
+- **PE (proposta del 06/11, non ancora confermata):** per arrivo, 100 (bronzo) / 150 (argento) / 200 (oro) / 250 (platino); finora per stelle 100/150/200 (`progressione.md`; da misurare domenica).
+- **Poteri (DECISO il 18/11):** vuoto base della fascia + *Colpo feroce* (a volontà) e *Colpo furioso* (per scontro); conteggi ★ 2/1, ★★ 2/2, ★★★ 3/2 (`vuoti.md`). Nomi, archetipi, vulnerabilità e diari 13-16 delle quattro ★★★ decisi il 19/11 (`decisioni_19_novembre.md`).
 
-**Gruppo 6, agguati: orchi e goblin (APPROVATO il 09/11/2026, traduzione dei numeri del 29 ottobre sullo schema degli ordinari)**, non maledetti, neutri a tutto. Regole degli agguati: `mondo_e_incontri.md`, sezione 4. I cinque avventurieri sono tolti per ora (8a).
-
-| Nemico | Liv. | Salute / CA / Att. / Danno | A volontà 1 | A volontà 2 | Per scontro |
-|---|---|---|---|---|---|
-| Goblin predone | 2 | 12 / 13 / +2 / 1d4 + 1 | Pugnalata | Lama sporca: applica Intossicato | Colpo alle spalle: attacco, aggrava il veleno |
-| Orco razziatore | 3 | 18 / 11 / +4 / 1d8 | Fendente | Ascia che squarcia: applica Sanguinante | Ruggito: TS Spirito → Impaurito |
-| Banda di goblin | 4 | 20 / 12 / +2 / 2 × 1d4 | Pugnalate | Lame sporche: applica Intossicato | Accerchiamento: attacco con un dado in più, aggrava il veleno |
-| Banda di orchi | 4 | 28 / 10 / +3 / 2 × 1d6 | Fendenti | Asce che squarciano: applica Sanguinante | Ruggito del branco: TS Spirito → Impaurito |
+**Gruppo 6, agguati: i vuoti (DEFINITI il 18/11/2026, `vuoti.md`).** Le statistiche di goblin, orchi e bande (approvate il 09/11) sono **cancellate il 16/11** (`registro_cancellati.md`). Vuoti con statistiche fisse per fascia (0-4), sei archetipi (Carica, Imboscata, Trappolista, Finto ferito, Veleni e vapori, Fuoco), maledetti, senza resa né ritorno; la prova di agguato (Percezione o Intuizione) dipende dall'archetipo. Regole degli agguati: `mondo_e_incontri.md`, sezione 4; decisioni: `decisioni_16_novembre.md`, sez. 7 e 10, `decisioni_18_novembre.md`. Numeri ⚠ (prime misure il 22/11: `decisioni_22_novembre.md`, sez. 9).
+- **Prova di agguato (16/11; nel motore dal 22/11):** d20 + Percezione o Intuizione del giocatore contro d20 + Furtività del vuoto. Riuscita: agisci per primo e il vuoto ha −2 CA nel primo round. Fallita: il vuoto agisce per primo (turno intero) e tu hai −2 CA nel primo round. *Elmo del Cacciatore di notti* e *Anello del Mastino* (Percezione) la fanno riuscire da sola.
+- ***Primo passo*** (Stivali dell'Ultimo passo): attacco extra con d20 all'inizio del tuo primo turno (classico o a volontà); −2 CA al nemico nel primo round solo se agisci per primo, sommato a quello dell'agguato o della Furtività (−4).
 
 ### 8d. Guardiani (IN CORSO, uno alla volta in ordine di storia)
 
@@ -861,7 +859,7 @@ Livello 5, maledetta, celestiale caduta, paladino corrotto, Spirito, falce (tagl
 - **Due barre.** *Sovrano di cenere* 70 PF; *sovrano di carne* **40 PF** (era 30, 15/11), CA 13. Il danno in eccesso della cenere passa alla carne. CA della cenere: 16 da 70 a 47 PF, 15 da 47 a 23, 14 da 23 a 0 (soglie ai terzi).
 - **Mappa della cenere (armatura)**, quella originale (ripristinata il 15/11; la aprono le clausole del set di cenere, 7c): taglio ✗, contundente ✓, perforante ✗, sangue ⛔, psichico ⛔, fuoco sacro ✓ (solo con oggetti o pergamene), ossa ✗, veleno ✗; forza da assegnare. **Forma vera (carne):** taglio ✓, sangue ✓, veleno ✓, psichico ✗, il resto neutro. (✓ vulnerabile, ✗ resistente, ⛔ immune.)
 - **Set del sovrano di cenere e di carne** (`storia_retaggio_e_set.md`, 7c): pezzi indossati, bonus 2/4/5 = a volontà / per scontro / giornaliero; la clausola sulla mappa è nascosta; la regola della soglia è superata.
-- **Obiettivi di vittoria:** finale B (Adele, con spada e Sentenza dell'erede) 50%; gli altri ≥ 40%; build con l'elmo ≥ 35%; peggiore build non oltre 10 punti sotto la migliore.
+- **Obiettivi di vittoria:** finale B (Adele, con spada e Decreto dell'erede, ex Sentenza dell'erede) 50%; gli altri ≥ 40%; build con l'elmo ≥ 35%; peggiore build non oltre 10 punti sotto la migliore.
 - **Scudo/focus del set di carne:** +2 CA senza malus, mano libera, solo con armi a una mano.
 
 **Scheda (11/11/2026, ipotesi da misurare):** livello 6 (un livello sopra il giocatore), Guerriero. **Ascia bipenne gigante: solo danno tagliente** (niente facce dell'arma). Attacco **+10** (era +8, 15/11), danno 1d12 + 4. **Scala dei dadi 1 / 1 / 2** (decisa l'11/11 perché i danni erano troppo alti): a volontà 1d12 + 4, per scontro 1d12 + 4 con lo stato aggravato (vale per lo stato, non per il danno), giornaliero 2d12 + 4. Poteri 3 / 3 / 3, uno per ogni fase di armatura. I suoi incantesimi di potenziamento (Spirito) versano un elemento nell'ascia: ogni fase ha il suo (rabbia, maledizione, vuoto). Gli stati nuovi sono solo da boss.
@@ -873,7 +871,7 @@ Livello 5, maledetta, celestiale caduta, paladino corrotto, Spirito, falce (tagl
 | Fase | A volontà (applica) | Per scontro (aggrava) | Giornaliero (2d12 + 4) |
 |---|---|---|---|
 | 1, **Rabbia** (armatura integra, 70→47 PF) | **Fendente di rabbia**: 1d12 + 4, Sanguinante | **Collera del re**: 1d12 + 4, Sanguinante → Emorragia; il sovrano diventa **Furente** (+2 danni per 3 turni) | **Scure della collera**: aggrava lo stato della fase |
-| 2, **Maledetto** (incrinata, 47→23 PF) | **Colpo maledetto**: 1d12 + 4, **Maledetto** | **Sentenza maledetta**: 1d12 + 4, Maledetto → **Condannato** | **Giudizio della Casa**: aggrava a Condannato |
+| 2, **Maledetto** (incrinata, 47→23 PF) | **Colpo maledetto**: 1d12 + 4, **Maledetto** | **Condanna maledetta** (ex Sentenza maledetta, 16/11): 1d12 + 4, Maledetto → **Condannato** | **Giudizio della Casa**: aggrava a Condannato |
 | 3, **Vuoto** (caduta, 23→0 PF) | **Colpo di vuoto**: 1d12 + 4, **Svuotato** | **Vuoto che divora**: 1d12 + 4, Svuotato → **Prosciugato** | **Scure del vuoto**: aggrava a Prosciugato |
 | 4, **Carne** (40 PF, CA 13) | **Colpo senza armatura**: 1d12 + 4, nessuno stato | nessuno | evento finale (sotto) |
 
@@ -907,7 +905,7 @@ DECISO l'11/11: la rovina e il divorare tutti valgono solo per il Trono di Cener
 - Danni: il giornaliero a 2d12 + 4 (media 17) contro l'Arcanista (32-40 PF); se è ancora troppo, d10.
 - Percentuali con la pozione come azione rapida; *Maledetto* e *Condannato* contro i Guerrieri e le classi con *Mani che curano*.
 - *Svuotato* e *Prosciugato* (correttivo pronto: lo spegnimento dura 3 turni invece che fino a fine scontro).
-- Monaco del Sangue e Arcanista dell'Illusione contro i 70 PF di cenere: sangue e psichico sono immuni, quindi solo l'attacco base con l'arma (d8 con il focus), con un contundente vulnerabile; da verificare se arrivano al 40% senza pergamene.
+- Monaco del Sangue e Arcanista dell'Illusione contro i 70 PF di cenere: sangue e psichico sono immuni, quindi solo l'attacco base con l'arma (o del focus, se più alto), con un contundente vulnerabile; da verificare se arrivano al 40% senza pergamene.
 - Stordito a intero turno in fase 3; la lunghezza delle fasi (28, 21 e 21 PF di cenere) contro la sequenza di 3 turni; *Furente*.
 
 ## 8f. Progressione ed equipaggiamento (DECISO il 06/11/2026)
@@ -938,42 +936,43 @@ DECISO l'11/11: la rovina e il divorare tutti valgono solo per il Trono di Cener
 - Tiro per colpire = d20 + caratteristica di classe; danno = dado dell'arma + caratteristica di classe; il bonus +N si somma a entrambi.
 - **L'attacco base con l'arma non applica stati**: solo i poteri applicano e aggravano (così senza i poteri a volontà non si arriva al grado 2).
 - L'attacco base con l'arma **non attiva le sinergie della specializzazione** (Sangue versato, Copie, +danni sullo stato).
-- Danno **fisico dell'arma** (taglio, contundente, perforante); l'elementale solo per armi uniche (es. verga del Profeta, fuoco), per non allargare la mappa delle vulnerabilità.
+- Danno **fisico dell'arma** (taglio, contundente, perforante); l'elementale solo per armi uniche (es. verga di cenere, fuoco), per non allargare la mappa delle vulnerabilità.
 - Poteri speciali delle armi: **sul critico o una volta per scontro** (come deciso il 28/10), non competono con i poteri di classe per l'unica azione del turno.
-- **Ogni PNG lascia la sua arma, senza scelta** (l'identità del PNG viene prima). Un'arma a due mani esclude lo scudo. **Massimo due armi con sé** (sezione 2, 11/11).
+- **Ogni PNG lascia la sua arma, senza scelta** (l'identità del PNG viene prima). Un'arma a due mani esclude lo scudo. **Massimo due armi con sé** (sezione 2, 11/11). Le prede delle cacce non lasciano l'arma ma un **regalo di Aldo** (18/11, `vuoti.md`).
 - **Scudo:** (il set del sovrano di carne ha uno scudo/focus +2 CA senza malus, 8e) è una scelta; possibili scudi maledetti che non si possono togliere, **dichiarati nella descrizione** prima di indossarli.
+- **Armi comuni e limiti di classe (17/11):** sei armi comuni (due per tipo, una e due mani) e limiti di classe; vedi `decisioni_17_novembre.md` e `oggetti_per_rarita.md`. Il Manganello è cancellato.
 
-### Focus per gli incantatori (decisione del 10/11/2026, sostituisce il «dado del focus» del 6/11)
-- **Valido per la classe** (Sciamano, Arcanista, Monaco), qualunque sia la specializzazione; il Guerriero non ha focus. Si sceglie alla creazione tra libro arcano, filatterio, simbolo sacro, bastone.
-- **Mano primaria = arma, mano secondaria = focus facoltativo.** Senza focus si può portare lo scudo (+1 CA, Agilità −1) e il dado dell'arma resta quello base. I focus hanno tutti 1d6; il **bastone** è arma e focus insieme: due mani, 1d8, niente scudo (come le armi a due mani delle classi marziali).
-- **Con il focus** i poteri offensivi che tirano il «dado dell'arma» tirano **d8 se l'arma è d6**. *Dardo di sangue*, *Colpo di forza*, *Dardo fantasma* e *Lancia d'ossa* tornano a «dado dell'arma + caratteristica». L'attacco base con l'arma non applica mai stati: li applicano solo i poteri (anche quelli di Sciamano, con dado dell'arma + caratteristica e il loro stato).
+### Focus per gli incantatori (decisione del 10/11/2026; dal 19/11 **un oggetto, due forme**, sezione 0 (c); nel codice dal 20/11)
+- **Valido per la classe** (Sciamano, Arcanista, Monaco), qualunque sia la specializzazione; il Guerriero non ha focus. Si sceglie alla creazione la forma: **normale** (Asse del mondo / Libro arcano / Filatterio, 1d8) o **scudo** (Scudo Feticcio / Brocchiere Runico / Aegis Divina, 1d6, +1 CA senza malus di Agilità). ~~libro arcano, filatterio, simbolo sacro, bastone~~ (Simbolo sacro e Bastone cancellati).
+- **Mano primaria = arma, mano secondaria = focus.** Lo scudo è del Guerriero; per gli incantatori la protezione è la forma scudo del focus. Con un'arma a due mani niente focus: il dado resta quello dell'arma. ~~Il **bastone** è arma e focus insieme: due mani, 1d8, niente scudo.~~ (cancellato il 17/11: il focus normale è a una mano, 1d8.)
+- **Con il focus** i poteri offensivi che tirano il «dado dell'arma» tirano **il dado del focus** se è più alto: d8 in forma normale, d6 in forma scudo (20/11: chiude la questione «d8 con il focus»; i personaggi creati prima del 20/11 restano d8). *Dardo di sangue*, *Colpo di forza*, *Dardo fantasma* e *Lancia d'ossa* tornano a «dado dell'arma + caratteristica». L'attacco base con l'arma non applica mai stati: li applicano solo i poteri (anche quelli di Sciamano, con dado dell'arma + caratteristica e il loro stato).
 - **Nessuna compensazione** per lo scudo perso (stesso scambio delle armi a due mani).
-- **Da misurare la domenica:** Arcanista, Ossa e Sciamano senza scudo contro Ettore, Enea, élite dei mastini; soglia: non più di 10 punti sotto la peggiore build di Guerriero. Correttivo pronto: filatterio e simbolo sacro *indossati* (non occupano una mano), così lo scudo resta possibile.
+- **Da misurare la domenica:** Arcanista, Ossa e Sciamano senza scudo contro Ettore, Enea, élite dei mastini; soglia: non più di 10 punti sotto la peggiore build di Guerriero; 16 combinazioni specializzazione × focus. Correttivo pronto: filatterio indossato (non occupa una mano), così lo scudo resta possibile.
 - Le **pergamene** restano un extra (tipi di danno nuovi, scoperte di storia) e non servono a pareggiare le classi: si perdono fallendo una prova, e le percentuali di vittoria devono valere per ogni classe.
 - Scartate: armi caricate alla scelta della classe (troppo lavoro) e versioni «caricate» degli incantesimi (meccanica nuova).
 
-### Matrice arma-classe (APPROVATA il 06/11/2026; armi e tipi segnaposto)
+### Matrice arma-classe (APPROVATA il 06/11/2026; armi e tipi segnaposto; nomi delle cacce ★ e ★★ aggiornati il 18/11, delle ★★★ il 19/11)
 | Finestra | PNG | Arma proposta | Bonus | Guerr. | Sciam. | Arcan. | Monaco |
 |---|---|---|---|---|---|---|---|
-| Bronzo | Bruto delle cave | maglio da cava (contundente, 2 mani) | +1 | ✓ | | | ✓ |
-| | Ladra dei portali | stiletto rituale (perforante, leggero; focus) | +1 | ✓ | ✓ | ✓ | |
+| Bronzo | Gualtiero Pietrafenda | maglio da cava (contundente, 2 mani) | +1 | ✓ | | | ✓ |
+| | Fiammetta Ruggine | stiletto rituale (perforante, leggero; focus) | +1 | ✓ | ✓ | ✓ | |
 | | Ettore | due pugnali | +1 | ✓ | ✓ | | |
-| Argento | Cartografo rinnegato | bastone da cartografo (focus, 2 mani) | +2 | | ✓ | ✓ | ✓ |
-| | Penitente flagellante | flagello (contundente) | +2 | ✓ | | | ✓ |
+| Argento | Baldassarre Tintaverde | Sfera armillare (focus a una mano, due forme; ex Bastone da cartografo, 19/11) | +2 | | ✓ | ✓ | ✓ |
+| | Ottilia dei Sette Digiuni | flagello chiodato (perforante, dal 14/11) | +2 | ✓ | | | ✓ |
 | | Enea | maglio-ascia (2 mani, tipo da decidere) | +2 | ✓ | | | ✓ |
-| Oro | Troll delle radici | clava di radice (contundente, 2 mani) | +3 | ✓ | | | ✓ |
-| | Strega della torbiera | verga di torbiera (focus) | +3 | | | ✓ | ✓ |
+| Oro | Brunilde Spezzacatena | clava di radice (contundente, 2 mani) | +3 | ✓ | | | ✓ |
+| | Ysolde della Torbiera | nessuna arma: pergamena di fuoco sacro (14/11; la riga «verga di torbiera» è superata) | | | | | |
 | | Dafne | stocco (perforante, leggero) | +3 | ✓ | ✓ | | |
-| Platino | Lama gemella | due lame (taglio, leggere) | +3 | ✓ | ✓ | | |
-| | Profeta della cenere | verga di cenere (focus; fuoco) | +3 | | | ✓ | ✓ |
+| Platino | Corvino Due Lame | due lame (taglio, leggere) | **+2** (era +3; corretto il 19/11 secondo la decisione del 14/11: Atena resta l'unica falce +3) | ✓ | ✓ | | |
+| | Ezechiele Cenerino | verga di cenere (focus a due forme, d10 / d8 in forma scudo +1 CA; *Pioggia di braci*; dal 22/11) | +3 | | | ✓ | ✓ |
 | | Atena | falce (taglio, 2 mani) | +3 | ✓ | | | ✓ |
 
-Ogni classe ha almeno un'arma utilizzabile in ogni finestra; Arcanista e Sciamano ne hanno una sola per finestra.
+Ogni classe ha almeno un'arma utilizzabile in ogni finestra; Arcanista e Sciamano ne hanno una sola per finestra. Le armi delle cacce sono **regali di Aldo** (non drop dei vuoti).
 
 ### Da fare
 - Soglie di PE fino al livello 10; riconfermare +1 punto attributo dal 6 al 10.
 - ~~Aggiornare `bilanciamento_nemici_oggetti.md`~~ → fatto il 09/11: diviso in `progressione.md`, `mondo_e_incontri.md`, `elisir_e_bottino.md` e archiviato.
-- ~~Aggiornare i poteri offensivi di Arcanista e Ossa~~ → fatto il 10/11: tornano al dado dell'arma (d8 con il focus).
+- ~~Aggiornare i poteri offensivi di Arcanista e Ossa~~ → fatto il 10/11: tornano al dado dell'arma (o del focus, se più alto).
 
 ## 8g. Valori dei boss e misure del 15/11/2026 (congelati)
 

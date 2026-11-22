@@ -24,7 +24,7 @@ Ultimo aggiornamento: 9 novembre 2026 (sezione 1: il re sa il chi, non il perch�
 - **Le altre lacrime:** con il passare dei secoli alcuni avventurieri ne hanno trovate, come Atena. Ad Aldo, fedele al sovrano, va bene così.
 - **Adele oggi:** nei secoli di prigionia, lontana da tutti, si è allenata e ha trovato la concentrazione dopo la disperazione. Il giocatore però non ha modo di verificarlo.
 - **La maledizione:** la rabbia del re è diventata la maledizione della casa, che trattiene i prigionieri e trasforma gli esploratori in guardiani. Aldo li usa anche come passatempo.
-- **Gli ingressi (DECISO il 28 ottobre):** è Aldo a controllare ingressi e uscite della casa. Gli avventurieri arrivano dagli altri ingressi della grotta e vagano nelle terre dei Vespera, fuori dalle mura. Il personaggio è l'unico entrato direttamente nella casa: un'anomalia che Aldo legge come un segnale, ed è per questo che lo mette alla prova e vuole farne il prossimo guardiano. Dentro casa si rischia la mente, fuori il corpo.
+- **Gli ingressi (DECISO il 28 ottobre):** è Aldo a controllare ingressi e uscite della casa. Gli avventurieri arrivano dagli altri ingressi (i portali) e, morti, vagano come **vuoti** nelle terre dei Vespera, fuori dalle mura. Il personaggio è l'unico entrato direttamente nella casa: un'anomalia che Aldo legge come un segnale, ed è per questo che lo mette alla prova e vuole farne il prossimo guardiano. Dentro casa si rischia la mente, fuori il corpo.
 
 ## 2. Regola del patto di Guendalina
 

@@ -71,16 +71,17 @@
   const immuneStordito = (b) => !!(b.boss || (b.immStordito > 0) || (b.immuni || []).includes("stordito"));
 
   /* ---------- Tiro salvezza (simmetria totale) ---------- */
-  const cd = (fonte) => CD_BASE + (Number(fonte && fonte.modClasse) || 0) + (Number(fonte && fonte.liv) || 0);
+  const cd = (fonte) => CD_BASE + (Number(fonte && fonte.modClasse) || 0) + (Number(fonte && fonte.liv) || 0) + (Number(fonte && fonte.cdBonus) || 0); /* cdBonus: Mente lucida, Lampo di intuizione */
   /* attr: caratteristica imposta dal potere (Labirinto: Stordito con TS di Mente; Vincolo di sangue: Spirito) */
   function tiroSalvezza(b, id, fonte, tira, attrImposto) {
     const attr = attrImposto || (STATI[id] || {}).ts || "Vigore";
     const c = b.cariche || {};
-    /* cariche dell'equipaggiamento (15/11): Piastre del Rettore = il prossimo TS contro uno stato riesce; Elmo del Penitente = contro Impaurito o Esposto */
+    /* cariche dell'equipaggiamento (15/11): Piastre del Rettore = il prossimo TS contro uno stato riesce; Elmo della Sentinella = contro Impaurito o Esposto */
     if (id && c.piastre) { delete c.piastre; return { k: "ts", stato: id, attr, auto: "Piastre del Rettore", ok: true, cd: cd(fonte) }; }
-    if ((id === "impaurito" || id === "esposto") && c.elmo) { delete c.elmo; return { k: "ts", stato: id, attr, auto: "Elmo del Penitente", ok: true, cd: cd(fonte) }; }
+    if ((id === "impaurito" || id === "esposto") && c.elmo) { delete c.elmo; return { k: "ts", stato: id, attr, auto: "Elmo della Sentinella", ok: true, cd: cd(fonte) }; }
     const piede = c.piede ? 4 : 0; if (piede) delete c.piede; /* Piede fermo: +4 al prossimo TS */
-    const m = mod(b, attr) + (Number(b.liv) || 0) + (Number(b.bonusTs) || 0) + ((b.tsStato && b.tsStato[id]) || 0) + piede; /* tsStato: Calzari, Talismano */
+    const m = mod(b, attr) + (Number(b.liv) || 0) + (Number(b.bonusTs) || 0) + ((b.tsStato && b.tsStato[id]) || 0) + piede /* tsStato: Calzari, Talismano */
+      + (id ? Object.values(b.buff || {}).reduce((t, x) => t + (Number(x.tsStati) || 0), 0) : 0); /* Fede incrollabile: +3 ai TS contro gli stati */
     const d = tira(20), tot = d + m, CD = cd(fonte);
     return { k: "ts", stato: id, attr, d, m, tot, cd: CD, ok: tot >= CD };
   }
@@ -186,7 +187,8 @@
     const s = st(b, id); if (!s || !STATI[id].dado) return null;
     const dado = STATI[id].dado[s.liv - 1], n = s.doppio > 0 ? 2 : 1, tiri = Array.from({ length: n }, () => tira(dado)), d = tiri.reduce((a, x) => a + x, 0);
     /* resStati: resistenza al solo danno continuativo di uno stato (es. creature di cenere: sanguinamento dimezzato) */
-    const dd = b.resStati && b.resStati[id] === "res" ? Math.ceil(d / 2) : d;
+    let dd = b.resStati && b.resStati[id] === "res" ? Math.ceil(d / 2) : d;
+    const rid = Number(b.riduciTick) || 0; if (rid && dd > 0) { dd = Math.max(0, dd - rid); b.riduciTick = 0; } /* Carne domata: −1 una volta per turno */
     const ev = subisci(b, dd, s.tipo);
     return { ...ev, k: "tick", stato: id, nome: nomeStato(id, s.liv), dado, d, ...(n > 1 ? { tiri } : {}) };
   }

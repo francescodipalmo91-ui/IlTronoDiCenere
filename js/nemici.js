@@ -55,6 +55,28 @@
     ringhio_della_soglia: { nome: "Ringhio della soglia", k: "ts", applica: ["impaurito"] },
     spallata_corazzata: A("Spallata corazzata", { soloDado: true, applica: ["indebolito"] }),
     carica_di_ferro: A("Carica di ferro", { piuDadi: 1, applica: ["stordito"], carica: true }),
+    /* ===== vuoti (vuoti.md, 18/11): sei archetipi degli agguati; a volontà 1 (fascia 0+), a volontà 2 (fascia 3+), per scontro (fascia 2+) ===== */
+    carica_testa_bassa: A("Carica a testa bassa", { piuDadi: 1, scopre: 2 }),          /* un dado in più, ma −2 CA fino al suo turno */
+    spallata_vuoto: A("Spallata", { applica: ["stordito"] }),
+    furia_cieca: A("Furia cieca", { volte: 2, malusPoi: 2 }),                          /* due attacchi, il secondo con −2 */
+    colpo_alle_spalle: A("Colpo alle spalle", { allaSpalle: 2 }),                     /* +2 a colpire se agisce prima di te nel round */
+    tiro_mirato: A("Tiro mirato", { applica: ["esposto"] }),
+    raffica: A("Raffica", { volte: 2 }),
+    laccio: A("Laccio", { applica: ["esposto"] }),
+    tagliola: A("Tagliola", { applica: ["sanguinante"] }),
+    buca: { nome: "Buca", k: "soffio", n: 2, dado: 6, tipoDanno: "contundente", togliRapida: true }, /* 2d6 senza tiro, perdi l'azione rapida */
+    ferita_finta: A("Ferita finta", { seMancato: 1 }),                                /* se hai mancato il tuo ultimo attacco, un dado in più */
+    voce_falsa: A("Voce falsa", { applica: ["impaurito"] }),
+    eco_della_tua_voce: { nome: "Eco della tua voce", k: "ts", applica: ["impaurito"] },
+    spora: A("Spora", { applica: ["intossicato"] }),
+    nube_vuoto: { nome: "Nube", k: "ts", applica: ["indebolito"] },
+    respiro_d_ombra: A("Respiro d'ombra", { piuDadi: 1, applicaPoiAggrava: ["intossicato"] }),
+    brace: A("Brace", { applica: ["scottato"] }),
+    lanterna: { nome: "Lanterna", k: "ts", applica: ["esposto"] },
+    vampa: { nome: "Vampa", k: "soffio", n: 2, dado: 6, tipoDanno: "fuoco", applicaPoiAggrava: ["scottato"] },
+    /* cacce (vuoti élite): due poteri generici; Colpo furioso applica e aggrava lo stato dell'archetipo */
+    colpo_feroce: A("Colpo feroce", { piuDadi: 1 }),
+    ...Object.fromEntries(["stordito", "esposto", "sanguinante", "impaurito", "intossicato", "scottato"].map(k => ["colpo_furioso_" + k, A("Colpo furioso", { piuDadi: 1, applicaPoiAggrava: [k] })])),
     /* nemico generico (cacce comuni e avventurieri, finché non hanno i loro poteri): solo l'attacco base */
     attacco_base: A("Attacco"),
     /* attacco semplice dei boss (intervallo tra le fasi): dado dell'arma + bonus, senza stati */
@@ -104,7 +126,7 @@
     collera_del_re: A("Collera del re", { aggrava: ["sanguinante"], suSe: ["furente"], tipo: "taglio", annuncia: true }),
     scure_della_collera: A("Scure della collera", { piuDadi: 1, aggrava: ["sanguinante"], tipo: "taglio", annuncia: true }),
     colpo_maledetto: A("Colpo maledetto", { applica: ["maledizione"], tipo: "taglio" }),
-    sentenza_maledetta: A("Sentenza maledetta", { aggrava: ["maledizione"], tipo: "taglio", annuncia: true }),
+    condanna_maledetta: A("Condanna maledetta", { aggrava: ["maledizione"], tipo: "taglio", annuncia: true }),
     giudizio_della_casa: A("Giudizio della Casa", { piuDadi: 1, aggrava: ["maledizione"], tipo: "taglio", annuncia: true }),
     colpo_di_vuoto: A("Colpo di vuoto", { applica: ["vuoto"], tipo: "taglio" }),
     vuoto_che_divora: A("Vuoto che divora", { aggrava: ["vuoto"], tipo: "taglio", annuncia: true }),
@@ -192,7 +214,7 @@
         { nome: "Rabbia (armatura integra)", ca: 16, res: "cenere", immuni: ["sanguinante"], statiCorti: true,
           sequenza: ["fendente_di_rabbia", "collera_del_re", "scure_della_collera"], ciclo: ["fendente_di_rabbia", "difesa_del_re", "colpo_semplice"], riempitivo: "fendente_di_rabbia" },
         { nome: "Maledetto (armatura incrinata)", ca: 15, res: "cenere", immuni: ["sanguinante"],
-          sequenza: ["colpo_maledetto", "sentenza_maledetta", "giudizio_della_casa"], ciclo: ["colpo_maledetto", "difesa_del_re", "colpo_semplice"], riempitivo: "colpo_maledetto" },
+          sequenza: ["colpo_maledetto", "condanna_maledetta", "giudizio_della_casa"], ciclo: ["colpo_maledetto", "difesa_del_re", "colpo_semplice"], riempitivo: "colpo_maledetto" },
         { nome: "Vuoto (armatura caduta)", ca: 14, res: "cenere",
           sequenza: ["colpo_di_vuoto", "vuoto_che_divora", "scure_del_vuoto"], ciclo: ["colpo_di_vuoto", "difesa_del_re", "colpo_semplice"], riempitivo: "colpo_di_vuoto" },
         { nome: "La carne", ca: 13, res: "carne", sequenza: [], ciclo: ["colpo_senza_armatura"] }
@@ -301,6 +323,8 @@
   /* un nemico pronto per lo scontro. ASSUNZIONI: caratteristiche a +0 (TS = d20 + livello); la CD dei suoi stati è 8 + attacco + livello */
   function crea(id, o) {
     if (BOSS[id]) return creaBoss(id, o);
+    if (/^vuoto:/.test(id)) { const [, f, a] = id.split(":"); return Object.assign(creaVuoto(Number(f), a), o || {}); }
+    if (/^caccia:/.test(id)) return Object.assign(creaCaccia(id.slice(7)), o || {});
     const d = NEMICI[id]; if (!d) throw new Error("nemico sconosciuto: " + id);
     return S.preparaScontro(Object.assign({
       id, nome: d.nome, liv: d.liv, pv: d.pv, pvMax: d.pv, caBase: d.ca, caVacillante: d.caVacillante, modAtt: d.att, modDanno: d.danno[2], modClasse: d.att,
@@ -309,6 +333,60 @@
       rune: !!d.rune, turno: 0, stati: {}, buff: {}
     }, o || {}));
   }
+
+  /* ===================== VUOTI (vuoti.md, 18-19/11; numeri ⚠ da misurare) =====================
+     Valori fissi per fascia (0 prima del bronzo … 4 dopo il platino), uguali per agguati e cacce; tutti maledetti (colore).
+     agguato: l'abilità del giocatore nella prova contrapposta (Percezione o Intuizione) contro la Furtività del vuoto (⚠ = il suo attacco). */
+  const FASCE_VUOTI = [
+    { pv: 20, ca: 11, att: 2, danno: [1, 6, 1], pe: 50 }, { pv: 26, ca: 12, att: 3, danno: [1, 6, 2], pe: 75 },
+    { pv: 32, ca: 13, att: 4, danno: [1, 8, 2], pe: 100 }, { pv: 38, ca: 14, att: 5, danno: [1, 8, 3], pe: 125 },
+    { pv: 44, ca: 15, att: 6, danno: [1, 10, 3], pe: 150 }
+  ];
+  const ARCHETIPI = {
+    carica: { nome: "Carica", agguato: "Intuizione", tipo: "contundente", stato: "stordito", volonta: ["carica_testa_bassa", "spallata_vuoto"], scontro: "furia_cieca" },
+    imboscata: { nome: "Imboscata", agguato: "Percezione", tipo: "perforante", stato: "esposto", volonta: ["colpo_alle_spalle", "tiro_mirato"], scontro: "raffica" },
+    trappolista: { nome: "Trappolista", agguato: "Percezione", tipo: "taglio", stato: "sanguinante", volonta: ["laccio", "tagliola"], scontro: "buca" },
+    finto: { nome: "Finto ferito", agguato: "Intuizione", tipo: "taglio", stato: "impaurito", volonta: ["ferita_finta", "voce_falsa"], scontro: "eco_della_tua_voce" },
+    veleni: { nome: "Veleni e vapori", agguato: "Percezione", tipo: "veleno", stato: "intossicato", volonta: ["spora", "nube_vuoto"], scontro: "respiro_d_ombra" },
+    fuoco: { nome: "Fuoco", agguato: "Percezione", tipo: "fuoco", stato: "scottato", volonta: ["brace", "lanterna"], scontro: "vampa" }
+  };
+  /* le otto cacce: vuoto élite della fascia (+50% salute, +1 CA, +1 attacco, Colpo feroce e Colpo furioso) */
+  const CACCE = {
+    gualtiero: { nome: "Gualtiero Pietrafenda", fascia: 1, arch: "carica", res: { psichico: "vuln", contundente: "res" } },
+    fiammetta: { nome: "Fiammetta Ruggine", fascia: 1, arch: "imboscata", res: { contundente: "vuln", veleno: "res" } },
+    baldassarre: { nome: "Baldassarre Tintaverde", fascia: 2, arch: "fuoco", res: { veleno: "vuln", psichico: "res" } },
+    ottilia: { nome: "Ottilia dei Sette Digiuni", fascia: 2, arch: "finto", res: { ossa: "vuln", fuoco_sacro: "res" } },
+    brunilde: { nome: "Brunilde Spezzacatena", fascia: 3, arch: "trappolista", res: { forza: "vuln", perforante: "res" } },
+    ysolde: { nome: "Ysolde della Torbiera", fascia: 3, arch: "veleni", res: { fuoco_sacro: "vuln", veleno: "res" } },
+    corvino: { nome: "Corvino Due Lame", fascia: 4, arch: "imboscata", res: { sangue: "vuln", taglio: "res" } },
+    ezechiele: { nome: "Ezechiele Cenerino", fascia: 4, arch: "fuoco", res: { veleno: "vuln", fuoco: "res" } }
+  };
+  /* vuoto dell'agguato: crea("vuoto:<fascia>:<archetipo>"); caccia: crea("caccia:<id>") */
+  function creaVuoto(fascia, arch, o) {
+    const f = FASCE_VUOTI[fascia], a = ARCHETIPI[arch]; if (!f || !a) throw new Error("vuoto sconosciuto: " + fascia + " " + arch);
+    o = o || {}; const el = !!o.caccia;
+    const volonta = [a.volonta[0], ...(fascia >= 3 ? [a.volonta[1]] : []), ...(el ? ["colpo_feroce"] : [])];
+    const scontro = [...(fascia >= 2 ? [a.scontro] : []), ...(el ? ["colpo_furioso_" + a.stato] : [])];
+    const pv = el ? Math.round(f.pv * 1.5) : f.pv, ca = f.ca + (el ? 1 : 0), att = f.att + (el ? 1 : 0);
+    return S.preparaScontro({
+      id: o.id || `vuoto:${fascia}:${arch}`, nome: o.nome || `Vuoto (${a.nome.toLowerCase()}, fascia ${fascia})`, liv: fascia + 1, pv, pvMax: pv, caBase: ca,
+      modAtt: att, modDanno: f.danno[2], modClasse: att, arma: { n: f.danno[0], dado: f.danno[1], tipo: a.tipo }, mod: {}, res: o.res || {},
+      maledetto: true, vuoto: true, archetipo: arch, fascia, agguato: a.agguato, furtivita: att, pe: f.pe, boss: false,
+      volonta, scontro, elite: false, caccia: el, fuggeAlTurno: 0, rune: false, turno: 0, stati: {}, buff: {}
+    });
+  }
+  /* prova dell'agguato (16/11 sez. 7): d20 + abilità del giocatore (bonus) contro d20 + Furtività del vuoto.
+     Riuscita: agisci per primo, il vuoto ha −2 CA nel primo round. Fallita: il vuoto agisce per primo (turno intero), tu hai −2 CA nel primo round.
+     opz.auto: riuscita automatica (Elmo del Cacciatore di notti; Anello del Mastino per la Percezione). Restituisce l'evento; chi gestisce lo scontro fa agire per primo il vuoto se ok è falso. */
+  function provaAgguato(n, pg, bonus, ctx, opz) {
+    S.preparaScontro(n); S.preparaScontro(pg); opz = opz || {};
+    const d = opz.auto ? null : ctx.tira(20), dn = opz.auto ? null : ctx.tira(20);
+    const tot = opz.auto ? null : d + (Number(bonus) || 0), contro = opz.auto ? null : dn + (Number(n.furtivita) || 0);
+    const ok = !!opz.auto || tot >= contro;
+    if (ok) n.buff.sorpreso = { ca: -2, turni: 1 }; else { pg.buff.sorpreso = { ca: -2, turni: 1 }; n.primo = true; }
+    return { k: "agguato", chi: n.nome, abilita: n.agguato || "Percezione", d, tot, dn, contro, ok, ...(opz.auto ? { auto: true } : {}) };
+  }
+  const creaCaccia = (id) => { const c = CACCE[id]; if (!c) throw new Error("caccia sconosciuta: " + id); return creaVuoto(c.fascia, c.arch, { caccia: true, id: "caccia:" + id, nome: c.nome, res: c.res }); };
 
   /* nemico generico dalle statistiche del gioco (cacce comuni, avventurieri): solo l'attacco base, nessuno stato */
   function creaGenerico(o) {
@@ -374,12 +452,16 @@
     const esito = {}, stati = () => {
       (p.aggrava || []).forEach(k => { if (pg.pv > 0) E.push(...S.statoSu(n, pg, "aggrava", ctx, k, esito)); });
       (p.applica || []).forEach(k => { if (pg.pv > 0) E.push(...S.statoSu(n, pg, "applica", ctx, k, esito)); });
+      /* applica e poi aggrava con lo stesso TS (vuoti: Respiro d'ombra, Vampa, Colpo furioso) */
+      (p.applicaPoiAggrava || []).forEach(k => { if (pg.pv > 0) { E.push(...S.statoSu(n, pg, "applica", ctx, k, esito)); if (pg.pv > 0 && !esito.ok) E.push(...S.statoSu(n, pg, "aggrava", ctx, k, esito)); } });
     };
     switch (p.k) {
       case "attacco": {
         for (let i = 0; i < (p.volte || 1) && pg.pv > 0 && n.pv > 0; i++) {
           E.push(...conta(n));
-          const r = S.attacco(n, pg, { nome: id, soloDado: p.soloDado, piuDadi: p.piuDadi, carica: p.carica || !!p.annuncia, tipo: p.tipo }, ctx); E.push(...r.eventi);
+          const bonus = (p.allaSpalle && n.turno === 1 && n.primo ? p.allaSpalle : 0) - (p.malusPoi && i > 0 ? p.malusPoi : 0);
+          const dadi = (p.piuDadi || 0) + (p.seMancato && pg.ultimoMancato ? p.seMancato : 0);
+          const r = S.attacco(n, pg, { nome: id, soloDado: p.soloDado, piuDadi: dadi, carica: p.carica || !!p.annuncia, tipo: p.tipo, bonusColpire: bonus }, ctx); E.push(...r.eventi);
           if (r.ok && !r.annullato) {
             stati();
             if (p.congela && pg.pv > 0 && P.grave(pg, "gelo")) E.push(...P.applica(pg, "stordito", { fonte: S.fonteDi(n), tira: ctx.tira, nome: "Congelato" })); /* Congelato = Stordito, TS Vigore */
@@ -387,6 +469,7 @@
           }
         }
         (p.suSe || []).forEach(k => E.push(...P.applica(n, k, { senzaTs: true })));
+        if (p.scopre) { n.buff.scoperto = { ca: -p.scopre, turni: 1 }; E.push({ k: "buff", id: "scoperto", chi: n.nome, ca: -p.scopre }); } /* Carica a testa bassa */
         break;
       }
       case "serie": { /* Alla dodicesima: per 3 turni due Pugnalate a turno, il secondo colpo aggrava */
@@ -401,7 +484,9 @@
       }
       case "soffio": {
         const t = Array.from({ length: p.n }, () => ctx.tira(p.dado)), e = { k: "soffio", tiri: t };
-        E.push(e, ...S.danneggia(pg, t.reduce((a, x) => a + x, 0), "fuoco", e, ctx)); stati(); break;
+        E.push(e, ...S.danneggia(pg, t.reduce((a, x) => a + x, 0), p.tipoDanno || "fuoco", e, ctx)); stati();
+        if (p.togliRapida && pg.pv > 0) { pg.rapidaPersa = true; E.push({ k: "rapidaPersa", chi: pg.nome }); } /* Buca */
+        break;
       }
       case "ts": stati(); break;
       case "difesa": n.buff[p.buff] = { finoAlTurno: true, ...(p.ca ? { ca: p.ca } : {}), ...(p.soglia ? { soglia: p.soglia } : {}) }; E.push({ k: "buff", id: p.buff, chi: n.nome, ...(p.ca ? { ca: p.ca } : {}) }); break;
@@ -427,7 +512,7 @@
     const dado = n ? `${n.arma.n}d${n.arma.dado}` : "il suo dado";
     const parti = [];
     if (p.k === "attacco") {
-      const nd = p.piuDadi ? (n ? `${n.arma.n + p.piuDadi}d${n.arma.dado}` : "un dado in più") : dado;
+      const nd = p.piuDadi ? (n ? `${n.arma.n + p.piuDadi}d${n.arma.dado}` : "un dado di danno in più") : dado;
       parti.push(`Attacco (d20 ${n ? "+ " + n.modAtt : ""} contro la tua CA): ${nd}${p.soloDado ? " (solo il dado)" : n && n.modDanno ? " + " + n.modDanno : ""}.`);
     }
     if (p.k === "soffio") parti.push(`Senza tiro per colpire: ${p.n}d${p.dado} di fuoco.`);
@@ -446,7 +531,7 @@
 
   /* le due barre del sovrano, per la scheda */
   const barreSovrano = (n) => (n.id === "sovrano" ? { cenere: Math.max(0, n.pv - 40), cenereMax: 70, carne: Math.min(40, Math.max(0, n.pv)), carneMax: 40 } : null);
-  const API = { clausoleCenere, iconaDi, POTERI, NEMICI, BOSS, crea, creaBoss, creaGenerico, scegli, agisci, esegui, statoRune, descrivi, REGOLA_SCELTA, cercaDafne, fineStacco, faseCorrente, barreSovrano };
+  const API = { clausoleCenere, iconaDi, POTERI, NEMICI, BOSS, FASCE_VUOTI, ARCHETIPI, CACCE, creaVuoto, creaCaccia, provaAgguato, crea, creaBoss, creaGenerico, scegli, agisci, esegui, statoRune, descrivi, REGOLA_SCELTA, cercaDafne, fineStacco, faseCorrente, barreSovrano };
   root.Nemici = API;
   if (typeof module !== "undefined" && module.exports) module.exports = API;
 })(typeof window !== "undefined" ? window : globalThis);

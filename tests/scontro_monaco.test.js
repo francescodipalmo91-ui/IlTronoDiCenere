@@ -82,9 +82,9 @@
     const c = ctx([4, 5, 4, 5, 4]); S.inizioTurno(a, n, c); S.inizioTurno(a, n, c); S.inizioTurno(a, n, c);
     eq([n.pv, n.stati.sanguinante.liv], [28, 2]); vero(!a.buff.costellazione); fine(c);
   });
-  caso("Marea cremisi: 4d8 + Spirito senza tiro, aggrava; se era già Emorragia dura 6 turni", () => {
+  caso("Marea cremisi: 4d8 senza tiro né Spirito, aggrava; se era già Emorragia dura 6 turni", () => {
     const a = monaco(), n = nemico({ stati: sangue(2, 1) }), c = ctx([1, 1, 1, 1]); S.usa(a, n, "marea_cremisi", c);
-    eq([n.pv, n.stati.sanguinante.turni], [13, 6]); fine(c);
+    eq([n.pv, n.stati.sanguinante.turni], [16, 6]); fine(c);
   });
 
   /* ===== Ossa ===== */
@@ -103,9 +103,9 @@
     const o = ossomante({ placche: 1 }), n = nemico(), c = ctx([18, 6]); S.attacco(n, o, {}, c); eq([o.pv, o.placche], [22, 0]); fine(c);
     const o3 = ossomante({ liv: 3, placche: 2 }), c3 = ctx([18, 6]); S.attacco(n, o3, {}, c3); eq([o3.pv, o3.placche], [24, 1]); fine(c3);
   });
-  caso("Spirito d'ossa: serve almeno una placca; 1d8 per placca + Spirito una volta", () => {
+  caso("Spirito d'ossa: serve almeno una placca; 1d8 per placca, senza Spirito", () => {
     eq(S.disponibile(ossomante(), "spirito_d_ossa").motivo, "senzaPlacche");
-    const o = ossomante({ placche: 3 }), n = nemico(), c = ctx([1, 1, 1]); S.usa(o, n, "spirito_d_ossa", c); eq([n.pv, o.placche], [14, 0], "20 − (3 + 3)");
+    const o = ossomante({ placche: 3 }), n = nemico(), c = ctx([1, 1, 1]); S.usa(o, n, "spirito_d_ossa", c); eq([n.pv, o.placche], [17, 0], "20 − 3");
     const visti = [], o2 = ossomante({ placche: 2 }); S.usa(o2, nemico(), "spirito_d_ossa", { tira: (d) => { visti.push(d); return 1; } }); eq(visti, [8, 8], "un d8 per placca"); fine(c);
   });
   caso("Lama d'osso: spendi una placca, due dadi in più; se colpisce la placca torna", () => {
@@ -130,9 +130,9 @@
   caso("Decrepitezza: un TS → Indebolito ed Esposto insieme; nasce una placca", () => {
     const o = ossomante(), n = nemico(), c = ctx([5]); S.usa(o, n, "decrepitezza", c); vero(P.ha(n, "indebolito") && P.ha(n, "esposto")); eq(o.placche, 1); fine(c);
   });
-  caso("Armata dei morti: 4d8 + Spirito senza consumare le placche, Stordito", () => {
+  caso("Armata dei morti: 4d8 senza Spirito, senza consumare le placche, Stordito", () => {
     const o = ossomante({ placche: 2 }), n = nemico(), c = ctx([1, 1, 1, 1, 2]); S.usa(o, n, "armata_dei_morti", c);
-    eq([n.pv, o.placche], [13, 2]); vero(P.ha(n, "stordito")); fine(c);
+    eq([n.pv, o.placche], [16, 2]); vero(P.ha(n, "stordito")); fine(c);
   });
 
   /* ===== Classe e tratti ===== */

@@ -9,7 +9,7 @@ import vm from "node:vm";
 
 const R = join(dirname(fileURLToPath(import.meta.url)), "..");
 const leggi = (f) => readFileSync(join(R, f), "utf8");
-const DOC = leggi("docs/bilanciamento_nemici_oggetti.md");
+const DOC = leggi("docs/archivio/bilanciamento_nemici_oggetti.md");
 const GIOCO = leggi("gioco.html");
 
 /* regole.js eseguito come nel browser */

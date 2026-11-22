@@ -121,7 +121,7 @@
   <script>
     /* Regolamento del giocatore: solo meccaniche, niente dinamiche di trama (niente nemici, luoghi o oggetti specifici).
        I numeri vengono da regole.js, gli stessi file del gioco. 20/11: riscritto sul motore nuovo (poteri a volontà / per scontro / giornalieri),
-       diviso in regole base e regole facoltative (riscrittura_meccaniche.md, sez. 1; regolamento_piano.md). */
+       20/11 (Francesco): niente più regole facoltative, Fame e Peso dei giorni valgono sempre (capitolo «Riposo e giorni»). */
     if (new URLSearchParams(location.search).has("dentro")) document.body.classList.add("dentro");
     const R = window.Regole, EN = Lingua.get() === "en", L = EN ? "en" : "it";
     const N = (cat, k) => Lingua.nome(cat, k);
@@ -159,7 +159,7 @@
             <span class="formula">Skill value = attribute modifier (+ your level, if you chose the skill)</span>
             <p>At creation you choose ${R.MAX_ABILITA}: those are your strengths, and they grow by 1 at every level. You can still attempt every other skill, with the attribute modifier alone.</p>
             <p class="esempio">Example: Mind 14 (+2), level 2. Perception, chosen: +2 + 2 = +4. Lore, not chosen: +2.</p>
-            <p>Armor and shield weigh you down: Agility skills (${N("abilita", "Furtività")} and ${N("abilita", "Acrobazia")}) take a penalty. The shield only counts while it is strapped on; a focus in shield form gives no penalty. The character sheet already shows the value with the penalty included.</p>
+            <p>Heavy armor and the shield weigh you down: Agility skills (${N("abilita", "Furtività")} and ${N("abilita", "Acrobazia")}) take a penalty. The shield only counts while it is strapped on; a focus in shield form gives no penalty. The character sheet already shows the value with the penalty included.</p>
             <div class="scroll"><table><tr><th>Gear</th><th>Agility skill penalty</th></tr>${malusAbilita}</table></div>
             <h3>${titoloAttr("Vigore")}</h3>${abilitaDi("Vigore")}
             <h3>${titoloAttr("Agilità")}</h3>${abilitaDi("Agilità")}
@@ -179,7 +179,7 @@
             <span class="formula">Valore dell'abilità = modificatore dell'attributo (+ il tuo livello, se l'hai scelta)</span>
             <p>In creazione ne scegli ${R.MAX_ABILITA}: sono i tuoi punti di forza, e a ogni livello crescono di 1. Tutte le altre puoi tentarle comunque, con il solo modificatore dell'attributo.</p>
             <p class="esempio">Esempio: Mente 14 (+2), livello 2. Percezione, scelta: +2 + 2 = +4. Sapienza, non scelta: +2.</p>
-            <p>Armatura e scudo appesantiscono: le abilità di Agilità (Furtività e Acrobazia) subiscono un malus. Lo scudo conta solo se è imbracciato; il focus in forma scudo non dà malus. La scheda del personaggio mostra già il valore con il malus compreso.</p>
+            <p>L'armatura pesante e lo scudo appesantiscono: le abilità di Agilità (Furtività e Acrobazia) subiscono un malus. Lo scudo conta solo se è imbracciato; il focus in forma scudo non dà malus. La scheda del personaggio mostra già il valore con il malus compreso.</p>
             <div class="scroll"><table><tr><th>Equipaggiamento</th><th>Malus alle abilità di Agilità</th></tr>${malusAbilita}</table></div>
             <h3>${titoloAttr("Vigore")}</h3>${abilitaDi("Vigore")}
             <h3>${titoloAttr("Agilità")}</h3>${abilitaDi("Agilità")}
@@ -199,14 +199,13 @@
 
     const T = {
       it: {
-        torna: "← Pagina iniziale", titolo: "Regolamento", sotto: "Le regole del gioco, da consultare quando vuoi. Prima le regole base, poi quelle facoltative.",
+        torna: "← Pagina iniziale", titolo: "Regolamento", sotto: "Le regole del gioco, da consultare quando vuoi.",
         parte: "Parte", capitolo: "Capitolo", apri: "Apri tutto", chiudi: "Comprimi",
         desc: ["Come dare ordini al personaggio e leggere le risposte del gioco.", "Il tiro del d20, la difficoltà e cosa costa fallire.", "Le nove abilità, come si calcolano e quando servono.", "Il fuoco, il sonno e il conto dei giorni.", "Cosa succede a zero salute e cosa logora la mente.", "Tre posti, condivisi tra computer e telefono.",
           "Le quattro caratteristiche e quella con cui combatti.", "Bonus di razza, dado vita e salute al primo livello.", "Armi, focus, scudo, armature, dotazione e rarità.", "Esperienza, soglie e cosa guadagni a ogni livello.",
           "Chi agisce per primo, l'azione e l'azione rapida.", "Tiro per colpire, danno, critico e colpi multipli.", "Gli effetti che durano qualche turno, i tiri salvezza e gli elisir.", "Vulnerabilità, annunci e fasi degli avversari più temibili.", "Fuori dalle stanze: le cacce di Aldo, gli agguati, il fermaglio.", "Un combattimento turno per turno.",
-          "Poteri, privilegi e vie di prestigio: le regole uguali per tutti.", "Vigore, armi e scudo.", "Agilità, veleno e corteccia.", "Mente, forza e illusioni.", "Spirito, sangue e ossa.",
-          "Fame e Peso dei giorni, da scegliere in creazione."],
-        parti: [["Come si gioca", [0, 1, 2, 3, 4, 5]], ["Il personaggio", [6, 7, 8, 9]], ["Combattimento", [10, 11, 12, 13, 14, 15]], ["Le classi", [16, 17, 18, 19, 20]], ["Regole facoltative", [21]]],
+          "Poteri, privilegi e vie di prestigio: le regole uguali per tutti.", "Vigore, armi e scudo.", "Agilità, veleno e corteccia.", "Mente, forza e illusioni.", "Spirito, sangue e ossa."],
+        parti: [["Come si gioca", [0, 1, 2, 3, 4, 5]], ["Il personaggio", [6, 7, 8, 9]], ["Combattimento", [10, 11, 12, 13, 14, 15]], ["Le classi", [16, 17, 18, 19, 20]]],
         sezioni: [
           /* 0 */ ["Scrivere le azioni ed esplorare", `
             <p>Il gioco si controlla scrivendo ciò che fa il tuo personaggio, con parole tue. Non servono formule precise: il gioco riconosce i verbi più comuni.</p>
@@ -244,8 +243,8 @@
             <p>Si riposa solo accanto a un fuoco caldo, dalle fiamme arancioni, in un luogo di cui ti fidi. Alcuni fuochi si consumano dopo un riposo; il focolare della cucina non si spegne mai.</p>
             <h3>Cosa succede quando riposi</h3>
             <ul>
-              <li>recuperi <b>tutta la salute fisica</b>;</li>
               <li>recuperi <b>2 punti di salute mentale</b> (3 con La lanterna, la via di Guendalina);</li>
+              <li>il corpo <b>non</b> guarisce: per la salute fisica servono cibo o pozioni (vedi «Il corpo» qui sotto);</li>
               <li>i poteri giornalieri tornano disponibili;</li>
               <li>il riposo scaccia gli stati alterati;</li>
               <li>le prove fallite tornano disponibili;</li>
@@ -253,10 +252,18 @@
               <li>se hai raggiunto un nuovo livello, lo applichi (capitolo «Livelli ed esperienza»).</li>
             </ul>
             <p>Se sei già in piena forma e non hai nulla da ricaricare, non c'è bisogno di dormire: il gioco non consuma il fuoco.</p>
+            <h3>Il corpo</h3>
+            <p><b>Dormire cura solo la salute mentale.</b> Per curare la salute fisica hai bisogno di cibo o di pozioni, che troverai in gioco.</p>
+            <ul>
+              <li>Le <b>razioni di Adele</b> curano un quarto della salute fisica massima ciascuna. Le mangi quando vuoi, fuori dallo scontro: dallo zaino («Mangia») o scrivendo «mangio una razione». Il riposo non le consuma.</li>
+              <li>Guendalina ne cucina ${R.RAZIONI_AL_GIORNO} al giorno; la dispensa ne tiene al massimo ${R.RAZIONI_MAX}. Il contatore è sempre nella scheda.</li>
+              <li>Con la via di Guendalina, Mani che curano vale anche per le razioni.</li>
+            </ul>
             <h3>La mente</h3>
             <p>La salute mentale si recupera solo così: con il riposo, alla fontana del giardino, con le lacrime e con gli elisir. Proteggila.</p>
             <h3>I giorni</h3>
-            <p>Il gioco tiene il conto dei giorni passati nella casa: lo trovi in cima alla scheda. Il conto conta per il finale. Con la regola facoltativa «Peso dei giorni» i giorni pesano anche sulla mente.</p>
+            <p>Il gioco tiene il conto dei giorni passati nella casa: lo trovi in cima alla scheda. Il conto conta per il finale.</p>
+            <p><b>Il peso dei giorni</b>: ogni 10 giorni passati nella casa perdi 1 punto di salute mentale <b>massima</b>, e il riposo te lo segnala. La fontana del giardino e alcuni reperti importanti della casa ne restituiscono 1, solo tra quelli persi così.</p>
             <h3>Pozioni</h3>
             <p>La pozione di cura recupera 1d6 + livello di salute fisica. Berla, in combattimento, è un'azione rapida. Gli elisir sono nel capitolo «Stati, tiri salvezza ed elisir».</p>`],
           /* 4 */ ["Morte e salute mentale", `
@@ -272,12 +279,12 @@
               <li>prove fallite e scelte sbagliate negli enigmi (1 punto);</li>
               <li>le sconfitte contro gli avversari più temibili: ognuna toglie 1 punto alla salute mentale <b>massima</b>, fino a 3 in tutto; il punto torna quando quell'avversario viene sconfitto o risparmiato;</li>
               <li>certe scoperte sulla casa (da 1 a 4 punti, solo la prima volta): da sole non ti portano mai a 0;</li>
-              <li>alcuni luoghi e, con la regola facoltativa, il peso dei giorni.</li>
+              <li>alcuni luoghi e il peso dei giorni.</li>
             </ul>
             <h3>Modalità</h3>
-            <p>Si sceglie in creazione. In <b>facile</b> dopo la morte riparti dall'ultimo salvataggio (contro il sovrano, dalla soglia della sala del trono) e salvi quando vuoi; in <b>difficile</b> la morte è permanente e c'è un solo salvataggio, automatico. Puoi passare da difficile a facile, mai il contrario.</p>`],
+            <p>Si sceglie in creazione. In <b>facile</b> dopo la morte riparti dall'ultimo salvataggio (contro il sovrano, dalla soglia della sala del trono) e salvi quando vuoi; in <b>difficile</b> la morte è permanente e niente si salva da solo: hai <b>un solo salvataggio in tutta la partita</b> e decidi tu quando usarlo, quindi sii furbo. Puoi passare da difficile a facile, mai il contrario.</p>`],
           /* 5 */ ["Salvataggi", `
-            <p>Puoi tenere fino a tre personaggi. Salva con il pulsante in alto nella pagina di gioco.</p>
+            <p>Puoi tenere fino a tre personaggi. Salva con il pulsante in alto nella pagina di gioco (in modalità difficile, una sola volta in tutta la partita).</p>
             <p>Accedendo con Google dalla pagina iniziale, i salvataggi sono condivisi tra computer e telefono.</p>`],
           /* 6 */ ["Attributi e caratteristica di classe", `
             <p>Ogni attributo parte da ${R.VALORE_MINIMO}; in creazione distribuisci ${R.PUNTI_BASE} punti. Nessun attributo può superare ${R.VALORE_MASSIMO}, bonus della razza compreso.</p>
@@ -326,7 +333,7 @@
             <p>Lo scudo dà +1 alla Classe armatura, −1 alle abilità di Agilità, e potenzia alcuni poteri difensivi. Occupa la mano secondaria e conta solo se è imbracciato.</p>
             <h3>Armature</h3>
             <span class="formula">CA = ${R.CA_BASE} + armatura + mod. Agilità (fino al tetto dell'armatura) + scudo o focus scudo</span>
-            <p>Armatura leggera +2, media +3, pesante +4. Tetto del bonus di Agilità: ${tetti}. Le armature che una classe non può indossare non le compaiono in creazione.</p>
+            <p>Armatura leggera +${R.ARMATURA_CA["Armatura leggera"]}, media +${R.ARMATURA_CA["Armatura media"]}, pesante +${R.ARMATURA_CA["Armatura pesante"]}. Tetto del bonus di Agilità: ${tetti}. La leggera premia chi è agile, la media è il giusto mezzo, la pesante protegge di più chi non lo è ma dà −1 alle abilità di Agilità. Le armature che una classe non può indossare non le compaiono in creazione.</p>
             <h3>Rarità</h3>
             <div class="scroll"><table><tr><th>Rarità</th><th>Bonus</th><th>Poteri</th></tr>
               <tr><td>Comune</td><td>+0</td><td>nessuno</td></tr>
@@ -383,7 +390,7 @@
             <span class="formula">Attacco: d20 + mod. della caratteristica di classe + bonus dell'arma, colpisce se supera la Classe armatura</span>
             <span class="formula">Danno: dado dell'arma (o del focus) + mod. della caratteristica di classe + bonus dell'arma</span>
             <ul>
-              <li><b>La caratteristica si somma una volta per attacco</b>, mai per dado. Un potere «con un dado in più» aggiunge solo il dado.</li>
+              <li><b>La caratteristica si somma una volta per attacco</b>, mai per dado. Un potere «con un dado di danno in più» aggiunge solo il dado.</li>
               <li><b>Critico</b>: un 20 sul dado colpisce sempre e tira il doppio dei dadi di danno. Le armi perforanti fanno critico con 19-20. Vale anche per i nemici.</li>
               <li><b>Più attacchi</b> («due attacchi»): un d20 per ogni attacco; ognuno può mancare per conto suo.</li>
               <li><b>Colpo gratuito</b>: va a segno da solo, solo con il dado dell'arma, senza bonus né critico, e parte solo se il colpo principale colpisce.</li>
@@ -468,7 +475,7 @@
             <p class="esempio">Livello 1, Vigore 16 (+3), spada 1d6. Contro un nemico con Classe armatura 12.</p>
             <div class="turno"><b>Turno 1.</b> Colpo di mestiere (a volontà): tiri 12, 12 + 3 = 15, più di 12, colpisci. Solo il dado dell'arma: 4 danni. La spada taglia: il nemico tira il tiro salvezza su Vigore e lo fallisce, è Sanguinante per 3 turni.</div>
             <div class="turno"><b>Turno del nemico.</b> Sanguina e perde 1d4. Ti colpisce: perdi 6 salute.</div>
-            <div class="turno"><b>Turno 2.</b> Azione rapida: bevi la pozione di cura. Azione: Colpo crudele (per scontro), un attacco con un dado in più. Tiri 9: 9 + 3 = 12, non supera 12, manchi. Il potere è comunque consumato.</div>
+            <div class="turno"><b>Turno 2.</b> Azione rapida: bevi la pozione di cura. Azione: Colpo crudele (per scontro), un attacco con un dado di danno in più. Tiri 9: 9 + 3 = 12, non supera 12, manchi. Il potere è comunque consumato.</div>
             <div class="turno"><b>Turno 3.</b> Colpo poderoso (a volontà): tiri 20, critico! Il doppio dei dadi, 2d6 + 3, e +2 perché il nemico ha già uno stato.</div>
             <p class="esempio">Gli a volontà preparano, i per scontro e i giornalieri raccolgono: si arriva al colpo grosso con lo stato già addosso al nemico.</p>`],
           /* 16 */ ["Regole comuni alle classi", `
@@ -486,7 +493,7 @@
             <p>Al livello 2 scegli una via, da Aldo o da Guendalina. Dà tre poteri passivi, ai livelli 2, 3 e 4: non occupano posti e non costano l'azione.</p>
             <div class="scroll"><table><tr><th>Livello</th><th>Via di Aldo: la caccia</th><th>Via di Guendalina: il focolare</th></tr>
               <tr><td class="n">2</td><td><b>Occhio del cacciatore</b>: il primo potere che fa danno nello scontro tira il doppio dei dadi; fuori dallo scontro +2 alla Furtività contro i guardiani</td><td><b>La lanterna</b>: immune a Impaurito, +2 a tutti i tiri salvezza, il riposo dà 3 punti mentali</td></tr>
-              <tr><td class="n">3</td><td><b>Odore del sangue</b>: contro i Vacillanti i tuoi poteri a volontà fanno un dado in più</td><td><b>Mani che curano</b>: pozioni ed elisir di salute curano il 50% in più</td></tr>
+              <tr><td class="n">3</td><td><b>Odore del sangue</b>: contro i Vacillanti i tuoi poteri a volontà fanno un dado di danno in più</td><td><b>Mani che curano</b>: pozioni ed elisir di salute curano il 50% in più</td></tr>
               <tr><td class="n">4</td><td><b>Senza scampo</b>: la prima volta che il nemico diventa Vacillante, un attacco gratuito con un potere a volontà (senza stati)</td><td><b>La soglia di casa</b>: una volta per scontro, il colpo che ti renderebbe Vacillante fa metà danno, e per 2 turni hai +2 CA</td></tr>
             </table></div>`],
           /* 17 */ ["Guerriero", `
@@ -512,29 +519,17 @@
             <h3>Privilegi</h3>
             <ul><li><b>Eredità del sepolcro</b> (livello 1): dopo un potere giornaliero, fino al tuo turno successivo dimezzi i danni che subisci.</li><li><b>Ultimo servizio</b> (livello 3): una volta al giorno, a 0 salute fisica resti a 1 e ti curi 1d6 + Spirito.</li><li><b>Tocco lenitivo</b> (livello 5, per scontro): costa l'azione, cura un quarto della salute massima e toglie uno stato.</li></ul>
             <h3>Specializzazioni</h3>
-            <ul><li><b>Sangue</b> (offensiva): dardi e lance di sangue; <i>Sangue versato</i>: sopra metà della salute, una volta per turno, paghi il 10% della salute massima per un dado in più; da Vacillante il dado è gratis. Niente cure.</li><li><b>Ossa</b> (difensiva): <i>placche d'ossa</i> sull'armatura (al massimo 3): un colpo subito ne spezza una e riduce il danno di 3, +1 per livello oltre il primo; alcuni poteri le spendono come armi.</li></ul>`],
-          /* 21 */ ["Fame e Peso dei giorni", `
-            <p>Le regole facoltative rendono la partita più dura. Si scelgono in creazione, accanto alla modalità, e valgono per tutta la partita. Senza di esse il gioco è completo.</p>
-            <h3>Fame</h3>
-            <ul>
-              <li>Dormire non cura il corpo: la salute fisica la curano le <b>razioni di Adele</b>, un quarto della salute massima ciascuna. Al riposo mangi quelle che servono, se le hai.</li>
-              <li>Guendalina ne cucina ${R.RAZIONI_AL_GIORNO} al giorno; la dispensa ne tiene al massimo ${R.RAZIONI_MAX}. Il contatore è sempre nella scheda.</li>
-              <li>La mente riposa comunque: +2 punti, come nella regola base.</li>
-              <li>Con la via di Guendalina, Mani che curano vale anche per le razioni.</li>
-            </ul>
-            <h3>Peso dei giorni</h3>
-            <p>Ogni 10 giorni passati nella casa perdi 1 punto di salute mentale <b>massima</b>, e il riposo te lo segnala. La fontana del giardino e alcuni reperti importanti della casa ne restituiscono 1, solo tra quelli persi così.</p>`]
+            <ul><li><b>Sangue</b> (offensiva): dardi e lance di sangue; <i>Sangue versato</i>: sopra metà della salute, una volta per turno, paghi il 10% della salute massima per un dado di danno in più; da Vacillante il dado è gratis. Niente cure.</li><li><b>Ossa</b> (difensiva): <i>placche d'ossa</i> sull'armatura (al massimo 3): un colpo subito ne spezza una e riduce il danno di 3, +1 per livello oltre il primo; alcuni poteri le spendono come armi.</li></ul>`],
         ]
       },
       en: {
-        torna: "← Home page", titolo: "Rulebook", sotto: "The rules of the game, to look up whenever you like. First the base rules, then the optional ones.",
+        torna: "← Home page", titolo: "Rulebook", sotto: "The rules of the game, to look up whenever you like.",
         parte: "Part", capitolo: "Chapter", apri: "Expand all", chiudi: "Collapse",
         desc: ["How to give orders to your character and read the game's answers.", "The d20 roll, the difficulty and what failing costs.", "The nine skills, how they are worked out and when they help.", "The fire, sleep and the count of days.", "What happens at zero health and what wears down the mind.", "Three slots, shared between computer and phone.",
           "The four attributes and the one you fight with.", "Race bonuses, hit die and health at first level.", "Weapons, focus, shield, armor, gear and rarity.", "Experience, thresholds and what you gain at each level.",
           "Who acts first, the action and the quick action.", "Attack roll, damage, critical hits and multiple attacks.", "Effects that last a few turns, saving throws and elixirs.", "Vulnerabilities, warnings and phases of the most fearsome foes.", "Beyond the rooms: Aldo's hunts, ambushes, the clasp.", "A fight, turn by turn.",
-          "Powers, features and prestige paths: the rules shared by everyone.", "Vigour, weapons and shield.", "Agility, poison and bark.", "Mind, force and illusions.", "Spirit, blood and bone.",
-          "Hunger and The weight of days, chosen at creation."],
-        parti: [["How to play", [0, 1, 2, 3, 4, 5]], ["Your character", [6, 7, 8, 9]], ["Combat", [10, 11, 12, 13, 14, 15]], ["The classes", [16, 17, 18, 19, 20]], ["Optional rules", [21]]],
+          "Powers, features and prestige paths: the rules shared by everyone.", "Vigour, weapons and shield.", "Agility, poison and bark.", "Mind, force and illusions.", "Spirit, blood and bone."],
+        parti: [["How to play", [0, 1, 2, 3, 4, 5]], ["Your character", [6, 7, 8, 9]], ["Combat", [10, 11, 12, 13, 14, 15]], ["The classes", [16, 17, 18, 19, 20]]],
         sezioni: [
           /* 0 */ ["Writing actions and exploring", `
             <p>You control the game by writing what your character does, in your own words. You don't need exact phrases: the game understands the most common verbs.</p>
@@ -572,8 +567,8 @@
             <p>You can only rest beside a warm fire, with orange flames, in a place you trust. Some fires burn out after a rest; the kitchen hearth never goes out.</p>
             <h3>What happens when you rest</h3>
             <ul>
-              <li>you recover <b>all your physical health</b>;</li>
               <li>you recover <b>2 points of mental health</b> (3 with The Lantern, Guendalina's path);</li>
+              <li>your body does <b>not</b> heal: physical health needs food or potions (see “The body” below);</li>
               <li>daily powers become available again;</li>
               <li>rest clears all conditions;</li>
               <li>failed checks become available again;</li>
@@ -581,10 +576,18 @@
               <li>if you have reached a new level, you apply it (chapter “Levels and experience”).</li>
             </ul>
             <p>If you are already in full shape and have nothing to recharge, there is no need to sleep: the game does not use up the fire.</p>
+            <h3>The body</h3>
+            <p><b>Sleeping heals only your mental health.</b> To heal your physical health you need food or potions, which you will find in the game.</p>
+            <ul>
+              <li><b>Adele's rations</b> heal a quarter of your maximum physical health each. You eat them whenever you like, outside a fight: from the pack (“Eat”) or by typing “I eat a ration”. Resting does not use them up.</li>
+              <li>Guendalina cooks ${R.RAZIONI_AL_GIORNO} a day; the larder holds at most ${R.RAZIONI_MAX}. The counter is always on the sheet.</li>
+              <li>With Guendalina's path, Healing Hands also works on rations.</li>
+            </ul>
             <h3>The mind</h3>
             <p>Mental health only comes back this way: by resting, at the garden fountain, with the tears and with elixirs. Guard it.</p>
             <h3>Days</h3>
-            <p>The game counts the days spent in the house: you find the count at the top of the sheet. It matters for the ending. With the optional rule “The weight of days” the days also weigh on your mind.</p>
+            <p>The game counts the days spent in the house: you find the count at the top of the sheet. It matters for the ending.</p>
+            <p><b>The weight of days</b>: every 10 days spent in the house you lose 1 point of <b>maximum</b> mental health, and resting tells you so. The garden fountain and some important relics of the house give 1 back, only among those lost this way.</p>
             <h3>Potions</h3>
             <p>The healing potion restores 1d6 + level of physical health. Drinking it in combat is a quick action. Elixirs are in the chapter “Conditions, saving throws and elixirs”.</p>`],
           /* 4 */ ["Death and mental health", `
@@ -600,12 +603,12 @@
               <li>failed checks and wrong choices in riddles (1 point);</li>
               <li>defeats against the most fearsome foes: each takes 1 point from your <b>maximum</b> mental health, up to 3 in all; the point comes back when that foe is defeated or spared;</li>
               <li>certain discoveries about the house (1 to 4 points, the first time only): on their own they never bring you to 0;</li>
-              <li>some places and, with the optional rule, the weight of days.</li>
+              <li>some places and the weight of days.</li>
             </ul>
             <h3>Mode</h3>
-            <p>Chosen at creation. In <b>easy</b> mode after death you start again from your last save (against the sovereign, from the threshold of the throne room) and you save whenever you like; in <b>hard</b> mode death is permanent and there is a single, automatic save. You can switch from hard to easy, never the other way.</p>`],
+            <p>Chosen at creation. In <b>easy</b> mode after death you start again from your last save (against the sovereign, from the threshold of the throne room) and you save whenever you like; in <b>hard</b> mode death is permanent and nothing is saved automatically: you have <b>a single save for the whole game</b> and you decide when to use it, so be smart about it. You can switch from hard to easy, never the other way.</p>`],
           /* 5 */ ["Saves", `
-            <p>You can keep up to three characters. Save with the button at the top of the game page.</p>
+            <p>You can keep up to three characters. Save with the button at the top of the game page (in hard mode, only once in the whole game).</p>
             <p>If you sign in with Google from the home page, your saves are shared between computer and phone.</p>`],
           /* 6 */ ["Attributes and class attribute", `
             <p>Every attribute starts at ${R.VALORE_MINIMO}; at creation you spread ${R.PUNTI_BASE} points. No attribute can exceed ${R.VALORE_MASSIMO}, race bonus included.</p>
@@ -654,7 +657,7 @@
             <p>The shield gives +1 Armor class, −1 to Agility skills, and strengthens some defensive powers. It takes the off hand and only counts while strapped on.</p>
             <h3>Armor</h3>
             <span class="formula">AC = ${R.CA_BASE} + armor + Agility mod. (up to the armor's cap) + shield or shield focus</span>
-            <p>Light armor +2, medium +3, heavy +4. Agility bonus cap: ${tetti}. Armor a class cannot wear does not appear at creation.</p>
+            <p>Light armor +${R.ARMATURA_CA["Armatura leggera"]}, medium +${R.ARMATURA_CA["Armatura media"]}, heavy +${R.ARMATURA_CA["Armatura pesante"]}. Agility bonus cap: ${tetti}. Light armor rewards the agile, medium armor is the middle way, heavy armor protects best those who are not agile but gives −1 to Agility skills. Armor a class cannot wear does not appear at creation.</p>
             <h3>Rarity</h3>
             <div class="scroll"><table><tr><th>Rarity</th><th>Bonus</th><th>Powers</th></tr>
               <tr><td>Common</td><td>+0</td><td>none</td></tr>
@@ -711,7 +714,7 @@
             <span class="formula">Attack: d20 + class attribute mod. + weapon bonus, hits if it beats the Armor class</span>
             <span class="formula">Damage: weapon (or focus) die + class attribute mod. + weapon bonus</span>
             <ul>
-              <li><b>The attribute is added once per attack</b>, never per die. A power “with one more die” only adds the die.</li>
+              <li><b>The attribute is added once per attack</b>, never per die. A power “with one more damage die” only adds the die.</li>
               <li><b>Critical hit</b>: a 20 on the die always hits and rolls double damage dice. Piercing weapons crit on 19-20. It works for enemies too.</li>
               <li><b>Several attacks</b> (“two attacks”): a d20 for each attack; each can miss on its own.</li>
               <li><b>Free strike</b>: it hits by itself, with the weapon die only, no bonus and no critical, and only if the main blow hits.</li>
@@ -796,7 +799,7 @@
             <p class="esempio">Level 1, Vigour 16 (+3), sword 1d6. Against an enemy with Armor class 12.</p>
             <div class="turno"><b>Turn 1.</b> Trade Blow (at will): you roll 12, 12 + 3 = 15, more than 12, you hit. Only the weapon die: 4 damage. The sword cuts: the enemy makes a Vigour saving throw and fails it, it is Bleeding for 3 turns.</div>
             <div class="turno"><b>Enemy's turn.</b> It bleeds and loses 1d4. It hits you: you lose 6 health.</div>
-            <div class="turno"><b>Turn 2.</b> Quick action: you drink the healing potion. Action: Cruel Blow (encounter), an attack with one more die. You roll 9: 9 + 3 = 12, it does not beat 12, you miss. The power is spent anyway.</div>
+            <div class="turno"><b>Turn 2.</b> Quick action: you drink the healing potion. Action: Cruel Blow (encounter), an attack with one more damage die. You roll 9: 9 + 3 = 12, it does not beat 12, you miss. The power is spent anyway.</div>
             <div class="turno"><b>Turn 3.</b> Mighty Blow (at will): you roll 20, critical! Double dice, 2d6 + 3, and +2 because the enemy already has a condition.</div>
             <p class="esempio">At-will powers set up, encounter and daily powers cash in: you reach the big blow with the condition already on the enemy.</p>`],
           /* 16 */ ["Rules shared by the classes", `
@@ -814,7 +817,7 @@
             <p>At level 2 you choose a path, from Aldo or from Guendalina. It gives three passive powers, at levels 2, 3 and 4: they take no slots and cost no action.</p>
             <div class="scroll"><table><tr><th>Level</th><th>Aldo's path: the hunt</th><th>Guendalina's path: the hearth</th></tr>
               <tr><td class="n">2</td><td><b>Hunter's Eye</b>: the first damaging power of the fight rolls double dice; outside combat +2 to Stealth against the guardians</td><td><b>The Lantern</b>: immune to Frightened, +2 to all saving throws, rest gives 3 mental points</td></tr>
-              <tr><td class="n">3</td><td><b>Scent of Blood</b>: against Staggered foes your at-will powers roll one more die</td><td><b>Healing Hands</b>: potions and health elixirs heal 50% more</td></tr>
+              <tr><td class="n">3</td><td><b>Scent of Blood</b>: against Staggered foes your at-will powers roll one more damage die</td><td><b>Healing Hands</b>: potions and health elixirs heal 50% more</td></tr>
               <tr><td class="n">4</td><td><b>No Escape</b>: the first time the enemy becomes Staggered, a free attack with an at-will power (no conditions)</td><td><b>The Threshold of Home</b>: once per fight, the blow that would make you Staggered deals half damage, and for 2 turns you have +2 AC</td></tr>
             </table></div>`],
           /* 17 */ ["Warrior", `
@@ -840,18 +843,7 @@
             <h3>Class features</h3>
             <ul><li><b>Legacy of the Tomb</b> (level 1): after a daily power, until your next turn you halve the damage you take.</li><li><b>Last Service</b> (level 3): once a day, at 0 physical health you stay at 1 and heal 1d6 + Spirit.</li><li><b>Soothing Touch</b> (level 5, encounter): costs your action, heals a quarter of your maximum health and removes a condition.</li></ul>
             <h3>Specializations</h3>
-            <ul><li><b>Blood</b> (offensive): darts and lances of blood; <i>Spilled Blood</i>: above half health, once per turn, you pay 10% of your maximum health for one more die; while Staggered the die is free. No healing.</li><li><b>Bone</b> (defensive): <i>bone plates</i> over your armor (at most 3): a blow you take breaks one and reduces the damage by 3, +1 per level above the first; some powers spend them as weapons.</li></ul>`],
-          /* 21 */ ["Hunger and The weight of days", `
-            <p>Optional rules make the game harder. They are chosen at creation, next to the mode, and last the whole game. Without them the game is complete.</p>
-            <h3>Hunger</h3>
-            <ul>
-              <li>Sleeping does not heal your body: physical health is healed by <b>Adele's rations</b>, a quarter of your maximum health each. When you rest you eat as many as you need, if you have them.</li>
-              <li>Guendalina cooks ${R.RAZIONI_AL_GIORNO} a day; the larder holds at most ${R.RAZIONI_MAX}. The counter is always on the sheet.</li>
-              <li>Your mind still rests: +2 points, as in the base rules.</li>
-              <li>With Guendalina's path, Healing Hands also works on rations.</li>
-            </ul>
-            <h3>The weight of days</h3>
-            <p>Every 10 days spent in the house you lose 1 point of <b>maximum</b> mental health, and resting tells you so. The garden fountain and some important relics of the house give 1 back, only among those lost this way.</p>`]
+            <ul><li><b>Blood</b> (offensive): darts and lances of blood; <i>Spilled Blood</i>: above half health, once per turn, you pay 10% of your maximum health for one more damage die; while Staggered the die is free. No healing.</li><li><b>Bone</b> (defensive): <i>bone plates</i> over your armor (at most 3): a blow you take breaks one and reduces the damage by 3, +1 per level above the first; some powers spend them as weapons.</li></ul>`],
         ]
       }
     }[L];

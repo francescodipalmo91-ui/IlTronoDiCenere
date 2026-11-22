@@ -11,6 +11,7 @@
   <script src="js/tecniche.js"></script>
   <script src="js/specializzazioni.js"></script>
   <script src="js/lingua.js"></script>
+  <script src="js/registro.js"></script>
   <link rel="stylesheet" href="tema.css">
   <style>
 
@@ -106,7 +107,10 @@
     .tip { pointer-events: none; display: none; position: absolute; left: calc(100% + 0.6rem); right: auto; top: 0; width: max-content; min-width: 8rem; max-width: 18rem; height: auto; z-index: 20; padding: 0.6rem 0.75rem; background: var(--tip-bg); border: 1px solid var(--tip-line); border-radius: 0.2rem; box-shadow: 0 4px 14px rgba(0,0,0,0.16); text-align: left; font-size: 0.8rem; line-height: 1.35; color: var(--text); white-space: normal; }
     .tip.a-sinistra { left: auto; right: calc(100% + 0.6rem); }
     .tip.in-alto { top: auto; bottom: 0; }
-    .tip.sotto { left: 0; right: 0; top: 100%; width: auto; min-width: 0; max-width: none; margin-top: 0.25rem; }
+    /* 20/11: anche sotto la voce il riquadro resta squadrato (largo al massimo 18rem, allineato a destra), così le voci sotto restano leggibili */
+    .tip.sotto { left: auto; right: 0; top: 100%; width: max-content; min-width: 8rem; max-width: min(18rem, 100%); margin-top: 0.25rem; }
+    /* 20/11: liste di scelta più strette, così il riquadro a scomparsa sta accanto alla voce e non copre quelle sotto */
+    #passo-1 .opzioni, #passo-2 .opzioni { max-width: 30rem; }
     #abilita label, #dotazione label, #armi label, #armature label, #scudi label, #lista-incantesimi label, #lista-incantesimi2 label { position: relative; }
     .tip-riga.sola { border: 0; margin: 0; padding: 0; }
     .tip .tit { display: block; font-weight: 600; margin: 0.1rem 0; }
@@ -142,11 +146,11 @@
     td.bonus { color: var(--muted); text-align: center; }
     td.mod { text-align: center; font-weight: 600; }
     td input { width: 4rem; text-align: center; padding: 0.4rem; }
-    @media (min-width: 901px) and (max-width: 1250px) { td.uso, th:nth-child(2) { display: none; } }
+    @media (min-width: 901px) and (max-width: 1250px) { td.uso, table:not(.tab-classe) th:nth-child(2) { display: none; } } /* 20/11: non la tabella di classe */
     /* telefono: la colonna «Utilizzo» spinge fuori dallo schermo valori e pulsanti; la descrizione va sotto il nome */
     .uso-mini { display: none; }
     @media (max-width: 600px) {
-      td.uso, th:nth-child(2) { display: none; }
+      td.uso, table:not(.tab-classe) th:nth-child(2) { display: none; }
       .uso-mini { display: block; color: var(--muted); font-size: 0.78rem; line-height: 1.25; margin-top: 0.15rem; }
       th, td { padding: 0.55rem 0.3rem; }
       td input[type="number"] { width: 2.6rem; padding: 0.35rem 0.1rem; -moz-appearance: textfield; appearance: textfield; }
@@ -202,6 +206,19 @@
     table.tab-classe caption { text-align: left; font-family: var(--f-titoli); font-weight: 600; letter-spacing: 0.05em; padding-bottom: 0.4rem; }
     table.tab-classe th, table.tab-classe td { padding: 0.4rem 0.4rem; text-align: center; }
     table.tab-classe th:nth-child(2), table.tab-classe td:nth-child(2) { text-align: left; }
+    /* 20/11: riepilogo come una scheda: ritratto a sinistra, dati a destra */
+    .cv { display: grid; grid-template-columns: 13rem 1fr; gap: 1.75rem; align-items: start; margin: 0 0 1.5rem; }
+    .cv-foto { width: 13rem; aspect-ratio: 900 / 1122; border-radius: 0.5rem; border: 3px solid var(--accent); background: var(--tip-bg) center 0 / cover no-repeat; }
+    .cv-foto.vuota { border: 3px dashed var(--line); }
+    @media (max-width: 640px) { .cv { grid-template-columns: 1fr; } .cv-foto { margin: 0 auto; width: 11rem; } }
+    /* 20/11: consenso al log anonimo, chiesto una volta sola quando si clicca «Entra nel dungeon» */
+    .consenso-velo { position: fixed; inset: 0; z-index: 80; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; padding: 1rem; }
+    .consenso-velo[hidden] { display: none; }
+    .consenso-box { width: min(32rem, 100%); padding: 1.1rem 1.25rem; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 8px 28px rgba(0,0,0,0.6); }
+    .consenso-box h2 { margin: 0 0 0.6rem; font-size: 1.2rem; }
+    .consenso-box p { margin: 0 0 1rem; line-height: 1.45; }
+    .consenso-box div { display: flex; gap: 0.6rem; justify-content: flex-end; flex-wrap: wrap; }
+    .consenso-box button { min-height: 2.75rem; }
     .riepilogo { display: grid; grid-template-columns: max-content 1fr; gap: 0.45rem 1.25rem; margin: 0 0 1.5rem; }
     .riepilogo dt { color: var(--muted); }
     .riepilogo dd { margin: 0; }
@@ -209,6 +226,12 @@
     @media (max-width: 560px) { .riepilogo { grid-template-columns: 1fr; gap: 0.1rem; } .riepilogo dd { margin-bottom: 0.5rem; } .passi .t { display: none; } .passi button { padding-right: 0.4rem; } }
     #focus-opz label { position: relative; }
     #focus-opz label:hover .tip, #focus-opz label:has(input:focus-visible) .tip { display: block; }
+    /* 20/11: gli stati nei testi dei poteri sono sottolineati e si spiegano al passaggio del mouse o al tocco */
+    .stato { position: relative; text-decoration: underline dotted; text-underline-offset: 0.2em; cursor: help; }
+    .stato:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+    .stato .spiega { display: none; position: absolute; left: 0; top: calc(100% + 0.3rem); z-index: 30; width: max-content; max-width: min(16rem, calc(100vw - 2rem)); padding: 0.5rem 0.65rem;
+      background: var(--tip-bg); border: 1px solid var(--tip-line); border-radius: 0.2rem; box-shadow: 0 4px 14px rgba(0,0,0,0.3); color: var(--text); font-size: 0.8rem; line-height: 1.35; font-weight: 400; white-space: normal; opacity: 1; }
+    .stato:hover .spiega, .stato:focus .spiega { display: block; }
   </style>
 </head>
 <body>
@@ -256,16 +279,6 @@
           </section>
         </div>
         <div class="passo" id="passo-2" hidden>
-          <p class="guida" id="poteri-vuoto" data-t="primaClasse"></p>
-          <section id="poteri" aria-labelledby="t-poteri" hidden>
-            <h2 class="sez" id="t-poteri" style="margin-top:0" data-t="poteri">Poteri</h2>
-            <p class="guida" style="margin:0 0 0.75rem" data-t="guidaPoteri"></p>
-            <h3 class="sub" id="h-spec" data-t="specializzazione">Specializzazione</h3>
-            <div class="carte-pot" id="lista-spec" role="radiogroup" aria-labelledby="h-spec"></div>
-            <div id="pot-dettaglio"></div>
-          </section>
-        </div>
-        <div class="passo" id="passo-3" hidden>
           <section id="equip" aria-labelledby="t-equip">
             <h2 class="sez" id="t-equip" style="margin-top:0" data-t="equipaggiamento">Equipaggiamento</h2>
           <h3 class="sub" id="h-arma" data-t="arma">Arma</h3>
@@ -294,20 +307,24 @@
 
           </section>
         </div>
+        <div class="passo" id="passo-3" hidden>
+          <p class="guida" id="poteri-vuoto" data-t="primaClasse"></p>
+          <section id="poteri" aria-labelledby="t-poteri" hidden>
+            <h2 class="sez" id="t-poteri" style="margin-top:0" data-t="poteri">Poteri</h2>
+            <p class="guida" style="margin:0 0 0.75rem" data-t="guidaPoteri"></p>
+            <h3 class="sub" id="h-spec" data-t="specializzazione">Specializzazione</h3>
+            <div class="carte-pot" id="lista-spec" role="radiogroup" aria-labelledby="h-spec"></div>
+            <div id="pot-dettaglio"></div>
+          </section>
+        </div>
         <div class="passo" id="passo-4" hidden>
           <h2 class="sez" style="margin-top:0" data-t="riepilogo">Riepilogo</h2>
-          <dl class="riepilogo" id="riepilogo"></dl>
+          <div class="cv"><div class="cv-foto" id="cv-foto" aria-hidden="true"></div><dl class="riepilogo" id="riepilogo"></dl></div>
       <div class="fine">
         <fieldset id="modalita" style="border:1px solid var(--line, #8884);border-radius:8px;padding:0.6rem 0.9rem;margin:0 0 0.9rem;text-align:left">
           <legend id="mod-tit" style="font-weight:600;padding:0 0.3rem">Modalità</legend>
           <label style="display:block;margin:0.2rem 0;padding:0.35rem 0"><input type="radio" name="modalita" value="facile" checked style="width:1.25rem;height:1.25rem;vertical-align:-0.2rem"> <b id="mod-f">Facile</b> <span id="mod-fd" class="guida"></span></label>
           <label style="display:block;margin:0.2rem 0;padding:0.35rem 0"><input type="radio" name="modalita" value="difficile" style="width:1.25rem;height:1.25rem;vertical-align:-0.2rem"> <b id="mod-d">Difficile</b> <span id="mod-dd" class="guida"></span></label>
-        </fieldset>
-        <fieldset id="facoltative" style="border:1px solid var(--line, #8884);border-radius:8px;padding:0.6rem 0.9rem;margin:0 0 0.9rem;text-align:left">
-          <legend id="fac-tit" style="font-weight:600;padding:0 0.3rem">Regole facoltative</legend>
-          <p id="fac-guida" class="guida" style="margin:0 0 0.3rem"></p>
-          <label style="display:block;margin:0.2rem 0;padding:0.35rem 0"><input type="checkbox" name="opzione" value="fame" style="width:1.25rem;height:1.25rem;vertical-align:-0.2rem"> <b id="fac-fame">Fame</b> <span id="fac-famed" class="guida"></span></label>
-          <label style="display:block;margin:0.2rem 0;padding:0.35rem 0"><input type="checkbox" name="opzione" value="pesoGiorni" style="width:1.25rem;height:1.25rem;vertical-align:-0.2rem"> <b id="fac-peso">Peso dei giorni</b> <span id="fac-pesod" class="guida"></span></label>
         </fieldset>
         <button type="submit" class="btn" id="crea" aria-describedby="avviso" style="margin-top:0" data-t="entra">Entra nel dungeon</button>
         <p id="avviso" class="formati"></p>
@@ -329,37 +346,39 @@
       </div>
     </form>
   </main>
+  <div class="consenso-velo" id="consenso" hidden>
+    <div class="consenso-box" role="dialog" aria-modal="true" aria-labelledby="consenso-t" aria-describedby="consenso-p">
+      <h2 id="consenso-t"></h2>
+      <p id="consenso-p"></p>
+      <div><button type="button" class="btn-sec" id="consenso-no"></button><button type="button" class="btn-sec" id="consenso-si"></button></div>
+    </div>
+  </div>
 
   <script>
     /* ---------- Lingua ---------- */
     const LINGUA = Lingua.get();
     { /* 28/10: scelta della modalità */
       const M = LINGUA === "en"
-        ? { t: "Mode", f: "Easy", fd: "— after death you start again from your last save; you save whenever you like.", d: "Hard", dd: "— death is permanent; a single automatic save, erased when you die. You can switch to easy later, never back." }
-        : { t: "Modalità", f: "Facile", fd: "— dopo la morte riparti dall'ultimo salvataggio; salvi quando vuoi.", d: "Difficile", dd: "— la morte è permanente; un solo salvataggio automatico, cancellato alla morte. Potrai passare a facile, mai tornare indietro." };
+        ? { t: "Mode", f: "Easy", fd: "— after death you start again from your last save; you save whenever you like.", d: "Hard", dd: "— death is permanent and nothing is saved automatically: you have a single save for the whole game, and you decide when to use it. Use it wisely. You can switch to easy later, never back." }
+        : { t: "Modalità", f: "Facile", fd: "— dopo la morte riparti dall'ultimo salvataggio; salvi quando vuoi.", d: "Difficile", dd: "— la morte è permanente e niente si salva da solo: hai un solo salvataggio in tutta la partita e decidi tu quando usarlo. Usalo bene. Potrai passare a facile, mai tornare indietro." };
       const set = (id, t) => { const e = document.getElementById(id); if (e) e.textContent = t; };
       set("mod-tit", M.t); set("mod-f", M.f); set("mod-fd", M.fd); set("mod-d", M.d); set("mod-dd", M.dd);
-      const F = LINGUA === "en"
-        ? { t: "Optional rules", g: "For those who want a harder game. You can play without them: the base rules are complete.", f: "Hunger", fd: "— sleeping does not heal your body: Adele's rations do, a quarter of your maximum health each. Guendalina cooks a few every day.", p: "The weight of days", pd: "— every 10 days spent in the house you lose 1 point of maximum mental health." }
-        : { t: "Regole facoltative", g: "Per chi vuole una partita più dura. Si gioca anche senza: le regole base sono complete.", f: "Fame", fd: "— dormire non cura il corpo: curano le razioni di Adele, un quarto della salute massima l'una. Guendalina ne cucina qualcuna ogni giorno.", p: "Peso dei giorni", pd: "— ogni 10 giorni passati nella casa perdi 1 punto di salute mentale massima." };
-      set("fac-tit", F.t); set("fac-guida", F.g); set("fac-fame", F.f); set("fac-famed", F.fd); set("fac-peso", F.p); set("fac-pesod", F.pd);
     }
     const L = Lingua.t, N = Lingua.nome;
     const T = {
       it: {
         titoloPagina: "Creazione personaggio", titolo: "Creazione del personaggio",
         /* 20/11: cinque passi, focus a due forme, riepilogo */
-        passi: ["Chi sei", "Attributi e abilità", "Specializzazione e poteri", "Equipaggiamento", "Riepilogo"],
+        passi: ["Chi sei", "Attributi e abilità", "Equipaggiamento", "Specializzazione e poteri", "Riepilogo"],
         indietro: "Indietro", avanti: "Avanti", passoN: (i, n) => `Passo ${i} di ${n}`,
         poteri: "Poteri", specializzazione: "Specializzazione", guidaPoteri: "La specializzazione si sceglie ora e non si cambia più. Al livello 1 scegli due poteri a volontà, uno per scontro e un giornaliero; a ogni livello sceglierai di nuovo. Le scelte sono definitive.",
         haiSubito: "Hai da subito", privilegio: "privilegio di classe", sceltaVolonta: "Livello 1 · scegli 2 poteri a volontà su 3", sceltaScontro: "Livello 1 · scegli il potere per scontro", sceltaGiorn: "Livello 1 · scegli il giornaliero",
-        scegliSpec: "Scegli una specializzazione per vedere i suoi poteri.", tipiPot: { volonta: "a volontà", scontro: "per scontro", giornaliero: "giornaliero" }, ruoli: { offesa: "offesa", controllo: "controllo", difesa: "difesa" }, ruoloSpec: { offensiva: "offensiva", difensiva: "difensiva" },
-        piuAvanti: (terzo, t3, fin, p5) => `Più avanti: al livello 2 ${terzo ? terzo + " (l'a volontà che lasci)" : "l'a volontà che lasci"} e la via di prestigio; al livello 3 ${t3}; al livello 5 ${fin} e ${p5}.`,
+        scegliSpec: "Scegli una specializzazione per vedere i suoi poteri.", tipiPot: { volonta: "a volontà", scontro: "per scontro", giornaliero: "giornaliero" },
         focus: "Focus", guidaFocus: "Un solo oggetto, in due forme: scegli quella che preferisci. Sta nella mano secondaria, quindi puoi usare solo armi a una mano. Il bonus a colpire e ai danni è lo stesso nelle due forme.",
         formaNormale: "forma normale", formaScudo: "forma scudo", infoFocusN: "1d8 · una mano", infoFocusS: "1d6 · +1 CA, nessun malus di Agilità",
         tipFocusN: "Il dado dei tuoi poteri offensivi diventa d8. Non dà classe armatura.", tipFocusS: "Il dado dei tuoi poteri offensivi resta d6, ma la tua classe armatura sale di 1, senza malus di Agilità.",
         guidaArmiFocus: "Scegline una. Il focus occupa la mano secondaria: solo armi a una mano.", infoFocusCA: "focus scudo",
-        tabLivello: "Livello", tabPrivilegi: "Privilegi e novità", tabVolonta: "A volontà", tabScontro: "Per scontro", tabGiorn: "Giornalieri", via: "Via di prestigio (Aldo o Guendalina)", finale: "giornaliero finale",
+        tabLivello: "Livello", tabPrivilegi: "Privilegi e novità", tabVolonta: "A volontà", tabScontro: "Per scontro", tabGiorn: "Giornalieri", via: (n) => `Via di prestigio: ${["", "primo", "secondo", "terzo"][n]} potere`,
         riepilogo: "Riepilogo", rNome: "Nome", rRazza: "Razza", rClasse: "Classe", rSpec: "Specializzazione", rPoteri: "Poteri del livello 1", rAttr: "Attributi", rAbilita: "Abilità", rArma: "Arma", rFocus: "Focus", rScudo: "Scudo", rArmatura: "Armatura", rDotazione: "Dotazione", nessuno: "nessuno", daScegliere: "da scegliere",
         mancaNome: "il nome", mancaFocus: "la forma del focus", mancaSpec: "la specializzazione", mancaPoteri: "i poteri del livello 1", nome: "Nome", immagine: "Immagine del personaggio",
         razza: "Razza", guidaRazza: "Scegli una razza.", classe: "Classe", guidaClasse: "Scegli una classe.",
@@ -393,17 +412,16 @@
       },
       en: {
         titoloPagina: "Character creation", titolo: "Character creation",
-        passi: ["Who you are", "Attributes and skills", "Specialization and powers", "Equipment", "Summary"],
+        passi: ["Who you are", "Attributes and skills", "Equipment", "Specialization and powers", "Summary"],
         indietro: "Back", avanti: "Next", passoN: (i, n) => `Step ${i} of ${n}`,
         poteri: "Powers", specializzazione: "Specialization", guidaPoteri: "You choose your specialization now and can never change it. At level 1 you pick two at-will powers, one encounter power and one daily; you will choose again at every level. Choices are final.",
         haiSubito: "You start with", privilegio: "class feature", sceltaVolonta: "Level 1 · choose 2 of 3 at-will powers", sceltaScontro: "Level 1 · choose the encounter power", sceltaGiorn: "Level 1 · choose the daily power",
-        scegliSpec: "Choose a specialization to see its powers.", tipiPot: { volonta: "at will", scontro: "encounter", giornaliero: "daily" }, ruoli: { offesa: "offence", controllo: "control", difesa: "defence" }, ruoloSpec: { offensiva: "offensive", difensiva: "defensive" },
-        piuAvanti: (terzo, t3, fin, p5) => `Later: at level 2 ${terzo ? terzo + " (the at-will power you leave)" : "the at-will power you leave"} and your prestige path; at level 3 ${t3}; at level 5 ${fin} and ${p5}.`,
+        scegliSpec: "Choose a specialization to see its powers.", tipiPot: { volonta: "at will", scontro: "encounter", giornaliero: "daily" },
         focus: "Focus", guidaFocus: "A single item with two forms: pick the one you prefer. It sits in your off hand, so you can only use one-handed weapons. The bonus to hit and to damage is the same in both forms.",
         formaNormale: "normal form", formaScudo: "shield form", infoFocusN: "1d8 · one hand", infoFocusS: "1d6 · +1 AC, no Agility penalty",
         tipFocusN: "The die of your offensive powers becomes a d8. It gives no armor class.", tipFocusS: "The die of your offensive powers stays a d6, but your armor class rises by 1, with no Agility penalty.",
         guidaArmiFocus: "Choose one. The focus takes your off hand: one-handed weapons only.", infoFocusCA: "shield focus",
-        tabLivello: "Level", tabPrivilegi: "Features and new things", tabVolonta: "At will", tabScontro: "Encounter", tabGiorn: "Daily", via: "Prestige path (Aldo or Guendalina)", finale: "final daily",
+        tabLivello: "Level", tabPrivilegi: "Features and new things", tabVolonta: "At will", tabScontro: "Encounter", tabGiorn: "Daily", via: (n) => `Prestige path: ${["", "first", "second", "third"][n]} power`,
         riepilogo: "Summary", rNome: "Name", rRazza: "Race", rClasse: "Class", rSpec: "Specialization", rPoteri: "Level 1 powers", rAttr: "Attributes", rAbilita: "Skills", rArma: "Weapon", rFocus: "Focus", rScudo: "Shield", rArmatura: "Armor", rDotazione: "Gear", nessuno: "none", daScegliere: "to choose",
         mancaNome: "the name", mancaFocus: "the focus form", mancaSpec: "the specialization", mancaPoteri: "the level 1 powers", nome: "Name", immagine: "Character portrait",
         razza: "Race", guidaRazza: "Choose a race.", classe: "Class", guidaClasse: "Choose a class.",
@@ -482,19 +500,20 @@
     /* bonus attributo per razza e punti liberi dell'Umano: da regole.js */
     const RAZZE = Object.fromEntries(Object.entries(R_.RAZZE).map(([k, v]) => [k, v.bonus || {}]));
     const PUNTI_RAZZA = Object.fromEntries(Object.entries(R_.RAZZE).filter(([, v]) => v.punti).map(([k, v]) => [k, v.punti])); /* punti attributo in più da distribuire */
+    /* 20/11: tipo di danno in breve (Francesco: la descrizione lunga era troppo) */
     const DANNI = {
-      Tagliente: {
-        it: "Causato da armi dotate di un filo affilato, il danno tagliente opera per incisione e scissione dei tessuti. Separa nettamente pelle e muscoli, provocando ferite ampie, sanguinamenti profusi e mutilazioni immediate. È il tipo di danno ideale per recidere le difese leggere e disattivare gli arti avversari.",
-        en: "Caused by weapons with a keen edge, slashing damage works by cutting and cleaving tissue. It parts skin and muscle cleanly, causing wide wounds, heavy bleeding and immediate mutilation. It is the ideal damage type for cutting through light defences and disabling an opponent's limbs."
-      },
-      Contundente: {
-        it: "Causato da impatti brutali sferrati con armi prive di filo. Il danno contundente non ha bisogno di penetrare la pelle per essere letale: la forza cinetica attraversa la carne e si scarica direttamente all'interno, frantumando le ossa, lesionando gli organi interni e provocando traumi da schiacciamento severi.",
-        en: "Caused by brutal blows from edgeless weapons. Bludgeoning damage need not break the skin to be lethal: the kinetic force travels through the flesh and discharges inside, shattering bones, damaging internal organs and causing severe crushing trauma."
-      },
-      Perforante: {
-        it: "Causato da armi appuntite e da stoccata focalizzate su una superficie d'impatto ridottissima. Il danno perforante sfrutta le fessure della corazza per penetrare in profondità, danneggiando direttamente organi vitali e centri nervosi. È la forma di attacco più letale contro bersagli dotati di armature pesanti o spesse difese naturali.",
-        en: "Caused by pointed weapons and thrusts focused on a tiny point of impact. Piercing damage exploits gaps in armor to penetrate deep, directly damaging vital organs and nerve centres. It is the deadliest form of attack against targets protected by heavy armor or thick natural defences."
-      }
+      Tagliente: { it: "Taglio: apre ferite che sanguinano. I poteri applicano Sanguinante.", en: "Slashing: opens bleeding wounds. Powers inflict Bleeding." },
+      Contundente: { it: "Contundente: schiaccia e scuote. I poteri applicano Stordito.", en: "Bludgeoning: crushes and rattles. Powers inflict Stunned." },
+      Perforante: { it: "Perforante: trova le fessure della difesa. I poteri applicano Esposto.", en: "Piercing: finds the gaps in a defence. Powers inflict Exposed." }
+    };
+    /* 20/11: micro descrizione di ogni arma comune */
+    const DESC_ARMI = {
+      Spada: { it: "Lama dritta a doppio filo, compagna fedele di ogni soldato di ventura.", en: "A straight double-edged blade, the faithful companion of every sellsword." },
+      Spadone: { it: "Lama lunga quasi quanto un uomo: va impugnata a due mani e apre la guardia di chiunque.", en: "A blade nearly as long as a man: it takes both hands and breaks anyone's guard." },
+      "Mazza ferrata": { it: "Testa di ferro irta di flange, forgiata per ammaccare elmi e incrinare ossa.", en: "An iron head bristling with flanges, forged to dent helmets and crack bones." },
+      Maglio: { it: "Martello da guerra a due mani: ogni colpo scuote anche chi riesce a pararlo.", en: "A two-handed war hammer: every blow shakes even those who manage to parry it." },
+      Pugnale: { it: "Lama corta e appuntita, fatta per scivolare tra le giunture delle armature.", en: "A short, pointed blade, made to slip between the joints of armour." },
+      Tridente: { it: "Asta con tre punte di ferro: tiene il nemico a distanza e lo trafigge.", en: "A shaft tipped with three iron prongs: it keeps the foe at bay and runs them through." }
     };
     /* 15/11: le sei armi comuni a griglia (decisione del 14/11: tre tipi × una o due mani, nomi provvisori) più il bastone,
        che è arma e focus insieme (due mani, d8). Scelta libera delle armi per tutte le classi (13/11). */
@@ -525,9 +544,9 @@
     const usaFocus = () => !!(classe && FOCUS[classe]);
     /* malus: penalità alle abilità che usano Agilità (il risultato può diventare negativo) */
     const ARMATURE = [
-      { nome: "Armatura leggera", ca: 2, malus: 0, desc: { it: "Cuoio lavorato e flessibile, rinforzato da borchie metalliche che aumentano la protezione senza limitare i movimenti.", en: "Worked, supple leather reinforced with metal studs that add protection without hindering movement." } },
-      { nome: "Armatura media", ca: 3, malus: 1, desc: { it: "Anelli di metallo intrecciati formano una maglia resistente, spesso rivestita di stoffa o cuoio per attutirne il rumore.", en: "Interlocking metal rings form a tough mesh, often lined with cloth or leather to muffle its noise." } },
-      { nome: "Armatura pesante", ca: 4, malus: 2, desc: { it: "Solide piastre metalliche proteggono il corpo sopra un'imbottitura spessa. Completa la protezione un elmo, insieme a guanti e stivali rinforzati.", en: "Solid metal plates protect the body over thick padding. A helmet completes the protection, along with reinforced gauntlets and boots." } }
+      { nome: "Armatura leggera", ca: R_.ARMATURA_CA["Armatura leggera"], malus: R_.MALUS_AGILITA["Armatura leggera"], desc: { it: "Cuoio lavorato e flessibile, rinforzato da borchie metalliche che aumentano la protezione senza limitare i movimenti.", en: "Worked, supple leather reinforced with metal studs that add protection without hindering movement." } },
+      { nome: "Armatura media", ca: R_.ARMATURA_CA["Armatura media"], malus: R_.MALUS_AGILITA["Armatura media"], desc: { it: "Anelli di metallo intrecciati formano una maglia resistente, spesso rivestita di stoffa o cuoio per attutirne il rumore.", en: "Interlocking metal rings form a tough mesh, often lined with cloth or leather to muffle its noise." } },
+      { nome: "Armatura pesante", ca: R_.ARMATURA_CA["Armatura pesante"], malus: R_.MALUS_AGILITA["Armatura pesante"], desc: { it: "Solide piastre metalliche proteggono il corpo sopra un'imbottitura spessa. Completa la protezione un elmo, insieme a guanti e stivali rinforzati.", en: "Solid metal plates protect the body over thick padding. A helmet completes the protection, along with reinforced gauntlets and boots." } }
     ];
     /* Scudo facoltativo: +1 Classe Armatura, −1 alle abilità di Agilità, occupa una mano */
     const SCUDO = { nome: "Scudo", ca: 1, malus: 1 };
@@ -589,10 +608,43 @@
     /* ---------- Poteri del motore nuovo (riscritto il 15/11): specializzazione e scelte del livello 1 (js/specializzazioni.js) ----------
        Livello 1: 2 a volontà su 3 (il terzo arriva da solo al livello 2), 1 per scontro su 3, 1 giornaliero su 2; privilegio di classe del livello 1 */
     const SP = window.SPECIALIZZAZIONI;
+    /* 20/11: spiegazione degli stati (le stesse del regolamento, capitolo «Stati, tiri salvezza ed elisir») */
+    const STATI_INFO = {
+      sanguinante: { it: "Sanguinante: 1d4 danni a ogni turno, per 3 turni. Aggravato diventa Emorragia: 1d6 a ogni turno. Si resiste con Vigore.", en: "Bleeding: 1d4 damage each turn, for 3 turns. Worsened it becomes Haemorrhage: 1d6 each turn. Resisted with Vigour." },
+      scottato: { it: "Scottato: 1d4 di fuoco a ogni turno, per 3 turni. Aggravato diventa Ustionato: 1d6 a ogni turno. Si resiste con Agilità.", en: "Scorched: 1d4 fire each turn, for 3 turns. Worsened it becomes Burned: 1d6 each turn. Resisted with Agility." },
+      intossicato: { it: "Intossicato: 1d4 di veleno a ogni turno, per 3 turni. Aggravato diventa Avvelenato: 1d6 a ogni turno. Si resiste con Vigore.", en: "Intoxicated: 1d4 poison each turn, for 3 turns. Worsened it becomes Poisoned: 1d6 each turn. Resisted with Vigour." },
+      stordito: { it: "Stordito: perde l'intero turno, poi è immune per 2 turni. Aggravato diventa Commosso: Indebolito per 3 turni. Sui nemici più temibili diventa Indebolito. Si resiste con Vigore.", en: "Stunned: loses the whole turn, then is immune for 2 turns. Worsened it becomes Shaken: Weakened for 3 turns. On the most fearsome foes it becomes Weakened. Resisted with Vigour." },
+      esposto: { it: "Esposto: −2 alla Classe armatura per 3 turni. Aggravato diventa Scoperto: −4 alla Classe armatura e critico con 19-20. Si resiste con Agilità.", en: "Exposed: −2 Armor class for 3 turns. Worsened it becomes Laid bare: −4 Armor class and critical on 19-20. Resisted with Agility." },
+      indebolito: { it: "Indebolito: −2 per colpire, per 3 turni. Si resiste con Vigore.", en: "Weakened: −2 to hit, for 3 turns. Resisted with Vigour." },
+      impaurito: { it: "Impaurito: può usare solo i poteri a volontà, per 2 turni. Si resiste con Spirito.", en: "Frightened: can use only at-will powers, for 2 turns. Resisted with Spirit." },
+      vacillante: { it: "Vacillante: sotto metà della salute. Non fa danni da sé, ma attiva molti poteri e i cambi di fase dei nemici.", en: "Staggered: below half health. It does no damage by itself, but it triggers many powers and the enemies' phase changes." },
+      arma: { it: "Lo stato dell'arma dipende dal suo tipo di danno: taglio → Sanguinante, contundente → Stordito, perforante → Esposto.", en: "The weapon's condition depends on its damage type: slashing → Bleeding, bludgeoning → Stunned, piercing → Exposed." }
+    };
+    const PAROLE_STATI = [
+      ["sanguinante", ["Sanguinante", "Emorragia", "sanguinamento", "Bleeding", "Haemorrhage"]], ["scottato", ["Scottato", "Ustionato", "Scorched", "Burned"]],
+      ["intossicato", ["Intossicato", "Avvelenato", "Intoxicated", "Poisoned"]], ["stordito", ["stato contundente", "Stordito", "Commosso", "Stunned", "Shaken"]],
+      ["esposto", ["Esposto", "Scoperto", "Exposed", "Laid bare"]], ["indebolito", ["Indebolito", "Weakened"]], ["impaurito", ["Impaurito", "Frightened"]],
+      ["vacillante", ["Vacillanti", "Vacillante", "Staggered"]], ["arma", ["stato dell'arma", "weapon's condition"]]
+    ];
+    const RE_STATI = new RegExp("\\b(" + PAROLE_STATI.flatMap(([, p]) => p).sort((a, b) => b.length - a.length).join("|") + ")\\b", "g");
+    const idStato = (parola) => (PAROLE_STATI.find(([, p]) => p.includes(parola)) || [])[0];
+    const STATO_ARMA = { Tagliente: "sanguinante", Contundente: "stordito", Perforante: "esposto" };
+    const spiegaStato = (k) => { /* lo stato dell'arma: con l'arma già scelta si dice anche quale */
+      const a = k === "arma" && typeof armaScelta === "function" ? armaScelta() : null, st = a && STATO_ARMA[a.tipo];
+      return L(STATI_INFO[k]) + (st ? (LINGUA === "en" ? ` With your ${N("oggetti", a.nome)}: ${L(STATI_INFO[st]).split(":")[0]}.` : ` Con la tua arma (${N("oggetti", a.nome)}): ${L(STATI_INFO[st]).split(":")[0]}.`) : "");
+    };
+    const conStati = (testo) => String(testo || "").replace(RE_STATI, (m) => { const k = idStato(m); return k ? `<span class="stato" tabindex="0">${m}<span class="spiega" role="tooltip">${spiegaStato(k)}</span></span>` : m; });
+    /* la spiegazione resta dentro lo schermo: se sborda a destra si sposta a sinistra */
+    ["mouseover", "focusin"].forEach(ev => document.addEventListener(ev, (e) => {
+      const st = e.target.closest && e.target.closest(".stato"); if (!st) return;
+      const sp = st.querySelector(".spiega"); sp.style.left = "0px";
+      requestAnimationFrame(() => { const r = sp.getBoundingClientRect(), fuori = r.right - (document.documentElement.clientWidth - 8); if (fuori > 0) sp.style.left = `${-Math.min(fuori, r.left - 8)}px`; });
+    }));
+    /* il tocco su uno stato lo spiega e non sceglie la carta */
+    document.addEventListener("click", (e) => { const st = e.target.closest && e.target.closest(".stato"); if (st) { e.preventDefault(); st.focus(); } });
     let spec = null, chiavePot = null;
     const scelteL1 = { volonta: [], scontro: null, giornaliero: null };
-    const tipoNome = t.tipiPot, RUOLO = t.ruoli;
-    const cartaPot = (name, id, checked, tipoInput) => `<label class="carta-pot"><input type="${tipoInput || "radio"}" name="${name}" value="${id}"${checked ? " checked" : ""}><b>${SP.POTERI[id].nome}</b> <span class="nota">${tipoNome[SP.POTERI[id].tipo]}${SP.POTERI[id].ruolo ? " · " + RUOLO[SP.POTERI[id].ruolo] : ""}</span><small>${SP.POTERI[id].testo}</small></label>`;
+    const cartaPot = (name, id, checked, tipoInput) => `<label class="carta-pot"><input type="${tipoInput || "radio"}" name="${name}" value="${id}"${checked ? " checked" : ""}><b>${SP.POTERI[id].nome}</b><small>${conStati(SP.POTERI[id].testo)}</small></label>`;
     const sceltePoteri = () => (spec && scelteL1.volonta.length === 2 && scelteL1.scontro && scelteL1.giornaliero ? [...scelteL1.volonta, scelteL1.scontro, scelteL1.giornaliero] : []);
     const poteriOk = () => !!spec && SP.sceltaValida(classe, spec, sceltePoteri(), 1).ok;
     function disegnaPoteri() {
@@ -603,22 +655,20 @@
       const cl = SP.SPEC[classe], specs = Object.keys(cl).filter(k => k !== "classe");
       if (chiavePot !== classe) { /* nuova classe: le sue due specializzazioni */
         chiavePot = classe; spec = null; scelteL1.volonta = []; scelteL1.scontro = scelteL1.giornaliero = null;
-        Sicuro.html($("lista-spec"), specs.map(k => `<label class="carta-pot"><input type="radio" name="spec" value="${k}"><b>${cl[k].nome}</b> <span class="nota">${t.ruoloSpec[cl[k].ruolo] || cl[k].ruolo}</span><small>${cl[k].descr || ""}${cl[k].regola ? "<br>" + cl[k].regola : ""}</small></label>`).join(""));
+        Sicuro.html($("lista-spec"), specs.map(k => `<label class="carta-pot"><input type="radio" name="spec" value="${k}"><b>${cl[k].nome}</b><small>${conStati(cl[k].descrLunga ? L(cl[k].descrLunga) : cl[k].descr || "")}${cl[k].regola ? "<br>" + conStati(cl[k].regola) : ""}</small></label>`).join(""));
         $("lista-spec").querySelectorAll("input").forEach(r => r.addEventListener("change", () => { spec = r.value; scelteL1.volonta = []; scelteL1.scontro = scelteL1.giornaliero = null; aggiorna(); }));
       }
       const det = $("pot-dettaglio");
       if (!spec) { Sicuro.html(det, `<p class="guida">${t.scegliSpec}</p>`); return; }
-      const s = cl[spec], pv = cl.classe.privilegi, t1 = SP.TRATTI[pv[1]], t3 = SP.TRATTI[pv[3]], p5 = SP.POTERI[pv[5]];
-      const terzo = scelteL1.volonta.length === 2 ? SP.terzoVolonta(classe, spec, scelteL1.volonta) : null;
+      const s = cl[spec], pv = cl.classe.privilegi, t1 = SP.TRATTI[pv[1]];
       Sicuro.html(det, `<h3 class="sub">${t.haiSubito}</h3><ul class="pot-fissi">
-          <li><b>${t1.nome}</b> (${t.privilegio}): ${t1.testo}</li></ul>
+          <li><b>${t1.nome}</b> (${t.privilegio}): ${conStati(t1.testo)}</li></ul>
         <h3 class="sub">${t.sceltaVolonta}</h3>
         <div class="carte-pot">${s.volonta.map(id => cartaPot("pot-volonta", id, scelteL1.volonta.includes(id), "checkbox")).join("")}</div>
         <h3 class="sub">${t.sceltaScontro}</h3>
         <div class="carte-pot">${s.scontro.map(id => cartaPot("pot-scontro", id, scelteL1.scontro === id)).join("")}</div>
         <h3 class="sub">${t.sceltaGiorn}</h3>
-        <div class="carte-pot">${s.giornalieri.map(id => cartaPot("pot-giorn", id, scelteL1.giornaliero === id)).join("")}</div>
-        <p class="guida">${t.piuAvanti(terzo ? SP.POTERI[terzo].nome : null, t3.nome, SP.POTERI[s.fissi.finale].nome, p5.nome)}</p>`);
+        <div class="carte-pot">${s.giornalieri.map(id => cartaPot("pot-giorn", id, scelteL1.giornaliero === id)).join("")}</div>`);
       det.querySelectorAll('input[name="pot-volonta"]').forEach(r => r.addEventListener("change", () => {
         const v = new Set(scelteL1.volonta); if (r.checked) v.add(r.value); else v.delete(r.value);
         scelteL1.volonta = s.volonta.filter(id => v.has(id)).slice(0, 2); aggiorna();
@@ -748,7 +798,7 @@
     }
     creaOpzioni("armi", ARMI, "radio", "arma", a => `${a.danno} + ${t.modLotta}`,
       a => `<em class="tip-riga"><i><b>${t.tipoDanno}</b><b>${N("danni", a.tipo)}</b></i><i><b>${t.mani}</b><b>${t.testoMani(a.mani)}</b></i></em>` +
-        `<strong class="tit">${t.dannoTit(N("danni", a.tipo))}</strong>${L(DANNI[a.tipo])}` +
+        `${DESC_ARMI[a.nome] ? L(DESC_ARMI[a.nome]) : ""}<em class="nota-mani">${L(DANNI[a.tipo])}</em>` +
         (a.mani === 2 ? `<em class="nota-mani">${t.notaDueMani}</em>` : ""));
     creaOpzioni("armature", ARMATURE, "radio", "armatura", () => "",
       a => `<em class="tip-riga"><i><b>${t.classeArmatura}</b><b>+${a.ca}</b></i><i><b>${t.malusAgilita}</b><b>${a.malus ? "−" + a.malus : "–"}</b></i><i><b>${t.bonusAgilita}</b><b>${TETTO_AGILITA[a.nome] ? "+" + TETTO_AGILITA[a.nome] : "–"}</b></i></em>${L(a.desc)}`);
@@ -1008,8 +1058,8 @@
     const passoOk = (i) => {
       if (i === 0) return !!($("nome").value.trim() && razza && classe && (ritrattiN === 0 || immagine));
       if (i === 1) return !!razza && puntiTotali() - spesi(-1) === 0 && abilitaScelte().length === MAX_ABILITA;
-      if (i === 2) return !!classe && poteriOk();
-      if (i === 3) return !!(armaScelta() && armaturaScelta() && (!usaFocus() || formaFocus()));
+      if (i === 2) return !!(armaScelta() && armaturaScelta() && (!usaFocus() || formaFocus())); /* 20/11: l'equipaggiamento prima dei poteri, che parlano dello stato dell'arma */
+      if (i === 3) return !!classe && poteriOk();
       return [0, 1, 2, 3].every(passoOk);
     };
     function vai(i) {
@@ -1037,9 +1087,8 @@
       chiaveInfo = classe;
       if (!classe || !SP || !SP.SPEC[classe]) { box.replaceChildren(); return; }
       const pv = SP.SPEC[classe].classe.privilegi, p1 = SP.TRATTI[pv[1]], p3 = SP.TRATTI[pv[3]], p5 = SP.POTERI[pv[5]];
-      const righe = [[1, `${p1.nome}`, 2, 1, 1], [2, t.via, 3, 1, 1], [3, `${p3.nome}`, 3, 2, 2], [4, "—", 3, 3, 2], [5, `${p5.nome}; ${t.finale}`, 3, 3, 3]];
-      Sicuro.html(box, `<p><b>${p1.nome}</b> (${t.privilegio}, ${t.tabLivello.toLowerCase()} 1): ${p1.testo}</p>` +
-        `<table class="tab-classe"><caption>${N("classi", classe)}</caption><thead><tr><th>${t.tabLivello}</th><th>${t.tabPrivilegi}</th><th>${t.tabVolonta}</th><th>${t.tabScontro}</th><th>${t.tabGiorn}</th></tr></thead><tbody>` +
+      const righe = [[1, `${p1.nome}`, 2, 1, 1], [2, t.via(1), 3, 1, 1], [3, `${p3.nome}; ${t.via(2)[0].toLowerCase() + t.via(2).slice(1)}`, 3, 2, 2], [4, t.via(3), 3, 3, 2], [5, `${p5.nome}`, 3, 3, 3]];
+      Sicuro.html(box, `<table class="tab-classe"><caption>${N("classi", classe)}</caption><thead><tr><th>${t.tabLivello}</th><th>${t.tabPrivilegi}</th><th>${t.tabVolonta}</th><th>${t.tabScontro}</th><th>${t.tabGiorn}</th></tr></thead><tbody>` +
         righe.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td></tr>`).join("") + `</tbody></table>`);
     }
 
@@ -1061,9 +1110,22 @@
       else voci.push([t.rScudo, scudoScelto() ? N("oggetti", SCUDO.nome) : t.nessuno]);
       voci.push([t.rArmatura, v(arm && N("oggetti", arm.nome))], [t.rDotazione, DOTAZIONE.map(d => N("oggetti", d.nome) + (d.usi ? ` ×${d.usi}` : "")).join(", ")]);
       Sicuro.html($("riepilogo"), voci.map(([k, x]) => `<dt>${k}</dt><dd>${x}</dd>`).join(""));
+      const foto = $("cv-foto"); foto.style.backgroundImage = immagine ? `url('${immagine}')` : ""; foto.classList.toggle("vuota", !immagine);
     }
 
     /* ---------- Salvataggio ---------- */
+    /* 20/11 (Francesco): il consenso al log anonimo si chiede qui, una volta sola, quando si entra nel dungeon */
+    const CONSENSO_TX = LINGUA === "en"
+      ? { t: "Before you go in", p: "To improve the game we record, anonymously, how games go (fights, checks, choices). No personal data. You can change your mind from the home page.", si: "That's fine", no: "No, thanks" }
+      : { t: "Prima di entrare", p: "Per migliorare il gioco registriamo in forma anonima come vanno le partite (scontri, prove, scelte). Nessun dato personale. Puoi cambiare idea dalla pagina iniziale.", si: "Va bene", no: "No, grazie" };
+    function chiediConsenso(poi) {
+      const velo = $("consenso");
+      $("consenso-t").textContent = CONSENSO_TX.t; $("consenso-p").textContent = CONSENSO_TX.p;
+      $("consenso-si").textContent = CONSENSO_TX.si; $("consenso-no").textContent = CONSENSO_TX.no;
+      const scegli = (si) => { Registro.impostaConsenso(si); velo.hidden = true; poi(); };
+      $("consenso-si").onclick = () => scegli(true); $("consenso-no").onclick = () => scegli(false);
+      velo.hidden = false; $("consenso-si").focus();
+    }
     $("scheda").addEventListener("submit", (e) => {
       e.preventDefault();
       const arma = armaScelta(), arm = armaturaScelta(), dot = dotazioneScelta(), sc = scudoScelto();
@@ -1071,6 +1133,7 @@
           abilitaScelte().length !== MAX_ABILITA || !arma || !arm || dot.length !== MAX_DOTAZIONE || (ritrattiN > 0 && !immagine) ||
           !$("nome").value.trim() || (usaFocus() && !formaFocus()) ||
           (usaMagia() && !incScuolaOk()) || (usaTecniche() && tecnicheScelte().length < tecNecessarie()) || !poteriOk()) return;
+      if (window.Registro && Registro.consenso() == null) return chiediConsenso(() => $("scheda").requestSubmit());
 
       const base = Object.fromEntries(NOMI.map((n, i) => [n, totale(i)]));
       /* 19/11: focus a due forme. La forma scudo vive nello slot dello scudo (mano secondaria) e porta con sé il dado del focus */
@@ -1096,7 +1159,6 @@
         scelte: sceltePoteri(), /* poteri scelti, nell'ordine dei livelli (livello 1: due a volontà, per scontro, giornaliero) */
         modalita: (document.querySelector('input[name="modalita"]:checked') || {}).value === "difficile" ? "difficile" : "facile",
         idPartita: Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4), /* 20/11: id anonimo della partita per i log (js/registro.js) */
-        opzioni: Object.fromEntries(["fame", "pesoGiorni"].map(k => [k, !!document.querySelector(`input[name="opzione"][value="${k}"]:checked`)])), /* 20/11: regole facoltative */ /* 28/10: facile (si riparte dal salvataggio) o difficile (morte permanente) */
         abilita: abilitaScelte().map(([n, a]) => ({ nome: n, attributo: a, valore: valoreAbilita(a) + LIVELLO })),
         equipaggiamento: {
           arma: arma.nome, armaDanno: arma.danno, armaTipoDanno: arma.tipo, armaMani: arma.mani,

@@ -30,7 +30,7 @@
   });
   caso("Occhio del cacciatore: vale anche per il danno senza tiro (doppio dei dadi)", () => {
     const a = { nome: "pg", liv: 2, pv: 24, pvMax: 24, modClasse: 3, mod: { Mente: 3 }, caBase: 12, focus: { dado: 8 }, arma: { dado: 6, tipo: "contundente" }, spec: "illusione", via: "aldo", copie: 1 };
-    const n = nemico(), c = ctx([1, 1]); S.usa(a, n, "frantumare", c); eq(n.pv, 35); fine(c);
+    const n = nemico(), c = ctx([1, 1]); S.usa(a, n, "frantumare", c); eq(n.pv, 38, "40 − 2 dadi, senza Mente"); fine(c);
   });
   caso("Odore del sangue (livello 3): contro un Vacillante i poteri a volontà fanno un dado in più", () => {
     const g = guerriero({ via: "aldo", liv: 3, occhioUsato: true }), n = nemico({ pv: 19 }), c = ctx([10, 1, 1, 10, 1, 1, 15]);

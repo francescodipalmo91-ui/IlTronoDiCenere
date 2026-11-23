@@ -3,7 +3,7 @@
 Documento di lavoro nato il 05/11/2026 dal feedback del primo tester esterno.
 Obiettivo: **snellire tantissimo** combattimento e regole, con poteri netti e definiti, ispirandosi a D&D 4.
 Regola di lavoro: si decide il nucleo minimo, lo si mette in gioco, lo si prova; solo dopo si aggiunge.
-**Meccaniche congelate dal 9 novembre 2026:** ciò che è deciso qui non si ridiscute; si aggiunge (guardiani, sovrano, cacce, pergamene, livelli 6-10). Si cambia solo se una prova giocata lo chiede. Questo documento prevale su ogni altro per le regole.
+**Meccaniche congelate dal 9 novembre 2026:** ciò che è deciso qui non si ridiscute; si aggiunge (guardiani, sovrano, cacce, pergamene). Si cambia solo se una prova giocata lo chiede. Questo documento prevale su ogni altro per le regole.
 **Cancellati il 16/11/2026:** goblin, orchi, bande e i cinque avventurieri (`registro_cancellati.md`): al loro posto i **vuoti**, definiti il 18/11 in **`vuoti.md`** (statistiche per fascia, archetipi, poteri, cacce élite, bottino; diari in `diari_vuoti.md`). Le decisioni del 16/11 sulle regole (poteri senza tiro, *Primo passo*, agguato, rinomi) sono **riversate qui il 22/11/2026, insieme al codice** (`decisioni_22_novembre.md`).
 **Aggiornato il 20/11/2026:** «verga del Profeta» → verga di cenere (regole delle armi); matrice 8f: Baldassarre lascia la Sfera armillare (ex Bastone da cartografo). Focus **un oggetto, due forme** riversato in 0 (c) e nella sezione sui focus (8f), insieme al codice: il dado dei poteri è quello della forma (normale d8, scudo d6). Riposo base e regole facoltative «Fame» e «Peso dei giorni» nel codice e nel regolamento (sezione 2). Dettaglio: `decisioni_20_novembre.md`.
 **Aggiornato il 19/11/2026:** Lama gemella a +2 nella matrice arma-classe (8f); agguati anche prima di Ettore; nomi, archetipi e vulnerabilità delle quattro cacce ★★★ (gruppo 5 e matrice) (`decisioni_19_novembre.md`).
@@ -719,7 +719,7 @@ Rimappate sui tipi nuovi (cadono Arcano, Forza, Luce, Ombra). Nessuna immunità 
 - **Maledetto:** tutti i vuoti (16/11, solo etichetta). Il fuoco sacro (oggetti e pergamene) ignora la resistenza al fuoco di Ezechiele Cenerino.
 - Nota di Aldo (★ e ★★), studio dell'★★★ e luoghi: `mondo_e_incontri.md`, sezione 7.
 - **Forza (DECISO il 19/11):** Brunilde Spezzacatena è vulnerabile alla forza (favorita: Arcanista della Realtà).
-- **PE (proposta del 06/11, non ancora confermata):** per arrivo, 100 (bronzo) / 150 (argento) / 200 (oro) / 250 (platino); finora per stelle 100/150/200 (`progressione.md`; da misurare domenica).
+- **PE: CANCELLATI il 23/11** (livelli a tappe, `progressione.md`).
 - **Poteri (DECISO il 18/11):** vuoto base della fascia + *Colpo feroce* (a volontà) e *Colpo furioso* (per scontro); conteggi ★ 2/1, ★★ 2/2, ★★★ 3/2 (`vuoti.md`). Nomi, archetipi, vulnerabilità e diari 13-16 delle quattro ★★★ decisi il 19/11 (`decisioni_19_novembre.md`).
 
 **Gruppo 6, agguati: i vuoti (DEFINITI il 18/11/2026, `vuoti.md`).** Le statistiche di goblin, orchi e bande (approvate il 09/11) sono **cancellate il 16/11** (`registro_cancellati.md`). Vuoti con statistiche fisse per fascia (0-4), sei archetipi (Carica, Imboscata, Trappolista, Finto ferito, Veleni e vapori, Fuoco), maledetti, senza resa né ritorno; la prova di agguato (Percezione o Intuizione) dipende dall'archetipo. Regole degli agguati: `mondo_e_incontri.md`, sezione 4; decisioni: `decisioni_16_novembre.md`, sez. 7 e 10, `decisioni_18_novembre.md`. Numeri ⚠ (prime misure il 22/11: `decisioni_22_novembre.md`, sez. 9).
@@ -910,14 +910,12 @@ DECISO l'11/11: la rovina e il divorare tutti valgono solo per il Trono di Cener
 
 ## 8f. Progressione ed equipaggiamento (DECISO il 06/11/2026)
 
-### Livelli fino a 10
-- Il livello massimo non è più 5: i livelli salgono **fino a 10**, come prima per caratteristiche, salute fisica e salute mentale. **Nessun potere nuovo oltre il 5** (3/3/3).
-- Punti attributo dal 6 al 10: **+1 a livello** (tetto 20), proposta non bocciata; da riconfermare.
-- Soglie di PE oltre il 5: **da ricalcolare** perché il 10 si raggiunga solo completando quasi tutto (il gioco dà circa 6500 PE in totale). Le attuali 300 / 1000 / 2400 / 4400 valgono fino al 5 (`progressione.md`).
+### Livelli a tappe (23/11; sostituisce «Livelli fino a 10» e le soglie di PE)
+- Livello massimo **5**, a tappe: si parte dal livello 1 e se ne sale uno dopo ogni guardiano sconfitto (ucciso o risparmiato) al ritorno da Aldo. Niente PE, niente livelli 6-10, niente punti attributo oltre il livello 5. Dettaglio: `progressione.md`.
 - Salute e mente fisse a ogni livello come oggi. Il danno non cresce col livello ma con le armi (vedi sotto).
 
 ### Boss
-- **Il boss ha sempre un livello in più del giocatore** (giocatore 6 → sovrano 7). Il livello non è quindi un vantaggio contro i boss: lo è l'equipaggiamento.
+- **Il boss ha sempre un livello in più del giocatore** (giocatore 1 → Ettore 2; … giocatore 5 → sovrano 6). Il livello non è quindi un vantaggio contro i boss: lo è l'equipaggiamento.
 - Percentuali di vittoria da mantenere (03/11): Ettore quasi sempre, Enea 80%, Dafne 70%, Atena 60%, sovrano 50%; mastini boss 10-20% di sconfitte. Si misurano **con l'equipaggiamento di quel momento del percorso**, non con una build nuda.
 
 ### Scala dei bonus
@@ -970,7 +968,6 @@ DECISO l'11/11: la rovina e il divorare tutti valgono solo per il Trono di Cener
 Ogni classe ha almeno un'arma utilizzabile in ogni finestra; Arcanista e Sciamano ne hanno una sola per finestra. Le armi delle cacce sono **regali di Aldo** (non drop dei vuoti).
 
 ### Da fare
-- Soglie di PE fino al livello 10; riconfermare +1 punto attributo dal 6 al 10.
 - ~~Aggiornare `bilanciamento_nemici_oggetti.md`~~ → fatto il 09/11: diviso in `progressione.md`, `mondo_e_incontri.md`, `elisir_e_bottino.md` e archiviato.
 - ~~Aggiornare i poteri offensivi di Arcanista e Ossa~~ → fatto il 10/11: tornano al dado dell'arma (o del focus, se più alto).
 

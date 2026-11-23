@@ -338,9 +338,9 @@
      Valori fissi per fascia (0 prima del bronzo … 4 dopo il platino), uguali per agguati e cacce; tutti maledetti (colore).
      agguato: l'abilità del giocatore nella prova contrapposta (Percezione o Intuizione) contro la Furtività del vuoto (⚠ = il suo attacco). */
   const FASCE_VUOTI = [
-    { pv: 20, ca: 11, att: 2, danno: [1, 6, 1], pe: 50 }, { pv: 26, ca: 12, att: 3, danno: [1, 6, 2], pe: 75 },
-    { pv: 32, ca: 13, att: 4, danno: [1, 8, 2], pe: 100 }, { pv: 38, ca: 14, att: 5, danno: [1, 8, 3], pe: 125 },
-    { pv: 44, ca: 15, att: 6, danno: [1, 10, 3], pe: 150 }
+    { pv: 20, ca: 11, att: 2, danno: [1, 6, 1] }, { pv: 26, ca: 12, att: 3, danno: [1, 6, 2] },
+    { pv: 32, ca: 13, att: 4, danno: [1, 8, 2] }, { pv: 38, ca: 14, att: 5, danno: [1, 8, 3] },
+    { pv: 44, ca: 15, att: 6, danno: [1, 10, 3] }
   ];
   const ARCHETIPI = {
     carica: { nome: "Carica", agguato: "Intuizione", tipo: "contundente", stato: "stordito", volonta: ["carica_testa_bassa", "spallata_vuoto"], scontro: "furia_cieca" },
@@ -371,7 +371,7 @@
     return S.preparaScontro({
       id: o.id || `vuoto:${fascia}:${arch}`, nome: o.nome || `Vuoto (${a.nome.toLowerCase()}, fascia ${fascia})`, liv: fascia + 1, pv, pvMax: pv, caBase: ca,
       modAtt: att, modDanno: f.danno[2], modClasse: att, arma: { n: f.danno[0], dado: f.danno[1], tipo: a.tipo }, mod: {}, res: o.res || {},
-      maledetto: true, vuoto: true, archetipo: arch, fascia, agguato: a.agguato, furtivita: att, pe: f.pe, boss: false,
+      maledetto: true, vuoto: true, archetipo: arch, fascia, agguato: a.agguato, furtivita: att, boss: false,
       volonta, scontro, elite: false, caccia: el, fuggeAlTurno: 0, rune: false, turno: 0, stati: {}, buff: {}
     });
   }

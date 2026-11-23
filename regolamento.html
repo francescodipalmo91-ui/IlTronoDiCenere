@@ -128,7 +128,7 @@
     const segno = (n) => (n < 0 ? "−" : "+") + Math.abs(n);
     const per = (o) => Object.entries(o).map(([k, v]) => `${segno(v)} ${N("attributi", k)}`).join(", ");
     const tetti = Object.entries(R.TETTO_AGILITA).map(([a, t]) => `${N("oggetti", a)} ${t ? "+" + t : (EN ? "none" : "nessuno")}`).join(" · ");
-    const soglie = R.SOGLIE_PE.slice(1).map((s, i) => `<tr><td>${i + 2}</td><td>${s - R.SOGLIE_PE[i]}</td><td>${s}</td></tr>`).join("");
+    const tappe = [["Ettore", 2], ["Enea", 3], ["Dafne", 4], ["Atena", 5]].map(([g, l]) => `<tr><td>${g}</td><td>${l}</td></tr>`).join("");
     const armatureClasse = (c) => (R.ARMATURE_CLASSI[c] || ["Armatura leggera", "Armatura media", "Armatura pesante"]).map(a => N("oggetti", a)).join(", ");
     const SECONDARIA = { Soldato: { it: "scudo (facoltativo)", en: "shield (optional)" }, Forestiero: { it: "focus a due forme", en: "two-form focus" }, Sapiente: { it: "focus a due forme", en: "two-form focus" }, Accolito: { it: "focus a due forme", en: "two-form focus" } };
     const righeClassi = Object.entries(R.CLASSI).map(([c, d]) => `<tr><td>${N("classi", c)}</td><td>d${d.dado}</td><td>${N("attributi", d.attrClasse)}</td><td>${armatureClasse(c)}</td><td>${SECONDARIA[c][L]}</td></tr>`).join("");
@@ -202,7 +202,7 @@
         torna: "← Pagina iniziale", titolo: "Regolamento", sotto: "Le regole del gioco, da consultare quando vuoi.",
         parte: "Parte", capitolo: "Capitolo", apri: "Apri tutto", chiudi: "Comprimi",
         desc: ["Come dare ordini al personaggio e leggere le risposte del gioco.", "Il tiro del d20, la difficoltà e cosa costa fallire.", "Le nove abilità, come si calcolano e quando servono.", "Il fuoco, il sonno e il conto dei giorni.", "Cosa succede a zero salute e cosa logora la mente.", "Tre posti, condivisi tra computer e telefono.",
-          "Le quattro caratteristiche e quella con cui combatti.", "Bonus di razza, dado vita e salute al primo livello.", "Armi, focus, scudo, armature, dotazione e rarità.", "Esperienza, soglie e cosa guadagni a ogni livello.",
+          "Le quattro caratteristiche e quella con cui combatti.", "Bonus di razza, dado vita e salute al primo livello.", "Armi, focus, scudo, armature, dotazione e rarità.", "Livelli a tappe e cosa guadagni a ogni livello.",
           "Chi agisce per primo, l'azione e l'azione rapida.", "Tiro per colpire, danno, critico e colpi multipli.", "Gli effetti che durano qualche turno, i tiri salvezza e gli elisir.", "Vulnerabilità, annunci e fasi degli avversari più temibili.", "Fuori dalle stanze: le cacce di Aldo, gli agguati, il fermaglio.", "Un combattimento turno per turno.",
           "Poteri, privilegi e vie di prestigio: le regole uguali per tutti.", "Vigore, armi e scudo.", "Agilità, veleno e corteccia.", "Mente, forza e illusioni.", "Spirito, sangue e ossa."],
         parti: [["Come si gioca", [0, 1, 2, 3, 4, 5]], ["Il personaggio", [6, 7, 8, 9]], ["Combattimento", [10, 11, 12, 13, 14, 15]], ["Le classi", [16, 17, 18, 19, 20]]],
@@ -249,7 +249,7 @@
               <li>il riposo scaccia gli stati alterati;</li>
               <li>le prove fallite tornano disponibili;</li>
               <li>passi al giorno successivo, e Guendalina cucina per la dispensa;</li>
-              <li>se hai raggiunto un nuovo livello, lo applichi (capitolo «Livelli ed esperienza»).</li>
+              <li>se hai raggiunto un nuovo livello, lo applichi (capitolo «Livelli»).</li>
             </ul>
             <p>Se sei già in piena forma e non hai nulla da ricaricare, non c'è bisogno di dormire: il gioco non consuma il fuoco.</p>
             <h3>Il corpo</h3>
@@ -311,7 +311,7 @@
             <h3>Salute al livello 1</h3>
             <span class="formula">Salute fisica = ${R.SALUTE_BASE} + massimo del dado vita + mod. Vigore</span>
             <span class="formula">Salute mentale = ${R.SALUTE_BASE} + massimo del dado vita + mod. Spirito</span>
-            <p>Il dado non si tira: al livello 1 vale il massimo. Come cresce con i livelli è nel capitolo «Livelli ed esperienza».</p>`],
+            <p>Il dado non si tira: al livello 1 vale il massimo. Come cresce con i livelli è nel capitolo «Livelli».</p>`],
           /* 8 */ ["Equipaggiamento", `
             <h3>Armi</h3>
             <p>Le armi comuni sono sei, due per tipo di danno: una a una mano (1d6) e una a due mani (1d8).</p>
@@ -348,10 +348,10 @@
               <li><b>Sempre con te</b>: piede di porco (Atletica dove si fa leva), corda (Acrobazia e Atletica su travi e dislivelli), lente (Indagare e Percezione per cercare ciò che è nascosto).</li>
               <li><b>Si consumano</b>: pozione di cura (1), torcia (2 usi), gesso (3: il primo errore in un enigma a scelta non costa punti mentali), quaderno e carboncino (2 fogli: un tentativo in più a una prova di Sapienza).</li>
             </ul>`],
-          /* 9 */ ["Livelli ed esperienza", `
-            <p>Guadagni punti esperienza sconfiggendo i nemici e completando missioni. Il livello massimo, per ora, è ${R.LIVELLO_MAX}.</p>
-            <div class="scroll"><table><tr><th>Livello</th><th>PE necessari</th><th>PE totali</th></tr>${soglie}</table></div>
-            <p><b>Il livello si raggiunge con i punti esperienza, ma si applica al primo riposo utile</b>: finché non riposi, salute, poteri e difficoltà restano quelli del livello precedente. Se nel frattempo raggiungi più livelli, al riposo li applichi tutti, uno dopo l'altro.</p>
+          /* 9 */ ["Livelli", `
+            <p>Non ci sono punti esperienza: si sale di livello a tappe. Si parte dal livello 1 e ogni guardiano sconfitto, ucciso o risparmiato, ti fa salire di uno quando torni da Aldo. Il livello massimo, per ora, è ${R.LIVELLO_MAX}.</p>
+            <div class="scroll"><table><tr><th>Guardiano sconfitto</th><th>Livello che sblocca</th></tr>${tappe}</table></div>
+            <p><b>Il livello si sblocca tornando da Aldo, ma si applica al primo riposo utile</b>: finché non riposi, salute, poteri e difficoltà restano quelli del livello precedente. Se nel frattempo raggiungi più livelli, al riposo li applichi tutti, uno dopo l'altro.</p>
             <h3>Cosa guadagni a ogni livello</h3>
             <ul>
               <li><b>${R.PUNTI_PER_LIVELLO} punti attributo</b> da distribuire liberamente, anche entrambi sullo stesso (massimo ${R.VALORE_MASSIMO});</li>
@@ -573,7 +573,7 @@
               <li>rest clears all conditions;</li>
               <li>failed checks become available again;</li>
               <li>you move on to the next day, and Guendalina cooks for the larder;</li>
-              <li>if you have reached a new level, you apply it (chapter “Levels and experience”).</li>
+              <li>if you have reached a new level, you apply it (chapter “Levels”).</li>
             </ul>
             <p>If you are already in full shape and have nothing to recharge, there is no need to sleep: the game does not use up the fire.</p>
             <h3>The body</h3>
@@ -635,7 +635,7 @@
             <h3>Health at level 1</h3>
             <span class="formula">Physical health = ${R.SALUTE_BASE} + maximum of the hit die + Vigour mod.</span>
             <span class="formula">Mental health = ${R.SALUTE_BASE} + maximum of the hit die + Spirit mod.</span>
-            <p>The die is not rolled: at level 1 it counts as its maximum. How it grows with levels is in the chapter “Levels and experience”.</p>`],
+            <p>The die is not rolled: at level 1 it counts as its maximum. How it grows with levels is in the chapter “Levels”.</p>`],
           /* 8 */ ["Equipment", `
             <h3>Weapons</h3>
             <p>There are six common weapons, two for each damage type: one-handed (1d6) and two-handed (1d8).</p>
@@ -672,10 +672,10 @@
               <li><b>Always with you</b>: crowbar (Athletics where you can get leverage), rope (Acrobatics and Athletics on beams and drops), magnifying glass (Investigation and Perception to find what is hidden).</li>
               <li><b>Used up</b>: healing potion (1), torch (2 uses), chalk (3: your first mistake in a multiple-choice riddle costs no mental points), notebook and charcoal (2 pages: one more attempt at a Lore check).</li>
             </ul>`],
-          /* 9 */ ["Levels and experience", `
-            <p>You earn experience points by defeating enemies and completing quests. The highest level, for now, is ${R.LIVELLO_MAX}.</p>
-            <div class="scroll"><table><tr><th>Level</th><th>XP needed</th><th>Total XP</th></tr>${soglie}</table></div>
-            <p><b>You reach a level with experience points, but you apply it at your next rest</b>: until you rest, health, powers and difficulties stay those of the previous level. If you reach several levels meanwhile, you apply them all at the rest, one after the other.</p>
+          /* 9 */ ["Levels", `
+            <p>There are no experience points: you level up in steps. You start at level 1 and each guardian you defeat, killed or spared, raises you by one when you return to Aldo. The highest level, for now, is ${R.LIVELLO_MAX}.</p>
+            <div class="scroll"><table><tr><th>Guardian defeated</th><th>Level unlocked</th></tr>${tappe}</table></div>
+            <p><b>You unlock a level by returning to Aldo, but you apply it at your next rest</b>: until you rest, health, powers and difficulties stay those of the previous level. If you reach several levels meanwhile, you apply them all at the rest, one after the other.</p>
             <h3>What you gain at each level</h3>
             <ul>
               <li><b>${R.PUNTI_PER_LIVELLO} attribute points</b> to spread freely, even both on the same one (maximum ${R.VALORE_MASSIMO});</li>

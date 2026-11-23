@@ -15,7 +15,7 @@ const PG = (o) => Object.assign({
   abilita: [{ nome: "Atletica", attributo: "Vigore", valore: 4 }],
   equipaggiamento: { arma: "Spada corta", armaDanno: "1d6", armaTipoDanno: "Tagliente", armaMani: 1, armatura: "Armatura media", armaturaCA: 4, malusAgilita: 0, scudo: null, dotazione: [] }
 }, o || {});
-const PARTITA = (o) => Object.assign({ usate: { riposo: "sbloccato" }, diario: [], luogo: "cucina", livello: 1, crescita: { salute: 0, mente: 0, risorsa: 0 }, risorsaUsata: 0, esperienza: 0, ora: Date.now() }, o || {});
+const PARTITA = (o) => Object.assign({ usate: { riposo: "sbloccato" }, diario: [], luogo: "cucina", livello: 1, crescita: { salute: 0, mente: 0, risorsa: 0 }, risorsaUsata: 0, ora: Date.now() }, o || {});
 
 async function apri(browser, url, pg, partita) {
   const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 } });

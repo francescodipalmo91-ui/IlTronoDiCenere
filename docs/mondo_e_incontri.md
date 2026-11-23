@@ -9,7 +9,7 @@ Statistiche, poteri, vulnerabilità e resistenze dei nemici: `riscrittura_meccan
 
 - **Dentro casa solo i mastini.** Dentro si rischia la mente (pedinamento, prove, diari), fuori il corpo (animali, agguati). Il mastino della cantina non ricompare; i due di Aldo nella sala da ballo non uccidono (è la sua prova).
 - **Fuori casa** (giardino, cimitero, cappella, orto; mai in cripta): ratto, corvo, lupo e i loro doppi infernali. **20%** di incontro a ogni ingresso.
-- **Foresta** (tre settori): lupo, cinghiale, cervo, vipera e i loro doppi infernali. **40%** a ogni ingresso, senza limite per riposo: il freno sono i PE a scalare (`progressione.md`).
+- **Foresta** (tre settori): lupo, cinghiale, cervo, vipera e i loro doppi infernali. **40%** a ogni ingresso, senza limite per riposo: il freno è il bottino che si esaurisce e la salute che si consuma (niente PE dal 23/11).
 - **Mai incontri casuali né agguati dove il fuoco è caldo** né dove c'è un PNG (scena di Guendalina nella serra).
 - **Un solo tiro per ingresso.** Fuori casa l'agguato prende il posto dell'animale. Mai due scontri di fila.
 - **Proporzioni:** foresta 60:40 tra normali e infernali; fuori casa dipende dal fermaglio (sezione 5).
@@ -47,7 +47,7 @@ Il fermaglio ha un suo posto nell'equipaggiamento e si toglie solo fuori dallo s
 - **Appuntato:** +2 alla Furtività del pedinamento (i mastini riconoscono l'odore di Aldo); fuori casa più agguati: **45% animale normale, 20% infernale, 35% agguato**. Titolo sotto il ritratto.
 - **Nascosto:** nessun bonus; fuori casa **55% / 30% / 15%**. Aldo lo nota quando gli parli, una volta al giorno.
 - Il 20% di incontro non cambia; prima del bronzo resta 67:33.
-- ⚠ Percentuali da rivalutare quando i vuoti avranno PE misurati (domenica 22/11); dal 19/11 gli agguati valgono anche prima del bronzo (sezione 1), quindi anche il «67:33» prima del bronzo va riconsiderato.
+- ⚠ Percentuali da rivalutare quando i vuoti saranno stati misurati; dal 19/11 gli agguati valgono anche prima del bronzo (sezione 1), quindi anche il «67:33» prima del bronzo va riconsiderato.
 
 ## 6. Furtività contro i guardiani
 
@@ -61,4 +61,4 @@ Solo contro i guardiani, in punti precisi: d20 + Furtività contro d20 + Percezi
 - **Se vinci** consegni il trofeo ad Aldo: un regalo di Aldo: una scelta dalle rastrelliere (`armeria_aldo.md`); ogni caccia ricarica la fontana. La preda lascia anche il diario e le risorse, mai equipaggiamento casuale (`vuoti.md`, sez. 6). **Se perdi, muori** (puoi fuggire: la preda resta).
 - **Nota di Aldo (★ e ★★):** finché Dafne tiene i confini, Aldo ha studiato la preda e dice a cosa è vulnerabile e cosa resiste (riga «Studio di Aldo» nella descrizione e in Missioni).
 - **★★★, Aldo è «cieco»:** dopo l'oro Dafne non c'è più. Lo studio lo fa il giocatore, prima dello scontro: guardare (Percezione: armi, armatura, tipo di danno), studiare (Sapienza: vulnerabilità, resistenze, stato inflitto), avvicinarsi (Furtività, facoltativo: riuscita dà vantaggio alla prova dopo e, allo scontro, primo round e −2 CA alla preda; fallita fa partire lo scontro con la preda per prima e −2 CA a te). Fasce: sotto la CD nulla (1 punto mentale); CD → una voce; CD + 5 → due; CD + 10 → tre; 20 naturale dopo un avvicinamento riuscito → scheda intera. CD 12 + crescita col livello.
-- Statistiche degli animali e dei guardiani: riscrittura 8c e 8d. PE: `progressione.md`.
+- Statistiche degli animali e dei guardiani: riscrittura 8c e 8d. Livelli: `progressione.md`.

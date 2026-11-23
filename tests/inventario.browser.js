@@ -20,7 +20,7 @@ const PG = () => ({
 const arma = (id, nome) => ({ id, nome, tipo: "arma", danno: "1d6", tipoDanno: "Perforante", mani: 1 });
 const PARTITA = (o) => Object.assign({
   usate: { riposo: "sbloccato" }, diario: [{ tipo: "narra", stanza: "cucina", righe: ["x"] }], luogo: "cucina", livello: 1,
-  crescita: { salute: 0, mente: 0, risorsa: 0 }, risorsaUsata: 0, esperienza: 0, ora: Date.now(),
+  crescita: { salute: 0, mente: 0, risorsa: 0 }, risorsaUsata: 0, ora: Date.now(),
   zaino: [
     arma("pugnale1", "Pugnale"),
     { id: "siero", nome: "Siero", tipo: "consumabile", usi: 2, effetto: "pozCura" },

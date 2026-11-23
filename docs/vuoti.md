@@ -11,15 +11,15 @@ Valori **fissi per fascia di avanzamento**, uguali per agguati e cacce; archetip
 ## 3. Scheda di fascia (struttura DECISA 18/11; numeri ⚠)
 Vuoto base = l'agguato. La caccia è lo stesso vuoto in versione élite (+50% salute, +1 CA, +1 attacco, due poteri in più: sez. 5).
 
-| Fascia | Quando | Salute | CA | Att. | Danno | Poteri base (a volontà / per scontro) | PE agguato |
-|---|---|---|---|---|---|---|---|
-| 0 | prima del bronzo | 20 | 11 | +2 | 1d6+1 | 1 / 0 | 50 |
-| 1 | dopo il bronzo | 26 | 12 | +3 | 1d6+2 | 1 / 0 | 75 |
-| 2 | dopo l'argento | 32 | 13 | +4 | 1d8+2 | 1 / 1 | 100 |
-| 3 | dopo l'oro | 38 | 14 | +5 | 1d8+3 | 2 / 1 | 125 |
-| 4 | dopo il platino | 44 | 15 | +6 | 1d10+3 | 2 / 1 | 150 |
+| Fascia | Quando | Salute | CA | Att. | Danno | Poteri base (a volontà / per scontro) |
+|---|---|---|---|---|---|---|
+| 0 | prima del bronzo | 20 | 11 | +2 | 1d6+1 | 1 / 0 |
+| 1 | dopo il bronzo | 26 | 12 | +3 | 1d6+2 | 1 / 0 |
+| 2 | dopo l'argento | 32 | 13 | +4 | 1d8+2 | 1 / 1 |
+| 3 | dopo l'oro | 38 | 14 | +5 | 1d8+3 | 2 / 1 |
+| 4 | dopo il platino | 44 | 15 | +6 | 1d10+3 | 2 / 1 |
 
-Ancore: cinghiale infernale 14 salute, CA 11, +2; Ettore (livello 2) 30 salute, CA 13, +3. Obiettivo agguati ~85-90% di vittoria. PE delle cacce 100 / 150 / 200 / 250 (proposta del 6/11, da confermare).
+Ancore: cinghiale infernale 14 salute, CA 11, +2; Ettore (livello 2) 30 salute, CA 13, +3. Obiettivo agguati ~85-90% di vittoria. Niente PE (cancellati il 23/11): vuoti e cacce lasciano bottino, diari e trofei.
 
 ## 4. I sei archetipi degli agguati (DECISO 18/11)
 Il primo a volontà vale dalla fascia 0 (è l'unico dalle fasce 0-2), il secondo a volontà dalla fascia 3, il per scontro dalla fascia 2. Regole: a volontà applicano soltanto; per scontro applicano e aggravano; i colpi senza tiro per colpire non hanno bonus né critico (16/11); niente reazioni (14/11).

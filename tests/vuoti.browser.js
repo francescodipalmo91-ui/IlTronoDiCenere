@@ -1,5 +1,5 @@
 /* Test nel browser dei vuoti negli agguati (22/11/2026): vuoti.md, diari_vuoti.md, mondo_e_incontri.md sez. 4.
-   Col motore nuovo: agguati fin dall'inizio (anche prima del bronzo), fascia dal fermaglio, prova di agguato, PE della fascia,
+   Col motore nuovo: agguati fin dall'inizio (anche prima del bronzo), fascia dal fermaglio, prova di agguato,
    diario sempre (gli otto con nome una volta sola), niente resa. Il vecchio motore resta com'era.
    Uso: python3 -m http.server 8765 --bind 127.0.0.1, poi node tests/vuoti.browser.js */
 const { chromium } = require("playwright");
@@ -45,16 +45,14 @@ async function apri(browser, pg, partita) {
 const vuotoVinto = (page, tiri) => page.evaluate(async (tiri) => {
   const P0 = Nemici.provaAgguato; /* i due d20 della prova: prima il giocatore, poi il vuoto */
   if (tiri) Nemici.provaAgguato = (n, p, bo, c, o) => { const t = [...tiri]; return P0(n, p, bo, { tira: () => t.shift() }, o); };
-  const pe0 = pg.esperienza || 0;
   avviaVuoto();
-  const N = scontro.N.nem, info = { id: N.id, nome: N.nome, fascia: N.fascia, vuoto: N.vuoto, maledetto: N.maledetto, pe: N.pe, primo: scontro.primo,
+  const N = scontro.N.nem, info = { id: N.id, nome: N.nome, fascia: N.fascia, vuoto: N.vuoto, maledetto: N.maledetto, primo: scontro.primo,
     vu: scontro.vuoto, sorpresoNem: !!(N.buff && N.buff.sorpreso), sorpresoPg: !!(scontro.N.pg.buff && scontro.N.pg.buff.sorpreso),
     prova: diario.filter(e => e.tipo === "prova").map(e => e.titolo).find(t => /Agguato/.test(t)) || "" };
   Nemici.provaAgguato = P0;
   await new Promise(r => setTimeout(r, 50));
   scontro.N.nem.pv = 0; scontro.pv = 0; vittoriaScontro();
   await new Promise(r => setTimeout(r, 50));
-  info.pe = [info.pe, (pg.esperienza || 0) - pe0];
   info.visti = usate.vuoti_visti || [];
   info.diari = zaino.filter(x => /^diario_vuoto_/.test(x.id)).map(x => [x.id, x.tipo, !!x.testo]);
   info.scontro = !!scontro;
@@ -74,12 +72,11 @@ caso("Agguato col motore nuovo: prima del bronzo esce un vuoto di fascia 0 (non 
   eq(errori, [], "errori nella pagina"); await chiudi();
 });
 
-caso("Prova di agguato riuscita: agisci per primo e il vuoto ha −2 CA; PE 50 e diario nello zaino", async (b) => {
+caso("Prova di agguato riuscita: agisci per primo e il vuoto ha −2 CA; diario nello zaino", async (b) => {
   const { page, errori, chiudi } = await apri(b, PG(), PARTITA());
   const r = await vuotoVinto(page, [20, 1]);
   eq(r.vuoto, true); eq(r.maledetto, true); eq(r.fascia, 0); eq(r.primo, "pg"); eq(r.sorpresoNem, true); eq(r.sorpresoPg, false);
   vero(/Agguato/.test(r.prova), "riga della prova: " + r.prova);
-  eq(r.pe, [50, 50], "PE della fascia 0");
   eq(r.visti.length, 1); eq(r.diari.length, 1); eq(r.diari[0][1], "nota"); eq(r.diari[0][2], true);
   eq(r.scontro, false);
   eq(errori, [], "errori nella pagina"); await chiudi();
@@ -97,10 +94,10 @@ caso("Prova di agguato fallita: il vuoto agisce per primo e tu hai −2 CA", asy
   eq(errori, [], "errori nella pagina"); await chiudi();
 });
 
-caso("Fascia dal fermaglio: argento → fascia 2 (32 salute, 100 PE); platino → fascia 4", async (b) => {
+caso("Fascia dal fermaglio: argento → fascia 2 (32 salute); platino → fascia 4", async (b) => {
   const { page, errori, chiudi } = await apri(b, PG(), PARTITA({ usate: { riposo: "sbloccato", fermaglio: "argento" } }));
   const r = await vuotoVinto(page, [20, 1]);
-  eq(r.fascia, 2); eq(r.pe, [100, 100]);
+  eq(r.fascia, 2);
   const f4 = await page.evaluate(() => { usate.fermaglio = "platino"; avviaVuoto(); const n = scontro.N.nem; const x = [n.fascia, n.pvMax, n.caBase]; scontro.N.nem.pv = 0; scontro.pv = 0; vittoriaScontro(); return x; });
   eq(f4, [4, 44, 15]);
   eq(errori, [], "errori nella pagina"); await chiudi();

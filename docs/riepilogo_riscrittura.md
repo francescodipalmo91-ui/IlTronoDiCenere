@@ -6,7 +6,7 @@ Leggere dopo `punto_della_situazione.md` e `registro_cancellati.md`. **Decisioni
 
 ## Da fare, in ordine
 1. ~~8c gruppo 4 (élite)~~ → approvato il 06/11/2026 (mastino della soglia di Adele liv. 4, mastino corazzato liv. 5).
-2. **8c gruppo 5:** vulnerabilità e resistenze delle otto cacce fatte (riscrittura 8c); restano personaggi e poteri (★ 2/1, ★★ 2/2, ★★★ 3/2) e la conferma dei PE per arrivo.
+2. **8c gruppo 5:** vulnerabilità e resistenze delle otto cacce fatte (riscrittura 8c); restano personaggi e poteri (★ 2/1, ★★ 2/2, ★★★ 3/2) .
 3a. **Set (10/11):** due set indossati, bonus a 2/4/5 pezzi (a volontà / per scontro / giornaliero, fuori dagli slot di potere); nomi provvisori «set del sovrano di cenere» (danno, ex Retaggio) e «set del sovrano di carne» (resistenza, ex Vespera); conflitto sulla testa (corona/elmo); spada con campo di forza, solo finale B; oggetto di mano libera +2 CA al posto dell'arma Vespera; niente legame vincolante. Dettaglio in `storia_retaggio_e_set.md` 7c e riscrittura 8e. **Nel codice dal 15/11:** Odore di Casa (−1), Sguardo della Casa, Ultima Guardia, Voce del sangue, mano libera +2; manca Decreto dell'erede.
 3. **8d guardiani** (Ettore, Enea, Dafne e Atena fatti il 10/11; regola del risparmio per Ettore ed Enea; **Dafne non si risparmia** dal 15/11; Atena muore sempre) e **8e sovrano (fatto l'11/11: tre fasi di armatura più la carne, stati Maledetto/Condannato/Svuotato/Prosciugato, evento finale per finale, soglia della sala del trono)**; restano le pergamene (quali, dove, quale prova) e la soglia del Retaggio sul nuovo sistema (`storia_retaggio_e_set.md`, sezione 7).
 4. ~~Allineare i documenti~~ → **fatto il 09/11**; `docs/` del repo GitHub allineato il 15/11 (sera).
@@ -81,11 +81,11 @@ Privilegi: il Guerriero è dal diagramma; le altre classi per tipo (ex tratto II
 Atena (15/11): tolte le vulnerabilità a sangue e veleno e la resistenza allo psichico.
 
 ## Decisioni del 06/11/2026 (dettaglio: riscrittura, sezione 8f e 8c gruppo 5)
-- **Livelli fino a 10**, solo numeri (caratteristiche, salute, mente); +1 punto attributo dal 6 (da riconfermare); soglie oltre il 5 da ricalcolare.
+- ~~Livelli fino a 10~~ → **cancellati il 23/11**: livelli a tappe, tetto 5, niente PE (`progressione.md`).
 - **Boss sempre un livello sopra il giocatore**; percentuali di vittoria (Ettore ~sempre, Enea 80%, Dafne 70%, Atena 60%, sovrano 50%) misurate con l'equipaggiamento del momento.
 - **Bonus equipaggiamento +1/+2/+3** (tetto +3 per tutto, set compresi dal 12/11; vedi `oggetti_per_rarita.md`); sostituisce «+livello».
 - Armi: attacco base senza stati e senza sinergie; ogni PNG lascia la sua arma (nessuna scelta); **focus** per classe (Sciamano, Arcanista, Monaco): mano primaria arma, secondaria focus facoltativo; con il focus gli offensivi che tirano il dado dell'arma passano da d6 a d8; bastone = arma + focus, due mani, d8; pergamene solo come extra; matrice arma-classe approvata (poi resa libera il 13/11).
-- **Mastino corazzato** (liv. 5, tre rune azzurre) e **mastino della soglia di Adele** (liv. 4); cacce rimappate, Profeta unico maledetto (ora Ezechiele Cenerino); PE per arrivo 100/150/200/250 proposti.
+- **Mastino corazzato** (liv. 5, tre rune azzurre) e **mastino della soglia di Adele** (liv. 4); cacce rimappate, Profeta unico maledetto (ora Ezechiele Cenerino).
 
 ## Decisioni dell'11/11/2026 (dettaglio: riscrittura, sezioni 0, 2, 4-6 e 8e)
 - **Specializzazioni ridisegnate (una offensiva e una difensiva per classe):** Guerriero Berserker / Paladino; Sciamano Funghi (veleno) / Legno (contundente e scudi di PF, senza cure); Arcanista Realtà (forza, nuova) / Illusione (psichico); Monaco Sangue (dall'Arcanista, costo 10% della salute, niente cure) / Ossa. Purificatore eliminato; fuoco sacro riciclato in oggetti e pergamene. Privilegi dello Sciamano validi per qualsiasi stato. Scariche alleggerite (Frantumare 1d6, Incubo +1d6, Grande Inganno 2d8; Spirito d'ossa portato a 1d8 per placca il 15/11). Idea in serbo *Appesantito*.

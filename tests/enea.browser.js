@@ -21,7 +21,7 @@ const PG = () => ({
 const PARTITA = (o) => Object.assign({
   usate: { riposo: "sbloccato", fermaglio: "bronzo", q4: "completata", udienze: ["bronzo"], portone_aperto: true, ettore: "morto", q1: "completata" },
   diario: [{ tipo: "narra", stanza: "sala_caccia", righe: ["x"] }], luogo: "sala_caccia", livello: 3,
-  crescita: { salute: 0, mente: 0, risorsa: 0 }, risorsaUsata: 0, esperienza: 1600, ora: Date.now(), zaino: []
+  crescita: { salute: 0, mente: 0, risorsa: 0 }, risorsaUsata: 0, ora: Date.now(), zaino: []
 }, o || {});
 
 async function apri(browser, pg, partita) {

@@ -10,8 +10,8 @@ Mappa concettuale per ritrovare subito dove sta ogni fatto e cosa aggiornare qua
 | Decisioni recenti non ancora riversate | `decisioni_19_novembre.md`, `decisioni_18_novembre.md`, `decisioni_17_novembre.md`, `decisioni_16_novembre.md` (poi `decisioni_14_novembre.md`) | tabella «Stato dell'allineamento» in cima |
 | Regole di combattimento, stati, poteri, scala dei livelli, nemici (8c), guardiani (8d), sovrano (8e), armi/armature/focus (8f) | `riscrittura_meccaniche.md` | sintesi in `riepilogo_riscrittura.md` |
 | Classi e specializzazioni (riassunto) | `schema_classi.md` → `classi_manuale.html` (generato) | riscrittura sez. 0 e 4-7 |
-| Livelli, salute, attributi, PE, percorso atteso | `progressione.md` | riscrittura (poteri per livello) |
-| Dove e con chi si combatte, morte, fuga, pedinamento, agguati, fermaglio, cacce | `mondo_e_incontri.md` | statistiche in riscrittura 8c; PE in progressione |
+| Livelli a tappe, salute, attributi | `progressione.md` | riscrittura (poteri per livello) |
+| Dove e con chi si combatte, morte, fuga, pedinamento, agguati, fermaglio, cacce | `mondo_e_incontri.md` | statistiche in riscrittura 8c |
 | **Vuoti: fasce, statistiche, archetipi, poteri, cacce élite, bottino** | `vuoti.md` | `mondo_e_incontri.md` sez. 4 e 7; stati in riscrittura |
 | **Diari dei vuoti** (regole, date, modi di svuotarsi, scorta) | `diari_vuoti.md` | aiuti agli enigmi da collegare a `pergamene.md` |
 | **Set di classe** (Valoroso, Sapiente, Penitente, Pellegrino) | `set_di_classe.md` | `storia_retaggio_e_set.md` (set storici); `loot_casuale.md` |
@@ -34,11 +34,11 @@ Mappa concettuale per ritrovare subito dove sta ogni fatto e cosa aggiornare qua
 | Cambia… | Aggiorna (in quest'ordine) |
 |---|---|
 | Una regola di combattimento, stato o potere | riscrittura → riepilogo_riscrittura → schema_classi → classi_manuale.html → cervello_bot → codice (`poteri.js`, `specializzazioni.js`, `scontro.js`) e test → regolamento |
-| Un nemico, una caccia | riscrittura 8c → `mondo_e_incontri.md` → `progressione.md` (PE) → `nemici_manuale.html` → `nemici.js` → `gioco.html` |
-| Un vuoto, una fascia, un archetipo, un diario | `vuoti.md` / `diari_vuoti.md` → `progressione.md` (PE) → `nemici_manuale.html` → generatore nel codice (dopo domenica) |
+| Un nemico, una caccia | riscrittura 8c → `mondo_e_incontri.md` → `nemici_manuale.html` → `nemici.js` → `gioco.html` |
+| Un vuoto, una fascia, un archetipo, un diario | `vuoti.md` / `diari_vuoti.md` → `nemici_manuale.html` → generatore nel codice (dopo domenica) |
 | Un oggetto, un'arma, un set | `oggetti_per_rarita.md` → `armeria_aldo.md` / `set_di_classe.md` / `storia_retaggio_e_set.md` → `oggetti_manuale.html` → `oggetti.js` |
 | Un elisir o un ingrediente | `elisir_e_bottino.md` → riscrittura 2 → codice → sala di prova |
-| Livelli, PE, salute | `progressione.md` → riscrittura (scala) → codice |
+| Livelli, salute | `progressione.md` → riscrittura (scala) → codice |
 | Un PNG, un luogo, la storia | il modulo `storia_*` giusto → `gioco.html` (testi) |
 | Qualcosa viene cancellato | **`registro_cancellati.md`** → purga dei documenti nello stesso blocco → grep nel codice → `punto_della_situazione.md` |
 

@@ -9,7 +9,7 @@ const eq = (a, b, msg) => { if (JSON.stringify(a) !== JSON.stringify(b)) throw n
 const vero = (x, msg) => { if (!x) throw new Error(msg || "atteso vero"); };
 
 const PG = (o) => Object.assign({
-  nome: "Prova", razza: "Umano", classe: "Soldato", livello: 1, immagine: null,
+  nome: "Prova", razza: "Umano", classe: "Soldato", livello: 1, immagine: null, motore: 2, spec: "berserker",
   statisticheBase: { Vigore: 16, "Agilità": 12, Mente: 10, Spirito: 12 }, statistiche: { Vigore: 16, "Agilità": 12, Mente: 10, Spirito: 12 },
   modificatori: { Vigore: 3, "Agilità": 1, Mente: 0, Spirito: 1 }, tiroDado: { dado: 10, valore: 10 }, puntiVita: 23, saluteMentale: 21,
   classeArmatura: 14, mana: null, risorsa: { id: "furia", max: 13 }, incantesimi: [], tecniche: ["polso", "morso_acciaio"],
@@ -52,8 +52,8 @@ const diario = (page) => page.evaluate(() => document.getElementById("diario").t
 
 
 
-caso("Livelli: con i PE arriva l'annuncio, ma il livello resta 1 fino al riposo", async (b) => {
-  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ esperienza: 350 }), PARTITA({ esperienza: 350, diario: [{ tipo: "narra", stanza: "cucina", righe: ["x"] }] }));
+caso("Livelli: dopo la tappa arriva l'annuncio, ma il livello resta 1 fino al riposo", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ usate: { riposo: "sbloccato", ettore: "morto", tappe: ["ettore"] }, diario: [{ tipo: "narra", stanza: "cucina", righe: ["x"] }] }));
   await page.evaluate(() => controllaLivello());
   eq(await page.evaluate(() => [pg.livello || 1, livelloMaturato(), livelliPronti(), cdProva(10)]), [1, 2, 1, 10], "prima del riposo");
   vero((await diario(page)).includes("livello 2"), "annuncio del livello");
@@ -61,7 +61,7 @@ caso("Livelli: con i PE arriva l'annuncio, ma il livello resta 1 fino al riposo"
 });
 
 caso("Livelli: al riposo si distribuiscono 2 punti (tetto 20), poi salute e risorse crescono e la CD sale di 1", async (b) => {
-  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ esperienza: 350 }), PARTITA({ esperienza: 350, diario: [{ tipo: "narra", stanza: "cucina", righe: ["x"] }] }));
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ usate: { riposo: "sbloccato", ettore: "morto", tappe: ["ettore"] }, diario: [{ tipo: "narra", stanza: "cucina", righe: ["x"] }] }));
   await page.evaluate(() => { controllaLivello(); riposa(); });
   await page.waitForSelector("#finestraPrep:not([hidden]) .riga-attr");
   const conferma = page.locator("#finestraPrep .azioni button.primario");
@@ -79,7 +79,7 @@ caso("Livelli: al riposo si distribuiscono 2 punti (tetto 20), poi salute e riso
 
 caso("Livelli: due livelli in attesa → due finestre di fila; un attributo a 20 non sale", async (b) => {
   const st = { Vigore: 20, "Agilità": 12, Mente: 10, Spirito: 12 };
-  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ esperienza: 1100, statistiche: st, statisticheBase: st }), PARTITA({ esperienza: 1100, diario: [{ tipo: "narra", stanza: "cucina", righe: ["x"] }] }));
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG({ statistiche: st, statisticheBase: st }), PARTITA({ usate: { riposo: "sbloccato", ettore: "morto", enea: "risparmiato", tappe: ["ettore", "enea"] }, diario: [{ tipo: "narra", stanza: "cucina", righe: ["x"] }] }));
   await page.evaluate(() => { controllaLivello(); riposa(); });
   for (let k = 0; k < 2; k++) {
     await page.waitForSelector("#finestraPrep:not([hidden]) .riga-attr");
@@ -89,6 +89,15 @@ caso("Livelli: due livelli in attesa → due finestre di fila; un attributo a 20
     await page.locator("#finestraPrep .azioni button.primario").click(); await page.waitForTimeout(250);
   }
   eq(await page.evaluate(() => [pg.livello, pg.statistiche["Agilità"], pg.statistiche.Vigore]), [3, 16, 20]);
+  eq(errori, [], "errori in console"); await chiudi();
+});
+
+caso("Livelli a tappe: si sale solo tornando da Aldo; ucciso o risparmiato vale uguale; niente PE", async (b) => {
+  const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ usate: { riposo: "sbloccato", ettore: "risparmiato", enea: "incontrato" }, diario: [{ tipo: "narra", stanza: "cucina", righe: ["x"] }] }));
+  eq(await page.evaluate(() => [livelloMaturato(), typeof guadagnaPE, typeof SOGLIE_PE]), [1, "undefined", "undefined"], "senza tornare da Aldo il livello non sale");
+  eq(await page.evaluate(() => [riscuotiTappe(), livelloMaturato(), livelliPronti(), usate.tappe]), [true, 2, 1, ["ettore"]], "Ettore risparmiato");
+  eq(await page.evaluate(() => [riscuotiTappe(), livelloMaturato()]), [false, 2], "una tappa si riscuote una volta sola");
+  eq(await page.evaluate(() => { usate.enea = "morto"; usate.dafne = "risparmiata"; riscuotiTappe(); return [livelloMaturato(), usate.tappe]; }), [4, ["ettore", "enea", "dafne"]], "Enea ucciso, Dafne risparmiata");
   eq(errori, [], "errori in console"); await chiudi();
 });
 

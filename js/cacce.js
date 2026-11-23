@@ -20,7 +20,7 @@ window.CacceComuni = (() => {
   const prede = {
     /* ---------- dopo il bronzo (★) ---------- */
     bruto: P({ finestra: 0, grado: 1, livello: 2, primaria: "Vigore", stat: { Vigore: 16, "Agilità": 10, Mente: 8, Spirito: 10 },
-      ca: 12, pvFissi: 22, dannoDado: 8, dannoBonus: 3, attacco: 1, xp: 100, pa: 4, tipoDanno: "Contundente",
+      ca: 12, pvFissi: 22, dannoDado: 8, dannoBonus: 3, attacco: 1, pa: 4, tipoDanno: "Contundente",
       vulnerabile: ["Illusione"], resiste: ["Contundente"], /* 04/11 sera: Illusione al posto di Arcano (scuole nuove dell'Arcanista) */
       abilita: [{ id: "maglio_cava", costo: 4, tipo: "colpo", stato: "stordito", ts: "Vigore", cd: 12 }],
       it: { nome: "Bruto delle cave", il: "il bruto", Il: "Il bruto", al: "al bruto", del: "del bruto", att1: "Maglio", att2: "Spallata", sotto: "Orco · giardino",
@@ -38,7 +38,7 @@ window.CacceComuni = (() => {
         intro: ["Between the petrified hedges a huge shape advances, bent under the weight of a quarry maul. An orc, his skin grey with stone dust. He sees you, and grins with broken teeth."],
         vittoria: "The brute drops to his knees, then forward. The maul slips from his fingers and rolls across the gravel." } }),
     ladra: P({ finestra: 0, grado: 1, livello: 2, primaria: "Agilità", stat: { Vigore: 10, "Agilità": 16, Mente: 12, Spirito: 10 },
-      ca: 14, pvFissi: 16, dannoDado: 6, dannoBonus: 2, attacco: 1, xp: 100, pa: 4, tipoDanno: "Perforante",
+      ca: 14, pvFissi: 16, dannoDado: 6, dannoBonus: 2, attacco: 1, pa: 4, tipoDanno: "Perforante",
       vulnerabile: ["Contundente"], resiste: ["Veleno"],
       abilita: [{ id: "stiletto", costo: 2, tipo: "colpo", stato: "sangue", ts: "Vigore", cd: 12 }],
       it: { nome: "Ladra dei portali", il: "la ladra", Il: "La ladra", al: "alla ladra", del: "della ladra", att1: "Stiletto", att2: "Affondo", sotto: "Umana · giardino",
@@ -57,7 +57,7 @@ window.CacceComuni = (() => {
         vittoria: "The thief falls among the flowerbeds, the stiletto still clenched in her fist." } }),
     /* ---------- dopo l'argento (★★) ---------- */
     cartografo: P({ finestra: 1, grado: 2, livello: 3, primaria: "Mente", stat: { Vigore: 10, "Agilità": 12, Mente: 16, Spirito: 12 },
-      ca: 12, pvFissi: 22, dannoDado: 6, dannoBonus: 3, attacco: 2, xp: 150, pa: 5, tipoDanno: "Forza",
+      ca: 12, pvFissi: 22, dannoDado: 6, dannoBonus: 3, attacco: 2, pa: 5, tipoDanno: "Forza",
       vulnerabile: ["Veleno"], resiste: ["Illusione"], /* 04/11 sera: il cartografo vede attraverso le illusioni */
       abilita: [{ id: "spinta_forza", costo: 2, tipo: "ts", stato: "sbilanciato", ts: "Agilità", cd: 13 }],
       it: { nome: "Cartografo rinnegato", il: "il cartografo", Il: "Il cartografo", al: "al cartografo", del: "del cartografo", att1: "Dardo di forza", att2: "Bastone", sotto: "Mago · giardino",
@@ -75,7 +75,7 @@ window.CacceComuni = (() => {
         intro: ["A thin man measures the garden in counted paces, marking a map. He raises his eyes to you and notes something down. “You were not expected,” he says, and lifts his staff."],
         vittoria: "The cartographer falls, and his maps scatter across the gravel: none of them shows a way out." } }),
     penitente: P({ finestra: 1, grado: 2, livello: 3, primaria: "Spirito", stat: { Vigore: 12, "Agilità": 10, Mente: 10, Spirito: 16 },
-      ca: 13, pvFissi: 26, dannoDado: 6, dannoBonus: 3, attacco: 2, xp: 150, pa: 5, tipoDanno: "Tagliente",
+      ca: 13, pvFissi: 26, dannoDado: 6, dannoBonus: 3, attacco: 2, pa: 5, tipoDanno: "Tagliente",
       vulnerabile: ["Ombra"], resiste: ["Luce"],
       abilita: [{ id: "litania", costo: 2, tipo: "ts", stato: "paura", ts: "Spirito", cd: 13 }],
       it: { nome: "Penitente flagellante", il: "il penitente", Il: "Il penitente", al: "al penitente", del: "del penitente", att1: "Flagello", att2: "Catena", sotto: "Fanatico · giardino",
@@ -94,7 +94,7 @@ window.CacceComuni = (() => {
         vittoria: "The penitent collapses on the gravel. His lips still move, but no sound comes out any more." } }),
     /* ---------- dopo l'oro (★★★): Aldo non sa nulla ---------- */
     troll: P({ finestra: 2, grado: 3, livello: 4, primaria: "Vigore", stat: { Vigore: 18, "Agilità": 8, Mente: 8, Spirito: 10 },
-      ca: 13, pvFissi: 38, dannoDado: 8, dannoBonus: 4, attacco: 2, xp: 200, pa: 6, tipoDanno: "Contundente",
+      ca: 13, pvFissi: 38, dannoDado: 8, dannoBonus: 4, attacco: 2, pa: 6, tipoDanno: "Contundente",
       vulnerabile: ["Tagliente"], resiste: ["Perforante"],
       abilita: [{ id: "pugno_radice", costo: 3, tipo: "colpo", stato: "frastornato", ts: "Vigore", cd: 14 }],
       it: { nome: "Troll delle radici", il: "il troll", Il: "Il troll", al: "al troll", del: "del troll", att1: "Pugno", att2: "Radice", sotto: "Troll · foresta",
@@ -112,7 +112,7 @@ window.CacceComuni = (() => {
         intro: ["A pine moves. It is not a pine: it is a troll twice your height, covered in bark and moss, tearing itself free of the wood with a sound of snapping branches. It sniffs the air, and turns towards you."],
         vittoria: "The troll kneels, then stiffens. In moments he is just a twisted trunk among the others." } }),
     strega: P({ finestra: 2, grado: 3, livello: 4, primaria: "Mente", stat: { Vigore: 10, "Agilità": 12, Mente: 18, Spirito: 12 },
-      ca: 12, pvFissi: 28, dannoDado: 6, dannoBonus: 4, attacco: 2, xp: 200, pa: 6, tipoDanno: "Veleno", immune: ["veleno"],
+      ca: 12, pvFissi: 28, dannoDado: 6, dannoBonus: 4, attacco: 2, pa: 6, tipoDanno: "Veleno", immune: ["veleno"],
       vulnerabile: ["Luce"], resiste: ["Veleno"],
       abilita: [{ id: "parola_muta", costo: 3, tipo: "ts", stato: "inibito", ts: "Mente", cd: 14 }],
       it: { nome: "Strega della torbiera", il: "la strega", Il: "La strega", al: "alla strega", del: "della strega", att1: "Spruzzo", att2: "Unghie", sotto: "Strega · foresta",
@@ -131,7 +131,7 @@ window.CacceComuni = (() => {
         vittoria: "The witch falls into her black pool, which swallows her and closes without a ripple." } }),
     /* ---------- dopo il platino (★★★) ---------- */
     lama: P({ finestra: 3, grado: 3, livello: 5, primaria: "Agilità", stat: { Vigore: 12, "Agilità": 18, Mente: 12, Spirito: 10 },
-      ca: 15, pvFissi: 30, dannoDado: 6, dannoBonus: 2, attacco: 2, attacchi: 2, xp: 200, pa: 6, tipoDanno: "Tagliente",
+      ca: 15, pvFissi: 30, dannoDado: 6, dannoBonus: 2, attacco: 2, attacchi: 2, pa: 6, tipoDanno: "Tagliente",
       vulnerabile: ["Sangue"], resiste: ["Tagliente"], /* 04/11 sera: Sangue al posto di Forza */
       abilita: [{ id: "taglio_tendine", costo: 2, tipo: "colpo", stato: "debole", ts: "Vigore", cd: 15 }],
       it: { nome: "Lama gemella", il: "il duellante", Il: "Il duellante", al: "al duellante", del: "del duellante", att1: "Prima lama", att2: "Seconda lama", sotto: "Duellante · foresta",
@@ -149,7 +149,7 @@ window.CacceComuni = (() => {
         intro: ["Among the pines, a man in a dark doublet is practising alone, two swords drawing circles in the air. He stops, looks at you, and salutes you with his blades as in a fencing hall. “At last, an opponent.”"],
         vittoria: "The duellist kneels and lays his swords on the ground, crossed. Then he stays still." } }),
     profeta: P({ finestra: 3, grado: 3, livello: 5, primaria: "Spirito", stat: { Vigore: 12, "Agilità": 10, Mente: 12, Spirito: 18 },
-      ca: 13, pvFissi: 40, dannoDado: 8, dannoBonus: 4, attacco: 3, xp: 200, pa: 6, tipoDanno: "Fuoco", immune: ["ustione"],
+      ca: 13, pvFissi: 40, dannoDado: 8, dannoBonus: 4, attacco: 3, pa: 6, tipoDanno: "Fuoco", immune: ["ustione"],
       vulnerabile: ["Veleno"], resiste: ["Fuoco"],
       abilita: [{ id: "parola_brace", costo: 2, tipo: "colpo", stato: "ustione", ts: "Vigore", cd: 15 }],
       it: { nome: "Profeta della cenere", il: "il profeta", Il: "Il profeta", al: "al profeta", del: "del profeta", att1: "Fiamma", att2: "Bastone ardente", sotto: "Profeta · foresta",

@@ -4721,7 +4721,7 @@
           abilita: (n) => `Le abilità addestrate ora aggiungono +${n}.`,
           massimo: "Hai raggiunto il livello massimo.",
           attesa: (n) => `Hai raggiunto il livello ${n}!`,
-          attesaRighe: ["L'esperienza c'è, ma il corpo e la mente hanno bisogno di fermarsi per farla propria.", "Al prossimo riposo il tuo personaggio crescerà: salute, risorse e 2 punti attributo da distribuire."],
+          attesaRighe: ["📖 Il guardiano è caduto e Aldo lo sa: qualcosa in te è cambiato, ma il corpo e la mente hanno bisogno di fermarsi per farlo proprio.", "Al prossimo riposo il tuo personaggio crescerà: salute, risorse e 2 punti attributo da distribuire."],
           crescitaTit: (n) => `Livello ${n}: 2 punti attributo`,
           crescitaGuida: (max) => `Distribuisci 2 punti tra gli attributi, anche entrambi sullo stesso (massimo ${max}). Contano da questo livello in poi: la salute e le risorse già guadagnate non cambiano.`,
           mancano: (n) => `Ancora ${n} da distribuire`,
@@ -4729,7 +4729,6 @@
           attributi: (lista) => `Attributi: ${lista}.`,
           prove: (n) => `Le difficoltà delle prove salgono di ${n} rispetto al livello 1.`
         },
-        pe: (n, tot) => `+${n} punti esperienza (totale ${tot}).`,
         fiducia: { /* PROVVISORIO: testi da riscrivere */
           intro: ["Guendalina torna al suo tagliere. Le sue parole ti risuonano ancora in testa: ti ha detto davvero tutto?"],
           azione: "Ripensi al suo tono, ai silenzi, a dove è caduto il suo sguardo mentre parlava.",
@@ -4804,7 +4803,7 @@
           abilita: (n) => `Trained skills now add +${n}.`,
           massimo: "You have reached the maximum level.",
           attesa: (n) => `You have reached level ${n}!`,
-          attesaRighe: ["The experience is there, but body and mind need to stop to make it their own.", "At your next rest your character will grow: health, resources and 2 attribute points to distribute."],
+          attesaRighe: ["📖 The guardian has fallen and Aldo knows it: something in you has changed, but body and mind need to stop to make it their own.", "At your next rest your character will grow: health, resources and 2 attribute points to distribute."],
           crescitaTit: (n) => `Level ${n}: 2 attribute points`,
           crescitaGuida: (max) => `Distribute 2 points among the attributes, both on the same one if you like (maximum ${max}). They count from this level on: health and resources already gained do not change.`,
           mancano: (n) => `${n} still to distribute`,
@@ -4812,7 +4811,6 @@
           attributi: (lista) => `Attributes: ${lista}.`,
           prove: (n) => `Check difficulties rise by ${n} compared with level 1.`
         },
-        pe: (n, tot) => `+${n} experience points (total ${tot}).`,
         fiducia: {
           intro: ["Guendalina goes back to her chopping board. Her words still echo in your head: did she really tell you everything?"],
           azione: "You think back on her tone, her silences, where her eyes fell while she spoke.",
@@ -6387,9 +6385,8 @@
 
     /* =====================================================================
        LIVELLI, RISORSE E GIORNI (regole decise)
-       - Livello massimo 5. PE per salire: 500 (1→2), 1000 (2→3), 1500 (3→4), 2000 (4→5): totali 500 / 1500 / 3000 / 5000.
-       - Ricompense: 150 PE mastini generici, 350 mastini specifici, 500 nemici che custodiscono ricompense o segreti
-         (la stessa se il nemico viene risparmiato).
+       - Livello massimo 5, a tappe (23/11): si parte dal livello 1 e se ne sale uno dopo ogni guardiano sconfitto (ucciso o risparmiato) al ritorno da Aldo.
+       - Niente punti esperienza: le ricompense sono bottino, ingredienti, diari e trofei.
        - A ogni livello: salute fisica + (dado vita + mod Vigore), salute mentale + (dado vita + mod Spirito),
          mana / fede / furia / natura + (mod dell'attributo della risorsa + nuovo livello), senza dado. Minimo +1 ciascuno.
        - Guerriero: punti furia (10 + mod Lotta); Sciamano: punti natura (10 + mod Spirito). Tutte le risorse si ricaricano solo riposando.
@@ -6397,7 +6394,6 @@
        ===================================================================== */
     const R_ = window.Regole; /* tutti i numeri delle regole stanno in regole.js */
     const LIVELLO_MAX = R_.LIVELLO_MAX;
-    const SOGLIE_PE = R_.SOGLIE_PE; /* PE totali per raggiungere il livello 2, 3, 4, 5 (indice = livello attuale) */
     const RISORSA_CLASSE = R_.RISORSA_MARZIALE, ATTR_RISORSA_MAGIA = R_.ATTR_MAGIA, DADO_VITA = R_.DADO_VITA;
     const RAZIONI_MAX = R_.RAZIONI_MAX, RAZIONI_AL_GIORNO = R_.RAZIONI_AL_GIORNO;
     let crescita = { salute: 0, mente: 0, risorsa: 0 };
@@ -6418,19 +6414,23 @@
       return { id: c.id, max: base + crescita.risorsa };
     }
     function risorsaAttuale() { const r = risorsaPg(); return r ? Math.max(0, r.max - (pg.risorsaUsata || 0)) : null; }
-    /* 01/11: il livello «maturato» arriva con i PE, quello «applicato» (pg.livello) solo al primo riposo utile.
-       CD delle prove, salute, risorse e attributi seguono il livello applicato. */
-    function livelloMaturato() { let l = 1; while (l < LIVELLO_MAX && (pg.esperienza || 0) >= SOGLIE_PE[l]) l++; return Math.max(l, livelloPg()); }
+    /* 23/11: livelli a tappe. Il livello «maturato» arriva con i guardiani sconfitti (uccisi o risparmiati) quando si torna da Aldo;
+       quello «applicato» (pg.livello) solo al primo riposo utile. CD delle prove, salute, risorse e attributi seguono il livello applicato. */
+    const GUARDIANI_TAPPE = ["ettore", "enea", "dafne", "atena"];
+    const guardianoSconfitto = (id) => ["morto", "morta", "risparmiato", "risparmiata"].includes(usate[id]);
+    const tappeRiscosse = () => (Array.isArray(usate.tappe) ? usate.tappe : []).length;
+    function livelloMaturato() { return Math.max(livelloPg(), Math.min(LIVELLO_MAX, 1 + tappeRiscosse())); }
     const livelliPronti = () => Math.max(0, livelloMaturato() - livelloPg());
     const cdProva = (cd) => (cd == null ? cd : Number(cd) + Math.max(0, livelloPg() - 1) * R_.CD_PER_LIVELLO);
-    function prossimaSogliaPE() { const l = livelloMaturato(); return l >= LIVELLO_MAX ? null : SOGLIE_PE[l]; }
-    function testoPE() { const s = prossimaSogliaPE(); return s == null ? `${pg.esperienza || 0} (${RG.livelloMax})` : `${pg.esperienza || 0} / ${s}`; }
+    function testoLivello() { return `${livelloPg()} / ${LIVELLO_MAX}`; }
     function mentaliAttuali() { return Math.max(0, maxMentali() - (pg.dannoMentale || 0)); }
 
-    /* punti esperienza: aggiunge, annuncia e controlla il passaggio di livello */
-    function guadagnaPE(n) {
-      pg.esperienza = (pg.esperienza || 0) + n; disegnaVitali(); modificato();
-      return n;
+    /* tappe: al ritorno da Aldo ogni guardiano sconfitto non ancora riscosso sblocca un livello */
+    function riscuotiTappe() {
+      const gia = Array.isArray(usate.tappe) ? usate.tappe : [], nuovi = GUARDIANI_TAPPE.filter(g => guardianoSconfitto(g) && !gia.includes(g));
+      if (!nuovi.length) return false;
+      usate.tappe = [...gia, ...nuovi]; salvaUsate(); controllaLivello();
+      return true;
     }
     function controllaLivello() { /* annuncia il livello raggiunto; la crescita vera avviene al riposo (01/11) */
       const l = livelloMaturato(), giaDetto = Number(pg.livelloAnnunciato) || livelloPg();
@@ -6646,7 +6646,6 @@
     let usate = (salvata && salvata.usate && typeof salvata.usate === "object" && !Array.isArray(salvata.usate)) ? salvata.usate : {};
     if (pg) pg.dannoFisico = salvata ? (Number(salvata.dannoFisico) || 0) : 0;
     if (pg) pg.dannoMentale = salvata ? (Number(salvata.dannoMentale) || 0) : 0;
-    if (pg) pg.esperienza = salvata ? (Number(salvata.esperienza) || 0) : 0; /* punti esperienza della partita */
     if (pg) pg.manaUsato = salvata ? (Number(salvata.manaUsato) || 0) : 0; /* i danni mentali fanno parte della partita, non del personaggio */
     const salvaUsate = () => modificato();
     const salvaPg = () => modificato();
@@ -6744,7 +6743,7 @@
       }
       const sep = (c) => { const d = document.createElement("div"); d.className = c; d.setAttribute("aria-hidden", "true"); vit.append(d); }; /* solo decorativo: dentro un <dl> un div non può avere un ruolo (29/10) */
       riga(vit, RG.giorno, String(Number(usate.giorno) || 1), "giorno"); /* i giorni passano a ogni riposo */
-      riga(vit, CB.esperienza, testoPE(), "xp");
+      riga(vit, CB.livello, testoLivello(), "xp");
       sep("sep-linea");
       riga(vit, U.puntiSalute, testoSalute(), "salute");
       riga(vit, U.puntiMentali, testoMentali(), "mentali");
@@ -7875,6 +7874,7 @@
       img.src = conCani ? IMG_ALDO_MASTINI : conAldo ? IMG_ALDO : IMMAGINI.sala_ballo; if (conAldo) img.alt = conCani ? A.aldo.altMastini : A.aldo.alt;
     }
     function parlaAldo() {
+      if (motoreNuovo()) riscuotiTappe(); /* 23/11: tornare da Aldo dopo un guardiano sblocca il livello */
       if (luogo === "sala_ballo") {
         if (!usate.aldo_incontrato) return arrivoAldo();
         if (!aldoInSala()) return aggiungi({ tipo: "narra", righe: A.aldo.sparito });
@@ -8032,9 +8032,6 @@
       if (!usate.q2_diario) { consegnaDiarioFiglio(); righe.push(A.sblocco.diario); } /* il diario arriva da Ettore, che viva o muoia */
       salvaUsate();
       sblocco(righe, "mis"); disegnaMissioni();
-      guadagnaPE(NEMICI.esploratore.xp); /* risparmiato: stessa ricompensa */
-      fuoriDallaTendina(() => aggiungi({ tipo: "narra", box: "ok", righe: [RG.pe(NEMICI.esploratore.xp, pg.esperienza)] }));
-      controllaLivello();
     }
 
     /* =====================================================================
@@ -9097,8 +9094,7 @@
       chiudiScontro(scappato ? "fuggito" : "resa");
       scontro = null; ultimoNemico = null; MusicaScontro.ferma(); barraScontro(); stato(false);
       if (!scappato) fuoriDallaTendina(() => aggiungi({ tipo: "narra", righe: [AGT().risparmiato(n)] }));
-      segnaAvv(id, { stato: "risparmiato", giorno: Number(usate.giorno) || 1, pe: true });
-      if (!s.pe) { const xp = NEMICI[id].xp; guadagnaPE(xp); fuoriDallaTendina(() => aggiungi({ tipo: "narra", box: "ok", righe: [RG.pe(xp, pg.esperienza)] })); controllaLivello(); }
+      segnaAvv(id, { stato: "risparmiato", giorno: Number(usate.giorno) || 1 });
       disegnaVitali();
     }
     /* Tobia: prova a fuggire; Atletica o Acrobazia (la migliore) contro CD 10 + il suo livello per afferrarlo */
@@ -9143,19 +9139,6 @@
       lista.forEach(o => { const it = { id: nuovoId(), ...o }; if (it.tipo === "dotazione") it.testo = Lingua.desc(it.nome); zaino.push(it); });
       aggiornaZaino(); modificato();
       fuoriDallaTendina(() => aggiungi({ tipo: "sistema", box: "cap", fuori: true, righe: [AGT().bottino(lista.map(o => nomeOg(o)).join(", "))] }));
-    }
-    /* PE degli agguati: i cinque 100 solo la prima volta (mai al ritorno); orchi e goblin pieni fino al loro livello di riferimento, metà al successivo, poi niente */
-    function xpAgguato(D, avv) {
-      if (D.avv) return avv && !avv.ritorno ? D.xp : 0;
-      const l = livelloPg(), fino = Number(D.peFino) || 3;
-      return Math.ceil(D.xp * (l <= fino ? 1 : l === fino + 1 ? 0.5 : 0));
-    }
-    /* PE degli animali a scalare con il livello del personaggio: gli animali normali fino al 2, poi metà al 3, poi niente; gli infernali un livello dopo */
-    function xpScontro(D, ctx) {
-      if (ctx !== "pineta" && ctx !== "fuori") return D.xp;
-      const l = livelloPg(), base = D.animale ? D.xp : (D.xpZona || Math.ceil(D.xp / 2));
-      const f = D.animale ? (l <= 2 ? 1 : l === 3 ? 0.5 : 0) : (l <= 3 ? 1 : l === 4 ? 0.5 : 0);
-      return Math.ceil(base * f);
     }
     /* coniglio e cervo: prima bisogna avvicinarsi (Furtività o Sopravvivenza, CD 12). Fallita, l'animale scappa; nessun danno alla mente */
     function avvicinaAnimale(id) {
@@ -9851,7 +9834,7 @@
     function salvaPartita() {
       const conta = {}, tenute = [];
       for (let i = diario.length - 1; i >= 0; i--) { const k = diario[i].stanza || "atrio"; conta[k] = (conta[k] || 0) + 1; if (conta[k] <= 30) tenute.unshift(diario[i]); }
-      const dati = { usate, diario: tenute, luogo, dannoMentale: pg.dannoMentale || 0, dannoFisico: pg.dannoFisico || 0, manaUsato: pg.manaUsato || 0, esperienza: pg.esperienza || 0, livello: livelloPg(), crescita, risorsaUsata: pg.risorsaUsata || 0, zaino, arma, mano, scudo, armatura: armaturaPartita, ora: Date.now() };
+      const dati = { usate, diario: tenute, luogo, dannoMentale: pg.dannoMentale || 0, dannoFisico: pg.dannoFisico || 0, manaUsato: pg.manaUsato || 0, livello: livelloPg(), crescita, risorsaUsata: pg.risorsaUsata || 0, zaino, arma, mano, scudo, armatura: armaturaPartita, ora: Date.now() };
       try { localStorage.setItem(CHIAVE_SALVATAGGIO, JSON.stringify(dati)); }
       catch (e) { document.getElementById("statoSalvataggio").textContent = U.salvataggioErr; return; }
       try { /* copia nel posto del personaggio attivo, così dalla pagina iniziale si riprende da qui */
@@ -11442,7 +11425,7 @@
     const ATTR_NEM = ["Vigore", "Agilità", "Mente", "Spirito"];
     const NEMICI = {
       mastino: {
-        ca: 10, dadoVita: 6, dannoDado: 4, xp: 150, boss: false, /* mastino generico: nemico comune */
+        ca: 10, dadoVita: 6, dannoDado: 4, boss: false, /* mastino generico: nemico comune */
         statFisse: { Vigore: 12, "Agilità": 12 }, pvFissi: 13, pa: 3, dannoBonus: 1, /* 28/10, passo 4: piano terra, statistiche fisse; Presa 1 PA, Soffio 2 PA */
         attacco: 1,                     /* + mod Vigore 1 = +2 per colpire */
         probPresa: 0.6,                 /* dopo un colpo a segno, una volta per scontro */
@@ -11455,7 +11438,7 @@
          Vulnerabile a contundente e luce (+1 dado, 29/10). Si arrende a un terzo della salute solo al primo incontro. */
       /* 01/11: primaria Mente (la pazzia lucida del cacciatore di taglie: il conteggio, il calcolo), Spirito volutamente basso.
          Mente 12 dà +1 come prima il Vigore 12: tiro per colpire invariato (+1 + attacco 2 = +3). Il danno resta dannoBonus 3 */
-      esploratore: { ca: 13, dadoVita: 8, dannoDado: 4, xp: 400, attacco: 1, attacchi: 2, tipoDanno: "Tagliente", boss: true, livello: 2, pvFissi: 30, pa: 8, ettore: true, primaria: "Mente",
+      esploratore: { ca: 13, dadoVita: 8, dannoDado: 4, attacco: 1, attacchi: 2, tipoDanno: "Tagliente", boss: true, livello: 2, pvFissi: 30, pa: 8, ettore: true, primaria: "Mente",
         statFisse: { Vigore: 10, "Agilità": 13, Mente: 13, Spirito: 8 }, dannoBonus: 1, /* 02/11: il ladro calcolatore, due pugnali 1d4 + 1 (Mente 13 = +1, per colpire +2: con +3 gli incantatori perdevano 9-12 punti nella simulazione) */ vulnerabile: ["Contundente", "Illusione", "Ombra"] /* 04/11 sera: Illusione (la pazzia, il conteggio) al posto di Arcano; 04/11: regola delle armature, senza armatura pesante → Arcano (prima Forza) */ /* 03/11: mappa bilanciata, una vulnerabilità per classe */, /* 29/10: luce e contundente */ /* 28/10: Vigore 12 (la gamba), +3 per colpire, spada 1d6 + 3, CD 11 */ /* boss: niente effetti di controllo, durate brevi, niente esecuzione */ /* custode del fermaglio: 400 PE, gli stessi se risparmiato */ probPresa: 0, probSoffio: 0, soffio: null, ritratto: "immagini/nemici/Ettore.webp" } /* immagine da aggiungere */
     };
     /* boss: Guendalina, Aldo, il sovrano, Adele, i guardiani dei fermagli e i due mastini speciali (campo boss in NEMICI) */
@@ -11494,7 +11477,7 @@
 
     const CB_BASE = ({
       it: {
-        nome: "Mastino infernale", nomeLungo: "Mastino infernale", esperienza: "Esperienza",
+        nome: "Mastino infernale", nomeLungo: "Mastino infernale", livello: "Livello",
         sotto: "Belva infernale · seminterrato", sottoVelato: "Belva · ???", ignoto: "???",
         caratteristiche: "Caratteristiche", attacchi: "Attacchi", speciali: "Attacchi speciali", salute: "Salute fisica", ca: "Classe Armatura",
         velato: "Non sai ancora nulla di questa belva: la sua scheda resterà coperta finché non l'avrai abbattuta.",
@@ -11602,13 +11585,12 @@
         resistito: "La belva scuote il capo e si libera dalla presa dell'incantesimo: non ha alcun effetto.",
         vittoria: ["📖 Con un ultimo guaito il Mastino crolla sulle zampe. Le fiamme azzurre sulla sua groppa tremano, si spengono una a una, e il suo corpo comincia a sgretolarsi: prima il muso, poi il collare borchiato, infine la coda, finché della belva non resta che una nube di cenere grigia che turbina tra le botti e si dissolve nel buio della cantina, senza lasciare traccia."], vittoriaVecchia: ["Con un ultimo guaito il Mastino si accascia tra le botti. Le fiamme azzurre sulla sua groppa si spengono una a una, e il corpo si sfalda in un mucchio di cenere grigia."], /* PROVVISORIO */
         bannerVinto: "Hai vinto lo scontro!",
-        xp: (n, tot) => `+${n} punti esperienza (totale ${tot}).`,
         sconfitta: ["📖 Le gambe ti cedono e crolli sulla pietra fredda. L'ultima cosa che vedi sono due braci rosse sopra di te, poi il buio."], /* PROVVISORIO */
         risveglio: ["📖 Quando riapri gli occhi sei disteso sul pavimento della cucina, il viso di Guendalina chino su di te: deve averti trascinato su per la scala. Le ferite si sono richiuse come se non fossero mai esistite, ma qualcosa nella tua mente si è incrinato."], /* PROVVISORIO */
         sistRisveglio: "Il Mastino ti aspetta ancora in cantina, di nuovo in piene forze."
       },
       en: {
-        nome: "Infernal Mastiff", nomeLungo: "Infernal Mastiff", esperienza: "Experience",
+        nome: "Infernal Mastiff", nomeLungo: "Infernal Mastiff", livello: "Level",
         sotto: "Hellish beast · basement", sottoVelato: "Beast · ???", ignoto: "???",
         caratteristiche: "Attributes", attacchi: "Attacks", speciali: "Special attacks", salute: "Physical health", ca: "Armor Class",
         velato: "You know nothing about this beast yet: its sheet will stay hidden until you bring it down.",
@@ -11716,7 +11698,6 @@
         resistito: "The beast shakes its head and shrugs off the spell's grip: it has no effect.",
         vittoria: ["With a last whine the Mastiff collapses on its paws. The blue flames on its back tremble and go out one by one, and its body begins to crumble: first the muzzle, then the studded collar, finally the tail, until nothing of the beast remains but a cloud of grey ash swirling among the barrels and fading into the darkness of the cellar, leaving no trace."], vittoriaVecchia: ["With a last whine the Mastiff collapses among the barrels. The blue flames on its back go out one by one, and its body crumbles into a heap of grey ash."],
         bannerVinto: "You won the fight!",
-        xp: (n, tot) => `+${n} experience points (total ${tot}).`,
         sconfitta: ["Your legs give way and you collapse on the cold stone. The last thing you see is two red embers above you, then darkness."],
         risveglio: ["When you open your eyes again you are lying on the kitchen floor, Guendalina's face bent over you: she must have dragged you up the stairs. Your wounds have closed as if they had never been, but something in your mind has cracked."],
         sistRisveglio: "The Mastiff is still waiting for you in the cellar, back at full strength."
@@ -11731,7 +11712,7 @@
        Ogni preda ha i suoi dati di gioco e i testi propri; gli altri testi derivano da quelli del mastino, con il nome della preda.
        ===================================================================== */
     const PREDE = {
-      ratto: { grado: 1, livello: 2, zone: ["fuori"], ca: 10, pvFissi: 8, dannoDado: 4, dannoBonus: 1, attacco: 1, attacchi: 1, xp: 100, xpZona: 75, pa: 3, parte: "occhio_cenere", qta: 1, immune: ["ustione", "sangue"],
+      ratto: { grado: 1, livello: 2, zone: ["fuori"], ca: 10, pvFissi: 8, dannoDado: 4, dannoBonus: 1, attacco: 1, attacchi: 1, pa: 3, parte: "occhio_cenere", qta: 1, immune: ["ustione", "sangue"],
         abilita: [{ id: "nube", costo: 2, tipo: "ts", stato: "cieco", ts: "Agilità", cd: 11 }],
         it: { nome: "Ratto di cenere", il: "il ratto", Il: "Il ratto", al: "al ratto", del: "del ratto", att1: "Morso", att2: "Graffio", sotto: "Creatura di cenere · giardino",
           cond: ["Squittisce furioso: sembra ancora del tutto integro.", "È ferito: dal pelo strappato cade cenere calda.", "Barcolla, il respiro rotto: la brace negli occhi si affievolisce.", "Giace a terra, ridotto in cenere."],
@@ -11747,7 +11728,7 @@
           crit: "The rat leaps at your throat with an impossible dash: its teeth find bare flesh and will not let go.",
           intro: ["Something moves among the hedges, hugging the path: a rat as big as a cat, its fur matted with ash, its eyes two embers. It heard you coming."],
           vittoria: "The rat squeals one last time and falls apart into a little heap of grey ash, which the garden wind scatters among the hedges." } },
-      corvo: { grado: 1, livello: 2, zone: ["fuori"], ca: 11, pvFissi: 8, dannoDado: 4, dannoBonus: 1, attacco: 2, attacchi: 1, xp: 100, xpZona: 75, pa: 3, parte: "piuma_brace", qta: 1, immune: ["ustione"],
+      corvo: { grado: 1, livello: 2, zone: ["fuori"], ca: 11, pvFissi: 8, dannoDado: 4, dannoBonus: 1, attacco: 2, attacchi: 1, pa: 3, parte: "piuma_brace", qta: 1, immune: ["ustione"],
         abilita: [{ id: "becco_ardente", costo: 2, tipo: "colpo", stato: "ustione", ts: "Vigore", cd: 11 }],
         it: { nome: "Corvo di brace", il: "il corvo", Il: "Il corvo", al: "al corvo", del: "del corvo", att1: "Beccata", att2: "Artigliata", sotto: "Creatura di brace · giardino",
           cond: ["Gracchia furioso: sembra ancora del tutto integro.", "È ferito: dalle penne strappate cadono scintille.", "Svolazza a fatica, le ali consumate: la brace si affievolisce.", "Giace a terra, ridotto in cenere."],
@@ -11763,7 +11744,7 @@
           crit: "The crow drops from the black sky and fastens on your face: beak and talons find flesh between the joints of your armor, amid croaking shrieks.",
           intro: ["A croak breaks the silence. On a bare branch just above the path, a crow as big as a goose stares at you with eyes of ember. It spreads its wings and swoops."],
           vittoria: "The crow croaks one last time and falls in a flash of spent embers, melting into a cloud of ash that the wind carries away." } },
-      cinghiale: { grado: 2, livello: 3, zone: ["foresta"], ca: 11, pvFissi: 14, dannoDado: 6, dannoBonus: 1, attacco: 2, attacchi: 1, xp: 150, xpZona: 100, pa: 4, parte: "grasso_brace", qta: 1, immune: ["ustione"],
+      cinghiale: { grado: 2, livello: 3, zone: ["foresta"], ca: 11, pvFissi: 14, dannoDado: 6, dannoBonus: 1, attacco: 2, attacchi: 1, pa: 4, parte: "grasso_brace", qta: 1, immune: ["ustione"],
         abilita: [{ id: "carica_rovente", costo: 3, tipo: "colpo", stato: "ustione", ts: "Vigore", cd: 11, critStato: "debole" }],
         it: { nome: "Cinghiale di brace", il: "il cinghiale", Il: "Il cinghiale", al: "al cinghiale", del: "del cinghiale", att1: "Zannata", att2: "Carica", sotto: "Creatura di brace · giardino",
           cond: ["Grugnisce furioso: sembra ancora del tutto integro.", "È ferito: dal dorso spuntano braci agitate.", "Barcolla, il respiro rotto: le braci sul dorso si spengono.", "Giace a terra, ridotto in cenere."],
@@ -11779,7 +11760,7 @@
           crit: "The boar lowers its head and charges with all its weight: the tusks lift you off the ground and slam you onto the gravel while fire bites your ribs.",
           intro: ["A dull grunt shakes the hedges. From the foliage steps a boar as big as a pony, its back strewn with embers that flare and fade with every breath. It scrapes the gravel and lowers its tusks."],
           vittoria: "The boar collapses with a broken grunt; the ember in its chest goes out and its body falls into a heap of warm ash that smokes on the path." } },
-      lupo: { grado: 2, livello: 3, zone: ["fuori", "foresta"], ca: 12, pvFissi: 14, dannoDado: 6, dannoBonus: 1, attacco: 3, attacchi: 1, xp: 150, xpZona: 100, pa: 4, parte: "zanna_cenere", qta: 1, immune: ["ustione", "sangue"],
+      lupo: { grado: 2, livello: 3, zone: ["fuori", "foresta"], ca: 12, pvFissi: 14, dannoDado: 6, dannoBonus: 1, attacco: 3, attacchi: 1, pa: 4, parte: "zanna_cenere", qta: 1, immune: ["ustione", "sangue"],
         abilita: [{ id: "ululato", costo: 2, tipo: "ts", stato: "paura", ts: "Spirito", cd: 12 }, { id: "morso_cenere", costo: 2, tipo: "colpo", stato: "cieco", ts: "Agilità", cd: 12 }],
         it: { nome: "Lupo di cenere", il: "il lupo", Il: "Il lupo", al: "al lupo", del: "del lupo", att1: "Morso", att2: "Zampata", sotto: "Creatura di cenere · giardino",
           cond: ["Ringhia furioso: sembra ancora del tutto integro.", "È ferito: dal pelo strappato cade cenere calda.", "Barcolla, il respiro rotto: la brace negli occhi si affievolisce.", "Giace a terra, ridotto in cenere."],
@@ -11795,7 +11776,7 @@
           crit: "The wolf springs without a sound, leaps on you and pins you down: its fangs seek your throat and find your shoulder, where they sink in.",
           intro: ["A low, long howl runs across the garden. A tall, gaunt wolf, its fur ash-grey and its eyes two embers, steps out of the chapel's shadow and circles you, unhurried."],
           vittoria: "The wolf howls one last time, a long sound that breaks in half, and crumbles into a swirl of grey ash that the breeze carries beyond the hedges." } },
-      branco: { grado: 3, livello: 4, zone: [], ca: 11, pvFissi: 26, dannoDado: 4, dannoBonus: 1, attacco: 3, attacchi: 2, xp: 200, pa: 5, immune: ["ustione", "sangue"], /* 29/10: statistiche fisse, 15% di sconfitta peggiore al livello 4 */
+      branco: { grado: 3, livello: 4, zone: [], ca: 11, pvFissi: 26, dannoDado: 4, dannoBonus: 1, attacco: 3, attacchi: 2, pa: 5, immune: ["ustione", "sangue"], /* 29/10: statistiche fisse, 15% di sconfitta peggiore al livello 4 */
         abilita: [{ id: "ululato_branco", costo: 2, tipo: "ts", stato: "paura", ts: "Spirito", cd: 12 }, { id: "assalto", costo: 2, tipo: "colpo", stato: "ustione", ts: "Vigore", cd: 12 }],
         it: { nome: "Branco di segugi di cenere", il: "il branco", Il: "Il branco", al: "al branco", del: "del branco", att1: "Morsi", att2: "Assalto", sotto: "Gruppo di creature di cenere · giardino",
           cond: ["Il branco ringhia compatto: sembra ancora del tutto integro.", "Il branco è ferito: qualche segugio zoppica, perdendo cenere.", "Il branco arretra, i corpi consumati: pochi segugi reggono ancora in piedi.", "Il branco è sparso a terra, ridotto in cenere."],
@@ -11811,7 +11792,7 @@
           crit: "The pack closes a circle around you and hurls itself at you as a single beast: for an instant you feel a thousand fangs upon you.",
           intro: ["The hedges shudder: from every side low, smoking shapes step out. Lean hounds, fur ash-grey, eyes two points of ember. Five of them, perhaps six. They ring you in silence, then one growls, and all together they begin to close in."],
           vittoria: "The last hound collapses with a yelp. One after another the bodies flake into ash and the whole pack scatters on the garden wind." } },
-      sciame: { grado: 3, livello: 4, zone: [], ca: 12, pvFissi: 22, dannoDado: 4, dannoBonus: 0, attacco: 2, attacchi: 3, xp: 200, pa: 5, immune: ["ustione"], /* 29/10: statistiche fisse, 13% di sconfitta peggiore al livello 4 */
+      sciame: { grado: 3, livello: 4, zone: [], ca: 12, pvFissi: 22, dannoDado: 4, dannoBonus: 0, attacco: 2, attacchi: 3, pa: 5, immune: ["ustione"], /* 29/10: statistiche fisse, 13% di sconfitta peggiore al livello 4 */
         abilita: [{ id: "nuvola_becchi", costo: 2, tipo: "ts", stato: "cieco", ts: "Agilità", cd: 12 }, { id: "piume_ardenti", costo: 2, tipo: "colpo", stato: "ustione", ts: "Vigore", cd: 12 }],
         it: { nome: "Sciame di corvi di brace", il: "lo sciame", Il: "Lo sciame", al: "allo sciame", del: "dello sciame", att1: "Beccate", att2: "Artigli", sotto: "Gruppo di creature di brace · giardino",
           cond: ["Lo sciame turbina compatto: sembra ancora del tutto integro.", "Lo sciame è ferito: qualche corvo cade a terra, spento.", "Lo sciame si sfilaccia: pochi corvi reggono ancora il volo.", "Lo sciame è caduto, ridotto in cenere."],
@@ -11832,7 +11813,7 @@
        Ognuno lascia una parte per la bottega di Guendalina. fugge: dopo quanti turni del nemico scappa; passivo: non attacca;
        avvicina: prova per avvicinarsi senza farlo scappare; colpoStato/critStato: stato alterato inflitto al personaggio. */
     Object.assign(PREDE, {
-      vipera_brace: { grado: 1, livello: 2, zone: ["foresta"], ca: 13, pvFissi: 8, dannoDado: 4, dannoBonus: 1, attacco: 3, attacchi: 1, xp: 100, xpZona: 75, pa: 3, parte: "fiele_brace", qta: 1, immune: ["ustione"],
+      vipera_brace: { grado: 1, livello: 2, zone: ["foresta"], ca: 13, pvFissi: 8, dannoDado: 4, dannoBonus: 1, attacco: 3, attacchi: 1, pa: 3, parte: "fiele_brace", qta: 1, immune: ["ustione"],
         abilita: [{ id: "morso_ardente", costo: 2, tipo: "colpo", stato: "ustione", ts: "Vigore", cd: 11 }],
         it: { nome: "Vipera di brace", il: "la vipera", Il: "La vipera", al: "alla vipera", del: "della vipera", att1: "Morso", att2: "Scatto", sotto: "Creatura di cenere · foresta dei pini",
           cond: ["Sibila, le squame che ardono: è illesa.", "È ferita: tra le squame si aprono crepe di brace.", "Si trascina, la brace che si spegne.", "Giace tra gli aghi, ridotta in cenere."],
@@ -11844,7 +11825,7 @@
           ok1: ["The viper bites your calf: its teeth are live coals."], ok2: ["A scorching strike: two smoking punctures on your wrist."], crit: "The viper bites your hand and will not let go: fire climbs up your arm.",
           intro: ["Something glows red among the needles: a viper made of embers, its scales crackling like wood in a hearth. It raises its head and hisses smoke."],
           vittoria: "The viper writhes one last time and goes out, leaving a thread of still-warm ash among the needles." } },
-      cervo_cenere: { grado: 1, livello: 2, zone: ["foresta"], ca: 11, pvFissi: 12, dannoDado: 6, dannoBonus: 0, attacco: 2, attacchi: 1, xp: 100, xpZona: 75, pa: 3, parte: "velluto_cenere", qta: 1, immune: ["ustione", "sangue"],
+      cervo_cenere: { grado: 1, livello: 2, zone: ["foresta"], ca: 11, pvFissi: 12, dannoDado: 6, dannoBonus: 0, attacco: 2, attacchi: 1, pa: 3, parte: "velluto_cenere", qta: 1, immune: ["ustione", "sangue"],
         abilita: [{ id: "scrollata", costo: 2, tipo: "ts", stato: "cieco", ts: "Agilità", cd: 11 }],
         it: { nome: "Cervo di cenere", il: "il cervo", Il: "Il cervo", al: "al cervo", del: "del cervo", att1: "Corna", att2: "Zoccoli", sotto: "Creatura di cenere · foresta dei pini",
           cond: ["Ti fissa, alto e grigio: è illeso.", "È ferito: dal fianco cade cenere a fiocchi.", "Barcolla, il palco che si sbriciola.", "Giace tra gli aghi, un mucchio di cenere."],
@@ -11858,7 +11839,7 @@
           vittoria: "The stag kneels and comes apart into grey ash; for a moment the antlers stay standing, then they too collapse." } }
     });
     const ANIMALI = {
-      coniglio: { grado: 0, zone: [], ca: 13, dadoVita: 2, pvBase: 2, dannoDado: 2, attacco: -2, attacchi: 1, xp: 20, parte: "zampa_coniglio", qta: 1, fugge: 1, passivo: true, avvicina: "Furtività", /* 28/10: esce dal gioco, resta per i salvataggi vecchi */
+      coniglio: { grado: 0, zone: [], ca: 13, dadoVita: 2, pvBase: 2, dannoDado: 2, attacco: -2, attacchi: 1, parte: "zampa_coniglio", qta: 1, fugge: 1, passivo: true, avvicina: "Furtività", /* 28/10: esce dal gioco, resta per i salvataggi vecchi */
         it: { nome: "Coniglio selvatico", il: "il coniglio", Il: "Il coniglio", al: "al coniglio", del: "del coniglio", att1: "Morso", att2: "Calcio", sotto: "Animale selvatico · foresta dei pini",
           cond: ["Annusa l'aria, le orecchie dritte: è illeso.", "È ferito e trema, pronto a scappare.", "Si trascina tra gli aghi, il fiato corto.", "Giace immobile tra gli aghi."],
           ok1: ["Il coniglio ti morde la mano e si divincola."], ok2: ["Un calcio delle zampe posteriori ti coglie il polso."], crit: "Il coniglio ti morde il dito fino all'osso, poi si divincola.",
@@ -11871,7 +11852,7 @@
           intro: ["Among the roots of a pine, a grey wild rabbit nibbles a tuft of grass. It is alive, truly alive: the first living thing you have seen since you entered the house. It has not heard you yet."],
           vittoria: "The rabbit twitches and lies still. It does not turn to ash: it is flesh and blood, like you.",
           fuga: "The rabbit bolts among the needles in a grey flash and vanishes between the trunks.", vede: "A twig snaps under your boot: the rabbit pricks up its ears and darts away among the pines." } },
-      cervo: { grado: 0, livello: 1, zone: ["foresta"], ca: 11, pvFissi: 9, dannoDado: 4, dannoBonus: 0, attacco: 0, attacchi: 1, xp: 50, parte: "velluto_cervo", qta: 1, fugge: 2, avvicina: "Sopravvivenza",
+      cervo: { grado: 0, livello: 1, zone: ["foresta"], ca: 11, pvFissi: 9, dannoDado: 4, dannoBonus: 0, attacco: 0, attacchi: 1, parte: "velluto_cervo", qta: 1, fugge: 2, avvicina: "Sopravvivenza",
         it: { nome: "Cervo", il: "il cervo", Il: "Il cervo", al: "al cervo", del: "del cervo", att1: "Incornata", att2: "Zoccolata", sotto: "Animale selvatico · foresta dei pini",
           cond: ["Ti fissa, alto e fiero: è illeso.", "È ferito: zoppica e sbuffa.", "Barcolla, il respiro rotto.", "Giace tra gli aghi, il palco spezzato."],
           ok1: ["Il cervo abbassa il palco e ti colpisce al fianco."], ok2: ["Uno zoccolo ti centra la coscia."], crit: "Il cervo carica a testa bassa e il palco ti solleva da terra.",
@@ -11884,7 +11865,7 @@
           intro: ["A stag moves between the pines, its antlers covered in velvet. It grazes, lifts its head, grazes again. Its tracks fade among the needles."],
           vittoria: "The stag falls to its knees, then onto its side. Its breathing slows, then stops. No ash: only a dead animal in the wood.",
           fuga: "The stag turns and bounds away between the trunks; in a few leaps it is gone.", vede: "You lose the tracks among the needles. When you find them again the stag has already seen you: one leap, and it is gone." } },
-      cinghiale_bosco: { grado: 0, livello: 1, zone: ["foresta"], ca: 11, pvFissi: 12, dannoDado: 6, dannoBonus: 1, attacco: 2, attacchi: 1, xp: 75, parte: "grasso_cinghiale", qta: 2, pa: 2,
+      cinghiale_bosco: { grado: 0, livello: 1, zone: ["foresta"], ca: 11, pvFissi: 12, dannoDado: 6, dannoBonus: 1, attacco: 2, attacchi: 1, parte: "grasso_cinghiale", qta: 2, pa: 2,
         abilita: [{ id: "zannata", costo: 2, tipo: "colpo", stato: "debole", ts: "Vigore", cd: 10 }],
         it: { nome: "Cinghiale selvatico", il: "il cinghiale", Il: "Il cinghiale", al: "al cinghiale", del: "del cinghiale", att1: "Zannata", att2: "Carica", sotto: "Animale selvatico · foresta dei pini",
           cond: ["Grugnisce e raspa il terreno: è illeso.", "È ferito: sanguina dal fianco.", "Barcolla, la bava alla bocca.", "Giace tra gli aghi."],
@@ -11896,7 +11877,7 @@
           ok1: ["The boar's tusks rip your thigh."], ok2: ["The boar bowls you over with a charge."], crit: "The boar charges you full on: its tusks sink into your side and the blow leaves you drained.",
           intro: ["A grunt among the bushes. A black, bristly wild boar steps out from under a fallen pine, lowers its tusks and paws the needles."],
           vittoria: "The boar collapses with a last grunt. It is only a beast of the wood, heavy and warm.", fuga: "", vede: "" } },
-      vipera: { grado: 0, livello: 1, zone: ["foresta"], ca: 13, pvFissi: 5, dannoDado: 3, dannoBonus: 0, attacco: 3, attacchi: 1, xp: 50, parte: "fiele_vipera", qta: 1, pa: 2,
+      vipera: { grado: 0, livello: 1, zone: ["foresta"], ca: 13, pvFissi: 5, dannoDado: 3, dannoBonus: 0, attacco: 3, attacchi: 1, parte: "fiele_vipera", qta: 1, pa: 2,
         abilita: [{ id: "morso_velenoso", costo: 2, tipo: "colpo", stato: "veleno", ts: "Vigore", cd: 11 }],
         it: { nome: "Vipera dei pini", il: "la vipera", Il: "La vipera", al: "alla vipera", del: "della vipera", att1: "Morso", att2: "Scatto", sotto: "Animale selvatico · foresta dei pini",
           cond: ["Sibila, arrotolata su sé stessa: è illesa.", "È ferita: si contorce tra gli aghi.", "Si trascina, la testa bassa.", "Giace tra gli aghi, immobile."],
@@ -11908,7 +11889,7 @@
           ok1: ["The viper strikes and sinks its fangs into your ankle."], ok2: ["A lightning strike: its fangs graze your wrist and leave two punctures."], crit: "The viper bites your wrist and will not let go: you feel the venom climbing your arm.",
           intro: ["Something uncoils among the needles, slowly: a dark viper with a row of diamonds along its back. It raises its head and hisses."],
           vittoria: "The viper writhes one last time and lies still among the needles.", fuga: "", vede: "" } },
-      ratto_comune: { grado: 0, livello: 1, zone: ["fuori"], ca: 10, pvFissi: 5, dannoDado: 3, dannoBonus: 0, attacco: 0, attacchi: 1, xp: 50, pa: 2,
+      ratto_comune: { grado: 0, livello: 1, zone: ["fuori"], ca: 10, pvFissi: 5, dannoDado: 3, dannoBonus: 0, attacco: 0, attacchi: 1, pa: 2,
         abilita: [{ id: "morso_sporco", costo: 2, tipo: "colpo", stato: "veleno", ts: "Vigore", cd: 10 }],
         it: { nome: "Ratto", il: "il ratto", Il: "Il ratto", al: "al ratto", del: "del ratto", att1: "Morso", att2: "Graffio", sotto: "Animale · terre dei Vespera",
           cond: ["Squittisce, il pelo ritto: è illeso.", "È ferito: zoppica e squittisce.", "Si trascina, il fiato corto.", "Giace a terra, immobile."],
@@ -11920,7 +11901,7 @@
           ok1: ["The rat bites your ankle: its teeth are filthy and the wound burns."], ok2: ["A quick scratch marks the back of your hand."], crit: "The rat climbs your leg and sinks its teeth to the bone.",
           intro: ["Something rummages among the grass and stones: a grey rat, big and mangy, lifts its snout and stares at you. It does not run."],
           vittoria: "The rat squeals one last time and lies still. It is only a rat: no ash, no embers.", fuga: "", vede: "" } },
-      corvo_comune: { grado: 0, livello: 1, zone: ["fuori"], ca: 12, pvFissi: 4, dannoDado: 3, dannoBonus: 0, attacco: 1, attacchi: 1, xp: 50, pa: 2,
+      corvo_comune: { grado: 0, livello: 1, zone: ["fuori"], ca: 12, pvFissi: 4, dannoDado: 3, dannoBonus: 0, attacco: 1, attacchi: 1, pa: 2,
         abilita: [{ id: "becco", costo: 2, tipo: "colpo", stato: "sangue", ts: "Vigore", cd: 10 }],
         it: { nome: "Corvo", il: "il corvo", Il: "Il corvo", al: "al corvo", del: "del corvo", att1: "Becco", att2: "Artigli", sotto: "Animale · terre dei Vespera",
           cond: ["Gracchia e sbatte le ali: è illeso.", "È ferito: perde piume nere.", "Saltella a terra, un'ala che pende.", "Giace tra le pietre, le ali aperte."],
@@ -11932,7 +11913,7 @@
           ok1: ["The crow's beak opens a cut above your eyebrow."], ok2: ["Its talons rake your neck."], crit: "The crow plunges at you and its beak finds your cheek, to the bone.",
           intro: ["A dry caw, then a flutter of wings: a black crow lands a few steps away, tilts its head and looks at you with one eye. Then it launches itself."],
           vittoria: "The crow caws one last time and falls among the stones. Only black feathers, no embers.", fuga: "", vede: "" } },
-      lupo_comune: { grado: 0, livello: 1, zone: ["fuori", "foresta"], ca: 12, pvFissi: 10, dannoDado: 6, dannoBonus: 0, attacco: 2, attacchi: 1, xp: 75, parte: "zanna_lupo", qta: 1, pa: 2,
+      lupo_comune: { grado: 0, livello: 1, zone: ["fuori", "foresta"], ca: 12, pvFissi: 10, dannoDado: 6, dannoBonus: 0, attacco: 2, attacchi: 1, parte: "zanna_lupo", qta: 1, pa: 2,
         abilita: [{ id: "morso_lupo", costo: 2, tipo: "colpo", stato: "sangue", ts: "Vigore", cd: 10 }],
         it: { nome: "Lupo", il: "il lupo", Il: "Il lupo", al: "al lupo", del: "del lupo", att1: "Morso", att2: "Zampata", sotto: "Animale selvatico · terre dei Vespera",
           cond: ["Ringhia, le orecchie dritte: è illeso.", "È ferito: zoppica, il pelo sporco di sangue.", "Ansima, la coda bassa.", "Giace a terra, il fiato fermo."],
@@ -11954,7 +11935,7 @@
     const AGGUATI = {
       /* 22/11: il vuoto (vuoti.md). Solo i testi dello scontro: statistiche, poteri e prova di agguato le decide il motore (crea("vuoto:<fascia>:<archetipo>")).
          I numeri qui sotto servono solo al vecchio motore, che il vuoto non lo usa. TESTI PROVVISORI */
-      vuoto: { agguato: true, umano: true, livello: 1, zone: [], ca: 11, pvFissi: 20, dannoDado: 6, dannoBonus: 1, attacco: 2, attacchi: 1, xp: 50, xpZona: 50, pa: 0,
+      vuoto: { agguato: true, umano: true, livello: 1, zone: [], ca: 11, pvFissi: 20, dannoDado: 6, dannoBonus: 1, attacco: 2, attacchi: 1, pa: 0,
         it: { nome: "Vuoto", il: "il vuoto", Il: "Il vuoto", al: "al vuoto", del: "del vuoto", att1: "Colpo", att2: "Colpo", sotto: "Vuoto · agguato · maledetto",
           cond: ["Sta in piedi senza fatica, lo sguardo fisso oltre te.", "È ferito, ma non sembra accorgersene: nessun lamento.", "Barcolla. Le mani cercano ancora l'arma, per abitudine.", "Giace a terra, immobile."],
           ok1: ["Il colpo del vuoto ti raggiunge senza rabbia, preciso come un gesto ripetuto mille volte."], ok2: ["Il vuoto ti colpisce di nuovo, con la stessa calma di prima."],
@@ -11967,7 +11948,7 @@
           crit: "The hollow finds the gap in your guard and drives in, without a sound.",
           agguati: ["A figure peels away from the shadows: an adventurer, or what is left of one. Its eyes do not look for you; its hands do."],
           vittoria: "📖 The hollow sags like a cloak with no one inside. It never said a word. Among its things there is a worn notebook." } },
-      goblin: { agguato: true, umano: true, livello: 2, peFino: 3, zone: [], ca: 13, pvFissi: 12, dannoDado: 4, dannoBonus: 1, attacco: 2, attacchi: 1, xp: 75, xpZona: 75, pa: 3,
+      goblin: { agguato: true, umano: true, livello: 2, zone: [], ca: 13, pvFissi: 12, dannoDado: 4, dannoBonus: 1, attacco: 2, attacchi: 1, pa: 3,
         abilita: [{ id: "lama_sporca", costo: 2, tipo: "colpo", stato: "veleno", ts: "Vigore", cd: 11 }],
         it: { nome: "Goblin predone", il: "il goblin", Il: "Il goblin", al: "al goblin", del: "del goblin", att1: "Coltellata", att2: "Graffio", sotto: "Goblin · agguato",
           cond: ["Saltella sul posto, ghignando: sembra ancora del tutto integro.", "È ferito: perde sangue scuro e ringhia tra i denti storti.", "Barcolla, ansimando: il ghigno è sparito.", "Giace a terra, immobile."],
@@ -11983,7 +11964,7 @@
           crit: "The goblin climbs you like a monkey and drives its knife between your ribs, shrieking with joy.",
           agguati: ["A shrill giggle behind a gravestone. Then another, closer. A goblin jumps out with a rusty knife, its yellow eyes fixed on your pockets.", "A stone grazes your ear. “Stuff! Shiny stuff!” The goblin charges, far too quick for its size."],
           vittoria: "The goblin collapses with a yelp and the knife slips from its hand. In its ragged pockets, among rat bones, there is something that did not belong to it." } },
-      orco: { agguato: true, umano: true, livello: 3, peFino: 3, zone: [], ca: 11, pvFissi: 18, dannoDado: 8, dannoBonus: 0, attacco: 4, attacchi: 1, xp: 100, xpZona: 100, pa: 4,
+      orco: { agguato: true, umano: true, livello: 3, zone: [], ca: 11, pvFissi: 18, dannoDado: 8, dannoBonus: 0, attacco: 4, attacchi: 1, pa: 4,
         abilita: [{ id: "ruggito", costo: 2, tipo: "ts", stato: "paura", ts: "Spirito", cd: 12 }, { id: "fendente_orco", costo: 2, tipo: "colpo", stato: "sangue", ts: "Vigore", cd: 12 }],
         it: { nome: "Orco razziatore", il: "l'orco", Il: "L'orco", al: "all'orco", del: "dell'orco", att1: "Ascia", att2: "Pugno", sotto: "Orco · agguato",
           cond: ["Grugnisce, le zanne scoperte: sembra ancora del tutto integro.", "È ferito: il sangue gli cola lungo il braccio, ma non rallenta.", "Respira a fatica, le spalle curve: l'ascia gli pesa.", "Giace a terra, immobile."],
@@ -11999,7 +11980,7 @@
           crit: "The orc raises its axe in both hands and brings it down on you with a roar: the blow tears the breath and nearly the senses out of you.",
           agguati: ["The ground shakes under heavy steps. An orc bursts from the shadow of a wall and bars your way. Its axe is already raised.", "You smell it before you see it: sweat, old blood, smoke. The orc grunts a word you do not understand, then charges."],
           vittoria: "The orc falls to its knees, then face down. The dull thud sends the crows flying from the cemetery." } },
-      banda_goblin: { agguato: true, umano: true, gruppo: true, livello: 4, peFino: 4, zone: [], ca: 12, pvFissi: 20, dannoDado: 4, dannoBonus: 0, attacco: 2, attacchi: 2, xp: 125, xpZona: 125, pa: 4,
+      banda_goblin: { agguato: true, umano: true, gruppo: true, livello: 4, zone: [], ca: 12, pvFissi: 20, dannoDado: 4, dannoBonus: 0, attacco: 2, attacchi: 2, pa: 4,
         abilita: [{ id: "lama_sporca", costo: 2, tipo: "colpo", stato: "veleno", ts: "Vigore", cd: 12 }],
         it: { nome: "Banda di goblin", il: "la banda", Il: "La banda", al: "alla banda", del: "della banda", att1: "Coltellate", att2: "Sassate", sotto: "Gruppo di goblin · agguato",
           cond: ["La banda ti gira attorno, strillando: sembra ancora del tutto integra.", "La banda è ferita: un goblin zoppica, un altro si tiene il braccio.", "La banda si sfalda: i pochi goblin in piedi si guardano alle spalle.", "La banda è a terra, dispersa."],
@@ -12017,7 +11998,7 @@
           scene: ["The biggest goblin steps forward; the others hang back, shrieking encouragement.", "Two goblins shove each other to get there first: the third takes the chance and leaps at you.", "One of the goblins throws a stone at you, another laughs so hard it nearly falls over.", "The goblins circle you: one feints, the other strikes.", "The smallest of the gang is kicked forward by the others, who enjoy the show."],
           agguati: ["Shrill giggles from every side. From behind the gravestones and bushes green heads pop up, one, three, five: a gang of goblins, knives in hand, closing the circle around you.", "“Stuff! Lots of stuff!” A shrill voice, then a chorus. The goblins break cover all together and charge with no order at all, shoving one another."],
           vittoria: "The last goblin standing drops its knife and runs off shrieking. The others stay on the ground. Among rags and rat bones there is something worth picking up." } },
-      banda_orchi: { agguato: true, umano: true, gruppo: true, livello: 4, peFino: 4, zone: [], ca: 10, pvFissi: 28, dannoDado: 6, dannoBonus: 0, attacco: 3, attacchi: 2, xp: 150, xpZona: 150, pa: 5,
+      banda_orchi: { agguato: true, umano: true, gruppo: true, livello: 4, zone: [], ca: 10, pvFissi: 28, dannoDado: 6, dannoBonus: 0, attacco: 3, attacchi: 2, pa: 5,
         abilita: [{ id: "ruggito", costo: 2, tipo: "ts", stato: "paura", ts: "Spirito", cd: 12 }, { id: "fendente_orco", costo: 2, tipo: "colpo", stato: "sangue", ts: "Vigore", cd: 12 }],
         it: { nome: "Banda di orchi", il: "la banda", Il: "La banda", al: "alla banda", del: "della banda", att1: "Asce", att2: "Mazze", sotto: "Gruppo di orchi · agguato",
           cond: ["Gli orchi avanzano spalla a spalla: la banda sembra ancora del tutto integra.", "La banda è ferita: uno degli orchi sanguina e impreca nella sua lingua.", "La banda vacilla: gli orchi rimasti arretrano di un passo.", "La banda è a terra."],
@@ -12036,7 +12017,7 @@
           agguati: ["The ground shakes under heavy steps, and not just one pair. Two orcs burst from the shadow of the wall, then a third. They bar your way unhurried: they know they outnumber you.", "The smell arrives before they do: sweat, old blood, smoke. Then the voices, guttural, and the orc warband breaks cover with weapons already raised."],
           vittoria: "The last orc collapses on top of the others with a thud that sends the crows flying from the cemetery. Silence returns, heavy." } },
       /* i cinque: livello = personaggio (minimo 2), +1 al ritorno; salute 15 + 3 per livello oltre il 2 (+ pvMod); +3 per colpire; arma magica dado + livello; 6 PA; CD 8 + livello */
-      brunilde: { agguato: true, umano: true, avv: { pvMod: -2 }, livello: 2, zone: [], ca: 13, pvFissi: 13, dannoDado: 8, dannoBonus: 2, attacco: 3, attacchi: 1, xp: 100, pa: 6, vulnerabile: ["Ombra"],
+      brunilde: { agguato: true, umano: true, avv: { pvMod: -2 }, livello: 2, zone: [], ca: 13, pvFissi: 13, dannoDado: 8, dannoBonus: 2, attacco: 3, attacchi: 1, pa: 6, vulnerabile: ["Ombra"],
         abilita: [{ id: "squarcio", costo: 2, tipo: "colpo", stato: "sangue", ts: "Vigore", cd: 10 }],
         it: { nome: "Brunilde Mezzaluna", il: "Brunilde", Il: "Brunilde", al: "a Brunilde", del: "di Brunilde", att1: "Ascia", att2: "Spallata", sotto: "Nana, minatrice · agguato",
           cond: ["Stringe l'ascia e sputa per terra: sembra ancora del tutto integra.", "È ferita: si tiene il fianco, ma non molla la presa sull'ascia.", "Ansima, piegata sul manico dell'ascia: le gambe le tremano.", "Giace a terra, immobile."],
@@ -12056,7 +12037,7 @@
             resa: { dice: "“I give way. It's only a matter of time before I'm the one in front anyway.”" },
             ritorno: { dice: "“You left me behind, but I've made up the ground. There's room for only one of us here... and your turn is over.”" } },
           vittoria: "Brunilde falls to her knees, then onto her side. The axe slips from her calloused fingers. In her jerkin pocket copper coins clink: the days she counted, up to today." } },
-      corrado: { agguato: true, umano: true, avv: { pvMod: 0 }, livello: 2, zone: [], ca: 14, pvFissi: 15, dannoDado: 6, dannoBonus: 2, attacco: 3, attacchi: 1, xp: 100, pa: 6, vulnerabile: ["Ombra"],
+      corrado: { agguato: true, umano: true, avv: { pvMod: 0 }, livello: 2, zone: [], ca: 14, pvFissi: 15, dannoDado: 6, dannoBonus: 2, attacco: 3, attacchi: 1, pa: 6, vulnerabile: ["Ombra"],
         abilita: [{ id: "colpo_scudo", costo: 2, tipo: "colpo", stato: "debole", ts: "Vigore", cd: 10 }],
         it: { nome: "Corrado Vallerossa", il: "Corrado", Il: "Corrado", al: "a Corrado", del: "di Corrado", att1: "Spada", att2: "Scudo", sotto: "Umano, soldato disertore · agguato",
           cond: ["Si copre dietro lo scudo, lo sguardo fermo: sembra ancora del tutto integro.", "È ferito: lo scudo gli pesa, ma tiene la posizione.", "Respira a fatica, la spada bassa: la disciplina comincia a cedere.", "Giace a terra, immobile."],
@@ -12076,7 +12057,7 @@
             resa: { scena: "He plants his sword and covers himself behind his shield.", dice: "“I surrender. I chose life once already, I'm not changing my mind now.”" },
             ritorno: { scena: "He shakes his head, eyes lowered.", dice: "“I've thought about what you did for me. Truly. But orders are chains heavier than yours. Let's start again.”" } },
           vittoria: "Corrado slumps over his shield, like a soldier who can finally stop standing at attention. His eyes stay open, turned towards the house." } },
-      isotta: { agguato: true, umano: true, avv: { pvMod: -3, mezzo: true }, livello: 2, zone: [], ca: 13, pvFissi: 12, dannoDado: 4, dannoBonus: 1, attacco: 3, attacchi: 2, xp: 100, pa: 6, vulnerabile: ["Ombra"],
+      isotta: { agguato: true, umano: true, avv: { pvMod: -3, mezzo: true }, livello: 2, zone: [], ca: 13, pvFissi: 12, dannoDado: 4, dannoBonus: 1, attacco: 3, attacchi: 2, pa: 6, vulnerabile: ["Ombra"],
         abilita: [{ id: "lama_intinta", costo: 2, tipo: "colpo", stato: "veleno", ts: "Vigore", cd: 10 }],
         it: { nome: "Isotta la Biscia", il: "Isotta", Il: "Isotta", al: "a Isotta", del: "di Isotta", att1: "Pugnale destro", att2: "Pugnale sinistro", sotto: "Elfa, sicaria · agguato",
           cond: ["Si muove senza rumore, le lame basse: sembra ancora del tutto integra.", "È ferita: una macchia scura le si allarga sul fianco, ma sorride ancora.", "È lenta, adesso: le lame tremano appena.", "Giace a terra, immobile."],
@@ -12096,7 +12077,7 @@
             resa: { scena: "She raises her hands in mock boredom, letting the blades clink before she drops them.", dice: "“All right, you win. I didn't like the air in this place today anyway.”" },
             ritorno: { scena: "She composes herself with deadly grace, taking up her blades again.", dice: "“You let me go. What a beginner's mistake. I never leave a score half settled.”" } },
           vittoria: "Isotta falls without a sound, as she always lived. The blades stay clenched in her fists. The contract, whoever signed it, stays half done." } },
-      anselmo: { agguato: true, umano: true, avv: { pvMod: 0 }, preghiera: true, livello: 2, zone: [], ca: 12, pvFissi: 15, dannoDado: 6, dannoBonus: 2, attacco: 3, attacchi: 1, xp: 100, pa: 6, vulnerabile: ["Ombra"],
+      anselmo: { agguato: true, umano: true, avv: { pvMod: 0 }, preghiera: true, livello: 2, zone: [], ca: 12, pvFissi: 15, dannoDado: 6, dannoBonus: 2, attacco: 3, attacchi: 1, pa: 6, vulnerabile: ["Ombra"],
         abilita: [{ id: "anatema", costo: 2, tipo: "ts", stato: "debole", ts: "Spirito", cd: 10 }],
         it: { nome: "Fra' Anselmo", il: "Fra' Anselmo", Il: "Fra' Anselmo", al: "a Fra' Anselmo", del: "di Fra' Anselmo", att1: "Bastone", att2: "Puntale", sotto: "Umano, monaco itinerante · agguato",
           cond: ["Mormora una preghiera tra i denti: sembra ancora del tutto integro.", "È ferito: il saio è strappato e macchiato, ma il bastone non trema.", "Si appoggia al bastone, il fiato corto: la preghiera gli muore in gola.", "Giace a terra, immobile."],
@@ -12116,7 +12097,7 @@
             resa: { scena: "He bows his head, clutching the holy symbol in his gnarled fingers.", dice: "“The flesh is weak. And today my only prayer is to stay in one piece.”" },
             ritorno: { scena: "He joins his hands in silent prayer.", dice: "“I prayed for your soul after you spared me. But the old man ordered me to correct my error of mercy.”" } },
           vittoria: "Brother Anselmo falls backwards, his hands still clutching the holy symbol. His lips move for one more instant, then not even they do." } },
-      tobia: { agguato: true, umano: true, avv: { pvMod: -3 }, scappa: true, livello: 2, zone: [], ca: 13, pvFissi: 12, dannoDado: 4, dannoBonus: 2, attacco: 3, attacchi: 1, xp: 100, pa: 6, vulnerabile: ["Ombra"],
+      tobia: { agguato: true, umano: true, avv: { pvMod: -3 }, scappa: true, livello: 2, zone: [], ca: 13, pvFissi: 12, dannoDado: 4, dannoBonus: 2, attacco: 3, attacchi: 1, pa: 6, vulnerabile: ["Ombra"],
         abilita: [{ id: "tagliola", costo: 2, tipo: "ts", stato: "sangue", ts: "Agilità", cd: 10 }],
         it: { nome: "Tobia Spillo", il: "Tobia", Il: "Tobia", al: "a Tobia", del: "di Tobia", att1: "Pugnale", att2: "Sgambetto", sotto: "Gnomo, trappolaio · agguato",
           cond: ["Saltella sul posto, con un ghigno nervoso: sembra ancora del tutto integro.", "È ferito: si guarda attorno in cerca di una via di fuga.", "Trema e indietreggia: non pensa più a combattere, solo a scappare.", "Giace a terra, immobile."],
@@ -12141,10 +12122,10 @@
     Object.assign(PREDE, AGGUATI);
     Object.assign(PREDE, window.CacceComuni.prede); /* 01/11: le otto cacce comuni di Aldo (js/cacce.js) */
     /* 22/11: Enea, il guardiano d'argento (solo testi: statistiche e poteri dal motore, Nemici.BOSS.enea) */
-    PREDE.enea = { guardiano: true, livello: 3, zone: [], ca: 13, pvFissi: 62, dannoDado: 8, dannoBonus: 2, attacco: 6, attacchi: 1, xp: 550, pa: 0, it: ENEA_TUTTI.it.nemico, en: ENEA_TUTTI.en.nemico };
-    PREDE.dafne = { guardiano: true, livello: 4, zone: [], ca: 15, pvFissi: 72, dannoDado: 8, dannoBonus: 3, attacco: 8, attacchi: 1, xp: 700, pa: 0, it: DAFNE_TUTTI.it.nemico, en: DAFNE_TUTTI.en.nemico }; /* 22/11: Dafne, la guardiana d'oro (statistiche dal motore, Nemici.BOSS.dafne) */
+    PREDE.enea = { guardiano: true, livello: 3, zone: [], ca: 13, pvFissi: 62, dannoDado: 8, dannoBonus: 2, attacco: 6, attacchi: 1, pa: 0, it: ENEA_TUTTI.it.nemico, en: ENEA_TUTTI.en.nemico };
+    PREDE.dafne = { guardiano: true, livello: 4, zone: [], ca: 15, pvFissi: 72, dannoDado: 8, dannoBonus: 3, attacco: 8, attacchi: 1, pa: 0, it: DAFNE_TUTTI.it.nemico, en: DAFNE_TUTTI.en.nemico }; /* 22/11: Dafne, la guardiana d'oro (statistiche dal motore, Nemici.BOSS.dafne) */
     const PRESE_INFERNALI = () => Object.keys(PREDE).filter(k => PREDE[k].grado >= 1);
-    for (const [id, p] of Object.entries(PREDE)) NEMICI[id] = { ca: p.ca, dadoVita: p.dadoVita, pvBase: p.pvBase, pvFissi: p.pvFissi, dannoDado: p.dannoDado, dannoBonus: p.dannoBonus, xp: p.xp, xpZona: p.xpZona, boss: false, attacco: p.attacco, attacchi: p.attacchi, probPresa: 0, probSoffio: 0, soffio: null, ritratto: null, comune: true, fugge: p.fugge, passivo: p.passivo, parte: p.parte, qta: p.qta, animale: p.grado === 0, grado: p.grado, livello: p.livello, pa: p.pa, abilita: p.abilita, immune: p.immune, zone: p.zone, vulnerabile: p.vulnerabile, agguato: p.agguato, avv: p.avv, gruppo: p.gruppo, preghiera: p.preghiera, scappa: p.scappa, peFino: p.peFino, statFisse: p.stat || (p.pvFissi != null ? { Vigore: 10, "Agilità": 10 } : undefined) /* 01/11: le cacce comuni hanno il loro profilo */,
+    for (const [id, p] of Object.entries(PREDE)) NEMICI[id] = { ca: p.ca, dadoVita: p.dadoVita, pvBase: p.pvBase, pvFissi: p.pvFissi, dannoDado: p.dannoDado, dannoBonus: p.dannoBonus, boss: false, attacco: p.attacco, attacchi: p.attacchi, probPresa: 0, probSoffio: 0, soffio: null, ritratto: null, comune: true, fugge: p.fugge, passivo: p.passivo, parte: p.parte, qta: p.qta, animale: p.grado === 0, grado: p.grado, livello: p.livello, pa: p.pa, abilita: p.abilita, immune: p.immune, zone: p.zone, vulnerabile: p.vulnerabile, agguato: p.agguato, avv: p.avv, gruppo: p.gruppo, preghiera: p.preghiera, scappa: p.scappa, peFino: p.peFino, statFisse: p.stat || (p.pvFissi != null ? { Vigore: 10, "Agilità": 10 } : undefined) /* 01/11: le cacce comuni hanno il loro profilo */,
       tipoDanno: p.tipoDanno, resiste: p.resiste, primaria: p.primaria, cacciaComune: !!p.cacciaComune, finestra: p.finestra } /* 28/10: statistiche fisse; il bonus vero sta in attacco e dannoBonus */;
     NEMICI.enea = { ...NEMICI.enea, boss: true, comune: false, ritratto: "immagini/png/enea_combat.webp" }; /* 22/11: Enea è un guardiano */
     NEMICI.dafne = { ...NEMICI.dafne, boss: true, comune: false, ritratto: "immagini/nemici/dafne.png" }; /* 22/11: Dafne è una guardiana */
@@ -12830,8 +12811,8 @@
     }
 
     function vittoriaScontro() {
-      const D = NEMICI[scontro.id], ctx = scontro.ctx, idNem = scontro.id, avv = scontro.avv, vu = scontro.vuoto, peVuoto = vu && scontro.N ? Number(scontro.N.nem.pe) || 0 : 0;
-      if (ctx === "agguato" && D.avv) segnaAvv(idNem, { stato: "morto", pe: true });
+      const D = NEMICI[scontro.id], ctx = scontro.ctx, idNem = scontro.id, avv = scontro.avv, vu = scontro.vuoto;
+      if (ctx === "agguato" && D.avv) segnaAvv(idNem, { stato: "morto" });
       if (sciamano() && viaPg() === "aldo" && SCI.fame(scontro)) { /* Fame del Parassita */
         const preso = guadagnaNatura(SCI.FAME);
         aggiungi({ tipo: "narra", box: "ok", righe: [SCI.testo({ k: "fame", preso })] });
@@ -12849,10 +12830,7 @@
         if (c) { c.classList.add("dissolto"); setTimeout(() => { const v = c.closest(".voce"); c.remove(); if (v && !v.textContent.trim()) v.remove(); }, 3100); }
       }
       aggiungi({ tipo: "narra", fuori: true, righe: CB.vittoria });
-      const xpVinti = vu ? peVuoto : ctx === "agguato" ? xpAgguato(D, avv) : xpScontro(D, ctx); /* 22/11: i vuoti danno i PE della fascia */ /* 28/10: PE a scalare per gli animali delle due zone; 29/10: agguati */
-      guadagnaPE(xpVinti);
-      aggiungi({ tipo: "narra", box: "ok", fuori: true, righe: [CB.bannerVinto, CB.xp(xpVinti, pg.esperienza)] });
-      controllaLivello();
+      aggiungi({ tipo: "narra", box: "ok", fuori: true, righe: [CB.bannerVinto] });
       if (D.parte) { const n = Number(D.qta) || 1; aggiungiMateriale(D.parte, n); aggiungi({ tipo: "sistema", box: "cap", fuori: true, righe: [BT.parte(n, Q.oggetti[D.parte].nome)] }); }
       if (ctx === "pineta") { dosiBorsaPg(); const b = borsaVeleni(); if (b && Number(b.usi) < DOSI_BORSA && Math.random() < 0.5) { b.usi = Number(b.usi) + 1; aggiornaEquip(); sist(EST2.dose(b.usi)); } }
       if (ctx === "agguato") { if (vu) bottinoVuoto(vu); else bottinoAgguato(idNem, avv); }

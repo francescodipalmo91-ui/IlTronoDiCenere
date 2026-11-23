@@ -147,14 +147,6 @@ caso("Sconfitta contro Dafne: non si muore, risveglio nella sala della caccia; n
   eq(errori, [], "errori nella pagina"); await chiudi();
 });
 
-caso("Vecchio motore: niente caccia d'oro, Dafne non compare", async (b) => {
-  const pg = PG(); delete pg.motore;
-  const { page, errori, chiudi } = await apri(b, pg, PARTITA());
-  const r = await page.evaluate(() => { accettaOro(); return { q6: usate.q6 || null, presente: dafnePresente() }; });
-  eq(r, { q6: null, presente: false });
-  eq(errori, [], "errori nella pagina"); await chiudi();
-});
-
 (async () => {
   const browser = await chromium.launch({ executablePath: process.env.CHROME || undefined, args: ["--no-sandbox"] });
   let ok = 0;

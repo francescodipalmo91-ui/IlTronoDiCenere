@@ -150,21 +150,8 @@ caso("Caccia col motore nuovo: la preda è il vuoto élite (Gualtiero), nota di 
 
 caso("Il vuoto non si arrende (niente resa a un terzo della salute)", async (b) => {
   const { page, errori, chiudi } = await apri(b, PG(), PARTITA());
-  const r = await page.evaluate(() => { avviaVuoto(); scontro.pv = 1; return resaPossibile(); });
-  eq(r, false);
-  eq(errori, [], "errori nella pagina"); await chiudi();
-});
-
-caso("Vecchio motore: niente vuoti, gli agguati restano dopo il bronzo", async (b) => {
-  const pg = PG(); delete pg.motore;
-  const { page, errori, chiudi } = await apri(b, pg, PARTITA());
-  const r = await page.evaluate(() => {
-    document.querySelectorAll(".avviso-vecchio").forEach(e => e.remove());
-    const seq = [0.0, 0.99, 0.99]; const R = Math.random; Math.random = () => (seq.length ? seq.shift() : R());
-    incontroZona(false); Math.random = R;
-    return scontro ? scontro.id : null;
-  });
-  vero(r !== "vuoto", "col vecchio motore è uscito un vuoto");
+  const r = await page.evaluate(() => { avviaVuoto(); scontro.pv = 1; return typeof resaPossibile === "undefined" && !scontro.resa; });
+  eq(r, true, "la resa dei vecchi agguati non esiste più e il vuoto non ha resa");
   eq(errori, [], "errori nella pagina"); await chiudi();
 });
 

@@ -139,14 +139,6 @@ caso("Foresta: dopo la rivelazione si cercano le cose dei suoi uomini (Sopravviv
   eq(errori, [], "errori nella pagina"); await chiudi();
 });
 
-caso("Vecchio motore: niente pulsante per la caccia d'argento, Enea non compare", async (b) => {
-  const pg = PG(); delete pg.motore;
-  const { page, errori, chiudi } = await apri(b, pg, PARTITA());
-  const r = await page.evaluate(() => { accettaArgento(); return { q5: usate.q5 || null, presente: eneaPresente() }; });
-  eq(r, { q5: null, presente: false });
-  eq(errori, [], "errori nella pagina"); await chiudi();
-});
-
 (async () => {
   const browser = await chromium.launch({ executablePath: process.env.CHROME || undefined, args: ["--no-sandbox"] });
   let ok = 0;

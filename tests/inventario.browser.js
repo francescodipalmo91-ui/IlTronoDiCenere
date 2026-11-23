@@ -10,7 +10,7 @@ const eq = (a, b, msg) => { if (JSON.stringify(a) !== JSON.stringify(b)) throw n
 const vero = (x, msg) => { if (!x) throw new Error(msg || "atteso vero"); };
 
 const PG = () => ({
-  nome: "Prova", razza: "Umano", classe: "Soldato", livello: 1, immagine: null,
+  nome: "Prova", razza: "Umano", classe: "Soldato", livello: 1, immagine: null, motore: 2, spec: "berserker",
   statisticheBase: { Vigore: 16, "Agilità": 12, Mente: 10, Spirito: 12 }, statistiche: { Vigore: 16, "Agilità": 12, Mente: 10, Spirito: 12 },
   modificatori: { Vigore: 3, "Agilità": 1, Mente: 0, Spirito: 1 }, tiroDado: { dado: 10, valore: 10 }, puntiVita: 23, saluteMentale: 21,
   classeArmatura: 14, mana: null, risorsa: { id: "furia", max: 13 }, incantesimi: [], tecniche: ["polso", "morso_acciaio"],

@@ -400,12 +400,6 @@
         ancora: "Ancora da fare: ", pronto: (n) => `${n} è pronto a entrare nel dungeon.`,
         errore: "Salvataggio non riuscito: prova con un'immagine più piccola.", nessunaImmagine: (r, c) => `Nessuna immagine per ${r} ${c}.`,
         scegliRitratto: "Scegli il tuo ritratto.", ritrattoN: (n) => `Ritratto ${n}`,
-        incantesimi: "Incantesimi lv 1", guidaInc: (p, a) => `Scegline ${p + a} tra le due scuole, liberamente: al livello 3 la via di prestigio deciderà quale scuola potenziare. Tutti di livello 1.`, capClasse: (n, c) => `Capacità di classe, senza occupare posti: ${n} (${c}).`, costoMagia: (n) => `${n}`, mana: "Punti arcano", fede: "Punti fede", furia: "Punti furia", natura: "Punti natura", modAttr: (a) => `mod. ${a}`,
-        notaRiposo: "Gli incantesimi scelti si potranno cambiare quando ti riposi; salendo di livello se ne sbloccano di nuovi.",
-        tecnicheTit: "Tecniche speciali lv 1", notaRiposoTec: "Le tecniche scelte si potranno cambiare quando ti riposi; salendo di livello se ne sbloccano di nuove.",
-        guidaTec: (n, tot) => tot ? `Scegline ${n}, tra quelle del tipo della tua arma${tot > 3 ? " e dello scudo" : ""}. Le altre restano visibili, ma non si possono prendere.` : "Scegli prima l'arma: qui sotto vedi tutte le tecniche, ma si sbloccano solo quelle del tipo della tua arma (e dello scudo, se lo prendi).", gruppoArma: (tp) => ({ Tagliente: "Armi da taglio", Contundente: "Armi contundenti", Perforante: "Armi perforanti" })[tp] || tp, gruppoScudo: "Scudo", richiedeArma: (tp) => ({ Tagliente: "Richiede un'arma da taglio.", Contundente: "Richiede un'arma contundente.", Perforante: "Richiede un'arma perforante." })[tp], richiedeScudo: "Richiede lo scudo.", costoFuria: (n) => `${n} furia`, costoNatura: (n) => `${n} natura`, gruppoNatura: "Tecniche della natura", guidaTecNatura: (n) => `Scegline ${n}: le tecniche della natura funzionano con qualsiasi arma.`,
-        mancaTec: (n) => `${n} ${n === 1 ? "tecnica" : "tecniche"}`,
-        costo: "Costo", costoMana: (n) => `${n} ${classe === "Accolito" ? "Fede" : "Arcano"}`, mancaInc: (n) => `${n} ${n === 1 ? "incantesimo" : "incantesimi"}`, mancaScuola: ""
       },
       en: {
         titoloPagina: "Character creation", titolo: "Character creation",
@@ -443,12 +437,6 @@
         ancora: "Still to do: ", pronto: (n) => `${n} is ready to enter the dungeon.`,
         errore: "Saving failed: try a smaller image.", nessunaImmagine: (r, c) => `No image for ${r} ${c}.`,
         scegliRitratto: "Choose your portrait.", ritrattoN: (n) => `Portrait ${n}`,
-        incantesimi: "Spells lv 1", guidaInc: (p, a) => `Choose ${p + a} from the two schools, freely: at level 3 your prestige path will decide which school to empower. All level 1.`, capClasse: (n, c) => `Class ability, takes no slots: ${n} (${c}).`, costoMagia: (n) => `${n}`, mana: "Arcane points", fede: "Faith points", furia: "Fury points", natura: "Nature points", modAttr: (a) => `${a} mod.`,
-        notaRiposo: "You will be able to change your chosen spells when you rest; new ones unlock as you level up.",
-        tecnicheTit: "Special techniques lv 1", notaRiposoTec: "You will be able to change your chosen techniques when you rest; new ones unlock as you level up.",
-        guidaTec: (n, tot) => tot ? `Choose ${n}, among those for your weapon type${tot > 3 ? " and the shield" : ""}. The others stay visible but cannot be taken.` : "Choose your weapon first: below you can see every technique, but only those of your weapon type (and the shield, if you take it) unlock.", gruppoArma: (tp) => ({ Tagliente: "Slashing weapons", Contundente: "Blunt weapons", Perforante: "Piercing weapons" })[tp] || tp, gruppoScudo: "Shield", richiedeArma: (tp) => ({ Tagliente: "Requires a slashing weapon.", Contundente: "Requires a blunt weapon.", Perforante: "Requires a piercing weapon." })[tp], richiedeScudo: "Requires the shield.", costoFuria: (n) => `${n} fury`, costoNatura: (n) => `${n} nature`, gruppoNatura: "Nature techniques", guidaTecNatura: (n) => `Choose ${n}: nature techniques work with any weapon.`,
-        mancaTec: (n) => `${n} ${n === 1 ? "technique" : "techniques"}`,
-        costo: "Cost", costoMana: (n) => `${n} ${classe === "Accolito" ? "Faith" : "Arcane"}`, mancaInc: (n) => `${n} ${n === 1 ? "spell" : "spells"}`, mancaScuola: ""
       }
     };
     const t = T[LINGUA];

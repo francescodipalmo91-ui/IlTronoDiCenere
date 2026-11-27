@@ -1,140 +1,62 @@
-# Audit Ponytail: Il Trono di Cenere
+# Audit Ponytail: Il Trono di Cenere (terza passata, 27/11/2026)
 
-*Fatto con le regole di `/ponytail-audit` (DietrichGebert/ponytail). È un report: non cambia il codice. Dimmi i numeri da sistemare («fai 1, 2 e 5»).*
+*Fatto con le regole di `/ponytail-audit` (DietrichGebert/ponytail, `skills/ponytail-audit/SKILL.md`). È un report: non cambia il codice. Dimmi i numeri da sistemare («fai 1, 2 e 5»).*
 
-**Cosa fa questo progetto:** è un gioco di ruolo testuale per browser. Si crea un personaggio, si scrivono le azioni in italiano o in inglese, si tirano i dadi e si esplora Casa Vespera. I salvataggi stanno nel browser (tre posti) e, con l'accesso Google, anche su Firestore, il database online di Firebase, per giocare da PC e telefono.
+**Cosa fa questo progetto:** gioco di ruolo testuale per browser, tutto statico (GitHub Pages). Si crea un personaggio, si scrivono azioni in italiano o in inglese, si tirano i dadi e si esplora Casa Vespera. I salvataggi stanno nel browser (3 posti); con l'accesso Google vanno anche su Firestore. Un log anonimo delle partite va su Firestore, in sola scrittura.
 
-**Carico ipotizzato:** una persona alla volta, con due dispositivi (PC e Pixel 9a). Nessun server proprio.
+**Carico ipotizzato:** una persona alla volta, due dispositivi (PC e Pixel 9a), pochi tester. Nessun server proprio.
 
-**Cosa ho letto e provato:** tutti gli 11 file. In gioco.html ho letto per intero la logica (scheda, prove, riposo, livelli, salvataggio, audio, combattimento); i testi della storia solo a campione. Ho giocato 6 partite casuali da 70 azioni ciascuna (420 azioni, nessun errore JavaScript), ho misurato pulsanti e tempi di caricamento e ho pesato un salvataggio.
+**Cosa ho letto e provato:** regole di Firestore, `js/cloud.js` (salvataggio e sincronizzazione), `js/sicuro.js`, tutti gli usi di `innerHTML`, `salvaPartita()`, i due workflow di GitHub, la lista delle dipendenze, i test (16 serie di regole, 11 suite browser, lint, coerenza dei documenti: tutti verdi), il codice morto (`/tmp/deadcode.py`: 0 funzioni orfane in `gioco.html`) e i residui del vecchio motore. Le 4 correzioni della passata del 2/11 sono state ricontrollate (tabella in fondo).
+
+**Cosa non va (in breve):** niente di grave. Un difetto vero ma raro nel cloud, un sistema di stati vecchio che i giocatori non possono più incontrare, e un po' di scarti del vecchio motore ancora in pagina.
 
 ---
-
-## Da sistemare subito
-
-**1. Sul telefono i pulsanti «Usa» delle Tecniche sono troppo piccoli** (`gioco.html` righe 297–303 e 523–524)
-- **Cos'è:** nella scheda, ogni tecnica del Guerriero ha un pulsante «Usa» per lanciarla in combattimento.
-- **Problema:** lo stile dei mini-pulsanti è copiato quattro volte (zaino, tecniche, incantesimi, missioni). La regola che li ingrandisce sul telefono elenca zaino, equipaggiamento, incantesimi e missioni, ma dimentica le tecniche. Misurato a 412px di larghezza: «Usa» delle Tecniche è alto **26px**, quello dello Zaino **34px**.
-- **Correzione:** unire le quattro copie in un'unica regola con tutti i selettori, `#tecniche` compreso. Si tolgono circa 12 righe e il difetto sparisce.
-- **Se non lo facciamo:** in combattimento sul Pixel il Guerriero sbaglia il tocco proprio sul pulsante che usa di più.
-
-**2. Un personaggio creato con i tre posti già pieni va perso** (`creazione.html` righe 833–839)
-- **Cos'è:** quando si conferma la scheda, il personaggio viene messo nel primo posto libero.
-- **Problema:** se i tre posti sono pieni e si apre `creazione.html` direttamente (da un segnalibro o dalla cronologia), il personaggio finisce solo in `personaggio` e `partita`, senza posto. Si gioca, si salva, ma dalla pagina iniziale non compare più, e la prossima nuova partita lo sovrascrive.
-- **Correzione:** all'apertura di creazione.html, se non c'è un posto libero, tornare alla pagina iniziale. Una riga: `if (!["1","2","3"].some(k => !localStorage.getItem("slot" + k))) location.replace("index.html");`
-- **Se non lo facciamo:** raro, ma quando succede il giocatore perde ore di partita senza capire perché.
 
 ## Da sistemare
 
-**3. Due salvataggi ravvicinati segnalano un falso conflitto nel cloud** (`cloud.js` righe 138–155)
-- **Cos'è:** dopo «Salva partita» il gioco manda il posto a Firestore con una transazione, cioè un'operazione che controlla che nessun altro dispositivo abbia salvato nel frattempo.
-- **Problema:** con due tocchi rapidi su «Salva» partono due invii insieme. Il secondo trova già scritto il primo e, poiché la base locale non è ancora aggiornata, risponde «conflitto»: il giocatore legge «☁ conflitto» anche se ha usato un solo dispositivo. Si sistema da solo alla sincronizzazione successiva, ma spaventa. (Ricavato dal codice: senza un account Firebase di prova non l'ho riprodotto.)
-- **Correzione:** mettere gli invii in fila: `let coda = Promise.resolve();` e far passare `inviaSlot` da `coda = coda.then(() => invia(n))`. Tre righe.
-- **Se non lo facciamo:** falsi allarmi di conflitto e dubbi sulla sicurezza dei salvataggi.
+**1. Gli elisir di cura e di protezione curano stati che il personaggio non può più avere** (`gioco.html` righe 5860-5870, 5876-5890, 6669-6670, 7425, 9984-10003)
+- **Cos'è:** Guendalina prepara sei rimedi (ustione, debolezza, veleno, paura, sangue, cecità) e i «concentrati» che rendono immuni per uno scontro. Il gioco ricorda gli stati del giocatore in `usate.stati_pg`.
+- **Problema:** nel motore nuovo nessuna riga scrive più `usate.stati_pg` (si legge, si svuota, ma non si riempie). Un rimedio comune risponde sempre «Sei già a posto»; un concentrato scrive `usate.protezione`, che nessuno legge tranne la riga che la mostra tra i valori. Il giocatore consuma ingredienti per oggetti che non fanno nulla.
+- **Fix:** scegliere. (a) Collegare i sei rimedi agli stati del motore nuovo (`js/poteri.js`: Stordito, Impaurito, ecc.), oppure (b) togliere le ricette, `statiPg`, `haStato`, `togliStatoPg`, `protezionePg` e il ramo `cura_/conc_` (circa 45 righe). È una scelta di gioco: decide Francesco.
+- **Se non lo facciamo:** i tester trovano elisir inutili e pensano a un errore.
 
-**4. Il salvataggio crescerà verso il limite di Firestore** (`gioco.html` riga 6778)
-- **Cos'è:** quando si salva, il diario viene tenuto per intero fino a **80 voci per stanza**.
-- **Problema:** una voce pesa in media **220 byte** (misurato). Con circa 25 stanze piene fanno già circa 440 KB, e le voci dei dialoghi lunghi pesano 3–5 volte di più. Firestore accetta al massimo **1 MiB** per documento; oltre, `cloud.js` risponde «troppo» e quel posto smette di sincronizzarsi per sempre. Inoltre in locale la stessa partita è scritta due volte (`partita` e `slotN`).
-- **Correzione:** abbassare 80 a 30 (un numero). Il diario mostra comunque le ultime 30 azioni di ogni stanza.
-- **Se non lo facciamo:** a fine gioco, proprio sulle partite più lunghe, PC e telefono smettono di allinearsi.
+**2. Due salvataggi ravvicinati segnalano un falso «conflitto» nel cloud** (`js/cloud.js` righe 139-152, ancora aperto dalla passata del 2/11)
+- **Cos'è:** dopo «Salva partita» il posto va a Firestore con una transazione che controlla che nessun altro dispositivo abbia salvato nel frattempo.
+- **Problema:** `setBase` si aggiorna solo quando il primo invio finisce. Con due «Salva» in pochi secondi il secondo trova scritto il primo e risponde «conflitto», anche con un solo dispositivo. Il giocatore legge «☁ conflitto» e può scegliere a mano quale versione tenere.
+- **Fix:** mettere gli invii in fila: `let coda = Promise.resolve();` e `coda = coda.then(() => invia(n))` dentro `inviaSlot`. Tre righe, più un test in `tests/cloud.test.js`.
+- **Se non lo facciamo:** falsi allarmi e sfiducia nei salvataggi.
 
-**5. Le stesse regole sono scritte in tre posti** (`regole.js`; `creazione.html` righe 349, 360, 445, 448; `gioco.html` righe 4926–4927, 4965, 5011–5013)
-- **Cos'è:** regole.js promette «si cambia un valore qui e cambia ovunque».
-- **Problema:** dado vita, risorse di classe, attributi degli incantatori e lista delle abilità sono ricopiati a mano in creazione e gioco. Se cambi il dado del Guerriero in regole.js, il regolamento mostra il nuovo dado ma creazione e passaggio di livello tirano ancora d10. Anche i valori di riserva (`?? 10`, `?? 3`…) sono doppioni, e uno è già sbagliato: in creazione `MAX_ABILITA` ha come riserva **3**, mentre la regola dice **4**.
-- **Correzione:** leggere tutto da `Regole` (es. `const CLASSI = Object.fromEntries(Object.entries(Regole.CLASSI).map(([k, v]) => [k, v.dado]))`) e togliere i valori di riserva: regole.js è un file locale, se manca non parte niente comunque. Circa −15 righe.
-- **Se non lo facciamo:** la prossima modifica alle regole crea un gioco che non rispetta il proprio regolamento.
+**3. Restano scarti del vecchio motore nelle pagine** (`gioco.html`: `disegnaIncantesimi` r. 6758, `incantesimiBox` r. 641, `tecnicheBox` r. 638, barra `r-mana` r. 656, testi «incantesimi/mana» nelle tabelle IT/EN; `incantesimi: []` e `mana: null` nei personaggi)
+- **Cos'è:** il vecchio sistema (mana, incantesimi, tecniche, furia) è stato tolto dalla logica il 27/11. Restano riquadri nascosti, una funzione che nasconde un riquadro, e circa 240 righe che nominano ancora mana, incantesimi, tecniche o furia (in parte testi di storia e commenti, che vanno bene).
+- **Problema:** ogni riga in più va letta e provata; i riquadri nascosti confondono chi legge il codice e il lint non li vede.
+- **Fix:** togliere i tre riquadri e la barra mana dall'HTML, le funzioni stub e le chiavi di testo non più usate. Va fatto a piccoli blocchi con la suite browser verde dopo ogni blocco.
+- **Se non lo facciamo:** nulla si rompe; il debito resta.
 
-**6. La sincronizzazione cloud non ha nessun test** (`cloud.js` righe 166–191)
-- **Cos'è:** `sincronizza()` decide, posto per posto, se caricare, scaricare o chiedere al giocatore quale versione tenere.
-- **Problema:** è la logica più delicata del progetto (decide quale salvataggio sopravvive), ma nessun test si accorgerebbe se una modifica la rompe.
-- **Correzione:** un solo test con un Firestore finto che copra i sei casi della tabella (cambiato solo il locale, solo il cloud, entrambi, eliminato da una parte, eliminato da entrambe, uguali). Il banco di prova l'ho già usato per il controllo dei dati scaricati.
-- **Se non lo facciamo:** un errore qui sovrascrive in silenzio la partita buona con quella vecchia.
+**4. Test mancanti sulle due difese del salvataggio** (`js/sicuro.js`, `js/cloud.js`)
+- **Cos'è:** `sicuro.js` filtra l'HTML (DOMPurify). Se `lib/purify.min.js` non si carica, il file inserisce l'HTML **senza filtro** e scrive solo un avviso in console.
+- **Problema:** nessun test lo verifica. Un salvataggio manomesso o un file mancante dopo un cambio di cartella lascerebbe passare un nome con codice dentro. Oggi le stringhe sono nostre e i soli due `innerHTML` diretti (`gioco.html` 12145 e 12257) sono statici: nessun buco aperto.
+- **Fix:** un test che carica la pagina senza `purify.min.js` e controlla che un nome tipo `<img onerror=...>` resti testo; e in `pulisci()` rispondere con il testo scappato invece del markup quando DOMPurify manca.
+- **Se non lo facciamo:** il giorno che si sposta `lib/`, la protezione sparisce senza che nessuno se ne accorga.
 
-**7. Codice che non serve più** (`gioco.html` righe 4426–4427, 4429, 6916, 6925–6937, 7086, e i testi `dannoStanza` alle righe 1095–1096 e 1521–1522)
-- **Cos'è:** `PROVA_PERCEZIONE`, `PROVA_MENTE` e `laboratorioAperto` non sono usati da nessuna parte. Il danno mentale «tutte le prove della stanza fallite» (`DANNO_STANZA`, `controllaDannoStanza`) è stato tolto: la tabella è vuota e quella funzione non fa mai nulla.
-- **Problema:** circa 25 righe da leggere e mantenere, in italiano e in inglese, che non fanno niente.
-- **Correzione:** cancellarle. Se pensi di riattivare il danno della stanza, tienilo ma scrivilo nel commento.
-- **Se non lo facciamo:** nessun danno immediato, solo peso in un file che ha già 9.000 righe.
+## Piccole migliorie
 
-## Utile ma non urgente
+**5. `immagini/nemici/dafne.png` pesa 5,6 MB** (gli altri nemici sono `.webp` da 0,9-1,2 MB)
+- **Fix:** convertirla in `.webp` (come gli altri) e cambiare il nome nel codice: circa −4,5 MB al primo incontro con Dafne, utile sul telefono.
+- **Se non lo facciamo:** caricamento lento sulla rete mobile, solo per quella scena.
 
-**8. Il ripiego senza howler in `audio.js` si potrebbe togliere** (`audio.js` righe 86–121 e 129–135)
-- **Cos'è:** l'ho aggiunto io al passo 3: se howler non si carica, l'audio usa il lettore del browser.
-- **Problema:** howler è un file locale servito insieme al gioco; se non arriva quello, quasi sicuramente non arriva neanche il resto. Sono circa 45 righe di sicurezza raramente utili (stesso discorso, più piccolo, per il ripiego di `sicuro.js`).
-- **Correzione:** cancellare il ramo `tracciaNativa` e il ripiego di `effetto`. Io lo terrei: è testato e protegge l'audio sul telefono se la cache si corrompe. Decidi tu.
-- **Se non lo facciamo:** 45 righe in più, nient'altro.
-
-**9. Commenti che dicono il contrario del codice** (`tecniche.js` riga 4; `creazione.html` riga 441; `gioco.html` righe 376 e 4466)
-- **Cos'è:** tecniche.js dice «si preparano 4 tecniche speciali» (la regola è 2, 3 con lo scudo); creazione dice che il cambio incantesimi al riposo «non è ancora implementato» (lo è); il CSS dice «riquadro viola come i dialoghi» per capacità e missioni (sono ambra e verde acqua); `PROVE_DICHIARATE` è segnata «VUOTA» ma è piena.
-- **Problema:** chi modifica il gioco, anche un'AI, si fida del commento e sbaglia.
-- **Correzione:** correggere le 4 righe di commento.
-- **Se non lo facciamo:** errori futuri quando si mette mano a quelle parti.
+**6. I due `innerHTML` diretti di `gioco.html` (12145, 12257) saltano `Sicuro.html`**
+- **Fix:** usare `Sicuro.html(el, markup)` come nel resto del gioco: coerenza, due righe.
 
 ---
 
-**Verdict:** sano per un gioco a un giocatore: nessun errore in 420 azioni casuali, dati del cloud validati, nessuna chiave segreta nel codice (la chiave Firebase è pubblica per progetto, la protezione sono le regole di Firestore). Da sistemare per primi: **1** e **2**.
+**Verdict:** sano. Prima da decidere il punto 1 (è una scelta di gioco), poi il 2 (tre righe); il resto si fa a blocchi piccoli.
+**Lean:** circa −45 righe (punto 1b) e −60 righe (punto 3) possibili, 0 dipendenze.
+**Not checked:** testi della storia (letti solo quelli toccati oggi), `strumenti/*` oltre il lint, le regole Firestore pubblicate sulla console (qui c'è la versione proposta), le prestazioni su telefono reale.
 
-**Lean:** −50 righe possibili (−95 togliendo anche i ripieghi del punto 8), −0 dipendenze.
-
-**Not checked:** sincronizzazione con un vero account Firebase (il punto 3 viene dalla lettura del codice); immagini e audio reali (non tra i file ricevuti); i contenuti oltre il piano terra (le partite casuali sono arrivate fino all'atrio e alla sala da conversazione); i testi inglesi, solo a campione. Caricamento di gioco.html misurato: circa 0,6–0,7 s con processore rallentato 4 volte, va bene così.
-
----
-
-## Esito delle correzioni (23 ottobre)
-
-| # | Esito |
-|---|-------|
-| 1 | **Fatto.** Le quattro copie dello stile sono diventate una sola regola. Sul telefono «Usa» delle Tecniche passa da 26px a 34px, come le altre sezioni; nessun altro stile cambiato (42 elementi controllati su PC e telefono, Guerriero e Arcanista). |
-| 2 | **Fatto.** Con tre posti pieni, creazione.html torna alla pagina iniziale. |
-| 3 | **Smentito dal test e non applicato.** Con un Firestore finto anche il codice originale gestisce bene due salvataggi ravvicinati: quando la transazione riprova, la base locale è già aggiornata. Il caso resta nel test come controllo. |
-| 4 | **Fatto.** Diario salvato: 30 voci per stanza. |
-| 5 | **Fatto.** Dado vita, risorse marziali e attributo degli incantatori sono ricavati in regole.js (`DADO_VITA`, `RISORSA_MARZIALE`, `ATTR_MAGIA`); creazione e gioco li leggono da lì, e i valori di riserva sono stati tolti (incluso il `MAX_ABILITA ?? 3` sbagliato). |
-| 6 | **Fatto.** `tests/cloud.test.js`, 8 casi: `node tests/cloud.test.js`. Sul cloud.js originale fallisce il caso «dati illeggibili», sistemato al passo DOMPurify. |
-| 7 | **Fatto.** Tolto il codice morto e il danno «tutte le prove della stanza fallite». Nuova regola decisa: diari (bronzo/argento 1d2, oro/platino 1d4, campo `grado` della pagina) e flashback (1d4) feriscono la mente solo la prima volta e non la portano mai sotto 1. Regolamento aggiornato. |
-| 8 | **Fatto.** Tolto il ripiego HTMLAudio; senza howler il gioco resta giocabile ma muto (il fuoco generato suona comunque). |
-| 9 | **Fatto.** Corretti i 4 commenti. |
-
----
-
-# Audit Ponytail del 3 novembre 2026 (seconda passata)
-
-*Regole di `/ponytail-audit` (DietrichGebert/ponytail, scaricato da GitHub il 3/11), insieme a `impeccable detect` (pbakaus/impeccable 0.1.18) e a tutti gli strumenti del repo.*
-
-**Cosa fa questo progetto:** gioco di ruolo testuale per browser, statico, con salvataggi nel browser e su Firestore. **Carico ipotizzato:** una persona, due dispositivi.
-
-**Cosa ho letto e provato:** tutto ciò che è cambiato il 3 novembre (Arcanista, Vita e Negromanzia, mappa delle vulnerabilità, Enea, regolamento) per intero; `npm test`; tutti i test nel browser (fumo con axe, esterni, bilanciamento, Sciamano, combattimento in 4 parti, livelli, cacce); `impeccable detect` sui file e sulle pagine renderizzate.
-
-## Sistemato in questa passata
-
-1. **Ramo morto del vecchio sistema di incantesimi** (`gioco.html`, `lanciaInScontro`): 34 righe irraggiungibili, perché dal 25/10 ogni incantesimo ha una scuola. Tolte; un incantesimo senza scuola ora mostra «arriverà presto».
-2. **`js/incantesimi.js`** non era caricato da nessuna pagina: cancellato (64 righe).
-3. **Variabili morte** in `js/magia_combattimento.js` (`segno`, `inflitto`) dopo il cambio dello Spirito Servitore: tolte (lint da 14 a 12 avvisi).
-4. **Titoli di creazione.html** saltavano un livello (h1 → h3 → h4): ora h1 → h2 → h3, aspetto identico al pixel (segnalato da impeccable; conta per i lettori di schermo).
-5. **Sei test con aspettative superate** dalle decisioni del giorno (mappa di Ettore, 20 capitoli, 1 mana per Sigillo, Vita, immagine della foresta): aggiornati. Tutti i test nel browser verdi.
-6. **`strumenti/serie_scontri.js`**: opzione `PORT`, per lanciare più serie in parallelo su copie dei file.
-
-## Da sistemare
-
-7. **I dati di Enea sono in due posti e presto in tre** (`js/sala_prova.js` riga 48, `js/preset_test.js` riga 54; poi `NEMICI` in gioco.html)
-   - **Problema:** oggi la salute 36 → 32 è andata cambiata due volte a mano. Lo stesso vale per le vulnerabilità di Ettore (sala e gioco).
-   - **Correzione:** quando Enea entra nel gioco, la sala legga i numeri da `NEMICI` (come già fa per altro), oppure un test confronti sala e gioco. Un test bastano 10 righe.
-   - **Se non lo facciamo:** la sala di prova misura un Enea diverso da quello del gioco e i numeri del bilanciamento mentono.
-8. **Il giocatore automatico conta Runa sull'Arma tra gli incantesimi di danno** (`js/sala_prova.js`, `preparaPredefiniti`, regola `/\dd\d/`)
-   - **Problema:** il testo «1d6 → 1d8» fa scattare la regola: con l'Arcano principale il bot prepara sempre la Runa.
-   - **Correzione:** escludere i testi con «→»; poi rifare la serie dell'Arcanista.
-   - **Se non lo facciamo:** la misura dell'Arcano è un po' falsata (in che verso, si vedrà).
-9. **SISTEMATO (3/11): Stordito saltava anche la Rigenerazione e il Pozzo Arcano** (`gioco.html`, inizio del turno; ora Linfa, Pozzo, Rigenerazione e Spirito Servitore vengono prima del controllo di Stordito)
-   - **Problema:** se il personaggio è Stordito, l'inizio turno esce prima di Rigenerazione, Spirito Servitore e Pozzo, ma gli effetti scalano lo stesso: si perde una cura o un colpo.
-   - **Correzione:** chiamare `inizioTurnoMonaco` / `inizioTurnoPozzo` prima del controllo di Stordito. Due righe spostate. Raro finché pochi nemici stordiscono il personaggio.
-10. **Testi narrativi del vecchio sistema ancora presenti** (`gioco.html`, mappe `inc` e `tsEffetto` dei testi di Ettore e del mastino): circa 60 righe di dati non più letti. Da togliere insieme alle due righe `rimO(B.inc)` e `rimO(B.tsEffetto)` che li copiano.
-
-## Note di impeccable
-
-- `gioco.html`: bagliore rosso attorno al ritratto: **voluto** (salute bassa ben visibile, deciso con Francesco).
-- Spaziatura 0.06em sui titoli in Cinzel: **voluta** (Cinzel solo per titoli brevi).
-- `test.html`: riquadri annidati e barre senza margine interno: pagina di servizio, non del giocatore.
-- Molte dimensioni di carattere fuori dalla scala di DESIGN.md (avvisi): da riordinare solo se si rifà la grafica.
-
-**Verdetto:** sano. Prima la 7 (dati di Enea in un posto solo) quando Enea entra nel gioco, poi la 8 e la 10.
-**Lean:** −98 righe fatte oggi, −60 possibili (punto 10).
-**Non controllato:** regole Firestore sull'emulatore (serve Java), il sito pubblicato e il telefono vero.
+## Stato delle correzioni della passata del 2/11
+| N. | Cosa | Oggi |
+|---|---|---|
+| 1 | Pulsanti «Usa» delle Tecniche troppo piccoli | superato: le Tecniche sono uscite col vecchio motore |
+| 2 | Personaggio perso con i tre posti pieni | **fatto** (`creazione.html` r. 449: torna alla pagina iniziale) |
+| 3 | Falso conflitto con due salvataggi ravvicinati | **aperto** (punto 2) |
+| 4 | Diario troppo grande per Firestore | **fatto** (limite 30 voci per stanza, `gioco.html` `salvaPartita`) |

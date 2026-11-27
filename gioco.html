@@ -1613,8 +1613,6 @@
            poi: nodo di cui riproporre le risposte quando il testo finisce (es. l'elenco delle domande)
          {nome} nel testo diventa il nome del personaggio.
          Ogni domanda del giocatore apre una tendina viola che contiene la risposta. */
-    /* varianti(testo gentile, { indice: riga diversa per l'approccio brusco }) */
-    const varianti = (lista, brusco) => /* non più usata: le varianti brusche sono scritte per intero */ ({ gentile: lista, brusco: lista.map((t, i) => (i in brusco ? brusco[i] : t)) });
     const DIALOGHI = {
       it: {
         guendalina: {
@@ -4624,8 +4622,6 @@
       scontro.conta = dodici ? 0 : n + 1;
       return { dodici, riga: perso ? ET.scontro.perso : dodici ? ET.scontro.dodici : (CONTA_INTERA.includes(n) ? C[n] : ET.numeri[n]) };
     }
-    /* azioni del personaggio che contano per Ettore: provare a stordirlo gli fa perdere il conto; chiudersi in difesa apre il colpo basso */
-    const DIFESE_INC = ["muro_forza", "specchio_rune", "barriera_cinetica", "respingere", "santuario", "invulnerabilita", "manto_ombra", "pelle_pietra"]; /* 28/10: Scudo e Scudo della Fede non fanno scattare il Colpo basso */
     function salvezzaSangue(righe) {
       if (haStato("sangue")) return;
       const cd = 11, m = mod(statPg("Vigore")) + malusStatoProva(), d = tira(20), tot = d + m;
@@ -5187,7 +5183,6 @@
 
     /* prove di atrio e sala da conversazione: nate con il d10, ora d20 come tutte le altre (difficoltà riscalate: 8 → 10, 10 → 12) */
     const PROVA_INDAGARE = { abilita: "Indagare", dado: 20, cd: 10 };
-    const PROVA_INDAGARE_10 = { abilita: "Indagare", dado: 20, cd: 12 };
     /* Se in queste stanze tutte le prove vengono fallite, il giocatore subisce danni mentali */
 
     /* Luoghi con "fisso": testi scritti a mano, uguali in ogni partita (l'IA non interviene).
@@ -5879,7 +5874,6 @@
     ];
     const ELISIR_PER_STATO = 2; /* borsa: al massimo 2 per tipo (22/11): elisir per stato (concentrati compresi) e pozioni di cura, essenza e serenità */
     const statoElisir = (ef) => (/^(cura|conc)_/.test(ef || "") ? ef.replace(/^(cura|conc)_/, "") : null);
-    const elisirPerStato = (k) => zaino.filter(x => statoElisir(effettoDi(x)) === k).reduce((n, x) => n + (Number(x.usi) || 1), 0);
     /* tipo di borsa di un effetto: l'elisir ha il suo stato, le tre pozioni il proprio effetto; il resto (acqua benedetta, razioni, torce) non ha tetto */
     const chiaveBorsa = (ef) => { const st = statoElisir(ef); return st ? "e:" + st : (ef === "pozCura" || ef === "pozMana" || ef === "serenita") ? "p:" + ef : null; };
     const nellaBorsa = (k) => zaino.filter(x => chiaveBorsa(effettoDi(x)) === k).reduce((n, x) => n + (Number(x.usi) || 1), 0);
@@ -5919,7 +5913,6 @@
     const malusStatoProva = () => 0; /* 28/10: Avvelenato non toglie più 2 a prove e tiri salvezza, fa 1d4 a turno */
     const malusStatoCA = () => (haStato("paura") ? -2 : 0) + (haStato("sbilanciato") ? -2 : 0); /* 01/11: Sbilanciato −2 */
     const svantaggioPg = () => haStato("cieco"); /* Accecato: 2d20 per colpire, tieni il peggiore */
-    const tiroAttPg = () => { if (!svantaggioPg()) return { d: tira(20) }; const a = tira(20), b = tira(20); return { d: Math.min(a, b), tiri: [a, b] }; };
     function fineTurnoNemStati() { scalaStatoPg("paura"); scalaStatoPg("sbilanciato"); }                        /* dopo il turno del nemico: il malus alla tua CA */
     /* fine dello scontro: gli stati se ne vanno e la protezione del raro si consuma (29/10) */
     function fineScontroStati() {
@@ -6365,14 +6358,10 @@
     const incantatore = () => false; /* 08/11: niente incantesimi nel motore nuovo */
     let capLuceCache = null;
     const capLuce = () => capLuceCache || (capLuceCache = { id: "luce", costo: MG.CAPACITA[pg.classe].costo, nome: MG.CAPACITA[pg.classe].nome, effetto: MG.CAPACITA[pg.classe].effetto, capacita: true });
-    const postiPrinc = () => Regole.TECNICHE_PER_LIVELLO.slice(0, Math.max(1, Math.min(5, livelloPg()))).reduce((a, b) => a + b, 0);
-    const incTotale = () => postiPrinc() + MG.POSTI_ALTRA_SCUOLA;
     /* 04/11: la scuola potenziata dalla via di prestigio (Aldo → Forza / Negromanzia, Guendalina → Arcano / Vita), null prima del livello 3 */
     const scuolaPotenziata = () => (incantatore() && livelloPg() >= 3 && viaPg() && window.MagiaCombattimento ? window.MagiaCombattimento.scuolaDellaVia(pg.classe, viaPg()) : null);
     const idIncPreparati = () => (typeof usate !== "undefined" && Array.isArray(usate.incPreparati) ? usate.incPreparati : [].concat(pg.incantesimi || [])).map(x => typeof x === "string" ? x : x && x.id).filter(Boolean);
     const incPreparati = () => idIncPreparati().map(id => MG.INCANTESIMI.find(i => i.id === id)).filter(i => i && MG.CLASSI[pg.classe].includes(i.scuola));
-    const incSbloccati = () => MG.INCANTESIMI.filter(i => MG.CLASSI[pg.classe].includes(i.scuola) && i.liv <= livelloPg());
-    const incLiberi = () => Math.max(0, incTotale() - incPreparati().length);
     const incVia = () => { const v = incantatore() && livelloPg() >= 3 ? viaPg() : null; return v ? MG.VIE.filter(x => x.via === v && MG.CLASSI[pg.classe].includes(x.scuola) && x.liv <= livelloPg()).sort((a, b) => a.liv - b.liv) : []; };
     const listaIncantesimi = () => incantatore() ? [capLuce(), ...incPreparati(), ...incVia()] : [];
     const nomeInc = (inc) => Lingua.t(inc.nome) || inc.id || "";
@@ -6921,86 +6910,6 @@
 
     /* ---------- Preparazione: tecniche (Guerriero) e incantesimi (Arcanista, Monaco) ----------
        Si cambia riposando; un posto ancora vuoto (nuovo livello) si può riempire subito. */
-    const prepIncantesimi = () => incantatore();
-    const haPreparazione = () => haTecniche() || prepIncantesimi();
-    function apriPreparazione(soloVuoti) {
-      if (scontro) return sist(RT.soloScontro.replace(/.*/, RT.prep.soloRiposo));
-      const f = document.getElementById("finestraPrep"), box = document.getElementById("prepBox"), P = RT.prep;
-      box.replaceChildren();
-      const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
-      const conferma = el("button", "primario", P.conferma), annulla = el("button", "", P.annulla), nota = el("span");
-      let maxT = 0;
-      if (haTecniche()) {
-        maxT = maxTecniche();
-        const prep = tecnichePreparate(), opz = [...prep, ...opzioniTecniche().filter(t => !prep.includes(t))];
-        maxT = CMB.sceltaPredefinita(opz, livelloPg(), scudoPosti()).length; /* quante se ne possono davvero preparare, quote comprese */
-        box.append(el("h2", "", P.titoloTec), el("p", "guida", sciamano() ? RT.guidaTecNatura(maxT) : P.guidaTec(maxT)));
-        const fs = el("fieldset");
-        if (!opz.length) fs.append(el("p", "guida", P.nessuna));
-        opz.forEach(t => {
-          const lab = el("label"), c = el("input"); c.type = "checkbox"; c.name = "tec"; c.value = t.id; c.checked = prep.includes(t);
-          if (soloVuoti && prep.includes(t)) { c.disabled = true; c.dataset.fissa = "1"; } /* fuori dal riposo si riempiono solo i posti vuoti */
-          lab.append(c, el("span", "", `${nomeTec(t)} — ${costoTec(t.costo)} · ${RT.posto(t.liv)}${tipoOk(t) ? "" : " · " + RT.richiede[t.tipo]}`), el("small", "", Lingua.t(t.effetto)));
-          fs.append(lab);
-        });
-        box.append(fs);
-        maxT = Math.min(maxT, maxTecniche());
-        if (viaPg() && !soloVuoti && !sciamano()) { /* serie della via: dell'arma o dello scudo, fino al prossimo riposo (non per lo Sciamano) */
-          const V = RT.via, ta = tipoArmaVia();
-          box.append(el("h2", "", V.serieTit), el("p", "guida", V.serieGuida));
-          const fsv = el("fieldset");
-          [["arma", ta], ["scudo", "Scudo"]].forEach(([k, tipo]) => {
-            const lab = el("label"), c = el("input"); c.type = "radio"; c.name = "serie"; c.value = k; c.checked = serieVia() === k;
-            const abil = TEC.filter(t => t.via === viaPg() && t.tipo === tipo && t.liv <= livelloPg()).map(t => nomeTec(t)).join(" · ");
-            lab.append(c, el("span", "", k === "scudo" ? V.serie.scudo + (scudo ? "" : " · " + RT.richiede.Scudo) : V.serie.arma(V.tipoArma[ta] || ta)), el("small", "", abil || "—"));
-            fsv.append(lab);
-          });
-          box.append(fsv);
-        }
-      }
-      let max = 0;
-      if (prepIncantesimi()) {
-        const att = incPreparati().map(x => x.id);
-        max = incTotale();
-        box.append(el("h2", "", P.titoloInc), el("p", "guida", RT.inc.guidaPrep(max)));
-        const fs = el("fieldset"), scPot = scuolaPotenziata();
-        MG.CLASSI[pg.classe].forEach(sk => {
-          fs.append(el("p", "guida", Lingua.t(MG.NOMI_SCUOLE[sk]) + (sk === scPot ? ` — ${RT.inc.potenziata(Lingua.t(MG.NOMI_VIE[pg.classe][viaPg()]))}` : "")));
-          incSbloccati().filter(i => i.scuola === sk).sort((x, y) => x.liv - y.liv).forEach(inc => {
-            const lab = el("label"), c = el("input"); c.type = "checkbox"; c.name = "inc"; c.value = inc.id; c.dataset.scuola = sk; c.checked = att.includes(inc.id);
-            if (soloVuoti && c.checked) { c.disabled = true; c.dataset.fissa = "1"; } /* fuori dal riposo si riempiono solo i posti vuoti */
-            lab.append(c, el("span", "", `${nomeInc(inc)} — ${inc.costo} ${U.mana.toLowerCase()} · ${RT.posto(inc.liv)}`), el("small", "", Lingua.t(inc.effetto)));
-            fs.append(lab);
-          });
-        });
-        box.append(fs);
-      }
-      const controlla = () => {
-        const inc = [...box.querySelectorAll('input[name="inc"]')], sc = inc.filter(c => c.checked).length;
-        inc.forEach(c => { if (!c.dataset.fissa) c.disabled = !c.checked && sc >= max; });
-        const tec = [...box.querySelectorAll('input[name="tec"]')], st = tec.filter(c => c.checked).length;
-        const scelteT = tec.filter(c => c.checked).map(c => TEC.find(x => x.id === c.value)).filter(Boolean);
-        tec.forEach(c => { if (!c.dataset.fissa) c.disabled = !c.checked && (st >= maxT || !aggiungibile(scelteT, TEC.find(x => x.id === c.value))); }); /* quote: 2 di livello 1, 2 di livello 2, 1 per gli altri */
-        const manca = (max ? max - sc : 0) + (maxT ? Math.max(0, maxT - st) : 0);
-        nota.textContent = manca > 0 ? P.mancano(manca) : "";
-        conferma.disabled = manca > 0;
-      };
-      box.addEventListener("change", controlla);
-      const az = el("div", "azioni"); az.append(nota, annulla, conferma); box.append(az);
-      controlla();
-      const chiudi = () => { f.hidden = true; };
-      annulla.addEventListener("click", chiudi);
-      conferma.addEventListener("click", () => {
-        if (haTecniche()) usate.tecPreparate = [...box.querySelectorAll('input[name="tec"]:checked')].map(c => c.value);
-        { const sv = box.querySelector('input[name="serie"]:checked'); if (sv) usate.viaSerie = sv.value; }
-        if (max) usate.incPreparati = [...box.querySelectorAll('input[name="inc"]:checked')].map(c => c.value);
-        salvaUsate(); chiudi();
-        disegnaTecniche(); disegnaIncantesimi();
-        fuoriDallaTendina(() => sist(P.ok));
-      });
-      f.hidden = false;
-      (box.querySelector("input") || conferma).focus();
-    }
 
     function disegnaAbilita() {
       const ab = document.getElementById("abil");
@@ -7362,8 +7271,6 @@
 
     /* ---------- Fine dei dialoghi: sblocchi e missioni ---------- */
     const sblocco = (righe, tipo) => aggiungi({ tipo: "sistema", box: tipo || "cap", fuori: true, righe }); /* cap = capacità (ambra), mis = missioni (verde acqua) */
-    /* spostamento automatico (fuga, ritorno con la scaletta): i testi della stanza restano fuori dalle tendine */
-    const vaiDaSolo = (id) => { if (luogo !== "cantina") return; vistaFissa = false; fuoriTendina = true; try { vai(id); } finally { fuoriTendina = false; } };
     function sbloccaRiposo() {
       if (usate.riposo === "sbloccato") return;
       usate.riposo = "sbloccato"; usate.razioni_date = true; salvaUsate();
@@ -7786,8 +7693,6 @@
        al buio l'immagine della sala vuota diventa quella con Aldo, e le candele si riaccendono tremolando.
        Le due immagini hanno la stessa inquadratura: cambia soltanto la presenza di Aldo. */
     const LUCE = (b, s) => ({ filter: `brightness(${b}) saturate(${s || 1})` });
-    const SPEGNIMENTO = [LUCE(1), LUCE(0.72), LUCE(0.95), LUCE(0.5), LUCE(0.68), LUCE(0.3, 1.3), LUCE(0.42, 1.3), LUCE(0.16, 1.5), LUCE(0.12, 1.6)];
-    const RIACCENSIONE = [LUCE(0.12, 1.6), LUCE(0.4, 1.3), LUCE(0.2, 1.4), LUCE(0.62), LUCE(0.48), LUCE(0.9), LUCE(0.78), LUCE(1)];
     /* Aldo affiora dall'ombra: l'immagine con lui si rivela a partire dai suoi piedi, allargandosi come una macchia d'inchiostro
        che risale; all'inizio la macchia è scura e fredda, poi prende i colori della sala. Niente stacco né dissolvenza. */
     async function affiora(img, nuova, alt) {
@@ -8730,7 +8635,6 @@
         scelta: "You have a new choice at the racks.", nuovo: (n) => `Aldo looks at you a moment longer than usual: the racks behind the grate now open for ${n}.`,
         missione: { da: "From: Aldo, the butler", ob: (l) => [l === "foresta" ? "Find the prey in the pine forest" : "Find the prey in the garden", "Bring it down", "Bring the trophy to Aldo"], cieca: "Aldo knows nothing about this prey: look at it and study it before you attack.", scoperto: "You have found out:" } }
     });
-    const SBLOCCHI_ARM = [2, 4, 6];
     function accettaCaccia(id) {
       if (usate.q4 !== "completata" || usate.cc_stato || luogo !== "sala_caccia" || !PREDE[id] || PREDE[id].finestra == null) return;
       if (!finestraAperta(PREDE[id].finestra) || (usate.cc_fatte_lista || []).includes(id)) return;
@@ -8865,7 +8769,6 @@
       if (animale && PREDE[id].avvicina) return avvicinaAnimale(id);
       avviaScontro(id, { ctx: z === "foresta" ? "pineta" : "fuori", testi: animale || z === "fuori" ? id : "p_" + id });
     }
-    const incontroPineta = () => incontroZona(false);
     /* ---------- agguati (29/10): fuori casa, dopo il bronzo; 1 su 5 uno dei cinque avventurieri ancora in gioco ----------
        usate.avv[id] = { stato: "incontrato" | "risparmiato" | "morto", giorno, pe }: «risparmiato» torna una volta, dopo un riposo, con +1 livello. */
     const AGT = () => Lingua.t({ it: { bottino: (n) => `Tra le sue cose trovi: ${n}.` }, en: { bottino: (n) => `Among their things you find: ${n}.` } });
@@ -9071,7 +8974,6 @@
        Indossato: titolo sotto il ritratto, +2 Furtività nel pedinamento dei mastini (riconoscono l'odore di Aldo), più agguati fuori casa (45:20:35).
        Nascosto: niente titolo né bonus, meno agguati (55:30:15). Aldo lo nota. Enea impugna il maglio solo se lo vede. TESTI PROVVISORI */
     const fermaglioIndossato = () => !!usate.fermaglio && !usate.fermaglio_nascosto;
-    const bonusFurtivitaPedinamento = () => (fermaglioIndossato() ? 2 : 0); /* per il pedinamento dei mastini del secondo piano (da fare) */
     const FM = () => Lingua.t({
       it: { etichetta: "Fermaglio", nascosto: (n) => `${n} (nascosto)`, nascondiBtn: "Nascondi il fermaglio", appuntaBtn: "Appunta il fermaglio",
         indossato: ["Titolo visibile sotto il ritratto", "Pedinamento dei mastini: +2 Furtività", "Fuori casa sei una preda di valore: più agguati"],
@@ -9455,8 +9357,6 @@
       scelte([{ testo: X.leggiSi, fn: () => { chiudiScelte(); trovaPagina(n); } },
         { testo: X.leggiNo, fn: () => { chiudiScelte(); trovaPagina(n, true); sist(X.nonLetta); } }]);
     }
-    /* giocattoli di Agnese: cinque in tutto, ne servono tre (il contatore comparirà dopo aver parlato con lei). Questo è quello delle siepi */
-    const giocattoliTrovati = () => (usate.giocattoli === "presi" ? 1 : 0) + (usate.giocattolo_siepe === "preso" ? 1 : 0);
     function offriGiocattoloSiepe() {
       if (usate.giocattolo_siepe === "preso") return;
       const G = GX().gioc;
@@ -11298,7 +11198,6 @@
     const dadiVuln = (tipo) => { const n = scontro || ultimoNemico, D = n && NEMICI[n.id]; return D && D.vulnerabile && tipo && D.vulnerabile.includes(tipo) ? 1 : 0; }; /* +1 dado di danno (28/10) */
     /* 01/11: resistenza a un tipo di danno = danno dimezzato (per difetto, minimo 1). «veleno» minuscolo resta per Dafne e il sovrano */
     const resisteA = (tipo) => { const n = scontro || ultimoNemico, D = n && NEMICI[n.id], r = (D && D.resiste) || []; return !!tipo && (r.includes(tipo) || (tipo === "Veleno" && r.includes("veleno"))); };
-    const tipoScuola = (s) => ({ sangue: "Sangue", illusione: "Illusione", luce: "Luce", ombra: "Ombra" })[s] || null; /* 04/11 sera: Sangue e Illusione al posto di Forza e Arcano */
     const caNem = () => { const n = scontro || ultimoNemico; return NEMICI[n.id].ca + (Number(n.caMod) || 0) - (n.eff ? CMB.malusCA(n) : 0) - (n.sorpreso && (Number(n.round) || 0) <= 1 ? 2 : 0) + (n.giaVista ? 2 : 0); }; /* 02/11: «L'ho già vista» di Ettore */ /* 01/11: sorpreso dalla Furtività: −2 nel primo turno */ /* il consiglio di Aldo abbassa la CA di Ettore; Sbilanciato e Incrinatura la abbassano */
     /* classe difficoltà degli incantesimi: 8 + modificatore (Mente per il Sapiente, Spirito per l'Accolito) + livello */
     const ATTR_INC = { Sapiente: "Mente", Accolito: "Spirito" };
@@ -11803,7 +11702,6 @@
     /* 22/11: Enea, il guardiano d'argento (solo testi: statistiche e poteri dal motore, Nemici.BOSS.enea) */
     PREDE.enea = { guardiano: true, livello: 3, zone: [], ca: 13, pvFissi: 62, dannoDado: 8, dannoBonus: 2, attacco: 6, attacchi: 1, pa: 0, it: ENEA_TUTTI.it.nemico, en: ENEA_TUTTI.en.nemico };
     PREDE.dafne = { guardiano: true, livello: 4, zone: [], ca: 15, pvFissi: 72, dannoDado: 8, dannoBonus: 3, attacco: 8, attacchi: 1, pa: 0, it: DAFNE_TUTTI.it.nemico, en: DAFNE_TUTTI.en.nemico }; /* 22/11: Dafne, la guardiana d'oro (statistiche dal motore, Nemici.BOSS.dafne) */
-    const PRESE_INFERNALI = () => Object.keys(PREDE).filter(k => PREDE[k].grado >= 1);
     for (const [id, p] of Object.entries(PREDE)) NEMICI[id] = { ca: p.ca, dadoVita: p.dadoVita, pvBase: p.pvBase, pvFissi: p.pvFissi, dannoDado: p.dannoDado, dannoBonus: p.dannoBonus, boss: false, attacco: p.attacco, attacchi: p.attacchi, probPresa: 0, probSoffio: 0, soffio: null, ritratto: null, comune: true, fugge: p.fugge, passivo: p.passivo, parte: p.parte, qta: p.qta, animale: p.grado === 0, grado: p.grado, livello: p.livello, pa: p.pa, abilita: p.abilita, immune: p.immune, zone: p.zone, vulnerabile: p.vulnerabile, agguato: p.agguato, statFisse: p.stat || (p.pvFissi != null ? { Vigore: 10, "Agilità": 10 } : undefined) /* 01/11: le cacce comuni hanno il loro profilo */,
       tipoDanno: p.tipoDanno, resiste: p.resiste, primaria: p.primaria, cacciaComune: !!p.cacciaComune, finestra: p.finestra } /* 28/10: statistiche fisse; il bonus vero sta in attacco e dannoBonus */;
     NEMICI.enea = { ...NEMICI.enea, boss: true, comune: false, ritratto: "immagini/png/enea_combat.webp" }; /* 22/11: Enea è un guardiano */
@@ -11920,7 +11818,6 @@
       return (eff("armaPiu") || eff("runa")) ? passoDado(d) : d; /* Arma Migliorata e Runa sull'Arma */
     };
     const bonusArmaPg = () => (arma && arma.nome !== "—" && Number(arma.bonus)) || 0; /* 29/10: armi del bottino «+livello», fissato al ritrovamento */
-    const torciaInMano = () => !!(mano && mano.nome === "Torcia" && Number(mano.usi) > 0);
     const pozioneCura = () => zaino.find(it => effettoDi(it) === "pozCura" && Number(it.usi) > 0);
     const bevandaDa = (t) => { /* «bevo l'olio», «bevo il distillato», «bevo la pozione di mana»; altrimenti una cura */
       const ef = /\bman[ao]\b|essenz|essence|\bolio\b|\boil\b|falen|moth/.test(t) ? "pozMana" : /distillat|serenit|liquor|fiaschett/.test(t) ? "serenita" : /razion|mangi|\bcib|\beat\b|ration|food/.test(t) ? "razione" : "pozCura";
@@ -12099,7 +11996,6 @@
     const TRATTI_MARZ = () => LINGUA === "en"
       ? { ultimo: "Last to Fall: the blow should have dropped you, but you stay on your feet with 1 health.", linfa: (n) => `Returning Sap: the poison in the enemy flows back to you as sap, you heal ${n}.` }
       : { ultimo: "Ultimo a cadere: il colpo doveva atterrarti, ma resti in piedi con 1 di salute.", linfa: (n) => `Linfa che ritorna: il veleno nel nemico ti torna come linfa, ti curi di ${n}.` };
-    const respiroOmbraPg = () => !!(scontro && pg && pg.classe === "Accolito" && (Number(scontro.bilancia) || 0) < 0); /* 03/11 */
     function beviScontro(it) {
       it = it || pozioneCura();
       const r = effettoBevanda(it);
@@ -12140,35 +12036,12 @@
     const sciamano = () => !!(pg && pg.classe === "Forestiero" && SCI); /* Sciamano: tecniche della natura (js/sciamano.js), punti natura */
     const haTecniche = () => false; /* 08/11: niente tecniche nel motore nuovo */
     const tecDellaClasse = (t) => (sciamano() ? t.classe === "Forestiero" : !t.classe); /* il Guerriero non vede quelle dello Sciamano e viceversa */
-    const costoTec = (n) => (sciamano() ? RT.costoNatura(n) : RT.costo(n));
     const nomeTec = (t) => Lingua.t(t.nome);
     const tipoArmaInMano = () => (arma && arma.nome !== "—" && arma.tipoDanno) || null;
-    const tipoOk = (t) => t.tipo === "Utilita" || t.tipo === "Natura" || (t.tipo === "Scudo" ? !!scudo : t.tipo === tipoArmaInMano()); /* lo Sciamano usa le sue con qualsiasi arma */
     const scudoPosti = () => !sciamano() && !!scudo; /* il posto in più dello scudo è del Guerriero */
     const maxTecniche = () => CMB.slotTecniche(livelloPg(), scudoPosti()); /* 2, 4, 5, 6, 7 (+1 con lo scudo) */
     const viaPg = () => (livelloPg() >= 2 && (usate.via === "aldo" || usate.via === "guendalina")) ? usate.via : null;
     const nomeViaPg = (v) => incantatore() ? Lingua.t(MG.NOMI_VIE[pg.classe][v]) : sciamano() ? RT.via.nomiNatura[v] : RT.via.nomi[v];
-    const tipoArmaVia = () => tipoArmaInMano() || eqPg().armaTipoDanno; /* le abilità della via cambiano con il tipo d'arma */
-    /* serie della via preparata al riposo: quella dell'arma o quella dello scudo (usate.viaSerie) */
-    const serieVia = () => (usate.viaSerie === "scudo" ? "scudo" : "arma");
-    const tipoVia = () => (serieVia() === "scudo" ? "Scudo" : tipoArmaVia());
-    const tecnicheVia = () => { const v = viaPg(), tipo = sciamano() ? "Natura" : tipoVia(); return v ? TEC.filter(t => t.via === v && t.tipo === tipo && tecDellaClasse(t) && t.liv <= livelloPg()) : []; };
-    /* tecniche sbloccate dal livello e adatte a ciò che si impugna (le possibili scelte quando si prepara) */
-    const opzioniTecniche = () => {
-      if (sciamano()) return TEC.filter(t => t.classe === "Forestiero" && !t.via && t.liv <= livelloPg());
-      const tipo = tipoArmaInMano() || eqPg().armaTipoDanno; return TEC.filter(t => !t.classe && t.tipo !== "Utilita" && !t.via && t.liv <= livelloPg() && (t.tipo === tipo || (t.tipo === "Scudo" && scudo)));
-    };
-    /* le tecniche speciali preparate: scelte in creazione (pg.tecniche) e cambiate riposando (usate.tecPreparate) */
-    function tecnichePreparate() {
-      if (!Array.isArray(usate.tecPreparate)) {
-        const dalla = Array.isArray(pg.tecniche) && pg.tecniche.length ? pg.tecniche.map(id => TEC.find(t => t.id === id)).filter(t => t && tecDellaClasse(t)) : CMB.sceltaPredefinita(opzioniTecniche(), livelloPg(), scudoPosti()); /* personaggi creati prima: le prime disponibili */
-        usate.tecPreparate = dalla.slice(0, maxTecniche()).map(t => t.id);
-      }
-      return usate.tecPreparate.map(id => TEC.find(t => t.id === id)).filter(t => t && !t.via && tecDellaClasse(t)); /* id di tecniche tolte: posto vuoto */
-    }
-    const postiLiberi = () => Math.max(0, maxTecniche() - tecnichePreparate().length);
-    /* una tecnica si può aggiungere alla scelta se rispetta le quote dei livelli (e i posti) */
-    const aggiungibile = (scelte, t) => CMB.sceltaValida([...scelte, t], livelloPg(), scudoPosti()).ok;
     function guadagnaFuria(n) {
       const r = risorsaPg(); if (!r || r.id !== "furia" || !(pg.risorsaUsata > 0) || !(n > 0)) return null;
       pg.risorsaUsata = Math.max(0, pg.risorsaUsata - n); disegnaVitali(); modificato();

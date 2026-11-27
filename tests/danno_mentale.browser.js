@@ -62,11 +62,23 @@ caso("Anello del Primo Vespera: la visione del funerale parte da sola, una volta
   const { page, errori, chiudi } = await apri(b, PG(), PARTITA({ luogo: "cripta" }));
   await page.evaluate(() => sarcofago(true)); await page.waitForTimeout(300);
   eq(await page.evaluate(() => [usate.flash_anello, pg.dannoMentale || 0]), [true, 0]);
-  vero(await page.evaluate(() => document.getElementById("diario").textContent.includes(A2.anello.visione[3])), "la visione è nel diario");
+  vero(await page.evaluate(() => document.getElementById("diario").textContent.includes(A2.anello.visione[1].slice(0, 60))), "la visione è nel diario");
   vero(!/danni mentali|mental damage/i.test(await testo(page)), "nessuna frase sul danno mentale");
   await page.evaluate(() => sarcofago(true)); await page.waitForTimeout(200);
   eq(await page.evaluate(() => pg.dannoMentale || 0), 0, "la seconda volta niente di nuovo");
   eq(errori, [], "errori in console"); await chiudi();
+});
+
+caso("Prima lacrima: parte il ricordo di Adele (il figlio maggiore), una volta, senza danno mentale", async (b) => {
+  const { page, errori, chiudi } = await apri(b, PG(), PARTITA({ luogo: "atrio" }));
+  await page.evaluate(() => { prendiBlasone(); inserisciBlasone(); }); await page.waitForTimeout(300);
+  eq(await page.evaluate(() => [usate.ricordo_lacrima1, pg.dannoMentale || 0]), [true, 0]);
+  vero(await page.evaluate(() => document.getElementById("diario").textContent.includes("la levatrice ti posa il neonato") || document.getElementById("diario").textContent.includes("the midwife lays the newborn")), "il ricordo è nel diario");
+  const n = await page.evaluate(() => document.getElementById("diario").textContent.length);
+  await page.evaluate(() => { prendiBlasone(); inserisciBlasone(); }); await page.waitForTimeout(300);
+  const t = await page.evaluate(() => (document.getElementById("diario").textContent.match(/levatrice|midwife/g) || []).length);
+  eq(t, 1, "il ricordo non si ripete");
+  eq(errori, [], "errori nella pagina"); await chiudi();
 });
 
 caso("Scale dell'atrio: il primo tocco mostra la visione del giardino senza danno", async (b) => {

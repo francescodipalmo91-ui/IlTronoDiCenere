@@ -114,7 +114,7 @@ caso("Stacco: il mastino resta in piedi e dopo 3 turni sparisce; Dafne torna", a
   eq(errori, [], "errori nella pagina"); await chiudi();
 });
 
-caso("A 0 parla: tono Gentile, muore; stocco, corno (visione di Francesco senza 📖) e fermaglio d'oro; Aldo lo riceve senza il corno", async (b) => {
+caso("A 0 parla: tono Gentile, muore; stocco, corno (visione dell'ultima caccia, 📖) e fermaglio d'oro; Aldo lo riceve senza il corno", async (b) => {
   const { page, errori, chiudi } = await apri(b, PG(), PARTITA());
   await page.evaluate(() => accettaOro());
   await nellaForesta(page, [0.99, 0, 0]);
@@ -122,10 +122,10 @@ caso("A 0 parla: tono Gentile, muore; stocco, corno (visione di Francesco senza 
   await premi(page, "Riposa");
   for (let i = 0; i < 80 && !(await page.evaluate(() => usate.dafne === "morta")); i++) { await page.evaluate(() => document.getElementById("diario").click()); await page.waitForTimeout(250); }
   const r = await page.evaluate(() => ({ dafne: usate.dafne, q6: usate.q6, tono: usate.dafne_tono, z: zaino.map(x => x.id),
-    vis: diario.map(e => (e.righe || []).join(" ")).find(t => /Sei Aldo/.test(t)) || "", parla: diario.filter(e => e.chi === "Dafne").map(e => e.righe[0]) }));
+    vis: diario.map(e => (e.righe || []).join(" ")).find(t => /il signore non dorme più/.test(t)) || "", parla: diario.filter(e => e.chi === "Dafne").map(e => e.righe[0]) }));
   eq(r.dafne, "morta"); eq(r.q6, "prova"); eq(r.tono, "gentile");
   vero(["stocco_dafne", "corno_signore", "fermaglio_oro"].every(k => r.z.includes(k)), "bottino: " + r.z);
-  vero(r.vis && !/📖/.test(r.vis), "visione del corno, senza segno"); vero(r.parla.length && r.parla.every(t => /^📖 /.test(t)), "dialoghi di Dafne segnati: " + r.parla);
+  vero(r.vis && /^📖/.test(r.vis), "visione del corno (l'ultima caccia del re), provvisoria con il segno"); vero(r.parla.length && r.parla.every(t => /^📖 /.test(t)), "dialoghi di Dafne segnati: " + r.parla);
   await page.evaluate(() => vai("sala_caccia"));
   await page.waitForTimeout(2500);
   const a = await page.evaluate(() => ({ f: usate.fermaglio, q6: usate.q6, oro: zaino.some(x => x.id === "fermaglio_oro"), corno: zaino.some(x => x.id === "corno_signore"), aldo: diario.filter(e => e.chi === "Aldo").map(e => e.righe.join(" ")).pop() }));

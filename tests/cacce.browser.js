@@ -1,5 +1,5 @@
 /* Test nel browser delle cacce comuni (01/11/2026): finestre tra un fermaglio e l'altro, studio di Aldo (★ e ★★),
-   studio del giocatore (★★★: guardare, studiare, avvicinarsi), resistenze e i quattro stati nuovi del personaggio.
+   studio del giocatore (★★★: guardare, studiare, avvicinarsi) e scheda della preda. (I vecchi stati Sbilanciato/Frastornato/Inibito sono usciti col vecchio motore: gli stati nuovi stanno in tests/poteri.test.js.)
    Uso: python3 -m http.server 8765 --bind 127.0.0.1, poi node tests/cacce.browser.js */
 const { chromium } = require("playwright");
 const BASE = process.env.BASE || "http://127.0.0.1:8765/";
@@ -9,14 +9,15 @@ const eq = (a, b, msg) => { if (JSON.stringify(a) !== JSON.stringify(b)) throw n
 const vero = (x, msg) => { if (!x) throw new Error(msg || "atteso vero"); };
 
 const PG = (o) => Object.assign({
-  nome: "Prova", razza: "Umano", classe: "Soldato", livello: 1, immagine: null,
+  nome: "Prova", razza: "Umano", classe: "Soldato", livello: 1, immagine: null, motore: 2, spec: "berserker",
+  scelte: ["colpo_poderoso", "colpo_di_mestiere", "spezza_guardia", "assalto_implacabile"], modalita: "facile", idPartita: "test",
   statisticheBase: { Vigore: 16, "Agilità": 12, Mente: 10, Spirito: 12 }, statistiche: { Vigore: 16, "Agilità": 12, Mente: 10, Spirito: 12 },
   modificatori: { Vigore: 3, "Agilità": 1, Mente: 0, Spirito: 1 }, tiroDado: { dado: 10, valore: 10 }, puntiVita: 23, saluteMentale: 21,
-  classeArmatura: 14, mana: null, risorsa: { id: "furia", max: 13 }, incantesimi: [], tecniche: ["polso", "morso_acciaio"],
+  classeArmatura: 14, mana: null, risorsa: null, incantesimi: [], tecniche: [],
   abilita: [{ nome: "Atletica", attributo: "Vigore", valore: 4 }],
   equipaggiamento: { arma: "Spada corta", armaDanno: "1d6", armaTipoDanno: "Tagliente", armaMani: 1, armatura: "Armatura media", armaturaCA: 4, malusAgilita: 0, scudo: null, dotazione: [] }
 }, o || {});
-const PARTITA = (o) => Object.assign({ usate: { riposo: "sbloccato" }, diario: [], luogo: "cucina", livello: 1, crescita: { salute: 0, mente: 0, risorsa: 0 }, risorsaUsata: 0, esperienza: 0, ora: Date.now() }, o || {});
+const PARTITA = (o) => Object.assign({ usate: { riposo: "sbloccato" }, diario: [], luogo: "cucina", livello: 1, crescita: { salute: 0, mente: 0, risorsa: 0 }, risorsaUsata: 0, esperienza: 0, ora: Date.now(), zaino: [] }, o || {});
 
 async function apri(browser, url, pg, partita) {
   const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 } });
@@ -64,7 +65,7 @@ caso("Cacce: finestre per fermaglio; ★ con lo studio di Aldo nel diario e nell
   await page.evaluate(() => accettaCaccia("bruto"));
   eq(await page.evaluate(() => [usate.cc_stato, usate.cc_preda]), ["attiva", "bruto"]);
   await page.waitForFunction(() => document.getElementById("diario").textContent.includes("Studio di Aldo"), null, { timeout: 15000 });
-  vero((await diario(page)).includes("vulnerabile a illusione; resistente a contundente"), "nota di Aldo");
+  vero((await diario(page)).includes("Studio di Aldo: vulnerabile a psichico; resistente a contundente."), "nota di Aldo");
   vero((await page.evaluate(() => document.getElementById("missioni").textContent)).includes("Studio di Aldo"), "nota nelle Missioni");
   eq(await page.evaluate(() => [cacciaQui("giardino"), cacciaQui("pineta")]), [true, false], "★ in giardino");
   eq(errori, [], "errori in console"); await chiudi();
@@ -89,7 +90,7 @@ caso("Cacce ★★★: Aldo è cieco; guardare con un tiro alto rivela tre voci,
   eq(errori, [], "errori in console"); await chiudi();
 });
 
-caso("Cacce: resistenze e vulnerabilità del troll; Sapienza da vicino con 20 naturale scopre la scheda", async (b) => {
+caso("Cacce: scheda del troll nei dati; Sapienza da vicino con 20 naturale scopre la scheda", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "pineta", diario: [{ tipo: "narra", stanza: "pineta", righe: ["x"] }], usate: U0({ fermaglio: "oro", cc_stato: "attiva", cc_preda: "troll", cc_grado: 3, cc_info: {}, cc_studio: { vicino: true, avvicina: true, guarda: true } }) }));
   await page.evaluate(() => imboscataCaccia());
   await bottone(page, "Sapienza").click();
@@ -101,21 +102,8 @@ caso("Cacce: resistenze e vulnerabilità del troll; Sapienza da vicino con 20 na
   await bottone(page, "Attacco").click();
   await page.waitForFunction(() => typeof scontro !== "undefined" && scontro && scontro.id === "troll", null, { timeout: 10000 });
   eq(await page.evaluate(() => [scontro.svelata, scontro.primo, !!scontro.sorpreso]), [true, "pg", true], "scheda scoperta e sorpresa");
-  eq(await page.evaluate(() => [resisteA("Perforante"), resisteA("Tagliente"), dadiVuln("Tagliente"), ctxTecnica().dimezza]), [true, false, 1, false], "spada corta: niente resistenza, +1 dado");
-  eq(errori, [], "errori in console"); await chiudi();
-});
-
-caso("Stati nuovi del personaggio: Sbilanciato −2 CA, Frastornato −4 e niente critici, Inibito blocca le tecniche, Stordito salta il turno", async (b) => {
-  const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "giardino", diario: [{ tipo: "narra", stanza: "giardino", righe: ["x"] }], usate: U0({ fermaglio: "bronzo" }) }));
-  await page.evaluate(() => { avviaScontro("bruto", { ctx: "caccia", testi: "bruto", primo: "pg", sorpresa: "x" }); });
-  await page.waitForFunction(() => scontro && scontro.tuoTurno, null, { timeout: 10000 });
-  await page.evaluate(() => { applicaStatoPg("sbilanciato"); applicaStatoPg("frastornato"); applicaStatoPg("inibito"); });
-  eq(await page.evaluate(() => [malusStatoCA(), malusStatoAtt(), ctxTecnica().noCrit]), [-2, -4, true]);
-  await page.evaluate(() => usaTecnica(TEC.find(t => t.id === "polso") || TEC[0]));
-  vero((await diario(page)).includes("Sei Inibito"), "Inibito blocca la tecnica");
-  await page.evaluate(() => { applicaStatoPg("stordito"); scontro.tuoTurno = false; turnoPgScontro(); });
-  vero((await diario(page)).includes("perdi il turno"), "Stordito: turno saltato");
-  eq(await page.evaluate(() => [haStato("stordito"), scontro.tuoTurno]), [false, false], "lo stato se ne va e il turno passa");
+  const res = await page.evaluate(() => MotN.CACCE[PREDE.troll.vuoto].res || {});
+  vero(Object.values(res).includes("vuln") && Object.values(res).includes("res"), "il troll ha almeno una vulnerabilità e una resistenza nei dati");
   eq(errori, [], "errori in console"); await chiudi();
 });
 

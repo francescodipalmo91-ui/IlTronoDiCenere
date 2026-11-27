@@ -5,7 +5,7 @@
   "scripts": {
     "test": "npm run test:regole && npm run lint && npm run coerenza",
     "test:regole": "node tests/cloud.test.js && node tests/poteri.test.js && node tests/scontro.test.js && node tests/scontro_sciamano.test.js && node tests/scontro_arcanista.test.js && node tests/scontro_monaco.test.js && node tests/scontro_vie.test.js && node tests/scontro_regole.test.js && node tests/guardiani.test.js && node tests/oggetti.test.js && node tests/set_elisir.test.js && node tests/nemici.test.js && node tests/registro.test.js",
-    "test:browser": "node tests/fumo.browser.js && node tests/esterni.browser.js && node tests/inventario.browser.js && node tests/vuoti.browser.js && node tests/enea.browser.js && node tests/dafne.browser.js && node tests/livelli.browser.js && node tests/danno_mentale.browser.js && node tests/creazione.browser.js && node tests/allenamento.browser.js",
+    "test:browser": "node tests/fumo.browser.js && node tests/esterni.browser.js && node tests/inventario.browser.js && node tests/vuoti.browser.js && node tests/enea.browser.js && node tests/dafne.browser.js && node tests/livelli.browser.js && node tests/danno_mentale.browser.js && node tests/creazione.browser.js && node tests/allenamento.browser.js && node tests/cacce.browser.js",
     "test:browser:cacce": "node tests/cacce.browser.js",
     "lint": "node strumenti/lint_pagine.mjs && html-validate \"*.html\"",
     "coerenza": "node strumenti/coerenza_docs.mjs",

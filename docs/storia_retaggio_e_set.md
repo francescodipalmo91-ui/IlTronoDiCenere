@@ -4,7 +4,7 @@ Modulo della storia di Casa Vespera: i due set (Vespera e Retaggio del Padrone),
 Nato dal taglio di `storia_casa_vespera.md` (sezioni 7, 7b, 8b, 12, 13; la 14 è fusa con i file di regole (`progressione.md`, `mondo_e_incontri.md`, `elisir_e_bottino.md`); la 9 è distribuita nei moduli). **I numeri di sezione sono quelli originali.** Gli altri moduli: `storia_verita_e_finali.md`, `storia_casa_ed_esterni.md`, `storia_personaggi.md`, `storia_enea.md`.
 **Regola di lavoro:** linea guida condivisa tra Francesco e Claude; ogni scelta dell'uno può essere messa in discussione dall'altro. Dove un punto è segnato ⚠ è una proposta di Claude da confermare.
 
-Ultimo aggiornamento: 15 novembre 2026 (poteri dei set nel codice, Odore di Casa −1). Prima: 9 novembre (scelta B sui flashback: le visioni non fanno più danno mentale e non si distorcono; la 14 fusa con il bilanciamento; la 9 distribuita).
+Ultimo aggiornamento: 27 novembre 2026 (sezione 12 rifatta: visioni come le due metà della vita di Rodolfo, spada con la prigionia di Adele, corno e corona cambiati, tre ricordi delle lacrime; nomi dei finali al posto di «finale B»). Prima: 15 novembre (poteri dei set nel codice, Odore di Casa −1). Prima ancora: 9 novembre (scelta B sui flashback: le visioni non fanno più danno mentale e non si distorcono; la 14 fusa con il bilanciamento; la 9 distribuita).
 
 
 > **Meccaniche (nota del 9 novembre):** regole e numeri di combattimento citati qui (PA, mana, furia, tecniche, incantesimi, scuole, stati, vulnerabilità) sono storici dove contraddicono `riscrittura_meccaniche.md`, che prevale sempre. Scontri e poteri dei guardiani si rifanno in 8d-8e. Punto d'ingresso: `punto_della_situazione.md`.
@@ -25,7 +25,7 @@ Ultimo aggiornamento: 15 novembre 2026 (poteri dei set nel codice, Odore di Casa
 
 | Reliquia | Luogo | Come si ottiene | Chi ne parla |
 |---|---|---|---|
-| Spada | Atrio, tra i guanti dell'armatura | Campo di forza: la scioglie Adele nel finale B (sezione 7b) | Un diario non identificabile; il figlio maggiore risponde |
+| Spada | Atrio, tra i guanti dell'armatura | Campo di forza: la scioglie Adele nel finale «Il pranzo in giardino» (sezione 7b) | Un diario non identificabile; il figlio maggiore risponde |
 | Anello col sigillo | Cripta, sarcofago del Primo dei Vespera | Indovinello del libro, Sapienza, Atletica | Ettore accenna, il libro del figlio maggiore rivela |
 | Medaglione | Cimitero, tra i rovi oltre l'ultima fila di lapidi | Sopravvivenza | Il figlio maggiore |
 | Corno da caccia | Foresta, al collo di Dafne | Scontro con Dafne (a 0 si ferma e parla: la finisci o la risparmi; `storia_personaggi.md`) | Il figlio maggiore lo riconosce: era il corno del Signore |
@@ -37,12 +37,12 @@ Nessuno le ha nascoste di proposito, tranne il corno, che Aldo affidò a Dafne c
 
 ### 7b. La spada del set del sovrano di cenere — il campo di forza (DECISO il 10 novembre, sostituisce «la chiamata»)
 - Nell'atrio, tra i guanti dell'armatura, la spada è visibile fin dal primo ingresso, bella e splendente. Il personaggio prova a prenderla e un **campo di forza** glielo impedisce. Nessuna visione al primo tentativo.
-- **Solo Adele può sciogliere l'incantesimo:** la spada si ottiene soltanto nel **finale B** (Adele liberata accompagna il personaggio all'armatura), prima dello scontro. Negli altri finali si affronta il sovrano senza spada.
-- **Visioni:** il flashback del giardino compare solo quando il personaggio tocca la spada, cioè allo sblocco nel finale B, mai prima.
+- **Solo Adele può sciogliere l'incantesimo:** la spada si ottiene soltanto nel finale **«Il pranzo in giardino»** (Adele liberata accompagna il personaggio all'armatura), prima dello scontro. Negli altri finali si affronta il sovrano senza spada.
+- **Visione (rifatta il 27 novembre):** la visione della spada è la **prigionia di Adele** (Rodolfo pianta la spada come sigillo) e compare solo quando il personaggio tocca la spada, cioè allo sblocco nel finale «Il pranzo in giardino», mai prima. Il pranzo in giardino non è più la visione della spada: è il ricordo della terza lacrima (sezione 12).
 - **Indizio anticipato:** un diario che il giocatore non riesce a identificare; il figlio maggiore dà le risposte (la spada è legata ad Adele).
 - **Scheda:** lo slot della spada è visibile ma bloccato, con «n/5» sul set, senza dire come ottenerla.
 - **Statistiche:** una mano, **taglio**, bonus +4 (leggendaria). Poteri fissi, legati alla storia e più forti contro guardiani e sovrano. ⚠ I vecchi «1d10 + livello» sono superati: rifare nella sessione oggetti.
-- **Non indossabile prima del B:** senza spada il set del sovrano di cenere ha al massimo 4 pezzi per tutto il gioco.
+- **Non indossabile prima di quel finale:** senza spada il set del sovrano di cenere ha al massimo 4 pezzi per tutto il gioco.
 
 ### 7c. I due set indossati: struttura e poteri (DECISO il 10 novembre)
 
@@ -58,13 +58,13 @@ Nessuno le ha nascoste di proposito, tranne il corno, che Aldo affidò a Dafne c
 | Schiena | | Mantello |
 | Torso | | Corazza |
 | Mani | | Guanti |
-| Mano principale | Spada (solo finale B) | |
+| Mano principale | Spada (solo «Il pranzo in giardino») | |
 | Mano libera | | Scudo/focus +2 CA |
 | Cintura | Corno | |
 | Anello | Anello col sigillo | |
 | Stivali | libero | libero |
 
-**Conflitto sulla testa (voluto):** corona o elmo. Fuori dal finale B: **corona = cenere 4 + carne 4; elmo = cenere 3 + carne 5**. Nel finale B (con la spada): corona = cenere 5 + carne 4; elmo = cenere 4 + carne 5. La scelta è alla cieca: il giocatore non sa delle clausole sul sovrano.
+**Conflitto sulla testa (voluto):** corona o elmo. Fuori dal finale «Il pranzo in giardino»: **corona = cenere 4 + carne 4; elmo = cenere 3 + carne 5**. In quel finale (con la spada): corona = cenere 5 + carne 4; elmo = cenere 4 + carne 5. La scelta è alla cieca: il giocatore non sa delle clausole sul sovrano.
 
 **Set del sovrano di cenere** (clausola sul sovrano nascosta; sulla scheda solo il potere generale):
 | Pezzi | Potere | Clausola sul sovrano di cenere (nascosta) |
@@ -80,9 +80,9 @@ Nessuno le ha nascoste di proposito, tranne il corno, che Aldo affidò a Dafne c
 | 4 | *Sguardo della Casa* (per scontro, azione rapida): marchi un nemico, che ha −2 a colpirti per tutto lo scontro |
 | 5 | *Ultima Guardia* (giornaliero): a 0 PF ti rialzi con il 10% della salute massima (per eccesso, minimo 1 PF) |
 
-**Quando si ottengono.** Cenere: anello e medaglione (storia, presto), corno (oro, Dafne), corona (platino, Atena), spada (solo finale B). Carne: mantello (prima caccia comune), guanti (bronzo), elmo (argento), mano libera (oro), corazza (platino).
-**Obiettivi di vittoria sul sovrano** (da misurare): finale B 50%; finali A e altri **non meno di 40%**; la build con l'elmo non sotto il 35%.
-**Nel codice (15/11/2026):** poteri a 2 e 4 pezzi di entrambi i set e *Ultima Guardia* (carne 5) funzionano in sala di prova; manca *Sentenza dell'erede* (solo finale B, serve la spada). La mappa della cenere è quella originale (immune a sangue e psichico) e le clausole la aprono come scritto sopra. La mano libera del set di carne dà +2 CA (con un'arma a una mano; per gli incantatori vale anche come focus). Misure con i pezzi della storia: `lavoro_codice_domenica.md`. I bonus propri dei pezzi restano da definire e non sono nel codice.
+**Quando si ottengono.** Cenere: anello e medaglione (storia, presto), corno (oro, Dafne), corona (platino, Atena), spada (solo «Il pranzo in giardino»). Carne: mantello (prima caccia comune), guanti (bronzo), elmo (argento), mano libera (oro), corazza (platino).
+**Obiettivi di vittoria sul sovrano** (da misurare): «Il pranzo in giardino» 50%; «Il Guardiano di Cenere» e «Il Trono di Cenere» **non meno di 40%**; la build con l'elmo non sotto il 35%.
+**Nel codice (15/11/2026):** poteri a 2 e 4 pezzi di entrambi i set e *Ultima Guardia* (carne 5) funzionano in sala di prova; manca *Sentenza dell'erede* (solo «Il pranzo in giardino», serve la spada). La mappa della cenere è quella originale (immune a sangue e psichico) e le clausole la aprono come scritto sopra. La mano libera del set di carne dà +2 CA (con un'arma a una mano; per gli incantatori vale anche come focus). Misure con i pezzi della storia: `lavoro_codice_domenica.md`. I bonus propri dei pezzi restano da definire e non sono nel codice.
 La **regola della soglia** (sezione 7) è superata dai set e dalla mappa dell'armatura (riscrittura 8e).
 
 ## 8b. Set del sovrano di carne (ex Vespera), struttura (rivista il 10 novembre)
@@ -92,23 +92,37 @@ La **regola della soglia** (sezione 7) è superata dai set e dalla mappa dell'ar
 - **Niente più legame vincolante** (10 novembre): i pezzi si tolgono sempre. Chi li indossa non ha un vincolo meccanico; Aldo può dirlo come avviso di storia.
 - Rivestono l'armatura scelta, non cambiano i limiti di classe; si adattano alla classe.
 - Poteri e bonus: sezione 7c. Bonus per ogni pezzo: sessione oggetti.
-- Finale B: Adele spezza il legame (solo narrativa). Finale A: il set completo è l'uniforme del Guardiano di Cenere.
+- «Il pranzo in giardino»: Adele spezza il legame (solo narrativa). «Il Guardiano di Cenere»: il set completo è l'uniforme del Guardiano.
 
-## 12. Le visioni del Retaggio (DECISO il 26 ottobre)
+## 12. Le visioni dei set e i ricordi delle lacrime (rifatta il 27 novembre)
 
-Testi completi nel file **visioni_retaggio_v2.txt**. Regole comuni (riviste il 9 novembre, **scelta B sui flashback**): le visioni sono scene, **senza danno mentale e senza distorsione** (~~1d4 danni mentali non letali alla prima lettura~~; ~~la fitta alle tempie peggiora a ogni visione~~: resta al più come colore nel testo, senza effetto di gioco). Il punto di vista cambia ogni volta.
+**Regole comuni.** Le visioni sono scene, **senza danno mentale e senza distorsione** (scelta B del 9 novembre; ~~1d4 danni mentali non letali alla prima lettura~~; ~~la fitta alle tempie peggiora a ogni visione~~). Nei ricordi di cenere la **confusione è solo stile del testo** (frasi spezzate, voci sovrapposte), mai meccanica. **Un ricordo per oggetto di set, 80-100 parole**, in seconda persona e al presente. **Testi provvisori 📖 in `visioni_e_ricordi.md`** (13 scene). Dal 27 novembre i due set sono le due metà della vita di Rodolfo.
 
-| Oggetto | Scena | Punto di vista | Quando nella storia |
-|---|---|---|---|
-| Spada (primo tocco dell'armatura) | Pranzo in giardino: Rodolfo, Adele incinta di Agnese, il figlio maggiore e Lorenzo con giocattoli di legno, Aldo e Guendalina in disparte. Chiude con la malinconia | Testimone | Prima dell'incendio |
-| Anello (cripta) | Funerale di Lorenzo: piccola bara, folla spettrale, Adele con una sola lacrima | Invisibile | Subito dopo l'incendio |
-| Collana vuota (cimitero, non è una reliquia) | Di notte Guendalina (capelli ramati, mani screpolate dal lavoro) nasconde la catena vuota del collier in una tomba con l'albero dei Vespera | Nel corpo di Guendalina | Dopo la prigionia di Adele |
-| Corno (foresta) | Nella sala da caccia Aldo consegna a Dafne il corno del Signore e le appunta il fermaglio d'oro | Nel corpo di Aldo | Secoli dopo, quando Dafne diventa guardiana |
-| Corona (sottotetto) | Sala del trono, folla spettrale: il re veste il lutto bianco, la corona resta sul trespolo, Guendalina tiene per mano i due figli, Aldo aspetta un ordine che non arriva | Ospite tra la folla | Dopo il funerale di Lorenzo |
-| Medaglione (cimitero) | Nella notte dell'incendio, con la casa in fiamme alle spalle, il re getta tra i rovi il medaglione con il ritratto di Adele | Nel corpo di Rodolfo | La notte dell'incendio |
+**Set di carne: Rodolfo buono** (punto di vista: Rodolfo; vittorie in difesa della terra e della casa, giustizia severa ma onesta, famiglia):
 
-- **Ordine:** la spada è sempre la prima (primo tocco). Le altre seguono i guardiani, per questo «un'altra fitta» e «l'ennesima» funzionano. La corona richiama «le ombre già viste nella cripta»: presuppone l'anello prima.
-- **Nella visione il re non ha nome:** il personaggio lo riconosce come «il cavaliere della vetrata».
+| Oggetto | Scena |
+|---|---|
+| Mantello (prima caccia comune) | Giura di difendere la casa nel mantello dei Vespera |
+| Guanti (bronzo) | Giudica la lite dei contadini per un pozzo, severo ma onesto |
+| Elmo (argento) | Tiene la linea in un passo di montagna contro gli invasori |
+| Mano libera (oro) | Insegna al figlio maggiore a tenere lo scudo |
+| Corazza (platino) | L'ultima vittoria: torna a casa, Adele sulla soglia, i bambini corrono |
+
+**Set di cenere: il declino verso il completamento della maledizione** (ricordi confusi e violenti; in ordine cronologico):
+
+| Oggetto | Scena | Punto di vista |
+|---|---|---|
+| Medaglione (cimitero) | La notte dell'incendio: il re getta tra i rovi il medaglione con il ritratto di Adele | Nel corpo di Rodolfo |
+| Anello (cripta) | Funerale di Lorenzo: piccola bara, folla **viva**, Adele con una sola lacrima | Invisibile |
+| Spada (solo allo sblocco, finale «Il pranzo in giardino») | La prigionia di Adele: Rodolfo pianta la spada nell'atrio come sigillo | Nel corpo di Rodolfo |
+| Corno (foresta) | L'ultima caccia del re: di notte suona il corno, i mastini corrono senza preda (**non più** Aldo che lo affida a Dafne: quella resta lore, 26 novembre) | Nel corpo di Aldo (testimone) |
+| Corona (sottotetto) | Il lutto bianco e il completamento: la corona resta sul trespolo, la folla diventa spettrale, Aldo aspetta un ordine che non arriva | Ospite tra la folla |
+
+**Tre lacrime** (punto di vista di Adele, tutti ricordi felici; `storia_verita_e_finali.md`, sezione 3): nascita del figlio maggiore, nascita di Lorenzo, pranzo in giardino con Agnese in arrivo.
+
+- **Fuori dai set:** la collana vuota (cimitero, non è una reliquia): di notte Guendalina (capelli ramati, mani screpolate dal lavoro) nasconde la catena vuota del collier in una tomba con l'albero dei Vespera. Punto di vista: Guendalina, dopo la prigionia di Adele. Invariata.
+- **Ordine:** non c'è più una visione «sempre prima»: ogni ricordo parte quando l'oggetto si ottiene o la lacrima si prende. Le visioni della spada e della corona presuppongono quelle già viste solo come colore.
+- **Nei ricordi dei set il re non ha nome** (è «il signore» o «tu»): il personaggio lo riconosce come «il cavaliere della vetrata».
 - **Lo stemma dei Vespera è sempre l'albero dalle radici intrecciate.** La stella a sei punte resta il simbolo dei gradi delle cacce.
 
 ## 13. Prove ed enigmi del Retaggio (DECISO il 26 ottobre)
@@ -116,7 +130,7 @@ Testi completi nel file **visioni_retaggio_v2.txt**. Regole comuni (riviste il 9
 **Regole comuni.** Tutte le prove hanno **CD 12**. Una prova fallita costa 1 punto mentale e resta bloccata fino al riposo, come da regolamento, salvo dove indicato. Una scelta sbagliata in un enigma costa 1 punto mentale. Se manca l'indizio, **il figlio maggiore** lo dà: nessun vicolo cieco. Il rumore, nel sottotetto, non alza la CD ma dà **svantaggio** (2d20, si tiene il peggiore).
 
 ### Spada (atrio) — ANNULLATA il 10 novembre
-Nessuna prova: niente chiamata a ogni lacrima, niente Intuizione CD 12, niente gesto dell'inginocchiarsi. La spada è protetta da un campo di forza e la scioglie solo Adele nel finale B (sezione 7b). Gli indizi della vetrata e dell'inchino di Aldo restano come colore, senza funzione di enigma.
+Nessuna prova: niente chiamata a ogni lacrima, niente Intuizione CD 12, niente gesto dell'inginocchiarsi. La spada è protetta da un campo di forza e la scioglie solo Adele nel finale «Il pranzo in giardino» (sezione 7b). Gli indizi della vetrata e dell'inchino di Aldo restano come colore, senza funzione di enigma.
 
 ### Anello (cripta)
 1. **Requisito:** il libro del figlio maggiore aperto. Dice: «Il primo dorme dove l'albero beve».
@@ -158,13 +172,13 @@ La vecchia sezione 14 è stata distribuita nei file di regole, tradotti sul sist
 
 ## Aperti (9 novembre)
 
-- **Sovrano e Atena (11/11):** la rivelazione di Atena punta ai due set (testo provvisorio, riscrittura 8d); l'evento finale del sovrano per finale e la morte contro di lui sono in riscrittura 8e. ⚠ Le lettere dei finali non coincidono tra documenti: qui «finale B» è il finale di Adele (positivo).
+- **Sovrano e Atena (11/11):** la rivelazione di Atena punta ai due set (testo provvisorio, riscrittura 8d); l'evento finale del sovrano per finale e la morte contro di lui sono in riscrittura 8e.
 - ~~Scelta B sui flashback, da chiudere in Verità e finali~~ → fatto il 9 novembre (`storia_verita_e_finali.md`, sezione 5).
-- **Testi delle visioni:** `visioni_retaggio_v2.txt` non è stato toccato; contiene «un'altra fitta» e «l'ennesima», che ora sono solo colore. Da decidere se tenerle.
+- **Testi delle visioni:** rifatti il 27 novembre in `visioni_e_ricordi.md` (13 scene provvisorie 📖); `visioni_retaggio_v2.txt` è superato (archiviare).
 - **Gara con Dafne: tolta il 9 novembre** (scontro normale). Il corno va sempre al personaggio (10 novembre, sezione «Corno»); resta da scrivere il dialogo di Dafne (un solo, con due toni).
-- **Visione del medaglione:** bozza di Claude in `visioni_retaggio_v2.txt`, da rivedere.
+- **Visione del medaglione:** riscritta il 27 novembre (`visioni_e_ricordi.md`, scena 6).
 - ⚠ **Da cambiare nel codice (10 novembre):** la spada non ha più chiamata, Intuizione né gesto (7b). Vecchia nota: spada (primo tocco con la visione del giardino, una chiamata per lacrima con Intuizione CD 12, gesto) e anello a CD 12 con la visione del funerale (senza più il danno mentale, scelta B: da togliere nel codice).
-- **Da portare nel gioco:** anello vincolato al libro e indovinello di Sapienza (servono il figlio maggiore e il secondo piano); collana, medaglione, corno e corona (servono cimitero, foresta e sottotetto); sblocco della spada da parte di Adele (finale B, 7b); dialogo di Dafne (un solo, due toni; la gara è tolta).
+- **Da portare nel gioco:** anello vincolato al libro e indovinello di Sapienza (servono il figlio maggiore e il secondo piano); collana, medaglione, corno e corona (servono cimitero, foresta e sottotetto); sblocco della spada da parte di Adele (finale «Il pranzo in giardino», 7b); dialogo di Dafne (un solo, due toni; la gara è tolta).
 - ~~Enigma delle torce~~ → sostituito dall'enigma delle radici della tomba (sezione 13); rimando corretto il 9 novembre in `storia_verita_e_finali.md`, sezione 3.
 - **Formato degli enigmi:** da decidere insieme.
 - ~~Abilità del set Vespera~~ → decise il 10 novembre (7c). Vecchia nota: (proposta in chat: Odore di Casa, Presa del Custode, Passo Silenzioso, Sguardo della Casa, Ultima Guardia, Custode di Casa Vespera): adattamento alla classe. **Passo Silenzioso** era pensata per gli stivali, tolti il 28 ottobre: va spostata o tolta. Serve l'abilità dell'arma.
@@ -181,4 +195,4 @@ La vecchia sezione 14 è stata distribuita nei file di regole, tradotti sul sist
 | Capacità del mastino a due teste e della soglia; proposte del 28 ottobre da confermare | riscrittura 8c (mastino corazzato e della soglia) |
 | Tecniche dello Sciamano, Scopri Carte e Manto d'Ombra, vulnerabilità | superati dalla riscrittura (Sciamano Funghi/Legno, mappa 8b); `tecniche_sciamano.md` archiviato |
 | Immagine `Trono_di_Cenere.webp` | risolto il 29 ottobre (`strumenti_verifica.md`) |
-- **Sessione oggetti (da fare):** nomi definitivi dei set e dei pezzi, bonus di ogni pezzo, valori della spada (taglio +3, 1d10), oggetto di mano libera, quando si trova ogni pezzo, riordino delle visioni (la spada ora è l'ultima, nel B).
+- **Sessione oggetti (da fare):** nomi definitivi dei set e dei pezzi, bonus di ogni pezzo, valori della spada (taglio +3, 1d10), oggetto di mano libera, quando si trova ogni pezzo, riordino delle visioni (rifatto il 27 novembre: sezione 12).

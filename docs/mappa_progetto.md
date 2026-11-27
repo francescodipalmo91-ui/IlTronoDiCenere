@@ -1,13 +1,13 @@
 # Il Trono di Cenere — Mappa del progetto
 
-Mappa concettuale per ritrovare subito dove sta ogni fatto e cosa aggiornare quando qualcosa cambia. Creata il 16/11/2026, aggiornata il 18/11 (documenti dei vuoti, dei set e dei diari). Si aggiorna solo se nasce, si divide o si archivia un documento. **Un fatto vive in un solo documento (la fonte); gli altri rimandano.**
+Mappa concettuale per ritrovare subito dove sta ogni fatto e cosa aggiornare quando qualcosa cambia. Creata il 16/11/2026, aggiornata il 18/11 (documenti dei vuoti, dei set e dei diari) e il 27/11 (storia: protagonista, Bilancia, visioni). Si aggiorna solo se nasce, si divide o si archivia un documento. **Un fatto vive in un solo documento (la fonte); gli altri rimandano.**
 
 ## 1. Argomento → fonte unica
 | Argomento | Fonte (vale questa) | Dipende da / rimanda a |
 |---|---|---|
 | Stato, piano, regole di lavoro | `punto_della_situazione.md` | tutti |
 | Cosa è cancellato / sostituito | `registro_cancellati.md` | da controllare prima di dire che qualcosa esiste |
-| Decisioni recenti non ancora riversate | `decisioni_19_novembre.md`, `decisioni_18_novembre.md`, `decisioni_17_novembre.md`, `decisioni_16_novembre.md` (poi `decisioni_14_novembre.md`) | tabella «Stato dell'allineamento» in cima |
+| Decisioni recenti | `decisioni_27_novembre.md` (storia S3-S6: maledizione, visioni, scena della scelta, finali; **riversate nei moduli `storia_*` il 27/11**), `decisioni_26_novembre.md` (storia S2-S3, date; ancora da riversare: date e calendario in `storia_casa_ed_esterni.md`, «consumati nei pressi della casa» in `vuoti.md`), `decisioni_25_novembre.md`, `decisioni_23_novembre.md`, `decisioni_19_novembre.md`, `decisioni_18_novembre.md`, `decisioni_17_novembre.md`, `decisioni_16_novembre.md` (poi `decisioni_14_novembre.md`) | tabella «Stato dell'allineamento» in cima |
 | Regole di combattimento, stati, poteri, scala dei livelli, nemici (8c), guardiani (8d), sovrano (8e), armi/armature/focus (8f) | `riscrittura_meccaniche.md` | sintesi in `riepilogo_riscrittura.md` |
 | Classi e specializzazioni (riassunto) | `schema_classi.md` → `classi_manuale.html` (generato) | riscrittura sez. 0 e 4-7 |
 | Livelli a tappe, salute, attributi | `progressione.md` | riscrittura (poteri per livello) |
@@ -22,8 +22,9 @@ Mappa concettuale per ritrovare subito dove sta ogni fatto e cosa aggiornare qua
 | Storia: verità, patto, lacrime, finali | `storia_verita_e_finali.md` | |
 | Storia: Guendalina, figli, Aldo, Ettore, Dafne, Atena, sovrano | `storia_personaggi.md` | |
 | Storia: Enea e i suoi uomini | `storia_enea.md` | |
-| Storia: set, reliquie, spada, visioni, enigmi | `storia_retaggio_e_set.md` | |
-| Storia: casa, esterni, cucina, tempo e riposo, calendario | `storia_casa_ed_esterni.md` | calendario nuovo in decisioni 16/11 (da riversare qui) |
+| Storia: set, reliquie, spada, visioni (sez. 12), enigmi | `storia_retaggio_e_set.md` | testi delle 13 scene provvisorie: `visioni_e_ricordi.md` |
+| **Storia: protagonista e background; Bilancia a tre poli; riassunto** | `storia_protagonista.md`; `bilancia_tre_poli.md`; `storia_riassunto.md` (non è una fonte) | scena della scelta ed epiloghi: `storia_verita_e_finali.md` sez. 6 |
+| Storia: casa, esterni, cucina, tempo e riposo, calendario | `storia_casa_ed_esterni.md` | calendario: decisioni 16/11 e, per la regola in vigore, `decisioni_26_novembre.md` sez. 11 (da riversare qui) |
 | Grafica | `DESIGN.md` | |
 | Test e strumenti di controllo | `strumenti_verifica.md` | |
 | Giocatore automatico (bot) | `cervello_bot.md` | |

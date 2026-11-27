@@ -8,8 +8,6 @@
   <script src="lib/purify.min.js"></script>
   <script src="js/sicuro.js"></script>
   <script src="js/regole.js"></script>
-  <script src="js/magia.js"></script>
-  <script src="js/tecniche.js"></script>
   <script src="js/poteri.js"></script>
   <script src="js/specializzazioni.js"></script>
   <script src="js/scontro.js"></script>
@@ -6212,7 +6210,6 @@
     else if (!pg.equipaggiamento) { pg = null; window.location.replace("index.html"); }
     /* 20/11: id casuale della partita per i log (js/registro.js); i personaggi creati prima lo ricevono qui */
     if (pg && !pg.idPartita && window.Registro) { pg.idPartita = Registro.nuovoId(); try { localStorage.setItem("personaggio", JSON.stringify(pg)); } catch (e) {} }
-    else if (window.MAGIA && window.MAGIA.CLASSI[pg.classe] && [].concat(pg.incantesimi || []).some(x => !window.MAGIA.INCANTESIMI.some(i => i.id === (x && x.id || x)))) { pg = null; window.location.replace("index.html"); } /* creato con il vecchio sistema di incantesimi (04/11: la scuola principale non c'è più, si controllano gli id) */
 
     /* =====================================================================
        REVISIONE ATTRIBUTI E ABILITÀ

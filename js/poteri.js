@@ -2,7 +2,7 @@
    POTERI — motore del nuovo combattimento (riscrittura del 05-06/11/2026), senza interfaccia.
    Blocco 1 (08/11/2026): stati, tiro salvezza simmetrico, applica / aggrava, Vacillante, vulnerabilità.
    Contratto: docs/riscrittura_meccaniche.md, sezione 2 («Stati») e 8b («Resistenze e vulnerabilità»).
-   Non dipende dal vecchio motore (combattimento.js, magia_combattimento.js, sciamano.js): convivono finché il nuovo non lo sostituisce.
+   Non dipende dal vecchio motore, rimosso il 27/11/2026.
 
    Un combattente (giocatore o nemico, stesse regole: simmetria totale) è un oggetto:
      { nome, liv, pv, pvMax, mod: { Vigore, Agilità, Mente, Spirito }, boss, bonusTs, immuni: [id stato],

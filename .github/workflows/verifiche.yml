@@ -45,8 +45,8 @@ jobs:
             awk '/^(ERRORE|KO) /{n=$0; getline m; gsub(/^ +/, "", m); print "::error title=" FILENAME_T "::" n " " m}' FILENAME_T="$*" out.txt
             [ $r -eq 0 ] || esito=1; }
           prova node tests/fumo.browser.js
-          # 22/11: solo motore nuovo; i test del vecchio motore (bilanciamento, sciamano, combattimento, livelli, cacce) sono fuori dal giro
-          for t in esterni inventario vuoti enea dafne; do prova node tests/$t.browser.js; done
+          # 27/11: il vecchio motore non esiste più; restano fuori dal giro solo le cacce (test da riscrivere sul motore nuovo)
+          for t in esterni inventario vuoti enea dafne livelli danno_mentale creazione allenamento; do prova node tests/$t.browser.js; done
           exit $esito
       - uses: actions/upload-artifact@v4
         if: always()

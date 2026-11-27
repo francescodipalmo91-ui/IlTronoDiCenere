@@ -30,7 +30,7 @@ const PARTITA = { usate: { riposo: "sbloccato" }, diario: [{ tipo: "narra", stan
 const PAGINE = [
   { url: "index.html" },
   { url: "creazione.html" },
-  { url: "tutorial.html" },
+  { url: "gioco.html?allenamento" },
   { url: "regolamento.html" },
   { url: "gioco.html", pg: PG, comando: "guardo intorno" }
 ];

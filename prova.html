@@ -328,7 +328,7 @@
   const tira = (d) => 1 + Math.floor(Math.random() * d), ctx = { tira };
   const mod = (v) => Math.floor((v - 10) / 2);
 
-  /* classi: chiave interna di Regole, preset di test.html, specializzazioni */
+  /* classi: chiave interna di Regole, preset di js/preset_test.js, specializzazioni */
   const CLASSI = { Soldato: { nome: "Guerriero", preset: "guerriero" }, Forestiero: { nome: "Sciamano", preset: "sciamano" }, Sapiente: { nome: "Arcanista", preset: "arcanista" }, Accolito: { nome: "Monaco", preset: "monaco" } };
   /* armi comuni a griglia (14/11/2026): tre tipi × una mano (d6) / due mani (d8), Nomi provvisori (il bastone come arma/focus a due mani è cancellato dal 17/11) */
   const ARMI = [
@@ -486,7 +486,7 @@
   $("arma").addEventListener("change", aggiornaArmi);
   $("arma2").addEventListener("change", () => { if ($("arma2").value === $("arma").value) { $("arma2").value = ""; log("La seconda arma deve essere diversa dalla prima.", "sis"); } aggiornaArmi(); });
 
-  /* il personaggio dalle stesse regole di test.html (js/preset_test.js) */
+  /* il personaggio dalle stesse regole di js/preset_test.js */
   /* Progressione come nel gioco (progressione.md): livello 1 = base di classe + razza; salute 10 + massimo del dado + mod Vigore.
      Ai livelli 2-5, al riposo: prima +2 punti attributo (tetto 20; quel che avanza va su Vigore, poi sugli altri), poi la salute cresce
      di metà del dado + 1 + mod Vigore (con il Vigore già aumentato). Gli stessi passi diventano la tabella «Progressione» della scheda. */
@@ -783,7 +783,7 @@
   const racconta = (e) => window.Racconto.racconta(e);
   const scrivi = (eventi) => (eventi || []).forEach(e => { if (!e) return; const [t, c] = racconta(e); log(t, c); });
 
-  /* ---------- log degli scontri su file (come js/registro_scontri.js di test.html, formato v2 per il motore nuovo) ----------
+  /* ---------- log degli scontri su file (formato v2 per il motore nuovo) ----------
      Un file JSON per scontro: { v: 2, motore, id, inizio, fine, esito, turni, pg, nem, azioni[], diario[] }
      azioni[i] = { t, id (o "passa"), sangueVersato?, prima: { pv, pvMax, nPv, nPvMax, statiPg, statiNem, copie, placche, nemPronto, vacPg, vacNem }, scelte: [poteri usabili] }
      Cartella scelta una volta (Chrome la ricorda); senza permesso i log restano nel browser (ultimi 200) e si scaricano col pulsante. */

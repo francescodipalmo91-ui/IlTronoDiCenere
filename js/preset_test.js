@@ -1,5 +1,5 @@
 /* =====================================================================
-   PRESET DELLA PAGINA DI TEST — test.html
+   PRESET DELLA SALA DI PROVA — prova.html
    Valori fissi e riutilizzabili: «Umano Guerriero livello 1» ha sempre gli stessi numeri,
    così due prove fatte in giorni diversi si possono confrontare.
    Regole di costruzione (le stesse della creazione, js/regole.js):
@@ -18,7 +18,7 @@ window.PresetTest = (() => {
 
   const ARMATURE = { nessuna: { nome: "Nessuna", ca: 0, tetto: 99 }, leggera: { nome: "Leggera", ca: 2, tetto: 3 }, veste: { nome: "Veste", ca: 2, tetto: 3 } /* 19/11: veste delle classi magiche = leggera */, media: { nome: "Media", ca: 3, tetto: 2 }, pesante: { nome: "Pesante", ca: 4, tetto: 0 } };
 
-  /* arma = indice in ARMI di js/sala_prova.js: 0 Spada corta, 1 Ascia da battaglia, 2 Bastone, 3 Martello da battaglia, 4 Mazza chiodata, 5 Piccone da battaglia */
+  /* arma = indice in ARMI di prova.html: 0 Spada corta, 1 Ascia da battaglia, 2 Bastone, 3 Martello da battaglia, 4 Mazza chiodata, 5 Piccone da battaglia */
   const PG = {
     guerriero: { nome: "Guerriero", dado: 10, base: { vig: 15, agi: 12, men: 10, spi: 11 }, umano: { vig: 1, agi: 1, spi: 1 }, armatura: "pesante", arma: 0, scudo: true, risorsa: "Punti furia (10 + mod Vigore)" },
     sciamano:  { nome: "Sciamano",  dado: 8,  base: { vig: 11, agi: 15, men: 10, spi: 12 }, umano: { agi: 1, vig: 1, spi: 1 }, armatura: "media",   arma: 4, scudo: false, risorsa: "Punti natura (10 + mod Agilità)" },
@@ -46,7 +46,7 @@ window.PresetTest = (() => {
     return { classe, liv, razza, ...a, armatura: b.armatura, arma: b.arma, scudo: b.scudo, ca: ca(b.armatura, a.agi, b.scudo), pv: salute(b.dado, a.vig, liv), intuizione: mod(a.spi), dado: b.dado, risorsa: b.risorsa };
   }
 
-  /* nemici: valori dei documenti (bilanciamento_nemici_oggetti.md); chiavi = NEMICI di js/sala_prova.js.
+  /* nemici: valori dei documenti (bilanciamento_nemici_oggetti.md); chiavi = NEMICI di prova.html.
      ca = senza scudo; lo scudo del nemico aggiunge 1. */
   const NEMICI = {
     mastino:   { classe: "Bestia infernale", liv: 1, vig: 12, agi: 12, men: 6,  spi: 10, ca: 10, pv: 13, arma: "Morso o zampata · 1d4 + Vigore; Soffio Infuocato 2d6, Presa 1d4", scudo: false },

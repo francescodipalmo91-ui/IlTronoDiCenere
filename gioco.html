@@ -6,6 +6,38 @@
   <meta name="theme-color" content="#161b22">
   <title>Il dungeon</title>
   <script src="lib/purify.min.js"></script>
+  <script>
+  /* Sala d'allenamento (gioco.html?allenamento, 27/11/2026): il combattimento di prova è il vero scontro col Mastino della cantina,
+     con un Guerriero fisso. Tutto vive in memoria: il salvataggio, il personaggio e il registro delle partite non si toccano.
+     Restano condivise solo le preferenze (lingua, audio, ritmo) e il segno «tutorial_completato». */
+  (function () {
+    if (!/[?&]allenamento(=|&|$)/.test(location.search)) return;
+    var reale = window.localStorage, m = {}, condivise = /^(lingua|audio|audio_volume|trono_ritmo|tutorial_completato)$/;
+    var memoria = {
+      getItem: function (k) { return condivise.test(k) ? reale.getItem(k) : (Object.prototype.hasOwnProperty.call(m, k) ? m[k] : null); },
+      setItem: function (k, v) { if (condivise.test(k)) reale.setItem(k, v); else m[k] = String(v); },
+      removeItem: function (k) { if (condivise.test(k)) reale.removeItem(k); else delete m[k]; },
+      clear: function () { m = {}; }, key: function (i) { return Object.keys(m)[i] || null; }
+    };
+    Object.defineProperty(memoria, "length", { get: function () { return Object.keys(m).length; } });
+    Object.defineProperty(window, "localStorage", { value: memoria, configurable: true });
+    window.ALLENAMENTO = true;
+    m.personaggio = JSON.stringify({
+      nome: "Recluta", razza: "Umano", classe: "Soldato", livello: 1, immagine: null, motore: 2, spec: "berserker",
+      scelte: ["colpo_poderoso", "colpo_di_mestiere", "spezza_guardia", "assalto_implacabile"],
+      statisticheBase: { Vigore: 16, "Agilità": 12, Mente: 12, Spirito: 12 }, statistiche: { Vigore: 16, "Agilità": 12, Mente: 12, Spirito: 12 },
+      modificatori: { Vigore: 3, "Agilità": 1, Mente: 1, Spirito: 1 }, tiroDado: { dado: 10, valore: 10 }, puntiVita: 23, saluteMentale: 21,
+      classeArmatura: 14, mana: null, risorsa: null, incantesimi: [], tecniche: [], modalita: "facile", idPartita: "allenamento",
+      abilita: [{ nome: "Atletica", attributo: "Vigore", valore: 4 }, { nome: "Percezione", attributo: "Mente", valore: 2 }],
+      equipaggiamento: { arma: "Spada corta", armaDanno: "1d6", armaTipoDanno: "Tagliente", armaMani: 1, armatura: "Armatura media", armaturaCA: 4, malusAgilita: 0, scudo: null, dotazione: [] }
+    });
+    m.partita = JSON.stringify({
+      usate: { riposo: "sbloccato", cantina_cane: "apparso", cantina_luce: "ok" }, diario: [{ tipo: "narra", stanza: "cantina", righe: [] }], luogo: "cantina", livello: 1,
+      crescita: { salute: 0, mente: 0, risorsa: 0 }, risorsaUsata: 0, ora: Date.now(),
+      zaino: [{ id: "siero", nome: "Siero", tipo: "consumabile", usi: 2, effetto: "pozCura" }]
+    });
+  })();
+  </script>
   <script src="js/sicuro.js"></script>
   <script src="js/regole.js"></script>
   <script src="js/poteri.js"></script>
@@ -20,6 +52,7 @@
   <script src="js/audio.js"></script>
   <script src="js/cloud.js"></script>
   <script src="js/registro.js"></script>
+  <script>if (window.ALLENAMENTO) { window.Registro = undefined; window.Cloud = undefined; } /* allenamento: niente log né cloud */</script>
   <link rel="stylesheet" href="tema.css">
   <style>
 
@@ -6294,7 +6327,7 @@
        ===================================================================== */
     const R_ = window.Regole; /* tutti i numeri delle regole stanno in regole.js */
     const LIVELLO_MAX = R_.LIVELLO_MAX;
-    const RISORSA_CLASSE = R_.RISORSA_MARZIALE, ATTR_RISORSA_MAGIA = R_.ATTR_MAGIA, DADO_VITA = R_.DADO_VITA;
+    const RISORSA_CLASSE = R_.RISORSA_MARZIALE, DADO_VITA = R_.DADO_VITA;
     const RAZIONI_MAX = R_.RAZIONI_MAX, RAZIONI_AL_GIORNO = R_.RAZIONI_AL_GIORNO;
     let crescita = { salute: 0, mente: 0, risorsa: 0 };
     if (salvata && salvata.crescita && typeof salvata.crescita === "object") crescita = { salute: Number(salvata.crescita.salute) || 0, mente: Number(salvata.crescita.mente) || 0, risorsa: Number(salvata.crescita.risorsa) || 0 };
@@ -10948,7 +10981,7 @@
     });
 
     /* =====================================================================
-       COMBATTIMENTO — stesse regole della sala d'allenamento (tutorial.html)
+       COMBATTIMENTO — stesse regole della sala d'allenamento (gioco.html?allenamento)
          attacco = d20 + mod Lotta, colpisce se SUPERA la Classe armatura del bersaglio
          20 sul dado = COLPO CRITICO: colpisce sempre e si tirano il doppio dei dadi di danno (vale anche per il nemico)
          danno   = dado dell'arma + mod Lotta (torcia 1d4, a mani nude 1d2)
@@ -11746,7 +11779,7 @@
 
 
     /* =====================================================================
-       TECNICHE DEL GUERRIERO (tecniche.js) — le regole stanno in js/combattimento.js
+       POTERI, SCELTE E LIVELLI DEL PERSONAGGIO (js/poteri.js, js/specializzazioni.js)
        Posti: 2 scelte ai livelli 1 e 2, poi 1 per livello (+1 con lo scudo imbracciato); si cambiano riposando.
        Vie di prestigio (dal livello 3, usate.via = "aldo" | "guendalina"): un'abilità per livello, fuori dai posti.
        Furia: 10 + mod Vigore, poi + mod Vigore + livello a ogni salita; cresce con i colpi subiti (1/2/3 punti per livello, doppia sui critici).
@@ -11798,7 +11831,27 @@
     const nomeAbilitaNem = (a) => (AN()[a.id] || [a.id])[0];
     const descAbilitaNem = (a) => AN().desc({ ...a, ts: N("attributi", a.ts) }, BT.stati[a.stato].nome);
 
+    /* Sala d'allenamento (gioco.html?allenamento): introduzione e fine dello scontro di prova */
+    function introAllenamento() {
+      const en = LINGUA === "en";
+      aggiungi({ tipo: "narra", box: "cap", righe: en
+        ? ["— TRAINING HALL: BASIC TRAINING —", "This is a real fight, with the rules of the game, against an Infernal Mastiff. Your character is a ready-made Warrior: nothing here touches your saved games."]
+        : ["— SALA D'ALLENAMENTO: ADDESTRAMENTO DI BASE —", "Questo è uno scontro vero, con le regole del gioco, contro un Mastino Infernale. Il tuo personaggio è un Guerriero già pronto: niente di quello che succede qui tocca le tue partite salvate."] });
+      sist(en ? "Write what you do («attack the mastiff», «use a power», «drink the serum»). The combat manual on the side suggests commands." : "Scrivi cosa fai («attacca il mastino», «usa un potere», «bevi il siero»). Il manuale di combattimento di lato suggerisce i comandi.");
+    }
+    function fineAllenamento(vinto) {
+      const en = LINGUA === "en";
+      chiudiScontro(vinto ? "vinto" : "perso");
+      scontro = null; MusicaScontro.ferma(); barraScontro();
+      if (vinto) { try { localStorage.setItem("tutorial_completato", "1"); } catch (e) {} }
+      aggiungi({ tipo: "narra", box: vinto ? "ok" : "ko", righe: vinto
+        ? [en ? "The Mastiff collapses and the flames on its back go out. Training complete." : "Il Mastino crolla e le fiamme sulla sua groppa si spengono. Addestramento completato."]
+        : [en ? "The beast overwhelms you. In the real game this is a defeat; here you can simply try again." : "La belva ha la meglio. Nel gioco vero sarebbe una sconfitta; qui puoi semplicemente riprovare."] });
+      stato(true, en ? "Back to the entrance…" : "Si torna all'ingresso…");
+      setTimeout(() => { location.href = vinto ? "index.html" : "gioco.html?allenamento"; }, 5000);
+    }
     function vittoriaScontro() {
+      if (window.ALLENAMENTO) return fineAllenamento(true);
       const D = NEMICI[scontro.id], ctx = scontro.ctx, idNem = scontro.id, vu = scontro.vuoto;
       if (!ctx) usate.cantina_cane = "sconfitto"; /* il mastino della cantina */
       if (ctx === "ettore") { usate.ettore = "morto"; usate.q4_esito = "uccisa"; fuocoDiEttoreLasciato(); if (usate.q4 === "accettata") usate.q4 = "prova"; guarisciFerita("ettore", "Ettore"); }
@@ -11881,6 +11934,7 @@
       aggiungi({ tipo: "dialogo", tuttoBox: true, chi: "Aldo", macchina: true, righe: [B[Math.floor(Math.random() * B.length)]] }); /* dentro la tendina dell'azione bloccata */
     }
     function sconfittaScontro() {
+      if (window.ALLENAMENTO) return fineAllenamento(false);
       if (scontro && scontro.ctx === "aldo") return interrompiAldo();
       if (scontro && scontro.ctx === "enea") return sconfittaEnea();
       if (scontro && scontro.ctx === "dafne") return sconfittaDafne(); /* 22/11: Dafne non ti finisce */ /* 22/11: Enea non ti finisce */
@@ -12228,6 +12282,7 @@
       mostraStanza(luogo);
       riprendiDialoghi();
       setTimeout(sceltePendenti, 1200); /* 08/11: scelte di livello rimaste in sospeso */
+      if (window.ALLENAMENTO) introAllenamento();
       if (luogo === "cantina" && usate.cantina_cane === "apparso") avviaScontro("mastino"); /* partita salvata durante lo scontro: si ricomincia */
       if (luogo === "sala_ballo" && usate.aldo_scontro === "in_corso") setTimeout(mastinoAldo, 600); /* scontro con i mastini di Aldo */
       if (luogo === "cripta") entraCripta();

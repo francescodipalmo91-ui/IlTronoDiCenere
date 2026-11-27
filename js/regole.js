@@ -50,12 +50,6 @@ window.Regole = (() => {
   RISORSA_MARZIALE: perClasse(marziale, c => ({ id: c.risorsa, attr: c.attrRisorsa })), /* punti furia (Guerriero), punti natura (Sciamano) */
   ATTR_MAGIA: perClasse(c => !marziale(c), c => c.attrRisorsa),                         /* attributo del mana (Arcanista) e della fede (Monaco) */
   ARMATURE_CLASSI: { Forestiero: ["Armatura leggera", "Armatura media"], Sapiente: ["Armatura leggera"], Accolito: ["Armatura leggera", "Armatura media"] },
-  RISORSA_BASE: 10,            /* mana, fede, furia, natura = 10 + modificatore */
-  MAX_INCANTESIMI: 4,
-  MAX_TECNICHE: 2,             /* tecniche speciali preparate al livello 1 */
-  TECNICHE_PER_LIVELLO: [2, 2, 1, 1, 1], /* scelte nuove a ogni livello: posti 2, 4, 5, 6, 7 */
-  IRA_PER_COLPO: [1, 1, 2, 2, 3], /* furia guadagnata per ogni colpo subito, per livello (doppia sui critici) */
-  TECNICHE_SCUDO: 1,           /* una tecnica in più con lo scudo imbracciato */
   SALUTE_BASE: 10,             /* salute fisica e mentale = 10 + massimo del dado vita + modificatore (28/10) */
   CA_BASE: 10,
   /* 20/11 (Francesco): più scalino tra le armature, così servono tutte. Con Agilità +1/+2/+3: leggera 2/3/4, media 4/5/5, pesante 6.

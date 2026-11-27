@@ -1,5 +1,5 @@
 /* =====================================================================
-   VOLUME — controllo condiviso da gioco.html e tutorial.html
+   VOLUME — controllo condiviso da gioco.html e index.html
    Un pulsante con l'icona dell'altoparlante: cliccandolo si apre un piccolo pannello
    con il cursore del volume (0–100) e il tasto per silenziare.
    Le scelte restano salvate nel browser e valgono per tutte le pagine:

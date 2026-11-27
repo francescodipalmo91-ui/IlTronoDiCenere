@@ -7,7 +7,7 @@
    Oggi le stringhe le scriviamo noi, ma i dati arrivano anche dai salvataggi e da Firestore:
    così un nome o un salvataggio manomesso non può mai eseguire codice nella pagina.
 
-   Se lib/purify.min.js non si carica il gioco continua a funzionare (avviso in console).
+   Se lib/purify.min.js non si carica il gioco continua a funzionare, ma il markup compare come testo (mai eseguito) e c'è un avviso in console.
    Sicuro.immagine(percorso) accetta solo immagini locali del gioco (cartella immagini/).
    ===================================================================== */
 window.Sicuro = (() => {
@@ -17,8 +17,8 @@ window.Sicuro = (() => {
   function pulisci(markup) {
     const s = markup == null ? "" : String(markup);
     if (pronto()) return DOMPurify.sanitize(s);
-    if (!avvisato) { avvisato = true; console.warn("Sicuro: DOMPurify non caricato, HTML inserito senza filtro"); }
-    return s;
+    if (!avvisato) { avvisato = true; console.warn("Sicuro: DOMPurify non caricato, il markup viene mostrato come testo"); }
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); /* senza filtro non si inserisce mai markup: si scappa tutto */
   }
 
   /* celle e righe di tabella fuori da una <table> verrebbero scartate dal parser:

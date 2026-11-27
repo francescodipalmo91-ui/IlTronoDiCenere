@@ -135,7 +135,9 @@ window.Cloud = (() => {
   }
 
   /* Chiamato dal gioco dopo «Salva partita». Esiti: ok | locale | conflitto | troppo | errore */
-  async function inviaSlot(n) {
+  let codaInvii = Promise.resolve(); /* gli invii partono uno alla volta: il secondo vede la base già aggiornata dal primo */
+  const inviaSlot = (n) => (codaInvii = codaInvii.then(() => inviaUno(n), () => inviaUno(n)));
+  async function inviaUno(n) {
     try {
       if (!await connesso()) return "locale";
       const sl = leggi("slot" + n);

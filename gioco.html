@@ -638,7 +638,6 @@
         <details class="sez" id="tecnicheBox" hidden open><summary id="tecnicheTit">Tecniche</summary><div id="tecniche"></div></details>
         <details class="sez" id="zainoBox"><summary data-t="zaino">Zaino</summary><div id="zaino"></div></details>
         <details class="sez" id="sgabuzzinoBox" hidden><summary data-t="sgabuzzino">Sgabuzzino</summary><div id="sgabuzzino"></div></details>
-        <details class="sez" id="incantesimiBox" hidden><summary data-t="incantesimi">Incantesimi</summary><div id="incantesimi"></div></details>
         <details class="sez" id="missioniBox" hidden open><summary>Missioni</summary><div id="missioni"></div></details>
         <details class="sez" id="capacitaBox" hidden open><summary>Capacità</summary><div id="capacita"></div></details>
       </details>
@@ -6626,7 +6625,6 @@
       disegnaAbilita();
       disegnaEquip();
       aggiornaZaino();
-      disegnaIncantesimi();
       disegnaMissioni();
       if (typeof disegnaFermaglio === "function") disegnaFermaglio();
     }
@@ -6755,9 +6753,6 @@
     }
 
     /* Tendina degli incantesimi: capacità di classe, incantesimi preparati, posti liberi e via di prestigio */
-    function disegnaIncantesimi() {
-      document.getElementById("incantesimiBox").hidden = true; /* 22/11: niente incantesimi nel motore nuovo */
-    }
 
     /* Tendina delle tecniche (Guerriero): disponibili, posti dei livelli e Mente incrollabile */
     function disegnaTecniche() {
@@ -6768,7 +6763,7 @@
     /* Scelta della via (PROVVISORIA: da spostare nei dialoghi con Aldo e Guendalina). Si sceglie una volta sola. */
     function sceglieVia(v) {
       if (viaPg() || !["aldo", "guendalina"].includes(v) || livelloPg() < 2) return false;
-      usate.via = v; salvaUsate(); disegnaTecniche(); disegnaIncantesimi();
+      usate.via = v; salvaUsate(); disegnaTecniche();
       fuoriDallaTendina(() => aggiungi({ tipo: "sistema", box: "cap", righe: [RT.via.scelta(nomeViaPg(v))] }));
       return true;
     }
@@ -11508,7 +11503,7 @@
     for (const [id, p] of Object.entries(PREDE)) NEMICI[id] = { ca: p.ca, dadoVita: p.dadoVita, pvBase: p.pvBase, pvFissi: p.pvFissi, dannoDado: p.dannoDado, dannoBonus: p.dannoBonus, boss: false, attacco: p.attacco, attacchi: p.attacchi, probPresa: 0, probSoffio: 0, soffio: null, ritratto: null, comune: true, fugge: p.fugge, passivo: p.passivo, parte: p.parte, qta: p.qta, animale: p.grado === 0, grado: p.grado, livello: p.livello, pa: p.pa, abilita: p.abilita, immune: p.immune, zone: p.zone, vulnerabile: p.vulnerabile, agguato: p.agguato, statFisse: p.stat || (p.pvFissi != null ? { Vigore: 10, "Agilità": 10 } : undefined) /* 01/11: le cacce comuni hanno il loro profilo */,
       tipoDanno: p.tipoDanno, resiste: p.resiste, primaria: p.primaria, cacciaComune: !!p.cacciaComune, finestra: p.finestra } /* 28/10: statistiche fisse; il bonus vero sta in attacco e dannoBonus */;
     NEMICI.enea = { ...NEMICI.enea, boss: true, comune: false, ritratto: "immagini/png/enea_combat.webp" }; /* 22/11: Enea è un guardiano */
-    NEMICI.dafne = { ...NEMICI.dafne, boss: true, comune: false, ritratto: "immagini/nemici/dafne.png" }; /* 22/11: Dafne è una guardiana */
+    NEMICI.dafne = { ...NEMICI.dafne, boss: true, comune: false, ritratto: "immagini/nemici/dafne.webp" }; /* 22/11: Dafne è una guardiana */
     /* testi dello scontro di una preda: derivano da quelli del mastino, con il nome della preda al posto di «la belva» */
     function testiPreda(L, id) {
       const p = PREDE[id], t = p[L], B = CB_BASE, n = p.attacchi; /* CB_BASE è già nella lingua corrente */
@@ -12142,7 +12137,7 @@
       const tit = document.createElement("b"); tit.textContent = P0.nome + " — ";
       const tx = document.createElement("span"); tx.textContent = P0.testo + (d.ok ? "" : ` (${motivi[d.motivo] || d.motivo})`);
       det.append(tit, tx);
-      if (M.pg.spec === "sangue") { const l = document.createElement("label"); l.style.display = "block"; l.innerHTML = `<input type="checkbox" id="sangueVersato"> Sangue versato (${Math.ceil(M.pg.pvMax / 10)} salute per un dado in più, sopra il 50%)`; det.append(l); }
+      if (M.pg.spec === "sangue") { const l = document.createElement("label"); l.style.display = "block"; Sicuro.html(l, `<input type="checkbox" id="sangueVersato"> Sangue versato (${Math.ceil(M.pg.pvMax / 10)} salute per un dado in più, sopra il 50%)`); det.append(l); }
       const u = document.createElement("button"); u.type = "button"; u.textContent = "Usa " + P0.nome; u.disabled = !d.ok;
       u.addEventListener("click", () => usaPotereNuovo(scontro.potSel));
       det.append(document.createElement("br"), u); box.append(det);
@@ -12254,7 +12249,7 @@
     /* personaggi creati prima del motore nuovo: vanno ricreati */
     function avvisoPersonaggioVecchio() {
       const d = document.createElement("div"); d.className = "avviso-vecchio"; d.setAttribute("role", "alertdialog");
-      d.innerHTML = `<div><h2>Personaggio da ricreare</h2><p>Questo personaggio è stato creato con le vecchie regole (furia, mana, tecniche e incantesimi). Il combattimento ora usa i nuovi poteri: crea un nuovo personaggio per giocare.</p><a href="creazione.html">Crea un nuovo personaggio</a><a href="index.html">Torna all'inizio</a></div>`;
+      Sicuro.html(d, `<div><h2>Personaggio da ricreare</h2><p>Questo personaggio è stato creato con le vecchie regole (furia, mana, tecniche e incantesimi). Il combattimento ora usa i nuovi poteri: crea un nuovo personaggio per giocare.</p><a href="creazione.html">Crea un nuovo personaggio</a><a href="index.html">Torna all'inizio</a></div>`);
       document.body.append(d);
     }
 

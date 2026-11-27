@@ -10,6 +10,16 @@
 
 **Cosa non va (in breve):** niente di grave. Un difetto vero ma raro nel cloud, un sistema di stati vecchio che i giocatori non possono più incontrare, e un po' di scarti del vecchio motore ancora in pagina.
 
+## Esito (27/11/2026, sera)
+| N. | Esito |
+|---|---|
+| 1 | **Aperto, serve una scelta di gioco.** Il sistema è legato a ricette, parti di animali, dialoghi con Guendalina e limiti di borsa: toglierlo è un lavoro grande. L'alternativa è collegare i sei rimedi agli stati del motore nuovo (Sanguinante, Scottato, Intossicato, Indebolito, Impaurito; «cieco» non ha corrispondente). Decide Francesco. |
+| 2 | **Fatto, ma il difetto non era provato:** `tests/cloud.test.js` già copriva i due salvataggi ravvicinati e passava. Aggiunta comunque la coda degli invii (`js/cloud.js`: `inviaSlot` → `inviaUno`), che rende l'ordine certo. |
+| 3 | **Fatto in parte:** tolti il riquadro Incantesimi e `disegnaIncantesimi`. Restano la barra «mana» nascosta (è dentro un ciclo che disegna anche salute e mente) e i testi IT/EN. |
+| 4 | **Fatto:** senza DOMPurify `Sicuro` ora mostra il markup come testo; nuovo `tests/sicuro.test.js` (3 casi, in `test:regole`). |
+| 5 | **Fatto:** `dafne.png` (5,6 MB) → `dafne.webp` (0,2 MB). |
+| 6 | **Fatto:** i due `innerHTML` diretti passano da `Sicuro.html`; in `gioco.html` non ne restano. |
+
 ---
 
 ## Da sistemare

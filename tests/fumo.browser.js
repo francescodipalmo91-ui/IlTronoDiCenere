@@ -12,7 +12,7 @@ const BASE = process.env.BASE || "http://127.0.0.1:8765/";
 const AXE = fs.readFileSync(require.resolve("axe-core/axe.min.js"), "utf8");
 
 const PG = {
-  nome: "Fumo", razza: "Nano", classe: "Soldato", livello: 1, immagine: null,
+  nome: "Fumo", razza: "Nano", classe: "Soldato", livello: 1, immagine: null, motore: 2, spec: "berserker",
   statisticheBase: { Vigore: 15, "Agilità": 12, Mente: 10, Spirito: 13 }, statistiche: { Vigore: 17, "Agilità": 12, Mente: 10, Spirito: 14 },
   modificatori: { Vigore: 3, "Agilità": 1, Mente: 0, Spirito: 2 }, tiroDado: { dado: 10, valore: 10 }, puntiVita: 23, saluteMentale: 22,
   classeArmatura: 15, mana: null, risorsa: { id: "furia", max: 13 }, incantesimi: [], tecniche: ["polso", "morso_acciaio"],
@@ -24,6 +24,9 @@ const VISTE = {
   pc: { viewport: { width: 1440, height: 900 } },
   telefono: { ...devices["Pixel 7"], viewport: { width: 412, height: 915 } } /* Pixel 9a: 412×915 CSS px */
 };
+/* partita già iniziata (27/11/2026): col motore nuovo un personaggio senza partita parte dalla preparazione e il campo di testo resta spento */
+const PARTITA = { usate: { riposo: "sbloccato" }, diario: [{ tipo: "narra", stanza: "cucina", righe: ["x"] }], luogo: "cucina", livello: 1,
+  crescita: { salute: 0, mente: 0, risorsa: 0 }, risorsaUsata: 0, ora: Date.now(), zaino: [] };
 const PAGINE = [
   { url: "index.html" },
   { url: "creazione.html" },
@@ -45,11 +48,11 @@ const PAGINE = [
       page.on("pageerror", e => r.errori.push(e.message));
       page.on("console", m => { if (m.type() === "error" && !/Failed to load resource|net::|firebase|gstatic|googleapis/i.test(m.text())) r.errori.push(m.text()); });
       page.on("response", res => { if (res.url().startsWith(BASE) && res.status() >= 400) r.mancanti.push(`${res.status()} ${res.url().slice(BASE.length)}`); });
-      await page.addInitScript((pg) => {
+      await page.addInitScript(([pg, partita]) => {
         if (sessionStorage.getItem("fumo")) return;
         sessionStorage.setItem("fumo", "1"); localStorage.clear(); localStorage.setItem("trono_ritmo", "veloce");
-        if (pg) localStorage.setItem("personaggio", JSON.stringify(pg));
-      }, p.pg || null);
+        if (pg) { localStorage.setItem("personaggio", JSON.stringify(pg)); localStorage.setItem("partita", JSON.stringify(partita)); }
+      }, [p.pg || null, PARTITA]);
       await page.goto(BASE + p.url);
       await page.waitForLoadState("networkidle").catch(() => {});
       await page.waitForTimeout(600);

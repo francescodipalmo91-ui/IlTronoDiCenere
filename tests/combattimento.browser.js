@@ -1051,10 +1051,9 @@ caso("Spada del Retaggio: primo tocco con la visione, una chiamata per lacrima (
 caso("Anello del Primo Vespera: CD 12 e visione del funerale una sola volta", async (b) => {
   const { page, errori, chiudi } = await apri(b, "gioco.html", PG(), PARTITA({ luogo: "cripta" }));
   eq(await page.evaluate(() => LUOGHI.cripta_sarcofago.prova.cd), 12);
-  await accoda(page, [R(2, 4)]);
-  await page.evaluate(() => sarcofago(true)); await page.click("#azioni button, #scelte button"); await page.waitForTimeout(300);
+  await page.evaluate(() => sarcofago(true)); await page.waitForTimeout(300);
   eq(await page.evaluate(() => [usate.flash_anello, document.getElementById("diario").textContent.includes(A2.anello.visione[3])]), [true, true]);
-  eq(await page.evaluate(() => pg.dannoMentale || 0), 2, "1d4 mentale");
+  eq(await page.evaluate(() => pg.dannoMentale || 0), 0, "27/11: nessun danno mentale dal flashback");
   eq(errori, [], "errori"); await chiudi();
 });
 

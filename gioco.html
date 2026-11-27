@@ -1027,7 +1027,7 @@
           },
           gestoSi: ["Pieghi un ginocchio sul marmo, davanti all'armatura, e chini il capo, come il cavaliere inginocchiato nella vetrata della cappella.", "Per un lungo istante non accade nulla. Poi, sopra di te, senti il ferro scricchiolare: le dita dell'armatura si allentano."],
           respintoDi: ["La pressione ti schiaccia le tempie e ti ricaccia indietro. Ricordi la visione e il suo sapore amaro, ma stavolta non ti travolge: ti limiti a barcollare, con le orecchie che fischiano."],
-          respinge: (d) => `L'armatura non si lascia toccare: subisci danni mentali pari a 1d${d}.`,
+          respinge: "L'armatura non si lascia toccare.",
           respinto: [ /* visione del giardino (Francesco, 26/10): Adele incinta di Agnese, al tavolo il figlio maggiore e Lorenzo */
             "Una fitta improvvisa e lancinante ti trafigge le tempie, costringendoti a barcollare e a portare le mani al capo per soffocare il dolore. Quando riapri gli occhi, il mondo è cambiato: l'atrio della dimora e la vecchia armatura sono svaniti nel nulla, sostituiti da una realtà improvvisa e lontana.",
             "Sei testimone di una visione, cristallizzata in un giardino baciato da una luce calda e irreale. Intorno a un tavolo di legno massello, quattro persone godono della quiete di un mattino qualunque. Un uomo e una donna conversano a bassa voce, immersi in un'intesa serena; lei, con un gesto tenero e istintivo, si accarezza il ventre arrotondato con un sorriso luminoso. Poco distante, seduti sul prato o aggrappati alle sedie, due maschietti ridono spensierati, muovendo tra le dita piccoli giocattoli intagliati nel legno.",
@@ -1480,7 +1480,7 @@
           },
           gestoSi: ["You bend one knee on the marble before the armor and bow your head, like the knight kneeling in the chapel's stained glass.", "For a long moment nothing happens. Then, above you, you hear iron creak: the armor's fingers loosen."],
           respintoDi: ["The pressure crushes your temples and drives you back. You remember the vision and its bitter taste, but this time it does not overwhelm you: you merely stagger, ears ringing."],
-          respinge: (d) => `The armor will not let itself be touched: you take 1d${d} mental damage.`,
+          respinge: "The armor will not let itself be touched.",
           respinto: [
             "A sudden, piercing pain stabs your temples, making you stagger and clutch your head to stifle it. When you open your eyes again, the world has changed: the hall of the mansion and the old armor have vanished, replaced by a reality sudden and far away.",
             "You are witness to a vision, frozen in a garden kissed by a warm, unreal light. Around a solid wooden table, four people enjoy the quiet of an ordinary morning. A man and a woman talk softly, lost in a calm understanding; she, with a tender, instinctive gesture, strokes her rounded belly with a radiant smile. Not far away, sitting on the lawn or clinging to the chairs, two little boys laugh carefree, turning small carved wooden toys between their fingers.",
@@ -3722,8 +3722,7 @@
         ],
         diario: { nome: "Diario di Adele", testo: "Pagine strappate dal diario segreto della Signora Adele.", mancante: "— pagina mancante —",
           trovata: (n, tot) => `Pagina del diario di Adele ritrovata (${n} di ${tot}). La rileggi quando vuoi dallo zaino, nel «Diario di Adele».`,
-          conteggio: (n, tot) => `Pagine ritrovate: ${n} di ${tot}.`,
-          ferisce: (d) => `Le parole di Adele ti restano addosso come cenere: subisci danni mentali pari a 1d${d}.` }, /* PROVVISORIO */
+          conteggio: (n, tot) => `Pagine ritrovate: ${n} di ${tot}.` }, /* 27/11: niente più danno mentale alla lettura (decisioni_27_novembre.md, sez. 2) */
         luoghi: {
           giardino_fontana: {
             fisso: ["Ti avvicini alla fontana. La vasca, scolpita in un marmo bianco e impreziosita da tralci e cervi rampanti, custodisce un'acqua di una limpidezza quasi innaturale.", "È l'unica reliquia a non aver dimenticato la vita, in questo giardino spettrale. E guardandola scorrere, non puoi fare a meno di chiederti quale vena segreta alimenti ancora questo flusso, o quale mano invisibile continui a governarlo."],
@@ -3854,7 +3853,6 @@
           ottenuta: "Oggetto ottenuto: Acqua benedetta ×2 (nello zaino)."
         },
         anello: { nome: "Anello del Primo Vespera", testo: "Reliquia del capostipite dei Vespera: un anello d'oro rosso, inciso con l'albero dalle radici intrecciate e il motto della casata, «Dal fuoco nasciamo, nel fuoco torniamo». Al dito è tiepido, come una mano posata sulla spalla. Protezione del capostipite: +1 alla Classe Armatura finché lo porti. Coraggio dei Vespera: in combattimento, quando la tua salute fisica scende a un quarto o meno, +1 ai tiri per colpire.",
-          visioneDanno: (d) => `La visione ti ferisce: subisci danni mentali pari a 1d${d}.`,
           visione: [ /* visione dell'anello (Francesco, 26/10): il funerale di Lorenzo */
             "Un'altra fitta spaventosa ti trafigge le tempie. Cerchi aria a vuoto mentre ti aggrappi al sarcofago per non crollare, prima che il buio inghiotta ogni cosa.",
             "Riapri gli occhi e la realtà è incrinata: il braciere e il giaciglio di Ettore sono svaniti. Al loro posto, la fatiscente cripta è divenuta una solenne camera funeraria, soffocata dal profumo denso di fiori freschi.",
@@ -3917,8 +3915,7 @@
         ],
         diario: { nome: "Adele's diary", testo: "Pages torn from Lady Adele's secret diary.", mancante: "— missing page —",
           trovata: (n, tot) => `Page of Adele's diary found (${n} of ${tot}). You can read it again any time from your pack, in “Adele's diary”.`,
-          conteggio: (n, tot) => `Pages found: ${n} of ${tot}.`,
-          ferisce: (d) => `Adele's words cling to you like ash: you take 1d${d} mental damage.` },
+          conteggio: (n, tot) => `Pages found: ${n} of ${tot}.` },
         luoghi: {
           giardino_fontana: {
             fisso: ["You walk up to the fountain. The basin, carved in white marble and adorned with vines and rampant stags, holds water of an almost unnatural clarity.", "It is the only relic in this ghostly garden that has not forgotten life. And watching it flow, you cannot help wondering what secret vein still feeds it, or what invisible hand still governs it."],
@@ -4048,7 +4045,6 @@
           ottenuta: "Item obtained: Holy water ×2 (in your pack)."
         },
         anello: { nome: "Ring of the First Vespera", testo: "Relic of the founder of the Vespera: a ring of red gold, engraved with the intertwined-root tree and the family motto, “From fire we are born, to fire we return”. On the finger it is warm, like a hand resting on your shoulder. Founder's protection: +1 Armor Class while you wear it. Courage of the Vespera: in combat, when your physical health drops to a quarter or less, +1 to attack rolls.",
-          visioneDanno: (d) => `The vision wounds you: you take 1d${d} mental damage.`,
           visione: [
             "Another terrible pain stabs your temples. You gasp for air as you cling to the sarcophagus so as not to collapse, before the darkness swallows everything.",
             "You open your eyes and reality is cracked: Ettore's brazier and bedroll have vanished. In their place, the crumbling crypt has become a solemn funeral chamber, stifled by the thick scent of fresh flowers.",
@@ -5952,7 +5948,7 @@
     if (salvata && salvata.luogo === "ingresso") salvata.luogo = "giardino"; /* 02/11: l'ingresso principale non esiste più */
     if (salvata && salvata.luogo && STANZE[salvata.luogo]) luogo = salvata.luogo;
 
-    const SCALE = { ...TX.scale, soglia: 14, dannoDado: 4 };
+    const SCALE = { ...TX.scale, soglia: 14 };
 
     /* =====================================================================
        RICONOSCIMENTO DI CIÒ CHE SCRIVE IL GIOCATORE (italiano e inglese)
@@ -6409,9 +6405,6 @@
     /* punti furia / punti natura: { id, max } oppure null (anche per i personaggi creati prima di questa regola) */
     function risorsaPg() {
       return null; /* niente furia né natura */
-      const c = RISORSA_CLASSE[pg && pg.classe]; if (!c) return null;
-      const base = (pg.risorsa && Number(pg.risorsa.max)) || (10 + mod(Number(pg.statistiche && pg.statistiche[c.attr]) || 10));
-      return { id: c.id, max: base + crescita.risorsa };
     }
     function risorsaAttuale() { const r = risorsaPg(); return r ? Math.max(0, r.max - (pg.risorsaUsata || 0)) : null; }
     /* 23/11: livelli a tappe. Il livello «maturato» arriva con i guardiani sconfitti (uccisi o risparmiati) quando si torna da Aldo;
@@ -6917,7 +6910,6 @@
       const box = document.getElementById("tecniche"), sez = document.getElementById("tecnicheBox");
       if (!box) return;
       return disegnaPoteriScheda(box, sez); /* 22/11: solo motore nuovo */
-      sez.hidden = true;
     }
     /* Scelta della via (PROVVISORIA: da spostare nei dialoghi con Aldo e Guendalina). Si sceglie una volta sola. */
     function sceglieVia(v) {
@@ -7721,11 +7713,6 @@
       aggiornaEquip(); modificato(); /* la borsa dei veleni non si riempie più al riposo: gli ingredienti si trovano nella foresta (27/10) */ /* Cataclisma del Filo Rovinato torna disponibile */
       if (livelliPronti()) return crescitaAlRiposo(offriPreparazione); /* 01/11: il livello si applica al primo riposo utile */
       return sceltePendenti(); /* 08/11: le scelte dei poteri del livello */
-      if (!haPreparazione() || finePartita) return;
-      scelte([
-        { testo: haTecniche() ? RT.prep.btnTec : RT.prep.btnInc, fn: () => { chiudiScelte(); apriPreparazione(false); } },
-        { testo: RT.prep.nonOra, fn: () => chiudiScelte() }
-      ]);
     }
 
     /* =====================================================================
@@ -7754,7 +7741,7 @@
       aggiornaMentali(); scuotiScheda(); modificato();
       return [prima, Math.max(0, max - pg.dannoMentale)];
     }
-    /* diari e flashback: la verità ferisce la mente, ma da sola non la porta mai a 0 (resta almeno 1) */
+    /* danno mentale non letale: non lo usano più né i diari né i flashback (27/11); resta per gli altri usi */
     function dannoMenteNonLetale(d) {
       const max = maxMentali(), prima = Math.max(0, max - (pg.dannoMentale || 0));
       const subito = Math.max(0, Math.min(d, prima - 1));
@@ -9347,7 +9334,6 @@
 
     /* ---------- I diari di Adele e le prove di giardino, cappella e cripta ---------- */
     const PAGINE_ADELE = () => A2.pagine.length;
-    const DANNO_DIARIO = { bronzo: 2, argento: 2, oro: 4, platino: 4 }; /* dado del danno mentale per grado della pagina (campo «grado», di base bronzo) */
     const pagineTrovate = () => (Array.isArray(usate.pagine_adele) ? usate.pagine_adele : []).filter(n => n >= 1 && n <= PAGINE_ADELE()).sort((a, b) => a - b);
     /* la pagina n (da 1) entra nel «Diario di Adele» e viene mostrata per intero */
     function trovaPagina(n, nonLetta) {
@@ -9365,8 +9351,6 @@
       const P = A2.pagine[n - 1];
       aggiungi({ tipo: "narra", box: "mis", righe: [P.titolo, ...P.testo] });
       sist(A2.diario.trovata(usate.pagine_adele.length, PAGINE_ADELE()));
-      const dado = DANNO_DIARIO[P.grado || "bronzo"], d = dannoMenteNonLetale(tira(dado)); /* solo alla prima lettura: trovaPagina esce se la pagina è già presa */
-      aggiungi({ tipo: "narra", box: "ko", esito: U.dannoSubito(d), righe: [A2.diario.ferisce(dado)] });
     }
     /* testo del diario nello zaino: le pagine in ordine di tempo, con i vuoti per quelle mancanti */
     function testoDiarioAdele() {
@@ -9532,12 +9516,8 @@
         aggiungi({ tipo: "narra", righe: A2.anello.reliquia });
         sist(A2.anello.ottenuto);
         if (usate.flash_anello) return;
-        usate.flash_anello = true; salvaUsate(); /* visione del funerale: 1d4 mentale, non letale, solo la prima volta */
-        aggiungi({ tipo: "narra", righe: [A2.anello.visioneDanno(4)] });
-        return scelte([{ testo: U.lancia(4), fn: () => {
-          const d = dannoMenteNonLetale(tira(4)); salvaPg(); chiudiScelte();
-          aggiungi({ tipo: "narra", box: "ko", esito: U.dannoSubito(d), righe: A2.anello.visione });
-        } }]);
+        usate.flash_anello = true; salvaUsate(); /* visione del funerale: solo la prima volta, senza danno mentale (27/11) */
+        return aggiungi({ tipo: "narra", box: "mis", righe: A2.anello.visione });
       }
       if (dotInUso === "Piede di porco") return aggiungi({ tipo: "sistema", box: "ko", righe: [A2.anello.ditaSalve] }); /* 17/11: con il piede di porco (nominato) il coperchio non costa più le dita */
       const d = tira(4), [da, a] = dannoCorpoNonLetale(d);
@@ -10514,12 +10494,8 @@
     }
     function primoTocco() {
       usate.scale_visione = true; usate.scale = "attesa"; salvaUsate();
-      aggiungi({ tipo: "narra", righe: [SCALE.respinge(SCALE.dannoDado)] });
-      scelte([{ testo: U.lancia(SCALE.dannoDado), fn: () => {
-        const d = dannoMenteNonLetale(tira(SCALE.dannoDado)); salvaPg(); /* flashback: 1d4, non letale */
-        chiudiScelte();
-        aggiungi({ tipo: "narra", box: "ko", esito: U.dannoSubito(d), righe: SCALE.respinto });
-      } }]);
+      aggiungi({ tipo: "narra", righe: [SCALE.respinge] });
+      aggiungi({ tipo: "narra", box: "mis", righe: SCALE.respinto }); /* flashback senza danno mentale (27/11) */
     }
     function provaRichiamo() {
       const ab = "Intuizione", m = valoreAbilita(ab), nome = N("abilita", ab), nota = addestrata(ab) ? "" : U.nonAddestrata;

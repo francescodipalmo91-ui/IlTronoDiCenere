@@ -1,6 +1,6 @@
 # Decisioni e lavori del 27 novembre 2026 (venerdì)
 
-Sessione di chiusura della settimana: i due aperti di S3 (sez. 1-2), S4 (sovrano e visioni, sez. 3), S6 (scena finale ed epiloghi, sez. 4) e il riversamento nei moduli (sez. 5). **⚠ = proposta di Claude non confermata esplicitamente da Francesco.** Nessun codice toccato.
+Sessione di chiusura della settimana: i due aperti di S3 (sez. 1-2), S4 (sovrano e visioni, sez. 3), S6 (scena finale ed epiloghi, sez. 4) e il riversamento nei moduli (sez. 5). **⚠ = proposta di Claude non confermata esplicitamente da Francesco.** Codice toccato solo nel pomeriggio: danno mentale tolto da diari e flashback (sez. 2); GitHub allineato al PC (commit `bab98de`).
 
 ## 1. Origine della maledizione (S3, punto 2) — DECISO da Francesco (opzione A, precisata)
 - **L'incantesimo di Adele è solo un incantesimo andato male.** Causa l'incendio e la morte di Lorenzo (2º mese, anno 15). **Non scatena la maledizione.**
@@ -11,7 +11,7 @@ Sessione di chiusura della settimana: i due aperti di S3 (sez. 1-2), S4 (sovrano
 ## 2. Danno mentale alla lettura dei diari (S3, punto 3) — DECISO da Francesco (opzione B)
 - **Nessun danno mentale alla lettura dei diari di Adele**, stessa linea dei flashback (9/11). Il costo mentale resta nella casa.
 - **Codice da fare (controllato su `gioco.html` del PC, nessuna modifica):** `DANNO_DIARIO` (~9350), tiro in `leggiPagina` (~9368-9369), frase `A2.diario.ferisce` (IT ~3726, EN ~3921).
-- ⚠ **Incongruenza trovata:** il codice applica ancora **1d4 di danno mentale ai flashback** (contro il 9/11): visione del funerale dell'anello (`flash_anello` ~9535-9540, `visioneDanno` ~3857) e «primo tocco» delle scale (`primoTocco` ~10515-10521, `SCALE.dannoDado`). Da togliere con la stessa modifica **CONFERMATO da Francesco il 27/11** («vince sempre la decisione più recente»: vale la linea del 9/11 e del 27/11, quindi niente danno nemmeno ai flashback). I diari dei vuoti (`js/cacce.js`) non hanno danno.
+- ⚠ **Incongruenza trovata:** il codice applica ancora **1d4 di danno mentale ai flashback** (contro il 9/11): visione del funerale dell'anello (`flash_anello` ~9535-9540, `visioneDanno` ~3857) e «primo tocco» delle scale (`primoTocco` ~10515-10521, `SCALE.dannoDado`). Da togliere con la stessa modifica **CONFERMATO da Francesco il 27/11 e FATTO nel codice il 27/11 sul PC (non su GitHub)** («vince sempre la decisione più recente»: vale la linea del 9/11 e del 27/11, quindi niente danno nemmeno ai flashback). I diari dei vuoti (`js/cacce.js`) non hanno danno.
 
 ## 3. S4: le visioni del sovrano e le tre lacrime — DECISO da Francesco
 **3a. Le tre lacrime sono tre ricordi positivi di Adele (condizione di Francesco).**

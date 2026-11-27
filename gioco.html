@@ -6738,14 +6738,10 @@
       if (risorsaPg()) riga(vit, nomeRisorsa(), `${risorsaAttuale()} / ${risorsaPg().max}`, "risorsa"); /* punti furia o punti natura */
       { riga(vit, "CD dei tuoi stati", String(8 + modAttaccoPg() + livelloPg()), "cdinc"); if (pg.classe === "Forestiero" && livelloPg() >= 5) riga(vit, "Elisir (Infuso)", String(Number(pg.elisir) || 0), "cdinc"); }
       if (scontro && pg.classe === "Accolito") riga(vit, Lingua.t({ it: "Bilancia", en: "Balance" }), nomeBilancia(Number(scontro.bilancia) || 0), "cdinc");
-      const sc = (() => { try { return scontro; } catch (e) { return null; } })();
-      if (sc) righeEffetti(vit, sc, EFF_PG, sep);
       statoMente();
       if (typeof disegnaTecniche === "function") disegnaTecniche();
     }
 
-    /* Effetti a durata: medaglione con simbolo, nome e turni rimasti (rombi pieni = turni ancora attivi) */
-    const EFF_PG = ["scudo", "invuln", "pietra", "armaPiu", "potenza", "guardia", "baluardo", "fortezza", "furore", "precisione", "runa", "occhio", "tomo", "quiete", "muro", "santuario", "voto", "rigen", "gemella", "cerchio", "fiamma", "notte", "furiaCinerea", "manto", "seconda", "rivest", "linfaFuria", "pelle", "infuso", "aura", "rinascita", "bulbo", "lama", "piena", "doppio", "teatro", "nessuno", "crosta", "costellazione", "destino"], EFF_NEM = ["truccato", "emorragia", "vincolo", "labirinto", "bloccato", "cieco", "sanguina", "frattura", "esposto", "debole", "sbilanciato", "silenzio", "frastornato", "intontito", "pressione", "parola", "accecato", "avvizzito", "paura", "corona", "avvelenato", "marea"];
     const SHIELD = "M12 2.8l7 2.7v5.3c0 4.6-3 8.1-7 10.4-4-2.3-7-5.8-7-10.4V5.5z";
     const ICONE_EFF = { /* tratti a 24×24, colore dal tema dell'effetto */
       scudo: { tono: "dif", d: `<path d="${SHIELD}"/><path d="M12 6.5v11M8.2 10.5h7.6" opacity=".7"/>` },
@@ -6821,72 +6817,6 @@
       m.className = "medaglione " + ic.tono; m.setAttribute("aria-hidden", "true");
       Sicuro.html(m, `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ic.d}</svg>`);
       return m;
-    }
-    function righeEffetti(dl, sc, chiavi, sep) {
-      const attivi = chiavi.filter(k => sc.eff[k] > 0), crepe = chiavi === EFF_NEM ? CMB.crepe(sc) : 0, cariche = chiavi === EFF_PG ? CMB.cariche(sc) : 0, sigilli = chiavi === EFF_NEM ? CMB.sigilli(sc) : 0;
-      /* Sciamano: cariche di Morbo sul nemico; Scudo di Corteccia e trappola pronta sul personaggio */
-      const copie = chiavi === EFF_PG ? CMB.copie(sc) : 0;
-      const morbo = chiavi === EFF_NEM ? Number(sc.morbo) || 0 : 0, corteccia = chiavi === EFF_PG ? Number(sc.corteccia) || 0 : 0, trappola = chiavi === EFF_PG ? sc.trappola : null;
-      if (!attivi.length && !crepe && !cariche && !sigilli && !morbo && !corteccia && !trappola && !copie) return;
-      sep("sep-spazio");
-      const t = document.createElement("div"); t.className = "eff-tit"; t.textContent = CB.effettiTit; dl.append(t);
-      if (cariche) { /* Carica Cinetica dello scudo: cariche, dura tutto lo scontro */
-        const max = CMB.CARICHE_MAX;
-        const dt = document.createElement("dt"); dt.className = "eff-nome"; dt.append(medaglione("cariche"), document.createTextNode(CB.effNomi.cariche + (sc.elastica && cariche >= 2 ? " · " + nomeTec(TEC.find(x => x.id === "marea_elastica")) : "")));
-        const dd = document.createElement("dd"); dd.className = "eff-dur dif";
-        const pall = document.createElement("span"); pall.className = "rombi"; pall.setAttribute("aria-hidden", "true");
-        for (let i = 0; i < max; i++) { const r = document.createElement("i"); if (i < cariche) r.className = "su"; pall.append(r); }
-        dd.append(pall, document.createTextNode(CB.cariche(cariche, max)));
-        dd.title = dt.title = `${CB.effNomi.cariche}: ${CB.cariche(cariche, max)}`;
-        dl.append(dt, dd);
-      }
-      const rigaNatura = (icona, nome, valore, tono) => { /* righe dello Sciamano senza durata in turni */
-        const dt = document.createElement("dt"); dt.className = "eff-nome"; dt.append(medaglione(icona), document.createTextNode(nome));
-        const dd = document.createElement("dd"); dd.className = "eff-dur " + tono; dd.textContent = valore;
-        dd.title = dt.title = `${nome}: ${valore}`; dl.append(dt, dd);
-      };
-      if (morbo) rigaNatura("avvelenato", CB.effNomi.morbo, `${morbo}/${SCI.MORBO_MAX}`, "mal");
-      if (copie) rigaNatura("copie", CB.effNomi.copie, `${copie}/${CMB.copieMax({ scuolaVia: scuolaPotenziata() })}`, "dif"); /* 04/11 sera: Copie dell'Illusione */
-      if (corteccia) rigaNatura("pelle", CB.effNomi.corteccia, `${corteccia}/${SCI.scudoMax({ liv: livelloPg() })}`, "dif");
-      if (trappola) rigaNatura("bulbo", CB.effNomi.trappola, nomeTec(TEC.find(x => x.id === trappola) || { nome: { it: trappola, en: trappola } }), "off");
-      if (sigilli) { /* Sigilli dell'Arcanista: incisi sul nemico, durano tutto lo scontro */
-        const max = CMB.sigilliMax({ boss: bossNem(), liv: livelloPg(), scuolaVia: scuolaPotenziata() });
-        const dt = document.createElement("dt"); dt.className = "eff-nome"; dt.append(medaglione("sigilli"), document.createTextNode(CB.effNomi.sigilli));
-        const dd = document.createElement("dd"); dd.className = "eff-dur mal";
-        const pall = document.createElement("span"); pall.className = "rombi"; pall.setAttribute("aria-hidden", "true");
-        for (let i = 0; i < max; i++) { const r = document.createElement("i"); if (i < sigilli) r.className = "su"; pall.append(r); }
-        dd.append(pall, document.createTextNode(`${sigilli}/${max}`));
-        dd.title = dt.title = `${CB.effNomi.sigilli}: ${sigilli}/${max}`;
-        dl.append(dt, dd);
-      }
-      if (crepe) { /* Incrinatura: cariche invece di turni, dura tutto lo scontro */
-        const max = CMB.crepeMax({ boss: bossNem() });
-        const dt = document.createElement("dt"); dt.className = "eff-nome"; dt.append(medaglione("crepe"), document.createTextNode(CB.effNomi.crepe + (sc.sigillo && crepe >= max ? ` · ${CB.sigillato}` : "")));
-        const dd = document.createElement("dd"); dd.className = "eff-dur mal";
-        const pall = document.createElement("span"); pall.className = "rombi"; pall.setAttribute("aria-hidden", "true");
-        for (let i = 0; i < max; i++) { const r = document.createElement("i"); if (i < crepe) r.className = "su"; pall.append(r); }
-        dd.append(pall, document.createTextNode(CB.cariche(crepe, max)));
-        dd.title = dt.title = `${CB.effNomi.crepe}: ${CB.cariche(crepe, max)}`;
-        dl.append(dt, dd);
-      }
-      attivi.forEach(k => {
-        if (CMB.perScontro(sc.eff[k])) { /* Frattura della Sentenza e del Martello: niente rombi */
-          const dt = document.createElement("dt"); dt.className = "eff-nome"; dt.append(medaglione(k), document.createTextNode(CB.effNomi[k]));
-          const dd = document.createElement("dd"); dd.className = "eff-dur " + ICONE_EFF[k].tono; dd.textContent = CB.tuttoScontro;
-          dd.title = dt.title = `${CB.effNomi[k]}: ${CB.tuttoScontro}`; dl.append(dt, dd); return;
-        }
-        const n = sc.eff[k], max = Math.max(n, (sc.effMax && sc.effMax[k]) || n), tono = ICONE_EFF[k].tono;
-        const dt = document.createElement("dt"); dt.className = "eff-nome";
-        const nomeEff = k === "sanguina" && Number(sc.sangueDado) === 6 ? CB.emorragia : k === "avvelenato" && Number(sc.velenoDado) === 6 ? CB.effNomi.tossina
-          : k === "rivest" && sc.rivest && TEC.find(x => x.id === sc.rivest) ? `${CB.effNomi.rivest} · ${nomeTec(TEC.find(x => x.id === sc.rivest))}` : CB.effNomi[k];
-        dt.append(medaglione(k), document.createTextNode(nomeEff + (k === "sanguina" && sc.marchio ? ` · ${CB.marchiato}` : "") + (k === "esposto" && sc.segno ? ` · ${CB.segnato}` : "")));
-        const dd = document.createElement("dd"); dd.className = "eff-dur " + tono + (n === 1 ? " ultimo" : "");
-        const pall = document.createElement("span"); pall.className = "rombi"; pall.setAttribute("aria-hidden", "true");
-        for (let i = 0; i < max; i++) { const r = document.createElement("i"); if (i < n) r.className = "su"; pall.append(r); }
-        dd.append(pall, document.createTextNode(CB.turniRim(n)));
-        dd.title = dt.title = `${CB.effNomi[k]}: ${CB.turniRim(n)}`;
-        dl.append(dt, dd);
-      });
     }
 
     /* Tendina degli incantesimi: capacità di classe, incantesimi preparati, posti liberi e via di prestigio */
@@ -11853,7 +11783,6 @@
       riga(vit, CB.salute, scoperta ? `${Math.max(0, n.pv)} / ${n.pvMax}` : ig);
       riga(vit, CB.ca, scoperta ? String(caNem()) : ig);
       if (n.paMax) riga(vit, (D.ettore ? ET.scontro.pa : null) || Lingua.t({ it: "Punti abilità", en: "Ability points" }), scoperta ? `${Math.max(0, n.pa)} / ${n.paMax}` : ig);
-      if (scontro) righeEffetti(vit, scontro, EFF_NEM, (c) => { const d = document.createElement("div"); d.className = c; vit.append(d); });
       $n("titStatNem").textContent = CB.caratteristiche; $n("titAttNem").textContent = CB.attacchi; $n("titSpecNem").textContent = CB.speciali;
       const st = $n("statNem"), at = $n("attNem");
       const sp = $n("specNem");

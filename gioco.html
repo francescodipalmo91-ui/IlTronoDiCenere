@@ -857,9 +857,6 @@
           giaFuori: "Sei già fuori, all'accampamento.",
           /* PROVVISORIO: passaggio dal buio all'atrio, prima della descrizione dell'atrio */
           luceTorcia: ["📖 La torcia prende fuoco con un crepitio improvviso. La fiamma strappa un lembo d'ombra al buio e ciò che rivela ti mozza il fiato."],
-          luceIncantesimo: ["📖 Pronunci la formula e una sfera di luce pallida si accende sul palmo della tua mano, respingendo l'oscurità. Ciò che rivela ti lascia senza fiato."],
-          incantesimoUsato: (c, r) => `Lanci l'incantesimo Luce: −${c} mana (rimasti ${r}).`,
-          pocoMana: (c, r) => `Raccogli le energie, ma non ne hai abbastanza: Luce richiede ${c} ${U.mana.toLowerCase()} e te ne restano ${r}.`,
           /* l'atrio dopo la luce */
           portone: "Istintivamente ti volti. L'ingresso della grotta da cui sei entrato è scomparso: al suo posto si erge un imponente portone di legno scuro, finemente intagliato e sigillato.",
           torciaSpenta: "In quell'istante, la fiamma della torcia si spegne soffocata da una morsa invisibile. Il tizzone è subito freddo, la pece ormai pietrificata. Inutile. Lo lasci cadere sul marmo con un tonfo sordo.",
@@ -875,7 +872,6 @@
           },
           portoneChiuso: ["Afferri le maniglie e spingi i pesanti battenti, poi provi a tirarli verso di te. Il portone non si muove di un millimetro.", "È chiuso. Al centro, tra gli intagli, noti una toppa massiccia: sembra che ti serva una chiave."],
           torciaAggiunta: (n) => `Zaino aggiornato: Torcia +1 utilizzo (ora ${n}).`,
-          incInutile: (n) => `📖 Ti prepari a lanciare ${n}, ma qui non servirebbe a nulla: lasci svanire l'energia senza consumarla.`, /* PROVVISORIO */
           incSconosciuto: "Non conosci nessun incantesimo con quel nome.",
           caminoPranzo: [
             "Ti avvicini al camino e lo osservi a lungo, ma non ha nulla da offrirti oltre allo spettacolo danzante delle sue fiamme bluastre.",
@@ -1311,9 +1307,6 @@
           nessunIncantesimo: "You try to gather your power, but you do not know the Light spell.",
           giaFuori: "You are already outside, at the camp.",
           luceTorcia: ["The torch catches with a sudden crackle. The flame tears a shred of shadow from the dark, and what it reveals takes your breath away."],
-          luceIncantesimo: ["You speak the formula and a sphere of pale light kindles on your palm, driving back the darkness. What it reveals takes your breath away."],
-          incantesimoUsato: (c, r) => `You cast the Light spell: −${c} mana (${r} left).`,
-          pocoMana: (c, r) => `You gather your power, but it is not enough: Light needs ${c} ${U.mana.toLowerCase()} and you have ${r} left.`,
           portone: "Instinctively you turn around. The mouth of the cave you came through has vanished: in its place stands an imposing door of dark wood, finely carved and sealed.",
           torciaSpenta: "At that very moment, the torch flame dies, smothered by an invisible grip. The brand is instantly cold, the pitch already turned to stone. Useless. You let it fall onto the marble with a dull thud.",
           sistTorciaSpenta: "The torch has gone out and is now useless: your off hand is free.",
@@ -1328,7 +1321,6 @@
           },
           portoneChiuso: ["You grasp the handles and push the heavy leaves, then try pulling them towards you. The door does not budge an inch.", "It is locked. In the middle, among the carvings, you notice a massive keyhole: it looks like you need a key."],
           torciaAggiunta: (n) => `Pack updated: Torch +1 use (now ${n}).`,
-          incInutile: (n) => `You prepare to cast ${n}, but it would be of no use here: you let the energy fade without spending it.`,
           incSconosciuto: "You know no spell by that name.",
           caminoPranzo: [
             "You approach the fireplace and study it for a long time, but it has nothing to offer you beyond the dancing show of its bluish flames.",
@@ -6246,7 +6238,6 @@
       } catch (e) {}
     }
     if (pg) pg.statistiche = conAttrVecchi(pg.statistiche || {});
-    if (pg && pg.classe === "Accolito") U.mana = LINGUA === "en" ? "Faith points" : "Punti fede"; /* il Monaco lancia incantesimi con i punti fede; l'Arcanista i punti arcano */
     Lingua.setRisorsa(() => (pg ? pg.classe : null)); /* {risorsa} nelle descrizioni: pozione di essenza, olio della falena */
     /* Agilità: il suo modificatore va sulla Classe armatura, fino al tetto dell'armatura indossata */
     const TETTO_AGILITA = Regole.TETTO_AGILITA;
@@ -6291,16 +6282,6 @@
     const GIORNI_LOGORIO = 10;
     const logorio = () => { try { return Math.max(0, Number(usate && usate.logorio) || 0); } catch (e) { return 0; } };
     /* mana (Sapiente e Accolito): il massimo viene dalla creazione (più la crescita di livello), quello speso fa parte della partita */
-    const manaMax = () => null; /* 08/11: niente mana nel motore nuovo */
-    /* ---------- Incantesimi (Arcanista e Monaco): le scuole di js/magia.js ----------
-       pg.incantesimi = id scelti in creazione, usate.incPreparati = id cambiati riposando.
-       04/11: niente scuola principale. Posti come le tecniche (2, 4, 5, 6, 7) più 1, liberi tra le due scuole e di qualsiasi
-       livello sbloccato; la via di prestigio (livello 3) potenzia la sua scuola (js/magia_combattimento.js, potenziamenti della via).
-       La capacità di classe (Luce / Lume Arcano) non occupa posti. */
-    const listaIncantesimi = () => []; /* 08/11: niente incantesimi nel motore nuovo */
-    const nomeInc = (inc) => Lingua.t(inc.nome) || inc.id || "";
-    const nomiInc = (inc) => (inc.nome && typeof inc.nome === "object" ? Object.values(inc.nome) : [inc.nome, inc.id]).filter(Boolean).map(String);
-    const manaAttuale = () => Math.max(0, manaMax() - (pg.manaUsato || 0));
 
     /* =====================================================================
        LIVELLI, RISORSE E GIORNI (regole decise)
@@ -6397,7 +6378,7 @@
       const dv = DADO_VITA[pg.classe] || Number(pg.tiroDado && pg.tiroDado.dado) || 6;
       const st = (a) => mod(Number(pg.statistiche && pg.statistiche[a]) || 10);
       const t = (m) => { const d = Math.floor(dv / 2) + 1; return { d, m, v: R_.CRESCITA_FISSA(dv, m) }; }; /* 28/10: crescita fissa, niente tiro */
-      const prima = { s: saluteMaxPg(), m: maxMentali(), r: manaMax() != null ? manaMax() : (risorsaPg() ? risorsaPg().max : null) };
+      const prima = { s: saluteMaxPg(), m: maxMentali(), r: risorsaPg() ? risorsaPg().max : null };
       const ts = t(st("Vigore")), tm = t(st("Spirito"));
       crescita.salute += ts.v; crescita.mente += tm.v;
       const righe = [RG.livello.salute(dv, ts, prima.s, saluteMaxPg()), RG.livello.mente(dv, tm, prima.m, maxMentali())];
@@ -6408,7 +6389,7 @@
       aggiungi({ tipo: "narra", box: "cap", fuori: true, esito: RG.livello.titolo(pg.livello), esitoRighe: righe, righe: [] });
       disegnaScheda(); modificato();
     }
-    function nomeRisorsa() { const r = risorsaPg(); return r ? RG[r.id] : U.mana; }
+    function nomeRisorsa() { const r = risorsaPg(); return r ? RG[r.id] : ""; }
 
     /* ---------- Salute mentale: ritratto incrinato, descrizioni distorte, a zero il personaggio diventa un guardiano ---------- */
     let finePartita = false, attesaGuardiano = null;
@@ -6553,7 +6534,6 @@
     let usate = (salvata && salvata.usate && typeof salvata.usate === "object" && !Array.isArray(salvata.usate)) ? salvata.usate : {};
     if (pg) pg.dannoFisico = salvata ? (Number(salvata.dannoFisico) || 0) : 0;
     if (pg) pg.dannoMentale = salvata ? (Number(salvata.dannoMentale) || 0) : 0;
-    if (pg) pg.manaUsato = salvata ? (Number(salvata.manaUsato) || 0) : 0; /* i danni mentali fanno parte della partita, non del personaggio */
     const salvaUsate = () => modificato();
     const salvaPg = () => modificato();
 
@@ -6659,7 +6639,6 @@
       { const pr = protezionePg(); if (pr && BT.stati[pr.stato]) riga(vit, BT.protTit, BT.protVoce(BT.stati[pr.stato].nome), "stati"); } /* elisir di protezione attivo */
       const magia = true;
       if (magia) sep("sep-spazio");
-      if (manaMax() != null) riga(vit, U.mana, `${manaAttuale()} / ${manaMax()}`, "mana");
       if (risorsaPg()) riga(vit, nomeRisorsa(), `${risorsaAttuale()} / ${risorsaPg().max}`, "risorsa"); /* punti furia o punti natura */
       { riga(vit, "CD dei tuoi stati", String(8 + modAttaccoPg() + livelloPg()), "cdinc"); if (pg.classe === "Forestiero" && livelloPg() >= 5) riga(vit, "Elisir (Infuso)", String(Number(pg.elisir) || 0), "cdinc"); }
       if (scontro && pg.classe === "Accolito") riga(vit, Lingua.t({ it: "Bilancia", en: "Balance" }), nomeBilancia(Number(scontro.bilancia) || 0), "cdinc");
@@ -7328,24 +7307,12 @@
     }
     function luceCantina(incantesimo) {
       if (usate.cantina_luce) return sist(Q.cantina.giaLuce);
-      if (incantesimo) {
-        const inc = incantesimoLuce();
-        if (!inc) return aggiungi({ tipo: "narra", righe: [TX.esterno.nessunIncantesimo] });
-        const costo = Number(inc.costo) || 1;
-        if (manaMax() != null) {
-          if (manaAttuale() < costo) return aggiungi({ tipo: "narra", righe: [TX.esterno.pocoMana(costo, manaAttuale())] });
-          pg.manaUsato = (pg.manaUsato || 0) + costo; disegnaVitali(); modificato();
-        }
-        usate.cantina_luce = "ok"; salvaUsate();
-        aggiungi({ tipo: "narra", ...vista("cantina"), titolo: undefined, righe: Q.cantina.luceInc });
-        sist(TX.esterno.incantesimoUsato(costo, manaMax() != null ? manaAttuale() : "—"));
-      } else {
-        const it = torciaUtile();
-        if (!it) return aggiungi({ tipo: "narra", righe: [TX.esterno.nessunaTorcia] });
-        usate.cantina_luce = "ok"; salvaUsate();
-        aggiungi({ tipo: "narra", ...vista("cantina"), titolo: undefined, righe: Q.cantina.luce });
-        usa(it.id); /* la torcia va in mano e consuma un utilizzo */
-      }
+      if (incantesimo) return aggiungi({ tipo: "narra", righe: [TX.esterno.nessunIncantesimo] }); /* niente incantesimi nel motore nuovo */
+      const it = torciaUtile();
+      if (!it) return aggiungi({ tipo: "narra", righe: [TX.esterno.nessunaTorcia] });
+      usate.cantina_luce = "ok"; salvaUsate();
+      aggiungi({ tipo: "narra", ...vista("cantina"), titolo: undefined, righe: Q.cantina.luce });
+      usa(it.id); /* la torcia va in mano e consuma un utilizzo */
       if (usate.cantina_cane !== "sconfitto") appareCane(); /* dopo la vittoria la cantina è libera */
     }
 
@@ -7404,7 +7371,7 @@
        Restituisce null se non c'è niente da recuperare. */
     function curaRiposo(conDigiuno) {
       const ris = risorsaPg();
-      const pieno = !(pg.dannoFisico > 0) && !(pg.dannoMentale > 0) && !(pg.manaUsato > 0 && manaMax() != null) && !(pg.risorsaUsata > 0 && ris) && !Object.keys(statiPg()).length; /* con uno stato alterato si può sempre riposare */
+      const pieno = !(pg.dannoFisico > 0) && !(pg.dannoMentale > 0) && !(pg.risorsaUsata > 0 && ris) && !Object.keys(statiPg()).length; /* con uno stato alterato si può sempre riposare */
       const ricarica = ((pg.giornalieriUsati || []).length > 0 || (pg.classe === "Forestiero" && livelloPg() >= 5 && (Number(pg.elisir) || 0) < 2)); /* 15/11: Infuso al livello 5, massimo 2 */ /* 08/11: si riposa anche per i giornalieri e l'Infuso */
       if (pieno && !livelliPronti() && !ricarica) return null; /* 01/11: con un livello in attesa si può riposare anche al pieno */
       let scorta = razioni();
@@ -7414,7 +7381,6 @@
       if (pg.dannoFisico > 0) righe.push(R.corpoNonGuarisce);
       const recMente = livelloPg() >= 2 && usate.via === "guendalina" ? 3 : 2; /* La lanterna */
       if (pg.dannoMentale > 0) { righe.push(R.mente(recMente)); const da = mentaliAttuali(); pg.dannoMentale = Math.max(0, (pg.dannoMentale || 0) - recMente); righe.push(R.riga(U.puntiMentali, da, mentaliAttuali())); }
-      if (manaMax() != null) { const da = manaAttuale(); pg.manaUsato = 0; righe.push(R.riga(U.mana, da, manaAttuale())); } /* vecchio motore */
       if (ris) { const da = risorsaAttuale(); pg.risorsaUsata = 0; righe.push(R.riga(nomeRisorsa(), da, risorsaAttuale())); }
       usate.giorno = (Number(usate.giorno) || 1) + 1;
       if (usate.giorno % GIORNI_LOGORIO === 0) { /* 01/11: il peso dei giorni (20/11: sempre attivo) */
@@ -9290,24 +9256,12 @@
     function luceCripta(incantesimo) {
       const B = A2.braciere;
       if (!criptaBuia()) return sist(B.giaLuce);
-      if (incantesimo) {
-        const inc = incantesimoLuce();
-        if (!inc) return aggiungi({ tipo: "narra", righe: [TX.esterno.nessunIncantesimo] });
-        const costo = Number(inc.costo) || 1;
-        if (manaMax() != null) {
-          if (manaAttuale() < costo) return aggiungi({ tipo: "narra", righe: [TX.esterno.pocoMana(costo, manaAttuale())] });
-          pg.manaUsato = (pg.manaUsato || 0) + costo; disegnaVitali(); modificato();
-        }
-        usate.cripta_buia = false; salvaUsate();
-        aggiungi({ tipo: "narra", ...vista("cripta"), titolo: undefined, righe: B.luce });
-        sist(TX.esterno.incantesimoUsato(costo, manaMax() != null ? manaAttuale() : "—"));
-      } else {
-        const it = torciaUtile();
-        if (!it) return aggiungi({ tipo: "narra", righe: [TX.esterno.nessunaTorcia] });
-        usate.cripta_buia = false; salvaUsate();
-        aggiungi({ tipo: "narra", ...vista("cripta"), titolo: undefined, righe: B.luce });
-        usa(it.id); /* la torcia va in mano e consuma un utilizzo */
-      }
+      if (incantesimo) return aggiungi({ tipo: "narra", righe: [TX.esterno.nessunIncantesimo] }); /* niente incantesimi nel motore nuovo */
+      const it = torciaUtile();
+      if (!it) return aggiungi({ tipo: "narra", righe: [TX.esterno.nessunaTorcia] });
+      usate.cripta_buia = false; salvaUsate();
+      aggiungi({ tipo: "narra", ...vista("cripta"), titolo: undefined, righe: B.luce });
+      usa(it.id); /* la torcia va in mano e consuma un utilizzo */
     }
     /* ritorno nella cripta dopo Ettore: al buio, o con il fuoco ancora acceso */
     function mostraCriptaVuota() {
@@ -9436,7 +9390,7 @@
     function salvaPartita() {
       const conta = {}, tenute = [];
       for (let i = diario.length - 1; i >= 0; i--) { const k = diario[i].stanza || "atrio"; conta[k] = (conta[k] || 0) + 1; if (conta[k] <= 30) tenute.unshift(diario[i]); }
-      const dati = { usate, diario: tenute, luogo, dannoMentale: pg.dannoMentale || 0, dannoFisico: pg.dannoFisico || 0, manaUsato: pg.manaUsato || 0, livello: livelloPg(), crescita, risorsaUsata: pg.risorsaUsata || 0, zaino, arma, mano, scudo, armatura: armaturaPartita, ora: Date.now() };
+      const dati = { usate, diario: tenute, luogo, dannoMentale: pg.dannoMentale || 0, dannoFisico: pg.dannoFisico || 0, livello: livelloPg(), crescita, risorsaUsata: pg.risorsaUsata || 0, zaino, arma, mano, scudo, armatura: armaturaPartita, ora: Date.now() };
       try { localStorage.setItem(CHIAVE_SALVATAGGIO, JSON.stringify(dati)); }
       catch (e) { document.getElementById("statoSalvataggio").textContent = U.salvataggioErr; return; }
       try { /* copia nel posto del personaggio attivo, così dalla pagina iniziale si riprende da qui */
@@ -9991,12 +9945,6 @@
         return { ok: B.pozCura(nome, d, prima, liv, Math.max(0, max - pg.dannoFisico)) };
       }
       if (ef === "pozMana") { /* «essenza»: punti arcano, fede, furia o natura, secondo la classe */
-        if (manaMax() != null) {
-          const prima = manaAttuale();
-          if (prima >= manaMax()) return { no: Q.oggetti.inutile.pozMana };
-          const d = tira(6) + liv; pg.manaUsato = Math.max(0, (pg.manaUsato || 0) - d);
-          return { ok: B.pozMana(nome, d, prima, liv, manaAttuale()) };
-        }
         const ris = risorsaPg();
         if (!ris) return { no: Q.oggetti.inutile.noMana };
         const prima = risorsaAttuale();
@@ -10279,8 +10227,7 @@
     const torciaUtile = () => [...(mano ? [mano] : []), ...zaino].find(it => (it.nome === "Torcia" || it.id === "lanterna") && Number(it.usi) > 0) || null; /* 01/11: anche la lanterna di Guendalina */
     const lanterna = () => [...(mano ? [mano] : []), ...zaino].find(it => it.id === "lanterna") || null;
     /* incantesimi scelti in creazione (Sapiente e Accolito): si cerca «Luce» / «Light», per nome o come stringa */
-    const incantesimoLuce = () => listaIncantesimi().find(s => s.id === "luce" || nomiInc(s).some(n => /^(luce|light)$/.test(norm(n).trim()))) || null;
-    const notaBuio = () => (torciaUtile() || incantesimoLuce()) ? undefined : EST.notaEsci;
+    const notaBuio = () => torciaUtile() ? undefined : EST.notaEsci;
     const buio = () => aggiungi({ tipo: "narra", righe: [EST.buio[Math.floor(Math.random() * EST.buio.length)]], nota: notaBuio() });
 
     function entraBuio() {
@@ -10304,7 +10251,7 @@
             preso: "Backpack updated: Lantern (1 use of oil).", ricaricata: (n) => `Lantern: +1 use of oil (now ${n}).`, scarto: (n) => `The leftover oil from the brew refills the lantern: +1 use (now ${n}).` }
     });
     function offriLanterna() {
-      if (luogo !== "cucina" || usate.q1 !== "accettata" || usate.cantina_luce || torciaUtile() || incantesimoLuce()) return;
+      if (luogo !== "cucina" || usate.q1 !== "accettata" || usate.cantina_luce || torciaUtile()) return;
       const T = LANT(), l = lanterna();
       if (l) { l.usi = (Number(l.usi) || 0) + 1; aggiungi({ tipo: "dialogo", fuori: true, tuttoBox: true, chi: "Guendalina", macchina: true, righe: T.ricarica }); aggiornaZaino(); aggiornaEquip(); modificato(); return scrittura.then(() => sist(T.ricaricata(l.usi))); }
       aggiungi({ tipo: "dialogo", fuori: true, tuttoBox: true, chi: "Guendalina", macchina: true, righe: T.dono });
@@ -10353,14 +10300,7 @@
     }
 
     function lanciaLuce() {
-      const inc = incantesimoLuce();
-      if (!inc) return aggiungi({ tipo: "narra", righe: [EST.nessunIncantesimo], nota: notaBuio() });
-      const costo = Number(inc.costo) || 1;
-      if (manaMax() != null) {
-        if (manaAttuale() < costo) return aggiungi({ tipo: "narra", righe: [EST.pocoMana(costo, manaAttuale())], nota: notaBuio() });
-        pg.manaUsato = (pg.manaUsato || 0) + costo; disegnaVitali(); modificato();
-      }
-      luceNelBuio(EST.luceIncantesimo, EST.incantesimoUsato(costo, manaMax() != null ? manaAttuale() : "—"));
+      return aggiungi({ tipo: "narra", righe: [EST.nessunIncantesimo], nota: notaBuio() }); /* niente incantesimi nel motore nuovo */
     }
 
 
@@ -10825,8 +10765,6 @@
 
       /* incantesimo lanciato fuori dal buio: per ora nessun effetto e nessun costo */
       if (/incantesim|\bspell\b|\bcast\w*|\blanci[oa]\b|\bevoc\w*/.test(t)) {
-        const citatoInc = listaIncantesimi().find(inc => nomiInc(inc).some(v => t.includes(norm(v))));
-        if (citatoInc) return aggiungi({ tipo: "narra", righe: [EST.incInutile(nomeInc(citatoInc))] });
         if (/incantesim|\bspell\b/.test(t)) return aggiungi({ tipo: "narra", righe: [EST.incSconosciuto] });
       }
 
@@ -11049,7 +10987,6 @@
       if (v > 0) return L(`Vita ${v}`, `Life ${v}`) + (v === 3 ? " · Zenit" : v === 2 ? " · Aureola" : "");
       return L(`Negromanzia ${-v}`, `Necromancy ${-v}`) + (v === -3 ? " · Nadir" : v === -2 ? L(" · Coro", " · Choir") : "");
     };
-    const nomeRisorsaInc = () => (pg && pg.classe === "Accolito" ? (Lingua.t({ it: "punti fede", en: "faith" })) : "mana");
     /* 01/11: ritmo dello scontro scelto dal giocatore (barra in alto, ⏱). Pausa tra un turno e l'altro e prima dell'esito finale */
     const RITMI = { lento: 4500, normale: 3000, veloce: 1600 }, ORDINE_RITMI = ["lento", "normale", "veloce"];
     let ritmo = "lento";
@@ -11148,8 +11085,6 @@
         guarda: "Il Mastino non stacca gli occhi da te. Ringhia, e a ogni respiro le fiamme sulla groppa si gonfiano come un mantice.",
         nonCapisco: "Durante lo scontro puoi scrivere: «attacca il mastino», «colpisci con la torcia», «impugna lo scudo», «bevi la pozione» oppure «lancio» e il nome di un incantesimo.",
         nonTuoTurno: "Aspetta il tuo turno.",
-        pocoMana: (c, r) => `Non hai abbastanza ${nomeRisorsaInc()}: l'incantesimo costa ${c} e te ne restano ${r}.`,
-        costo: (c, r) => `−${c} ${nomeRisorsaInc()} (rimasti ${r})`,
         incInArrivo: "Questo incantesimo arriverà presto in combattimento: per ora non lo lanci e non consumi punti.", luceInutile: "La luce non ti serve a nulla contro il Mastino: lasci svanire l'energia senza consumarla.",
         inc: {
           dardo_ghiaccio: "Una spina di ghiaccio nero sfreccia dal tuo indice e si pianta nella carne della belva.",
@@ -11261,8 +11196,6 @@
         guarda: "The Mastiff never takes its eyes off you. It growls, and with every breath the flames on its back swell like a bellows.",
         nonCapisco: "During the fight you can write: “attack the mastiff”, “strike with the torch”, “take the shield”, “drink the potion” or “I cast” and the name of a spell.",
         nonTuoTurno: "Wait for your turn.",
-        pocoMana: (c, r) => `Not enough ${nomeRisorsaInc()}: the spell costs ${c} and you have ${r} left.`,
-        costo: (c, r) => `−${c} ${nomeRisorsaInc()} (${r} left)`,
         incInArrivo: "This spell will soon work in combat: for now you cannot cast it and spend no points.", luceInutile: "Light is of no use against the Mastiff: you let the energy fade without spending it.",
         inc: {
           dardo_ghiaccio: "A spike of black ice streaks from your finger and lodges in the beast's flesh.",

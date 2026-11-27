@@ -2,6 +2,8 @@
 
 Bozza del 27/11/2026, da `decisioni_27_novembre.md` sez. 3. Seconda persona, tempo presente, 80-100 parole l'una. **Tutto 📖: testi provvisori di Claude, da rivedere con Francesco.** Solo italiano; l'inglese si traduce dopo l'approvazione. Nessun danno mentale, nessuna distorsione meccanica: la confusione dei ricordi di cenere è solo stile del testo.
 
+**Stato nel codice (27/11 sera):** sono già in `gioco.html` (IT+EN, 📖) i n. **7 anello** (cripta), **8 spada** (flashback alla presa), **9 corno** (alla morte di Dafne) e **11 prima lacrima** (all'inserimento del blasone). Gli altri (n. 1-6, 10, 12, 13) aspettano gli oggetti e i luoghi nel gioco (set di carne, medaglione, corona, seconda e terza lacrima). La pagina IV dei diari di Adele è riscritta (la rabbia di Rodolfo che diventa catena; non è un atto di Adele né di lui).
+
 ## Set di carne: Rodolfo buono (punto di vista: Rodolfo)
 
 ### 1. Mantello (prima caccia comune)
